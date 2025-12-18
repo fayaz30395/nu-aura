@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="078-01" author="system">
+        <comment>Create objectives table for OKR tracking</comment>
+        <createTable tableName="objectives">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cycle_id" type="UUID"/>
+            <column name="parent_objective_id" type="UUID"/>
+            <column name="title" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="objective_level" type="VARCHAR(30)" defaultValue="INDIVIDUAL"/>
+            <column name="status" type="VARCHAR(30)" defaultValue="DRAFT"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progress_percentage" type="DECIMAL(5,2)" defaultValue="0"/>
+            <column name="weight" type="INTEGER" defaultValue="100"/>
+            <column name="is_stretch_goal" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="aligned_to_company_objective" type="UUID"/>
+            <column name="department_id" type="UUID"/>
+            <column name="team_id" type="UUID"/>
+            <column name="visibility" type="VARCHAR(20)" defaultValue="TEAM"/>
+            <column name="approved_by" type="UUID"/>
+            <column name="check_in_frequency" type="VARCHAR(20)" defaultValue="WEEKLY"/>
+            <column name="last_check_in_date" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="objectives" indexName="idx_objective_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="objectives" indexName="idx_objective_owner">
+            <column name="owner_id"/>
+        </createIndex>
+        <createIndex tableName="objectives" indexName="idx_objective_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="078-02" author="system">
+        <comment>Create key_results table</comment>
+        <createTable tableName="key_results">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="objective_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="measurement_type" type="VARCHAR(30)" defaultValue="PERCENTAGE"/>
+            <column name="start_value" type="DECIMAL(19,2)" defaultValue="0"/>
+            <column name="current_value" type="DECIMAL(19,2)" defaultValue="0"/>
+            <column name="target_value" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="measurement_unit" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(30)" defaultValue="NOT_STARTED"/>
+            <column name="progress_percentage" type="DECIMAL(5,2)" defaultValue="0"/>
+            <column name="weight" type="INTEGER" defaultValue="100"/>
+            <column name="due_date" type="DATE"/>
+            <column name="is_milestone" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="milestone_order" type="INTEGER"/>
+            <column name="confidence_level" type="INTEGER" defaultValue="50"/>
+            <column name="last_updated_notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="key_results" indexName="idx_kr_objective">
+            <column name="objective_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="078-03" author="system">
+        <comment>Create okr_check_ins table</comment>
+        <createTable tableName="okr_check_ins">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="objective_id" type="UUID"/>
+            <column name="key_result_id" type="UUID"/>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_in_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="previous_value" type="DECIMAL(19,2)"/>
+            <column name="new_value" type="DECIMAL(19,2)"/>
+            <column name="previous_progress" type="DECIMAL(5,2)"/>
+            <column name="new_progress" type="DECIMAL(5,2)"/>
+            <column name="confidence_level" type="INTEGER"/>
+            <column name="notes" type="TEXT"/>
+            <column name="blockers" type="TEXT"/>
+            <column name="next_steps" type="TEXT"/>
+            <column name="check_in_type" type="VARCHAR(30)" defaultValue="PROGRESS_UPDATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

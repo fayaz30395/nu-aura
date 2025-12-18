@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Provident Fund Configurations -->
+    <changeSet id="071-create-provident-fund-configs-table" author="hrms">
+        <createTable tableName="provident_fund_configs">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_from" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_to" type="DATE"/>
+            <column name="employee_contribution_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employer_contribution_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eps_contribution_percentage" type="DECIMAL(5,2)"/>
+            <column name="wage_ceiling" type="DECIMAL(10,2)"/>
+            <column name="is_vpf_allowed" type="BOOLEAN"/>
+            <column name="max_vpf_percentage" type="DECIMAL(5,2)"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="provident_fund_configs" indexName="idx_pf_config_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Employee PF Records -->
+    <changeSet id="071-create-employee-pf-records-table" author="hrms">
+        <createTable tableName="employee_pf_records">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uan_number" type="VARCHAR(12)"/>
+            <column name="pf_number" type="VARCHAR(50)"/>
+            <column name="enrollment_date" type="DATE"/>
+            <column name="exit_date" type="DATE"/>
+            <column name="vpf_percentage" type="DECIMAL(5,2)"/>
+            <column name="is_international_worker" type="BOOLEAN"/>
+            <column name="previous_pf_balance" type="DECIMAL(12,2)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="employee_pf_records" indexName="idx_empf_tenant_employee">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+        <createIndex tableName="employee_pf_records" indexName="idx_empf_uan">
+            <column name="uan_number"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ESI Configurations -->
+    <changeSet id="071-create-esi-configs-table" author="hrms">
+        <createTable tableName="esi_configs">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_from" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_to" type="DATE"/>
+            <column name="employee_contribution_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employer_contribution_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wage_ceiling" type="DECIMAL(10,2)"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="esi_configs" indexName="idx_esi_config_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Employee ESI Records -->
+    <changeSet id="071-create-employee-esi-records-table" author="hrms">
+        <createTable tableName="employee_esi_records">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="esi_number" type="VARCHAR(17)"/>
+            <column name="ip_number" type="VARCHAR(20)"/>
+            <column name="enrollment_date" type="DATE"/>
+            <column name="exit_date" type="DATE"/>
+            <column name="dispensary_name" type="VARCHAR(200)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="employee_esi_records" indexName="idx_emesi_tenant_employee">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Professional Tax Slabs -->
+    <changeSet id="071-create-professional-tax-slabs-table" author="hrms">
+        <createTable tableName="professional_tax_slabs">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state_code" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_from" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_to" type="DATE"/>
+            <column name="min_salary" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_salary" type="DECIMAL(10,2)"/>
+            <column name="tax_amount" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deduction_month" type="INTEGER"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="professional_tax_slabs" indexName="idx_pt_tenant_state">
+            <column name="tenant_id"/>
+            <column name="state_code"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- TDS Slabs -->
+    <changeSet id="071-create-tds-slabs-table" author="hrms">
+        <createTable tableName="tds_slabs">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_year" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_regime" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="min_income" type="DECIMAL(12,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_income" type="DECIMAL(12,2)"/>
+            <column name="tax_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="tds_slabs" indexName="idx_tds_tenant_year">
+            <column name="tenant_id"/>
+            <column name="assessment_year"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Employee TDS Declarations -->
+    <changeSet id="071-create-employee-tds-declarations-table" author="hrms">
+        <createTable tableName="employee_tds_declarations">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="financial_year" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_regime" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="section_80c" type="DECIMAL(12,2)"/>
+            <column name="section_80d" type="DECIMAL(12,2)"/>
+            <column name="section_80g" type="DECIMAL(12,2)"/>
+            <column name="section_24" type="DECIMAL(12,2)"/>
+            <column name="section_80e" type="DECIMAL(12,2)"/>
+            <column name="hra_exemption" type="DECIMAL(12,2)"/>
+            <column name="lta_exemption" type="DECIMAL(12,2)"/>
+            <column name="other_exemptions" type="DECIMAL(12,2)"/>
+            <column name="previous_employer_income" type="DECIMAL(12,2)"/>
+            <column name="previous_employer_tds" type="DECIMAL(12,2)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="submitted_at" type="TIMESTAMP"/>
+            <column name="approved_at" type="TIMESTAMP"/>
+            <column name="approved_by" type="UUID"/>
+            <column name="remarks" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+        </createTable>
+        <createIndex tableName="employee_tds_declarations" indexName="idx_tds_decl_tenant_emp">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Monthly Statutory Contributions -->
+    <changeSet id="071-create-monthly-statutory-contributions-table" author="hrms">
+        <createTable tableName="monthly_statutory_contributions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payslip_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="month" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pf_employee_contribution" type="DECIMAL(10,2)"/>
+            <column name="pf_employer_contribution" type="DECIMAL(10,2)"/>
+            <column name="eps_contribution" type="DECIMAL(10,2)"/>
+            <column name="vpf_contribution" type="DECIMAL(10,2)"/>
+            <column name="pf_wage" type="DECIMAL(10,2)"/>
+            <column name="esi_employee_contribution" type="DECIMAL(10,2)"/>
+            <column name="esi_employer_contribution" type="DECIMAL(10,2)"/>
+            <column name="esi_wage" type="DECIMAL(10,2)"/>
+            <column name="professional_tax" type="DECIMAL(10,2)"/>
+            <column name="tds_deducted" type="DECIMAL(10,2)"/>
+            <column name="gross_salary" type="DECIMAL(12,2)"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="monthly_statutory_contributions" indexName="idx_statutory_tenant_emp">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+        <createIndex tableName="monthly_statutory_contributions" indexName="idx_statutory_month_year">
+            <column name="month"/>
+            <column name="year"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

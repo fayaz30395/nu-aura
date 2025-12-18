@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Playbook Reference: Prompt 34 - Feature flags (tenant-level) -->
+    <changeSet id="102-1" author="nulogic">
+        <comment>Create feature_flags table for tenant-level feature toggles</comment>
+
+        <createTable tableName="feature_flags">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="feature_key" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="feature_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)"/>
+            <column name="enabled" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="percentage_rollout" type="int"/>
+            <column name="metadata" type="text"/>
+            <column name="category" type="varchar(50)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp"/>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+        </createTable>
+
+        <addUniqueConstraint
+            tableName="feature_flags"
+            columnNames="tenant_id, feature_key"
+            constraintName="uk_feature_flags_tenant_key"/>
+
+        <createIndex tableName="feature_flags" indexName="idx_feature_flags_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="feature_flags" indexName="idx_feature_flags_category">
+            <column name="tenant_id"/>
+            <column name="category"/>
+        </createIndex>
+
+        <addForeignKeyConstraint
+            baseTableName="feature_flags"
+            baseColumnNames="tenant_id"
+            referencedTableName="tenants"
+            referencedColumnNames="id"
+            constraintName="fk_feature_flags_tenant"/>
+    </changeSet>
+
+    <!-- Seed default feature flags for existing tenants -->
+    <changeSet id="102-2" author="nulogic">
+        <comment>Seed default feature flags for demo tenant</comment>
+
+        <sql>
+            INSERT INTO feature_flags (id, tenant_id, feature_key, feature_name, description, enabled, category, created_at)
+            SELECT
+                gen_random_uuid(),
+                t.id,
+                'enable_projects',
+                'Projects Module',
+                'Enable project management features',
+                true,
+                'PROJECTS',
+                CURRENT_TIMESTAMP
+            FROM tenants t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM feature_flags f
+                WHERE f.tenant_id = t.id AND f.feature_key = 'enable_projects'
+            );
+        </sql>
+
+        <sql>
+            INSERT INTO feature_flags (id, tenant_id, feature_key, feature_name, description, enabled, category, created_at)
+            SELECT
+                gen_random_uuid(),
+                t.id,
+                'enable_timesheets',
+                'Timesheets',
+                'Enable timesheet tracking',
+                true,
+                'PROJECTS',
+                CURRENT_TIMESTAMP
+            FROM tenants t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM feature_flags f
+                WHERE f.tenant_id = t.id AND f.feature_key = 'enable_timesheets'
+            );
+        </sql>
+
+        <sql>
+            INSERT INTO feature_flags (id, tenant_id, feature_key, feature_name, description, enabled, category, created_at)
+            SELECT
+                gen_random_uuid(),
+                t.id,
+                'enable_payroll',
+                'Payroll',
+                'Enable payroll processing',
+                true,
+                'HRMS',
+                CURRENT_TIMESTAMP
+            FROM tenants t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM feature_flags f
+                WHERE f.tenant_id = t.id AND f.feature_key = 'enable_payroll'
+            );
+        </sql>
+
+        <sql>
+            INSERT INTO feature_flags (id, tenant_id, feature_key, feature_name, description, enabled, category, created_at)
+            SELECT
+                gen_random_uuid(),
+                t.id,
+                'enable_performance',
+                'Performance Management',
+                'Enable performance reviews and goals',
+                true,
+                'HRMS',
+                CURRENT_TIMESTAMP
+            FROM tenants t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM feature_flags f
+                WHERE f.tenant_id = t.id AND f.feature_key = 'enable_performance'
+            );
+        </sql>
+
+        <sql>
+            INSERT INTO feature_flags (id, tenant_id, feature_key, feature_name, description, enabled, category, created_at)
+            SELECT
+                gen_random_uuid(),
+                t.id,
+                'enable_documents',
+                'Documents',
+                'Enable document management',
+                true,
+                'HRMS',
+                CURRENT_TIMESTAMP
+            FROM tenants t
+            WHERE NOT EXISTS (
+                SELECT 1 FROM feature_flags f
+                WHERE f.tenant_id = t.id AND f.feature_key = 'enable_documents'
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

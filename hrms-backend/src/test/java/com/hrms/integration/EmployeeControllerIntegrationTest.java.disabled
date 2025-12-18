@@ -1,0 +1,177 @@
+package com.hrms.integration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.employee.dto.CreateEmployeeRequest;
+import com.hrms.domain.employee.EmployeeLevel;
+import com.hrms.domain.employee.EmployeeType;
+import com.hrms.domain.employee.Gender;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class EmployeeControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private static final String BASE_URL = "/api/v1/employees";
+    private static final String TENANT_ID_HEADER = "X-Tenant-ID";
+    private static final String TENANT_ID = UUID.randomUUID().toString();
+
+    @Test
+    void createEmployee_Success() throws Exception {
+        CreateEmployeeRequest request = CreateEmployeeRequest.builder()
+                .userId(UUID.randomUUID())
+                .employeeCode("EMP-INT-001")
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe.int@example.com")
+                .designation("Software Engineer")
+                .employeeType(EmployeeType.FULL_TIME)
+                .level(EmployeeLevel.MID)
+                .dateOfJoining(LocalDate.now())
+                .gender(Gender.MALE)
+                .build();
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.employeeCode").value("EMP-INT-001"))
+                .andExpect(jsonPath("$.email").value("john.doe.int@example.com"));
+    }
+
+    @Test
+    void createEmployee_MissingRequiredFields_ReturnsBadRequest() throws Exception {
+        CreateEmployeeRequest request = CreateEmployeeRequest.builder()
+                .firstName("John")
+                // Missing other required fields
+                .build();
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getEmployeeById_Success() throws Exception {
+        // First create an employee
+        CreateEmployeeRequest createRequest = CreateEmployeeRequest.builder()
+                .userId(UUID.randomUUID())
+                .employeeCode("EMP-INT-002")
+                .firstName("Jane")
+                .lastName("Smith")
+                .email("jane.smith.int@example.com")
+                .designation("Product Manager")
+                .employeeType(EmployeeType.FULL_TIME)
+                .level(EmployeeLevel.SENIOR)
+                .dateOfJoining(LocalDate.now())
+                .gender(Gender.FEMALE)
+                .build();
+
+        String createResponse = mockMvc.perform(post(BASE_URL)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String employeeId = objectMapper.readTree(createResponse).get("id").asText();
+
+        // Then get the employee
+        mockMvc.perform(get(BASE_URL + "/" + employeeId)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(employeeId))
+                .andExpect(jsonPath("$.employeeCode").value("EMP-INT-002"))
+                .andExpect(jsonPath("$.email").value("jane.smith.int@example.com"));
+    }
+
+    @Test
+    void getEmployeeById_NotFound_ReturnsNotFound() throws Exception {
+        String nonExistentId = UUID.randomUUID().toString();
+
+        mockMvc.perform(get(BASE_URL + "/" + nonExistentId)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAllEmployees_Success() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.totalElements").isNumber());
+    }
+
+    @Test
+    void deleteEmployee_Success() throws Exception {
+        // First create an employee
+        CreateEmployeeRequest createRequest = CreateEmployeeRequest.builder()
+                .userId(UUID.randomUUID())
+                .employeeCode("EMP-INT-003")
+                .firstName("Bob")
+                .lastName("Johnson")
+                .email("bob.johnson.int@example.com")
+                .designation("QA Engineer")
+                .employeeType(EmployeeType.FULL_TIME)
+                .level(EmployeeLevel.MID)
+                .dateOfJoining(LocalDate.now())
+                .gender(Gender.MALE)
+                .build();
+
+        String createResponse = mockMvc.perform(post(BASE_URL)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequest)))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String employeeId = objectMapper.readTree(createResponse).get("id").asText();
+
+        // Then delete the employee
+        mockMvc.perform(delete(BASE_URL + "/" + employeeId)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token"))
+                .andExpect(status().isNoContent());
+
+        // Verify the employee is deleted
+        mockMvc.perform(get(BASE_URL + "/" + employeeId)
+                        .header(TENANT_ID_HEADER, TENANT_ID)
+                        .header("Authorization", "Bearer mock-jwt-token"))
+                .andExpect(status().isNotFound());
+    }
+}

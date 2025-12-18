@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="033-create-salary-structures-table" author="hrms">
+        <sql>
+            CREATE TABLE salary_structures (
+                id UUID PRIMARY KEY,
+                tenant_id VARCHAR(255) NOT NULL,
+                employee_id VARCHAR(255) NOT NULL,
+                effective_date DATE NOT NULL,
+                basic_salary DECIMAL(15,2) NOT NULL,
+                hra DECIMAL(15,2),
+                transport_allowance DECIMAL(15,2),
+                medical_allowance DECIMAL(15,2),
+                special_allowance DECIMAL(15,2),
+                other_allowances DECIMAL(15,2),
+                gross_salary DECIMAL(15,2) NOT NULL,
+                provident_fund DECIMAL(15,2),
+                professional_tax DECIMAL(15,2),
+                income_tax DECIMAL(15,2),
+                other_deductions DECIMAL(15,2),
+                total_deductions DECIMAL(15,2) NOT NULL,
+                net_salary DECIMAL(15,2) NOT NULL,
+                currency VARCHAR(10) DEFAULT 'INR',
+                is_active BOOLEAN DEFAULT true,
+                remarks TEXT,
+                created_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP NOT NULL,
+                version BIGINT DEFAULT 0
+            );
+
+            CREATE INDEX idx_salary_structures_tenant ON salary_structures(tenant_id);
+            CREATE INDEX idx_salary_structures_employee ON salary_structures(employee_id);
+            CREATE INDEX idx_salary_structures_effective_date ON salary_structures(effective_date);
+            CREATE INDEX idx_salary_structures_active ON salary_structures(is_active);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="022-create-leave-balances-table" author="hrms">
+        <createTable tableName="leave_balances">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="leave_type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="opening_balance" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="accrued" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="used" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="pending" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="available" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="carried_forward" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="encashed" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="lapsed" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="last_accrual_date" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="leave_balances"
+                                 baseColumnNames="employee_id"
+                                 constraintName="fk_leave_balance_employee"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="leave_balances"
+                                 baseColumnNames="leave_type_id"
+                                 constraintName="fk_leave_balance_type"
+                                 referencedTableName="leave_types"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addUniqueConstraint tableName="leave_balances"
+                             columnNames="tenant_id, employee_id, leave_type_id, year"
+                             constraintName="uk_leave_balance_emp_type_year"/>
+
+        <createIndex tableName="leave_balances" indexName="idx_leave_balances_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="leave_balances" indexName="idx_leave_balances_employee_id">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="leave_balances" indexName="idx_leave_balances_year">
+            <column name="year"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

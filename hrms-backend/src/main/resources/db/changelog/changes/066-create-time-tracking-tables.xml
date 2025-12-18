@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create project_members table -->
+    <changeSet id="066-create-project-members-table" author="hrms">
+        <createTable tableName="project_members">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="allocation_percentage" type="DECIMAL(5, 2)"/>
+            <column name="billing_rate" type="DECIMAL(10, 2)"/>
+            <column name="cost_rate" type="DECIMAL(10, 2)"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="can_approve_time" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="project_members" indexName="idx_project_members_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_members" indexName="idx_project_members_project">
+            <column name="tenant_id"/>
+            <column name="project_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_members" indexName="idx_project_members_employee">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_members" indexName="idx_project_members_active">
+            <column name="tenant_id"/>
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create time_entries table -->
+    <changeSet id="066-create-time-entries-table" author="hrms">
+        <createTable tableName="time_entries">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hours_worked" type="DECIMAL(5, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="task_name" type="VARCHAR(200)"/>
+            <column name="entry_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_billable" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="billing_rate" type="DECIMAL(10, 2)"/>
+            <column name="billed_amount" type="DECIMAL(15, 2)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved_by" type="UUID"/>
+            <column name="approved_at" type="TIMESTAMP"/>
+            <column name="submitted_at" type="TIMESTAMP"/>
+            <column name="rejected_reason" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_project">
+            <column name="tenant_id"/>
+            <column name="project_id"/>
+        </createIndex>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_employee">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_date">
+            <column name="tenant_id"/>
+            <column name="work_date"/>
+        </createIndex>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_status">
+            <column name="tenant_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="time_entries" indexName="idx_time_entries_billable">
+            <column name="tenant_id"/>
+            <column name="is_billable"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

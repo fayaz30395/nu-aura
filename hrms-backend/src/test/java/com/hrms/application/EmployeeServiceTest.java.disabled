@@ -1,0 +1,203 @@
+package com.hrms.application;
+
+import com.hrms.api.employee.dto.CreateEmployeeRequest;
+import com.hrms.api.employee.dto.EmployeeDTO;
+import com.hrms.api.employee.dto.UpdateEmployeeRequest;
+import com.hrms.application.employee.EmployeeService;
+import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.employee.EmployeeLevel;
+import com.hrms.domain.employee.EmployeeType;
+import com.hrms.domain.employee.Gender;
+import com.hrms.domain.user.User;
+import com.hrms.infrastructure.employee.EmployeeRepository;
+import com.hrms.infrastructure.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class EmployeeServiceTest {
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private EmployeeService employeeService;
+
+    private UUID tenantId;
+    private UUID userId;
+    private UUID employeeId;
+    private User user;
+    private Employee employee;
+
+    @BeforeEach
+    void setUp() {
+        tenantId = UUID.randomUUID();
+        userId = UUID.randomUUID();
+        employeeId = UUID.randomUUID();
+
+        user = User.builder()
+                .id(userId)
+                .tenantId(tenantId)
+                .email("john.doe@example.com")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        employee = Employee.builder()
+                .id(employeeId)
+                .tenantId(tenantId)
+                .userId(userId)
+                .employeeCode("EMP001")
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .designation("Software Engineer")
+                .employeeType(EmployeeType.FULL_TIME)
+                .level(EmployeeLevel.MID)
+                .dateOfJoining(LocalDate.now())
+                .gender(Gender.MALE)
+                .build();
+    }
+
+    @Test
+    void createEmployee_Success() {
+        // Given
+        CreateEmployeeRequest request = CreateEmployeeRequest.builder()
+                .userId(userId)
+                .employeeCode("EMP001")
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .designation("Software Engineer")
+                .employeeType(EmployeeType.FULL_TIME)
+                .level(EmployeeLevel.MID)
+                .dateOfJoining(LocalDate.now())
+                .gender(Gender.MALE)
+                .build();
+
+        when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.of(user));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+
+        // When
+        EmployeeDTO result = employeeService.createEmployee(tenantId, request);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getEmployeeCode()).isEqualTo("EMP001");
+        assertThat(result.getEmail()).isEqualTo("john.doe@example.com");
+
+        verify(userRepository).findByIdAndTenantId(userId, tenantId);
+        verify(employeeRepository).save(any(Employee.class));
+    }
+
+    @Test
+    void createEmployee_UserNotFound_ThrowsException() {
+        // Given
+        CreateEmployeeRequest request = CreateEmployeeRequest.builder()
+                .userId(userId)
+                .employeeCode("EMP001")
+                .build();
+
+        when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> employeeService.createEmployee(tenantId, request))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("User not found");
+
+        verify(userRepository).findByIdAndTenantId(userId, tenantId);
+        verify(employeeRepository, never()).save(any());
+    }
+
+    @Test
+    void getEmployeeById_Success() {
+        // Given
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+
+        // When
+        EmployeeDTO result = employeeService.getEmployeeById(tenantId, employeeId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(employeeId);
+        assertThat(result.getEmployeeCode()).isEqualTo("EMP001");
+
+        verify(employeeRepository).findByIdAndTenantId(employeeId, tenantId);
+    }
+
+    @Test
+    void getEmployeeById_NotFound_ThrowsException() {
+        // Given
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> employeeService.getEmployeeById(tenantId, employeeId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Employee not found");
+
+        verify(employeeRepository).findByIdAndTenantId(employeeId, tenantId);
+    }
+
+    @Test
+    void updateEmployee_Success() {
+        // Given
+        UpdateEmployeeRequest request = UpdateEmployeeRequest.builder()
+                .designation("Senior Software Engineer")
+                .level(EmployeeLevel.SENIOR)
+                .build();
+
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+        when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
+
+        // When
+        EmployeeDTO result = employeeService.updateEmployee(tenantId, employeeId, request);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(employeeRepository).findByIdAndTenantId(employeeId, tenantId);
+        verify(employeeRepository).save(any(Employee.class));
+    }
+
+    @Test
+    void deleteEmployee_Success() {
+        // Given
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+
+        // When
+        employeeService.deleteEmployee(tenantId, employeeId);
+
+        // Then
+        verify(employeeRepository).findByIdAndTenantId(employeeId, tenantId);
+        verify(employeeRepository).delete(employee);
+    }
+
+    @Test
+    void deleteEmployee_NotFound_ThrowsException() {
+        // Given
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> employeeService.deleteEmployee(tenantId, employeeId))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(employeeRepository).findByIdAndTenantId(employeeId, tenantId);
+        verify(employeeRepository, never()).delete(any());
+    }
+}
