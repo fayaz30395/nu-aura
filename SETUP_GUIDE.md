@@ -8,14 +8,29 @@ Complete guide to set up and run the HRMS platform on a new system.
 
 ### Required Software
 
-| Software | Version | Download |
-|----------|---------|----------|
-| Java JDK | 17+ (21 recommended) | [Adoptium](https://adoptium.net/) |
-| Maven | 3.9+ | [Maven](https://maven.apache.org/download.cgi) |
-| Node.js | 18+ (23 recommended) | [Node.js](https://nodejs.org/) |
-| PostgreSQL | 14+ | [PostgreSQL](https://www.postgresql.org/download/) |
-| Redis | 6+ | [Redis](https://redis.io/download/) |
-| MinIO (optional) | Latest | [MinIO](https://min.io/download) |
+| Software | Minimum Version | Recommended | Download |
+|----------|-----------------|-------------|----------|
+| Java JDK | **17+** | 21 LTS | [Adoptium](https://adoptium.net/) |
+| Maven | 3.8+ | 3.9+ | [Maven](https://maven.apache.org/download.cgi) |
+| Node.js | **18.17+** | 20 LTS | [Node.js](https://nodejs.org/) |
+| PostgreSQL | 14+ | 16 | [PostgreSQL](https://www.postgresql.org/download/) |
+| Redis | 6+ | 7 | [Redis](https://redis.io/download/) |
+| MinIO (optional) | Latest | Latest | [MinIO](https://min.io/download) |
+
+> **Important:** Node.js 14.x and 16.x are **NOT supported**. Next.js 14 requires Node.js 18.17 or later.
+
+### Verify Your Versions
+
+```bash
+# Check versions
+node --version   # Must be 18.17+
+java --version   # Must be 17+
+mvn --version    # Must be 3.8+
+
+# If Node.js is too old, upgrade with:
+brew install node@20 && brew link --overwrite node@20  # macOS
+# or use nvm: nvm install 20 && nvm use 20
+```
 
 ---
 

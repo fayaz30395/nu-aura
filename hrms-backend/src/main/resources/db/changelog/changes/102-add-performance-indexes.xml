@@ -211,7 +211,7 @@
         </preConditions>
         <createIndex indexName="idx_audit_logs_timestamp" tableName="audit_logs">
             <column name="tenant_id"/>
-            <column name="timestamp" descending="true"/>
+            <column name="created_at" descending="true"/>
         </createIndex>
     </changeSet>
 
@@ -228,18 +228,6 @@
         </createIndex>
     </changeSet>
 
-    <!-- Time entries indexes -->
-    <changeSet id="102-idx-time-entries-employee-date" author="system">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <indexExists indexName="idx_time_entries_employee_date"/>
-            </not>
-        </preConditions>
-        <createIndex indexName="idx_time_entries_employee_date" tableName="time_entries">
-            <column name="tenant_id"/>
-            <column name="employee_id"/>
-            <column name="entry_date"/>
-        </createIndex>
-    </changeSet>
+    <!-- Time entries indexes - already has indexes in 066-create-time-tracking-tables.xml -->
 
 </databaseChangeLog>
