@@ -3,6 +3,8 @@ package com.hrms.application.employee.service;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
+import com.hrms.common.exception.DuplicateResourceException;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.user.User;
@@ -38,12 +40,12 @@ public class EmployeeService {
 
         // Check if employee code already exists
         if (employeeRepository.existsByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)) {
-            throw new RuntimeException("Employee code already exists");
+            throw new DuplicateResourceException("Employee code already exists");
         }
 
         // Check if email already exists
         if (userRepository.findByEmailAndTenantId(request.getWorkEmail(), tenantId).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new DuplicateResourceException("Email already exists");
         }
 
         // Create user account for employee
@@ -100,7 +102,7 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         // Update fields if provided
         if (request.getFirstName() != null) {
@@ -152,7 +154,7 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
 
@@ -198,7 +200,7 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
 
@@ -230,7 +232,7 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         // Mark as terminated instead of deleting
         employee.terminate();

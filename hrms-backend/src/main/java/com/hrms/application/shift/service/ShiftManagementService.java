@@ -4,6 +4,8 @@ import com.hrms.api.shift.dto.ShiftAssignmentRequest;
 import com.hrms.api.shift.dto.ShiftAssignmentResponse;
 import com.hrms.api.shift.dto.ShiftRequest;
 import com.hrms.api.shift.dto.ShiftResponse;
+import com.hrms.common.exception.DuplicateResourceException;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.shift.Shift;
@@ -41,7 +43,7 @@ public class ShiftManagementService {
         log.info("Creating shift: {} for tenant: {}", request.getShiftCode(), tenantId);
 
         if (shiftRepository.existsByTenantIdAndShiftCode(tenantId, request.getShiftCode())) {
-            throw new RuntimeException("Shift code already exists: " + request.getShiftCode());
+            throw new DuplicateResourceException("Shift code already exists: " + request.getShiftCode());
         }
 
         Shift shift = Shift.builder()
@@ -73,7 +75,7 @@ public class ShiftManagementService {
     public ShiftResponse updateShift(UUID shiftId, ShiftRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Shift not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
 
         shift.setShiftName(request.getShiftName());
         shift.setDescription(request.getDescription());
@@ -102,7 +104,7 @@ public class ShiftManagementService {
     public ShiftResponse getShiftById(UUID shiftId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Shift not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
         return mapToShiftResponse(shift);
     }
 
@@ -125,7 +127,7 @@ public class ShiftManagementService {
     public void deleteShift(UUID shiftId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Shift not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
         shiftRepository.delete(shift);
         log.info("Deleted shift: {}", shift.getShiftCode());
     }
@@ -138,9 +140,9 @@ public class ShiftManagementService {
 
         // Validate employee and shift exist
         employeeRepository.findById(request.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
         shiftRepository.findByIdAndTenantId(request.getShiftId(), tenantId)
-                .orElseThrow(() -> new RuntimeException("Shift not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found"));
 
         ShiftAssignment assignment = ShiftAssignment.builder()
                 .tenantId(tenantId)
@@ -181,7 +183,7 @@ public class ShiftManagementService {
     public void cancelAssignment(UUID assignmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ShiftAssignment assignment = shiftAssignmentRepository.findByIdAndTenantId(assignmentId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Assignment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
         assignment.setStatus(ShiftAssignment.AssignmentStatus.CANCELLED);
         shiftAssignmentRepository.save(assignment);
         log.info("Cancelled assignment: {}", assignmentId);

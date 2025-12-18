@@ -3,6 +3,9 @@ package com.hrms.application.overtime.service;
 import com.hrms.api.overtime.dto.OvertimeApprovalRequest;
 import com.hrms.api.overtime.dto.OvertimeRecordRequest;
 import com.hrms.api.overtime.dto.OvertimeRecordResponse;
+import com.hrms.common.exception.BusinessException;
+import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.overtime.OvertimePolicy;
@@ -49,7 +52,7 @@ public class OvertimeManagementService {
 
         // Get overtime policy
         OvertimePolicy policy = overtimePolicyRepository.findDefaultPolicy(tenantId)
-                .orElseThrow(() -> new RuntimeException("No default overtime policy found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No default overtime policy found"));
 
         // Parse overtime type
         OvertimeRecord.OvertimeType overtimeType = OvertimeRecord.OvertimeType.valueOf(request.getOvertimeType());
@@ -95,10 +98,10 @@ public class OvertimeManagementService {
             OvertimeApprovalRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Overtime record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
 
         if (record.getStatus() != OvertimeRecord.OvertimeStatus.PENDING) {
-            throw new RuntimeException("Only pending overtime records can be approved/rejected");
+            throw new BusinessException("Only pending overtime records can be approved/rejected");
         }
 
         if ("APPROVE".equalsIgnoreCase(request.getAction())) {
@@ -113,7 +116,7 @@ public class OvertimeManagementService {
             record.setRejectionReason(request.getRejectionReason());
             log.info("Rejected overtime record: {}", recordId);
         } else {
-            throw new RuntimeException("Invalid action. Must be APPROVE or REJECT");
+            throw new ValidationException("Invalid action. Must be APPROVE or REJECT");
         }
 
         record = overtimeRecordRepository.save(record);
@@ -124,7 +127,7 @@ public class OvertimeManagementService {
     public OvertimeRecordResponse getOvertimeRecordById(UUID recordId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Overtime record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
         return mapToResponse(record);
     }
 
@@ -153,10 +156,10 @@ public class OvertimeManagementService {
     public void deleteOvertimeRecord(UUID recordId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Overtime record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
 
         if (!record.canBeModified()) {
-            throw new RuntimeException("Cannot delete overtime record that is already processed");
+            throw new BusinessException("Cannot delete overtime record that is already processed");
         }
 
         overtimeRecordRepository.delete(record);
@@ -209,7 +212,7 @@ public class OvertimeManagementService {
 
         java.util.List<CompTimeBalance> balances = compTimeBalanceRepository.findActiveBalances(tenantId, employeeId);
         if (balances.isEmpty()) {
-            throw new RuntimeException("No comp time balance available");
+            throw new ResourceNotFoundException("No comp time balance available");
         }
 
         BigDecimal remainingToUse = hours;
@@ -239,7 +242,7 @@ public class OvertimeManagementService {
         }
 
         if (remainingToUse.compareTo(BigDecimal.ZERO) > 0) {
-            throw new RuntimeException("Insufficient comp time balance");
+            throw new BusinessException("Insufficient comp time balance");
         }
 
         log.info("Used {} comp time hours for employee: {}", hours, employeeId);

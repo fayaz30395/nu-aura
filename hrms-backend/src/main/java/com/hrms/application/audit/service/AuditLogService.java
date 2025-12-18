@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.audit.dto.AuditLogResponse;
 import com.hrms.api.audit.dto.AuditStatisticsResponse;
+import com.hrms.common.exception.BusinessException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.audit.AuditLog;
@@ -74,7 +75,7 @@ public class AuditLogService {
             return auditLogRepository.save(auditLog);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize audit log values", e);
-            throw new RuntimeException("Failed to create audit log", e);
+            throw new BusinessException("Failed to create audit log");
         }
     }
 
