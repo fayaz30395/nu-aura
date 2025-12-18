@@ -50,7 +50,7 @@ export const PayrollCostTrendChart: React.FC<PayrollCostTrendChartProps> = ({ da
                   borderRadius: '8px',
                   padding: '8px 12px',
                 }}
-                formatter={(value: number) => [formatCurrency(value), 'Total Cost']}
+                formatter={(value) => [formatCurrency(value as number), 'Total Cost']}
               />
               <Legend />
               <Bar dataKey="amount" name="Payroll Cost" fill="#8b5cf6" radius={[8, 8, 0, 0]} />

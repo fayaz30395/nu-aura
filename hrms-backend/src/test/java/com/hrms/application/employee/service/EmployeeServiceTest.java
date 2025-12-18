@@ -66,7 +66,6 @@ class EmployeeServiceTest {
         createRequest.setJoiningDate(LocalDate.now());
 
         user = User.builder()
-                .id(UUID.randomUUID())
                 .email("john.doe@company.com")
                 .firstName("John")
                 .lastName("Doe")
@@ -75,7 +74,6 @@ class EmployeeServiceTest {
         user.setTenantId(tenantId);
 
         employee = Employee.builder()
-                .id(employeeId)
                 .employeeCode("EMP001")
                 .firstName("John")
                 .lastName("Doe")
