@@ -14,6 +14,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,13 +136,11 @@ public class AnnouncementService {
         final boolean finalIsManager = isManager;
         final LocalDateTime finalJoinDate = joinDate;
 
-        return announcementRepository.findActiveAnnouncements(tenantId, LocalDateTime.now(), pageable)
-                .map(a -> {
-                    // Filter based on target audience
-                    if (!isAnnouncementVisibleToEmployee(a, employeeId, finalDepartmentId, finalIsManager, finalJoinDate)) {
-                        return null;
-                    }
+        Page<Announcement> announcements = announcementRepository.findActiveAnnouncements(tenantId, LocalDateTime.now(), pageable);
 
+        List<AnnouncementDto> filteredDtos = announcements.getContent().stream()
+                .filter(a -> isAnnouncementVisibleToEmployee(a, employeeId, finalDepartmentId, finalIsManager, finalJoinDate))
+                .map(a -> {
                     AnnouncementDto dto = AnnouncementDto.fromEntity(a);
                     dto.setIsRead(readAnnouncementIds.contains(a.getId()));
                     AnnouncementRead readRecord = readMap.get(a.getId());
@@ -151,7 +150,9 @@ public class AnnouncementService {
                     }
                     return dto;
                 })
-                .filter(dto -> dto != null);
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(filteredDtos, pageable, filteredDtos.size());
     }
 
     /**
