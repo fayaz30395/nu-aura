@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  sql:
+    init:
+      mode: always
+
+  liquibase:
+    enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  cache:
+    type: none
+
+  mail:
+    host: localhost
+    port: 25
+
+app:
+  jwt:
+    secret: test-secret-key-for-testing-purposes-must-be-at-least-256-bits-long-for-jwt
+    expiration: 3600000
+    refresh-expiration: 86400000
+
+  tenant:
+    resolution-strategy: header
+    header-name: X-Tenant-ID
+
+  frontend:
+    url: http://localhost:3000
+
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: hrms-test-files
+
+logging:
+  level:
+    root: WARN
+    com.hrms: DEBUG
+    org.springframework.test: DEBUG

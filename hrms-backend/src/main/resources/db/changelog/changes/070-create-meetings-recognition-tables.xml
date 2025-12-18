@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <changeSet id="070-01-create-one-on-one-meetings-table" author="system">
+        <createTable tableName="one_on_one_meetings">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="tenant_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="employee_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="manager_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="meeting_date" type="TIMESTAMP"><constraints nullable="false"/></column>
+            <column name="duration_minutes" type="INT"/>
+            <column name="status" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="agenda" type="TEXT"/>
+            <column name="notes" type="TEXT"/>
+            <column name="action_items" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createIndex indexName="idx_meeting_tenant" tableName="one_on_one_meetings"><column name="tenant_id"/></createIndex>
+        <createIndex indexName="idx_meeting_employee" tableName="one_on_one_meetings"><column name="tenant_id"/><column name="employee_id"/></createIndex>
+    </changeSet>
+    <changeSet id="070-02-create-recognition-badges-table" author="system">
+        <createTable tableName="recognition_badges">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="tenant_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="badge_name" type="VARCHAR(255)"><constraints nullable="false"/></column>
+            <column name="description" type="TEXT"/>
+            <column name="icon_url" type="VARCHAR(500)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>
+        </createTable>
+    </changeSet>
+    <changeSet id="070-03-create-peer-recognitions-table" author="system">
+        <createTable tableName="peer_recognitions">
+            <column name="id" type="UUID"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="tenant_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="giver_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="receiver_id" type="UUID"><constraints nullable="false"/></column>
+            <column name="badge_id" type="UUID"/>
+            <column name="message" type="TEXT"><constraints nullable="false"/></column>
+            <column name="is_public" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"><constraints nullable="false"/></column>
+        </createTable>
+        <createIndex indexName="idx_recognition_tenant" tableName="peer_recognitions"><column name="tenant_id"/></createIndex>
+        <createIndex indexName="idx_recognition_receiver" tableName="peer_recognitions"><column name="tenant_id"/><column name="receiver_id"/></createIndex>
+    </changeSet>
+</databaseChangeLog>

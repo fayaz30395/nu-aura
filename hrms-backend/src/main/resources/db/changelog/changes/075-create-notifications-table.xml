@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="075-01-create-notifications-table" author="system">
+        <createTable tableName="notifications">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="related_entity_id" type="UUID"/>
+            <column name="related_entity_type" type="VARCHAR(100)"/>
+            <column name="action_url" type="VARCHAR(500)"/>
+            <column name="is_read" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_at" type="TIMESTAMP"/>
+            <column name="priority" type="VARCHAR(20)" defaultValue="NORMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <createIndex indexName="idx_notification_user" tableName="notifications">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_notification_tenant" tableName="notifications">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_notification_read" tableName="notifications">
+            <column name="is_read"/>
+        </createIndex>
+
+        <createIndex indexName="idx_notification_created" tableName="notifications">
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex indexName="idx_notification_user_read" tableName="notifications">
+            <column name="user_id"/>
+            <column name="is_read"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

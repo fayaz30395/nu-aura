@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="058-create-training-programs-table" author="hrms">
+        <createTable tableName="training_programs">
+            <column name="id" type="uuid"><constraints primaryKey="true"/></column>
+            <column name="tenant_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="program_code" type="varchar(50)"><constraints nullable="false"/></column>
+            <column name="program_name" type="varchar(200)"><constraints nullable="false"/></column>
+            <column name="description" type="text"/>
+            <column name="category" type="varchar(50)"/>
+            <column name="delivery_mode" type="varchar(30)"/>
+            <column name="duration_hours" type="integer"/>
+            <column name="start_date" type="date"/>
+            <column name="end_date" type="date"/>
+            <column name="trainer_name" type="varchar(100)"/>
+            <column name="trainer_email" type="varchar(100)"/>
+            <column name="location" type="varchar(200)"/>
+            <column name="max_participants" type="integer"/>
+            <column name="cost_per_participant" type="decimal(10,2)"/>
+            <column name="is_mandatory" type="boolean" defaultValueBoolean="false"/>
+            <column name="status" type="varchar(20)" defaultValue="DRAFT"/>
+            <column name="materials_url" type="varchar(500)"/>
+            <column name="certificate_template_url" type="varchar(500)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValue="0"/>
+        </createTable>
+        <addUniqueConstraint tableName="training_programs" columnNames="tenant_id, program_code"/>
+        <createIndex tableName="training_programs" indexName="idx_training_program_tenant"><column name="tenant_id"/></createIndex>
+    </changeSet>
+
+    <changeSet id="058-create-training-enrollments-table" author="hrms">
+        <createTable tableName="training_enrollments">
+            <column name="id" type="uuid"><constraints primaryKey="true"/></column>
+            <column name="tenant_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="program_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="employee_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="status" type="varchar(20)" defaultValue="ENROLLED"/>
+            <column name="enrolled_at" type="timestamp"/>
+            <column name="completed_at" type="timestamp"/>
+            <column name="attendance_percentage" type="integer"/>
+            <column name="assessment_score" type="integer"/>
+            <column name="certificate_issued" type="boolean" defaultValueBoolean="false"/>
+            <column name="certificate_url" type="varchar(500)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="version" type="bigint" defaultValue="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="training_enrollments" baseColumnNames="program_id"
+                                 constraintName="fk_enrollment_program" referencedTableName="training_programs"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="training_enrollments" baseColumnNames="employee_id"
+                                 constraintName="fk_enrollment_employee" referencedTableName="employees"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <createIndex tableName="training_enrollments" indexName="idx_enrollment_employee"><column name="employee_id"/></createIndex>
+    </changeSet>
+</databaseChangeLog>

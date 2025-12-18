@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="017-create-project-employees-table" author="system">
+        <createTable tableName="project_employees">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(100)"/>
+            <column name="allocation_percentage" type="INTEGER" defaultValue="100"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="project_employees"
+                baseColumnNames="project_id"
+                constraintName="fk_project_employees_project"
+                referencedTableName="projects"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="project_employees"
+                baseColumnNames="employee_id"
+                constraintName="fk_project_employees_employee"
+                referencedTableName="employees"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <createIndex tableName="project_employees" indexName="idx_project_employees_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_employees" indexName="idx_project_employees_project">
+            <column name="project_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_employees" indexName="idx_project_employees_employee">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="project_employees" indexName="idx_project_employees_unique" unique="true">
+            <column name="project_id"/>
+            <column name="employee_id"/>
+            <column name="tenant_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

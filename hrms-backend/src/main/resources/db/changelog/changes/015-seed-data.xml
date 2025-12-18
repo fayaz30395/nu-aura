@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <changeSet id="015-seed-tenant" author="system">
+        <insert tableName="tenants">
+            <column name="id" value="550e8400-e29b-41d4-a716-446655440000"/>
+            <column name="code" value="demo"/>
+            <column name="name" value="Demo Company"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="contact_email" value="admin@demo.com"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+            <column name="version" value="0"/>
+        </insert>
+    </changeSet>
+    <changeSet id="015-seed-admin-user" author="system">
+        <insert tableName="users">
+            <column name="id" value="660e8400-e29b-41d4-a716-446655440000"/>
+            <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
+            <column name="email" value="admin@demo.com"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="User"/>
+            <column name="password_hash" value="$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" valueDate="now()"/>
+            <column name="updated_at" valueDate="now()"/>
+            <column name="version" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

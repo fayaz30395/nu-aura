@@ -1,0 +1,759 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { AppLayout } from '@/components/layout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { recruitmentService } from '@/lib/services/recruitment.service';
+import { employeeService } from '@/lib/services/employee.service';
+import { Interview, CreateInterviewRequest, InterviewStatus, InterviewRound, InterviewType, InterviewResult, Candidate, JobOpening } from '@/lib/types/recruitment';
+import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react';
+
+export default function InterviewsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const candidateIdFilter = searchParams.get('candidateId');
+
+  const [interviews, setInterviews] = useState<Interview[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+  const [interviewers, setInterviewers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [interviewToDelete, setInterviewToDelete] = useState<Interview | null>(null);
+  const [selectedInterview, setSelectedInterview] = useState<Interview | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingInterview, setEditingInterview] = useState<Interview | null>(null);
+
+  const [formData, setFormData] = useState<CreateInterviewRequest>({
+    candidateId: candidateIdFilter || '',
+    jobOpeningId: '',
+    interviewRound: 'SCREENING',
+    interviewType: 'VIDEO',
+    scheduledAt: '',
+    durationMinutes: 60,
+    interviewerId: '',
+    location: '',
+    meetingLink: '',
+    status: 'SCHEDULED',
+    feedback: '',
+    rating: undefined,
+    result: 'PENDING',
+    notes: '',
+  });
+
+  useEffect(() => {
+    loadData();
+  }, [candidateIdFilter, statusFilter]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Load candidates, job openings, and interviewers
+      const [candidatesRes, jobsRes, employeesRes] = await Promise.all([
+        recruitmentService.getAllCandidates(0, 100),
+        recruitmentService.getAllJobOpenings(0, 100),
+        employeeService.getAllEmployees(0, 100),
+      ]);
+
+      setCandidates(candidatesRes.content);
+      setJobOpenings(jobsRes.content);
+      setInterviewers(employeesRes.content);
+
+      // Load interviews - if candidateIdFilter is set, get interviews for that candidate
+      if (candidateIdFilter) {
+        const interviewsList = await recruitmentService.getInterviewsByCandidate(candidateIdFilter);
+        setInterviews(interviewsList);
+      } else {
+        // For now, we'll aggregate interviews from all candidates
+        // In a real app, you'd have a getAllInterviews endpoint
+        const allInterviews: Interview[] = [];
+        for (const candidate of candidatesRes.content.slice(0, 20)) {
+          try {
+            const candidateInterviews = await recruitmentService.getInterviewsByCandidate(candidate.id);
+            allInterviews.push(...candidateInterviews);
+          } catch (e) {
+            // Ignore errors for individual candidates
+          }
+        }
+        setInterviews(allInterviews);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      if (editingInterview) {
+        await recruitmentService.updateInterview(editingInterview.id, formData);
+      } else {
+        await recruitmentService.scheduleInterview(formData);
+      }
+      setShowAddModal(false);
+      resetForm();
+      loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to save interview');
+    }
+  };
+
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedInterview) return;
+    try {
+      setError(null);
+      await recruitmentService.updateInterview(selectedInterview.id, {
+        ...formData,
+        status: 'COMPLETED',
+      });
+      setShowFeedbackModal(false);
+      setSelectedInterview(null);
+      resetForm();
+      loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to submit feedback');
+    }
+  };
+
+  const handleEdit = (interview: Interview) => {
+    setEditingInterview(interview);
+    setFormData({
+      candidateId: interview.candidateId,
+      jobOpeningId: interview.jobOpeningId,
+      interviewRound: interview.interviewRound || 'SCREENING',
+      interviewType: interview.interviewType || 'VIDEO',
+      scheduledAt: interview.scheduledAt || '',
+      durationMinutes: interview.durationMinutes || 60,
+      interviewerId: interview.interviewerId || '',
+      location: interview.location || '',
+      meetingLink: interview.meetingLink || '',
+      status: interview.status,
+      feedback: interview.feedback || '',
+      rating: interview.rating,
+      result: interview.result || 'PENDING',
+      notes: interview.notes || '',
+    });
+    setShowAddModal(true);
+  };
+
+  const handleProvideFeedback = (interview: Interview) => {
+    setSelectedInterview(interview);
+    setFormData({
+      ...formData,
+      candidateId: interview.candidateId,
+      jobOpeningId: interview.jobOpeningId,
+      interviewRound: interview.interviewRound || 'SCREENING',
+      interviewType: interview.interviewType || 'VIDEO',
+      scheduledAt: interview.scheduledAt || '',
+      durationMinutes: interview.durationMinutes || 60,
+      interviewerId: interview.interviewerId || '',
+      location: interview.location || '',
+      meetingLink: interview.meetingLink || '',
+      status: 'COMPLETED',
+      feedback: interview.feedback || '',
+      rating: interview.rating,
+      result: interview.result || 'PENDING',
+      notes: interview.notes || '',
+    });
+    setShowFeedbackModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (!interviewToDelete) return;
+    try {
+      await recruitmentService.deleteInterview(interviewToDelete.id);
+      setShowDeleteModal(false);
+      setInterviewToDelete(null);
+      loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to delete interview');
+    }
+  };
+
+  const resetForm = () => {
+    setEditingInterview(null);
+    setFormData({
+      candidateId: candidateIdFilter || '',
+      jobOpeningId: '',
+      interviewRound: 'SCREENING',
+      interviewType: 'VIDEO',
+      scheduledAt: '',
+      durationMinutes: 60,
+      interviewerId: '',
+      location: '',
+      meetingLink: '',
+      status: 'SCHEDULED',
+      feedback: '',
+      rating: undefined,
+      result: 'PENDING',
+      notes: '',
+    });
+  };
+
+  const getStatusColor = (status: InterviewStatus) => {
+    switch (status) {
+      case 'SCHEDULED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'RESCHEDULED': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'COMPLETED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'NO_SHOW': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    }
+  };
+
+  const getResultColor = (result?: InterviewResult) => {
+    switch (result) {
+      case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+      case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'PENDING': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    }
+  };
+
+  const getTypeIcon = (type?: InterviewType) => {
+    switch (type) {
+      case 'VIDEO': return <Video className="h-4 w-4" />;
+      case 'PHONE': return <Phone className="h-4 w-4" />;
+      case 'IN_PERSON': return <MapPin className="h-4 w-4" />;
+      default: return <Calendar className="h-4 w-4" />;
+    }
+  };
+
+  const filteredInterviews = interviews.filter(interview => {
+    const matchesStatus = !statusFilter || interview.status === statusFilter;
+    const matchesSearch = !searchQuery ||
+      interview.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      interview.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  const stats = {
+    total: interviews.length,
+    scheduled: interviews.filter(i => i.status === 'SCHEDULED').length,
+    completed: interviews.filter(i => i.status === 'COMPLETED').length,
+    pending: interviews.filter(i => i.result === 'PENDING').length,
+  };
+
+  const formatDateTime = (dateString?: string) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  return (
+    <AppLayout activeMenuItem="recruitment">
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interviews</h1>
+            <p className="text-surface-600 dark:text-surface-400 mt-1">Schedule and manage candidate interviews</p>
+          </div>
+          <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Schedule Interview
+          </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="bg-white dark:bg-surface-900">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">Total</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.total}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white dark:bg-surface-900">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">Scheduled</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.scheduled}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white dark:bg-surface-900">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">Completed</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.completed}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-white dark:bg-surface-900">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">Pending Decision</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.pending}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Search and Filters */}
+        <Card className="bg-white dark:bg-surface-900">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <input
+                  type="text"
+                  placeholder="Search interviews..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              >
+                <option value="">All Status</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="RESCHEDULED">Rescheduled</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="NO_SHOW">No Show</option>
+              </select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Interviews List */}
+        <Card className="bg-white dark:bg-surface-900">
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading interviews...</div>
+            ) : filteredInterviews.length === 0 ? (
+              <div className="text-center py-12">
+                <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
+                <p className="text-surface-500 dark:text-surface-400">No interviews found</p>
+                <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="mt-4">
+                  Schedule First Interview
+                </Button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Candidate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Job</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Round</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Scheduled</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Interviewer</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Result</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                    {filteredInterviews.map((interview) => (
+                      <tr key={interview.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                              <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{interview.candidateName || 'Unknown'}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                          {interview.jobTitle || '-'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {getTypeIcon(interview.interviewType)}
+                            <span className="text-sm text-surface-900 dark:text-surface-50">
+                              {interview.interviewRound?.replace(/_/g, ' ') || '-'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-surface-900 dark:text-surface-50">{formatDateTime(interview.scheduledAt)}</div>
+                          <div className="text-xs text-surface-500 dark:text-surface-400">{interview.durationMinutes} min</div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                          {interview.interviewerName || '-'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(interview.status)}`}>
+                            {interview.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {interview.result && (
+                              <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getResultColor(interview.result)}`}>
+                                {interview.result}
+                              </span>
+                            )}
+                            {interview.rating && (
+                              <span className="flex items-center gap-1 text-sm text-yellow-600 dark:text-yellow-400">
+                                <Star className="h-4 w-4 fill-current" />
+                                {interview.rating}/5
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            {interview.status === 'SCHEDULED' && (
+                              <button
+                                onClick={() => handleProvideFeedback(interview)}
+                                className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
+                                title="Provide Feedback"
+                              >
+                                <CheckCircle className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleEdit(interview)}
+                              className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                              title="Edit"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
+                              className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Add/Edit Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
+                  </h2>
+                  <button onClick={() => { setShowAddModal(false); resetForm(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate *</label>
+                      <select
+                        required
+                        value={formData.candidateId}
+                        onChange={(e) => {
+                          const candidate = candidates.find(c => c.id === e.target.value);
+                          setFormData({
+                            ...formData,
+                            candidateId: e.target.value,
+                            jobOpeningId: candidate?.jobOpeningId || formData.jobOpeningId
+                          });
+                        }}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      >
+                        <option value="">Select Candidate</option>
+                        {candidates.map((candidate) => (
+                          <option key={candidate.id} value={candidate.id}>{candidate.fullName}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
+                      <select
+                        required
+                        value={formData.jobOpeningId}
+                        onChange={(e) => setFormData({ ...formData, jobOpeningId: e.target.value })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      >
+                        <option value="">Select Job Opening</option>
+                        {jobOpenings.map((job) => (
+                          <option key={job.id} value={job.id}>{job.jobTitle}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Round</label>
+                      <select
+                        value={formData.interviewRound}
+                        onChange={(e) => setFormData({ ...formData, interviewRound: e.target.value as InterviewRound })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      >
+                        <option value="SCREENING">Screening</option>
+                        <option value="TECHNICAL_1">Technical 1</option>
+                        <option value="TECHNICAL_2">Technical 2</option>
+                        <option value="HR">HR</option>
+                        <option value="MANAGERIAL">Managerial</option>
+                        <option value="FINAL">Final</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Type</label>
+                      <select
+                        value={formData.interviewType}
+                        onChange={(e) => setFormData({ ...formData, interviewType: e.target.value as InterviewType })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      >
+                        <option value="VIDEO">Video Call</option>
+                        <option value="PHONE">Phone</option>
+                        <option value="IN_PERSON">In Person</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Scheduled Date & Time *</label>
+                      <input
+                        type="datetime-local"
+                        required
+                        value={formData.scheduledAt || ''}
+                        onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Duration (minutes)</label>
+                      <input
+                        type="number"
+                        min="15"
+                        step="15"
+                        value={formData.durationMinutes || 60}
+                        onChange={(e) => setFormData({ ...formData, durationMinutes: parseInt(e.target.value) })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interviewer</label>
+                    <select
+                      value={formData.interviewerId || ''}
+                      onChange={(e) => setFormData({ ...formData, interviewerId: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    >
+                      <option value="">Select Interviewer</option>
+                      {interviewers.map((interviewer) => (
+                        <option key={interviewer.id} value={interviewer.id}>{interviewer.fullName}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Meeting Link</label>
+                      <input
+                        type="url"
+                        value={formData.meetingLink || ''}
+                        onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        placeholder="https://meet.google.com/..."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
+                      <input
+                        type="text"
+                        value={formData.location || ''}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        placeholder="Conference Room A"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                    <textarea
+                      rows={3}
+                      value={formData.notes || ''}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      placeholder="Additional notes..."
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetForm(); }} className="flex-1">
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                      {editingInterview ? 'Update Interview' : 'Schedule Interview'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Feedback Modal */}
+        {showFeedbackModal && selectedInterview && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interview Feedback</h2>
+                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="mb-4 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                  <p className="text-sm text-surface-500 dark:text-surface-400">Candidate</p>
+                  <p className="font-medium text-surface-900 dark:text-surface-50">{selectedInterview.candidateName}</p>
+                  <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
+                </div>
+
+                <form onSubmit={handleFeedbackSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Rating (1-5)</label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((rating) => (
+                        <button
+                          key={rating}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, rating })}
+                          className={`p-2 rounded-xl transition-colors ${
+                            formData.rating === rating
+                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                              : 'bg-surface-100 dark:bg-surface-800 text-surface-400 hover:text-yellow-500'
+                          }`}
+                        >
+                          <Star className={`h-6 w-6 ${formData.rating && formData.rating >= rating ? 'fill-current' : ''}`} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Result</label>
+                    <select
+                      value={formData.result}
+                      onChange={(e) => setFormData({ ...formData, result: e.target.value as InterviewResult })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    >
+                      <option value="PENDING">Pending</option>
+                      <option value="SELECTED">Selected</option>
+                      <option value="REJECTED">Rejected</option>
+                      <option value="ON_HOLD">On Hold</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Feedback *</label>
+                    <textarea
+                      rows={4}
+                      required
+                      value={formData.feedback || ''}
+                      onChange={(e) => setFormData({ ...formData, feedback: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      placeholder="Provide detailed feedback about the candidate's performance..."
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); }} className="flex-1">
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                      Submit Feedback
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Modal */}
+        {showDeleteModal && interviewToDelete && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="flex items-center mb-4">
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Delete Interview</h3>
+              </div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+                Are you sure you want to delete this interview for <strong className="text-surface-700 dark:text-surface-300">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDelete} className="flex-1">
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </AppLayout>
+  );
+}

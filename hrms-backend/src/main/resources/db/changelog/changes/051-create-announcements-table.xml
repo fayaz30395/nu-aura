@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="051-create-announcements-table" author="hrms">
+        <createTable tableName="announcements">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_audience" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_department_ids" type="VARCHAR(500)"/>
+            <column name="target_employee_ids" type="VARCHAR(500)"/>
+            <column name="published_at" type="TIMESTAMP"/>
+            <column name="expires_at" type="TIMESTAMP"/>
+            <column name="is_pinned" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="send_email" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="published_by" type="UUID"/>
+            <column name="attachment_url" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_priority">
+            <column name="priority"/>
+        </createIndex>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_category">
+            <column name="category"/>
+        </createIndex>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_published">
+            <column name="published_at"/>
+        </createIndex>
+
+        <createIndex tableName="announcements" indexName="idx_announcement_pinned">
+            <column name="is_pinned"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="052-create-announcement-reads-table" author="hrms">
+        <createTable tableName="announcement_reads">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="announcement_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="read_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="announcement_reads" indexName="idx_read_announcement">
+            <column name="announcement_id"/>
+        </createIndex>
+
+        <createIndex tableName="announcement_reads" indexName="idx_read_employee">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="announcement_reads" indexName="idx_read_composite" unique="true">
+            <column name="announcement_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint
+            baseTableName="announcement_reads"
+            baseColumnNames="announcement_id"
+            constraintName="fk_read_announcement"
+            referencedTableName="announcements"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="announcement_reads"
+            baseColumnNames="employee_id"
+            constraintName="fk_read_employee"
+            referencedTableName="employees"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
