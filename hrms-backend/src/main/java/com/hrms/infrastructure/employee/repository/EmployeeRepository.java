@@ -72,9 +72,20 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     Optional<Employee> findByUserIdAndTenantId(UUID userId, UUID tenantId);
 
     // Analytics methods
+    long countByTenantId(UUID tenantId);
+
     Long countByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
 
     Long countByTenantIdAndJoiningDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT COUNT(e) FROM Employee e WHERE e.tenantId = :tenantId AND e.status = 'TERMINATED' AND e.exitDate >= :afterDate")
+    Long countTerminatedAfterDate(@Param("tenantId") UUID tenantId, @Param("afterDate") LocalDate afterDate);
+
+    @Query("SELECT COUNT(e) FROM Employee e WHERE e.tenantId = :tenantId AND e.joiningDate >= :afterDate")
+    Long countNewHiresAfterDate(@Param("tenantId") UUID tenantId, @Param("afterDate") LocalDate afterDate);
+
+    @Query(value = "SELECT COALESCE(d.name, 'Unassigned') as dept_name, COUNT(e.id) FROM employees e LEFT JOIN departments d ON e.department_id = d.id WHERE e.tenant_id = :tenantId GROUP BY dept_name ORDER BY COUNT(e.id) DESC", nativeQuery = true)
+    List<Object[]> getEmployeeCountByDepartment(@Param("tenantId") UUID tenantId);
 
     Long countByTenantIdAndStatusAndExitDateBetween(UUID tenantId, Employee.EmployeeStatus status, LocalDate startDate, LocalDate endDate);
 
