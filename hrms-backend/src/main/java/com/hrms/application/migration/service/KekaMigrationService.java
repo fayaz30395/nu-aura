@@ -1,6 +1,7 @@
 package com.hrms.application.migration.service;
 
 import com.hrms.api.migration.dto.ImportResult;
+import com.hrms.common.exception.ValidationException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.employee.Department;
@@ -104,7 +105,7 @@ public class KekaMigrationService {
         String lastName = row.getOrDefault("last_name", "");
 
         if (employeeCode == null || email == null || firstName == null) {
-            throw new RuntimeException("Missing required fields");
+            throw new ValidationException("Missing required fields");
         }
 
         // Check for existing employee
@@ -211,7 +212,7 @@ public class KekaMigrationService {
         String dateStr = getOrError(row, "date", "Date", rowNum, result);
 
         if (employeeCode == null || dateStr == null) {
-            throw new RuntimeException("Missing required fields");
+            throw new ValidationException("Missing required fields");
         }
 
         UUID employeeId = employeeCache.computeIfAbsent(employeeCode, code -> {
@@ -451,14 +452,14 @@ public class KekaMigrationService {
     private List<Map<String, String>> parseFile(MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null)
-            throw new RuntimeException("No filename");
+            throw new ValidationException("No filename");
 
         if (filename.endsWith(".xlsx") || filename.endsWith(".xls")) {
             return parseExcel(file);
         } else if (filename.endsWith(".csv")) {
             return parseCsv(file);
         } else {
-            throw new RuntimeException("Unsupported file format. Use .xlsx, .xls, or .csv");
+            throw new ValidationException("Unsupported file format. Use .xlsx, .xls, or .csv");
         }
     }
 
@@ -470,7 +471,7 @@ public class KekaMigrationService {
             Row headerRow = sheet.getRow(0);
 
             if (headerRow == null) {
-                throw new RuntimeException("Empty file or missing headers");
+                throw new ValidationException("Empty file or missing headers");
             }
 
             // Get headers
@@ -512,7 +513,7 @@ public class KekaMigrationService {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String headerLine = reader.readLine();
             if (headerLine == null) {
-                throw new RuntimeException("Empty file");
+                throw new ValidationException("Empty file");
             }
 
             String[] headers = headerLine.split(",");

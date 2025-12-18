@@ -2,11 +2,17 @@ package com.hrms.application.employee.service;
 
 import com.hrms.api.employee.dto.DepartmentRequest;
 import com.hrms.api.employee.dto.DepartmentResponse;
+import com.hrms.common.config.CacheConfig;
+import com.hrms.common.exception.BusinessException;
+import com.hrms.common.exception.DuplicateResourceException;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Department;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,11 +32,12 @@ public class DepartmentService {
     private EmployeeRepository employeeRepository;
 
     @Transactional
+    @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse createDepartment(DepartmentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         if (departmentRepository.existsByCodeAndTenantId(request.getCode(), tenantId)) {
-            throw new RuntimeException("Department code already exists");
+            throw new DuplicateResourceException("Department code already exists");
         }
 
         Department department = Department.builder()
@@ -52,16 +59,17 @@ public class DepartmentService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse updateDepartment(UUID id, DepartmentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Department department = departmentRepository.findById(id)
                 .filter(d -> d.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         if (request.getCode() != null && !request.getCode().equals(department.getCode())) {
             if (departmentRepository.existsByCodeAndTenantId(request.getCode(), tenantId)) {
-                throw new RuntimeException("Department code already exists");
+                throw new DuplicateResourceException("Department code already exists");
             }
             department.setCode(request.getCode());
         }
@@ -94,7 +102,7 @@ public class DepartmentService {
 
         Department department = departmentRepository.findById(id)
                 .filter(d -> d.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         return enrichDepartmentResponse(department);
     }
@@ -107,6 +115,7 @@ public class DepartmentService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.DEPARTMENTS, key = "'active:' + T(com.hrms.common.security.TenantContext).getCurrentTenant()")
     public List<DepartmentResponse> getActiveDepartments() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return departmentRepository.findAllByTenantIdAndIsActive(tenantId, true)
@@ -151,33 +160,35 @@ public class DepartmentService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public void deleteDepartment(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Department department = departmentRepository.findById(id)
                 .filter(d -> d.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         long employeeCount = employeeRepository.countByDepartmentIdAndTenantId(department.getId(), tenantId);
         if (employeeCount > 0) {
-            throw new RuntimeException("Cannot delete department with employees. Please reassign employees first.");
+            throw new BusinessException("Cannot delete department with employees. Please reassign employees first.");
         }
 
         long subDeptCount = departmentRepository.countByTenantIdAndParentDepartmentId(tenantId, id);
         if (subDeptCount > 0) {
-            throw new RuntimeException("Cannot delete department with sub-departments.");
+            throw new BusinessException("Cannot delete department with sub-departments.");
         }
 
         departmentRepository.delete(department);
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse deactivateDepartment(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Department department = departmentRepository.findById(id)
                 .filter(d -> d.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         department.setIsActive(false);
         department = departmentRepository.save(department);
@@ -186,12 +197,13 @@ public class DepartmentService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.DEPARTMENTS, allEntries = true)
     public DepartmentResponse activateDepartment(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Department department = departmentRepository.findById(id)
                 .filter(d -> d.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         department.setIsActive(true);
         department = departmentRepository.save(department);

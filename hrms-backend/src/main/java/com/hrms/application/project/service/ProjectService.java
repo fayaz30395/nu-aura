@@ -1,6 +1,8 @@
 package com.hrms.application.project.service;
 
 import com.hrms.api.project.dto.*;
+import com.hrms.common.exception.DuplicateResourceException;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.project.Project;
@@ -36,7 +38,7 @@ public class ProjectService {
 
         // Check if project code already exists
         if (projectRepository.existsByProjectCodeAndTenantId(request.getProjectCode(), tenantId)) {
-            throw new RuntimeException("Project code already exists");
+            throw new DuplicateResourceException("Project code already exists");
         }
 
         Project project = Project.builder()
@@ -65,7 +67,7 @@ public class ProjectService {
 
         Project project = projectRepository.findById(projectId)
                 .filter(p -> p.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         // Update fields if provided
         if (request.getName() != null) project.setName(request.getName());
@@ -90,7 +92,7 @@ public class ProjectService {
 
         Project project = projectRepository.findById(projectId)
                 .filter(p -> p.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         ProjectResponse response = ProjectResponse.fromProject(project);
 
@@ -128,17 +130,17 @@ public class ProjectService {
         // Verify project exists
         Project project = projectRepository.findById(projectId)
                 .filter(p -> p.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         // Verify employee exists
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .filter(e -> e.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
         // Check if already assigned
         if (projectEmployeeRepository.existsByProjectIdAndEmployeeIdAndTenantId(
                 projectId, request.getEmployeeId(), tenantId)) {
-            throw new RuntimeException("Employee is already assigned to this project");
+            throw new DuplicateResourceException("Employee is already assigned to this project");
         }
 
         ProjectEmployee projectEmployee = ProjectEmployee.builder()
@@ -168,7 +170,7 @@ public class ProjectService {
 
         ProjectEmployee projectEmployee = projectEmployeeRepository
                 .findByProjectIdAndEmployeeIdAndTenantId(projectId, employeeId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Employee assignment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee assignment not found"));
 
         projectEmployee.deactivate();
         projectEmployeeRepository.save(projectEmployee);
@@ -216,7 +218,7 @@ public class ProjectService {
 
         Project project = projectRepository.findById(projectId)
                 .filter(p -> p.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         // Soft delete - mark as cancelled
         project.cancel();

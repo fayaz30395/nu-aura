@@ -110,6 +110,9 @@
     <!-- Add password reset columns to users table -->
     <include file="db/changelog/102-add-password-reset-columns.xml"/>
 
+    <!-- Performance indexes for query optimization -->
+    <include file="db/changelog/changes/102-add-performance-indexes.xml"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 
