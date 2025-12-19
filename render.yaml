@@ -3,6 +3,7 @@ services:
     name: hrms-backend
     runtime: docker
     plan: free
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
