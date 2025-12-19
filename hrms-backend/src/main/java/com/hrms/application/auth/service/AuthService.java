@@ -74,9 +74,17 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        // Use provided tenantId or default demo tenant
+        // First, find the user by email to auto-detect their tenant
         UUID tenantId = request.getTenantId();
-        if (tenantId == null) {
+
+        // Try to find user by email first (without tenant filter) to auto-detect tenant
+        Optional<User> userByEmail = userRepository.findByEmail(request.getEmail());
+
+        if (userByEmail.isPresent()) {
+            // Use the user's actual tenant
+            tenantId = userByEmail.get().getTenantId();
+        } else if (tenantId == null) {
+            // Fallback to demo tenant if user not found and no tenant specified
             tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         }
 

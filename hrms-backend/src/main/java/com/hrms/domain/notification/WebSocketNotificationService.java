@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("domainWebSocketNotificationService")
 @RequiredArgsConstructor
 public class WebSocketNotificationService {
 

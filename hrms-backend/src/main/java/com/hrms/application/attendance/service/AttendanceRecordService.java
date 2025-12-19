@@ -30,6 +30,9 @@ public class AttendanceRecordService {
 
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location, String ip) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
+        }
         LocalDate today = LocalDate.now();
 
         AttendanceRecord record = attendanceRecordRepository
@@ -55,6 +58,9 @@ public class AttendanceRecordService {
 
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location, String ip) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
+        }
         LocalDate today = LocalDate.now();
 
         AttendanceRecord record = attendanceRecordRepository
@@ -80,6 +86,9 @@ public class AttendanceRecordService {
     public AttendanceTimeEntry multiCheckIn(UUID employeeId, LocalDateTime checkInTime,
             String entryType, String source, String location, String ip, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
+        }
         LocalDate today = checkInTime != null ? checkInTime.toLocalDate() : LocalDate.now();
         LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now();
 
@@ -106,6 +115,9 @@ public class AttendanceRecordService {
     public AttendanceTimeEntry multiCheckOut(UUID employeeId, UUID timeEntryId,
             LocalDateTime checkOutTime, String source, String location, String ip) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
+        }
         LocalDate today = checkOutTime != null ? checkOutTime.toLocalDate() : LocalDate.now();
         LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now();
 
