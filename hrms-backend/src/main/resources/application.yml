@@ -91,7 +91,8 @@ management:
       enabled: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
+  address: 0.0.0.0
   error:
     include-message: always
     include-binding-errors: always
@@ -169,6 +170,19 @@ spring:
 
   jpa:
     show-sql: false
+
+  cache:
+    type: simple
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+
+management:
+  health:
+    redis:
+      enabled: false
 
 logging:
   level:
