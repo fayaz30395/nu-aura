@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,7 +10,28 @@ import { employeeService } from '@/lib/services/employee.service';
 import { Candidate, CreateCandidateRequest, CandidateStatus, CandidateSource, RecruitmentStage, JobOpening } from '@/lib/types/recruitment';
 import { Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X, Eye, ChevronRight, DollarSign } from 'lucide-react';
 
-export default function CandidatesPage() {
+// Loading fallback
+function CandidatesPageLoading() {
+  return (
+    <AppLayout>
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-surface-200 dark:bg-surface-700 rounded w-1/4" />
+        <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
+      </div>
+    </AppLayout>
+  );
+}
+
+// Wrap with Suspense for useSearchParams
+export default function CandidatesPageWrapper() {
+  return (
+    <Suspense fallback={<CandidatesPageLoading />}>
+      <CandidatesPage />
+    </Suspense>
+  );
+}
+
+function CandidatesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobIdFilter = searchParams.get('jobId');
