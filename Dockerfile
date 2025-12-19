@@ -48,12 +48,12 @@ USER hrms
 # Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+# Health check - longer start period for Spring Boot
+HEALTHCHECK --interval=30s --timeout=30s --start-period=180s --retries=5 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# JVM options for containers - optimized for 512MB limit
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=50.0 -XX:+UseSerialGC -Xms128m -Xmx256m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
+# JVM options for containers - more memory for Spring Boot
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
 # Entry point - load env file and start
 ENTRYPOINT ["sh", "-c", "set -a && . /app/.env && set +a && java $JAVA_OPTS -jar app.jar"]
