@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -22,6 +23,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmailAndTenantId(username,
                 com.hrms.common.security.TenantContext.getCurrentTenant())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        // Debug logging
+        log.debug("Loading user: email={}, id={}, passwordHashLength={}, passwordHashPrefix={}",
+                user.getEmail(), user.getId(),
+                user.getPasswordHash() != null ? user.getPasswordHash().length() : 0,
+                user.getPasswordHash() != null && user.getPasswordHash().length() > 10 ? user.getPasswordHash().substring(0, 10) : "null");
 
         return UserPrincipal.create(user);
     }

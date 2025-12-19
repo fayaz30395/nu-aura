@@ -113,6 +113,18 @@
     <!-- Performance indexes for query optimization -->
     <include file="db/changelog/changes/102-add-performance-indexes.xml"/>
 
+    <!-- API Keys for external integrations -->
+    <include file="db/changelog/changes/103-create-api-keys-table.xml"/>
+
+    <!-- Reset NuLogic admin password to 'password' for consistent dev experience -->
+    <include file="db/changelog/changes/104-reset-nulogic-admin-password.sql"/>
+
+    <!-- Add audit columns (created_by, updated_by) to attendance tables -->
+    <include file="db/changelog/changes/105-add-audit-columns-to-attendance.sql"/>
+
+    <!-- Attendance time entries for multi check-in/out support -->
+    <include file="db/changelog/changes/106-create-attendance-time-entries-table.xml"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 

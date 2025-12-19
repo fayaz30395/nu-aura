@@ -65,10 +65,10 @@ class AttendanceRecordServiceTest {
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
         attendanceRecord = AttendanceRecord.builder()
-                .id(UUID.randomUUID())
                 .employeeId(employeeId)
                 .attendanceDate(LocalDate.now())
                 .build();
+        attendanceRecord.setId(UUID.randomUUID());
         attendanceRecord.setTenantId(tenantId);
     }
 

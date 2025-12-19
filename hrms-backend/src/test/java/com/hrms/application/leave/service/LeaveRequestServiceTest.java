@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -62,16 +63,16 @@ class LeaveRequestServiceTest {
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
         leaveRequest = LeaveRequest.builder()
-                .id(UUID.randomUUID())
-                .tenantId(tenantId)
                 .employeeId(employeeId)
                 .leaveTypeId(leaveTypeId)
                 .startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(3))
-                .totalDays(3.0)
+                .totalDays(BigDecimal.valueOf(3.0))
                 .reason("Family vacation")
                 .status(LeaveRequest.LeaveRequestStatus.PENDING)
                 .build();
+        leaveRequest.setId(UUID.randomUUID());
+        leaveRequest.setTenantId(tenantId);
     }
 
     @Nested
@@ -98,9 +99,9 @@ class LeaveRequestServiceTest {
         @DisplayName("Should throw exception when overlapping leave exists")
         void shouldThrowExceptionWhenOverlappingLeaveExists() {
             LeaveRequest existingLeave = LeaveRequest.builder()
-                    .id(UUID.randomUUID())
                     .employeeId(employeeId)
                     .build();
+            existingLeave.setId(UUID.randomUUID());
             when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
                     .thenReturn(List.of(existingLeave));
 
@@ -161,7 +162,7 @@ class LeaveRequestServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.REJECTED);
-            verify(leaveBalanceService, never()).deductLeave(any(), any(), anyDouble());
+            verify(leaveBalanceService, never()).deductLeave(any(), any(), any(BigDecimal.class));
         }
     }
 
@@ -183,7 +184,7 @@ class LeaveRequestServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.CANCELLED);
-            verify(leaveBalanceService, never()).creditLeave(any(), any(), anyDouble());
+            verify(leaveBalanceService, never()).creditLeave(any(), any(), any(BigDecimal.class));
         }
 
         @Test
