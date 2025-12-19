@@ -331,6 +331,7 @@ function LoginPage() {
     },
     scope: GOOGLE_SSO_SCOPES + ' openid email profile',
     flow: 'implicit',
+    prompt: 'select_account', // Always show account picker
   });
 
   // Legacy Google Sign-In handlers (credential-based, without Drive/Mail scopes)
