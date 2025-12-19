@@ -168,6 +168,14 @@ spring:
     activate:
       on-profile: prod
 
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 300000
+      max-lifetime: 600000
+
   jpa:
     show-sql: false
 
@@ -189,5 +197,3 @@ logging:
     root: INFO
     com.hrms: INFO
     org.springframework.security: INFO
-    org.springframework.boot: INFO
-    com.zaxxer.hikari: DEBUG
