@@ -48,9 +48,9 @@ USER hrms
 # Expose port
 EXPOSE 8080
 
-# Health check - longer start period for Spring Boot
-HEALTHCHECK --interval=30s --timeout=30s --start-period=180s --retries=5 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+# Health check disabled - let Railway handle it
+# HEALTHCHECK --interval=30s --timeout=30s --start-period=180s --retries=5 \
+#   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # JVM options for containers - more memory for Spring Boot
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
