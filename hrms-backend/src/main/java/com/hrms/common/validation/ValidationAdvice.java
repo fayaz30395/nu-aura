@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 
 /**
  * AOP advice for automatic input validation on controller methods.
@@ -36,10 +37,21 @@ public class ValidationAdvice {
     private void validateObject(Object obj, String objectName) {
         Class<?> clazz = obj.getClass();
 
+        // Skip validation for core Java types and non-application classes
+        String packageName = clazz.getPackageName();
+        if (packageName.startsWith("java.") || packageName.startsWith("javax.") ||
+            packageName.startsWith("sun.") || packageName.startsWith("jdk.")) {
+            return;
+        }
+
         for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true);
+            // Skip synthetic fields and static fields
+            if (field.isSynthetic() || java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
 
             try {
+                field.setAccessible(true);
                 Object value = field.get(obj);
 
                 if (value instanceof String stringValue) {
@@ -58,7 +70,7 @@ public class ValidationAdvice {
                                 "Invalid input: invalid characters in " + field.getName());
                     }
                 }
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | InaccessibleObjectException e) {
                 log.debug("Could not access field: {}", field.getName());
             }
         }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { ColorSchemeScript } from '@mantine/core';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -17,6 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ColorSchemeScript defaultColorScheme="auto" />
+      </head>
       <body className={inter.className}>
         <Providers>
           {children}

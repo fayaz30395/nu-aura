@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.attendance.service.AttendanceRecordService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.user.User;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.attendance.repository.AttendanceTimeEntryRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,25 +64,44 @@ class AttendanceE2ETest {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private static final String BASE_URL = "/api/v1/attendance";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
     private static final UUID TEST_TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
 
     private UUID testEmployeeId;
+    private UUID testUserId;
     private UUID attendanceRecordId;
 
     @BeforeAll
     void setUpTestData() {
         setupSecurityContext();
 
-        // Create test employee
-        Employee employee = Employee.builder()
-                .employeeCode("ATT_EMP_" + System.currentTimeMillis())
+        // Create test user first (required for Employee)
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        User testUser = User.builder()
+                .email("attendance.test" + uniqueSuffix + "@test.com")
+                .passwordHash("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
                 .firstName("Attendance")
                 .lastName("TestEmployee")
-                .personalEmail("attendance.test" + System.currentTimeMillis() + "@test.com")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        testUser.setTenantId(TEST_TENANT_ID);
+        User savedUser = userRepository.save(testUser);
+        testUserId = savedUser.getId();
+
+        // Create test employee linked to user
+        Employee employee = Employee.builder()
+                .employeeCode("ATT_EMP_" + uniqueSuffix)
+                .firstName("Attendance")
+                .lastName("TestEmployee")
+                .personalEmail("attendance.test" + uniqueSuffix + "@test.com")
                 .status(Employee.EmployeeStatus.ACTIVE)
+                .employmentType(Employee.EmploymentType.FULL_TIME)
                 .joiningDate(LocalDate.now().minusMonths(3))
+                .user(savedUser)
                 .build();
         employee.setTenantId(TEST_TENANT_ID);
         Employee savedEmployee = employeeRepository.save(employee);
@@ -101,6 +123,52 @@ class AttendanceE2ETest {
 
         SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_USER_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
+    }
+
+    /**
+     * Helper method to create a test employee with associated user
+     */
+    private Employee createTestEmployee(String prefix) {
+        String uniqueSuffix = prefix + "_" + System.currentTimeMillis();
+
+        // Create user first
+        User user = User.builder()
+                .email(uniqueSuffix.toLowerCase() + "@test.com")
+                .passwordHash("$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
+                .firstName(prefix)
+                .lastName("TestEmployee")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TEST_TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        // Create employee linked to user
+        Employee employee = Employee.builder()
+                .employeeCode(uniqueSuffix)
+                .firstName(prefix)
+                .lastName("TestEmployee")
+                .personalEmail(uniqueSuffix.toLowerCase() + "@test.com")
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .joiningDate(LocalDate.now().minusMonths(1))
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TEST_TENANT_ID);
+        return employeeRepository.save(employee);
+    }
+
+    /**
+     * Helper method to delete a test employee and their associated user
+     */
+    private void deleteTestEmployee(UUID employeeId) {
+        employeeRepository.findById(employeeId).ifPresent(employee -> {
+            UUID userId = employee.getUser() != null ? employee.getUser().getId() : null;
+            employeeRepository.deleteById(employeeId);
+            if (userId != null) {
+                userRepository.deleteById(userId);
+            }
+        });
     }
 
     // ==================== Check-In Tests ====================
@@ -119,7 +187,7 @@ class AttendanceE2ETest {
         MvcResult result = mockMvc.perform(post(BASE_URL + "/check-in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(checkInRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.employeeId").value(testEmployeeId.toString()))
                 .andExpect(jsonPath("$.checkInTime").exists())
@@ -139,11 +207,16 @@ class AttendanceE2ETest {
     @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
     @DisplayName("E2E: Get today's attendance after check-in")
     void getTodayAttendance_AfterCheckIn() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/today/" + testEmployeeId))
+        LocalDate today = LocalDate.now();
+        mockMvc.perform(get(BASE_URL + "/my-attendance")
+                        .param("employeeId", testEmployeeId.toString())
+                        .param("startDate", today.toString())
+                        .param("endDate", today.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.employeeId").value(testEmployeeId.toString()))
-                .andExpect(jsonPath("$.checkInTime").exists())
-                .andExpect(jsonPath("$.status").value("PRESENT"));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].employeeId").value(testEmployeeId.toString()))
+                .andExpect(jsonPath("$[0].checkInTime").exists())
+                .andExpect(jsonPath("$[0].status").value("PRESENT"));
     }
 
     // ==================== Check-Out Tests ====================
@@ -165,7 +238,7 @@ class AttendanceE2ETest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.employeeId").value(testEmployeeId.toString()))
                 .andExpect(jsonPath("$.checkOutTime").exists())
-                .andExpect(jsonPath("$.totalWorkDuration").exists());
+                .andExpect(jsonPath("$.workDurationMinutes").exists());
     }
 
     @Test
@@ -175,11 +248,16 @@ class AttendanceE2ETest {
     void getAttendanceRecord_WithWorkDuration() throws Exception {
         assertThat(attendanceRecordId).isNotNull();
 
-        mockMvc.perform(get(BASE_URL + "/" + attendanceRecordId))
+        // Use my-attendance endpoint to get today's records
+        LocalDate today = LocalDate.now();
+        mockMvc.perform(get(BASE_URL + "/my-attendance")
+                        .param("employeeId", testEmployeeId.toString())
+                        .param("startDate", today.toString())
+                        .param("endDate", today.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.checkInTime").exists())
-                .andExpect(jsonPath("$.checkOutTime").exists())
-                .andExpect(jsonPath("$.totalWorkDuration").exists());
+                .andExpect(jsonPath("$[0].checkInTime").exists())
+                .andExpect(jsonPath("$[0].checkOutTime").exists())
+                .andExpect(jsonPath("$[0].workDurationMinutes").exists());
     }
 
     // ==================== Multi Check-In/Out Tests ====================
@@ -190,16 +268,7 @@ class AttendanceE2ETest {
     @DisplayName("E2E: Multiple check-in sessions (lunch break scenario)")
     void multipleCheckInSessions_LunchBreak() throws Exception {
         // Create a new employee for this test to avoid conflicts
-        Employee breakEmployee = Employee.builder()
-                .employeeCode("BREAK_EMP_" + System.currentTimeMillis())
-                .firstName("Break")
-                .lastName("TestEmployee")
-                .personalEmail("break.test" + System.currentTimeMillis() + "@test.com")
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .joiningDate(LocalDate.now().minusMonths(1))
-                .build();
-        breakEmployee.setTenantId(TEST_TENANT_ID);
-        Employee savedBreakEmployee = employeeRepository.save(breakEmployee);
+        Employee savedBreakEmployee = createTestEmployee("BREAK_EMP");
         UUID breakEmployeeId = savedBreakEmployee.getId();
 
         try {
@@ -211,7 +280,7 @@ class AttendanceE2ETest {
             mockMvc.perform(post(BASE_URL + "/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(morningCheckIn)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
 
             // Check-out for lunch
             Map<String, Object> lunchCheckOut = new HashMap<>();
@@ -224,7 +293,7 @@ class AttendanceE2ETest {
                     .andExpect(status().isOk());
 
             // Get time entries to verify
-            mockMvc.perform(get(BASE_URL + "/time-entries/" + breakEmployeeId)
+            mockMvc.perform(get(BASE_URL + "/employee/" + breakEmployeeId + "/time-entries")
                             .param("date", LocalDate.now().toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray());
@@ -236,7 +305,7 @@ class AttendanceE2ETest {
                             .filter(ar -> ar.getEmployeeId().equals(breakEmployeeId))
                             .toList()
             );
-            employeeRepository.deleteById(breakEmployeeId);
+            deleteTestEmployee(breakEmployeeId);
         }
     }
 
@@ -254,17 +323,17 @@ class AttendanceE2ETest {
                         .param("startDate", weekAgo.toString())
                         .param("endDate", today.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test
     @Order(7)
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
-    @DisplayName("E2E: Get all attendance records for a date")
-    void getAllAttendanceForDate_Success() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/date/" + LocalDate.now()))
+    @DisplayName("E2E: Get all attendance records for employee (paginated)")
+    void getAllAttendanceForEmployee_Success() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/employee/" + testEmployeeId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     // ==================== Service Layer Direct Tests ====================
@@ -274,16 +343,7 @@ class AttendanceE2ETest {
     @DisplayName("E2E: AttendanceRecordService check-in flow")
     void attendanceService_CheckInFlow() {
         // Create a unique employee for service test
-        Employee serviceEmployee = Employee.builder()
-                .employeeCode("SVC_EMP_" + System.currentTimeMillis())
-                .firstName("Service")
-                .lastName("TestEmployee")
-                .personalEmail("service.test" + System.currentTimeMillis() + "@test.com")
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .joiningDate(LocalDate.now().minusMonths(2))
-                .build();
-        serviceEmployee.setTenantId(TEST_TENANT_ID);
-        Employee savedServiceEmployee = employeeRepository.save(serviceEmployee);
+        Employee savedServiceEmployee = createTestEmployee("SVC_EMP");
         UUID serviceEmployeeId = savedServiceEmployee.getId();
 
         try {
@@ -323,7 +383,7 @@ class AttendanceE2ETest {
                             .filter(ar -> ar.getEmployeeId().equals(serviceEmployeeId))
                             .toList()
             );
-            employeeRepository.deleteById(serviceEmployeeId);
+            deleteTestEmployee(serviceEmployeeId);
         }
     }
 
@@ -335,16 +395,7 @@ class AttendanceE2ETest {
     @DisplayName("E2E: Regularize attendance record")
     void regularizeAttendance_Success() throws Exception {
         // Create an attendance record for yesterday
-        Employee regEmployee = Employee.builder()
-                .employeeCode("REG_EMP_" + System.currentTimeMillis())
-                .firstName("Regularize")
-                .lastName("TestEmployee")
-                .personalEmail("regularize.test" + System.currentTimeMillis() + "@test.com")
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .joiningDate(LocalDate.now().minusMonths(1))
-                .build();
-        regEmployee.setTenantId(TEST_TENANT_ID);
-        Employee savedRegEmployee = employeeRepository.save(regEmployee);
+        Employee savedRegEmployee = createTestEmployee("REG_EMP");
         UUID regEmployeeId = savedRegEmployee.getId();
 
         try {
@@ -358,16 +409,11 @@ class AttendanceE2ETest {
             yesterdayRecord.setTenantId(TEST_TENANT_ID);
             AttendanceRecord savedRecord = attendanceRecordRepository.save(yesterdayRecord);
 
-            // Request regularization
-            Map<String, Object> regularizeRequest = new HashMap<>();
-            regularizeRequest.put("checkInTime", LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(8, 30)).toString());
-            regularizeRequest.put("checkOutTime", LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(17, 30)).toString());
-            regularizeRequest.put("reason", "Forgot to check out - E2E test");
-
-            mockMvc.perform(put(BASE_URL + "/" + savedRecord.getId() + "/regularize")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(regularizeRequest)))
-                    .andExpect(status().isOk());
+            // Request regularization - uses POST with query param
+            mockMvc.perform(post(BASE_URL + "/" + savedRecord.getId() + "/request-regularization")
+                            .param("reason", "Forgot to check out - E2E test"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.regularizationRequested").value(true));
 
         } finally {
             // Clean up
@@ -376,7 +422,7 @@ class AttendanceE2ETest {
                             .filter(ar -> ar.getEmployeeId().equals(regEmployeeId))
                             .toList()
             );
-            employeeRepository.deleteById(regEmployeeId);
+            deleteTestEmployee(regEmployeeId);
         }
     }
 
@@ -388,16 +434,7 @@ class AttendanceE2ETest {
     @DisplayName("E2E: Check-out without check-in fails")
     void checkOut_WithoutCheckIn_Fails() throws Exception {
         // Create a new employee who hasn't checked in
-        Employee noCheckInEmployee = Employee.builder()
-                .employeeCode("NOCI_EMP_" + System.currentTimeMillis())
-                .firstName("NoCheckIn")
-                .lastName("TestEmployee")
-                .personalEmail("nocheckin.test" + System.currentTimeMillis() + "@test.com")
-                .status(Employee.EmployeeStatus.ACTIVE)
-                .joiningDate(LocalDate.now().minusMonths(1))
-                .build();
-        noCheckInEmployee.setTenantId(TEST_TENANT_ID);
-        Employee savedNoCheckInEmployee = employeeRepository.save(noCheckInEmployee);
+        Employee savedNoCheckInEmployee = createTestEmployee("NOCI_EMP");
 
         try {
             Map<String, Object> checkOutRequest = new HashMap<>();
@@ -410,7 +447,7 @@ class AttendanceE2ETest {
                     .andExpect(status().isBadRequest());
 
         } finally {
-            employeeRepository.deleteById(savedNoCheckInEmployee.getId());
+            deleteTestEmployee(savedNoCheckInEmployee.getId());
         }
     }
 
@@ -423,7 +460,11 @@ class AttendanceE2ETest {
                             .filter(ar -> ar.getEmployeeId().equals(testEmployeeId))
                             .toList()
             );
-            employeeRepository.deleteById(testEmployeeId);
+            deleteTestEmployee(testEmployeeId);
+        }
+        // Also clean up the user created in setUpTestData
+        if (testUserId != null) {
+            userRepository.deleteById(testUserId);
         }
     }
 }

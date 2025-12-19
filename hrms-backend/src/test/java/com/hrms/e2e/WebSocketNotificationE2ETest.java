@@ -4,6 +4,7 @@ import com.hrms.application.notification.dto.NotificationMessage;
 import com.hrms.application.notification.service.WebSocketNotificationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
@@ -51,6 +52,7 @@ class WebSocketNotificationE2ETest {
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         // Reset mock
         reset(messagingTemplate);

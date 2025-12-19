@@ -1,6 +1,7 @@
 package com.hrms.application.leave.service;
 
 import com.hrms.application.notification.service.WebSocketNotificationService;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
@@ -163,7 +164,7 @@ public class LeaveRequestService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveRequestRepository.findById(id)
                 .filter(lr -> lr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Leave request not found"));
     }
 
     @Transactional(readOnly = true)

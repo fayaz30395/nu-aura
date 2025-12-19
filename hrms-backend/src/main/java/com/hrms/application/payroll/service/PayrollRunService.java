@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
@@ -39,7 +40,7 @@ public class PayrollRunService {
 
         PayrollRun payrollRun = payrollRunRepository.findById(id)
                 .filter(pr -> pr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Payroll run not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
 
         if (payrollRun.getStatus() == PayrollStatus.LOCKED) {
             throw new IllegalStateException("Cannot update locked payroll run");
@@ -58,7 +59,7 @@ public class PayrollRunService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payrollRunRepository.findById(id)
                 .filter(pr -> pr.getTenantId().equals(tenantId))
-                .orElseThrow(() -> new IllegalArgumentException("Payroll run not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +72,7 @@ public class PayrollRunService {
     public PayrollRun getPayrollRunByPeriod(Integer year, Integer month) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, year, month)
-                .orElseThrow(() -> new IllegalArgumentException("Payroll run not found for this period"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found for this period"));
     }
 
     @Transactional(readOnly = true)
