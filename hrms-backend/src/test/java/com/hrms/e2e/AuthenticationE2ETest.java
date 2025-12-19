@@ -3,6 +3,7 @@ package com.hrms.e2e;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.application.auth.service.AuthService;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.user.repository.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -80,6 +82,7 @@ class AuthenticationE2ETest {
     @BeforeEach
     void setUp() {
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
 
     // ==================== Login Tests ====================
@@ -100,8 +103,7 @@ class AuthenticationE2ETest {
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists())
                 .andExpect(jsonPath("$.tokenType").value("Bearer"))
-                .andExpect(jsonPath("$.user").exists())
-                .andExpect(jsonPath("$.user.email").value(testUserEmail))
+                .andExpect(jsonPath("$.email").value(testUserEmail))
                 .andReturn();
 
         // Store tokens for subsequent tests
@@ -151,13 +153,10 @@ class AuthenticationE2ETest {
     void refreshToken_Valid_Success() throws Exception {
         assertThat(refreshToken).isNotEmpty();
 
-        Map<String, String> refreshRequest = new HashMap<>();
-        refreshRequest.put("refreshToken", refreshToken);
-
         MvcResult result = mockMvc.perform(post(BASE_URL + "/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Tenant-ID", TEST_TENANT_ID.toString())
-                        .content(objectMapper.writeValueAsString(refreshRequest)))
+                        .header("X-Refresh-Token", refreshToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists())
@@ -166,23 +165,22 @@ class AuthenticationE2ETest {
         // Verify new tokens are different
         String responseBody = result.getResponse().getContentAsString();
         String newAccessToken = objectMapper.readTree(responseBody).get("accessToken").asText();
+        String newRefreshToken = objectMapper.readTree(responseBody).get("refreshToken").asText();
 
         assertThat(newAccessToken).isNotEmpty();
-        // Update access token for future tests
+        // Update tokens for future tests
         accessToken = newAccessToken;
+        refreshToken = newRefreshToken;
     }
 
     @Test
     @Order(5)
     @DisplayName("E2E: Refresh with invalid token fails")
     void refreshToken_Invalid_Fails() throws Exception {
-        Map<String, String> refreshRequest = new HashMap<>();
-        refreshRequest.put("refreshToken", "invalid-refresh-token");
-
         mockMvc.perform(post(BASE_URL + "/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Tenant-ID", TEST_TENANT_ID.toString())
-                        .content(objectMapper.writeValueAsString(refreshRequest)))
+                        .header("X-Refresh-Token", "invalid-refresh-token"))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -192,13 +190,36 @@ class AuthenticationE2ETest {
     @Order(6)
     @DisplayName("E2E: Change password successfully")
     void changePassword_Valid_Success() throws Exception {
+        // Ensure we have an access token (login if needed)
+        if (accessToken == null || accessToken.isEmpty()) {
+            Map<String, String> loginRequest = new HashMap<>();
+            loginRequest.put("email", testUserEmail);
+            loginRequest.put("password", testUserPassword);
+
+            MvcResult loginResult = mockMvc.perform(post(BASE_URL + "/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-Tenant-ID", TEST_TENANT_ID.toString())
+                            .content(objectMapper.writeValueAsString(loginRequest)))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String responseBody = loginResult.getResponse().getContentAsString();
+            accessToken = objectMapper.readTree(responseBody).get("accessToken").asText();
+        }
+
         assertThat(accessToken).isNotEmpty();
+
+        // Set up security context with the test user ID
+        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Set.of());
+        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         String newPassword = "NewTestPassword456!";
 
         Map<String, String> changePasswordRequest = new HashMap<>();
         changePasswordRequest.put("currentPassword", testUserPassword);
         changePasswordRequest.put("newPassword", newPassword);
+        changePasswordRequest.put("confirmPassword", newPassword);
 
         mockMvc.perform(post(BASE_URL + "/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,13 +266,19 @@ class AuthenticationE2ETest {
         Map<String, String> changePasswordRequest = new HashMap<>();
         changePasswordRequest.put("currentPassword", "WrongCurrentPassword123!");
         changePasswordRequest.put("newPassword", "AnotherNewPassword789!");
+        changePasswordRequest.put("confirmPassword", "AnotherNewPassword789!");
+
+        // Set up security context with the test user ID
+        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Set.of());
+        SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+        TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
         mockMvc.perform(post(BASE_URL + "/change-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + newAccessToken)
                         .header("X-Tenant-ID", TEST_TENANT_ID.toString())
                         .content(objectMapper.writeValueAsString(changePasswordRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     // ==================== Password Reset Tests ====================

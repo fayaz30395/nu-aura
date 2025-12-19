@@ -1,12 +1,57 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Bell, Check, CheckCheck, Trash2, X, ExternalLink } from 'lucide-react';
 import { notificationsApi } from '@/lib/api/notifications';
-import { Notification } from '@/lib/types/notifications';
+import { Notification, NotificationType } from '@/lib/types/notifications';
 import { formatDistanceToNow } from 'date-fns';
 
+// Map notification types to their navigation routes
+const getNotificationRoute = (notification: Notification): string | null => {
+  const { type, relatedEntityId, actionUrl } = notification;
+
+  // If actionUrl is provided, use it
+  if (actionUrl) {
+    return actionUrl;
+  }
+
+  // Map types to routes based on relatedEntityType or type
+  switch (type) {
+    case 'LEAVE_APPROVED':
+    case 'LEAVE_REJECTED':
+    case 'LEAVE_PENDING':
+      return relatedEntityId ? `/leave/requests/${relatedEntityId}` : '/leave/requests';
+    case 'ATTENDANCE_MARKED':
+    case 'ATTENDANCE_ALERT':
+      return '/attendance/my-attendance';
+    case 'PAYROLL_GENERATED':
+      return relatedEntityId ? `/payroll/${relatedEntityId}` : '/payroll';
+    case 'DOCUMENT_UPLOADED':
+    case 'DOCUMENT_REQUIRED':
+      return relatedEntityId ? `/documents/${relatedEntityId}` : '/documents';
+    case 'ANNOUNCEMENT':
+      return relatedEntityId ? `/announcements/${relatedEntityId}` : '/announcements';
+    case 'PERFORMANCE_REVIEW_DUE':
+      return relatedEntityId ? `/performance/reviews/${relatedEntityId}` : '/performance/reviews';
+    case 'EXPENSE_APPROVED':
+    case 'EXPENSE_REJECTED':
+      return relatedEntityId ? `/expenses/${relatedEntityId}` : '/expenses';
+    case 'SHIFT_ASSIGNED':
+    case 'SHIFT_CHANGED':
+      return '/attendance/shifts';
+    case 'ROLE_UPDATED':
+      return '/me/profile';
+    case 'BIRTHDAY':
+    case 'ANNIVERSARY':
+      return '/dashboard';
+    default:
+      return null;
+  }
+};
+
 export const NotificationBell: React.FC = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -88,6 +133,20 @@ export const NotificationBell: React.FC = () => {
     }
   };
 
+  const handleNotificationClick = async (notification: Notification) => {
+    // Mark as read if not already
+    if (!notification.isRead) {
+      await handleMarkAsRead(notification.id);
+    }
+
+    // Get the route and navigate
+    const route = getNotificationRoute(notification);
+    if (route) {
+      setIsOpen(false);
+      router.push(route);
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -124,29 +183,57 @@ export const NotificationBell: React.FC = () => {
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">No notifications</div>
             ) : (
-              notifications.map((notification) => (
-                <div key={notification.id} className={`p-4 border-b ${!notification.isRead ? 'bg-blue-50' : ''}`}>
-                  <div className="flex items-start gap-3">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{notification.title}</p>
-                      <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                    <div className="flex gap-1">
-                      {!notification.isRead && (
-                        <button onClick={() => handleMarkAsRead(notification.id)} className="p-1 text-blue-600">
-                          <Check className="h-4 w-4" />
+              notifications.map((notification) => {
+                const hasRoute = !!getNotificationRoute(notification);
+                return (
+                  <div
+                    key={notification.id}
+                    className={`p-4 border-b dark:border-gray-700 transition-colors ${
+                      !notification.isRead
+                        ? 'bg-blue-50 dark:bg-blue-900/20'
+                        : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                    } ${hasRoute ? 'cursor-pointer' : ''}`}
+                    onClick={() => hasRoute && handleNotificationClick(notification)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                            {notification.title}
+                          </p>
+                          {hasRoute && (
+                            <ExternalLink className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        </p>
+                      </div>
+                      <div className="flex gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                        {!notification.isRead && (
+                          <button
+                            onClick={() => handleMarkAsRead(notification.id)}
+                            className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            title="Mark as read"
+                          >
+                            <Check className="h-4 w-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDelete(notification.id)}
+                          className="p-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </button>
-                      )}
-                      <button onClick={() => handleDelete(notification.id)} className="p-1 text-red-600">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

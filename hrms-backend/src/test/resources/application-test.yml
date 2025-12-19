@@ -34,6 +34,13 @@ spring:
 
   cache:
     type: simple
+    cache-names:
+      - dashboardMetrics
+      - dashboardAnalytics
+      - employeeMetrics
+      - attendanceMetrics
+      - leaveMetrics
+      - payrollMetrics
 
   mail:
     host: localhost
