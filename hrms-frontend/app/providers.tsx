@@ -40,15 +40,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 
+  // Always wrap with GoogleOAuthProvider to avoid "must be used within GoogleOAuthProvider" errors
+  // during static generation. Empty clientId is handled gracefully by the library.
   return (
     <ErrorBoundary>
-      {GOOGLE_CLIENT_ID ? (
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          {content}
-        </GoogleOAuthProvider>
-      ) : (
-        content
-      )}
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        {content}
+      </GoogleOAuthProvider>
     </ErrorBoundary>
   );
 }

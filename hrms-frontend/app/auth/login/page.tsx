@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -59,7 +59,28 @@ const IS_DEMO_MODE = process.env.NODE_ENV === 'development' || process.env.NEXT_
 // Check if Google OAuth is configured
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
-export default function LoginPage() {
+// Loading fallback for Suspense
+function LoginPageLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30">
+      <div className="animate-pulse flex flex-col items-center">
+        <div className="w-48 h-12 bg-surface-200 dark:bg-surface-700 rounded mb-8" />
+        <div className="w-96 h-96 bg-surface-200 dark:bg-surface-700 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+// Wrap the main component with Suspense for useSearchParams
+export default function LoginPageWrapper() {
+  return (
+    <Suspense fallback={<LoginPageLoading />}>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, googleLogin, user, isAuthenticated, hasHydrated } = useAuth();

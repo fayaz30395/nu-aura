@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,7 +10,28 @@ import { employeeService } from '@/lib/services/employee.service';
 import { Interview, CreateInterviewRequest, InterviewStatus, InterviewRound, InterviewType, InterviewResult, Candidate, JobOpening } from '@/lib/types/recruitment';
 import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react';
 
-export default function InterviewsPage() {
+// Loading fallback
+function InterviewsPageLoading() {
+  return (
+    <AppLayout>
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-surface-200 dark:bg-surface-700 rounded w-1/4" />
+        <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
+      </div>
+    </AppLayout>
+  );
+}
+
+// Wrap with Suspense for useSearchParams
+export default function InterviewsPageWrapper() {
+  return (
+    <Suspense fallback={<InterviewsPageLoading />}>
+      <InterviewsPage />
+    </Suspense>
+  );
+}
+
+function InterviewsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
