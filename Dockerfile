@@ -36,6 +36,9 @@ RUN apk add --no-cache curl
 # Copy JAR from builder
 COPY --from=build /app/hrms-backend/target/*.jar app.jar
 
+# Copy environment file
+COPY .env.production .env
+
 # Change ownership
 RUN chown -R hrms:hrms /app
 
@@ -52,5 +55,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # JVM options for containers - optimized for 512MB limit
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=50.0 -XX:+UseSerialGC -Xms128m -Xmx256m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom"
 
-# Entry point
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+# Entry point - load env file and start
+ENTRYPOINT ["sh", "-c", "set -a && . /app/.env && set +a && java $JAVA_OPTS -jar app.jar"]
