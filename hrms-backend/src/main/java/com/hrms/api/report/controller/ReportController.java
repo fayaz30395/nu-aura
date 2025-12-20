@@ -57,6 +57,39 @@ public class ReportController {
         return buildResponse(reportData, "department-headcount", request.getFormat());
     }
 
+    @PostMapping("/leave")
+    @RequiresPermission(Permission.REPORT_CREATE)
+    public ResponseEntity<byte[]> generateLeaveReport(
+        @Valid @RequestBody ReportRequest request
+    ) throws IOException, DocumentException {
+        log.info("Generating leave report from {} to {}",
+            request.getStartDate(), request.getEndDate());
+        byte[] reportData = reportService.generateLeaveReport(request);
+        return buildResponse(reportData, "leave", request.getFormat());
+    }
+
+    @PostMapping("/payroll")
+    @RequiresPermission(Permission.REPORT_CREATE)
+    public ResponseEntity<byte[]> generatePayrollReport(
+        @Valid @RequestBody ReportRequest request
+    ) throws IOException, DocumentException {
+        log.info("Generating payroll report from {} to {}",
+            request.getStartDate(), request.getEndDate());
+        byte[] reportData = reportService.generatePayrollReport(request);
+        return buildResponse(reportData, "payroll", request.getFormat());
+    }
+
+    @PostMapping("/performance")
+    @RequiresPermission(Permission.REPORT_CREATE)
+    public ResponseEntity<byte[]> generatePerformanceReport(
+        @Valid @RequestBody ReportRequest request
+    ) throws IOException, DocumentException {
+        log.info("Generating performance report from {} to {}",
+            request.getStartDate(), request.getEndDate());
+        byte[] reportData = reportService.generatePerformanceReport(request);
+        return buildResponse(reportData, "performance", request.getFormat());
+    }
+
     private ResponseEntity<byte[]> buildResponse(
         byte[] reportData,
         String reportName,

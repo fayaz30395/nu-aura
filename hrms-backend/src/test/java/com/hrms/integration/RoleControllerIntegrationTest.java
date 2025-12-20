@@ -7,6 +7,7 @@ import com.hrms.api.user.dto.UpdateRoleRequest;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.infrastructure.user.repository.PermissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
+@Transactional
 class RoleControllerIntegrationTest {
 
     @Autowired
@@ -37,6 +40,9 @@ class RoleControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
 
     private static final String BASE_URL = "/api/v1/roles";
     private static final UUID TEST_USER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440000");
@@ -54,6 +60,45 @@ class RoleControllerIntegrationTest {
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
+
+        // Seed test permissions if not already present
+        if (permissionRepository.findByCode("EMPLOYEE:READ").isEmpty()) {
+            seedTestPermissions();
+        }
+    }
+
+    private void seedTestPermissions() {
+        com.hrms.domain.user.Permission readPerm = new com.hrms.domain.user.Permission();
+        readPerm.setCode("EMPLOYEE:READ");
+        readPerm.setName("Read Employee");
+        readPerm.setDescription("View employee details");
+        readPerm.setResource("EMPLOYEE");
+        readPerm.setAction("READ");
+        permissionRepository.save(readPerm);
+
+        com.hrms.domain.user.Permission updatePerm = new com.hrms.domain.user.Permission();
+        updatePerm.setCode("EMPLOYEE:UPDATE");
+        updatePerm.setName("Update Employee");
+        updatePerm.setDescription("Update employee details");
+        updatePerm.setResource("EMPLOYEE");
+        updatePerm.setAction("UPDATE");
+        permissionRepository.save(updatePerm);
+
+        com.hrms.domain.user.Permission createPerm = new com.hrms.domain.user.Permission();
+        createPerm.setCode("EMPLOYEE:CREATE");
+        createPerm.setName("Create Employee");
+        createPerm.setDescription("Create new employee");
+        createPerm.setResource("EMPLOYEE");
+        createPerm.setAction("CREATE");
+        permissionRepository.save(createPerm);
+
+        com.hrms.domain.user.Permission deletePerm = new com.hrms.domain.user.Permission();
+        deletePerm.setCode("EMPLOYEE:DELETE");
+        deletePerm.setName("Delete Employee");
+        deletePerm.setDescription("Delete employee");
+        deletePerm.setResource("EMPLOYEE");
+        deletePerm.setAction("DELETE");
+        permissionRepository.save(deletePerm);
     }
 
     @Test
@@ -211,7 +256,7 @@ class RoleControllerIntegrationTest {
 
         String roleId = objectMapper.readTree(createResponse).get("id").asText();
 
-        // Then assign permissions
+        // Then assign permissions (use permission codes from test data.sql)
         AssignPermissionsRequest permissionsRequest = new AssignPermissionsRequest();
         permissionsRequest.setPermissionCodes(new HashSet<>(Arrays.asList("EMPLOYEE:READ", "EMPLOYEE:UPDATE")));
 

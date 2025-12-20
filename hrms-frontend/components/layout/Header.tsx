@@ -35,6 +35,7 @@ import { useWebSocket } from '@/lib/contexts/WebSocketContext';
 import { Check, X, Info } from 'lucide-react';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { Button } from '@/components/ui/Button';
+import { getNotificationRoute } from '@/lib/utils/notificationRoutes';
 
 interface GoogleNotification {
   id: string;
@@ -653,7 +654,12 @@ const Header: React.FC<HeaderProps> = ({
                           {notifications.map((notification, index) => (
                             <div
                               key={index}
-                              onClick={() => markAsRead(index)}
+                              onClick={() => {
+                                markAsRead(index);
+                                setIsNotificationsOpen(false);
+                                const route = getNotificationRoute(notification);
+                                router.push(route);
+                              }}
                               className={cn(
                                 "flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
                                 !notification.read && "bg-primary-50/50 dark:bg-primary-900/10"

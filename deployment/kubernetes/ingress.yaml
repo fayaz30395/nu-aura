@@ -1,0 +1,300 @@
+# Kubernetes Ingress Configuration for HRMS Platform
+# This manifest defines ingress rules for routing traffic to backend and frontend services
+
+---
+# GCE Ingress with HTTPS and SSL certificates
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hrms-ingress
+  namespace: hrms
+  labels:
+    app: hrms-platform
+  annotations:
+    # GCP specific annotations
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "hrms-static-ip"
+
+    # SSL/TLS configuration
+    networking.gke.io/managed-certificates: "hrms-ssl-cert"
+
+    # Force HTTPS redirect
+    ingress.gcp.kubernetes.io/pre-shared-cert: "hrms-ssl-cert"
+    kubernetes.io/ingress.allow-http: "true"
+
+    # Backend configuration
+    cloud.google.com/backend-config: '{"default": "hrms-backend-backendconfig"}'
+
+    # CDN configuration
+    cloud.google.com/cdn-enabled: "true"
+
+    # Armor security policy (optional)
+    # cloud.google.com/armor-config: '{"securityPolicy": "hrms-security-policy"}'
+
+    # Connection timeout
+    cloud.google.com/connection-draining-timeout: "60"
+
+    # Session affinity
+    cloud.google.com/affinity-type: "CLIENT_IP"
+    cloud.google.com/affinity-cookie-ttl-sec: "3600"
+
+spec:
+  rules:
+    # Backend API routing
+    - host: api.hrms.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+
+    # Frontend routing
+    - host: app.hrms.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-frontend-service
+                port:
+                  number: 80
+
+    # Main domain (redirects to app subdomain or serves frontend)
+    - host: hrms.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-frontend-service
+                port:
+                  number: 80
+
+  tls:
+    - hosts:
+        - hrms.example.com
+        - api.hrms.example.com
+        - app.hrms.example.com
+      secretName: hrms-tls-secret
+
+---
+# Managed Certificate for GCP
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: hrms-ssl-cert
+  namespace: hrms
+spec:
+  domains:
+    - hrms.example.com
+    - api.hrms.example.com
+    - app.hrms.example.com
+
+---
+# NGINX Ingress (Alternative to GCE Ingress)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hrms-nginx-ingress
+  namespace: hrms
+  labels:
+    app: hrms-platform
+  annotations:
+    # NGINX specific annotations
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # NGINX configuration
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-connections: "50"
+
+    # Request body size
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+
+    # CORS (if needed)
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://hrms.example.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+
+    # Backend health checks
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+    # Session affinity
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "hrms-session"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
+
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    # Backend API routing
+    - host: api.hrms.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+
+    # Frontend routing
+    - host: app.hrms.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-frontend-service
+                port:
+                  number: 80
+
+    # Main domain routing
+    - host: hrms.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+          - path: /swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-backend-service
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hrms-frontend-service
+                port:
+                  number: 80
+
+  tls:
+    - hosts:
+        - hrms.example.com
+        - api.hrms.example.com
+        - app.hrms.example.com
+      secretName: hrms-tls-secret
+
+---
+# FrontendConfig for GCP Cloud CDN (GKE specific)
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: hrms-frontend-config
+  namespace: hrms
+spec:
+  sslPolicy: hrms-ssl-policy
+  redirectToHttps:
+    enabled: true
+    responseCodeName: MOVED_PERMANENTLY_DEFAULT
+
+---
+# Static IP Address (must be created via gcloud)
+# gcloud compute addresses create hrms-static-ip --global
+# This is just for reference - actual creation done via CLI
+
+---
+# Network Policy for Ingress (optional security)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hrms-ingress-policy
+  namespace: hrms
+spec:
+  podSelector:
+    matchLabels:
+      app: hrms-backend
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow traffic from ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+    # Allow traffic from frontend
+    - from:
+        - podSelector:
+            matchLabels:
+              app: hrms-frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+    # Allow health checks from GCP load balancer
+    - from:
+        - ipBlock:
+            cidr: 35.191.0.0/16  # GCP health check IP range
+        - ipBlock:
+            cidr: 130.211.0.0/22  # GCP health check IP range
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+# Certificate (if using cert-manager with Let's Encrypt)
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hrms-tls-cert
+  namespace: hrms
+spec:
+  secretName: hrms-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - hrms.example.com
+    - api.hrms.example.com
+    - app.hrms.example.com
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days

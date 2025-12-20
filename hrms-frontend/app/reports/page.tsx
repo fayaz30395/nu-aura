@@ -110,11 +110,11 @@ const reports: ReportConfig[] = [
 interface DownloadModalProps {
   report: ReportConfig;
   onClose: () => void;
-  onDownload: (format: 'EXCEL' | 'PDF', request: ReportRequest) => Promise<void>;
+  onDownload: (format: 'EXCEL' | 'PDF' | 'CSV', request: ReportRequest) => Promise<void>;
 }
 
 const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownload }) => {
-  const [format, setFormat] = useState<'EXCEL' | 'PDF'>('EXCEL');
+  const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
@@ -186,10 +186,10 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
               Export Format
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <button
                 onClick={() => setFormat('EXCEL')}
-                className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
                   format === 'EXCEL'
                     ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
@@ -198,31 +198,51 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
                 <FileSpreadsheet
                   className={`h-6 w-6 ${format === 'EXCEL' ? 'text-green-600' : 'text-slate-400'}`}
                 />
-                <div className="text-left">
-                  <p className={`font-medium ${format === 'EXCEL' ? 'text-green-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                <div className="text-center">
+                  <p className={`font-medium text-sm ${format === 'EXCEL' ? 'text-green-700' : 'text-slate-700 dark:text-slate-300'}`}>
                     Excel
                   </p>
-                  <p className="text-xs text-slate-500">.xlsx file</p>
+                  <p className="text-xs text-slate-500">.xlsx</p>
                 </div>
-                {format === 'EXCEL' && <Check className="h-5 w-5 text-green-600 ml-auto" />}
+                {format === 'EXCEL' && <Check className="h-4 w-4 text-green-600 absolute top-2 right-2" />}
               </button>
 
               <button
                 onClick={() => setFormat('PDF')}
-                className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
                   format === 'PDF'
                     ? 'border-red-500 bg-red-50 dark:bg-red-950/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
                 }`}
               >
                 <FileText className={`h-6 w-6 ${format === 'PDF' ? 'text-red-600' : 'text-slate-400'}`} />
-                <div className="text-left">
-                  <p className={`font-medium ${format === 'PDF' ? 'text-red-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                <div className="text-center">
+                  <p className={`font-medium text-sm ${format === 'PDF' ? 'text-red-700' : 'text-slate-700 dark:text-slate-300'}`}>
                     PDF
                   </p>
-                  <p className="text-xs text-slate-500">.pdf file</p>
+                  <p className="text-xs text-slate-500">.pdf</p>
                 </div>
-                {format === 'PDF' && <Check className="h-5 w-5 text-red-600 ml-auto" />}
+                {format === 'PDF' && <Check className="h-4 w-4 text-red-600 absolute top-2 right-2" />}
+              </button>
+
+              <button
+                onClick={() => setFormat('CSV')}
+                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all relative ${
+                  format === 'CSV'
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/20'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                }`}
+              >
+                <FileSpreadsheet
+                  className={`h-6 w-6 ${format === 'CSV' ? 'text-blue-600' : 'text-slate-400'}`}
+                />
+                <div className="text-center">
+                  <p className={`font-medium text-sm ${format === 'CSV' ? 'text-blue-700' : 'text-slate-700 dark:text-slate-300'}`}>
+                    CSV
+                  </p>
+                  <p className="text-xs text-slate-500">.csv</p>
+                </div>
+                {format === 'CSV' && <Check className="h-4 w-4 text-blue-600 absolute top-2 right-2" />}
               </button>
             </div>
           </div>
@@ -299,7 +319,7 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleDownload = async (format: 'EXCEL' | 'PDF', request: ReportRequest) => {
+  const handleDownload = async (format: 'EXCEL' | 'PDF' | 'CSV', request: ReportRequest) => {
     if (!selectedReport) return;
 
     switch (selectedReport.id) {
@@ -423,6 +443,7 @@ export default function ReportsPage() {
                 <ul className="text-sm text-blue-700 dark:text-blue-300 mt-2 space-y-1">
                   <li>• Excel format is recommended for data analysis and further processing</li>
                   <li>• PDF format is ideal for printing and sharing official documents</li>
+                  <li>• CSV format provides raw data compatible with all spreadsheet applications</li>
                   <li>• Use date filters to generate reports for specific time periods</li>
                   <li>• Reports include all active employees unless filtered by department</li>
                 </ul>

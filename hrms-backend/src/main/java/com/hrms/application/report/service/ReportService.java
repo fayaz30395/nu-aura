@@ -5,9 +5,17 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.domain.leave.LeaveType;
+import com.hrms.domain.payroll.EmployeePayrollRecord;
+import com.hrms.domain.performance.PerformanceReview;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
+import com.hrms.infrastructure.payroll.repository.EmployeePayrollRecordRepository;
+import com.hrms.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.lowagie.text.DocumentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +37,13 @@ public class ReportService {
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final DepartmentRepository departmentRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+    private final EmployeePayrollRecordRepository payrollRecordRepository;
+    private final PerformanceReviewRepository performanceReviewRepository;
     private final ExcelExportService excelExportService;
     private final PdfExportService pdfExportService;
+    private final CsvExportService csvExportService;
 
     public byte[] generateEmployeeDirectoryReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -120,17 +133,160 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "department");
     }
 
-    // Stub methods for future implementation
-    public byte[] generateLeaveReport(ReportRequest request) throws IOException {
-        throw new UnsupportedOperationException("Leave report not yet implemented");
+    public byte[] generateLeaveReport(ReportRequest request) throws IOException, DocumentException {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // Get all leave requests, optionally filtered by date range
+        List<LeaveRequest> leaveRequests;
+        if (request.getStartDate() != null && request.getEndDate() != null) {
+            leaveRequests = leaveRequestRepository.findByTenantIdAndStartDateBetween(
+                tenantId, request.getStartDate(), request.getEndDate());
+        } else {
+            leaveRequests = leaveRequestRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
+        }
+
+        // Apply filters
+        if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
+            Set<UUID> employeeIds = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged())
+                .getContent().stream()
+                .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
+                .map(Employee::getId)
+                .collect(Collectors.toSet());
+
+            leaveRequests = leaveRequests.stream()
+                .filter(lr -> employeeIds.contains(lr.getEmployeeId()))
+                .collect(Collectors.toList());
+        }
+
+        if (request.getLeaveType() != null) {
+            leaveRequests = leaveRequests.stream()
+                .filter(lr -> {
+                    LeaveType type = leaveTypeRepository.findById(lr.getLeaveTypeId()).orElse(null);
+                    return type != null && type.getLeaveName().equalsIgnoreCase(request.getLeaveType());
+                })
+                .collect(Collectors.toList());
+        }
+
+        if (request.getLeaveStatus() != null) {
+            leaveRequests = leaveRequests.stream()
+                .filter(lr -> lr.getStatus().name().equals(request.getLeaveStatus()))
+                .collect(Collectors.toList());
+        }
+
+        // Fetch all employees and leave types to avoid N+1 queries
+        Set<UUID> employeeIds = leaveRequests.stream()
+            .map(LeaveRequest::getEmployeeId)
+            .collect(Collectors.toSet());
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllById(employeeIds).stream()
+            .collect(Collectors.toMap(Employee::getId, e -> e));
+
+        Set<UUID> leaveTypeIds = leaveRequests.stream()
+            .map(LeaveRequest::getLeaveTypeId)
+            .collect(Collectors.toSet());
+        Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllById(leaveTypeIds).stream()
+            .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
+
+        List<LeaveReportRow> reportData = leaveRequests.stream()
+            .map(lr -> mapToLeaveRow(lr, employeeMap, leaveTypeMap))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return exportReport(reportData, request.getFormat(), "leave");
     }
 
-    public byte[] generatePayrollReport(ReportRequest request) throws IOException {
-        throw new UnsupportedOperationException("Payroll report not yet implemented");
+    public byte[] generatePayrollReport(ReportRequest request) throws IOException, DocumentException {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // Get all payroll records for the tenant
+        List<EmployeePayrollRecord> payrollRecords = payrollRecordRepository.findAll().stream()
+            .filter(pr -> tenantId.equals(pr.getTenantId()))
+            .collect(Collectors.toList());
+
+        // Apply filters
+        if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
+            payrollRecords = payrollRecords.stream()
+                .filter(pr -> pr.getDepartmentId() != null && request.getDepartmentIds().contains(pr.getDepartmentId()))
+                .collect(Collectors.toList());
+        }
+
+        if (request.getStartDate() != null && request.getEndDate() != null) {
+            payrollRecords = payrollRecords.stream()
+                .filter(pr -> {
+                    if (pr.getPayrollRun() != null && pr.getPayrollRun().getPayPeriodStart() != null) {
+                        LocalDate periodStart = pr.getPayrollRun().getPayPeriodStart();
+                        return !periodStart.isBefore(request.getStartDate()) &&
+                               !periodStart.isAfter(request.getEndDate());
+                    }
+                    return false;
+                })
+                .collect(Collectors.toList());
+        }
+
+        // Fetch departments for mapping
+        Map<UUID, Department> departmentMap = departmentRepository
+            .findAllByTenantId(tenantId, Pageable.unpaged())
+            .getContent().stream()
+            .collect(Collectors.toMap(Department::getId, d -> d));
+
+        // Fetch employees for designation mapping
+        Map<UUID, Employee> employeeMap = employeeRepository
+            .findAllByTenantId(tenantId, Pageable.unpaged())
+            .getContent().stream()
+            .collect(Collectors.toMap(Employee::getId, e -> e));
+
+        List<PayrollReportRow> reportData = payrollRecords.stream()
+            .map(pr -> mapToPayrollRow(pr, departmentMap, employeeMap))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return exportReport(reportData, request.getFormat(), "payroll");
     }
 
-    public byte[] generatePerformanceReport(ReportRequest request) throws IOException {
-        throw new UnsupportedOperationException("Performance report not yet implemented");
+    public byte[] generatePerformanceReport(ReportRequest request) throws IOException, DocumentException {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        List<PerformanceReview> reviews;
+        if (request.getStartDate() != null && request.getEndDate() != null) {
+            reviews = performanceReviewRepository.findByTenantIdAndReviewDateBetween(
+                tenantId, request.getStartDate(), request.getEndDate());
+        } else {
+            reviews = performanceReviewRepository.findByTenantId(tenantId);
+        }
+
+        // Apply department filter
+        if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
+            Set<UUID> employeeIds = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged())
+                .getContent().stream()
+                .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
+                .map(Employee::getId)
+                .collect(Collectors.toSet());
+
+            reviews = reviews.stream()
+                .filter(r -> employeeIds.contains(r.getEmployeeId()))
+                .collect(Collectors.toList());
+        }
+
+        // Fetch all employees and reviewers
+        Set<UUID> employeeIds = reviews.stream()
+            .map(PerformanceReview::getEmployeeId)
+            .collect(Collectors.toSet());
+        Set<UUID> reviewerIds = reviews.stream()
+            .map(PerformanceReview::getReviewerId)
+            .collect(Collectors.toSet());
+
+        Set<UUID> allUserIds = new HashSet<>();
+        allUserIds.addAll(employeeIds);
+        allUserIds.addAll(reviewerIds);
+
+        Map<UUID, Employee> employeeMap = employeeRepository.findAllById(allUserIds).stream()
+            .collect(Collectors.toMap(Employee::getId, e -> e));
+
+        List<PerformanceReportRow> reportData = reviews.stream()
+            .map(r -> mapToPerformanceRow(r, employeeMap))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return exportReport(reportData, request.getFormat(), "performance");
     }
 
     // Mapping methods
@@ -241,6 +397,134 @@ public class ReportService {
             .build();
     }
 
+    private LeaveReportRow mapToLeaveRow(LeaveRequest leaveRequest,
+                                          Map<UUID, Employee> employeeMap,
+                                          Map<UUID, LeaveType> leaveTypeMap) {
+        Employee employee = employeeMap.get(leaveRequest.getEmployeeId());
+        if (employee == null) {
+            return null;
+        }
+
+        LeaveType leaveType = leaveTypeMap.get(leaveRequest.getLeaveTypeId());
+        String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "";
+
+        String departmentName = "";
+        if (employee.getDepartmentId() != null) {
+            departmentName = departmentRepository.findById(employee.getDepartmentId())
+                .map(Department::getName)
+                .orElse("");
+        }
+
+        String approvedByName = "";
+        if (leaveRequest.getApprovedBy() != null) {
+            approvedByName = employeeMap.containsKey(leaveRequest.getApprovedBy()) ?
+                employeeMap.get(leaveRequest.getApprovedBy()).getFullName() : "";
+        }
+
+        return LeaveReportRow.builder()
+            .employeeId(employee.getId())
+            .employeeCode(employee.getEmployeeCode())
+            .employeeName(employee.getFullName())
+            .department(departmentName)
+            .leaveType(leaveTypeName)
+            .startDate(leaveRequest.getStartDate())
+            .endDate(leaveRequest.getEndDate())
+            .days(leaveRequest.getTotalDays() != null ? leaveRequest.getTotalDays().doubleValue() : 0.0)
+            .status(leaveRequest.getStatus().name())
+            .reason(leaveRequest.getReason())
+            .approvedBy(approvedByName)
+            .approvedOn(leaveRequest.getApprovedOn() != null ? leaveRequest.getApprovedOn().toLocalDate() : null)
+            .build();
+    }
+
+    private PayrollReportRow mapToPayrollRow(EmployeePayrollRecord record,
+                                             Map<UUID, Department> departmentMap,
+                                             Map<UUID, Employee> employeeMap) {
+        String departmentName = "";
+        if (record.getDepartmentId() != null && departmentMap.containsKey(record.getDepartmentId())) {
+            departmentName = departmentMap.get(record.getDepartmentId()).getName();
+        }
+
+        String designation = "";
+        if (record.getEmployeeId() != null && employeeMap.containsKey(record.getEmployeeId())) {
+            designation = employeeMap.get(record.getEmployeeId()).getDesignation();
+        }
+
+        LocalDate payrollMonth = null;
+        if (record.getPayrollRun() != null && record.getPayrollRun().getPayPeriodStart() != null) {
+            payrollMonth = record.getPayrollRun().getPayPeriodStart();
+        }
+
+        return PayrollReportRow.builder()
+            .employeeId(record.getEmployeeId())
+            .employeeCode(record.getEmployeeNumber())
+            .employeeName(record.getEmployeeName())
+            .department(departmentName)
+            .designation(designation)
+            .payrollMonth(payrollMonth)
+            .basicSalary(record.getBaseSalaryLocal())
+            .allowances(record.getAllowancesLocal().add(record.getBonusesLocal()).add(record.getOvertimeLocal()))
+            .deductions(record.getTotalDeductionsLocal())
+            .netSalary(record.getNetPayLocal())
+            .paymentStatus(record.getStatus() != null ? record.getStatus().name() : "")
+            .paymentDate(null) // Payment date not available in current schema
+            .build();
+    }
+
+    private PerformanceReportRow mapToPerformanceRow(PerformanceReview review,
+                                                     Map<UUID, Employee> employeeMap) {
+        Employee employee = employeeMap.get(review.getEmployeeId());
+        if (employee == null) {
+            return null;
+        }
+
+        Employee reviewer = employeeMap.get(review.getReviewerId());
+        String reviewerName = reviewer != null ? reviewer.getFullName() : "";
+
+        String departmentName = "";
+        if (employee.getDepartmentId() != null) {
+            departmentName = departmentRepository.findById(employee.getDepartmentId())
+                .map(Department::getName)
+                .orElse("");
+        }
+
+        // For review cycle, we'll use the review type if cycle ID is not available
+        String reviewCycle = review.getReviewType() != null ? review.getReviewType().name() : "";
+
+        // Calculate performance level based on rating
+        String performanceLevel = "";
+        if (review.getOverallRating() != null) {
+            double rating = review.getOverallRating().doubleValue();
+            if (rating >= 4.5) {
+                performanceLevel = "EXCEPTIONAL";
+            } else if (rating >= 3.5) {
+                performanceLevel = "EXCEEDS_EXPECTATIONS";
+            } else if (rating >= 2.5) {
+                performanceLevel = "MEETS_EXPECTATIONS";
+            } else if (rating >= 1.5) {
+                performanceLevel = "NEEDS_IMPROVEMENT";
+            } else {
+                performanceLevel = "UNSATISFACTORY";
+            }
+        }
+
+        return PerformanceReportRow.builder()
+            .employeeId(employee.getId())
+            .employeeCode(employee.getEmployeeCode())
+            .employeeName(employee.getFullName())
+            .department(departmentName)
+            .designation(employee.getDesignation())
+            .reviewCycle(reviewCycle)
+            .reviewDate(review.getReviewPeriodStart())
+            .reviewer(reviewerName)
+            .overallRating(review.getOverallRating() != null ? review.getOverallRating().doubleValue() : 0.0)
+            .performanceLevel(performanceLevel)
+            .goalsCompleted(0) // Not available in current schema
+            .totalGoals(0) // Not available in current schema
+            .comments(review.getManagerComments())
+            .build();
+    }
+
     // Export helper methods
     private byte[] exportReport(List<?> data, ReportRequest.ExportFormat format, String reportType)
         throws IOException, DocumentException {
@@ -252,7 +536,7 @@ public class ReportService {
         return switch (format) {
             case EXCEL -> exportToExcel(data, reportType);
             case PDF -> exportToPdf(data, reportType);
-            case CSV -> throw new UnsupportedOperationException("CSV export not yet implemented");
+            case CSV -> exportToCsv(data, reportType);
         };
     }
 
@@ -265,6 +549,12 @@ public class ReportService {
                 (List<AttendanceReportRow>) data);
             case "department" -> excelExportService.exportDepartmentHeadcountToExcel(
                 (List<DepartmentHeadcountReportRow>) data);
+            case "leave" -> excelExportService.exportLeaveToExcel(
+                (List<LeaveReportRow>) data);
+            case "payroll" -> excelExportService.exportPayrollToExcel(
+                (List<PayrollReportRow>) data);
+            case "performance" -> excelExportService.exportPerformanceToExcel(
+                (List<PerformanceReportRow>) data);
             default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
         };
     }
@@ -278,6 +568,31 @@ public class ReportService {
                 (List<AttendanceReportRow>) data);
             case "department" -> pdfExportService.exportDepartmentHeadcountToPdf(
                 (List<DepartmentHeadcountReportRow>) data);
+            case "leave" -> pdfExportService.exportLeaveToPdf(
+                (List<LeaveReportRow>) data);
+            case "payroll" -> pdfExportService.exportPayrollToPdf(
+                (List<PayrollReportRow>) data);
+            case "performance" -> pdfExportService.exportPerformanceToPdf(
+                (List<PerformanceReportRow>) data);
+            default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    private byte[] exportToCsv(List<?> data, String reportType) throws IOException {
+        return switch (reportType) {
+            case "employee" -> csvExportService.exportEmployeeDirectoryToCsv(
+                (List<EmployeeDirectoryReportRow>) data);
+            case "attendance" -> csvExportService.exportAttendanceToCsv(
+                (List<AttendanceReportRow>) data);
+            case "department" -> csvExportService.exportDepartmentHeadcountToCsv(
+                (List<DepartmentHeadcountReportRow>) data);
+            case "leave" -> csvExportService.exportLeaveToCsv(
+                (List<LeaveReportRow>) data);
+            case "payroll" -> csvExportService.exportPayrollToCsv(
+                (List<PayrollReportRow>) data);
+            case "performance" -> csvExportService.exportPerformanceToCsv(
+                (List<PerformanceReportRow>) data);
             default -> throw new IllegalArgumentException("Unknown report type: " + reportType);
         };
     }

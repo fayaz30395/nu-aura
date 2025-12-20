@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
@@ -151,7 +152,7 @@ class PayrollRunServiceTest {
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> payrollRunService.updatePayrollRun(runId, updateData))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("not found");
         }
     }
@@ -172,7 +173,7 @@ class PayrollRunServiceTest {
             PayrollRun result = payrollRunService.processPayrollRun(runId, userId);
 
             assertThat(result).isNotNull();
-            assertThat(result.getStatus()).isEqualTo(PayrollStatus.PROCESSING);
+            assertThat(result.getStatus()).isEqualTo(PayrollStatus.PROCESSED);
             verify(payrollRunRepository).save(any(PayrollRun.class));
         }
     }

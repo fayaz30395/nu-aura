@@ -43,6 +43,7 @@ import {
   Mail,
   HardDrive,
   Inbox,
+  Plane,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sidebar, SidebarItem, SidebarSection } from '@/components/ui';
@@ -124,6 +125,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Dashboard',
           icon: <LayoutDashboard className="h-5 w-5" />,
           href: '/dashboard',
+        },
+      ],
+    },
+    {
+      id: 'dashboards',
+      label: 'Dashboards',
+      items: [
+        {
+          id: 'executive-dashboard',
+          label: 'Executive',
+          icon: <TrendingUp className="h-5 w-5" />,
+          href: '/dashboards/executive',
         },
       ],
     },
@@ -334,6 +347,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Expenses',
           icon: <Receipt className="h-5 w-5" />,
           href: '/expenses',
+        },
+        {
+          id: 'travel',
+          label: 'Travel',
+          icon: <Plane className="h-5 w-5" />,
+          href: '/travel',
         },
       ],
     },

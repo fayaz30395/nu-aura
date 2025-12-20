@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,17 +56,13 @@ public class RoleManagementService {
             throw new BusinessException("Role with code '" + request.getCode() + "' already exists");
         }
 
-        // Create role
+        // Create role - let JPA handle ID, version, and timestamps via auditing
         Role role = new Role();
-        role.setId(UUID.randomUUID());
         role.setCode(request.getCode());
         role.setName(request.getName());
         role.setDescription(request.getDescription());
         role.setIsSystemRole(false);
         role.setTenantId(tenantId);
-        role.setCreatedAt(LocalDateTime.now());
-        role.setUpdatedAt(LocalDateTime.now());
-        role.setVersion(0L);
 
         // Assign permissions if provided
         if (request.getPermissionCodes() != null && !request.getPermissionCodes().isEmpty()) {
@@ -111,7 +106,6 @@ public class RoleManagementService {
         // Update basic fields
         role.setName(request.getName());
         role.setDescription(request.getDescription());
-        role.setUpdatedAt(LocalDateTime.now());
 
         Role updatedRole = roleRepository.save(role);
         log.info("Updated role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -179,7 +173,6 @@ public class RoleManagementService {
 
         // Replace existing permissions with new set
         role.setPermissions(new HashSet<>(permissions));
-        role.setUpdatedAt(LocalDateTime.now());
 
         Role updatedRole = roleRepository.save(role);
         log.info("Updated permissions for role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -211,7 +204,6 @@ public class RoleManagementService {
 
         // Add new permissions to existing ones
         role.getPermissions().addAll(permissions);
-        role.setUpdatedAt(LocalDateTime.now());
 
         Role updatedRole = roleRepository.save(role);
         log.info("Added permissions to role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -236,7 +228,6 @@ public class RoleManagementService {
 
         // Remove permissions from existing ones
         role.getPermissions().removeAll(permissions);
-        role.setUpdatedAt(LocalDateTime.now());
 
         Role updatedRole = roleRepository.save(role);
         log.info("Removed permissions from role: {} for tenant: {}", updatedRole.getCode(), tenantId);

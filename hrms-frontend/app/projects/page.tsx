@@ -42,7 +42,7 @@ import {
 import { projectService } from '@/lib/services/project.service';
 import { Project, ProjectEmployee, CreateProjectRequest, UpdateProjectRequest, AssignEmployeeRequest } from '@/lib/types/project';
 
-type ViewMode = 'list' | 'board';
+type ViewMode = 'list' | 'board' | 'calendar';
 type ProjectStatus = 'PLANNED' | 'IN_PROGRESS' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED';
 type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 type SortField = 'name' | 'priority' | 'startDate' | 'expectedEndDate' | 'status';
@@ -520,14 +520,23 @@ export default function ProjectsPage() {
             <button
               onClick={() => setViewMode('board')}
               className={`p-2 rounded ${viewMode === 'board' ? 'bg-white dark:bg-surface-700 shadow' : ''}`}
+              title="Board View"
             >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded ${viewMode === 'list' ? 'bg-white dark:bg-surface-700 shadow' : ''}`}
+              title="List View"
             >
               <LayoutList className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => router.push('/projects/calendar')}
+              className={`p-2 rounded ${viewMode === 'calendar' ? 'bg-white dark:bg-surface-700 shadow' : ''}`}
+              title="Calendar/Gantt View"
+            >
+              <Calendar className="h-4 w-4" />
             </button>
           </div>
         </div>
