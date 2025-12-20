@@ -25,57 +25,135 @@ import java.util.UUID;
 @Slf4j
 public class AttendanceRecordService {
 
+    private static final int MAX_OVERNIGHT_SHIFT_HOURS = 16;
+    private static final int MAX_LOOKBACK_DAYS = 2;
+
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final AttendanceTimeEntryRepository timeEntryRepository;
 
+    /**
+     * Check in an employee at the specified time.
+     * Creates a new attendance record if one doesn't exist for the check-in date.
+     *
+     * @param employeeId The employee's UUID
+     * @param checkInTime The check-in time (uses current time if null)
+     * @param source The source of check-in (WEB, MOBILE, BIOMETRIC, etc.)
+     * @param location The location of check-in
+     * @param ip The IP address of the request
+     * @return The updated or created AttendanceRecord
+     * @throws IllegalStateException if tenant context is not set
+     * @throws IllegalArgumentException if employeeId is null
+     */
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location, String ip) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        if (tenantId == null) {
-            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
-        }
-        LocalDate today = LocalDate.now();
+        validateEmployeeId(employeeId);
+        UUID tenantId = validateAndGetTenantId();
+
+        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now();
+        LocalDate checkInDate = actualCheckInTime.toLocalDate();
+
+        log.debug("Processing check-in for employee {} on date {} at {}", employeeId, checkInDate, actualCheckInTime);
 
         AttendanceRecord record = attendanceRecordRepository
-            .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, today, tenantId)
+            .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, checkInDate, tenantId)
             .orElseGet(() -> {
+                log.info("Creating new attendance record for employee {} on {}", employeeId, checkInDate);
                 AttendanceRecord newRecord = AttendanceRecord.builder()
                     .employeeId(employeeId)
-                    .attendanceDate(today)
+                    .attendanceDate(checkInDate)
                     .build();
                 newRecord.setTenantId(tenantId);
                 return newRecord;
             });
 
-        record.checkIn(checkInTime, source, location, ip);
+        record.checkIn(actualCheckInTime, source, location, ip);
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
 
         // Create initial time entry
-        createTimeEntry(savedRecord.getId(), checkInTime, source, location, ip,
+        createTimeEntry(savedRecord.getId(), actualCheckInTime, source, location, ip,
                        AttendanceTimeEntry.EntryType.REGULAR, null);
 
+        log.info("Check-in completed for employee {} at {} via {}", employeeId, actualCheckInTime, source);
         return savedRecord;
     }
 
+    /**
+     * Check out an employee at the specified time.
+     * Supports overnight shifts by looking back up to MAX_LOOKBACK_DAYS days for an open check-in.
+     *
+     * @param employeeId The employee's UUID
+     * @param checkOutTime The check-out time (uses current time if null)
+     * @param source The source of check-out (WEB, MOBILE, BIOMETRIC, etc.)
+     * @param location The location of check-out
+     * @param ip The IP address of the request
+     * @return The updated AttendanceRecord
+     * @throws IllegalStateException if tenant context is not set
+     * @throws IllegalArgumentException if employeeId is null or no check-in found
+     */
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location, String ip) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        if (tenantId == null) {
-            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
-        }
-        LocalDate today = LocalDate.now();
+        validateEmployeeId(employeeId);
+        UUID tenantId = validateAndGetTenantId();
 
-        AttendanceRecord record = attendanceRecordRepository
-            .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, today, tenantId)
-            .orElseThrow(() -> new IllegalArgumentException("No check-in found for today"));
+        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now();
+        LocalDate checkOutDate = actualCheckOutTime.toLocalDate();
 
-        record.checkOut(checkOutTime, source, location, ip);
+        log.debug("Processing check-out for employee {} on date {} at {}", employeeId, checkOutDate, actualCheckOutTime);
+
+        // Look for attendance record with open check-in, starting from checkout date and going back
+        AttendanceRecord record = findOpenAttendanceRecord(employeeId, checkOutDate, tenantId);
+
+        // Validate checkout time is reasonable (not too far from check-in)
+        validateCheckoutTime(record, actualCheckOutTime);
+
+        record.checkOut(actualCheckOutTime, source, location, ip);
 
         // Close the latest open time entry
-        closeOpenTimeEntry(record.getId(), checkOutTime, source, location, ip);
+        closeOpenTimeEntry(record.getId(), actualCheckOutTime, source, location, ip);
 
         // Update total work duration from time entries
         updateRecordDurations(record);
 
+        log.info("Check-out completed for employee {} at {} via {} (attendance date: {})",
+                 employeeId, actualCheckOutTime, source, record.getAttendanceDate());
         return attendanceRecordRepository.save(record);
+    }
+
+    /**
+     * Find an open attendance record for the employee, looking back up to MAX_LOOKBACK_DAYS.
+     */
+    private AttendanceRecord findOpenAttendanceRecord(UUID employeeId, LocalDate checkOutDate, UUID tenantId) {
+        for (int i = 0; i <= MAX_LOOKBACK_DAYS; i++) {
+            LocalDate searchDate = checkOutDate.minusDays(i);
+            Optional<AttendanceRecord> recordOpt = attendanceRecordRepository
+                .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, searchDate, tenantId);
+
+            if (recordOpt.isPresent()) {
+                AttendanceRecord record = recordOpt.get();
+                // Check if this record has an open check-in (no check-out yet)
+                if (record.getCheckOutTime() == null) {
+                    log.debug("Found open attendance record for employee {} on date {}", employeeId, searchDate);
+                    return record;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException(
+            String.format("No open check-in found for employee in the last %d days", MAX_LOOKBACK_DAYS + 1));
+    }
+
+    /**
+     * Validate that the checkout time is reasonable relative to the check-in time.
+     */
+    private void validateCheckoutTime(AttendanceRecord record, LocalDateTime checkOutTime) {
+        if (record.getCheckInTime() != null && checkOutTime.isBefore(record.getCheckInTime())) {
+            throw new IllegalArgumentException("Check-out time cannot be before check-in time");
+        }
+
+        if (record.getCheckInTime() != null) {
+            long hoursWorked = java.time.Duration.between(record.getCheckInTime(), checkOutTime).toHours();
+            if (hoursWorked > MAX_OVERNIGHT_SHIFT_HOURS) {
+                log.warn("Unusually long shift detected for record {}: {} hours", record.getId(), hoursWorked);
+            }
+        }
     }
 
     // ===================== Multi Check-In/Out Methods =====================
@@ -295,13 +373,94 @@ public class AttendanceRecordService {
         try {
             return AttendanceTimeEntry.EntryType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
+            log.debug("Unknown entry type '{}', defaulting to REGULAR", type);
             return AttendanceTimeEntry.EntryType.REGULAR;
         }
+    }
+
+    private UUID validateAndGetTenantId() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            throw new IllegalStateException("Tenant context not set. Please re-authenticate.");
+        }
+        return tenantId;
+    }
+
+    private void validateEmployeeId(UUID employeeId) {
+        if (employeeId == null) {
+            throw new IllegalArgumentException("Employee ID cannot be null");
+        }
+    }
+
+    // ===================== Additional Query Methods =====================
+
+    /**
+     * Get attendance status for an employee on a specific date.
+     */
+    @Transactional(readOnly = true)
+    public Optional<AttendanceRecord> getAttendanceForDate(UUID employeeId, LocalDate date) {
+        validateEmployeeId(employeeId);
+        UUID tenantId = validateAndGetTenantId();
+        return attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId);
+    }
+
+    /**
+     * Check if an employee is currently checked in (has an open attendance record).
+     */
+    @Transactional(readOnly = true)
+    public boolean isEmployeeCheckedIn(UUID employeeId) {
+        validateEmployeeId(employeeId);
+        UUID tenantId = validateAndGetTenantId();
+        LocalDate today = LocalDate.now();
+
+        return attendanceRecordRepository
+            .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, today, tenantId)
+            .map(record -> record.getCheckInTime() != null && record.getCheckOutTime() == null)
+            .orElse(false);
+    }
+
+    /**
+     * Get today's attendance record for an employee, if it exists.
+     */
+    @Transactional(readOnly = true)
+    public Optional<AttendanceRecord> getTodayAttendance(UUID employeeId) {
+        return getAttendanceForDate(employeeId, LocalDate.now());
+    }
+
+    /**
+     * Reject a regularization request.
+     */
+    public AttendanceRecord rejectRegularization(UUID id, UUID rejectorId, String reason) {
+        UUID tenantId = validateAndGetTenantId();
+
+        AttendanceRecord record = attendanceRecordRepository.findById(id)
+            .filter(a -> a.getTenantId().equals(tenantId))
+            .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+
+        record.rejectRegularization(rejectorId, reason);
+        log.info("Regularization rejected for record {} by {}", id, rejectorId);
+        return attendanceRecordRepository.save(record);
     }
 
     // ===================== Result Classes =====================
 
     public record BulkResult(List<AttendanceRecord> successful, List<FailedEntry> failed) {
         public record FailedEntry(UUID employeeId, String error) {}
+
+        public int totalCount() {
+            return successful.size() + failed.size();
+        }
+
+        public int successCount() {
+            return successful.size();
+        }
+
+        public int failureCount() {
+            return failed.size();
+        }
+
+        public boolean hasFailures() {
+            return !failed.isEmpty();
+        }
     }
 }

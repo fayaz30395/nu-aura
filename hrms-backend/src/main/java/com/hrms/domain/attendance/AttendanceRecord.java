@@ -207,5 +207,30 @@ public class AttendanceRecord extends TenantAware {
         this.approvedAt = LocalDateTime.now();
         this.status = AttendanceStatus.PRESENT;
     }
+
+    public void rejectRegularization(UUID rejectorId, String rejectionReason) {
+        this.regularizationApproved = false;
+        this.approvedBy = rejectorId;
+        this.approvedAt = LocalDateTime.now();
+        if (rejectionReason != null && !rejectionReason.isEmpty()) {
+            this.regularizationReason = this.regularizationReason + " [REJECTED: " + rejectionReason + "]";
+        }
+        // Revert to absent status since regularization was rejected
+        this.status = AttendanceStatus.ABSENT;
+    }
+
+    /**
+     * Check if this attendance record has an open check-in (checked in but not checked out).
+     */
+    public boolean hasOpenCheckIn() {
+        return this.checkInTime != null && this.checkOutTime == null;
+    }
+
+    /**
+     * Check if this attendance record is complete (both checked in and out).
+     */
+    public boolean isComplete() {
+        return this.checkInTime != null && this.checkOutTime != null;
+    }
 }
 

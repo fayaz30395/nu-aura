@@ -154,4 +154,130 @@ public class MetricsService {
                 .register(meterRegistry)
                 .increment();
     }
+
+    /**
+     * Record active users (concurrent sessions)
+     */
+    public void recordActiveUsers(int count) {
+        meterRegistry.gauge("active_users", count);
+    }
+
+    /**
+     * Record API error
+     */
+    public void recordApiError(String endpoint, String errorType, int statusCode) {
+        Counter.builder("api_errors")
+                .tag("endpoint", endpoint)
+                .tag("error_type", errorType)
+                .tag("status_code", String.valueOf(statusCode))
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record employee actions
+     */
+    public void recordEmployeeAction(UUID tenantId, String action) {
+        Counter.builder("employee_actions")
+                .tag("tenant_id", tenantId.toString())
+                .tag("action", action)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record attendance events
+     */
+    public void recordAttendanceEvent(UUID tenantId, String eventType) {
+        Counter.builder("attendance_events")
+                .tag("tenant_id", tenantId.toString())
+                .tag("event_type", eventType)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record leave request events
+     */
+    public void recordLeaveRequest(UUID tenantId, String status) {
+        Counter.builder("leave_requests")
+                .tag("tenant_id", tenantId.toString())
+                .tag("status", status)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record payroll processing
+     */
+    public void recordPayrollProcessing(UUID tenantId, int employeeCount, Duration duration) {
+        Counter.builder("payroll_processed")
+                .tag("tenant_id", tenantId.toString())
+                .register(meterRegistry)
+                .increment();
+
+        meterRegistry.gauge("payroll_employee_count", employeeCount);
+
+        Timer.builder("payroll_processing_duration")
+                .tag("tenant_id", tenantId.toString())
+                .register(meterRegistry)
+                .record(duration);
+    }
+
+    /**
+     * Record recruitment actions
+     */
+    public void recordRecruitmentAction(UUID tenantId, String action) {
+        Counter.builder("recruitment_actions")
+                .tag("tenant_id", tenantId.toString())
+                .tag("action", action)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record performance review events
+     */
+    public void recordPerformanceReview(UUID tenantId, String reviewType, String status) {
+        Counter.builder("performance_reviews")
+                .tag("tenant_id", tenantId.toString())
+                .tag("review_type", reviewType)
+                .tag("status", status)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record cache hit/miss
+     */
+    public void recordCacheEvent(String cacheName, boolean hit) {
+        Counter.builder("cache_events")
+                .tag("cache_name", cacheName)
+                .tag("result", hit ? "hit" : "miss")
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record document generation
+     */
+    public void recordDocumentGeneration(UUID tenantId, String documentType, boolean success) {
+        Counter.builder("document_generation")
+                .tag("tenant_id", tenantId.toString())
+                .tag("document_type", documentType)
+                .tag("success", String.valueOf(success))
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record notification delivery
+     */
+    public void recordNotificationDelivery(String channel, boolean success) {
+        Counter.builder("notification_delivery")
+                .tag("channel", channel)
+                .tag("success", String.valueOf(success))
+                .register(meterRegistry)
+                .increment();
+    }
 }

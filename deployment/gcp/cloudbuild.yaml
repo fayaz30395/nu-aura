@@ -1,0 +1,182 @@
+# Google Cloud Build CI/CD Pipeline for HRMS Platform
+# This pipeline builds and deploys both backend and frontend services
+
+steps:
+  # Step 1: Build Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-backend'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hrms-backend:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hrms-backend:latest'
+      - '-f'
+      - 'platform/deployment/docker/Dockerfile.backend'
+      - '.'
+    timeout: 1200s
+
+  # Step 2: Build Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hrms-frontend:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/hrms-frontend:latest'
+      - '-f'
+      - 'platform/deployment/docker/Dockerfile.frontend'
+      - './platform/hrms-frontend'
+    timeout: 1200s
+
+  # Step 3: Push Backend Image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/hrms-backend:$SHORT_SHA'
+    waitFor: ['build-backend']
+
+  # Step 4: Push Backend Latest Tag
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend-latest'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/hrms-backend:latest'
+    waitFor: ['build-backend']
+
+  # Step 5: Push Frontend Image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/hrms-frontend:$SHORT_SHA'
+    waitFor: ['build-frontend']
+
+  # Step 6: Push Frontend Latest Tag
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend-latest'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/hrms-frontend:latest'
+    waitFor: ['build-frontend']
+
+  # Step 7: Deploy to Cloud Run - Backend
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-backend-cloud-run'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'hrms-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/hrms-backend:$SHORT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+      - '--timeout'
+      - '300s'
+      - '--max-instances'
+      - '10'
+      - '--min-instances'
+      - '1'
+      - '--port'
+      - '8080'
+      - '--set-env-vars'
+      - 'SPRING_PROFILES_ACTIVE=prod,PORT=8080'
+      - '--set-secrets'
+      - 'SPRING_DATASOURCE_URL=DATABASE_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest,JWT_SECRET=JWT_SECRET:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest'
+    waitFor: ['push-backend']
+
+  # Step 8: Deploy to Cloud Run - Frontend
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-frontend-cloud-run'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'hrms-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/hrms-frontend:$SHORT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '1'
+      - '--timeout'
+      - '60s'
+      - '--max-instances'
+      - '10'
+      - '--min-instances'
+      - '0'
+      - '--port'
+      - '3000'
+      - '--set-env-vars'
+      - 'NEXT_PUBLIC_API_URL=${_BACKEND_URL},NODE_ENV=production'
+    waitFor: ['push-frontend']
+
+  # Step 9: Deploy to GKE (Optional - uncomment if using Kubernetes)
+  # - name: 'gcr.io/cloud-builders/kubectl'
+  #   id: 'deploy-to-gke'
+  #   args:
+  #     - 'apply'
+  #     - '-f'
+  #     - 'platform/deployment/kubernetes/'
+  #   env:
+  #     - 'CLOUDSDK_COMPUTE_REGION=${_REGION}'
+  #     - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+  #   waitFor: ['push-backend-latest', 'push-frontend-latest']
+
+  # Step 10: Update GKE Deployment (Optional)
+  # - name: 'gcr.io/cloud-builders/kubectl'
+  #   id: 'rollout-gke'
+  #   args:
+  #     - 'set'
+  #     - 'image'
+  #     - 'deployment/hrms-backend'
+  #     - 'hrms-backend=gcr.io/$PROJECT_ID/hrms-backend:$SHORT_SHA'
+  #     - '--namespace=hrms'
+  #   env:
+  #     - 'CLOUDSDK_COMPUTE_REGION=${_REGION}'
+  #     - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+  #   waitFor: ['deploy-to-gke']
+
+# Images to be pushed to Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/hrms-backend:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/hrms-backend:latest'
+  - 'gcr.io/$PROJECT_ID/hrms-frontend:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/hrms-frontend:latest'
+
+# Build timeout
+timeout: 3600s
+
+# Substitution variables
+substitutions:
+  _REGION: 'us-central1'
+  _GKE_CLUSTER: 'hrms-cluster'
+  _BACKEND_URL: 'https://hrms-backend-xxxxxxxxxx.run.app'
+
+# Cloud Build options
+options:
+  machineType: 'N1_HIGHCPU_8'
+  diskSizeGb: 100
+  logging: CLOUD_LOGGING_ONLY
+  logStreamingOption: STREAM_ON
+
+# Tags for build history
+tags:
+  - 'hrms-platform'
+  - 'production'
+  - '$BRANCH_NAME'

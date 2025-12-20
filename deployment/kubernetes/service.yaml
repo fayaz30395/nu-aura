@@ -1,0 +1,225 @@
+# Kubernetes Services for HRMS Platform
+# This manifest defines service configurations for backend and frontend
+
+---
+# Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-backend-service
+  namespace: hrms
+  labels:
+    app: hrms-backend
+    tier: backend
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"default": "hrms-backend-backendconfig"}'
+spec:
+  type: ClusterIP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 3600
+  selector:
+    app: hrms-backend
+    tier: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: actuator
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+# Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-frontend-service
+  namespace: hrms
+  labels:
+    app: hrms-frontend
+    tier: frontend
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"default": "hrms-frontend-backendconfig"}'
+spec:
+  type: ClusterIP
+  selector:
+    app: hrms-frontend
+    tier: frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+# Backend LoadBalancer Service (Optional - for direct access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-backend-lb
+  namespace: hrms
+  labels:
+    app: hrms-backend
+    tier: backend
+  annotations:
+    cloud.google.com/load-balancer-type: "External"
+    networking.gke.io/load-balancer-type: "External"
+spec:
+  type: LoadBalancer
+  loadBalancerSourceRanges:
+    # Restrict to specific IP ranges for security
+    # - "0.0.0.0/0"  # Allow all (not recommended for production)
+  selector:
+    app: hrms-backend
+    tier: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  sessionAffinity: ClientIP
+
+---
+# Backend NodePort Service (Optional - for development/testing)
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-backend-nodeport
+  namespace: hrms
+  labels:
+    app: hrms-backend
+    tier: backend
+spec:
+  type: NodePort
+  selector:
+    app: hrms-backend
+    tier: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+
+---
+# Backend Headless Service (for StatefulSet if needed)
+apiVersion: v1
+kind: Service
+metadata:
+  name: hrms-backend-headless
+  namespace: hrms
+  labels:
+    app: hrms-backend
+    tier: backend
+spec:
+  clusterIP: None
+  selector:
+    app: hrms-backend
+    tier: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+# GCP Backend Config for Backend
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: hrms-backend-backendconfig
+  namespace: hrms
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 10
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+    type: HTTP
+    requestPath: /actuator/health
+    port: 8080
+
+  connectionDraining:
+    drainingTimeoutSec: 60
+
+  timeoutSec: 300
+
+  sessionAffinity:
+    affinityType: "CLIENT_IP"
+    affinityCookieTtlSec: 3600
+
+  cdn:
+    enabled: false
+
+  iap:
+    enabled: false
+    # oauthclientCredentials:
+    #   secretName: oauth-client-secret
+
+  logging:
+    enable: true
+    sampleRate: 1.0
+
+---
+# GCP Backend Config for Frontend
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: hrms-frontend-backendconfig
+  namespace: hrms
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+    type: HTTP
+    requestPath: /
+    port: 3000
+
+  connectionDraining:
+    drainingTimeoutSec: 30
+
+  timeoutSec: 60
+
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
+    negativeCaching: true
+    negativeCachingPolicy:
+      - code: 404
+        ttl: 120
+      - code: 410
+        ttl: 120
+
+  logging:
+    enable: true
+    sampleRate: 0.5
+
+---
+# Service Monitor for Prometheus (if using Prometheus Operator)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hrms-backend-metrics
+  namespace: hrms
+  labels:
+    app: hrms-backend
+spec:
+  selector:
+    matchLabels:
+      app: hrms-backend
+  endpoints:
+    - port: actuator
+      path: /actuator/prometheus
+      interval: 30s
+      scrapeTimeout: 10s

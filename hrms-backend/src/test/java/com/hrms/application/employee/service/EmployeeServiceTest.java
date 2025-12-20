@@ -80,6 +80,7 @@ class EmployeeServiceTest {
                 .user(user)
                 .status(Employee.EmployeeStatus.ACTIVE)
                 .build();
+        employee.setId(employeeId);
         employee.setTenantId(tenantId);
     }
 

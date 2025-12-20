@@ -29,6 +29,7 @@ public class ReportRequest {
     // Leave specific
     private String leaveStatus; // PENDING, APPROVED, REJECTED
     private UUID leaveTypeId;
+    private String leaveType; // Leave type name for filtering
 
     // Payroll specific
     private UUID payrollRunId;
