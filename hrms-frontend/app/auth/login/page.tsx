@@ -566,9 +566,9 @@ function LoginPage() {
                       <div className="grid grid-cols-2 gap-2">
                         {[
                           { label: 'Admin', email: 'admin@demo.com' },
-                          { label: 'HR Manager', email: 'michael.chen@company.com' },
-                          { label: 'Manager', email: 'sarah.johnson@company.com' },
-                          { label: 'Employee', email: 'john.smith@company.com' },
+                          { label: 'HR Manager', email: 'jane.smith@demo.com' },
+                          { label: 'Manager', email: 'robert.johnson@demo.com' },
+                          { label: 'Employee', email: 'john.doe@demo.com' },
                         ].map((cred) => (
                           <button
                             key={cred.email}

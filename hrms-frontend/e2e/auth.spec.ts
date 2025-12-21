@@ -69,7 +69,7 @@ test.describe('Authentication Flow', () => {
     test('should validate email format', async ({ page }) => {
       // Enter invalid email format
       await loginPage.emailInput.fill('notanemail');
-      await loginPage.passwordInput.fill('password123');
+      await loginPage.passwordInput.fill('password');
 
       // Check HTML5 validation
       const emailValidity = await loginPage.emailInput.evaluate((el: HTMLInputElement) => el.validity.valid);

@@ -214,11 +214,13 @@ public class Employee extends TenantAware {
         HR_GENERALIST,
         RECRUITER,
         TALENT_ACQUISITION,
+        HUMAN_RESOURCES,  // Legacy value from seed data
 
         // Finance
         ACCOUNTANT,
         FINANCIAL_ANALYST,
         FINANCE_MANAGER,
+        FINANCE,  // Legacy value from seed data
 
         // Admin & Support
         ADMIN_ASSISTANT,

@@ -1,16 +1,18 @@
 # Development profile configuration
-# Uses shared Neon cloud database for team development
+# IMPORTANT: All sensitive values should be provided via environment variables
+# Never commit actual credentials to version control
 
 spring:
   datasource:
-    url: jdbc:postgresql://ep-little-darkness-ad7czn2x-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
-    username: neondb_owner
-    password: npg_xwHjDEtfb4o2
+    # Use environment variables for database credentials
+    url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms_dev}
+    username: ${DEV_DATABASE_USERNAME:hrms_user}
+    password: ${DEV_DATABASE_PASSWORD:hrms_pass}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${DEV_REDIS_HOST:localhost}
+      port: ${DEV_REDIS_PORT:6379}
 
   mail:
     host: smtp.gmail.com
@@ -26,19 +28,19 @@ spring:
 
 app:
   jwt:
-    # Development-only JWT secret - MUST be replaced in production
-    secret: dev-secret-key-for-local-development-only-change-in-production-256-bits
+    # IMPORTANT: Set JWT_SECRET environment variable in production
+    secret: ${JWT_SECRET:dev-only-secret-change-in-production-must-be-at-least-256-bits-long}
     expiration: 3600000
     refresh-expiration: 86400000
 
   minio:
-    endpoint: http://localhost:9000
-    access-key: minioadmin
-    secret-key: minioadmin
-    bucket: hrms-files
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:hrms-files}
 
   frontend:
-    url: http://localhost:3000
+    url: ${FRONTEND_URL:http://localhost:3000}
 
 logging:
   level:
