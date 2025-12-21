@@ -11,7 +11,7 @@ from playwright.async_api import async_playwright
 # Test configuration
 BASE_URL = "http://localhost:3000"
 TEST_EMAIL = "john.doe@demo.com"
-TEST_PASSWORD = "password123"
+TEST_PASSWORD = "password"
 SCREENSHOT_DIR = Path("/tmp/hrms_screenshots")
 
 async def take_screenshot(page, name: str) -> str:
