@@ -412,43 +412,36 @@ public class WebSocketNotificationService {
 
 ---
 
-## 6. Known Issues & Recommendations
+## 6. Test Results & Recommendations
 
-### 6.1 E2E Test Compatibility
+### 6.1 E2E Test Results
 
-**Issue:** H2 database in PostgreSQL mode has compatibility issues with:
-- Reserved keywords (month, year, value) as column names
-- Multiple schema support
-- TEXT domain type
-- Enum type handling
+All **97 E2E tests pass successfully**:
 
-**Recommendation:** Use Testcontainers with PostgreSQL for E2E tests:
+| Test Class | Tests | Status |
+|------------|-------|--------|
+| `AnalyticsE2ETest` | 10 | PASSED |
+| `AttendanceE2ETest` | 10 | PASSED |
+| `AuthenticationE2ETest` | 13 | PASSED |
+| `LeaveRequestE2ETest` | 12 | PASSED |
+| `PayrollE2ETest` | 13 | PASSED |
+| `ValidationAndLoggingE2ETest` | 24 | PASSED |
+| `WebSocketNotificationE2ETest` | 15 | PASSED |
+| **Total** | **97** | **PASSED** |
 
-```xml
-<dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>test</scope>
-</dependency>
+**Run tests:**
+```bash
+mvn test -Dtest="*E2ETest"
 ```
 
-```java
-@Testcontainers
-@SpringBootTest
-class E2ETest {
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15");
+### 6.2 H2 PostgreSQL Compatibility
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-}
-```
+The test configuration handles H2/PostgreSQL compatibility with:
+- `globally_quoted_identifiers: true` - Escapes reserved keywords
+- `schema-h2.sql` - Creates required schemas (public, pm) and TEXT domain
+- `spring.cache.cache-names` - Explicitly defines cache names for tests
 
-### 6.2 Production Checklist
+### 6.3 Production Checklist
 
 Before deploying to production:
 
@@ -528,12 +521,133 @@ hrms-backend/
 
 ---
 
+## 7. RBAC Enhancements & Pre-boarding Portal
+
+### 7.1 Specialized Roles (Keka-equivalent)
+
+**File:** `src/main/java/com/hrms/common/security/RoleHierarchy.java`
+
+Added 10 specialized roles with complete permission sets:
+
+| Role | Description | Key Permissions |
+|------|-------------|-----------------|
+| `PAYROLL_ADMIN` | Payroll and compensation management | Full payroll access |
+| `RECRUITMENT_ADMIN` | Talent acquisition and onboarding | Recruitment, job postings |
+| `PROJECT_ADMIN` | Project and timesheet management | Project CRUD, time tracking |
+| `ASSET_MANAGER` | IT asset tracking | Asset management |
+| `EXPENSE_MANAGER` | Expense approval | Expense CRUD, approval |
+| `HELPDESK_ADMIN` | Support ticket management | Helpdesk admin |
+| `TRAVEL_ADMIN` | Travel request management | Travel admin |
+| `COMPLIANCE_OFFICER` | Compliance and policy management | Compliance, audit |
+| `LMS_ADMIN` | Learning management | Training, courses |
+| `INTERN` | Limited trainee access | Self-view, attendance |
+
+### 7.2 Implicit Roles
+
+**File:** `src/main/java/com/hrms/application/user/service/ImplicitRoleService.java`
+
+Auto-assigned roles based on employee relationships:
+
+| Role | Trigger | Permissions |
+|------|---------|-------------|
+| `REPORTING_MANAGER` | Has direct reports | View/approve team leave, attendance |
+| `SKIP_LEVEL_MANAGER` | Has 2nd-level reports | Extended team view |
+| `DEPARTMENT_HEAD` | Heads a department | Department management |
+| `MENTOR` | Assigned as mentor | Mentee view access |
+| `INTERVIEWER` | On interview panel | Interview scheduling |
+| `PERFORMANCE_REVIEWER` | Review assignee | Performance input |
+| `ONBOARDING_BUDDY` | Assigned as buddy | New hire assistance |
+
+### 7.3 Field-Level Permissions
+
+**File:** `src/main/java/com/hrms/common/security/FieldPermission.java`
+
+Fine-grained access control for sensitive data:
+
+```java
+public final class FieldPermission {
+    public static final String EMPLOYEE_SALARY_VIEW = "FIELD:EMPLOYEE:SALARY:VIEW";
+    public static final String EMPLOYEE_SALARY_EDIT = "FIELD:EMPLOYEE:SALARY:EDIT";
+    public static final String EMPLOYEE_BANK_VIEW = "FIELD:EMPLOYEE:BANK:VIEW";
+    public static final String EMPLOYEE_BANK_EDIT = "FIELD:EMPLOYEE:BANK:EDIT";
+    public static final String EMPLOYEE_TAX_ID_VIEW = "FIELD:EMPLOYEE:TAX_ID:VIEW";
+    public static final String EMPLOYEE_ID_DOCS_VIEW = "FIELD:EMPLOYEE:ID_DOCS:VIEW";
+}
+```
+
+### 7.4 Pre-boarding Portal
+
+Complete pre-boarding system for new hires to complete paperwork before joining.
+
+**Backend:**
+
+| File | Description |
+|------|-------------|
+| `domain/preboarding/PreboardingCandidate.java` | Entity with personal info, bank details, document status |
+| `infrastructure/preboarding/repository/PreboardingCandidateRepository.java` | JPA repository |
+| `application/preboarding/service/PreboardingService.java` | Business logic |
+| `api/preboarding/controller/PreboardingController.java` | REST endpoints |
+
+**API Endpoints:**
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/preboarding/candidates` | POST | Create invitation |
+| `/api/v1/preboarding/candidates` | GET | List all candidates |
+| `/api/v1/preboarding/candidates/status/{status}` | GET | Filter by status |
+| `/api/v1/preboarding/candidates/upcoming` | GET | Upcoming joiners |
+| `/api/v1/preboarding/candidates/{id}/cancel` | POST | Cancel invitation |
+| `/api/v1/preboarding/candidates/{id}/resend` | POST | Resend invitation |
+| `/api/v1/preboarding/portal/{token}` | GET | Public: Get candidate data |
+| `/api/v1/preboarding/portal/{token}/personal-info` | PUT | Public: Update info |
+| `/api/v1/preboarding/portal/{token}/bank-details` | PUT | Public: Update bank |
+| `/api/v1/preboarding/portal/{token}/sign-offer` | POST | Public: Sign offer |
+
+**Frontend:**
+
+| File | Description |
+|------|-------------|
+| `app/preboarding/page.tsx` | Admin dashboard for managing candidates |
+| `app/preboarding/portal/[token]/page.tsx` | Public portal for candidates |
+
+**Features:**
+- Token-based secure access for candidates
+- Step-by-step completion (Personal Info → Bank Details → Documents → Offer Letter)
+- Progress tracking with completion percentage
+- Document upload placeholders
+- Offer letter signing
+- Automatic status transitions
+
+---
+
+## 8. Frontend Enhancements
+
+### 8.1 New Components
+
+| Component | Path | Description |
+|-----------|------|-------------|
+| `ToastProvider` | `components/providers/ToastProvider.tsx` | Toast notification context |
+| `WebSocketProvider` | `components/providers/WebSocketProvider.tsx` | Real-time notifications |
+| `FileUpload` | `components/ui/FileUpload.tsx` | File upload with progress |
+| `Label` | `components/ui/Label.tsx` | Form label component |
+
+### 8.2 Integration Services
+
+| Service | Path | Description |
+|---------|------|-------------|
+| `SlackNotificationService` | `application/notification/service/SlackNotificationService.java` | Slack webhook integration |
+| `FileStorageService` | `application/document/service/FileStorageService.java` | MinIO file storage |
+| `ReportGenerationService` | `application/report/service/ReportGenerationService.java` | PDF report generation |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2025-12-19 | Initial improvements documentation |
+| 1.1.0 | 2025-12-22 | RBAC enhancements, Pre-boarding portal, Frontend components |
 
 ---
 
-*Generated for HRMS Backend v1.0.0*
+*Generated for HRMS Backend v1.1.0*

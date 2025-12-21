@@ -1,0 +1,273 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hrms-backend
+  namespace: hrms
+  labels:
+    app: hrms
+    component: backend
+    version: v1
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hrms
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: hrms
+        component: backend
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
+      # Init container to wait for dependencies
+      initContainers:
+      - name: wait-for-db
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z ${DB_HOST} ${DB_PORT}; do echo waiting for database; sleep 2; done;']
+        env:
+        - name: DB_HOST
+          value: "REPLACE_DB_HOST"
+        - name: DB_PORT
+          value: "5432"
+
+      containers:
+      - name: backend
+        image: gcr.io/PROJECT_ID/hrms-backend:latest
+        imagePullPolicy: Always
+
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: actuator
+          containerPort: 8081
+          protocol: TCP
+
+        env:
+        # Spring Boot Configuration
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: SPRING_PROFILES_ACTIVE
+
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: SERVER_PORT
+
+        # Database Configuration
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: DATABASE_URL
+
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: DB_USERNAME
+
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: DB_PASSWORD
+
+        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: DB_DRIVER
+
+        # JPA Configuration
+        - name: SPRING_JPA_SHOW_SQL
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: JPA_SHOW_SQL
+
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: JPA_HIBERNATE_DDL_AUTO
+
+        # Redis Configuration
+        - name: SPRING_REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: REDIS_HOST
+
+        - name: SPRING_REDIS_PORT
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: REDIS_PORT
+
+        - name: SPRING_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: REDIS_PASSWORD
+
+        # JWT Configuration
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: JWT_SECRET
+
+        - name: JWT_EXPIRATION
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: JWT_EXPIRATION
+
+        # MinIO Configuration
+        - name: MINIO_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MINIO_ENDPOINT
+
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MINIO_ACCESS_KEY
+
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MINIO_SECRET_KEY
+
+        - name: MINIO_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MINIO_BUCKET
+
+        # Email Configuration
+        - name: SPRING_MAIL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MAIL_HOST
+
+        - name: SPRING_MAIL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MAIL_PORT
+
+        - name: SPRING_MAIL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MAIL_USERNAME
+
+        - name: SPRING_MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MAIL_PASSWORD
+
+        # Google OAuth
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: GOOGLE_CLIENT_ID
+
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: GOOGLE_CLIENT_SECRET
+
+        # Java Options
+        - name: JAVA_OPTS
+          value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
+
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /app/logs
+
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - backend
+              topologyKey: kubernetes.io/hostname
+
+      terminationGracePeriodSeconds: 30

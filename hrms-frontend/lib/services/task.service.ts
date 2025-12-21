@@ -74,6 +74,12 @@ export const taskService = {
     return response.data;
   },
 
+  // Get all tasks with pagination
+  async getAllTasks(page: number = 0, size: number = 50): Promise<TasksPageResponse> {
+    const response = await apiClient.get<TasksPageResponse>(`${BASE_URL}?page=${page}&size=${size}`);
+    return response.data;
+  },
+
   // Get subtasks of a parent task
   async getSubtasks(parentTaskId: string): Promise<Task[]> {
     const response = await apiClient.get<Task[]>(`${BASE_URL}/${parentTaskId}/subtasks`);

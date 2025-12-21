@@ -19,7 +19,8 @@ export type TaskType =
   | 'SUBTASK'
   | 'BUG'
   | 'FEATURE'
-  | 'IMPROVEMENT';
+  | 'IMPROVEMENT'
+  | 'MILESTONE';
 
 // Full Task Response
 export interface Task {

@@ -133,6 +133,15 @@ app:
     secret-key: ${MINIO_SECRET_KEY:}
     bucket: ${MINIO_BUCKET:hrms-files}
 
+  slack:
+    enabled: ${SLACK_ENABLED:false}
+    webhook-url: ${SLACK_WEBHOOK_URL:}
+    bot-token: ${SLACK_BOT_TOKEN:}
+    default-channel: ${SLACK_DEFAULT_CHANNEL:#hrms-notifications}
+
+  auth:
+    allowed-domain: ${AUTH_ALLOWED_DOMAIN:nulogic.io}
+
 # AI Configuration for recruitment features
 ai:
   openai:

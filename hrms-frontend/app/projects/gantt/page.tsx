@@ -51,13 +51,13 @@ export default function GanttChartPage() {
     setError(null);
     try {
       const [projectsRes, tasksRes] = await Promise.all([
-        projectService.getProjects({ page: 0, size: 100 }),
-        taskService.getTasks({ page: 0, size: 500 }),
+        projectService.getAllProjects(0, 100),
+        taskService.getAllTasks(0, 500),
       ]);
 
       const tasks = projectCalendarService.convertToGanttTasks(
         projectsRes.content,
-        tasksRes.content
+        tasksRes.content as any[]
       );
 
       // Apply filters
