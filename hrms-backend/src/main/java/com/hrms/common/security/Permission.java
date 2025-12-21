@@ -336,6 +336,11 @@ public final class Permission {
     public static final String LEAVE_BALANCE_VIEW_ALL = "LEAVE_BALANCE:VIEW_ALL";
     public static final String LEAVE_BALANCE_MANAGE = "LEAVE_BALANCE:MANAGE";
 
+    // Pre-boarding
+    public static final String PREBOARDING_VIEW = "PREBOARDING:VIEW";
+    public static final String PREBOARDING_CREATE = "PREBOARDING:CREATE";
+    public static final String PREBOARDING_MANAGE = "PREBOARDING:MANAGE";
+
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");
     }

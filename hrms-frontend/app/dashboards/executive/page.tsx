@@ -351,7 +351,7 @@ export default function ExecutiveDashboardPage() {
                       border: 'none',
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                     }}
-                    formatter={(value: number) => formatCurrency(value)}
+                    formatter={(value) => formatCurrency(value as number)}
                   />
                   <Area
                     type="monotone"
@@ -378,20 +378,20 @@ export default function ExecutiveDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsPieChart>
                   <Pie
-                    data={data.workforce.demographics.byDepartment}
+                    data={data.workforce.demographics.byDepartment as any[]}
                     dataKey="count"
                     nameKey="department"
                     cx="50%"
                     cy="50%"
                     outerRadius={100}
-                    label={({ department, percentage }) => `${department} (${percentage}%)`}
+                    label={({ name, percent }) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
                     labelLine={true}
                   >
                     {data.workforce.demographics.byDepartment.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => formatNumber(value)} />
+                  <Tooltip formatter={(value) => formatNumber(value as number)} />
                 </RechartsPieChart>
               </ResponsiveContainer>
             </CardContent>

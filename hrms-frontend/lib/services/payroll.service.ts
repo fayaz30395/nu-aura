@@ -196,6 +196,58 @@ class PayrollService {
   async deleteSalaryStructure(id: string): Promise<void> {
     await apiClient.delete(`/payroll/salary-structures/${id}`);
   }
+
+  // Bulk Processing
+  async bulkProcessPayroll(data: {
+    employeeIds: string[];
+    payrollPeriodStart: string;
+    payrollPeriodEnd: string;
+    paymentDate: string;
+    runName?: string;
+  }): Promise<{ payrollRunId: string; processedCount: number; failedCount: number }> {
+    const response = await apiClient.post<{ payrollRunId: string; processedCount: number; failedCount: number }>('/payroll/bulk-process', data);
+    return response.data;
+  }
+
+  async getBulkProcessingStatus(payrollRunId: string): Promise<{
+    status: string;
+    processedCount: number;
+    totalCount: number;
+    errors?: Array<{ employeeId: string; error: string }>;
+  }> {
+    const response = await apiClient.get<{
+      status: string;
+      processedCount: number;
+      totalCount: number;
+      errors?: Array<{ employeeId: string; error: string }>;
+    }>(`/payroll/bulk-process/${payrollRunId}/status`);
+    return response.data;
+  }
+
+  async previewBulkProcessing(data: {
+    employeeIds: string[];
+    payrollPeriodStart: string;
+    payrollPeriodEnd: string;
+  }): Promise<Array<{
+    employeeId: string;
+    employeeName: string;
+    baseSalary: number;
+    totalAllowances: number;
+    totalDeductions: number;
+    grossAmount: number;
+    netAmount: number;
+  }>> {
+    const response = await apiClient.post<Array<{
+      employeeId: string;
+      employeeName: string;
+      baseSalary: number;
+      totalAllowances: number;
+      totalDeductions: number;
+      grossAmount: number;
+      netAmount: number;
+    }>>('/payroll/bulk-process/preview', data);
+    return response.data;
+  }
 }
 
 export const payrollService = new PayrollService();

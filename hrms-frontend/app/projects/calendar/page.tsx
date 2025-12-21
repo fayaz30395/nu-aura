@@ -54,7 +54,7 @@ const STATUS_COLORS = {
   DONE: '#059669',
 };
 
-const PRIORITY_COLORS = {
+const PRIORITY_COLORS: Record<string, string> = {
   LOW: '#22c55e',
   MEDIUM: '#fb923c',
   HIGH: '#ef4444',
