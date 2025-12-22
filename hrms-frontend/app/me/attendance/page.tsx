@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord, AttendanceStatus, TimeEntry } from '@/lib/types/attendance';
+import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 
 export default function MyAttendancePage() {
   const router = useRouter();
@@ -56,19 +57,19 @@ export default function MyAttendancePage() {
       setIsLoading(true);
       setError(null);
 
-      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      // Use utility functions for consistent timezone handling
+      const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
+      const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
 
       const data = await attendanceService.getAttendanceByDateRange(
         user!.employeeId!,
-        startOfMonth.toISOString().split('T')[0],
-        endOfMonth.toISOString().split('T')[0]
+        startOfMonth,
+        endOfMonth
       );
       setAttendance(data);
 
       // Use local date format (YYYY-MM-DD) to match backend's LocalDate
-      const now = new Date();
-      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      const today = getLocalDateString();
       const todayRecord = data.find((a) => {
         const recordDate = a.attendanceDate?.includes('T')
           ? a.attendanceDate.split('T')[0]
@@ -78,7 +79,7 @@ export default function MyAttendancePage() {
       setTodayAttendance(todayRecord || null);
 
       // Load today's time entries and set today as selected
-      setSelectedDate(now);
+      setSelectedDate(new Date());
       await loadTimeEntries(today, true);
     } catch (err: any) {
       console.error('Failed to load attendance:', err);
@@ -110,7 +111,7 @@ export default function MyAttendancePage() {
 
   const handleDateSelect = async (day: Date) => {
     setSelectedDate(day);
-    const dateStr = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+    const dateStr = getLocalDateString(day);
     await loadTimeEntries(dateStr, false);
   };
 
@@ -119,13 +120,13 @@ export default function MyAttendancePage() {
       setIsCheckingIn(true);
       setError(null);
 
-      // Get local date in YYYY-MM-DD format to handle timezone differences
-      const now = new Date();
-      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      // Use utility functions for consistent timezone handling
+      const localDate = getLocalDateString();
+      const localTime = getLocalDateTimeString();
 
       await attendanceService.checkIn({
         employeeId: user!.employeeId!,
-        checkInTime: now.toISOString(),
+        checkInTime: localTime,
         attendanceDate: localDate,
       });
 
@@ -143,13 +144,13 @@ export default function MyAttendancePage() {
       setIsCheckingIn(true);
       setError(null);
 
-      // Get local date in YYYY-MM-DD format to handle timezone differences
-      const now = new Date();
-      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      // Use utility functions for consistent timezone handling
+      const localDate = getLocalDateString();
+      const localTime = getLocalDateTimeString();
 
       await attendanceService.checkOut({
         employeeId: user!.employeeId!,
-        checkOutTime: now.toISOString(),
+        checkOutTime: localTime,
         attendanceDate: localDate,
       });
 

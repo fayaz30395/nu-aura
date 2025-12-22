@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
+import { getMonthStartString, getMonthEndString } from '@/lib/utils/dateUtils';
 
 type ViewMode = 'calendar' | 'list';
 
@@ -37,8 +38,9 @@ export default function MyAttendancePage() {
     try {
       setLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-      const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+      // Use utility functions for consistent timezone handling
+      const startDate = getMonthStartString(year, month);
+      const endDate = getMonthEndString(year, month);
 
       const response = await attendanceService.getAttendanceByDateRange(
         user.employeeId,

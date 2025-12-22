@@ -45,6 +45,7 @@ import { attendanceService } from '@/lib/services/attendance.service';
 import { DashboardAnalytics } from '@/lib/types/analytics';
 import { AttendanceRecord, TimeEntry } from '@/lib/types/attendance';
 import { onboardingService } from '@/lib/services/onboarding.service';
+import { getLocalDateString, getLocalDateTimeString, getDateOffsetString } from '@/lib/utils/dateUtils';
 
 interface GoogleNotification {
   id: string;
@@ -289,7 +290,8 @@ export default function DashboardPage() {
   const loadTodayAttendance = async () => {
     if (!user?.employeeId) return;
     try {
-      const today = new Date().toISOString().split('T')[0];
+      // Use utility function for consistent local timezone handling
+      const today = getLocalDateString();
       const [attendanceData, entriesData] = await Promise.all([
         attendanceService.getAttendanceByDateRange(user.employeeId, today, today),
         attendanceService.getMyTimeEntries(user.employeeId, today).catch(() => [] as TimeEntry[]),
@@ -316,12 +318,12 @@ export default function DashboardPage() {
     try {
       setIsClockingIn(true);
       setClockError(null);
-      // Get local date in YYYY-MM-DD format to handle timezone differences
-      const now = new Date();
-      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      // Use utility functions for consistent timezone handling
+      const localDate = getLocalDateString();
+      const localTime = getLocalDateTimeString();
       await attendanceService.checkIn({
         employeeId: user.employeeId,
-        checkInTime: now.toISOString(),
+        checkInTime: localTime,
         attendanceDate: localDate,
       });
       // Reload attendance and time entries to get fresh data
@@ -338,12 +340,12 @@ export default function DashboardPage() {
     try {
       setIsClockingIn(true);
       setClockError(null);
-      // Get local date in YYYY-MM-DD format to handle timezone differences
-      const now = new Date();
-      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      // Use utility functions for consistent timezone handling
+      const localDate = getLocalDateString();
+      const localTime = getLocalDateTimeString();
       await attendanceService.checkOut({
         employeeId: user.employeeId,
-        checkOutTime: now.toISOString(),
+        checkOutTime: localTime,
         attendanceDate: localDate,
       });
       // Reload attendance and time entries to get fresh data

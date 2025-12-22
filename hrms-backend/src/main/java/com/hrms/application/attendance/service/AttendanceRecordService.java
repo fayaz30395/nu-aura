@@ -187,14 +187,21 @@ public class AttendanceRecordService {
 
     /**
      * Validate that the checkout time is reasonable relative to the check-in time.
+     * For multi check-in/out scenarios, validates against the latest open time entry's check-in time.
      */
     private void validateCheckoutTime(AttendanceRecord record, LocalDateTime checkOutTime) {
-        if (record.getCheckInTime() != null && checkOutTime.isBefore(record.getCheckInTime())) {
+        // For multi check-in/out support, validate against the latest open time entry's check-in
+        Optional<AttendanceTimeEntry> openEntry = timeEntryRepository.findOpenEntryByAttendanceRecordId(record.getId());
+        LocalDateTime relevantCheckInTime = openEntry
+            .map(AttendanceTimeEntry::getCheckInTime)
+            .orElse(record.getCheckInTime());
+
+        if (relevantCheckInTime != null && checkOutTime.isBefore(relevantCheckInTime)) {
             throw new IllegalArgumentException("Check-out time cannot be before check-in time");
         }
 
-        if (record.getCheckInTime() != null) {
-            long hoursWorked = java.time.Duration.between(record.getCheckInTime(), checkOutTime).toHours();
+        if (relevantCheckInTime != null) {
+            long hoursWorked = java.time.Duration.between(relevantCheckInTime, checkOutTime).toHours();
             if (hoursWorked > MAX_OVERNIGHT_SHIFT_HOURS) {
                 log.warn("Unusually long shift detected for record {}: {} hours", record.getId(), hoursWorked);
             }
