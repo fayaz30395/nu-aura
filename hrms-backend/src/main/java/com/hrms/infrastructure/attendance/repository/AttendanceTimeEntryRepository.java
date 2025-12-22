@@ -18,6 +18,9 @@ public interface AttendanceTimeEntryRepository extends JpaRepository<AttendanceT
     @Query("SELECT e FROM AttendanceTimeEntry e WHERE e.attendanceRecordId = :recordId AND e.checkOutTime IS NULL ORDER BY e.sequenceNumber DESC LIMIT 1")
     Optional<AttendanceTimeEntry> findOpenEntryByAttendanceRecordId(@Param("recordId") UUID attendanceRecordId);
 
+    @Query("SELECT e FROM AttendanceTimeEntry e WHERE e.attendanceRecordId = :recordId AND e.checkOutTime IS NULL")
+    List<AttendanceTimeEntry> findAllOpenEntriesByAttendanceRecordId(@Param("recordId") UUID attendanceRecordId);
+
     @Query("SELECT COALESCE(MAX(e.sequenceNumber), 0) FROM AttendanceTimeEntry e WHERE e.attendanceRecordId = :recordId")
     int getMaxSequenceNumber(@Param("recordId") UUID attendanceRecordId);
 

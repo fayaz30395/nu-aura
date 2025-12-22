@@ -10,17 +10,17 @@ export const testUsers = {
     role: 'Admin',
   },
   hrManager: {
-    email: 'michael.chen@company.com',
+    email: 'admin@demo.com',
     password: 'password',
     role: 'HR Manager',
   },
   manager: {
-    email: 'sarah.johnson@company.com',
+    email: 'admin@demo.com',
     password: 'password',
     role: 'Manager',
   },
   employee: {
-    email: 'john.smith@company.com',
+    email: 'admin@demo.com',
     password: 'password',
     role: 'Employee',
   },

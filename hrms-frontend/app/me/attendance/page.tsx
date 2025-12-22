@@ -119,9 +119,14 @@ export default function MyAttendancePage() {
       setIsCheckingIn(true);
       setError(null);
 
+      // Get local date in YYYY-MM-DD format to handle timezone differences
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
       await attendanceService.checkIn({
         employeeId: user!.employeeId!,
-        checkInTime: new Date().toISOString(),
+        checkInTime: now.toISOString(),
+        attendanceDate: localDate,
       });
 
       await loadAttendance();
@@ -138,9 +143,14 @@ export default function MyAttendancePage() {
       setIsCheckingIn(true);
       setError(null);
 
+      // Get local date in YYYY-MM-DD format to handle timezone differences
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
       await attendanceService.checkOut({
         employeeId: user!.employeeId!,
-        checkOutTime: new Date().toISOString(),
+        checkOutTime: now.toISOString(),
+        attendanceDate: localDate,
       });
 
       await loadAttendance();

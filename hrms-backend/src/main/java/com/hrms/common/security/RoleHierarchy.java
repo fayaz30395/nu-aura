@@ -105,7 +105,11 @@ public final class RoleHierarchy {
             Permission.SETTINGS_UPDATE,
             Permission.PLATFORM_MANAGE,
             Permission.MIGRATION_IMPORT,
-            Permission.MIGRATION_EXPORT
+            Permission.MIGRATION_EXPORT,
+            // Self-service permissions for dashboard access
+            Permission.EMPLOYEE_VIEW_SELF,
+            Permission.DASHBOARD_VIEW,
+            Permission.ANALYTICS_VIEW
         ));
     }
 

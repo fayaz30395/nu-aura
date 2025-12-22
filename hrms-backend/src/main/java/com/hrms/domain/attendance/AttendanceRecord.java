@@ -167,6 +167,11 @@ public class AttendanceRecord extends TenantAware {
         this.checkInSource = source;
         this.checkInLocation = location;
         this.checkInIp = ip;
+        // Clear checkout fields when re-checking in (for multi check-in/out support)
+        this.checkOutTime = null;
+        this.checkOutSource = null;
+        this.checkOutLocation = null;
+        this.checkOutIp = null;
         this.status = AttendanceStatus.PRESENT;
     }
 

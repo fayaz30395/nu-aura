@@ -90,8 +90,8 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, UUID
             @Param("status") LeaveRequest.LeaveRequestStatus status,
             @Param("employeeIds") List<UUID> employeeIds);
 
-    // Count approved leave days for employee in date range (uses native SQL for DATEDIFF)
-    @Query(value = "SELECT COALESCE(SUM(DATEDIFF(end_date, start_date) + 1), 0) FROM leave_requests " +
+    // Count approved leave days for employee in date range (PostgreSQL date subtraction)
+    @Query(value = "SELECT COALESCE(SUM((end_date - start_date) + 1), 0) FROM leave_requests " +
            "WHERE tenant_id = :tenantId AND employee_id = :employeeId " +
            "AND status = 'APPROVED' AND start_date <= :endDate AND end_date >= :startDate", nativeQuery = true)
     Long countApprovedLeaveDaysByEmployeeIdAndDateBetween(

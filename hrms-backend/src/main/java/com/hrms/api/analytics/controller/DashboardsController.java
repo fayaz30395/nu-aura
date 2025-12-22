@@ -118,7 +118,7 @@ public class DashboardsController {
      * For employees, provides personal analytics and self-service insights
      */
     @GetMapping("/employee")
-    @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
+    @RequiresPermission({Permission.EMPLOYEE_VIEW_SELF, Permission.SYSTEM_ADMIN})
     @Operation(summary = "Get employee dashboard",
                description = "Returns personal analytics including attendance, leave, payroll, performance, and career progress")
     public ResponseEntity<EmployeeDashboardResponse> getEmployeeDashboard() {

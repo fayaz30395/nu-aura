@@ -45,11 +45,30 @@ public class AttendanceRecordService {
      * @throws IllegalArgumentException if employeeId is null
      */
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location, String ip) {
+        return checkIn(employeeId, checkInTime, source, location, ip, null);
+    }
+
+    /**
+     * Check in an employee at the specified time with explicit attendance date.
+     * Creates a new attendance record if one doesn't exist for the check-in date.
+     *
+     * @param employeeId The employee's UUID
+     * @param checkInTime The check-in time (uses current time if null)
+     * @param source The source of check-in (WEB, MOBILE, BIOMETRIC, etc.)
+     * @param location The location of check-in
+     * @param ip The IP address of the request
+     * @param attendanceDate The client's local date for attendance (uses checkInTime date if null)
+     * @return The updated or created AttendanceRecord
+     * @throws IllegalStateException if tenant context is not set
+     * @throws IllegalArgumentException if employeeId is null
+     */
+    public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location, String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
         LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : LocalDateTime.now();
-        LocalDate checkInDate = actualCheckInTime.toLocalDate();
+        // Use provided attendanceDate if available, otherwise extract from checkInTime
+        LocalDate checkInDate = attendanceDate != null ? attendanceDate : actualCheckInTime.toLocalDate();
 
         log.debug("Processing check-in for employee {} on date {} at {}", employeeId, checkInDate, actualCheckInTime);
 
@@ -90,11 +109,30 @@ public class AttendanceRecordService {
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location, String ip) {
+        return checkOut(employeeId, checkOutTime, source, location, ip, null);
+    }
+
+    /**
+     * Check out an employee at the specified time with explicit attendance date.
+     * Supports overnight shifts by looking back up to MAX_LOOKBACK_DAYS days for an open check-in.
+     *
+     * @param employeeId The employee's UUID
+     * @param checkOutTime The check-out time (uses current time if null)
+     * @param source The source of check-out (WEB, MOBILE, BIOMETRIC, etc.)
+     * @param location The location of check-out
+     * @param ip The IP address of the request
+     * @param attendanceDate The client's local date for attendance (uses checkOutTime date if null)
+     * @return The updated AttendanceRecord
+     * @throws IllegalStateException if tenant context is not set
+     * @throws IllegalArgumentException if employeeId is null or no check-in found
+     */
+    public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location, String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
         UUID tenantId = validateAndGetTenantId();
 
         LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : LocalDateTime.now();
-        LocalDate checkOutDate = actualCheckOutTime.toLocalDate();
+        // Use provided attendanceDate if available, otherwise extract from checkOutTime
+        LocalDate checkOutDate = attendanceDate != null ? attendanceDate : actualCheckOutTime.toLocalDate();
 
         log.debug("Processing check-out for employee {} on date {} at {}", employeeId, checkOutDate, actualCheckOutTime);
 
@@ -119,6 +157,7 @@ public class AttendanceRecordService {
 
     /**
      * Find an open attendance record for the employee, looking back up to MAX_LOOKBACK_DAYS.
+     * Also checks for open time entries (for multi check-in/out support).
      */
     private AttendanceRecord findOpenAttendanceRecord(UUID employeeId, LocalDate checkOutDate, UUID tenantId) {
         for (int i = 0; i <= MAX_LOOKBACK_DAYS; i++) {
@@ -128,9 +167,15 @@ public class AttendanceRecordService {
 
             if (recordOpt.isPresent()) {
                 AttendanceRecord record = recordOpt.get();
-                // Check if this record has an open check-in (no check-out yet)
+                // Check if this record has an open check-in (no check-out yet on main record)
                 if (record.getCheckOutTime() == null) {
                     log.debug("Found open attendance record for employee {} on date {}", employeeId, searchDate);
+                    return record;
+                }
+                // Also check for open time entries (multi check-in/out support)
+                Optional<AttendanceTimeEntry> openEntry = timeEntryRepository.findOpenEntryByAttendanceRecordId(record.getId());
+                if (openEntry.isPresent()) {
+                    log.debug("Found open time entry for employee {} on date {}", employeeId, searchDate);
                     return record;
                 }
             }
@@ -351,11 +396,15 @@ public class AttendanceRecordService {
 
     private void closeOpenTimeEntry(UUID attendanceRecordId, LocalDateTime checkOutTime,
             String source, String location, String ip) {
-        timeEntryRepository.findOpenEntryByAttendanceRecordId(attendanceRecordId)
-            .ifPresent(entry -> {
-                entry.checkOut(checkOutTime, source, location, ip);
-                timeEntryRepository.save(entry);
-            });
+        // Close ALL open time entries (handles cases where multiple entries were created)
+        List<AttendanceTimeEntry> openEntries = timeEntryRepository.findAllOpenEntriesByAttendanceRecordId(attendanceRecordId);
+        for (AttendanceTimeEntry entry : openEntries) {
+            entry.checkOut(checkOutTime, source, location, ip);
+            timeEntryRepository.save(entry);
+        }
+        if (!openEntries.isEmpty()) {
+            log.debug("Closed {} open time entries for record {}", openEntries.size(), attendanceRecordId);
+        }
     }
 
     private void updateRecordDurations(AttendanceRecord record) {

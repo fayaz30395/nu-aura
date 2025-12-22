@@ -131,6 +131,7 @@ export interface CheckInRequest {
   source?: string;
   location?: string;
   ip?: string;
+  attendanceDate?: string; // Client's local date (YYYY-MM-DD) to handle timezone differences
 }
 
 export interface CheckOutRequest {
@@ -139,6 +140,7 @@ export interface CheckOutRequest {
   source?: string;
   location?: string;
   ip?: string;
+  attendanceDate?: string; // Client's local date (YYYY-MM-DD) to handle timezone differences
 }
 
 export interface RegularizationRequest {
