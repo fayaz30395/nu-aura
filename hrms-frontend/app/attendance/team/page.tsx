@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
+import { getLocalDateString } from '@/lib/utils/dateUtils';
 
 interface EmployeeAttendanceSummary {
   employeeId: string;
@@ -22,7 +23,7 @@ export default function TeamAttendancePage() {
   const router = useRouter();
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [viewMode, setViewMode] = useState<'daily' | 'summary'>('daily');
 
   useEffect(() => {

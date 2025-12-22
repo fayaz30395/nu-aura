@@ -315,3 +315,221 @@ test.describe('Attendance - Edge Cases', () => {
     expect(hasCheckOutAfter).toBe(false);
   });
 });
+
+test.describe('Attendance - Multiple Check-In/Check-Out Cycles', () => {
+  let loginPage: LoginPage;
+  let attendancePage: AttendancePage;
+
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    attendancePage = new AttendancePage(page);
+
+    await loginPage.navigate();
+    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
+    await page.waitForURL('**/dashboard');
+    await attendancePage.navigate();
+  });
+
+  test('should allow check-in again after check-out (break scenario)', async ({ page }) => {
+    // Ensure we start from a clean state
+    const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
+    if (hasCheckOut) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+    }
+
+    // First check-in
+    const hasCheckIn1 = await attendancePage.isCheckInButtonVisible();
+    if (hasCheckIn1) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+
+      // Verify checked in
+      expect(await attendancePage.isCheckOutButtonVisible()).toBe(true);
+    }
+
+    // First check-out (lunch break)
+    const hasCheckOut1 = await attendancePage.isCheckOutButtonVisible();
+    if (hasCheckOut1) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+
+      // Verify checked out
+      expect(await attendancePage.isCheckInButtonVisible()).toBe(true);
+    }
+
+    // Second check-in (back from lunch)
+    const hasCheckIn2 = await attendancePage.isCheckInButtonVisible();
+    if (hasCheckIn2) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+
+      // Verify checked in again
+      const isCheckedIn = await attendancePage.isCheckedIn();
+      expect(isCheckedIn).toBe(true);
+    }
+  });
+
+  test('should maintain state after page refresh', async ({ page }) => {
+    // Ensure checked in
+    const hasCheckIn = await attendancePage.isCheckInButtonVisible();
+    if (hasCheckIn) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+    }
+
+    // Verify checked in
+    expect(await attendancePage.isCheckOutButtonVisible()).toBe(true);
+
+    // Refresh page
+    await page.reload();
+    await page.waitForTimeout(2000);
+
+    // Verify still checked in
+    const stillCheckedIn = await attendancePage.isCheckOutButtonVisible();
+    expect(stillCheckedIn).toBe(true);
+  });
+
+  test('should handle rapid check-in/check-out cycles', async ({ page }) => {
+    // Ensure checked out first
+    const hasCheckOut = await attendancePage.isCheckOutButtonVisible();
+    if (hasCheckOut) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+    }
+
+    // Perform 2 complete cycles
+    for (let i = 0; i < 2; i++) {
+      if (await attendancePage.isCheckInButtonVisible()) {
+        await attendancePage.checkIn();
+        await page.waitForTimeout(1500);
+      }
+
+      if (await attendancePage.isCheckOutButtonVisible()) {
+        await attendancePage.checkOut();
+        await page.waitForTimeout(1500);
+      }
+    }
+
+    // Should end in checked-out state
+    const isCheckedOut = await attendancePage.isCheckedOut();
+    expect(isCheckedOut).toBe(true);
+  });
+});
+
+test.describe('Attendance - Time Entry Tracking', () => {
+  let loginPage: LoginPage;
+  let attendancePage: AttendancePage;
+
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    attendancePage = new AttendancePage(page);
+
+    await loginPage.navigate();
+    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
+    await page.waitForURL('**/dashboard');
+    await attendancePage.navigate();
+  });
+
+  test('should create time entry on check-in', async ({ page }) => {
+    // Ensure checked out first
+    if (await attendancePage.isCheckOutButtonVisible()) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+    }
+
+    // Perform check-in
+    if (await attendancePage.isCheckInButtonVisible()) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+
+      // Verify check-in was successful
+      const isCheckedIn = await attendancePage.isCheckedIn();
+      expect(isCheckedIn).toBe(true);
+    }
+  });
+
+  test('should close time entry on check-out', async ({ page }) => {
+    // Ensure checked in first
+    if (await attendancePage.isCheckInButtonVisible()) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+    }
+
+    // Perform check-out
+    if (await attendancePage.isCheckOutButtonVisible()) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+
+      // Verify check-out was successful
+      const isCheckedOut = await attendancePage.isCheckedOut();
+      expect(isCheckedOut).toBe(true);
+    }
+  });
+});
+
+test.describe('Attendance - Cross-Page Consistency', () => {
+  let loginPage: LoginPage;
+  let attendancePage: AttendancePage;
+
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    attendancePage = new AttendancePage(page);
+
+    await loginPage.navigate();
+    await loginPage.login(testUsers.employee.email, testUsers.employee.password);
+    await page.waitForURL('**/dashboard');
+  });
+
+  test('check-in on attendance page should reflect on dashboard', async ({ page }) => {
+    // Navigate to attendance page
+    await attendancePage.navigate();
+
+    // Ensure checked out first
+    if (await attendancePage.isCheckOutButtonVisible()) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+    }
+
+    // Check-in on attendance page
+    if (await attendancePage.isCheckInButtonVisible()) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+    }
+
+    // Navigate to dashboard
+    await page.goto('/dashboard');
+    await page.waitForTimeout(2000);
+
+    // Verify check-out button is visible on dashboard (meaning checked in)
+    const checkOutButton = page.locator('button:has-text("Check Out")');
+    const isVisible = await checkOutButton.isVisible();
+    expect(isVisible).toBe(true);
+  });
+
+  test('check-out on attendance page should reflect on dashboard', async ({ page }) => {
+    // Navigate to attendance page
+    await attendancePage.navigate();
+
+    // Ensure checked in first
+    if (await attendancePage.isCheckInButtonVisible()) {
+      await attendancePage.checkIn();
+      await page.waitForTimeout(1500);
+    }
+
+    // Check-out on attendance page
+    if (await attendancePage.isCheckOutButtonVisible()) {
+      await attendancePage.checkOut();
+      await page.waitForTimeout(1500);
+    }
+
+    // Navigate to dashboard
+    await page.goto('/dashboard');
+    await page.waitForTimeout(2000);
+
+    // Verify check-in button is visible on dashboard (meaning checked out)
+    const checkInButton = page.locator('button:has-text("Check In")');
+    const isVisible = await checkInButton.isVisible();
+    expect(isVisible).toBe(true);
+  });
+});

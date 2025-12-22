@@ -38,6 +38,7 @@ import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
+import { getLocalDateString, getDateOffsetString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 
 export default function AttendancePage() {
   const router = useRouter();
@@ -68,13 +69,9 @@ export default function AttendancePage() {
       setDataLoading(true);
       if (!user?.employeeId) return;
 
-      const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
-
-      // Calculate date range for the last 7 days
-      const lastWeek = new Date(today);
-      lastWeek.setDate(today.getDate() - 6);
-      const lastWeekStr = lastWeek.toISOString().split('T')[0];
+      // Use local date to avoid timezone issues (e.g., 4 AM local = previous day UTC)
+      const todayStr = getLocalDateString();
+      const lastWeekStr = getDateOffsetString(-6);
 
       const [todayData, weeklyData] = await Promise.all([
         attendanceService.getAttendanceByDateRange(user.employeeId, todayStr, todayStr),
@@ -124,14 +121,8 @@ export default function AttendancePage() {
         console.log('IP fetch failed');
       }
 
-      const now = new Date();
-      // Format to LocalDateTime string as expected by backend
-      const localTimeString = now.getFullYear() + '-' +
-        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-        String(now.getDate()).padStart(2, '0') + 'T' +
-        String(now.getHours()).padStart(2, '0') + ':' +
-        String(now.getMinutes()).padStart(2, '0') + ':' +
-        String(now.getSeconds()).padStart(2, '0');
+      // Use local date-time string to ensure correct timezone handling
+      const localTimeString = getLocalDateTimeString();
 
       await attendanceService.checkIn({
         employeeId: user.employeeId,
