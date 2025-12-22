@@ -316,8 +316,14 @@ export default function DashboardPage() {
     try {
       setIsClockingIn(true);
       setClockError(null);
-      // Let the server use its local time to avoid timezone issues
-      await attendanceService.checkIn({ employeeId: user.employeeId });
+      // Get local date in YYYY-MM-DD format to handle timezone differences
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      await attendanceService.checkIn({
+        employeeId: user.employeeId,
+        checkInTime: now.toISOString(),
+        attendanceDate: localDate,
+      });
       // Reload attendance and time entries to get fresh data
       await loadTodayAttendance();
     } catch (err: any) {
@@ -332,8 +338,14 @@ export default function DashboardPage() {
     try {
       setIsClockingIn(true);
       setClockError(null);
-      // Let the server use its local time to avoid timezone issues
-      await attendanceService.checkOut({ employeeId: user.employeeId });
+      // Get local date in YYYY-MM-DD format to handle timezone differences
+      const now = new Date();
+      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      await attendanceService.checkOut({
+        employeeId: user.employeeId,
+        checkOutTime: now.toISOString(),
+        attendanceDate: localDate,
+      });
       // Reload attendance and time entries to get fresh data
       await loadTodayAttendance();
     } catch (err: any) {
