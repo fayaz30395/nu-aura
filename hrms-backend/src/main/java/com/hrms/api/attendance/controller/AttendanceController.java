@@ -44,7 +44,8 @@ public class AttendanceController {
             checkInTime,
             request.getSource(),
             request.getLocation(),
-            request.getIp()
+            request.getIp(),
+            request.getAttendanceDate()  // Pass client's local date to handle timezone differences
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(record));
     }
@@ -58,7 +59,8 @@ public class AttendanceController {
             checkOutTime,
             request.getSource(),
             request.getLocation(),
-            request.getIp()
+            request.getIp(),
+            request.getAttendanceDate()  // Pass client's local date to handle timezone differences
         );
         return ResponseEntity.ok(toResponse(record));
     }

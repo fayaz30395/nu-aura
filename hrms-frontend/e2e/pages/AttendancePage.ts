@@ -86,7 +86,7 @@ export class AttendancePage extends BasePage {
    * Navigate to attendance page
    */
   async navigate() {
-    await this.goto('/attendance');
+    await this.goto('/me/attendance');
     await this.waitForPageLoad();
   }
 
@@ -94,7 +94,7 @@ export class AttendancePage extends BasePage {
    * Navigate to my attendance page
    */
   async navigateToMyAttendance() {
-    await this.goto('/attendance/my-attendance');
+    await this.goto('/me/attendance');
     await this.waitForPageLoad();
   }
 
@@ -154,19 +154,21 @@ export class AttendancePage extends BasePage {
   }
 
   /**
-   * Check if checked in
+   * Check if checked in (check-out button is visible)
    */
   async isCheckedIn(): Promise<boolean> {
-    const status = await this.getCurrentStatus();
-    return status.toLowerCase().includes('checked in');
+    // If check-out button is visible, user is checked in
+    return await this.checkOutButton.isVisible();
   }
 
   /**
-   * Check if checked out
+   * Check if checked out (check-in button is visible, no open sessions)
    */
   async isCheckedOut(): Promise<boolean> {
-    const status = await this.getCurrentStatus();
-    return status.toLowerCase().includes('checked out');
+    // If check-in button is visible and check-out is not, user is checked out
+    const checkInVisible = await this.checkInButton.isVisible();
+    const checkOutVisible = await this.checkOutButton.isVisible();
+    return checkInVisible && !checkOutVisible;
   }
 
   /**
