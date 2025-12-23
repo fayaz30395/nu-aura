@@ -5,3 +5,8 @@ node_modules/
 .env.local
 
 .vercel
+
+# Playwright
+playwright/.auth/
+playwright-report/
+test-results/
