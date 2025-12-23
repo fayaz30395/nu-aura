@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   GraduationCap,
   Plus,
   Search,
-  Filter,
   Calendar,
   Clock,
   Users,
@@ -20,6 +19,11 @@ import {
   AlertCircle,
   PlayCircle,
   FileText,
+  Award,
+  BookOpen,
+  Loader2,
+  Download,
+  Play,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -35,6 +39,7 @@ import {
   Badge,
   Textarea,
 } from '@/components/ui';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { trainingService } from '@/lib/services/training.service';
 import type {
   TrainingProgram,
@@ -48,6 +53,8 @@ import {
   ProgramStatus,
   EnrollmentStatus,
 } from '@/lib/types/training';
+
+type TabType = 'my-trainings' | 'catalog' | 'manage';
 
 const categoryOptions = [
   { value: TrainingCategory.TECHNICAL, label: 'Technical' },
@@ -77,17 +84,23 @@ const statusOptions = [
   { value: ProgramStatus.CANCELLED, label: 'Cancelled' },
 ];
 
-const getStatusColor = (status: ProgramStatus) => {
+const getStatusColor = (status: ProgramStatus | EnrollmentStatus) => {
   switch (status) {
     case ProgramStatus.DRAFT:
+    case EnrollmentStatus.ENROLLED:
       return 'default';
     case ProgramStatus.SCHEDULED:
       return 'info';
     case ProgramStatus.IN_PROGRESS:
+    case EnrollmentStatus.IN_PROGRESS:
       return 'warning';
     case ProgramStatus.COMPLETED:
+    case EnrollmentStatus.COMPLETED:
       return 'success';
     case ProgramStatus.CANCELLED:
+    case EnrollmentStatus.CANCELLED:
+    case EnrollmentStatus.DROPPED:
+    case EnrollmentStatus.FAILED:
       return 'danger';
     default:
       return 'default';
@@ -129,11 +142,16 @@ const getCategoryColor = (category: TrainingCategory) => {
 };
 
 export default function TrainingPage() {
+  const { user, hasHydrated } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabType>('my-trainings');
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
+  const [myEnrollments, setMyEnrollments] = useState<TrainingEnrollment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -142,6 +160,7 @@ export default function TrainingPage() {
   const [editingProgram, setEditingProgram] = useState<TrainingProgram | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
   const [enrollments, setEnrollments] = useState<TrainingEnrollment[]>([]);
+  const [enrolling, setEnrolling] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<Partial<TrainingProgramRequest>>({
@@ -171,22 +190,44 @@ export default function TrainingPage() {
     enrollmentDate: new Date().toISOString().split('T')[0],
   });
 
-  useEffect(() => {
-    fetchPrograms();
-  }, []);
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    if (type === 'success') {
+      setSuccess(message);
+      setError(null);
+    } else {
+      setError(message);
+      setSuccess(null);
+    }
+    setTimeout(() => {
+      setSuccess(null);
+      setError(null);
+    }, 5000);
+  };
 
-  const fetchPrograms = async () => {
+  const fetchData = useCallback(async () => {
+    if (!user?.employeeId) return;
+
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await trainingService.getAllPrograms();
-      setPrograms(response.content || []);
-    } catch (error) {
-      console.error('Error fetching training programs:', error);
-      setPrograms([]);
+      if (activeTab === 'my-trainings') {
+        const enrollmentList = await trainingService.getEnrollmentsByEmployee(user.employeeId);
+        setMyEnrollments(enrollmentList);
+      } else {
+        const response = await trainingService.getAllPrograms();
+        setPrograms(response.content || []);
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.employeeId, activeTab]);
+
+  useEffect(() => {
+    if (hasHydrated && user?.employeeId) {
+      fetchData();
+    }
+  }, [hasHydrated, user?.employeeId, fetchData]);
 
   const handleCreateProgram = () => {
     setEditingProgram(null);
@@ -241,8 +282,8 @@ export default function TrainingPage() {
     try {
       const enrollmentList = await trainingService.getEnrollmentsByProgram(program.id);
       setEnrollments(enrollmentList);
-    } catch (error) {
-      console.error('Error fetching enrollments:', error);
+    } catch (err) {
+      console.error('Error fetching enrollments:', err);
       setEnrollments([]);
     }
     setIsViewModalOpen(true);
@@ -258,17 +299,51 @@ export default function TrainingPage() {
     setIsEnrollModalOpen(true);
   };
 
+  const handleSelfEnroll = async (program: TrainingProgram) => {
+    if (!user?.employeeId) {
+      showNotification('You must be logged in to enroll', 'error');
+      return;
+    }
+
+    // Check if already enrolled
+    const alreadyEnrolled = myEnrollments.some(e => e.programId === program.id);
+    if (alreadyEnrolled) {
+      showNotification('You are already enrolled in this program', 'error');
+      return;
+    }
+
+    setEnrolling(true);
+    try {
+      await trainingService.enrollEmployee({
+        programId: program.id,
+        employeeId: user.employeeId,
+        enrollmentDate: new Date().toISOString().split('T')[0],
+      });
+      showNotification(`Successfully enrolled in ${program.programName}!`, 'success');
+      setActiveTab('my-trainings');
+      fetchData();
+    } catch (err: any) {
+      console.error('Error enrolling:', err);
+      showNotification(err.response?.data?.message || 'Failed to enroll', 'error');
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
   const handleSubmitProgram = async () => {
     try {
       if (editingProgram) {
         await trainingService.updateProgram(editingProgram.id, formData as TrainingProgramRequest);
+        showNotification('Program updated successfully', 'success');
       } else {
         await trainingService.createProgram(formData as TrainingProgramRequest);
+        showNotification('Program created successfully', 'success');
       }
       setIsModalOpen(false);
-      fetchPrograms();
-    } catch (error) {
-      console.error('Error saving training program:', error);
+      fetchData();
+    } catch (err: any) {
+      console.error('Error saving training program:', err);
+      showNotification(err.response?.data?.message || 'Failed to save program', 'error');
     }
   };
 
@@ -276,12 +351,14 @@ export default function TrainingPage() {
     try {
       await trainingService.enrollEmployee(enrollFormData as TrainingEnrollmentRequest);
       setIsEnrollModalOpen(false);
+      showNotification('Employee enrolled successfully', 'success');
       if (selectedProgram) {
         const enrollmentList = await trainingService.getEnrollmentsByProgram(selectedProgram.id);
         setEnrollments(enrollmentList);
       }
-    } catch (error) {
-      console.error('Error enrolling employee:', error);
+    } catch (err: any) {
+      console.error('Error enrolling employee:', err);
+      showNotification(err.response?.data?.message || 'Failed to enroll employee', 'error');
     }
   };
 
@@ -289,9 +366,11 @@ export default function TrainingPage() {
     if (confirm('Are you sure you want to delete this training program?')) {
       try {
         await trainingService.deleteProgram(programId);
-        fetchPrograms();
-      } catch (error) {
-        console.error('Error deleting training program:', error);
+        showNotification('Program deleted successfully', 'success');
+        fetchData();
+      } catch (err: any) {
+        console.error('Error deleting training program:', err);
+        showNotification(err.response?.data?.message || 'Failed to delete program', 'error');
       }
     }
   };
@@ -312,16 +391,45 @@ export default function TrainingPage() {
     scheduled: programs.filter((p) => p.status === ProgramStatus.SCHEDULED).length,
     inProgress: programs.filter((p) => p.status === ProgramStatus.IN_PROGRESS).length,
     completed: programs.filter((p) => p.status === ProgramStatus.COMPLETED).length,
+    myEnrolled: myEnrollments.length,
+    myInProgress: myEnrollments.filter((e) => e.status === EnrollmentStatus.IN_PROGRESS).length,
+    myCompleted: myEnrollments.filter((e) => e.status === EnrollmentStatus.COMPLETED).length,
   };
+
+  const isEnrolled = (programId: string) => myEnrollments.some(e => e.programId === programId);
 
   const breadcrumbs = [
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Training Programs' },
   ];
 
+  if (!hasHydrated) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
       <div className="space-y-6">
+        {/* Notifications */}
+        {error && (
+          <div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg flex items-center gap-2 text-red-800 dark:text-red-300">
+            <AlertCircle className="w-5 h-5" />
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg flex items-center gap-2 text-green-800 dark:text-green-300">
+            <CheckCircle className="w-5 h-5" />
+            {success}
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -329,13 +437,15 @@ export default function TrainingPage() {
               Training Programs
             </h1>
             <p className="text-surface-600 dark:text-surface-400">
-              Manage employee training and development programs
+              Enroll in courses and track your learning progress
             </p>
           </div>
-          <Button onClick={handleCreateProgram}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Program
-          </Button>
+          {activeTab === 'manage' && (
+            <Button onClick={handleCreateProgram}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Program
+            </Button>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -344,24 +454,11 @@ export default function TrainingPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
-                  <GraduationCap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Programs</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
-                  <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Scheduled</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.scheduled}</p>
+                  <p className="text-sm text-surface-600 dark:text-surface-400">My Enrollments</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myEnrolled}</p>
                 </div>
               </div>
             </CardContent>
@@ -374,7 +471,7 @@ export default function TrainingPage() {
                 </div>
                 <div>
                   <p className="text-sm text-surface-600 dark:text-surface-400">In Progress</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.inProgress}</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myInProgress}</p>
                 </div>
               </div>
             </CardContent>
@@ -383,181 +480,508 @@ export default function TrainingPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
-                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
                   <p className="text-sm text-surface-600 dark:text-surface-400">Completed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.completed}</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myCompleted}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+                  <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-surface-600 dark:text-surface-400">Available Programs</p>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
-                <Input
-                  type="text"
-                  placeholder="Search programs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full sm:w-48"
-              >
-                <option value="">All Status</option>
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full sm:w-48"
-              >
-                <option value="">All Categories</option>
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Programs Grid */}
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
+        {/* Tabs */}
+        <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm">
+          <div className="flex border-b border-surface-200 dark:border-surface-700">
+            <button
+              onClick={() => setActiveTab('my-trainings')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'my-trainings'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              <BookOpen className="h-4 w-4 inline-block mr-2" />
+              My Trainings
+            </button>
+            <button
+              onClick={() => setActiveTab('catalog')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'catalog'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              <GraduationCap className="h-4 w-4 inline-block mr-2" />
+              Course Catalog
+            </button>
+            <button
+              onClick={() => setActiveTab('manage')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'manage'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              <Edit className="h-4 w-4 inline-block mr-2" />
+              Manage Programs
+            </button>
           </div>
-        ) : filteredPrograms.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <GraduationCap className="h-12 w-12 text-surface-400" />
-              <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
-                No training programs found
-              </p>
-              <p className="text-surface-600 dark:text-surface-400">
-                Create your first training program to get started
-              </p>
-              <Button onClick={handleCreateProgram} className="mt-4">
-                <Plus className="mr-2 h-4 w-4" />
-                Create Program
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredPrograms.map((program) => (
-              <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-0">
-                  <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm opacity-80">{program.programCode}</p>
-                        <h3 className="text-lg font-semibold">{program.programName}</h3>
-                      </div>
-                      <Badge variant={getStatusColor(program.status) as any} className="flex items-center gap-1">
-                        {getStatusIcon(program.status)}
-                        {program.status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="p-4 space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
-                        {program.category.replace('_', ' ')}
-                      </span>
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
-                        {program.deliveryMode.replace('_', ' ')}
-                      </span>
-                      {program.isMandatory && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                          Mandatory
-                        </span>
-                      )}
-                    </div>
+        </div>
 
-                    <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
-                      {program.description || 'No description provided'}
-                    </p>
-
-                    <div className="space-y-2 text-sm">
-                      {program.trainerName && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <Users className="h-4 w-4" />
-                          <span>Trainer: {program.trainerName}</span>
-                        </div>
-                      )}
-                      {program.durationHours && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <Clock className="h-4 w-4" />
-                          <span>{program.durationHours} hours</span>
-                        </div>
-                      )}
-                      {program.startDate && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <Calendar className="h-4 w-4" />
-                          <span>
-                            {new Date(program.startDate).toLocaleDateString()}
-                            {program.endDate && ` - ${new Date(program.endDate).toLocaleDateString()}`}
-                          </span>
-                        </div>
-                      )}
-                      {program.location && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <MapPin className="h-4 w-4" />
-                          <span>{program.location}</span>
-                        </div>
-                      )}
-                      {program.maxParticipants && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <Users className="h-4 w-4" />
-                          <span>Max {program.maxParticipants} participants</span>
-                        </div>
-                      )}
-                      {program.costPerParticipant && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
-                          <DollarSign className="h-4 w-4" />
-                          <span>${program.costPerParticipant} per participant</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
-                      <Button size="sm" variant="outline" onClick={() => handleViewProgram(program)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEnrollEmployee(program)}>
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleEditProgram(program)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                        onClick={() => handleDeleteProgram(program.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+        {/* Tab Content: My Trainings */}
+        {activeTab === 'my-trainings' && (
+          <div className="space-y-4">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+              </div>
+            ) : myEnrollments.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <BookOpen className="h-12 w-12 text-surface-400" />
+                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    No enrolled trainings yet
+                  </p>
+                  <p className="text-surface-600 dark:text-surface-400">
+                    Browse the course catalog to find programs
+                  </p>
+                  <Button onClick={() => setActiveTab('catalog')} className="mt-4">
+                    Browse Catalog
+                  </Button>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              myEnrollments.map((enrollment) => (
+                <Card key={enrollment.id}>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h3>
+                          <Badge variant={getStatusColor(enrollment.status) as any}>
+                            {enrollment.status.replace('_', ' ')}
+                          </Badge>
+                          {enrollment.certificateIssued && (
+                            <Badge variant="success">
+                              <Award className="h-3 w-3 mr-1" />
+                              Certified
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Progress Bar */}
+                        {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
+                          <div className="mb-3">
+                            <div className="flex justify-between text-sm text-surface-600 dark:text-surface-400 mb-1">
+                              <span>Progress</span>
+                              <span>{enrollment.attendancePercentage || 0}%</span>
+                            </div>
+                            <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                              <div
+                                className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${enrollment.attendancePercentage || 0}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="text-surface-600 dark:text-surface-400">Enrolled:</span>
+                            <p className="font-medium">
+                              {enrollment.enrollmentDate
+                                ? new Date(enrollment.enrollmentDate).toLocaleDateString()
+                                : 'N/A'}
+                            </p>
+                          </div>
+                          {enrollment.completedAt && (
+                            <div>
+                              <span className="text-surface-600 dark:text-surface-400">Completed:</span>
+                              <p className="font-medium">
+                                {new Date(enrollment.completedAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                          )}
+                          {enrollment.assessmentScore !== undefined && (
+                            <div>
+                              <span className="text-surface-600 dark:text-surface-400">Score:</span>
+                              <p className="font-medium">{enrollment.assessmentScore}%</p>
+                            </div>
+                          )}
+                          {enrollment.attendancePercentage !== undefined && (
+                            <div>
+                              <span className="text-surface-600 dark:text-surface-400">Attendance:</span>
+                              <p className="font-medium">{enrollment.attendancePercentage}%</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {enrollment.feedback && (
+                          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                            <span className="font-medium">Feedback:</span> {enrollment.feedback}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
+                          <Button size="sm" variant="outline">
+                            <Play className="h-4 w-4 mr-1" />
+                            Continue
+                          </Button>
+                        )}
+                        {enrollment.certificateUrl && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(enrollment.certificateUrl, '_blank')}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            Certificate
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Tab Content: Course Catalog */}
+        {activeTab === 'catalog' && (
+          <div className="space-y-6">
+            {/* Filters */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search programs..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="w-full sm:w-48"
+                  >
+                    <option value="">All Categories</option>
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Programs Grid */}
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+              </div>
+            ) : filteredPrograms.filter(p => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS).length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <GraduationCap className="h-12 w-12 text-surface-400" />
+                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    No courses available
+                  </p>
+                  <p className="text-surface-600 dark:text-surface-400">
+                    Check back later for new training programs
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredPrograms
+                  .filter(p => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS)
+                  .map((program) => {
+                    const enrolled = isEnrolled(program.id);
+                    return (
+                      <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                        <CardContent className="p-0">
+                          <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <p className="text-sm opacity-80">{program.programCode}</p>
+                                <h3 className="text-lg font-semibold">{program.programName}</h3>
+                              </div>
+                              {enrolled && (
+                                <Badge variant="success" className="bg-white/20 text-white">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Enrolled
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-4">
+                            <div className="flex flex-wrap gap-2">
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
+                                {program.category.replace('_', ' ')}
+                              </span>
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                                {program.deliveryMode.replace('_', ' ')}
+                              </span>
+                              {program.isMandatory && (
+                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                  Mandatory
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                              {program.description || 'No description provided'}
+                            </p>
+
+                            <div className="space-y-2 text-sm">
+                              {program.durationHours && (
+                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                  <Clock className="h-4 w-4" />
+                                  <span>{program.durationHours} hours</span>
+                                </div>
+                              )}
+                              {program.startDate && (
+                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                  <Calendar className="h-4 w-4" />
+                                  <span>Starts: {new Date(program.startDate).toLocaleDateString()}</span>
+                                </div>
+                              )}
+                              {program.location && (
+                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{program.location}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleViewProgram(program)}
+                                className="flex-1"
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Details
+                              </Button>
+                              {!enrolled ? (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSelfEnroll(program)}
+                                  disabled={enrolling}
+                                  className="flex-1"
+                                >
+                                  {enrolling ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <Plus className="h-4 w-4 mr-1" />
+                                      Enroll
+                                    </>
+                                  )}
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setActiveTab('my-trainings')}
+                                  className="flex-1"
+                                >
+                                  <Play className="h-4 w-4 mr-1" />
+                                  Go to Course
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab Content: Manage Programs */}
+        {activeTab === 'manage' && (
+          <div className="space-y-6">
+            {/* Filters */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search programs..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="w-full sm:w-48"
+                  >
+                    <option value="">All Status</option>
+                    {statusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                  <Select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="w-full sm:w-48"
+                  >
+                    <option value="">All Categories</option>
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Programs Grid */}
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+              </div>
+            ) : filteredPrograms.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <GraduationCap className="h-12 w-12 text-surface-400" />
+                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    No training programs found
+                  </p>
+                  <p className="text-surface-600 dark:text-surface-400">
+                    Create your first training program to get started
+                  </p>
+                  <Button onClick={handleCreateProgram} className="mt-4">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Program
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredPrograms.map((program) => (
+                  <Card key={program.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <CardContent className="p-0">
+                      <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 text-white">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm opacity-80">{program.programCode}</p>
+                            <h3 className="text-lg font-semibold">{program.programName}</h3>
+                          </div>
+                          <Badge variant={getStatusColor(program.status) as any} className="flex items-center gap-1">
+                            {getStatusIcon(program.status)}
+                            {program.status.replace('_', ' ')}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="p-4 space-y-4">
+                        <div className="flex flex-wrap gap-2">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
+                            {program.category.replace('_', ' ')}
+                          </span>
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                            {program.deliveryMode.replace('_', ' ')}
+                          </span>
+                          {program.isMandatory && (
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                              Mandatory
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                          {program.description || 'No description provided'}
+                        </p>
+
+                        <div className="space-y-2 text-sm">
+                          {program.trainerName && (
+                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                              <Users className="h-4 w-4" />
+                              <span>Trainer: {program.trainerName}</span>
+                            </div>
+                          )}
+                          {program.durationHours && (
+                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                              <Clock className="h-4 w-4" />
+                              <span>{program.durationHours} hours</span>
+                            </div>
+                          )}
+                          {program.startDate && (
+                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                              <Calendar className="h-4 w-4" />
+                              <span>
+                                {new Date(program.startDate).toLocaleDateString()}
+                                {program.endDate && ` - ${new Date(program.endDate).toLocaleDateString()}`}
+                              </span>
+                            </div>
+                          )}
+                          {program.costPerParticipant && (
+                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                              <DollarSign className="h-4 w-4" />
+                              <span>${program.costPerParticipant} per participant</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
+                          <Button size="sm" variant="outline" onClick={() => handleViewProgram(program)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => handleEnrollEmployee(program)}>
+                            <UserPlus className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => handleEditProgram(program)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            onClick={() => handleDeleteProgram(program.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -689,17 +1113,6 @@ export default function TrainingPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                  Trainer Email
-                </label>
-                <Input
-                  type="email"
-                  value={formData.trainerEmail}
-                  onChange={(e) => setFormData({ ...formData, trainerEmail: e.target.value })}
-                  placeholder="Enter trainer email"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                   Location
                 </label>
                 <Input
@@ -728,17 +1141,6 @@ export default function TrainingPage() {
                   value={formData.costPerParticipant}
                   onChange={(e) => setFormData({ ...formData, costPerParticipant: parseFloat(e.target.value) || 0 })}
                   placeholder="Enter cost"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                  Prerequisites
-                </label>
-                <Textarea
-                  value={formData.prerequisites}
-                  onChange={(e) => setFormData({ ...formData, prerequisites: e.target.value })}
-                  placeholder="Enter prerequisites"
-                  rows={2}
                 />
               </div>
               <div className="sm:col-span-2">
@@ -823,6 +1225,15 @@ export default function TrainingPage() {
                   </div>
                 )}
 
+                {selectedProgram.learningObjectives && (
+                  <div>
+                    <h4 className="font-medium text-surface-900 dark:text-white mb-2">Learning Objectives</h4>
+                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                      {selectedProgram.learningObjectives}
+                    </p>
+                  </div>
+                )}
+
                 <div>
                   <h4 className="font-medium text-surface-900 dark:text-white mb-2">
                     Enrollments ({enrollments.length})
@@ -867,10 +1278,16 @@ export default function TrainingPage() {
             <Button variant="outline" onClick={() => setIsViewModalOpen(false)}>
               Close
             </Button>
-            <Button onClick={() => selectedProgram && handleEnrollEmployee(selectedProgram)}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Enroll Employee
-            </Button>
+            {selectedProgram && !isEnrolled(selectedProgram.id) && (
+              <Button onClick={() => handleSelfEnroll(selectedProgram)} disabled={enrolling}>
+                {enrolling ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
+                Enroll
+              </Button>
+            )}
           </ModalFooter>
         </Modal>
 

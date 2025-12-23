@@ -15,6 +15,16 @@ import {
   Save,
   Check,
   AlertCircle,
+  Calendar,
+  Clock,
+  DollarSign,
+  Award,
+  Megaphone,
+  Gift,
+  Heart,
+  AlertTriangle,
+  Smartphone,
+  Globe,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -22,6 +32,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useDarkMode } from '@/components/layout/DarkModeProvider';
 import { authApi } from '@/lib/api/auth';
 import { notificationsApi } from '@/lib/api/notifications';
+import { NotificationPreferences } from '@/lib/types/notifications';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -30,14 +41,26 @@ export default function SettingsPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeNotificationTab, setActiveNotificationTab] = useState<'channels' | 'categories'>('channels');
 
-  // Notification Settings
+  // Notification Channel Settings
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
-  const [securityAlerts, setSecurityAlerts] = useState(true);
+
+  // Notification Category Settings
+  const [leaveNotifications, setLeaveNotifications] = useState(true);
+  const [attendanceNotifications, setAttendanceNotifications] = useState(true);
+  const [payrollNotifications, setPayrollNotifications] = useState(true);
+  const [performanceNotifications, setPerformanceNotifications] = useState(true);
+  const [announcementNotifications, setAnnouncementNotifications] = useState(true);
+  const [birthdayNotifications, setBirthdayNotifications] = useState(true);
+  const [anniversaryNotifications, setAnniversaryNotifications] = useState(true);
+  const [systemAlertNotifications, setSystemAlertNotifications] = useState(true);
+
   const [preferencesLoaded, setPreferencesLoaded] = useState(false);
 
   // Password Change
@@ -68,10 +91,19 @@ export default function SettingsPage() {
 
       try {
         const prefs = await notificationsApi.getPreferences();
-        setEmailNotifications(prefs.emailNotifications ?? true);
-        setPushNotifications(prefs.pushNotifications ?? true);
-        setSmsNotifications(prefs.smsNotifications ?? false);
-        setSecurityAlerts(prefs.systemAlertNotifications ?? true);
+        // Channel settings
+        setEmailNotifications(prefs.emailEnabled ?? prefs.emailNotifications ?? true);
+        setPushNotifications(prefs.pushEnabled ?? prefs.pushNotifications ?? true);
+        setSmsNotifications(prefs.smsEnabled ?? prefs.smsNotifications ?? false);
+        // Category settings
+        setLeaveNotifications(prefs.leaveNotifications ?? true);
+        setAttendanceNotifications(prefs.attendanceNotifications ?? true);
+        setPayrollNotifications(prefs.payrollNotifications ?? true);
+        setPerformanceNotifications(prefs.performanceNotifications ?? true);
+        setAnnouncementNotifications(prefs.announcementNotifications ?? true);
+        setBirthdayNotifications(prefs.birthdayNotifications ?? true);
+        setAnniversaryNotifications(prefs.anniversaryNotifications ?? true);
+        setSystemAlertNotifications(prefs.systemAlertNotifications ?? true);
         setPreferencesLoaded(true);
       } catch (err) {
         console.error('Failed to load notification preferences:', err);
@@ -123,14 +155,24 @@ export default function SettingsPage() {
 
   const handleNotificationSave = async () => {
     try {
-      setIsSaving(true);
+      setIsSavingNotifications(true);
       setError(null);
 
       await notificationsApi.updatePreferences({
+        emailEnabled: emailNotifications,
         emailNotifications,
+        pushEnabled: pushNotifications,
         pushNotifications,
+        smsEnabled: smsNotifications,
         smsNotifications,
-        systemAlertNotifications: securityAlerts,
+        leaveNotifications,
+        attendanceNotifications,
+        payrollNotifications,
+        performanceNotifications,
+        announcementNotifications,
+        birthdayNotifications,
+        anniversaryNotifications,
+        systemAlertNotifications,
       });
 
       setSuccess(true);
@@ -139,9 +181,54 @@ export default function SettingsPage() {
       console.error('Failed to save notification preferences:', err);
       setError(err.response?.data?.message || 'Failed to save preferences');
     } finally {
-      setIsSaving(false);
+      setIsSavingNotifications(false);
     }
   };
+
+  // Toggle switch component for reuse
+  const ToggleSwitch = ({
+    enabled,
+    onChange,
+    label,
+    description,
+    icon: Icon
+  }: {
+    enabled: boolean;
+    onChange: (v: boolean) => void;
+    label: string;
+    description: string;
+    icon?: React.ElementType;
+  }) => (
+    <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
+      <div className="flex items-center gap-3">
+        {Icon && (
+          <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+            <Icon className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          </div>
+        )}
+        <div>
+          <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
+            {label}
+          </label>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+            {description}
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={() => onChange(!enabled)}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+          enabled ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
+        }`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
+            enabled ? 'translate-x-6' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </div>
+  );
 
   return (
     <AppLayout activeMenuItem="settings">
@@ -338,110 +425,154 @@ export default function SettingsPage() {
                 <Bell className="h-5 w-5" />
                 Notification Preferences
               </CardTitle>
-              <CardDescription>Choose what notifications you want to receive</CardDescription>
+              <CardDescription>Choose how and when you want to receive notifications</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
-                  <div>
-                    <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
-                      Email Notifications
-                    </label>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                      Receive email updates about important events
-                    </p>
+              {/* Tabs */}
+              <div className="flex gap-2 border-b border-slate-200 dark:border-slate-700">
+                <button
+                  onClick={() => setActiveNotificationTab('channels')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeNotificationTab === 'channels'
+                      ? 'border-primary-600 text-primary-600'
+                      : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    Delivery Channels
                   </div>
-                  <button
-                    onClick={() => setEmailNotifications(!emailNotifications)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      emailNotifications ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
-                        emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
-                </div>
+                </button>
+                <button
+                  onClick={() => setActiveNotificationTab('categories')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeNotificationTab === 'categories'
+                      ? 'border-primary-600 text-primary-600'
+                      : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4" />
+                    Notification Types
+                  </div>
+                </button>
+              </div>
 
-                <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
-                  <div>
-                    <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
-                      Push Notifications
-                    </label>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                      Receive push notifications in your browser
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setPushNotifications(!pushNotifications)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      pushNotifications ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
-                        pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
+              {/* Channel Settings */}
+              {activeNotificationTab === 'channels' && (
+                <div className="space-y-1 pt-2">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    Choose how you want to receive notifications
+                  </p>
+                  <ToggleSwitch
+                    enabled={emailNotifications}
+                    onChange={setEmailNotifications}
+                    label="Email Notifications"
+                    description="Receive email updates about important events"
+                    icon={Mail}
+                  />
+                  <ToggleSwitch
+                    enabled={pushNotifications}
+                    onChange={setPushNotifications}
+                    label="Push Notifications"
+                    description="Receive push notifications in your browser"
+                    icon={Globe}
+                  />
+                  <ToggleSwitch
+                    enabled={smsNotifications}
+                    onChange={setSmsNotifications}
+                    label="SMS Notifications"
+                    description="Receive SMS alerts for urgent updates"
+                    icon={Smartphone}
+                  />
                 </div>
+              )}
 
-                <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700">
-                  <div>
-                    <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
-                      SMS Notifications
-                    </label>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                      Receive SMS alerts for important updates
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSmsNotifications(!smsNotifications)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      smsNotifications ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
-                        smsNotifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
+              {/* Category Settings */}
+              {activeNotificationTab === 'categories' && (
+                <div className="space-y-1 pt-2">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                    Choose which types of notifications you want to receive
+                  </p>
+                  <ToggleSwitch
+                    enabled={leaveNotifications}
+                    onChange={setLeaveNotifications}
+                    label="Leave Notifications"
+                    description="Leave requests, approvals, and rejections"
+                    icon={Calendar}
+                  />
+                  <ToggleSwitch
+                    enabled={attendanceNotifications}
+                    onChange={setAttendanceNotifications}
+                    label="Attendance Notifications"
+                    description="Check-in/out reminders and alerts"
+                    icon={Clock}
+                  />
+                  <ToggleSwitch
+                    enabled={payrollNotifications}
+                    onChange={setPayrollNotifications}
+                    label="Payroll Notifications"
+                    description="Salary processing and payment updates"
+                    icon={DollarSign}
+                  />
+                  <ToggleSwitch
+                    enabled={performanceNotifications}
+                    onChange={setPerformanceNotifications}
+                    label="Performance Notifications"
+                    description="Reviews, goals, and feedback"
+                    icon={Award}
+                  />
+                  <ToggleSwitch
+                    enabled={announcementNotifications}
+                    onChange={setAnnouncementNotifications}
+                    label="Announcements"
+                    description="Company-wide announcements and news"
+                    icon={Megaphone}
+                  />
+                  <ToggleSwitch
+                    enabled={birthdayNotifications}
+                    onChange={setBirthdayNotifications}
+                    label="Birthday Notifications"
+                    description="Colleague birthday reminders"
+                    icon={Gift}
+                  />
+                  <ToggleSwitch
+                    enabled={anniversaryNotifications}
+                    onChange={setAnniversaryNotifications}
+                    label="Work Anniversary Notifications"
+                    description="Work anniversary celebrations"
+                    icon={Heart}
+                  />
+                  <ToggleSwitch
+                    enabled={systemAlertNotifications}
+                    onChange={setSystemAlertNotifications}
+                    label="System Alerts"
+                    description="Security and system-related alerts"
+                    icon={AlertTriangle}
+                  />
                 </div>
+              )}
 
-                <div className="flex items-center justify-between py-3">
-                  <div>
-                    <label className="text-sm font-medium text-slate-900 dark:text-slate-50">
-                      Security Alerts
-                    </label>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                      Get notified about security and account activity
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSecurityAlerts(!securityAlerts)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      securityAlerts ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
-                        securityAlerts ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
+              {/* Summary */}
+              <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <div className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600" />
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {[emailNotifications, pushNotifications, smsNotifications].filter(Boolean).length} delivery channel(s) enabled,{' '}
+                    {[leaveNotifications, attendanceNotifications, payrollNotifications, performanceNotifications,
+                      announcementNotifications, birthdayNotifications, anniversaryNotifications, systemAlertNotifications
+                    ].filter(Boolean).length} notification type(s) enabled
+                  </span>
                 </div>
               </div>
 
               <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-700">
                 <button
                   onClick={handleNotificationSave}
-                  disabled={isSaving}
+                  disabled={isSavingNotifications}
                   className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
                 >
-                  {isSaving ? (
+                  {isSavingNotifications ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       Saving...
