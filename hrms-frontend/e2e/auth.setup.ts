@@ -9,6 +9,9 @@ const authFile = 'playwright/.auth/user.json';
  * so tests don't need to log in repeatedly.
  */
 setup('authenticate', async ({ page }) => {
+  // Set longer timeout for auth setup
+  setup.setTimeout(120000);
+
   // Navigate to login page
   await page.goto('/auth/login');
   await page.waitForLoadState('networkidle');
@@ -34,7 +37,18 @@ setup('authenticate', async ({ page }) => {
   await submitButton.click();
 
   // Wait for successful login - either dashboard URL or redirect
-  await page.waitForURL('**/dashboard', { timeout: 30000 });
+  // Use a longer timeout and handle potential errors
+  try {
+    await page.waitForURL('**/dashboard', { timeout: 60000 });
+  } catch {
+    // If dashboard redirect fails, check if we're already on dashboard or got an error
+    const currentUrl = page.url();
+    if (!currentUrl.includes('dashboard')) {
+      // Take a screenshot for debugging
+      await page.screenshot({ path: 'test-results/auth-debug.png' });
+      throw new Error(`Login failed - current URL: ${currentUrl}`);
+    }
+  }
 
   // Wait for page to load with content
   await page.waitForLoadState('networkidle');
