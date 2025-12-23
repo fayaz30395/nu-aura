@@ -46,7 +46,7 @@ import {
   Plane,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Sidebar, SidebarItem, SidebarSection } from '@/components/ui';
+import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
 import { Header } from './Header';
 import type { HeaderProps } from './Header';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
@@ -169,6 +169,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       label: 'Self Service',
       items: [
         {
+          id: 'my-dashboard',
+          label: 'My Dashboard',
+          icon: <LayoutDashboard className="h-5 w-5" />,
+          href: '/me/dashboard',
+        },
+        {
           id: 'profile',
           label: 'My Profile',
           icon: <User className="h-5 w-5" />,
@@ -191,6 +197,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'My Leaves',
           icon: <Palmtree className="h-5 w-5" />,
           href: '/me/leaves',
+        },
+        {
+          id: 'my-documents',
+          label: 'My Documents',
+          icon: <FileText className="h-5 w-5" />,
+          href: '/me/documents',
         },
       ],
     },
@@ -543,12 +555,19 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <div
             className={cn(
               'p-4 sm:p-6 lg:p-8 transition-all duration-300',
+              // Add bottom padding for mobile bottom nav
+              'pb-24 md:pb-4 lg:pb-8',
               mounted ? 'opacity-100' : 'opacity-0'
             )}
           >
             {children}
           </div>
         </main>
+
+        {/* Mobile Bottom Navigation */}
+        <MobileBottomNav
+          onMoreClick={() => setIsMobileMenuOpen(true)}
+        />
       </div>
     </div>
   );

@@ -103,6 +103,38 @@ export default defineConfig({
       },
       dependencies: ['setup'],
     },
+
+    // Mobile viewport projects
+    {
+      name: 'mobile-chrome',
+      use: {
+        ...devices['Pixel 5'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
+
+    {
+      name: 'mobile-safari',
+      use: {
+        ...devices['iPhone 13'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
+
+    // Tablet viewport project
+    {
+      name: 'tablet',
+      use: {
+        ...devices['iPad Pro 11'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.mobile\.spec\.ts/,
+    },
   ],
 
   // Run your local dev server before starting the tests
