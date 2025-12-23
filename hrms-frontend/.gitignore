@@ -6,6 +6,9 @@ node_modules/
 
 .vercel
 
+# TypeScript
+*.tsbuildinfo
+
 # Playwright
 playwright/.auth/
 playwright-report/
