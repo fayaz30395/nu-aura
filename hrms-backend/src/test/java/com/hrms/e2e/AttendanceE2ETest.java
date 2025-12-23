@@ -426,10 +426,257 @@ class AttendanceE2ETest {
         }
     }
 
-    // ==================== Validation Tests ====================
+    // ==================== Timezone / AttendanceDate Tests ====================
 
     @Test
     @Order(10)
+    @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+    @DisplayName("E2E: Check-in with explicit attendanceDate")
+    void checkIn_WithAttendanceDate_Success() throws Exception {
+        Employee tzEmployee = createTestEmployee("TZ_EMP");
+        UUID tzEmployeeId = tzEmployee.getId();
+
+        try {
+            LocalDate today = LocalDate.now();
+            Map<String, Object> checkInRequest = new HashMap<>();
+            checkInRequest.put("employeeId", tzEmployeeId.toString());
+            checkInRequest.put("source", "WEB");
+            checkInRequest.put("attendanceDate", today.toString());
+            checkInRequest.put("checkInTime", LocalDateTime.now().toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(checkInRequest)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.employeeId").value(tzEmployeeId.toString()))
+                    .andExpect(jsonPath("$.attendanceDate").value(today.toString()));
+
+        } finally {
+            attendanceRecordRepository.deleteAll(
+                    attendanceRecordRepository.findAll().stream()
+                            .filter(ar -> ar.getEmployeeId().equals(tzEmployeeId))
+                            .toList()
+            );
+            deleteTestEmployee(tzEmployeeId);
+        }
+    }
+
+    @Test
+    @Order(11)
+    @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+    @DisplayName("E2E: Check-in and Check-out with attendanceDate creates correct time entries")
+    void checkInCheckOut_WithAttendanceDate_CreatesTimeEntries() throws Exception {
+        Employee cycleEmployee = createTestEmployee("CYCLE_EMP");
+        UUID cycleEmployeeId = cycleEmployee.getId();
+
+        try {
+            LocalDate today = LocalDate.now();
+
+            // Check-in
+            Map<String, Object> checkInRequest = new HashMap<>();
+            checkInRequest.put("employeeId", cycleEmployeeId.toString());
+            checkInRequest.put("source", "WEB");
+            checkInRequest.put("attendanceDate", today.toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(checkInRequest)))
+                    .andExpect(status().isCreated());
+
+            // Check-out
+            Map<String, Object> checkOutRequest = new HashMap<>();
+            checkOutRequest.put("employeeId", cycleEmployeeId.toString());
+            checkOutRequest.put("source", "WEB");
+            checkOutRequest.put("attendanceDate", today.toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-out")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(checkOutRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.checkOutTime").exists())
+                    .andExpect(jsonPath("$.workDurationMinutes").exists());
+
+            // Verify time entries
+            mockMvc.perform(get(BASE_URL + "/employee/" + cycleEmployeeId + "/time-entries")
+                            .param("date", today.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$[0].checkInTime").exists())
+                    .andExpect(jsonPath("$[0].checkOutTime").exists())
+                    .andExpect(jsonPath("$[0].open").value(false));
+
+        } finally {
+            attendanceRecordRepository.deleteAll(
+                    attendanceRecordRepository.findAll().stream()
+                            .filter(ar -> ar.getEmployeeId().equals(cycleEmployeeId))
+                            .toList()
+            );
+            deleteTestEmployee(cycleEmployeeId);
+        }
+    }
+
+    @Test
+    @Order(12)
+    @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+    @DisplayName("E2E: Multiple check-in/check-out cycles in same day")
+    void multipleCheckInCheckOutCycles_SameDay() throws Exception {
+        Employee multiEmployee = createTestEmployee("MULTI_EMP");
+        UUID multiEmployeeId = multiEmployee.getId();
+
+        try {
+            LocalDate today = LocalDate.now();
+
+            // First cycle - morning session
+            Map<String, Object> request1 = new HashMap<>();
+            request1.put("employeeId", multiEmployeeId.toString());
+            request1.put("source", "WEB");
+            request1.put("attendanceDate", today.toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request1)))
+                    .andExpect(status().isCreated());
+
+            mockMvc.perform(post(BASE_URL + "/check-out")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request1)))
+                    .andExpect(status().isOk());
+
+            // Second cycle - afternoon session
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request1)))
+                    .andExpect(status().isCreated());
+
+            mockMvc.perform(post(BASE_URL + "/check-out")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request1)))
+                    .andExpect(status().isOk());
+
+            // Verify we have 2 time entries
+            MvcResult result = mockMvc.perform(get(BASE_URL + "/employee/" + multiEmployeeId + "/time-entries")
+                            .param("date", today.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andReturn();
+
+            String responseBody = result.getResponse().getContentAsString();
+            int entryCount = objectMapper.readTree(responseBody).size();
+            assertThat(entryCount).isGreaterThanOrEqualTo(2);
+
+        } finally {
+            attendanceRecordRepository.deleteAll(
+                    attendanceRecordRepository.findAll().stream()
+                            .filter(ar -> ar.getEmployeeId().equals(multiEmployeeId))
+                            .toList()
+            );
+            deleteTestEmployee(multiEmployeeId);
+        }
+    }
+
+    @Test
+    @Order(13)
+    @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+    @DisplayName("E2E: Check-out closes open time entry")
+    void checkOut_ClosesOpenTimeEntry() throws Exception {
+        Employee closeEmployee = createTestEmployee("CLOSE_EMP");
+        UUID closeEmployeeId = closeEmployee.getId();
+
+        try {
+            LocalDate today = LocalDate.now();
+
+            // Check-in
+            Map<String, Object> request = new HashMap<>();
+            request.put("employeeId", closeEmployeeId.toString());
+            request.put("source", "WEB");
+            request.put("attendanceDate", today.toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated());
+
+            // Verify open time entry exists
+            MvcResult beforeResult = mockMvc.perform(get(BASE_URL + "/employee/" + closeEmployeeId + "/time-entries")
+                            .param("date", today.toString()))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String beforeBody = beforeResult.getResponse().getContentAsString();
+            boolean hasOpenEntry = objectMapper.readTree(beforeBody).get(0).get("open").asBoolean();
+            assertThat(hasOpenEntry).isTrue();
+
+            // Check-out
+            mockMvc.perform(post(BASE_URL + "/check-out")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk());
+
+            // Verify time entry is now closed
+            MvcResult afterResult = mockMvc.perform(get(BASE_URL + "/employee/" + closeEmployeeId + "/time-entries")
+                            .param("date", today.toString()))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String afterBody = afterResult.getResponse().getContentAsString();
+            boolean isClosed = !objectMapper.readTree(afterBody).get(0).get("open").asBoolean();
+            assertThat(isClosed).isTrue();
+
+        } finally {
+            attendanceRecordRepository.deleteAll(
+                    attendanceRecordRepository.findAll().stream()
+                            .filter(ar -> ar.getEmployeeId().equals(closeEmployeeId))
+                            .toList()
+            );
+            deleteTestEmployee(closeEmployeeId);
+        }
+    }
+
+    @Test
+    @Order(14)
+    @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+    @DisplayName("E2E: Get my-time-entries endpoint")
+    void getMyTimeEntries_Success() throws Exception {
+        Employee myTimeEmployee = createTestEmployee("MYTIME_EMP");
+        UUID myTimeEmployeeId = myTimeEmployee.getId();
+
+        try {
+            LocalDate today = LocalDate.now();
+
+            // Create check-in
+            Map<String, Object> request = new HashMap<>();
+            request.put("employeeId", myTimeEmployeeId.toString());
+            request.put("source", "WEB");
+            request.put("attendanceDate", today.toString());
+
+            mockMvc.perform(post(BASE_URL + "/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated());
+
+            // Get my time entries
+            mockMvc.perform(get(BASE_URL + "/my-time-entries")
+                            .param("employeeId", myTimeEmployeeId.toString())
+                            .param("date", today.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$[0].checkInTime").exists())
+                    .andExpect(jsonPath("$[0].open").value(true));
+
+        } finally {
+            attendanceRecordRepository.deleteAll(
+                    attendanceRecordRepository.findAll().stream()
+                            .filter(ar -> ar.getEmployeeId().equals(myTimeEmployeeId))
+                            .toList()
+            );
+            deleteTestEmployee(myTimeEmployeeId);
+        }
+    }
+
+    // ==================== Validation Tests ====================
+
+    @Test
+    @Order(20)
     @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
     @DisplayName("E2E: Check-out without check-in fails")
     void checkOut_WithoutCheckIn_Fails() throws Exception {

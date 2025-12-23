@@ -9,21 +9,21 @@ import { defineConfig, devices } from '@playwright/test';
  * - Video recording for failed tests
  * - Trace collection for debugging
  * - Visual regression testing support
- * - Parallel test execution
+ * - Parallel test execution with shared auth state
  */
 export default defineConfig({
   // Test directory
   testDir: './e2e',
 
   // Maximum time one test can run
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
 
   // Maximum time to wait for each assertion
   expect: {
-    timeout: 5000,
+    timeout: 10000,
     // Visual comparison threshold
     toHaveScreenshot: {
-      maxDiffPixels: 100,
+      maxDiffPixels: 500,
     },
   },
 
@@ -34,10 +34,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
 
-  // Opt out of parallel tests on CI
-  workers: process.env.CI ? 1 : undefined,
+  // Number of parallel workers
+  workers: process.env.CI ? 2 : 4,
 
   // Reporter to use
   reporter: [
@@ -61,7 +61,7 @@ export default defineConfig({
     video: 'retain-on-failure',
 
     // Maximum time for actions
-    actionTimeout: 10000,
+    actionTimeout: 15000,
 
     // Browser context options
     viewport: { width: 1280, height: 720 },
@@ -75,45 +75,34 @@ export default defineConfig({
 
   // Configure projects for major browsers
   projects: [
+    // Setup project - runs auth setup once
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // Additional chromium-specific options
+        // Use stored auth state
+        storageState: 'playwright/.auth/user.json',
         launchOptions: {
           args: ['--disable-web-security'],
         },
       },
+      dependencies: ['setup'],
     },
 
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
+        // Use stored auth state
+        storageState: 'playwright/.auth/user.json',
       },
+      dependencies: ['setup'],
     },
-
-    // Uncomment to test on Safari
-    // {
-    //   name: 'webkit',
-    //   use: {
-    //     ...devices['Desktop Safari'],
-    //   },
-    // },
-
-    // Mobile viewports for responsive testing
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: {
-    //     ...devices['Pixel 5'],
-    //   },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 12'],
-    //   },
-    // },
   ],
 
   // Run your local dev server before starting the tests

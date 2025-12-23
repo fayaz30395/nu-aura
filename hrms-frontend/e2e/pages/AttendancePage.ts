@@ -78,7 +78,7 @@ export class AttendancePage extends BasePage {
     this.requestRegularizationButton = page.locator('button:has-text("Request Regularization")');
     this.regularizationModal = page.locator('div.fixed.inset-0').filter({ hasText: 'Regularization' });
     this.regularizationDateInput = page.locator('label:has-text("Date")').locator('..').locator('input');
-    this.regularizationReasonInput = page.locator('textarea[placeholder*="reason"]');
+    this.regularizationReasonInput = page.locator('textarea[placeholder*="regularization"], textarea[placeholder*="explain"]');
     this.submitRegularizationButton = page.locator('button:has-text("Submit Request")');
   }
 
