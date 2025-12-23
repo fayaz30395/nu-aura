@@ -60,3 +60,11 @@ export { EmployeeSearchAutocomplete } from './EmployeeSearchAutocomplete';
 
 // Skeleton Component
 export { Skeleton } from './Skeleton';
+
+// ResponsiveTable Component
+export { ResponsiveTable, TablePagination } from './ResponsiveTable';
+export type { ResponsiveTableProps, Column, TablePaginationProps } from './ResponsiveTable';
+
+// MobileBottomNav Component
+export { MobileBottomNav, useMobileNavHeight } from './MobileBottomNav';
+export type { MobileBottomNavProps, NavItem } from './MobileBottomNav';
