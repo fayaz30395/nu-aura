@@ -333,6 +333,42 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       ],
     },
     {
+      id: 'resource-management',
+      label: 'Resource Management',
+      items: [
+        {
+          id: 'resources',
+          label: 'Resources',
+          icon: <Users className="h-5 w-5" />,
+          href: '/resources',
+        },
+        {
+          id: 'workload',
+          label: 'Workload Dashboard',
+          icon: <BarChart3 className="h-5 w-5" />,
+          href: '/resources/workload',
+        },
+        {
+          id: 'availability',
+          label: 'Availability Calendar',
+          icon: <Calendar className="h-5 w-5" />,
+          href: '/resources/availability',
+        },
+        {
+          id: 'allocations',
+          label: 'Allocation Approvals',
+          icon: <Clock className="h-5 w-5" />,
+          href: '/resources/approvals',
+        },
+        {
+          id: 'timesheets',
+          label: 'Timesheets',
+          icon: <Timer className="h-5 w-5" />,
+          href: '/timesheets',
+        },
+      ],
+    },
+    {
       id: 'compensation-benefits',
       label: 'Compensation & Benefits',
       items: [
