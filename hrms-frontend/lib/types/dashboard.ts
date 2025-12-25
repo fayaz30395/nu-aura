@@ -1,209 +1,181 @@
+// =============================================
+// EXECUTIVE DASHBOARD TYPES
+// =============================================
+
 export interface ExecutiveDashboardData {
-  csuite: CSuiteMetrics;
-  financial: FinancialMetrics;
-  strategic: StrategicInsights;
-  workforce: WorkforceSummary;
-  timestamp: string;
+  keyMetrics: KpiCard[];
+  financialSummary: FinancialSummary | null;
+  workforceSummary: WorkforceSummary | null;
+  productivityMetrics: ProductivityMetrics | null;
+  riskIndicators: RiskIndicators | null;
+  trendCharts: TrendCharts | null;
+  strategicAlerts: StrategicAlert[];
 }
 
-export interface CSuiteMetrics {
-  headcount: {
-    total: number;
-    activeEmployees: number;
-    newHires: number;
-    terminations: number;
-    growth: number;
-    growthPercentage: number;
-  };
-  revenuePerEmployee: {
-    current: number;
-    previous: number;
-    change: number;
-    changePercentage: number;
-  };
-  costMetrics: {
-    totalCost: number;
-    costPerEmployee: number;
-    payrollCost: number;
-    benefitsCost: number;
-    operationalCost: number;
-  };
-  productivity: {
-    utilizationRate: number;
-    billableHours: number;
-    nonBillableHours: number;
-    efficiency: number;
-  };
+export interface KpiCard {
+  name: string;
+  value: string;
+  unit: string;
+  trend: 'UP' | 'DOWN' | 'STABLE';
+  changePercent: number;
+  changeDescription: string;
+  status: 'GOOD' | 'WARNING' | 'CRITICAL';
+  icon: string;
+  color: string;
 }
 
-export interface FinancialMetrics {
-  payroll: {
-    currentMonth: number;
-    previousMonth: number;
-    change: number;
-    changePercentage: number;
-    processed: number;
-    pending: number;
-    trend: MonthlyTrend[];
-  };
-  compensation: {
-    totalCompensation: number;
-    averageSalary: number;
-    medianSalary: number;
-    salaryRange: {
-      min: number;
-      max: number;
-    };
-    byDepartment: DepartmentCompensation[];
-  };
-  benefits: {
-    totalBenefitsCost: number;
-    perEmployee: number;
-    healthInsurance: number;
-    retirement: number;
-    other: number;
-    enrollment: number;
-  };
-  expenses: {
-    total: number;
-    pending: number;
-    approved: number;
-    reimbursed: number;
-    byCategory: ExpenseCategory[];
-  };
+export interface FinancialSummary {
+  monthlyPayrollCost: number;
+  yearToDatePayrollCost: number;
+  projectedAnnualPayrollCost: number;
+  payrollCostChangePercent: number;
+  avgCostPerEmployee: number;
+  costPerEmployeeChange: number;
+  budgetAllocated: number;
+  budgetUtilized: number;
+  budgetUtilizationPercent: number;
+  revenuePerEmployee: number;
+  departmentCosts: DepartmentCost[];
+  costBreakdown: CostBreakdown | null;
 }
 
-export interface StrategicInsights {
-  alerts: Alert[];
-  recommendations: Recommendation[];
-  trends: Trend[];
-  risks: Risk[];
+export interface DepartmentCost {
+  departmentId: string;
+  departmentName: string;
+  totalCost: number;
+  headcount: number;
+  costPerHead: number;
+  percentOfTotal: number;
+}
+
+export interface CostBreakdown {
+  baseSalary: number;
+  benefits: number;
+  bonuses: number;
+  taxes: number;
+  training: number;
+  recruitment: number;
+  other: number;
 }
 
 export interface WorkforceSummary {
-  demographics: {
-    byDepartment: DepartmentBreakdown[];
-    byLocation: LocationBreakdown[];
-    byTenure: TenureBreakdown[];
-    byAge: AgeBreakdown[];
-  };
-  attendance: {
-    present: number;
-    absent: number;
-    onLeave: number;
-    late: number;
-    attendanceRate: number;
-    trend: DailyAttendance[];
-  };
-  performance: {
-    highPerformers: number;
-    meetingExpectations: number;
-    needsImprovement: number;
-    averageRating: number;
-    reviewsCompleted: number;
-    reviewsPending: number;
-  };
-  engagement: {
-    eNPS: number;
-    satisfactionScore: number;
-    turnoverRate: number;
-    retentionRate: number;
-    activeOnboarding: number;
-  };
+  totalHeadcount: number;
+  activeEmployees: number;
+  contractorCount: number;
+  openPositions: number;
+  newHiresThisMonth: number;
+  newHiresThisQuarter: number;
+  newHiresThisYear: number;
+  terminationsThisMonth: number;
+  terminationsThisQuarter: number;
+  terminationsThisYear: number;
+  attritionRate: number;
+  retentionRate: number;
+  hiringVelocity: number;
+  byDepartment: DemographicBreakdown[];
+  byLocation: DemographicBreakdown[];
+  byEmploymentType: DemographicBreakdown[];
+  tenureDistribution: TenureDistribution | null;
 }
 
-export interface MonthlyTrend {
-  month: string;
+export interface DemographicBreakdown {
+  category: string;
+  count: number;
+  percentage: number;
+}
+
+export interface TenureDistribution {
+  lessThan1Year: number;
+  oneToThreeYears: number;
+  threeToFiveYears: number;
+  fiveToTenYears: number;
+  moreThan10Years: number;
+  avgTenureYears: number;
+}
+
+export interface ProductivityMetrics {
+  avgAttendanceRate: number;
+  absenteeismRate: number;
+  avgWorkingHours: number;
+  avgPerformanceRating: number;
+  highPerformersCount: number;
+  lowPerformersCount: number;
+  performanceImprovementRate: number;
+  engagementScore: number;
+  engagementChangePercent: number;
+  eNPS: number;
+  trainingHoursPerEmployee: number;
+  trainingCompletionRate: number;
+  certificationCount: number;
+  goalCompletionRate: number;
+  goalsOnTrack: number;
+  goalsAtRisk: number;
+  goalsDelayed: number;
+}
+
+export interface RiskIndicators {
+  highRiskEmployees: number;
+  criticalRiskEmployees: number;
+  predictedAttritionRate: number;
+  departmentRisks: DepartmentRisk[];
+  complianceIssuesCount: number;
+  overdueTrainings: number;
+  expiredCertifications: number;
+  criticalSkillGaps: number;
+  totalSkillGaps: number;
+  skillCoveragePercent: number;
+  keyPositionsWithoutSuccessor: number;
+  successionReadyPercentage: number;
+  employeesWithHighWorkload: number;
+  employeesWithExcessiveOvertime: number;
+  avgOvertimeHours: number;
+}
+
+export interface DepartmentRisk {
+  departmentId: string;
+  departmentName: string;
+  atRiskCount: number;
+  avgRiskScore: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+}
+
+export interface TrendCharts {
+  headcountTrend: TrendPoint[];
+  payrollCostTrend: TrendPoint[];
+  attritionTrend: TrendPoint[];
+  engagementTrend: TrendPoint[];
+  hiringVsAttrition: HiringAttritionPoint[];
+}
+
+export interface TrendPoint {
+  period: string;
   value: number;
-  label: string;
+  previousValue: number;
+  changePercent: number;
 }
 
-export interface DepartmentCompensation {
-  department: string;
-  totalCompensation: number;
-  averageSalary: number;
-  employeeCount: number;
+export interface HiringAttritionPoint {
+  period: string;
+  hires: number;
+  terminations: number;
+  netChange: number;
 }
 
-export interface ExpenseCategory {
-  category: string;
-  amount: number;
-  count: number;
-}
-
-export interface Alert {
+export interface StrategicAlert {
   id: string;
-  type: 'warning' | 'error' | 'info' | 'success';
-  title: string;
-  message: string;
-  action?: string;
-  actionUrl?: string;
-  priority: 'high' | 'medium' | 'low';
-  timestamp: string;
-}
-
-export interface Recommendation {
-  id: string;
-  category: string;
+  severity: 'INFO' | 'WARNING' | 'CRITICAL';
+  category: 'ATTRITION' | 'COMPLIANCE' | 'BUDGET' | 'PERFORMANCE';
   title: string;
   description: string;
-  impact: 'high' | 'medium' | 'low';
-  effort: 'high' | 'medium' | 'low';
-  potentialSavings?: number;
+  recommendation: string;
+  impact: 'HIGH' | 'MEDIUM' | 'LOW';
+  trend: 'IMPROVING' | 'WORSENING' | 'STABLE';
+  createdAt: string;
 }
 
-export interface Trend {
-  metric: string;
-  direction: 'up' | 'down' | 'stable';
-  change: number;
-  changePercentage: number;
-  description: string;
-}
-
-export interface Risk {
-  id: string;
-  category: string;
-  title: string;
-  severity: 'high' | 'medium' | 'low';
-  probability: number;
-  impact: string;
-  mitigation?: string;
-}
-
-export interface DepartmentBreakdown {
-  department: string;
-  count: number;
-  percentage: number;
-}
-
-export interface LocationBreakdown {
-  location: string;
-  count: number;
-  percentage: number;
-}
-
-export interface TenureBreakdown {
-  range: string;
-  count: number;
-  percentage: number;
-}
-
-export interface AgeBreakdown {
-  range: string;
-  count: number;
-  percentage: number;
-}
-
-export interface DailyAttendance {
-  date: string;
-  present: number;
-  absent: number;
-  onLeave: number;
-  late: number;
-  attendanceRate: number;
-}
-
-// Employee Dashboard Types
+// =============================================
+// EMPLOYEE DASHBOARD TYPES
+// =============================================
 
 export interface AttendanceHistory {
   date: string;
@@ -269,7 +241,6 @@ export interface EmployeeDashboardData {
   designation?: string;
   department?: string;
 
-  // Attendance Summary
   attendanceSummary: {
     currentMonth: {
       present: number;
@@ -284,10 +255,8 @@ export interface EmployeeDashboardData {
     weeklyTrend: AttendanceTrend[];
   };
 
-  // Leave Balances
   leaveBalances: LeaveBalanceItem[];
 
-  // Career Progress
   careerProgress: {
     currentGoals: CareerGoal[];
     recentReviews: PerformanceReview[];
@@ -295,10 +264,8 @@ export interface EmployeeDashboardData {
     upcomingTrainings: number;
   };
 
-  // Upcoming Events
   upcomingEvents: UpcomingEvent[];
 
-  // Quick stats
   stats: {
     totalLeavesTaken: number;
     totalLeavesRemaining: number;
@@ -307,7 +274,9 @@ export interface EmployeeDashboardData {
   };
 }
 
-// Manager Dashboard Types
+// =============================================
+// MANAGER DASHBOARD TYPES
+// =============================================
 
 export interface ManagerDashboardResponse {
   managerId: string;
