@@ -24,6 +24,8 @@ import {
   ArrowDownRight,
   Minus,
   RefreshCw,
+  Shield,
+  UserX,
 } from 'lucide-react';
 import {
   BarChart,
@@ -48,7 +50,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { dashboardService } from '@/lib/services/dashboard.service';
-import { ExecutiveDashboardData, Alert as DashboardAlert } from '@/lib/types/dashboard';
+import { ExecutiveDashboardData, KpiCard, StrategicAlert } from '@/lib/types/dashboard';
 
 const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
@@ -101,47 +103,64 @@ export default function ExecutiveDashboardPage() {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
   };
 
-  const getAlertIcon = (type: DashboardAlert['type']) => {
-    switch (type) {
-      case 'error':
+  const getAlertIcon = (severity: StrategicAlert['severity']) => {
+    switch (severity) {
+      case 'CRITICAL':
         return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case 'warning':
+      case 'WARNING':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      case 'success':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'info':
+      case 'INFO':
       default:
         return <Info className="h-5 w-5 text-blue-500" />;
     }
   };
 
-  const getAlertBgColor = (type: DashboardAlert['type']) => {
-    switch (type) {
-      case 'error':
+  const getAlertBgColor = (severity: StrategicAlert['severity']) => {
+    switch (severity) {
+      case 'CRITICAL':
         return 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800';
-      case 'warning':
+      case 'WARNING':
         return 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800';
-      case 'success':
-        return 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800';
-      case 'info':
+      case 'INFO':
       default:
         return 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800';
     }
   };
 
-  const getTrendIcon = (changePercentage: number) => {
-    if (changePercentage > 0) {
+  const getTrendIcon = (trend: string) => {
+    if (trend === 'UP') {
       return <ArrowUpRight className="h-4 w-4 text-green-600" />;
-    } else if (changePercentage < 0) {
+    } else if (trend === 'DOWN') {
       return <ArrowDownRight className="h-4 w-4 text-red-600" />;
     }
     return <Minus className="h-4 w-4 text-surface-400" />;
   };
 
-  const getTrendColor = (changePercentage: number) => {
-    if (changePercentage > 0) return 'text-green-600';
-    if (changePercentage < 0) return 'text-red-600';
-    return 'text-surface-400';
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'GOOD':
+        return 'text-green-600 bg-green-50 dark:bg-green-900/30';
+      case 'WARNING':
+        return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30';
+      case 'CRITICAL':
+        return 'text-red-600 bg-red-50 dark:bg-red-900/30';
+      default:
+        return 'text-surface-600 bg-surface-50 dark:bg-surface-800';
+    }
+  };
+
+  const getKpiIcon = (iconName: string) => {
+    const icons: Record<string, React.ReactNode> = {
+      users: <Users className="h-6 w-6" />,
+      dollar: <DollarSign className="h-6 w-6" />,
+      trending: <TrendingUp className="h-6 w-6" />,
+      target: <Target className="h-6 w-6" />,
+      activity: <Activity className="h-6 w-6" />,
+      briefcase: <Briefcase className="h-6 w-6" />,
+      building: <Building2 className="h-6 w-6" />,
+      clock: <Clock className="h-6 w-6" />,
+    };
+    return icons[iconName?.toLowerCase()] || <BarChart3 className="h-6 w-6" />;
   };
 
   const DashboardSkeleton = () => (
@@ -227,182 +246,118 @@ export default function ExecutiveDashboardPage() {
           </div>
         </div>
 
-        {/* C-Suite KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Total Headcount */}
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Total Headcount</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {formatNumber(data.csuite.headcount.total)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    {getTrendIcon(data.csuite.headcount.growthPercentage)}
-                    <span className={`text-sm font-medium ${getTrendColor(data.csuite.headcount.growthPercentage)}`}>
-                      {formatPercentage(data.csuite.headcount.growthPercentage)}
-                    </span>
-                    <span className="text-xs text-surface-400">vs last month</span>
+        {/* Key Metrics */}
+        {data.keyMetrics && data.keyMetrics.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.keyMetrics.slice(0, 4).map((kpi, index) => (
+              <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-surface-500 dark:text-surface-400">{kpi.name}</p>
+                      <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
+                        {kpi.value}{kpi.unit && kpi.unit !== '#' ? kpi.unit : ''}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {getTrendIcon(kpi.trend)}
+                        <span className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-green-600' : kpi.trend === 'DOWN' ? 'text-red-600' : 'text-surface-400'}`}>
+                          {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
+                        </span>
+                        <span className="text-xs text-surface-400">{kpi.changeDescription || ''}</span>
+                      </div>
+                    </div>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getStatusColor(kpi.status)}`}>
+                      {getKpiIcon(kpi.icon)}
+                    </div>
                   </div>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
-          {/* Revenue per Employee */}
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Revenue/Employee</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {formatCurrency(data.csuite.revenuePerEmployee.current)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    {getTrendIcon(data.csuite.revenuePerEmployee.changePercentage)}
-                    <span className={`text-sm font-medium ${getTrendColor(data.csuite.revenuePerEmployee.changePercentage)}`}>
-                      {formatPercentage(data.csuite.revenuePerEmployee.changePercentage)}
-                    </span>
-                    <span className="text-xs text-surface-400">vs previous</span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Total Cost */}
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Total Cost</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {formatCurrency(data.csuite.costMetrics.totalCost)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs text-surface-400">
-                      {formatCurrency(data.csuite.costMetrics.costPerEmployee)}/employee
-                    </span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Utilization Rate */}
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Utilization Rate</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {data.csuite.productivity.utilizationRate.toFixed(1)}%
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Activity className="h-4 w-4 text-blue-600" />
-                    <span className="text-xs text-surface-400">
-                      {data.csuite.productivity.efficiency.toFixed(1)}% efficiency
-                    </span>
-                  </div>
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Financial Metrics & Workforce Summary */}
+        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Payroll Trend */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary-500" />
-                Payroll Trend
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data.financial.payroll.trend}>
-                  <defs>
-                    <linearGradient id="colorPayroll" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="month" tick={{ fill: '#64748B', fontSize: 12 }} />
-                  <YAxis tick={{ fill: '#64748B', fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: '8px',
-                      border: 'none',
-                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                    }}
-                    formatter={(value) => formatCurrency(value as number)}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#6366F1"
-                    strokeWidth={2}
-                    fillOpacity={1}
-                    fill="url(#colorPayroll)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {/* Payroll/Headcount Trend */}
+          {data.trendCharts?.headcountTrend && data.trendCharts.headcountTrend.length > 0 && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary-500" />
+                  Headcount Trend
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data.trendCharts.headcountTrend}>
+                    <defs>
+                      <linearGradient id="colorHeadcount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                    <XAxis dataKey="period" tick={{ fill: '#64748B', fontSize: 12 }} />
+                    <YAxis tick={{ fill: '#64748B', fontSize: 12 }} />
+                    <Tooltip
+                      contentStyle={{
+                        borderRadius: '8px',
+                        border: 'none',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#6366F1"
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#colorHeadcount)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Department Distribution */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PieChart className="h-5 w-5 text-primary-500" />
-                Department Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={data.workforce.demographics.byDepartment as any[]}
-                    dataKey="count"
-                    nameKey="department"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label={({ name, percent }) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
-                    labelLine={true}
-                  >
-                    {data.workforce.demographics.byDepartment.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => formatNumber(value as number)} />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {data.workforceSummary?.byDepartment && data.workforceSummary.byDepartment.length > 0 && (
+            <Card className="border-0 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChart className="h-5 w-5 text-primary-500" />
+                  Department Distribution
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Pie
+                      data={data.workforceSummary.byDepartment as any[]}
+                      dataKey="count"
+                      nameKey="category"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label={({ name, percent }) => `${name || ''} (${((percent || 0) * 100).toFixed(0)}%)`}
+                      labelLine={true}
+                    >
+                      {data.workforceSummary.byDepartment.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => formatNumber(value as number)} />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Strategic Insights & Alerts */}
+        {/* Strategic Alerts & Risk Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Alerts & Recommendations */}
+          {/* Alerts */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Alerts */}
             <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -412,38 +367,33 @@ export default function ExecutiveDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {data.strategic.alerts.length > 0 ? (
-                    data.strategic.alerts.slice(0, 5).map((alert) => (
+                  {data.strategicAlerts && data.strategicAlerts.length > 0 ? (
+                    data.strategicAlerts.slice(0, 5).map((alert) => (
                       <div
                         key={alert.id}
-                        className={`flex items-start gap-3 p-4 rounded-lg border ${getAlertBgColor(alert.type)}`}
+                        className={`flex items-start gap-3 p-4 rounded-lg border ${getAlertBgColor(alert.severity)}`}
                       >
-                        <div className="flex-shrink-0 mt-0.5">{getAlertIcon(alert.type)}</div>
+                        <div className="flex-shrink-0 mt-0.5">{getAlertIcon(alert.severity)}</div>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-sm font-semibold text-surface-900 dark:text-white">{alert.title}</h4>
-                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">{alert.message}</p>
-                          {alert.action && alert.actionUrl && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="mt-2 h-8 px-3"
-                              onClick={() => router.push(alert.actionUrl!)}
-                            >
-                              {alert.action}
-                            </Button>
+                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">{alert.description}</p>
+                          {alert.recommendation && (
+                            <p className="text-xs text-surface-500 mt-2">
+                              <span className="font-medium">Recommendation:</span> {alert.recommendation}
+                            </p>
                           )}
                         </div>
                         <div className="flex-shrink-0">
                           <span
                             className={`text-xs px-2 py-1 rounded-full ${
-                              alert.priority === 'high'
+                              alert.impact === 'HIGH'
                                 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                                : alert.priority === 'medium'
+                                : alert.impact === 'MEDIUM'
                                 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                                 : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                             }`}
                           >
-                            {alert.priority}
+                            {alert.impact} impact
                           </span>
                         </div>
                       </div>
@@ -457,218 +407,185 @@ export default function ExecutiveDashboardPage() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Recommendations */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-yellow-500" />
-                  Strategic Recommendations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {data.strategic.recommendations.length > 0 ? (
-                    data.strategic.recommendations.slice(0, 3).map((rec) => (
-                      <div key={rec.id} className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400">
-                                {rec.category}
-                              </span>
-                              <span
-                                className={`text-xs px-2 py-0.5 rounded-full ${
-                                  rec.impact === 'high'
-                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                    : rec.impact === 'medium'
-                                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                }`}
-                              >
-                                {rec.impact} impact
-                              </span>
-                            </div>
-                            <h4 className="text-sm font-semibold text-surface-900 dark:text-white">{rec.title}</h4>
-                            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">{rec.description}</p>
-                            {rec.potentialSavings && (
-                              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                                Potential savings: {formatCurrency(rec.potentialSavings)}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-surface-500 text-center py-4">No recommendations available</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Workforce Summary Sidebar */}
           <div className="space-y-4">
-            {/* Attendance Overview */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Clock className="h-5 w-5 text-primary-500" />
-                  Today's Attendance
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Present</span>
-                    <span className="text-lg font-bold text-green-600">{data.workforce.attendance.present}</span>
+            {/* Workforce Overview */}
+            {data.workforceSummary && (
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Users className="h-5 w-5 text-primary-500" />
+                    Workforce Overview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Total Headcount</span>
+                      <span className="text-lg font-bold text-surface-900 dark:text-white">{data.workforceSummary.totalHeadcount}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Active Employees</span>
+                      <span className="text-lg font-bold text-green-600">{data.workforceSummary.activeEmployees}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">New Hires (Month)</span>
+                      <span className="text-lg font-bold text-blue-600">{data.workforceSummary.newHiresThisMonth}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Terminations (Month)</span>
+                      <span className="text-lg font-bold text-red-600">{data.workforceSummary.terminationsThisMonth}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-surface-200 dark:border-surface-700">
+                      <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Retention Rate</span>
+                      <span className="text-xl font-bold text-primary-600">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">On Leave</span>
-                    <span className="text-lg font-bold text-orange-600">{data.workforce.attendance.onLeave}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Absent</span>
-                    <span className="text-lg font-bold text-red-600">{data.workforce.attendance.absent}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-3 border-t border-surface-200 dark:border-surface-700">
-                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Attendance Rate</span>
-                    <span className="text-xl font-bold text-primary-600">{data.workforce.attendance.attendanceRate.toFixed(1)}%</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
-            {/* Performance Summary */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <BarChart3 className="h-5 w-5 text-primary-500" />
-                  Performance Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="text-center pb-3 border-b border-surface-200 dark:border-surface-700">
-                    <p className="text-3xl font-bold text-surface-900 dark:text-white">
-                      {data.workforce.performance.averageRating.toFixed(1)}
-                    </p>
-                    <p className="text-sm text-surface-500 mt-1">Average Rating</p>
+            {/* Productivity Metrics */}
+            {data.productivityMetrics && (
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Activity className="h-5 w-5 text-primary-500" />
+                    Productivity
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Attendance Rate</span>
+                      <span className="text-lg font-bold text-green-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Performance Rating</span>
+                      <span className="text-lg font-bold text-primary-600">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Engagement Score</span>
+                      <span className="text-lg font-bold text-blue-600">{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">eNPS</span>
+                      <span className="text-lg font-bold text-orange-600">{data.productivityMetrics.eNPS || 0}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">High Performers</span>
-                    <span className="text-sm font-semibold text-green-600">{data.workforce.performance.highPerformers}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Needs Improvement</span>
-                    <span className="text-sm font-semibold text-orange-600">{data.workforce.performance.needsImprovement}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Reviews Pending</span>
-                    <span className="text-sm font-semibold text-primary-600">{data.workforce.performance.reviewsPending}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
-            {/* Engagement Metrics */}
-            <Card className="border-0 shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Briefcase className="h-5 w-5 text-primary-500" />
-                  Engagement
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">eNPS Score</span>
-                    <span className="text-lg font-bold text-primary-600">{data.workforce.engagement.eNPS}</span>
+            {/* Risk Indicators */}
+            {data.riskIndicators && (
+              <Card className="border-0 shadow-md">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Shield className="h-5 w-5 text-red-500" />
+                    Risk Indicators
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">High Risk Employees</span>
+                      <span className="text-lg font-bold text-red-600">{data.riskIndicators.highRiskEmployees}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Predicted Attrition</span>
+                      <span className="text-lg font-bold text-orange-600">{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Compliance Issues</span>
+                      <span className="text-lg font-bold text-yellow-600">{data.riskIndicators.complianceIssuesCount}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-surface-600 dark:text-surface-400">Skill Gaps</span>
+                      <span className="text-lg font-bold text-purple-600">{data.riskIndicators.totalSkillGaps}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Satisfaction</span>
-                    <span className="text-lg font-bold text-green-600">{data.workforce.engagement.satisfactionScore}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Retention Rate</span>
-                    <span className="text-lg font-bold text-blue-600">{data.workforce.engagement.retentionRate.toFixed(1)}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">Active Onboarding</span>
-                    <span className="text-lg font-bold text-orange-600">{data.workforce.engagement.activeOnboarding}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
-        {/* Additional Financial Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Payroll</p>
-                <DollarSign className="h-5 w-5 text-primary-500" />
-              </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">
-                {formatCurrency(data.financial.payroll.currentMonth)}
-              </p>
-              <div className="flex items-center gap-2 mt-2">
-                {getTrendIcon(data.financial.payroll.changePercentage)}
-                <span className={`text-sm ${getTrendColor(data.financial.payroll.changePercentage)}`}>
-                  {formatPercentage(data.financial.payroll.changePercentage)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Financial Summary */}
+        {data.financialSummary && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Monthly Payroll</p>
+                  <DollarSign className="h-5 w-5 text-primary-500" />
+                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}
+                </p>
+                {data.financialSummary.payrollCostChangePercent != null && (
+                  <div className="flex items-center gap-2 mt-2">
+                    {data.financialSummary.payrollCostChangePercent >= 0 ? (
+                      <ArrowUpRight className="h-4 w-4 text-red-600" />
+                    ) : (
+                      <ArrowDownRight className="h-4 w-4 text-green-600" />
+                    )}
+                    <span className={`text-sm ${data.financialSummary.payrollCostChangePercent >= 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {formatPercentage(data.financialSummary.payrollCostChangePercent)}
+                    </span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Benefits Cost</p>
-                <Building2 className="h-5 w-5 text-green-500" />
-              </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">
-                {formatCurrency(data.financial.benefits.totalBenefitsCost)}
-              </p>
-              <p className="text-xs text-surface-400 mt-2">
-                {formatCurrency(data.financial.benefits.perEmployee)}/employee
-              </p>
-            </CardContent>
-          </Card>
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">YTD Payroll</p>
+                  <Calendar className="h-5 w-5 text-green-500" />
+                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  {formatCurrency(data.financialSummary.yearToDatePayrollCost || 0)}
+                </p>
+                <p className="text-xs text-surface-400 mt-2">
+                  Budget: {data.financialSummary.budgetUtilizationPercent?.toFixed(0) || 0}% utilized
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Avg Salary</p>
-                <TrendingUp className="h-5 w-5 text-orange-500" />
-              </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">
-                {formatCurrency(data.financial.compensation.averageSalary)}
-              </p>
-              <p className="text-xs text-surface-400 mt-2">
-                Median: {formatCurrency(data.financial.compensation.medianSalary)}
-              </p>
-            </CardContent>
-          </Card>
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Cost/Employee</p>
+                  <Users className="h-5 w-5 text-orange-500" />
+                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  {formatCurrency(data.financialSummary.avgCostPerEmployee || 0)}
+                </p>
+                <p className="text-xs text-surface-400 mt-2">
+                  Monthly average
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Expenses</p>
-                <Calendar className="h-5 w-5 text-blue-500" />
-              </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-white">
-                {formatCurrency(data.financial.expenses.total)}
-              </p>
-              <p className="text-xs text-surface-400 mt-2">
-                {data.financial.expenses.pending} pending
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Revenue/Employee</p>
+                  <TrendingUp className="h-5 w-5 text-blue-500" />
+                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  {formatCurrency(data.financialSummary.revenuePerEmployee || 0)}
+                </p>
+                <p className="text-xs text-surface-400 mt-2">
+                  Per month
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </AppLayout>
   );

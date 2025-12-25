@@ -9,15 +9,15 @@ import {
   BarChart3,
   Clock,
   AlertTriangle,
-  CheckCircle,
   ArrowRight,
   TrendingUp,
-  Briefcase,
+  Settings,
+  RefreshCw,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { resourceManagementService } from '@/lib/services/resource-management.service';
+import { resourceManagementService, ResourceManagementApiError } from '@/lib/services/resource-management.service';
 import { WorkloadSummary, AllocationApprovalRequest } from '@/lib/types/resource-management';
 
 interface QuickStats {
@@ -25,29 +25,40 @@ interface QuickStats {
   pendingApprovals: AllocationApprovalRequest[];
 }
 
+interface ApiState {
+  loading: boolean;
+  error: string | null;
+  isApiNotAvailable: boolean;
+}
+
 export default function ResourcesPage() {
-  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<QuickStats>({ summary: null, pendingApprovals: [] });
+  const [apiState, setApiState] = useState<ApiState>({ loading: true, error: null, isApiNotAvailable: false });
+
+  const fetchStats = async () => {
+    setApiState({ loading: true, error: null, isApiNotAvailable: false });
+    try {
+      const [dashboardData, pendingData] = await Promise.all([
+        resourceManagementService.getWorkloadDashboard({}),
+        resourceManagementService.getMyPendingApprovals(0, 5),
+      ]);
+      setStats({
+        summary: dashboardData.summary,
+        pendingApprovals: pendingData.content,
+      });
+      setApiState({ loading: false, error: null, isApiNotAvailable: false });
+    } catch (err) {
+      console.error('Error fetching resource stats:', err);
+      const isApiError = err instanceof ResourceManagementApiError;
+      setApiState({
+        loading: false,
+        error: err instanceof Error ? err.message : 'Failed to load data',
+        isApiNotAvailable: isApiError && err.isApiNotAvailable,
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        const [dashboardData, pendingData] = await Promise.all([
-          resourceManagementService.getWorkloadDashboard({}),
-          resourceManagementService.getMyPendingApprovals(0, 5),
-        ]);
-        setStats({
-          summary: dashboardData.summary,
-          pendingApprovals: pendingData.content,
-        });
-      } catch (err) {
-        console.error('Error fetching resource stats:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStats();
   }, []);
 
@@ -76,6 +87,85 @@ export default function ResourcesPage() {
     },
   ];
 
+  // API Not Available State
+  if (apiState.isApiNotAvailable) {
+    return (
+      <AppLayout>
+        <div className="space-y-6 p-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              Resource Management
+            </h1>
+            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+              Manage team capacity, allocations, and availability
+            </p>
+          </div>
+
+          {/* API Not Available Card */}
+          <Card className="border-amber-200 dark:border-amber-800">
+            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="mb-4 rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
+                <Settings className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+                Resource Management API Not Available
+              </h2>
+              <p className="mt-2 max-w-md text-surface-600 dark:text-surface-400">
+                The Resource Management backend API is not yet implemented. This feature requires
+                backend development to provide workload data, capacity allocation, and availability
+                calendar functionality.
+              </p>
+              <div className="mt-6 flex gap-3">
+                <Button variant="outline" onClick={fetchStats}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry Connection
+                </Button>
+                <Link href="/dashboard">
+                  <Button variant="primary">
+                    Back to Dashboard
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Feature Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Planned Features</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {navigationCards.map((card) => {
+                  const Icon = card.icon;
+                  return (
+                    <div
+                      key={card.href}
+                      className="flex items-start gap-3 rounded-lg border border-surface-200 p-4 dark:border-surface-700"
+                    >
+                      <div className={`rounded-lg p-2 ${card.color}`}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-surface-900 dark:text-surface-50">
+                          {card.title}
+                        </h3>
+                        <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+                          {card.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       <div className="space-y-6 p-6">
@@ -89,8 +179,25 @@ export default function ResourcesPage() {
           </p>
         </div>
 
+        {/* Error State */}
+        {apiState.error && !apiState.isApiNotAvailable && (
+          <Card className="border-red-200 dark:border-red-800">
+            <CardContent className="flex items-center gap-4 p-4">
+              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <div className="flex-1">
+                <p className="font-medium text-red-600 dark:text-red-400">Error Loading Data</p>
+                <p className="text-sm text-surface-600 dark:text-surface-400">{apiState.error}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={fetchStats}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Stats */}
-        {loading ? (
+        {apiState.loading ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[...Array(4)].map((_, i) => (
               <Skeleton key={i} className="h-24 rounded-xl" />
