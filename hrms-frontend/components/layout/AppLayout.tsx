@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -85,10 +85,27 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     setMounted(true);
   }, []);
 
-  const handleSidebarCollapsedChange = (collapsed: boolean) => {
+  // Keyboard shortcut for toggling sidebar (Cmd/Ctrl + B)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+        e.preventDefault();
+        setIsCollapsed(prev => {
+          const newValue = !prev;
+          onSidebarCollapsedChange?.(newValue);
+          return newValue;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onSidebarCollapsedChange]);
+
+  const handleSidebarCollapsedChange = useCallback((collapsed: boolean) => {
     setIsCollapsed(collapsed);
     onSidebarCollapsedChange?.(collapsed);
-  };
+  }, [onSidebarCollapsedChange]);
 
   const handleMenuItemClick = (item: SidebarItem) => {
     if (item.href) {

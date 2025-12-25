@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { ChevronRight, ChevronLeft, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown, Sparkles, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 export interface SidebarItem {
   id: string;
@@ -35,6 +35,9 @@ export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   logo?: React.ReactNode;
   logoCollapsed?: React.ReactNode;
 }
+
+const STORAGE_KEY_COLLAPSED = 'sidebar-collapsed';
+const STORAGE_KEY_SECTIONS = 'sidebar-sections-state';
 
 const SidebarItemComponent: React.FC<{
   item: SidebarItem;
@@ -88,7 +91,7 @@ const SidebarItemComponent: React.FC<{
         {item.icon && (
           <span
             className={cn(
-              'flex items-center justify-center w-8 h-8 rounded-md transition-colors',
+              'flex items-center justify-center w-8 h-8 rounded-md transition-colors flex-shrink-0',
               isActive
                 ? 'text-primary-600 dark:text-primary-400'
                 : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-200'
@@ -158,6 +161,49 @@ const SidebarItemComponent: React.FC<{
   );
 };
 
+// Collapsible Section Header Component
+const SectionHeader: React.FC<{
+  section: SidebarSection;
+  isExpanded: boolean;
+  isCollapsed: boolean;
+  onToggle: () => void;
+  itemCount: number;
+}> = ({ section, isExpanded, isCollapsed, onToggle, itemCount }) => {
+  if (isCollapsed) {
+    return (
+      <div className="relative group px-2 py-1.5">
+        <div className="w-full h-px bg-surface-200 dark:bg-surface-700" />
+        {/* Tooltip showing section name */}
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-surface-900 text-white text-xs font-medium rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-lg">
+          {section.label} ({itemCount})
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between px-3 py-2 group hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-md transition-colors"
+    >
+      <span className="text-xs font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
+        {section.label}
+      </span>
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] font-medium text-surface-400 dark:text-surface-500 bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded">
+          {itemCount}
+        </span>
+        <ChevronDown
+          className={cn(
+            'h-3.5 w-3.5 text-surface-400 transition-transform duration-200',
+            !isExpanded && '-rotate-90'
+          )}
+        />
+      </div>
+    </button>
+  );
+};
+
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
@@ -177,15 +223,87 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     ref
   ) => {
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
+    const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+    const [isHovering, setIsHovering] = useState(false);
 
+    // Load collapsed state from localStorage
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const savedCollapsed = localStorage.getItem(STORAGE_KEY_COLLAPSED);
+        if (savedCollapsed !== null) {
+          const parsedCollapsed = savedCollapsed === 'true';
+          setIsCollapsed(parsedCollapsed);
+          onCollapsedChange?.(parsedCollapsed);
+        }
+
+        const savedSections = localStorage.getItem(STORAGE_KEY_SECTIONS);
+        if (savedSections) {
+          try {
+            setExpandedSections(JSON.parse(savedSections));
+          } catch {
+            // Initialize all sections as expanded
+            const allExpanded: Record<string, boolean> = {};
+            groupedItems.forEach(section => {
+              allExpanded[section.id] = true;
+            });
+            setExpandedSections(allExpanded);
+          }
+        } else {
+          // Default: all sections expanded
+          const allExpanded: Record<string, boolean> = {};
+          groupedItems.forEach(section => {
+            allExpanded[section.id] = true;
+          });
+          setExpandedSections(allExpanded);
+        }
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Sync with prop changes
     useEffect(() => {
       setIsCollapsed(collapsed);
     }, [collapsed]);
 
-    const handleCollapsedChange = (newCollapsed: boolean) => {
+    const handleCollapsedChange = useCallback((newCollapsed: boolean) => {
       setIsCollapsed(newCollapsed);
       onCollapsedChange?.(newCollapsed);
-    };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_COLLAPSED, String(newCollapsed));
+      }
+    }, [onCollapsedChange]);
+
+    const toggleSection = useCallback((sectionId: string) => {
+      setExpandedSections(prev => {
+        const newState = { ...prev, [sectionId]: !prev[sectionId] };
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(newState));
+        }
+        return newState;
+      });
+    }, []);
+
+    const expandAllSections = useCallback(() => {
+      const allExpanded: Record<string, boolean> = {};
+      groupedItems.forEach(section => {
+        allExpanded[section.id] = true;
+      });
+      setExpandedSections(allExpanded);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(allExpanded));
+      }
+    }, []);
+
+    const collapseAllSections = useCallback(() => {
+      const allCollapsed: Record<string, boolean> = {};
+      groupedItems.forEach(section => {
+        allCollapsed[section.id] = false;
+      });
+      setExpandedSections(allCollapsed);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(allCollapsed));
+      }
+    }, []);
 
     // Group items by section
     const groupedItems = React.useMemo(() => {
@@ -198,16 +316,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       };
 
       items.forEach(item => {
-        // Self-service items
         if (['profile', 'payslips', 'my-attendance', 'leaves'].includes(item.id)) {
           groups['Quick Access'].push(item);
-        }
-        // Settings items
-        else if (['roles', 'settings'].includes(item.id)) {
+        } else if (['roles', 'settings'].includes(item.id)) {
           groups['Settings'].push(item);
-        }
-        // Everything else is management
-        else {
+        } else {
           groups['Management'].push(item);
         }
       });
@@ -217,15 +330,36 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         .map(([label, items]) => ({ id: label.toLowerCase().replace(/\s+/g, '-'), label, items }));
     }, [items, sections]);
 
+    // Check if a section contains the active item
+    const sectionContainsActiveItem = useCallback((section: SidebarSection) => {
+      return section.items.some(item =>
+        item.id === activeId ||
+        item.children?.some(child => child.id === activeId)
+      );
+    }, [activeId]);
+
+    // Auto-expand section containing active item
+    useEffect(() => {
+      if (activeId) {
+        groupedItems.forEach(section => {
+          if (sectionContainsActiveItem(section) && !expandedSections[section.id]) {
+            setExpandedSections(prev => ({ ...prev, [section.id]: true }));
+          }
+        });
+      }
+    }, [activeId, groupedItems, sectionContainsActiveItem, expandedSections]);
+
     return (
       <div
         ref={ref}
         className={cn(
-          'flex flex-col bg-white border-r border-surface-200 transition-all duration-200 h-screen',
+          'flex flex-col bg-white border-r border-surface-200 transition-all duration-300 ease-in-out h-screen',
           'dark:bg-surface-900 dark:border-surface-800',
           isCollapsed ? 'w-[72px]' : 'w-64',
           className
         )}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
         {...props}
       >
         {/* Logo Header */}
@@ -256,65 +390,108 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               />
             </div>
           )}
-
-          {collapsible && !isCollapsed && (
-            <button
-              onClick={() => handleCollapsedChange(!isCollapsed)}
-              className="p-1.5 rounded-md text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-colors"
-              aria-label="Collapse sidebar"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
         </div>
 
-        {/* Expand button when collapsed */}
-        {collapsible && isCollapsed && (
-          <div className="px-3 py-2">
+        {/* Collapse Toggle - Always visible */}
+        {collapsible && (
+          <div className={cn(
+            'px-3 py-2 border-b border-surface-100 dark:border-surface-800',
+            isCollapsed ? 'flex justify-center' : ''
+          )}>
             <button
-              onClick={() => handleCollapsedChange(false)}
-              className="w-full p-2 rounded-md text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-colors flex items-center justify-center"
-              aria-label="Expand sidebar"
+              onClick={() => handleCollapsedChange(!isCollapsed)}
+              className={cn(
+                'flex items-center gap-2 p-2 rounded-lg text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-all duration-150',
+                isCollapsed ? 'w-full justify-center' : 'w-full',
+                // Highlight when hovering over collapsed sidebar
+                isCollapsed && isHovering && 'bg-surface-100 dark:bg-surface-800'
+              )}
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
             >
-              <ChevronRight className="h-4 w-4" />
+              {isCollapsed ? (
+                <PanelLeft className="h-5 w-5" />
+              ) : (
+                <>
+                  <PanelLeftClose className="h-5 w-5" />
+                  <span className="text-xs font-medium">Collapse</span>
+                  <kbd className="ml-auto text-[10px] font-mono text-surface-400 bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded">
+                    ⌘B
+                  </kbd>
+                </>
+              )}
             </button>
+
+            {/* Expand/Collapse all sections - only when expanded */}
+            {!isCollapsed && (
+              <div className="flex items-center gap-1 mt-1.5">
+                <button
+                  onClick={expandAllSections}
+                  className="flex-1 text-[10px] text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 py-1 px-2 rounded hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  Expand all
+                </button>
+                <span className="text-surface-300 dark:text-surface-600">|</span>
+                <button
+                  onClick={collapseAllSections}
+                  className="flex-1 text-[10px] text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 py-1 px-2 rounded hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  Collapse all
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-          {groupedItems.map((section, sectionIndex) => (
-            <div key={section.id}>
-              {/* Section Label */}
-              {!isCollapsed && (
-                <div className="px-3 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500">
-                    {section.label}
-                  </span>
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-thin scrollbar-thumb-surface-300 dark:scrollbar-thumb-surface-600 hover:scrollbar-thumb-surface-400 dark:hover:scrollbar-thumb-surface-500">
+          {groupedItems.map((section) => {
+            const isExpanded = expandedSections[section.id] !== false;
+            const hasActiveItem = sectionContainsActiveItem(section);
+
+            return (
+              <div key={section.id} className="mb-2">
+                {/* Section Header */}
+                <SectionHeader
+                  section={section}
+                  isExpanded={isExpanded}
+                  isCollapsed={isCollapsed}
+                  onToggle={() => toggleSection(section.id)}
+                  itemCount={section.items.length}
+                />
+
+                {/* Section Items - with animation */}
+                <div
+                  className={cn(
+                    'overflow-hidden transition-all duration-200 ease-in-out',
+                    isExpanded || isCollapsed ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                  )}
+                >
+                  <div className={cn(
+                    'space-y-0.5',
+                    !isCollapsed && 'mt-1'
+                  )}>
+                    {section.items.map((item) => (
+                      <SidebarItemComponent
+                        key={item.id}
+                        item={item}
+                        isActive={activeId === item.id}
+                        isCollapsed={isCollapsed}
+                        onItemClick={onItemClick}
+                        variant={variant}
+                        activeId={activeId}
+                      />
+                    ))}
+                  </div>
                 </div>
-              )}
 
-              {/* Section Items */}
-              <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <SidebarItemComponent
-                    key={item.id}
-                    item={item}
-                    isActive={activeId === item.id}
-                    isCollapsed={isCollapsed}
-                    onItemClick={onItemClick}
-                    variant={variant}
-                    activeId={activeId}
-                  />
-                ))}
+                {/* Collapsed indicator for active section */}
+                {isCollapsed && hasActiveItem && (
+                  <div className="mt-1 mx-auto w-1 h-1 rounded-full bg-primary-500" />
+                )}
               </div>
-
-              {/* Section Divider */}
-              {sectionIndex < groupedItems.length - 1 && !isCollapsed && (
-                <div className="mt-4 border-t border-surface-100 dark:border-surface-800" />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Footer */}
@@ -337,8 +514,12 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               </div>
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center group relative">
               <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+              {/* Tooltip */}
+              <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-lg">
+                Pro Features Active
+              </div>
             </div>
           )}
         </div>
