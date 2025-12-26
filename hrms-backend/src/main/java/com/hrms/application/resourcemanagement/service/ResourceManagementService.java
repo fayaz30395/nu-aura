@@ -722,7 +722,7 @@ public class ResourceManagementService {
                 if (departmentIds == null || departmentIds.isEmpty()) {
                         employees = employeeRepository.findByTenantId(tenantId);
                 } else {
-                        employees = employeeRepository.findAllByTenantId(tenantId).stream()
+                        employees = employeeRepository.findByTenantId(tenantId).stream()
                                         .filter(e -> departmentIds.contains(e.getDepartmentId()))
                                         .collect(Collectors.toList());
                 }
