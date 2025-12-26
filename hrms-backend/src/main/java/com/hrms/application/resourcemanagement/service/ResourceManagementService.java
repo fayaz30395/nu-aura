@@ -171,12 +171,18 @@ public class ResourceManagementService {
                                         .build());
                 }
 
+                String departmentName = employee.getDepartmentId() != null
+                                ? departmentRepository.findById(employee.getDepartmentId())
+                                                .map(d -> d.getName())
+                                                .orElse("N/A")
+                                : "N/A";
+
                 return EmployeeCapacity.builder()
                                 .employeeId(employeeId)
                                 .employeeName(employee.getFullName())
                                 .employeeCode(employee.getEmployeeCode())
                                 .departmentId(employee.getDepartmentId())
-                                .departmentName(employee.getDepartmentName())
+                                .departmentName(departmentName)
                                 .designation(employee.getDesignation())
                                 .totalAllocation(totalAllocation)
                                 .approvedAllocation(approvedAllocation)
@@ -334,7 +340,8 @@ public class ResourceManagementService {
         public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId);
-                List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId);
+                List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId, Pageable.unpaged())
+                                .getContent();
 
                 List<EmployeeWorkload> workloads = allEmployees.stream()
                                 .map(emp -> getEmployeeWorkload(emp.getId()))
@@ -343,7 +350,7 @@ public class ResourceManagementService {
 
                 WorkloadSummary summary = calculateWorkloadSummary(workloads, activeProjects.size(), filters);
 
-                List<DepartmentWorkload> deptWorkloads = departmentRepository.findAllByTenantId(tenantId).stream()
+                List<DepartmentWorkload> deptWorkloads = departmentRepository.findByTenantId(tenantId).stream()
                                 .map(dept -> calculateDepartmentWorkload(dept.getId(), dept.getName(), workloads))
                                 .collect(Collectors.toList());
 
@@ -431,7 +438,7 @@ public class ResourceManagementService {
                                 .underUtilizedCount(under)
                                 .unassignedCount(unassigned)
                                 .pendingApprovals(pending)
-                                .totalAllocatedHours((long) avg * workloads.size() * 1.6) // Rough heuristic
+                                .totalAllocatedHours((long) (avg * workloads.size() * 1.6)) // Rough heuristic
                                 .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
                                 .periodEnd(filters != null ? filters.getEndDate() : LocalDate.now().plusMonths(1))
                                 .build();
@@ -473,7 +480,7 @@ public class ResourceManagementService {
                                                 .count())
                                 .activeProjects(deptWorkloads.stream().mapToInt(EmployeeWorkload::getProjectCount)
                                                 .sum())
-                                .totalAllocatedHours((long) avg * deptWorkloads.size() * 1.6)
+                                .totalAllocatedHours((long) (avg * deptWorkloads.size() * 1.6))
                                 .build();
         }
 
@@ -504,7 +511,7 @@ public class ResourceManagementService {
                                 : employeeRepository.findByTenantId(tenantId).stream()
                                                 .limit(limit != null ? limit : 50).collect(Collectors.toList());
 
-                return employees.stream().map(emp -> {
+                List<WorkloadHeatmapRow> heatmapRows = employees.stream().map(emp -> {
                         List<WorkloadHeatmapCell> cells = new ArrayList<>();
                         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusWeeks(1)) {
                                 LocalDate weekStart = date;
@@ -518,14 +525,23 @@ public class ResourceManagementService {
                                                 .projectCount(cap.getAllocations().size())
                                                 .build());
                         }
+
+                        String deptName = emp.getDepartmentId() != null
+                                        ? departmentRepository.findById(emp.getDepartmentId())
+                                                        .map(d -> d.getName())
+                                                        .orElse("N/A")
+                                        : "N/A";
+
                         return WorkloadHeatmapRow.builder()
                                         .employeeId(emp.getId())
                                         .employeeName(emp.getFullName())
                                         .employeeCode(emp.getEmployeeCode())
-                                        .departmentName(emp.getDepartmentName())
+                                        .departmentName(deptName)
                                         .cells(cells)
                                         .build();
                 }).collect(Collectors.toList());
+
+                return heatmapRows;
         }
 
         public List<com.hrms.api.resourcemanagement.dto.AvailabilityDTOs.Holiday> getHolidays(LocalDate startDate,
@@ -566,8 +582,8 @@ public class ResourceManagementService {
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true);
                 List<LeaveRequest> leaves = (List<LeaveRequest>) leaveRequestRepository.findOverlappingLeaves(tenantId,
                                 employeeId, startDate, endDate);
-                List<Holiday> holidays = holidayRepository.findAllByTenantId(tenantId); // Need filter by date range
-                                                                                        // ideally
+                List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, startDate,
+                                endDate);
 
                 List<ResourceAvailabilityDay> days = new ArrayList<>();
                 long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
