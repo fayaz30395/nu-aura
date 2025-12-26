@@ -189,7 +189,10 @@ const SidebarMenuItem: React.FC<{
   const hasChildren = item.children && item.children.length > 0;
   const isFlyoverOpen = openFlyoverId === item.id;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (hasChildren) {
       // Toggle flyover for items with children
       if (isFlyoverOpen) {
