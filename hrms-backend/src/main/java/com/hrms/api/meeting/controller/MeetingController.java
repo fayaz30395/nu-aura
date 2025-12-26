@@ -1,4 +1,5 @@
 package com.hrms.api.meeting.controller;
+
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.engagement.OneOnOneMeeting;
@@ -6,7 +7,6 @@ import com.hrms.infrastructure.engagement.repository.OneOnOneMeetingRepository;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.hrms.common.security.Permission.*;
@@ -29,6 +29,7 @@ public class MeetingController {
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<OneOnOneMeeting>> getByEmployee(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(meetingRepository.findByTenantIdAndEmployeeIdOrderByMeetingDateDesc(TenantContext.getCurrentTenant(), employeeId));
+        return ResponseEntity.ok(meetingRepository
+                .findByTenantIdAndEmployeeIdOrderByMeetingDateDesc(TenantContext.getCurrentTenant(), employeeId));
     }
 }

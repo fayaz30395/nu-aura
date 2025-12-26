@@ -26,10 +26,14 @@ public class EmployeeSearchRequest {
     private UUID managerId;
 
     // Pagination
+    @Builder.Default
     private Integer page = 0;
+    @Builder.Default
     private Integer size = 20;
 
     // Sorting
+    @Builder.Default
     private String sortBy = "fullName"; // fullName, employeeCode, joiningDate, department
+    @Builder.Default
     private String sortDirection = "ASC"; // ASC, DESC
 }

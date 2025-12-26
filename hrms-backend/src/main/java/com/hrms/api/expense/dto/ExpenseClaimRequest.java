@@ -33,6 +33,7 @@ public class ExpenseClaimRequest {
     private BigDecimal amount;
 
     @Size(max = 3, message = "Currency code must be 3 characters")
+    @Builder.Default
     private String currency = "USD";
 
     @Size(max = 500, message = "Receipt URL cannot exceed 500 characters")

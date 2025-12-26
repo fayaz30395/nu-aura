@@ -3,7 +3,6 @@ package com.hrms.api.asset.controller;
 import com.hrms.api.asset.dto.AssetRequest;
 import com.hrms.api.asset.dto.AssetResponse;
 import com.hrms.application.asset.service.AssetManagementService;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.asset.Asset;
 import jakarta.validation.Valid;

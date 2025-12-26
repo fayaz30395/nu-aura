@@ -1,6 +1,5 @@
 package com.hrms.api.project.dto;
 
-import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.domain.project.Project;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

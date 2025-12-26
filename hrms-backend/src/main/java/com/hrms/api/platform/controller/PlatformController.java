@@ -31,7 +31,6 @@ public class PlatformController {
     private final NuPlatformService platformService;
     private final PermissionMigrationService migrationService;
     private final NuApplicationRepository applicationRepository;
-    private final AppPermissionRepository permissionRepository;
     private final AppRoleRepository roleRepository;
     private final UserAppAccessRepository userAppAccessRepository;
 
@@ -138,8 +137,7 @@ public class PlatformController {
                 .collect(Collectors.groupingBy(
                         p -> p.getCategory() != null ? p.getCategory() : "Other",
                         LinkedHashMap::new,
-                        Collectors.mapping(AppPermissionDTO::fromEntity, Collectors.toList())
-                ));
+                        Collectors.mapping(AppPermissionDTO::fromEntity, Collectors.toList())));
 
         return ResponseEntity.ok(result);
     }
@@ -183,8 +181,7 @@ public class PlatformController {
                 request.getName(),
                 request.getDescription(),
                 request.getLevel(),
-                request.getPermissionCodes()
-        );
+                request.getPermissionCodes());
         return ResponseEntity.ok(AppRoleDTO.fromEntity(role));
     }
 
@@ -261,8 +258,7 @@ public class PlatformController {
                 request.getUserId(),
                 request.getAppCode(),
                 request.getRoleCodes(),
-                grantedBy
-        );
+                grantedBy);
         return ResponseEntity.ok(UserAppAccessDTO.fromEntity(access));
     }
 
@@ -353,7 +349,8 @@ public class PlatformController {
 
     /**
      * Run permission migration for current tenant.
-     * Migrates legacy permissions, roles, and user access to the NU Platform format.
+     * Migrates legacy permissions, roles, and user access to the NU Platform
+     * format.
      */
     @PostMapping("/migrate")
     @RequiresPermission("SYSTEM:ADMIN")

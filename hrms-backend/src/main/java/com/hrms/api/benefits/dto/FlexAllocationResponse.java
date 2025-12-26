@@ -60,16 +60,17 @@ public class FlexAllocationResponse {
     private LocalDateTime updatedAt;
 
     public static FlexAllocationResponse from(FlexBenefitAllocation allocation) {
-        BigDecimal remaining = allocation.getRemainingCredits() != null ? allocation.getRemainingCredits() : BigDecimal.ZERO;
         BigDecimal total = allocation.getTotalCredits() != null ? allocation.getTotalCredits() : BigDecimal.ONE;
         BigDecimal used = allocation.getUsedCredits() != null ? allocation.getUsedCredits() : BigDecimal.ZERO;
 
-        double utilization = total.compareTo(BigDecimal.ZERO) > 0 ?
-                used.multiply(BigDecimal.valueOf(100)).divide(total, 2, java.math.RoundingMode.HALF_UP).doubleValue() : 0;
+        double utilization = total.compareTo(BigDecimal.ZERO) > 0
+                ? used.multiply(BigDecimal.valueOf(100)).divide(total, 2, java.math.RoundingMode.HALF_UP).doubleValue()
+                : 0;
 
         int daysUntilExpiry = 0;
         if (allocation.getExpiryDate() != null) {
-            daysUntilExpiry = (int) java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), allocation.getExpiryDate());
+            daysUntilExpiry = (int) java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(),
+                    allocation.getExpiryDate());
         }
 
         return FlexAllocationResponse.builder()
@@ -88,16 +89,20 @@ public class FlexAllocationResponse {
                 .wellnessRemaining(calculateRemaining(allocation.getWellnessAllocation(), allocation.getWellnessUsed()))
                 .lifestyleAllocation(allocation.getLifestyleAllocation())
                 .lifestyleUsed(allocation.getLifestyleUsed())
-                .lifestyleRemaining(calculateRemaining(allocation.getLifestyleAllocation(), allocation.getLifestyleUsed()))
+                .lifestyleRemaining(
+                        calculateRemaining(allocation.getLifestyleAllocation(), allocation.getLifestyleUsed()))
                 .retirementAllocation(allocation.getRetirementAllocation())
                 .retirementUsed(allocation.getRetirementUsed())
-                .retirementRemaining(calculateRemaining(allocation.getRetirementAllocation(), allocation.getRetirementUsed()))
+                .retirementRemaining(
+                        calculateRemaining(allocation.getRetirementAllocation(), allocation.getRetirementUsed()))
                 .educationAllocation(allocation.getEducationAllocation())
                 .educationUsed(allocation.getEducationUsed())
-                .educationRemaining(calculateRemaining(allocation.getEducationAllocation(), allocation.getEducationUsed()))
+                .educationRemaining(
+                        calculateRemaining(allocation.getEducationAllocation(), allocation.getEducationUsed()))
                 .transportAllocation(allocation.getTransportAllocation())
                 .transportUsed(allocation.getTransportUsed())
-                .transportRemaining(calculateRemaining(allocation.getTransportAllocation(), allocation.getTransportUsed()))
+                .transportRemaining(
+                        calculateRemaining(allocation.getTransportAllocation(), allocation.getTransportUsed()))
                 .allocationDate(allocation.getAllocationDate())
                 .expiryDate(allocation.getExpiryDate())
                 .daysUntilExpiry(daysUntilExpiry)
@@ -111,8 +116,10 @@ public class FlexAllocationResponse {
     }
 
     private static BigDecimal calculateRemaining(BigDecimal allocation, BigDecimal used) {
-        if (allocation == null) return null;
-        if (used == null) return allocation;
+        if (allocation == null)
+            return null;
+        if (used == null)
+            return allocation;
         return allocation.subtract(used);
     }
 }
