@@ -420,6 +420,17 @@ public class AttendanceRecordService {
 
         record.setWorkDurationMinutes(totalWork != null ? totalWork : 0);
         record.setBreakDurationMinutes(totalBreak != null ? totalBreak : 0);
+
+        // Update status based on actual work duration (PRESENT, HALF_DAY, or INCOMPLETE)
+        record.updateStatusBasedOnWorkDuration();
+
+        // Log if attendance is incomplete
+        if (record.isIncompleteAttendance()) {
+            log.info("Incomplete attendance for employee {} on {}: worked {} minutes (required: {} minutes, deficit: {} minutes)",
+                     record.getEmployeeId(), record.getAttendanceDate(),
+                     record.getWorkDurationMinutes(), AttendanceRecord.FULL_DAY_MINUTES,
+                     record.getDeficitMinutes());
+        }
     }
 
     private AttendanceTimeEntry.EntryType parseEntryType(String type) {

@@ -158,6 +158,7 @@ export interface CreateEmployeeRequest {
   departmentId?: string;
   designation?: string;
   managerId?: string;
+  selfManaged?: boolean;
   employmentType: EmploymentType;
   status: EmployeeStatus;
   bankAccountNumber?: string;
@@ -169,6 +170,7 @@ export interface CreateEmployeeRequest {
 }
 
 export interface UpdateEmployeeRequest {
+  employeeCode?: string;
   firstName?: string;
   middleName?: string;
   lastName?: string;

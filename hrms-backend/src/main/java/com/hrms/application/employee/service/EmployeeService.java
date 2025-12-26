@@ -93,6 +93,12 @@ public class EmployeeService {
         employee.setTenantId(tenantId);
         employee = employeeRepository.save(employee);
 
+        // If selfManaged is true, set the managerId to the employee's own ID
+        if (Boolean.TRUE.equals(request.getSelfManaged())) {
+            employee.setManagerId(employee.getId());
+            employee = employeeRepository.save(employee);
+        }
+
         return EmployeeResponse.fromEmployee(employee);
     }
 
@@ -103,6 +109,18 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .filter(e -> e.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        // Update employee code if provided and different from current
+        if (request.getEmployeeCode() != null && !request.getEmployeeCode().equals(employee.getEmployeeCode())) {
+            // Check if new employee code already exists for another employee
+            employeeRepository.findByEmployeeCodeAndTenantId(request.getEmployeeCode(), tenantId)
+                    .ifPresent(existing -> {
+                        if (!existing.getId().equals(employeeId)) {
+                            throw new DuplicateResourceException("Employee code already exists");
+                        }
+                    });
+            employee.setEmployeeCode(request.getEmployeeCode());
+        }
 
         // Update fields if provided
         if (request.getFirstName() != null) {

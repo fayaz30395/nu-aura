@@ -498,7 +498,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                     <SidebarMenuItem
                       key={item.id}
                       item={item}
-                      isActive={activeId === item.id || item.children?.some(c => c.id === activeId)}
+                      isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
                       isCollapsed={isCollapsed}
                       onItemClick={onItemClick}
                       activeId={activeId}

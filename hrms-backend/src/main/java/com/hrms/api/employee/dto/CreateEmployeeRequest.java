@@ -59,6 +59,8 @@ public class CreateEmployeeRequest {
 
     private UUID managerId;
 
+    private Boolean selfManaged;
+
     @NotNull(message = "Employment type is required")
     private Employee.EmploymentType employmentType;
 

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
+import { format, differenceInSeconds, parseISO } from 'date-fns';
 import {
   User,
   Calendar,
@@ -17,6 +17,8 @@ import {
   AlertCircle,
   ArrowRight,
   Download,
+  Play,
+  Pause,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, StatCard, Loading, Badge } from '@/components/ui';
@@ -25,6 +27,20 @@ import { selfServiceService } from '@/lib/services/selfservice.service';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { SelfServiceDashboard } from '@/lib/types/selfservice';
 
+// Helper function to format elapsed time
+function formatElapsedTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
+  parts.push(`${secs}s`);
+
+  return parts.join(' ');
+}
+
 export default function MyDashboardPage() {
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
@@ -32,6 +48,9 @@ export default function MyDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [checkInTime, setCheckInTime] = useState<Date | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (hasHydrated && !user) {
@@ -45,6 +64,37 @@ export default function MyDashboardPage() {
     }
   }, [user?.employeeId]);
 
+  // Real-time timer effect
+  useEffect(() => {
+    if (checkInTime && isCheckedIn) {
+      // Calculate initial elapsed time
+      const updateElapsed = () => {
+        const now = new Date();
+        const elapsed = differenceInSeconds(now, checkInTime);
+        setElapsedSeconds(Math.max(0, elapsed));
+      };
+
+      // Update immediately
+      updateElapsed();
+
+      // Update every second
+      timerRef.current = setInterval(updateElapsed, 1000);
+
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+      };
+    } else {
+      setElapsedSeconds(0);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [checkInTime, isCheckedIn]);
+
   const loadDashboard = async () => {
     if (!user?.employeeId) return;
 
@@ -52,7 +102,48 @@ export default function MyDashboardPage() {
       setIsLoading(true);
       const data = await selfServiceService.getDashboard(user.employeeId);
       setDashboard(data);
-      setIsCheckedIn(data.todayAttendanceStatus === 'CHECKED_IN' || data.todayAttendanceStatus === 'PRESENT');
+
+      // Always fetch today's attendance directly to get accurate check-in time
+      // This is more reliable than depending on self-service dashboard data
+      try {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        const attendance = await attendanceService.getAttendanceByDateRange(
+          user.employeeId,
+          today,
+          today
+        );
+        if (attendance && attendance.length > 0) {
+          const todayRecord = attendance[0];
+          // Check if there's an open session (checked in but not out)
+          if (todayRecord.checkInTime && !todayRecord.checkOutTime) {
+            setIsCheckedIn(true);
+            const checkIn = parseISO(todayRecord.checkInTime);
+            setCheckInTime(checkIn);
+          } else if (todayRecord.checkOutTime) {
+            // Already checked out for today
+            setIsCheckedIn(false);
+            setCheckInTime(null);
+          } else {
+            // No attendance record yet
+            setIsCheckedIn(false);
+            setCheckInTime(null);
+          }
+        } else {
+          // No attendance record for today
+          setIsCheckedIn(false);
+          setCheckInTime(null);
+        }
+      } catch (err) {
+        console.error('Failed to fetch today\'s attendance:', err);
+        // Fallback to self-service dashboard data
+        const checkedIn = data.todayAttendanceStatus === 'CHECKED_IN' || data.todayAttendanceStatus === 'PRESENT';
+        setIsCheckedIn(checkedIn);
+        if (checkedIn && data.todayCheckInTime && !data.todayCheckOutTime) {
+          setCheckInTime(parseISO(data.todayCheckInTime));
+        } else {
+          setCheckInTime(null);
+        }
+      }
     } catch (error) {
       console.error('Failed to load dashboard:', error);
       // Set fallback data for demo
@@ -91,11 +182,17 @@ export default function MyDashboardPage() {
 
     try {
       setCheckingIn(true);
-      await attendanceService.checkIn({
+      const response = await attendanceService.checkIn({
         employeeId: user.employeeId,
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(true);
+      // Set check-in time from response or use current time
+      if (response.checkInTime) {
+        setCheckInTime(parseISO(response.checkInTime));
+      } else {
+        setCheckInTime(new Date());
+      }
       loadDashboard();
     } catch (error) {
       console.error('Check-in failed:', error);
@@ -114,6 +211,7 @@ export default function MyDashboardPage() {
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(false);
+      setCheckInTime(null); // Clear the timer
       loadDashboard();
     } catch (error) {
       console.error('Check-out failed:', error);
@@ -160,18 +258,28 @@ export default function MyDashboardPage() {
           </div>
 
           {/* Quick Check-in/out */}
-          <button
-            onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
-            disabled={checkingIn}
-            className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-              isCheckedIn
-                ? 'bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400'
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
-          >
-            <Clock className="h-5 w-5" />
-            {checkingIn ? 'Processing...' : isCheckedIn ? 'Check Out' : 'Check In'}
-          </button>
+          <div className="flex items-center gap-4">
+            {isCheckedIn && checkInTime && (
+              <div className="text-right hidden sm:block">
+                <p className="text-sm text-surface-500 dark:text-surface-400">Working for</p>
+                <p className="font-bold text-lg text-success-600 dark:text-success-400 font-mono">
+                  {formatElapsedTime(elapsedSeconds)}
+                </p>
+              </div>
+            )}
+            <button
+              onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
+              disabled={checkingIn}
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                isCheckedIn
+                  ? 'bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400'
+                  : 'bg-primary-600 text-white hover:bg-primary-700'
+              }`}
+            >
+              <Clock className="h-5 w-5" />
+              {checkingIn ? 'Processing...' : isCheckedIn ? 'Check Out' : 'Check In'}
+            </button>
+          </div>
         </div>
 
         {/* Quick Stats */}
@@ -286,14 +394,62 @@ export default function MyDashboardPage() {
                       ? 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400'
                       : 'bg-surface-100 text-surface-500 dark:bg-surface-800'
                   }`}>
-                    <Clock className="h-8 w-8" />
+                    {isCheckedIn ? <Play className="h-8 w-8" /> : <Clock className="h-8 w-8" />}
                   </div>
                   <p className="font-medium text-surface-900 dark:text-surface-50">
                     {isCheckedIn ? 'Checked In' : 'Not Checked In'}
                   </p>
-                  <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                    {isCheckedIn ? 'Have a productive day!' : 'Click the button above to check in'}
-                  </p>
+
+                  {/* Real-time Timer */}
+                  {isCheckedIn && checkInTime && (
+                    <div className="mt-3 p-3 bg-success-50 dark:bg-success-900/20 rounded-lg">
+                      <p className="text-xs text-success-600 dark:text-success-400 uppercase tracking-wide mb-1">
+                        Working Time
+                      </p>
+                      <p className="text-2xl font-bold text-success-700 dark:text-success-300 font-mono">
+                        {formatElapsedTime(elapsedSeconds)}
+                      </p>
+                      <p className="text-xs text-success-600 dark:text-success-400 mt-1">
+                        Since {format(checkInTime, 'h:mm a')}
+                      </p>
+
+                      {/* Progress bar - 8 hours = 28800 seconds */}
+                      <div className="mt-3">
+                        <div className="flex justify-between text-xs text-success-600 dark:text-success-400 mb-1">
+                          <span>0h</span>
+                          <span>4h</span>
+                          <span>8h</span>
+                        </div>
+                        <div className="h-2 bg-success-200 dark:bg-success-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-1000 rounded-full ${
+                              elapsedSeconds >= 28800
+                                ? 'bg-success-600 dark:bg-success-400'
+                                : elapsedSeconds >= 14400
+                                ? 'bg-success-500 dark:bg-success-500'
+                                : 'bg-warning-500 dark:bg-warning-400'
+                            }`}
+                            style={{ width: `${Math.min(100, (elapsedSeconds / 28800) * 100)}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                          {elapsedSeconds >= 28800 ? (
+                            <span className="text-success-600 dark:text-success-400 font-medium">Full day completed!</span>
+                          ) : elapsedSeconds >= 14400 ? (
+                            <span>Half day completed, {formatElapsedTime(28800 - elapsedSeconds)} to go</span>
+                          ) : (
+                            <span>{formatElapsedTime(28800 - elapsedSeconds)} to complete 8 hours</span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isCheckedIn && (
+                    <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+                      Click the button above to check in
+                    </p>
+                  )}
                 </div>
 
                 {/* Monthly Summary */}
