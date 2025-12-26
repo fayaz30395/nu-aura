@@ -25,6 +25,7 @@ export default function EditEmployeePage() {
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, CustomFieldValueRequest>>({});
 
   const [formData, setFormData] = useState<UpdateEmployeeRequest>({
+    employeeCode: '',
     firstName: '',
     middleName: '',
     lastName: '',
@@ -67,6 +68,7 @@ export default function EditEmployeePage() {
 
       // Pre-populate form data
       setFormData({
+        employeeCode: data.employeeCode,
         firstName: data.firstName,
         middleName: data.middleName || '',
         lastName: data.lastName || '',
@@ -128,6 +130,7 @@ export default function EditEmployeePage() {
       // Clean up empty optional fields
       const submitData: UpdateEmployeeRequest = {
         ...formData,
+        employeeCode: formData.employeeCode || undefined,
         middleName: formData.middleName || undefined,
         lastName: formData.lastName || undefined,
         personalEmail: formData.personalEmail || undefined,
@@ -323,7 +326,24 @@ export default function EditEmployeePage() {
               <div className="space-y-4">
                 <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-500 dark:border-primary-500 rounded-md p-4">
                   <p className="text-sm text-primary-600 dark:text-primary-400">
-                    <strong>Note:</strong> Employee Code and Work Email cannot be changed.
+                    <strong>Note:</strong> Work Email cannot be changed after creation.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Employee Code *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.employeeCode}
+                    onChange={(e) => setFormData({ ...formData, employeeCode: e.target.value })}
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                    placeholder="EMP001"
+                  />
+                  <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                    Unique identifier for this employee. Changing this may affect integrations.
                   </p>
                 </div>
 
@@ -703,20 +723,25 @@ export default function EditEmployeePage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                      Reporting Manager
+                      Reporting Manager *
                     </label>
                     <select
+                      required
                       value={formData.managerId}
                       onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
                     >
-                      <option value="">No Manager</option>
+                      <option value="">Select Manager</option>
+                      <option value={employeeId}>Self (No Reporting Manager)</option>
                       {managers.filter(m => m.id !== employeeId).map((manager) => (
                         <option key={manager.id} value={manager.id}>
                           {manager.fullName} ({manager.employeeCode})
                         </option>
                       ))}
                     </select>
+                    <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                      Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
+                    </p>
                   </div>
                 </div>
               </div>

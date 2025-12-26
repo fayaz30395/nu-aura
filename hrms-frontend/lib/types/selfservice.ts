@@ -144,6 +144,8 @@ export interface SelfServiceDashboard {
   lateDaysThisMonth: number;
   attendancePercentage: number;
   todayAttendanceStatus?: string;
+  todayCheckInTime?: string;
+  todayCheckOutTime?: string;
 
   // Pending Actions
   pendingProfileUpdates: number;

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ public class SelfServiceDashboardResponse {
     private Integer lateDaysThisMonth;
     private Double attendancePercentage;
     private String todayAttendanceStatus;
+    private LocalDateTime todayCheckInTime;
+    private LocalDateTime todayCheckOutTime;
 
     // Pending Actions
     private Integer pendingProfileUpdates;

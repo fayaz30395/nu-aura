@@ -152,10 +152,16 @@ public class AttendanceRecord extends TenantAware {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
+    // Minimum required work hours (8 hours = 480 minutes)
+    public static final int FULL_DAY_MINUTES = 480;
+    // Half day threshold (4 hours = 240 minutes)
+    public static final int HALF_DAY_MINUTES = 240;
+
     public enum AttendanceStatus {
-        PRESENT,
-        ABSENT,
-        HALF_DAY,
+        PRESENT,           // Worked full day (>= 8 hours)
+        ABSENT,            // No attendance recorded
+        HALF_DAY,          // Worked between 4-8 hours OR explicitly marked half day
+        INCOMPLETE,        // Checked in but worked less than minimum required hours
         ON_LEAVE,
         WEEKLY_OFF,
         HOLIDAY,
@@ -187,7 +193,77 @@ public class AttendanceRecord extends TenantAware {
         if (checkInTime != null && checkOutTime != null) {
             long minutes = java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
             this.workDurationMinutes = (int) (minutes - (breakDurationMinutes != null ? breakDurationMinutes : 0));
+
+            // Update status based on work duration
+            updateStatusBasedOnWorkDuration();
         }
+    }
+
+    /**
+     * Updates the attendance status based on the actual work duration.
+     * - PRESENT: >= 8 hours (480 minutes)
+     * - HALF_DAY: >= 4 hours but < 8 hours (240-479 minutes)
+     * - INCOMPLETE: < 4 hours (less than 240 minutes) - needs regularization
+     */
+    public void updateStatusBasedOnWorkDuration() {
+        // Only update if we have a valid checkout (meaning the day is complete)
+        if (this.checkInTime == null || this.checkOutTime == null) {
+            return; // Wait until checkout to determine final status
+        }
+
+        if (this.workDurationMinutes == null) {
+            this.workDurationMinutes = 0;
+        }
+
+        // Don't override special statuses like ON_LEAVE, HOLIDAY, WEEKLY_OFF, or PENDING_REGULARIZATION
+        if (this.status == AttendanceStatus.ON_LEAVE ||
+            this.status == AttendanceStatus.HOLIDAY ||
+            this.status == AttendanceStatus.WEEKLY_OFF ||
+            this.status == AttendanceStatus.PENDING_REGULARIZATION) {
+            return;
+        }
+
+        if (this.workDurationMinutes >= FULL_DAY_MINUTES) {
+            // Full day - 8 hours or more
+            this.status = AttendanceStatus.PRESENT;
+            this.isHalfDay = false;
+            // Check for overtime (more than 9 hours = 540 minutes)
+            if (this.workDurationMinutes > 540) {
+                this.isOvertime = true;
+                this.overtimeMinutes = this.workDurationMinutes - FULL_DAY_MINUTES;
+            }
+        } else if (this.workDurationMinutes >= HALF_DAY_MINUTES) {
+            // Half day - between 4 and 8 hours
+            this.status = AttendanceStatus.HALF_DAY;
+            this.isHalfDay = true;
+        } else {
+            // Incomplete - less than 4 hours (including 0 minutes)
+            this.status = AttendanceStatus.INCOMPLETE;
+            this.isHalfDay = false;
+        }
+    }
+
+    /**
+     * Get the deficit minutes (how many minutes short of full day).
+     * Returns 0 if worked full day or more.
+     */
+    public int getDeficitMinutes() {
+        if (this.workDurationMinutes == null) {
+            return FULL_DAY_MINUTES;
+        }
+        int deficit = FULL_DAY_MINUTES - this.workDurationMinutes;
+        return Math.max(0, deficit);
+    }
+
+    /**
+     * Check if attendance is considered incomplete (less than required hours).
+     */
+    public boolean isIncompleteAttendance() {
+        return this.workDurationMinutes != null &&
+               this.workDurationMinutes < FULL_DAY_MINUTES &&
+               this.status != AttendanceStatus.ON_LEAVE &&
+               this.status != AttendanceStatus.HOLIDAY &&
+               this.status != AttendanceStatus.WEEKLY_OFF;
     }
 
     public void markAsLate(int minutes) {

@@ -10,6 +10,8 @@ import java.util.UUID;
 @Data
 public class UpdateEmployeeRequest {
 
+    private String employeeCode;
+
     private String firstName;
 
     private String middleName;

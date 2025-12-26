@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
@@ -332,7 +333,9 @@ public class SelfServiceService {
                 .absentDaysThisMonth(attendanceSummary.absentDays)
                 .lateDaysThisMonth(attendanceSummary.lateDays)
                 .attendancePercentage(attendanceSummary.attendancePercentage)
-                .todayAttendanceStatus(attendanceSummary.todayStatus);
+                .todayAttendanceStatus(attendanceSummary.todayStatus)
+                .todayCheckInTime(attendanceSummary.todayCheckInTime)
+                .todayCheckOutTime(attendanceSummary.todayCheckOutTime);
 
         // Add employee info if available
         if (employee != null) {
@@ -387,12 +390,14 @@ public class SelfServiceService {
         LocalDate today = LocalDate.now();
 
         List<AttendanceRecord> records = attendanceRecordRepository
-                .findAllByEmployeeIdAndAttendanceDateBetween(employeeId, startOfMonth, today);
+                .findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(tenantId, employeeId, startOfMonth, today);
 
         int presentDays = 0;
         int absentDays = 0;
         int lateDays = 0;
         String todayStatus = "NOT_MARKED";
+        LocalDateTime todayCheckInTime = null;
+        LocalDateTime todayCheckOutTime = null;
 
         for (AttendanceRecord record : records) {
             AttendanceRecord.AttendanceStatus status = record.getStatus();
@@ -410,6 +415,8 @@ public class SelfServiceService {
             // Check if this is today's record
             if (record.getAttendanceDate().equals(today)) {
                 todayStatus = status.name();
+                todayCheckInTime = record.getCheckInTime();
+                todayCheckOutTime = record.getCheckOutTime();
             }
         }
 
@@ -419,12 +426,14 @@ public class SelfServiceService {
                 ? (presentDays * 100.0) / totalWorkingDays
                 : 0.0;
 
-        return new AttendanceSummary(presentDays, absentDays, lateDays, attendancePercentage, todayStatus);
+        return new AttendanceSummary(presentDays, absentDays, lateDays, attendancePercentage, todayStatus,
+                todayCheckInTime, todayCheckOutTime);
     }
 
     // Helper class for attendance summary
     private record AttendanceSummary(int presentDays, int absentDays, int lateDays,
-                                     double attendancePercentage, String todayStatus) {}
+                                     double attendancePercentage, String todayStatus,
+                                     LocalDateTime todayCheckInTime, LocalDateTime todayCheckOutTime) {}
 
     // ==================== Helper Methods ====================
 

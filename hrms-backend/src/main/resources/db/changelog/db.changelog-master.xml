@@ -128,6 +128,21 @@
     <!-- Resource Management: Allocation Requests -->
     <include file="db/changelog/changes/107-create-allocation-requests-table.xml"/>
 
+    <!-- Add audit columns to leave tables -->
+    <include file="db/changelog/changes/108-add-audit-columns-to-leave-tables.sql"/>
+
+    <!-- Add missing columns to payslips table -->
+    <include file="db/changelog/changes/109-add-missing-columns-to-payslips.sql"/>
+
+    <!-- Add pay_date and hra columns to payslips -->
+    <include file="db/changelog/changes/110-add-more-payslips-columns.sql"/>
+
+    <!-- Add audit columns to allocation_requests -->
+    <include file="db/changelog/changes/111-add-audit-columns-to-allocation-requests.sql"/>
+
+    <!-- Add audit columns to all tables that are missing them -->
+    <include file="db/changelog/changes/112-add-audit-columns-to-all-tables.sql"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 

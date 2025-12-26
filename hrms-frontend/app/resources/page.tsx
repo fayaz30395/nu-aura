@@ -13,12 +13,14 @@ import {
   TrendingUp,
   Settings,
   RefreshCw,
+  Plus,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { resourceManagementService, ResourceManagementApiError } from '@/lib/services/resource-management.service';
 import { WorkloadSummary, AllocationApprovalRequest } from '@/lib/types/resource-management';
+import { CreateAllocationModal } from '@/components/resources/CreateAllocationModal';
 
 interface QuickStats {
   summary: WorkloadSummary | null;
@@ -34,6 +36,7 @@ interface ApiState {
 export default function ResourcesPage() {
   const [stats, setStats] = useState<QuickStats>({ summary: null, pendingApprovals: [] });
   const [apiState, setApiState] = useState<ApiState>({ loading: true, error: null, isApiNotAvailable: false });
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const fetchStats = async () => {
     setApiState({ loading: true, error: null, isApiNotAvailable: false });
@@ -170,14 +173,29 @@ export default function ResourcesPage() {
     <AppLayout>
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-            Resource Management
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-            Manage team capacity, allocations, and availability
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              Resource Management
+            </h1>
+            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+              Manage team capacity, allocations, and availability
+            </p>
+          </div>
+          <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Allocation
+          </Button>
         </div>
+
+        {/* Create Allocation Modal */}
+        <CreateAllocationModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => {
+            fetchStats();
+          }}
+        />
 
         {/* Error State */}
         {apiState.error && !apiState.isApiNotAvailable && (

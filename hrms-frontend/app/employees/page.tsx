@@ -98,6 +98,9 @@ export default function EmployeesPage() {
       setError(null);
 
       // Clean up empty optional fields
+      // Handle SELF manager - set selfManaged flag for backend to set managerId to employee's own ID
+      const isSelfManaged = formData.managerId === 'SELF';
+
       const submitData: CreateEmployeeRequest = {
         ...formData,
         middleName: formData.middleName || undefined,
@@ -112,7 +115,8 @@ export default function EmployeesPage() {
         postalCode: formData.postalCode || undefined,
         country: formData.country || undefined,
         confirmationDate: formData.confirmationDate || undefined,
-        managerId: formData.managerId || undefined,
+        managerId: isSelfManaged ? undefined : (formData.managerId || undefined),
+        selfManaged: isSelfManaged,
         bankAccountNumber: formData.bankAccountNumber || undefined,
         bankName: formData.bankName || undefined,
         bankIfscCode: formData.bankIfscCode || undefined,
@@ -867,20 +871,25 @@ export default function EmployeesPage() {
 
                       <div>
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Reporting Manager
+                          Reporting Manager *
                         </label>
                         <select
+                          required
                           value={formData.managerId}
                           onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
                           className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                         >
-                          <option value="">No Manager</option>
+                          <option value="">Select Manager</option>
+                          <option value="SELF">Self (No Reporting Manager)</option>
                           {managers.map((manager) => (
                             <option key={manager.id} value={manager.id}>
                               {manager.fullName} ({manager.employeeCode})
                             </option>
                           ))}
                         </select>
+                        <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                          Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
+                        </p>
                       </div>
                     </div>
                   )}
