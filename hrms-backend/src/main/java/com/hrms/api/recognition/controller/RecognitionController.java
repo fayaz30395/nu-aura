@@ -2,8 +2,6 @@ package com.hrms.api.recognition.controller;
 
 import com.hrms.api.recognition.dto.*;
 import com.hrms.application.recognition.service.RecognitionService;
-import com.hrms.common.security.Permission;
-import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.recognition.*;
 import jakarta.validation.Valid;

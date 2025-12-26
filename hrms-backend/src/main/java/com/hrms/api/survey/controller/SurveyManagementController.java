@@ -3,7 +3,6 @@ package com.hrms.api.survey.controller;
 import com.hrms.api.survey.dto.SurveyRequest;
 import com.hrms.api.survey.dto.SurveyDto;
 import com.hrms.application.survey.service.SurveyManagementService;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.survey.Survey;

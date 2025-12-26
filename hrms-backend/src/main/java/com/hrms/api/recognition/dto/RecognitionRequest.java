@@ -29,8 +29,10 @@ public class RecognitionRequest {
 
     private Integer points;
 
+    @Builder.Default
     private Boolean isPublic = true;
 
+    @Builder.Default
     private Boolean isAnonymous = false;
 
     private UUID badgeId;

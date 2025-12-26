@@ -3,7 +3,6 @@ package com.hrms.api.benefits.controller;
 import com.hrms.api.benefits.dto.BenefitPlanRequest;
 import com.hrms.api.benefits.dto.BenefitPlanResponse;
 import com.hrms.application.benefits.service.BenefitManagementService;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.benefits.BenefitPlan;
 import jakarta.validation.Valid;

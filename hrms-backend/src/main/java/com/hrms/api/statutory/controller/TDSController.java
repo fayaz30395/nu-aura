@@ -1,6 +1,6 @@
 package com.hrms.api.statutory.controller;
+
 import com.hrms.common.security.TenantContext;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.statutory.*;
 import com.hrms.infrastructure.statutory.repository.*;
@@ -28,10 +28,10 @@ public class TDSController {
     @GetMapping("/slabs/{assessmentYear}/{regime}")
     @RequiresPermission("STATUTORY_VIEW")
     public ResponseEntity<List<TDSSlab>> getSlabs(
-        @PathVariable String assessmentYear,
-        @PathVariable TDSSlab.TaxRegime regime) {
+            @PathVariable String assessmentYear,
+            @PathVariable TDSSlab.TaxRegime regime) {
         return ResponseEntity.ok(tdsSlabRepository.findByTenantIdAndAssessmentYearAndTaxRegimeAndIsActiveTrue(
-            TenantContext.getCurrentTenant(), assessmentYear, regime));
+                TenantContext.getCurrentTenant(), assessmentYear, regime));
     }
 
     @PostMapping("/declaration")
@@ -46,24 +46,25 @@ public class TDSController {
     @GetMapping("/declaration/{employeeId}/{financialYear}")
     @RequiresPermission("STATUTORY_VIEW")
     public ResponseEntity<EmployeeTDSDeclaration> getDeclaration(
-        @PathVariable UUID employeeId,
-        @PathVariable String financialYear) {
+            @PathVariable UUID employeeId,
+            @PathVariable String financialYear) {
         return tdsDeclarationRepository.findByTenantIdAndEmployeeIdAndFinancialYear(
-            TenantContext.getCurrentTenant(), employeeId, financialYear)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                TenantContext.getCurrentTenant(), employeeId, financialYear)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/declaration/{id}/approve")
     @RequiresPermission("STATUTORY_MANAGE")
-    public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(@PathVariable UUID id, @RequestBody UUID approverId) {
+    public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(@PathVariable UUID id,
+            @RequestBody UUID approverId) {
         return tdsDeclarationRepository.findById(id)
-            .map(decl -> {
-                decl.setStatus(EmployeeTDSDeclaration.DeclarationStatus.APPROVED);
-                decl.setApprovedAt(LocalDateTime.now());
-                decl.setApprovedBy(approverId);
-                return ResponseEntity.ok(tdsDeclarationRepository.save(decl));
-            })
-            .orElse(ResponseEntity.notFound().build());
+                .map(decl -> {
+                    decl.setStatus(EmployeeTDSDeclaration.DeclarationStatus.APPROVED);
+                    decl.setApprovedAt(LocalDateTime.now());
+                    decl.setApprovedBy(approverId);
+                    return ResponseEntity.ok(tdsDeclarationRepository.save(decl));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -2,7 +2,6 @@ package com.hrms.api.training.controller;
 
 import com.hrms.api.training.dto.*;
 import com.hrms.application.training.service.TrainingManagementService;
-import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.training.TrainingEnrollment;
 import com.hrms.domain.training.TrainingProgram;
@@ -71,7 +70,8 @@ public class TrainingManagementController {
 
     @PostMapping("/enrollments")
     @RequiresPermission("TRAINING_ENROLL")
-    public ResponseEntity<TrainingEnrollmentResponse> enrollEmployee(@Valid @RequestBody TrainingEnrollmentRequest request) {
+    public ResponseEntity<TrainingEnrollmentResponse> enrollEmployee(
+            @Valid @RequestBody TrainingEnrollmentRequest request) {
         TrainingEnrollmentResponse response = trainingService.enrollEmployee(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

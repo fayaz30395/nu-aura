@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 /**
  * AI-powered recruitment service for:
@@ -80,46 +80,46 @@ public class AIRecruitmentService {
 
     private String buildResumeParsePrompt(String resumeText) {
         return """
-            You are an expert HR resume parser. Extract the following information from this resume in JSON format:
+                You are an expert HR resume parser. Extract the following information from this resume in JSON format:
 
-            {
-              "fullName": "string",
-              "email": "string",
-              "phone": "string",
-              "currentLocation": "string",
-              "currentCompany": "string",
-              "currentDesignation": "string",
-              "totalExperienceYears": number,
-              "skills": ["skill1", "skill2"],
-              "education": [
                 {
-                  "degree": "string",
-                  "institution": "string",
-                  "year": number,
-                  "score": "string"
+                  "fullName": "string",
+                  "email": "string",
+                  "phone": "string",
+                  "currentLocation": "string",
+                  "currentCompany": "string",
+                  "currentDesignation": "string",
+                  "totalExperienceYears": number,
+                  "skills": ["skill1", "skill2"],
+                  "education": [
+                    {
+                      "degree": "string",
+                      "institution": "string",
+                      "year": number,
+                      "score": "string"
+                    }
+                  ],
+                  "experience": [
+                    {
+                      "company": "string",
+                      "designation": "string",
+                      "startDate": "string",
+                      "endDate": "string",
+                      "description": "string"
+                    }
+                  ],
+                  "certifications": ["cert1", "cert2"],
+                  "languages": ["lang1", "lang2"],
+                  "summary": "Brief professional summary"
                 }
-              ],
-              "experience": [
-                {
-                  "company": "string",
-                  "designation": "string",
-                  "startDate": "string",
-                  "endDate": "string",
-                  "description": "string"
-                }
-              ],
-              "certifications": ["cert1", "cert2"],
-              "languages": ["lang1", "lang2"],
-              "summary": "Brief professional summary"
-            }
 
-            Resume:
-            ---
-            %s
-            ---
+                Resume:
+                ---
+                %s
+                ---
 
-            Return ONLY valid JSON, no explanations.
-            """.formatted(resumeText);
+                Return ONLY valid JSON, no explanations.
+                """.formatted(resumeText);
     }
 
     private ResumeParseResponse parseResumeResponse(String aiResponse) {
@@ -198,7 +198,7 @@ public class AIRecruitmentService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Ranking candidates for job {}", jobOpeningId);
 
-        JobOpening job = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
+        jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
 
         List<Candidate> candidates = candidateRepository.findByTenantIdAndJobOpeningId(tenantId, jobOpeningId);
@@ -222,41 +222,41 @@ public class AIRecruitmentService {
 
     private String buildMatchingPrompt(Candidate candidate, JobOpening job) {
         return """
-            You are an expert HR recruiter. Analyze the match between this candidate and job opening.
+                You are an expert HR recruiter. Analyze the match between this candidate and job opening.
 
-            JOB OPENING:
-            - Title: %s
-            - Description: %s
-            - Requirements: %s
-            - Required Skills: %s
-            - Experience Required: %s
-            - Location: %s
+                JOB OPENING:
+                - Title: %s
+                - Description: %s
+                - Requirements: %s
+                - Required Skills: %s
+                - Experience Required: %s
+                - Location: %s
 
-            CANDIDATE:
-            - Name: %s
-            - Current Role: %s at %s
-            - Total Experience: %s years
-            - Location: %s
-            - Current CTC: %s
-            - Expected CTC: %s
-            - Notice Period: %s days
+                CANDIDATE:
+                - Name: %s
+                - Current Role: %s at %s
+                - Total Experience: %s years
+                - Location: %s
+                - Current CTC: %s
+                - Expected CTC: %s
+                - Notice Period: %s days
 
-            Provide analysis in this JSON format:
-            {
-              "overallScore": number (0-100),
-              "skillsScore": number (0-100),
-              "experienceScore": number (0-100),
-              "educationScore": number (0-100),
-              "culturalFitScore": number (0-100),
-              "strengths": ["strength1", "strength2"],
-              "gaps": ["gap1", "gap2"],
-              "recommendation": "HIGHLY_RECOMMENDED" | "RECOMMENDED" | "CONSIDER" | "NOT_RECOMMENDED",
-              "summary": "Brief assessment summary",
-              "interviewFocus": ["area1", "area2"]
-            }
+                Provide analysis in this JSON format:
+                {
+                  "overallScore": number (0-100),
+                  "skillsScore": number (0-100),
+                  "experienceScore": number (0-100),
+                  "educationScore": number (0-100),
+                  "culturalFitScore": number (0-100),
+                  "strengths": ["strength1", "strength2"],
+                  "gaps": ["gap1", "gap2"],
+                  "recommendation": "HIGHLY_RECOMMENDED" | "RECOMMENDED" | "CONSIDER" | "NOT_RECOMMENDED",
+                  "summary": "Brief assessment summary",
+                  "interviewFocus": ["area1", "area2"]
+                }
 
-            Return ONLY valid JSON.
-            """.formatted(
+                Return ONLY valid JSON.
+                """.formatted(
                 job.getJobTitle(),
                 job.getJobDescription() != null ? job.getJobDescription() : "Not specified",
                 job.getRequirements() != null ? job.getRequirements() : "Not specified",
@@ -270,8 +270,7 @@ public class AIRecruitmentService {
                 candidate.getCurrentLocation() != null ? candidate.getCurrentLocation() : "Not specified",
                 candidate.getCurrentCtc() != null ? candidate.getCurrentCtc() : "Not specified",
                 candidate.getExpectedCtc() != null ? candidate.getExpectedCtc() : "Not specified",
-                candidate.getNoticePeriodDays() != null ? candidate.getNoticePeriodDays() : "Not specified"
-        );
+                candidate.getNoticePeriodDays() != null ? candidate.getNoticePeriodDays() : "Not specified");
     }
 
     private CandidateMatchResponse parseMatchResponse(String aiResponse, Candidate candidate, JobOpening job) {
@@ -361,32 +360,32 @@ public class AIRecruitmentService {
 
     private String buildJobDescriptionPrompt(JobDescriptionRequest request) {
         return """
-            You are an expert HR professional. Generate a compelling job description.
+                You are an expert HR professional. Generate a compelling job description.
 
-            Job Details:
-            - Title: %s
-            - Department: %s
-            - Location: %s
-            - Employment Type: %s
-            - Experience Range: %s
-            - Key Skills: %s
-            - Industry: %s
-            - Company Culture: %s
+                Job Details:
+                - Title: %s
+                - Department: %s
+                - Location: %s
+                - Employment Type: %s
+                - Experience Range: %s
+                - Key Skills: %s
+                - Industry: %s
+                - Company Culture: %s
 
-            Generate a professional job description in this JSON format:
-            {
-              "title": "Enhanced job title if needed",
-              "summary": "2-3 sentence job summary",
-              "responsibilities": ["responsibility1", "responsibility2", ...],
-              "requirements": ["requirement1", "requirement2", ...],
-              "preferredQualifications": ["qualification1", "qualification2", ...],
-              "benefits": ["benefit1", "benefit2", ...],
-              "aboutCompany": "Brief company description placeholder",
-              "fullDescription": "Complete formatted job description text"
-            }
+                Generate a professional job description in this JSON format:
+                {
+                  "title": "Enhanced job title if needed",
+                  "summary": "2-3 sentence job summary",
+                  "responsibilities": ["responsibility1", "responsibility2", ...],
+                  "requirements": ["requirement1", "requirement2", ...],
+                  "preferredQualifications": ["qualification1", "qualification2", ...],
+                  "benefits": ["benefit1", "benefit2", ...],
+                  "aboutCompany": "Brief company description placeholder",
+                  "fullDescription": "Complete formatted job description text"
+                }
 
-            Return ONLY valid JSON.
-            """.formatted(
+                Return ONLY valid JSON.
+                """.formatted(
                 request.getJobTitle(),
                 request.getDepartment() != null ? request.getDepartment() : "Not specified",
                 request.getLocation() != null ? request.getLocation() : "Remote/Flexible",
@@ -394,8 +393,7 @@ public class AIRecruitmentService {
                 request.getExperienceRange() != null ? request.getExperienceRange() : "Not specified",
                 request.getKeySkills() != null ? String.join(", ", request.getKeySkills()) : "Not specified",
                 request.getIndustry() != null ? request.getIndustry() : "Technology",
-                request.getCompanyCulture() != null ? request.getCompanyCulture() : "Innovative and collaborative"
-        );
+                request.getCompanyCulture() != null ? request.getCompanyCulture() : "Innovative and collaborative");
     }
 
     private JobDescriptionResponse parseJobDescriptionResponse(String aiResponse, JobDescriptionRequest request) {
@@ -456,54 +454,52 @@ public class AIRecruitmentService {
         if (candidate != null) {
             candidateInfo = """
 
-                CANDIDATE BACKGROUND:
-                - Current Role: %s at %s
-                - Experience: %s years
-                - Focus areas based on their profile to probe
-                """.formatted(
+                    CANDIDATE BACKGROUND:
+                    - Current Role: %s at %s
+                    - Experience: %s years
+                    - Focus areas based on their profile to probe
+                    """.formatted(
                     candidate.getCurrentDesignation() != null ? candidate.getCurrentDesignation() : "Not specified",
                     candidate.getCurrentCompany() != null ? candidate.getCurrentCompany() : "Not specified",
-                    candidate.getTotalExperience() != null ? candidate.getTotalExperience() : "Not specified"
-            );
+                    candidate.getTotalExperience() != null ? candidate.getTotalExperience() : "Not specified");
         }
 
         return """
-            You are an expert interviewer. Generate interview questions for this role.
+                You are an expert interviewer. Generate interview questions for this role.
 
-            JOB:
-            - Title: %s
-            - Description: %s
-            - Requirements: %s
-            - Skills: %s
-            %s
+                JOB:
+                - Title: %s
+                - Description: %s
+                - Requirements: %s
+                - Skills: %s
+                %s
 
-            Generate questions in this JSON format:
-            {
-              "technicalQuestions": [
-                {"question": "string", "purpose": "what it evaluates", "difficulty": "easy|medium|hard"}
-              ],
-              "behavioralQuestions": [
-                {"question": "string", "competency": "what competency it tests"}
-              ],
-              "situationalQuestions": [
-                {"question": "string", "scenario": "brief scenario description"}
-              ],
-              "culturalFitQuestions": [
-                {"question": "string", "value": "company value it relates to"}
-              ],
-              "roleSpecificQuestions": [
-                {"question": "string", "focus": "specific role aspect"}
-              ]
-            }
+                Generate questions in this JSON format:
+                {
+                  "technicalQuestions": [
+                    {"question": "string", "purpose": "what it evaluates", "difficulty": "easy|medium|hard"}
+                  ],
+                  "behavioralQuestions": [
+                    {"question": "string", "competency": "what competency it tests"}
+                  ],
+                  "situationalQuestions": [
+                    {"question": "string", "scenario": "brief scenario description"}
+                  ],
+                  "culturalFitQuestions": [
+                    {"question": "string", "value": "company value it relates to"}
+                  ],
+                  "roleSpecificQuestions": [
+                    {"question": "string", "focus": "specific role aspect"}
+                  ]
+                }
 
-            Generate 3-5 questions per category. Return ONLY valid JSON.
-            """.formatted(
+                Generate 3-5 questions per category. Return ONLY valid JSON.
+                """.formatted(
                 job.getJobTitle(),
                 job.getJobDescription() != null ? job.getJobDescription() : "Not specified",
                 job.getRequirements() != null ? job.getRequirements() : "Not specified",
                 job.getSkillsRequired() != null ? job.getSkillsRequired() : "Not specified",
-                candidateInfo
-        );
+                candidateInfo);
     }
 
     private InterviewQuestionsResponse parseInterviewQuestionsResponse(String aiResponse) {
@@ -539,23 +535,24 @@ public class AIRecruitmentService {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("model", openAiModel);
             requestBody.put("messages", List.of(
-                    Map.of("role", "user", "content", prompt)
-            ));
+                    Map.of("role", "user", "content", prompt)));
             requestBody.put("temperature", 0.7);
             requestBody.put("max_tokens", 2000);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     openAiBaseUrl + "/chat/completions",
                     HttpMethod.POST,
                     entity,
-                    Map.class
-            );
+                    new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (response.getBody() != null) {
+                @SuppressWarnings("unchecked")
                 List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
                 if (choices != null && !choices.isEmpty()) {
+                    @SuppressWarnings("unchecked")
                     Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
                     return (String) message.get("content");
                 }
@@ -572,69 +569,69 @@ public class AIRecruitmentService {
         // Return mock responses for testing when API is not available
         if (prompt.contains("resume")) {
             return """
-                {
-                  "fullName": "John Doe",
-                  "email": "john.doe@email.com",
-                  "phone": "+91 9876543210",
-                  "currentLocation": "Bangalore, India",
-                  "currentCompany": "Tech Corp",
-                  "currentDesignation": "Senior Software Engineer",
-                  "totalExperienceYears": 5,
-                  "skills": ["Java", "Spring Boot", "Microservices", "AWS", "Docker"],
-                  "education": [{"degree": "B.Tech", "institution": "IIT Delhi", "year": 2018}],
-                  "certifications": ["AWS Solutions Architect"],
-                  "languages": ["English", "Hindi"],
-                  "summary": "Experienced software engineer with 5 years in backend development"
-                }
-                """;
+                    {
+                      "fullName": "John Doe",
+                      "email": "john.doe@email.com",
+                      "phone": "+91 9876543210",
+                      "currentLocation": "Bangalore, India",
+                      "currentCompany": "Tech Corp",
+                      "currentDesignation": "Senior Software Engineer",
+                      "totalExperienceYears": 5,
+                      "skills": ["Java", "Spring Boot", "Microservices", "AWS", "Docker"],
+                      "education": [{"degree": "B.Tech", "institution": "IIT Delhi", "year": 2018}],
+                      "certifications": ["AWS Solutions Architect"],
+                      "languages": ["English", "Hindi"],
+                      "summary": "Experienced software engineer with 5 years in backend development"
+                    }
+                    """;
         } else if (prompt.contains("match")) {
             return """
-                {
-                  "overallScore": 78,
-                  "skillsScore": 85,
-                  "experienceScore": 75,
-                  "educationScore": 80,
-                  "culturalFitScore": 70,
-                  "strengths": ["Strong technical skills", "Relevant experience", "Good communication"],
-                  "gaps": ["Limited leadership experience", "No cloud certification"],
-                  "recommendation": "RECOMMENDED",
-                  "summary": "Strong candidate with relevant technical skills. Recommended for interview.",
-                  "interviewFocus": ["Leadership potential", "Cloud architecture knowledge"]
-                }
-                """;
+                    {
+                      "overallScore": 78,
+                      "skillsScore": 85,
+                      "experienceScore": 75,
+                      "educationScore": 80,
+                      "culturalFitScore": 70,
+                      "strengths": ["Strong technical skills", "Relevant experience", "Good communication"],
+                      "gaps": ["Limited leadership experience", "No cloud certification"],
+                      "recommendation": "RECOMMENDED",
+                      "summary": "Strong candidate with relevant technical skills. Recommended for interview.",
+                      "interviewFocus": ["Leadership potential", "Cloud architecture knowledge"]
+                    }
+                    """;
         } else if (prompt.contains("job description")) {
             return """
-                {
-                  "title": "Senior Software Engineer",
-                  "summary": "We are looking for an experienced Software Engineer to join our team.",
-                  "responsibilities": ["Design and develop scalable applications", "Mentor junior developers", "Participate in code reviews"],
-                  "requirements": ["5+ years of experience", "Proficiency in Java/Python", "Experience with cloud platforms"],
-                  "preferredQualifications": ["AWS certification", "Open source contributions"],
-                  "benefits": ["Competitive salary", "Health insurance", "Flexible work hours"],
-                  "fullDescription": "Join our innovative team as a Senior Software Engineer..."
-                }
-                """;
+                    {
+                      "title": "Senior Software Engineer",
+                      "summary": "We are looking for an experienced Software Engineer to join our team.",
+                      "responsibilities": ["Design and develop scalable applications", "Mentor junior developers", "Participate in code reviews"],
+                      "requirements": ["5+ years of experience", "Proficiency in Java/Python", "Experience with cloud platforms"],
+                      "preferredQualifications": ["AWS certification", "Open source contributions"],
+                      "benefits": ["Competitive salary", "Health insurance", "Flexible work hours"],
+                      "fullDescription": "Join our innovative team as a Senior Software Engineer..."
+                    }
+                    """;
         } else {
             return """
-                {
-                  "technicalQuestions": [
-                    {"question": "Explain microservices architecture", "purpose": "Technical knowledge", "difficulty": "medium"},
-                    {"question": "How do you handle database optimization?", "purpose": "Problem solving", "difficulty": "medium"}
-                  ],
-                  "behavioralQuestions": [
-                    {"question": "Tell me about a challenging project", "competency": "Problem solving"}
-                  ],
-                  "situationalQuestions": [
-                    {"question": "How would you handle a production outage?", "scenario": "Crisis management"}
-                  ],
-                  "culturalFitQuestions": [
-                    {"question": "How do you prefer to receive feedback?", "value": "Growth mindset"}
-                  ],
-                  "roleSpecificQuestions": [
-                    {"question": "What's your experience with agile methodologies?", "focus": "Process"}
-                  ]
-                }
-                """;
+                    {
+                      "technicalQuestions": [
+                        {"question": "Explain microservices architecture", "purpose": "Technical knowledge", "difficulty": "medium"},
+                        {"question": "How do you handle database optimization?", "purpose": "Problem solving", "difficulty": "medium"}
+                      ],
+                      "behavioralQuestions": [
+                        {"question": "Tell me about a challenging project", "competency": "Problem solving"}
+                      ],
+                      "situationalQuestions": [
+                        {"question": "How would you handle a production outage?", "scenario": "Crisis management"}
+                      ],
+                      "culturalFitQuestions": [
+                        {"question": "How do you prefer to receive feedback?", "value": "Growth mindset"}
+                      ],
+                      "roleSpecificQuestions": [
+                        {"question": "What's your experience with agile methodologies?", "focus": "Process"}
+                      ]
+                    }
+                    """;
         }
     }
 

@@ -125,6 +125,9 @@
     <!-- Attendance time entries for multi check-in/out support -->
     <include file="db/changelog/changes/106-create-attendance-time-entries-table.xml"/>
 
+    <!-- Resource Management: Allocation Requests -->
+    <include file="db/changelog/changes/107-create-allocation-requests-table.xml"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 
