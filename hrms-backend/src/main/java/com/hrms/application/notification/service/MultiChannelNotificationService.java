@@ -29,6 +29,7 @@ public class MultiChannelNotificationService {
     private final UserNotificationPreferenceRepository preferenceRepository;
     private final NotificationChannelConfigRepository channelConfigRepository;
     private final ObjectMapper objectMapper;
+    private final SmsNotificationService smsNotificationService;
 
     // ==================== TEMPLATE MANAGEMENT ====================
 
@@ -314,9 +315,29 @@ public class MultiChannelNotificationService {
     }
 
     private void sendSmsNotification(MultiChannelNotification notification) {
+        if (notification.getRecipientPhone() == null || notification.getRecipientPhone().isBlank()) {
+            log.warn("Cannot send SMS: recipient phone is missing for notification {}", notification.getId());
+            notification.setStatus(NotificationStatus.FAILED);
+            notification.setErrorMessage("Recipient phone number is missing");
+            return;
+        }
+
         log.info("Sending SMS to {}: {}", notification.getRecipientPhone(), notification.getBody());
-        notification.setStatus(NotificationStatus.SENT);
-        notification.setSentAt(LocalDateTime.now());
+
+        SmsNotificationService.SmsResult result = smsNotificationService.sendSms(
+                notification.getRecipientPhone(),
+                notification.getBody()
+        );
+
+        if (result.success()) {
+            notification.setStatus(NotificationStatus.SENT);
+            notification.setSentAt(LocalDateTime.now());
+            log.info("SMS sent successfully. SID: {}", result.messageSid());
+        } else {
+            notification.setStatus(NotificationStatus.FAILED);
+            notification.setErrorMessage(result.errorMessage());
+            log.error("SMS failed: {}", result.errorMessage());
+        }
     }
 
     private void sendPushNotification(MultiChannelNotification notification) {
