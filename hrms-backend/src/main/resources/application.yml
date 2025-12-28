@@ -85,6 +85,21 @@ twilio:
   status-callback-enabled: false
   status-callback-url: ${TWILIO_STATUS_CALLBACK_URL:}
 
+# Calendar Integration Configuration
+# Set mock-mode to false and provide OAuth credentials for real sync
+calendar:
+  sync:
+    mock-mode: ${CALENDAR_MOCK_MODE:true}
+  google:
+    client-id: ${GOOGLE_CALENDAR_CLIENT_ID:}
+    client-secret: ${GOOGLE_CALENDAR_CLIENT_SECRET:}
+    redirect-uri: ${GOOGLE_CALENDAR_REDIRECT_URI:}
+  outlook:
+    client-id: ${OUTLOOK_CALENDAR_CLIENT_ID:}
+    client-secret: ${OUTLOOK_CALENDAR_CLIENT_SECRET:}
+    tenant-id: ${OUTLOOK_TENANT_ID:}
+    redirect-uri: ${OUTLOOK_CALENDAR_REDIRECT_URI:}
+
 management:
   endpoints:
     web:
