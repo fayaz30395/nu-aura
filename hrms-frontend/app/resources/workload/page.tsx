@@ -135,7 +135,8 @@ export default function WorkloadDashboardPage() {
 
   const handleExport = async () => {
     try {
-      const blob = await resourceManagementService.exportWorkloadReport('excel', {
+      setError(null);
+      const blob = await resourceManagementService.exportWorkloadReport('csv', {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
         allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
@@ -143,11 +144,14 @@ export default function WorkloadDashboardPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `workload-report-${dateRange.startDate}-${dateRange.endDate}.xlsx`;
+      a.download = `workload-report-${dateRange.startDate}-${dateRange.endDate}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Export failed:', err);
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to export workload report. Please try again.';
+      setError(errorMessage);
     }
   };
 

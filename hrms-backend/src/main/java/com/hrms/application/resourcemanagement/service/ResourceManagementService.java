@@ -68,17 +68,63 @@ public class ResourceManagementService {
         public AllocationValidationResult validateAllocation(UUID employeeId, UUID projectId,
                         Integer allocationPercentage,
                         LocalDate startDate, LocalDate endDate) {
+                UUID tenantId = SecurityContext.getCurrentTenantId();
                 EmployeeCapacity current = getEmployeeCapacity(employeeId, startDate);
                 int proposed = allocationPercentage;
-                int resulting = current.getTotalAllocation() + proposed;
+
+                // Check for existing allocation on the same project within the date range
+                List<ProjectEmployee> existingProjectAllocations = projectEmployeeRepository
+                                .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true)
+                                .stream()
+                                .filter(pe -> pe.getProjectId().equals(projectId))
+                                .filter(pe -> {
+                                        // Check date overlap
+                                        LocalDate peStart = pe.getStartDate();
+                                        LocalDate peEnd = pe.getEndDate() != null ? pe.getEndDate() : LocalDate.MAX;
+                                        LocalDate reqEnd = endDate != null ? endDate : LocalDate.MAX;
+                                        return !startDate.isAfter(peEnd) && !reqEnd.isBefore(peStart);
+                                })
+                                .collect(Collectors.toList());
+
+                // Check if already allocated to this project in overlapping period
+                boolean hasOverlappingAllocation = !existingProjectAllocations.isEmpty();
+                int existingAllocationForProject = existingProjectAllocations.stream()
+                                .mapToInt(ProjectEmployee::getAllocationPercentage)
+                                .sum();
+
+                // Calculate resulting allocation excluding existing allocation on same project
+                // (in case of update)
+                int adjustedCurrentAllocation = current.getTotalAllocation() - existingAllocationForProject;
+                int resulting = adjustedCurrentAllocation + proposed;
 
                 boolean requiresApproval = resulting > 100;
+                List<String> warnings = new ArrayList<>();
+
+                if (hasOverlappingAllocation) {
+                        warnings.add("Employee already has allocation on this project during the specified period. "
+                                        + "Current allocation: " + existingAllocationForProject + "%");
+                }
+
+                if (endDate != null && endDate.isBefore(startDate)) {
+                        return AllocationValidationResult.builder()
+                                        .isValid(false)
+                                        .requiresApproval(false)
+                                        .currentTotalAllocation(current.getTotalAllocation())
+                                        .proposedAllocation(proposed)
+                                        .resultingAllocation(resulting)
+                                        .message("End date cannot be before start date.")
+                                        .existingAllocations(current.getAllocations())
+                                        .build();
+                }
+
                 String message = requiresApproval
                                 ? "This allocation will exceed 100% capacity. Approval required."
-                                : "Allocation is within capacity limits.";
+                                : hasOverlappingAllocation
+                                        ? "Note: Updating existing allocation on this project."
+                                        : "Allocation is within capacity limits.";
 
                 return AllocationValidationResult.builder()
-                                .isValid(true) // Always "valid" but might require approval
+                                .isValid(true)
                                 .requiresApproval(requiresApproval)
                                 .currentTotalAllocation(current.getTotalAllocation())
                                 .proposedAllocation(proposed)
@@ -285,12 +331,20 @@ public class ResourceManagementService {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 UUID approverId = SecurityContext.getCurrentEmployeeId();
 
+                // Permission check: user must be a manager or have ALLOCATION:APPROVE permission
+                validateApprovalPermission(approverId);
+
                 AllocationApprovalRequest request = approvalRepository.findById(requestId)
                                 .filter(r -> r.getTenantId().equals(tenantId))
                                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
 
                 if (request.getStatus() != AllocationApprovalRequest.ApprovalStatus.PENDING) {
                         throw new IllegalStateException("Request is already " + request.getStatus());
+                }
+
+                // Cannot approve your own request
+                if (request.getRequestedById().equals(approverId)) {
+                        throw new IllegalStateException("Cannot approve your own allocation request");
                 }
 
                 request.setStatus(AllocationApprovalRequest.ApprovalStatus.APPROVED);
@@ -318,6 +372,9 @@ public class ResourceManagementService {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 UUID approverId = SecurityContext.getCurrentEmployeeId();
 
+                // Permission check: user must be a manager or have ALLOCATION:APPROVE permission
+                validateApprovalPermission(approverId);
+
                 AllocationApprovalRequest request = approvalRepository.findById(requestId)
                                 .filter(r -> r.getTenantId().equals(tenantId))
                                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
@@ -326,11 +383,33 @@ public class ResourceManagementService {
                         throw new IllegalStateException("Request is already " + request.getStatus());
                 }
 
+                // Cannot reject your own request
+                if (request.getRequestedById().equals(approverId)) {
+                        throw new IllegalStateException("Cannot reject your own allocation request");
+                }
+
                 request.setStatus(AllocationApprovalRequest.ApprovalStatus.REJECTED);
                 request.setApproverId(approverId);
                 request.setRejectionReason(reason);
                 request.setResolvedAt(LocalDateTime.now());
                 approvalRepository.save(request);
+        }
+
+        private void validateApprovalPermission(UUID approverId) {
+                // Check if user has approval permission or is a manager
+                boolean hasApprovalPermission = SecurityContext.hasAnyPermission(
+                                com.hrms.common.security.Permission.ALLOCATION_APPROVE,
+                                com.hrms.common.security.Permission.ALLOCATION_MANAGE,
+                                com.hrms.common.security.Permission.PROJECT_MANAGE,
+                                com.hrms.common.security.Permission.SYSTEM_ADMIN);
+
+                boolean isManager = SecurityContext.isManager();
+
+                if (!hasApprovalPermission && !isManager) {
+                        throw new SecurityException(
+                                        "You do not have permission to approve or reject allocation requests. "
+                                                        + "Required: ALLOCATION:APPROVE permission or Manager role.");
+                }
         }
 
         // ============================================
@@ -354,15 +433,18 @@ public class ResourceManagementService {
                                 .map(dept -> calculateDepartmentWorkload(dept.getId(), dept.getName(), workloads))
                                 .collect(Collectors.toList());
 
-                // Heatmap and Trends can be simulated or calculated if needed, for MVP we'll
-                // provide basic arrays
+                // Calculate project workloads, heatmap, and trends
+                List<ProjectWorkloadSummary> projectWorkloads = calculateProjectWorkloads(activeProjects, tenantId);
+                List<WorkloadHeatmapRow> heatmapData = calculateHeatmapData(allEmployees, filters);
+                List<WorkloadTrend> trends = calculateWorkloadTrends(allEmployees, tenantId);
+
                 return WorkloadDashboardData.builder()
                                 .summary(summary)
                                 .employeeWorkloads(workloads)
                                 .departmentWorkloads(deptWorkloads)
-                                .projectWorkloads(new ArrayList<>()) // Placeholder
-                                .heatmapData(new ArrayList<>()) // Placeholder
-                                .trends(new ArrayList<>()) // Placeholder
+                                .projectWorkloads(projectWorkloads)
+                                .heatmapData(heatmapData)
+                                .trends(trends)
                                 .build();
         }
 
@@ -442,6 +524,122 @@ public class ResourceManagementService {
                                 .periodStart(filters != null ? filters.getStartDate() : LocalDate.now())
                                 .periodEnd(filters != null ? filters.getEndDate() : LocalDate.now().plusMonths(1))
                                 .build();
+        }
+
+        private List<ProjectWorkloadSummary> calculateProjectWorkloads(List<Project> projects, UUID tenantId) {
+                return projects.stream().map(project -> {
+                        List<ProjectEmployee> assignments = projectEmployeeRepository
+                                        .findAllByProjectIdAndTenantIdAndIsActive(project.getId(), tenantId, true);
+
+                        int teamSize = assignments.size();
+                        int totalAllocatedPercentage = assignments.stream()
+                                        .mapToInt(ProjectEmployee::getAllocationPercentage)
+                                        .sum();
+                        double averageAllocation = teamSize > 0 ? (double) totalAllocatedPercentage / teamSize : 0.0;
+
+                        return ProjectWorkloadSummary.builder()
+                                        .projectId(project.getId())
+                                        .projectName(project.getName())
+                                        .projectCode(project.getProjectCode())
+                                        .projectStatus(project.getStatus().name())
+                                        .teamSize(teamSize)
+                                        .totalAllocatedPercentage(totalAllocatedPercentage)
+                                        .averageAllocation(averageAllocation)
+                                        .startDate(project.getStartDate())
+                                        .endDate(project.getEndDate())
+                                        .build();
+                }).collect(Collectors.toList());
+        }
+
+        private List<WorkloadHeatmapRow> calculateHeatmapData(List<Employee> employees, WorkloadFilterOptions filters) {
+                LocalDate startDate = filters != null && filters.getStartDate() != null
+                                ? filters.getStartDate()
+                                : LocalDate.now();
+                LocalDate endDate = filters != null && filters.getEndDate() != null
+                                ? filters.getEndDate()
+                                : LocalDate.now().plusWeeks(4);
+
+                // Limit to first 20 employees for dashboard heatmap
+                List<Employee> limitedEmployees = employees.stream().limit(20).collect(Collectors.toList());
+
+                return limitedEmployees.stream().map(emp -> {
+                        List<WorkloadHeatmapCell> cells = new ArrayList<>();
+                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusWeeks(1)) {
+                                LocalDate weekStart = date;
+                                LocalDate weekEnd = date.plusDays(6).isAfter(endDate) ? endDate : date.plusDays(6);
+                                EmployeeCapacity cap = getEmployeeCapacity(emp.getId(), weekStart);
+                                cells.add(WorkloadHeatmapCell.builder()
+                                                .weekStart(weekStart)
+                                                .weekEnd(weekEnd)
+                                                .allocation(cap.getTotalAllocation())
+                                                .status(cap.getAllocationStatus())
+                                                .projectCount(cap.getAllocations().size())
+                                                .build());
+                        }
+
+                        String deptName = emp.getDepartmentId() != null
+                                        ? departmentRepository.findById(emp.getDepartmentId())
+                                                        .map(d -> d.getName())
+                                                        .orElse("N/A")
+                                        : "N/A";
+
+                        return WorkloadHeatmapRow.builder()
+                                        .employeeId(emp.getId())
+                                        .employeeName(emp.getFullName())
+                                        .employeeCode(emp.getEmployeeCode())
+                                        .departmentName(deptName)
+                                        .cells(cells)
+                                        .build();
+                }).collect(Collectors.toList());
+        }
+
+        private List<WorkloadTrend> calculateWorkloadTrends(List<Employee> employees, UUID tenantId) {
+                List<WorkloadTrend> trends = new ArrayList<>();
+                LocalDate today = LocalDate.now();
+
+                // Generate trends for last 6 months
+                for (int i = 5; i >= 0; i--) {
+                        LocalDate monthStart = today.minusMonths(i).withDayOfMonth(1);
+                        String period = monthStart.getYear() + "-" + String.format("%02d", monthStart.getMonthValue());
+                        String periodLabel = monthStart.getMonth().toString().substring(0, 3) + " "
+                                        + monthStart.getYear();
+
+                        // Calculate workload for each employee as of that month
+                        int overCount = 0, optimalCount = 0, underCount = 0;
+                        double totalAllocation = 0;
+
+                        for (Employee emp : employees) {
+                                EmployeeCapacity capacity = getEmployeeCapacity(emp.getId(), monthStart);
+                                totalAllocation += capacity.getTotalAllocation();
+
+                                switch (capacity.getAllocationStatus()) {
+                                        case OVER_ALLOCATED:
+                                                overCount++;
+                                                break;
+                                        case OPTIMAL:
+                                                optimalCount++;
+                                                break;
+                                        case UNDER_UTILIZED:
+                                        case UNASSIGNED:
+                                                underCount++;
+                                                break;
+                                }
+                        }
+
+                        double avgAllocation = employees.isEmpty() ? 0 : totalAllocation / employees.size();
+
+                        trends.add(WorkloadTrend.builder()
+                                        .period(period)
+                                        .periodLabel(periodLabel)
+                                        .averageAllocation(avgAllocation)
+                                        .overAllocatedCount(overCount)
+                                        .optimalCount(optimalCount)
+                                        .underUtilizedCount(underCount)
+                                        .totalEmployees(employees.size())
+                                        .build());
+                }
+
+                return trends;
         }
 
         private DepartmentWorkload calculateDepartmentWorkload(UUID departmentId, String name,
@@ -789,16 +987,67 @@ public class ResourceManagementService {
 
         public byte[] exportWorkloadReport(String format, WorkloadFilterOptions filters) {
                 WorkloadDashboardData data = getWorkloadDashboard(filters);
-                StringBuilder csv = new StringBuilder("Employee,Department,Total Allocation,Status,Projects\n");
-                for (EmployeeWorkload wl : data.getEmployeeWorkloads()) {
-                        csv.append(String.format("%s,%s,%d%%,%s,%d\n",
-                                        wl.getEmployeeName(),
-                                        wl.getDepartmentName(),
-                                        wl.getTotalAllocation(),
-                                        wl.getAllocationStatus(),
-                                        wl.getProjectCount()));
+
+                String normalizedFormat = format != null ? format.toLowerCase().trim() : "csv";
+
+                switch (normalizedFormat) {
+                        case "csv":
+                                return exportWorkloadAsCsv(data);
+                        case "xlsx":
+                        case "excel":
+                                throw new UnsupportedOperationException(
+                                                "Excel export is not yet implemented. Please use CSV format.");
+                        case "pdf":
+                                throw new UnsupportedOperationException(
+                                                "PDF export is not yet implemented. Please use CSV format.");
+                        default:
+                                throw new IllegalArgumentException(
+                                                "Unsupported export format: " + format + ". Supported formats: csv");
                 }
+        }
+
+        private byte[] exportWorkloadAsCsv(WorkloadDashboardData data) {
+                StringBuilder csv = new StringBuilder();
+
+                // Header
+                csv.append("Employee,Employee Code,Department,Designation,Total Allocation,Approved Allocation,");
+                csv.append("Pending Allocation,Status,Project Count,Has Pending Approvals\n");
+
+                // Employee workloads
+                for (EmployeeWorkload wl : data.getEmployeeWorkloads()) {
+                        csv.append(String.format("\"%s\",\"%s\",\"%s\",\"%s\",%d%%,%d%%,%d%%,\"%s\",%d,%s\n",
+                                        escapeForCsv(wl.getEmployeeName()),
+                                        escapeForCsv(wl.getEmployeeCode()),
+                                        escapeForCsv(wl.getDepartmentName()),
+                                        escapeForCsv(wl.getDesignation()),
+                                        wl.getTotalAllocation(),
+                                        wl.getApprovedAllocation(),
+                                        wl.getPendingAllocation(),
+                                        wl.getAllocationStatus(),
+                                        wl.getProjectCount(),
+                                        wl.getHasPendingApprovals()));
+                }
+
+                // Add summary section
+                WorkloadSummary summary = data.getSummary();
+                csv.append("\n--- Summary ---\n");
+                csv.append(String.format("Total Employees,%d\n", summary.getTotalEmployees()));
+                csv.append(String.format("Active Projects,%d\n", summary.getActiveProjects()));
+                csv.append(String.format("Average Allocation,%.1f%%\n", summary.getAverageAllocation()));
+                csv.append(String.format("Over-Allocated,%d\n", summary.getOverAllocatedCount()));
+                csv.append(String.format("Optimal,%d\n", summary.getOptimalCount()));
+                csv.append(String.format("Under-Utilized,%d\n", summary.getUnderUtilizedCount()));
+                csv.append(String.format("Unassigned,%d\n", summary.getUnassignedCount()));
+                csv.append(String.format("Pending Approvals,%d\n", summary.getPendingApprovals()));
+
                 return csv.toString().getBytes();
+        }
+
+        private String escapeForCsv(String value) {
+                if (value == null) {
+                        return "";
+                }
+                return value.replace("\"", "\"\"");
         }
 
         private AllocationApprovalResponse mapToApprovalResponse(AllocationApprovalRequest request) {
