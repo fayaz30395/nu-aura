@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
-public interface TimeEntryRepository extends JpaRepository<TimeEntry, UUID>, JpaSpecificationExecutor<TimeEntry> {
+@Repository("projectTimeEntryRepository")
+public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUID>, JpaSpecificationExecutor<TimeEntry> {
 
     Optional<TimeEntry> findByIdAndTenantId(UUID id, UUID tenantId);
 
@@ -31,12 +31,12 @@ public interface TimeEntryRepository extends JpaRepository<TimeEntry, UUID>, Jpa
 
     List<TimeEntry> findByTenantIdAndIsBillable(UUID tenantId, Boolean isBillable);
 
-    @Query("SELECT te FROM HrmsTimeEntry te WHERE te.tenantId = :tenantId AND te.projectId = :projectId AND te.status = :status")
+    @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.projectId = :projectId AND te.status = :status")
     List<TimeEntry> findByProjectAndStatus(@Param("tenantId") UUID tenantId,
                                           @Param("projectId") UUID projectId,
                                           @Param("status") TimeEntry.TimeEntryStatus status);
 
-    @Query("SELECT te FROM HrmsTimeEntry te WHERE te.tenantId = :tenantId AND te.employeeId = :employeeId AND te.workDate = :date")
+    @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.employeeId = :employeeId AND te.workDate = :date")
     List<TimeEntry> findByEmployeeAndDate(@Param("tenantId") UUID tenantId,
                                          @Param("employeeId") UUID employeeId,
                                          @Param("date") LocalDate date);

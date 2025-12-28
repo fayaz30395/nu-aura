@@ -22,12 +22,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("projectTimesheetService")
 @RequiredArgsConstructor
 @Transactional
-public class TimeTrackingService {
+public class ProjectTimesheetService {
 
-    private final TimeEntryRepository timeEntryRepository;
+    private final ProjectTimeEntryRepository timeEntryRepository;
     private final HrmsProjectMemberRepository projectMemberRepository;
     private final EmployeeRepository employeeRepository;
     private final TimeEntryValidator timeEntryValidator;

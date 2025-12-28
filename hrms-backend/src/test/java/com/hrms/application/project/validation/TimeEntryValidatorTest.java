@@ -1,7 +1,7 @@
 package com.hrms.application.project.validation;
 
 import com.hrms.domain.project.TimeEntry;
-import com.hrms.infrastructure.project.repository.TimeEntryRepository;
+import com.hrms.infrastructure.project.repository.ProjectTimeEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class TimeEntryValidatorTest {
 
     @Mock
-    private TimeEntryRepository timeEntryRepository;
+    private ProjectTimeEntryRepository timeEntryRepository;
 
     @InjectMocks
     private TimeEntryValidator validator;
