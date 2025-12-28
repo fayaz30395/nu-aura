@@ -126,8 +126,15 @@ public final class Permission {
     // Projects & Timesheets
     public static final String PROJECT_VIEW = "PROJECT:VIEW";
     public static final String PROJECT_CREATE = "PROJECT:CREATE";
+    public static final String PROJECT_MANAGE = "PROJECT:MANAGE";
     public static final String TIMESHEET_SUBMIT = "TIMESHEET:SUBMIT";
     public static final String TIMESHEET_APPROVE = "TIMESHEET:APPROVE";
+
+    // Resource Allocation Management
+    public static final String ALLOCATION_VIEW = "ALLOCATION:VIEW";
+    public static final String ALLOCATION_CREATE = "ALLOCATION:CREATE";
+    public static final String ALLOCATION_APPROVE = "ALLOCATION:APPROVE";
+    public static final String ALLOCATION_MANAGE = "ALLOCATION:MANAGE";
 
     // Statutory Compliance
     public static final String STATUTORY_VIEW = "STATUTORY:VIEW";
