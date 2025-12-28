@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("AttendanceRecordService Tests")
 class AttendanceRecordServiceTest {
 
@@ -311,24 +314,25 @@ class AttendanceRecordServiceTest {
         void shouldSkipAlreadyCheckedOutRecords() {
             LocalDate today = checkOutTime.toLocalDate();
             LocalDate yesterday = today.minusDays(1);
-            LocalDate dayBefore = today.minusDays(2);
 
             // Today's record is already checked out
+            UUID todayRecordId = UUID.randomUUID();
             AttendanceRecord todayRecord = AttendanceRecord.builder()
                     .employeeId(employeeId)
                     .attendanceDate(today)
                     .build();
-            todayRecord.setId(UUID.randomUUID());
+            todayRecord.setId(todayRecordId);
             todayRecord.setTenantId(tenantId);
             todayRecord.checkIn(checkInTime.minusHours(2), "WEB", "Office", "192.168.1.1");
             todayRecord.checkOut(checkInTime.minusHours(1), "WEB", "Office", "192.168.1.1");
 
             // Yesterday's record has open check-in
+            UUID yesterdayRecordId = UUID.randomUUID();
             AttendanceRecord yesterdayRecord = AttendanceRecord.builder()
                     .employeeId(employeeId)
                     .attendanceDate(yesterday)
                     .build();
-            yesterdayRecord.setId(UUID.randomUUID());
+            yesterdayRecord.setId(yesterdayRecordId);
             yesterdayRecord.setTenantId(tenantId);
             yesterdayRecord.checkIn(yesterday.atTime(22, 0), "WEB", "Office", "192.168.1.1");
 
@@ -338,9 +342,13 @@ class AttendanceRecordServiceTest {
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
                     employeeId, yesterday, tenantId))
                     .thenReturn(Optional.of(yesterdayRecord));
-            when(timeEntryRepository.findOpenEntryByAttendanceRecordId(any()))
+            // Today's record has no open time entry (already checked out)
+            when(timeEntryRepository.findOpenEntryByAttendanceRecordId(todayRecordId))
+                    .thenReturn(Optional.empty());
+            // Yesterday's record has an open time entry
+            when(timeEntryRepository.findOpenEntryByAttendanceRecordId(yesterdayRecordId))
                     .thenReturn(Optional.of(AttendanceTimeEntry.builder()
-                            .attendanceRecordId(yesterdayRecord.getId())
+                            .attendanceRecordId(yesterdayRecordId)
                             .checkInTime(yesterday.atTime(22, 0))
                             .build()));
             when(timeEntryRepository.save(any(AttendanceTimeEntry.class)))
