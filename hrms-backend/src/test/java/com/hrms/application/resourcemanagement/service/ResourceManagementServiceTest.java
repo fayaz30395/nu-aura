@@ -106,8 +106,8 @@ class ResourceManagementServiceTest {
                 when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        eq(employeeId), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 AllocationValidationResult result = resourceManagementService.validateAllocation(
                         employeeId, projectId, 50, LocalDate.now(), LocalDate.now().plusMonths(3));
@@ -135,8 +135,8 @@ class ResourceManagementServiceTest {
                 when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(List.of(existingAllocation));
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        eq(employeeId), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 AllocationValidationResult result = resourceManagementService.validateAllocation(
                         employeeId, projectId, 50, LocalDate.now(), LocalDate.now().plusMonths(3));
@@ -156,8 +156,8 @@ class ResourceManagementServiceTest {
                 when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         employeeId, tenantId, true)).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        eq(employeeId), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 AllocationValidationResult result = resourceManagementService.validateAllocation(
                         employeeId, projectId, 50,
@@ -178,25 +178,13 @@ class ResourceManagementServiceTest {
         void shouldThrowWhenUserLacksApprovalPermission() {
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 UUID requestId = UUID.randomUUID();
-                UUID requesterId = UUID.randomUUID();
 
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
                 securityContext.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerId);
                 securityContext.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(false);
                 securityContext.when(SecurityContext::isManager).thenReturn(false);
 
-                AllocationApprovalRequest request = AllocationApprovalRequest.builder()
-                        .employeeId(employeeId)
-                        .projectId(projectId)
-                        .requestedAllocation(50)
-                        .requestedById(requesterId)
-                        .status(AllocationApprovalRequest.ApprovalStatus.PENDING)
-                        .build();
-                request.setId(requestId);
-                request.setTenantId(tenantId);
-
-                when(approvalRepository.findById(requestId)).thenReturn(Optional.of(request));
-
+                // Permission check happens before findById is called
                 assertThatThrownBy(() ->
                         resourceManagementService.approveAllocationRequest(requestId, "Approved"))
                         .isInstanceOf(SecurityException.class)
@@ -288,13 +276,16 @@ class ResourceManagementServiceTest {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
                 when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
                         .thenReturn(new PageImpl<>(List.of(project)));
                 when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        any(), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
+                        any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 byte[] result = resourceManagementService.exportWorkloadReport("csv", null);
 
@@ -372,6 +363,7 @@ class ResourceManagementServiceTest {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
                 when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
                         .thenReturn(new PageImpl<>(List.of(project)));
                 when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
@@ -379,8 +371,8 @@ class ResourceManagementServiceTest {
                         any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
                 when(projectEmployeeRepository.findAllByProjectIdAndTenantIdAndIsActive(
                         eq(projectId), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        any(), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 WorkloadDashboardData result = resourceManagementService.getWorkloadDashboard(null);
 
@@ -399,13 +391,14 @@ class ResourceManagementServiceTest {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
                 when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
                 when(projectRepository.findAllByTenantId(eq(tenantId), any(Pageable.class)))
                         .thenReturn(Page.empty());
                 when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         any(), eq(tenantId), eq(true))).thenReturn(Collections.emptyList());
-                when(approvalRepository.findAllByEmployeeIdAndTenantIdAndStatus(
-                        any(), eq(tenantId), any())).thenReturn(Collections.emptyList());
+                when(approvalRepository.findAllByTenantIdAndStatus(
+                        eq(tenantId), any(), any(Pageable.class))).thenReturn(Page.empty());
 
                 WorkloadDashboardData result = resourceManagementService.getWorkloadDashboard(null);
 

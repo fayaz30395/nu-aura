@@ -3,6 +3,7 @@ package com.hrms.application.notification.service;
 import com.hrms.config.TwilioConfig;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.api.v2010.account.MessageCreator;
 import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -128,7 +129,7 @@ public class SmsNotificationService {
      */
     private SmsResult sendRealSms(String toPhoneNumber, String message, String fromPhoneNumber) {
         try {
-            Message.Creator messageCreator = Message.creator(
+            MessageCreator messageCreator = Message.creator(
                     new PhoneNumber(toPhoneNumber),
                     new PhoneNumber(fromPhoneNumber),
                     message
