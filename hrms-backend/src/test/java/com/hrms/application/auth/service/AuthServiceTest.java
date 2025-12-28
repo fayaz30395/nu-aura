@@ -1,6 +1,7 @@
 package com.hrms.application.auth.service;
 
 import com.hrms.api.auth.dto.*;
+import com.hrms.application.notification.service.EmailNotificationService;
 import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
@@ -49,6 +50,9 @@ class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private EmailNotificationService emailNotificationService;
 
     @InjectMocks
     private AuthService authService;
@@ -277,7 +281,7 @@ class AuthServiceTest {
         @Test
         @DisplayName("Should request password reset for existing user")
         void shouldRequestPasswordResetForExistingUser() {
-            when(userRepository.findByEmailAndTenantId(eq("test@example.com"), any(UUID.class)))
+            when(userRepository.findByEmail("test@example.com"))
                     .thenReturn(Optional.of(user));
             when(userRepository.save(any(User.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -287,18 +291,20 @@ class AuthServiceTest {
             verify(userRepository).save(argThat(savedUser ->
                     savedUser.getPasswordResetToken() != null &&
                     savedUser.getPasswordResetTokenExpiry() != null));
+            verify(emailNotificationService).sendPasswordResetEmail(eq("test@example.com"), anyString(), anyString());
         }
 
         @Test
         @DisplayName("Should not throw exception for non-existent email (security)")
         void shouldNotThrowExceptionForNonExistentEmail() {
-            when(userRepository.findByEmailAndTenantId(eq("unknown@example.com"), any(UUID.class)))
+            when(userRepository.findByEmail("unknown@example.com"))
                     .thenReturn(Optional.empty());
 
             assertThatCode(() -> authService.requestPasswordReset("unknown@example.com"))
                     .doesNotThrowAnyException();
 
             verify(userRepository, never()).save(any(User.class));
+            verify(emailNotificationService, never()).sendPasswordResetEmail(anyString(), anyString(), anyString());
         }
 
         @Test
@@ -324,6 +330,7 @@ class AuthServiceTest {
             verify(userRepository).save(argThat(savedUser ->
                     savedUser.getPasswordResetToken() == null &&
                     savedUser.getPasswordResetTokenExpiry() == null));
+            verify(emailNotificationService).sendPasswordChangedEmail(eq("test@example.com"), anyString());
         }
 
         @Test
