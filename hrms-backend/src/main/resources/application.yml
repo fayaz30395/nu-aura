@@ -73,6 +73,18 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
+# Twilio SMS Configuration
+# Set mock-mode to false and provide credentials to send real SMS
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID:}
+  auth-token: ${TWILIO_AUTH_TOKEN:}
+  from-number: ${TWILIO_FROM_NUMBER:}
+  mock-mode: ${TWILIO_MOCK_MODE:true}
+  messaging-service-sid: ${TWILIO_MESSAGING_SERVICE_SID:}
+  max-message-length: 1600
+  status-callback-enabled: false
+  status-callback-url: ${TWILIO_STATUS_CALLBACK_URL:}
+
 management:
   endpoints:
     web:
