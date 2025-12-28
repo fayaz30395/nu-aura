@@ -17,6 +17,7 @@ import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
+import com.hrms.application.notification.service.EmailNotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +63,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailNotificationService emailNotificationService;
 
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
@@ -419,10 +423,8 @@ public class AuthService {
      */
     @Transactional
     public void requestPasswordReset(String email) {
-        // Default tenant for password reset
-        UUID tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-
-        Optional<User> userOpt = userRepository.findByEmailAndTenantId(email, tenantId);
+        // Search across all tenants for the user by email
+        Optional<User> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
@@ -433,13 +435,13 @@ public class AuthService {
             user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
             userRepository.save(user);
 
-            // Log the token for now - in production, this would send an email
-            log.info("Password reset requested for user: {}. Reset token: {}", email, resetToken);
+            log.info("Password reset requested for user: {}", email);
 
-            // TODO: Send email with reset link containing token
-            // emailService.sendPasswordResetEmail(email, resetToken);
+            // Send password reset email
+            String userName = user.getFullName() != null ? user.getFullName() : email;
+            emailNotificationService.sendPasswordResetEmail(email, userName, resetToken);
         } else {
-            // Log but don't reveal that user doesn't exist
+            // Log but don't reveal that user doesn't exist (security best practice)
             log.info("Password reset requested for non-existent email: {}", email);
         }
     }
@@ -470,5 +472,9 @@ public class AuthService {
         userRepository.save(user);
 
         log.info("Password reset successful for user: {}", user.getEmail());
+
+        // Send confirmation email
+        String userName = user.getFullName() != null ? user.getFullName() : user.getEmail();
+        emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
 }
