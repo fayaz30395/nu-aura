@@ -12,8 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "HrmsTimeEntry")
-@Table(name = "time_entries")
+@Entity(name = "ProjectTimeEntry")
+@Table(name = "project_time_entries")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

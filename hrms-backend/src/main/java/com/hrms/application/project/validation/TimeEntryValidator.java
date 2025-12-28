@@ -1,7 +1,7 @@
 package com.hrms.application.project.validation;
 
 import com.hrms.domain.project.TimeEntry;
-import com.hrms.infrastructure.project.repository.TimeEntryRepository;
+import com.hrms.infrastructure.project.repository.ProjectTimeEntryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Slf4j
 public class TimeEntryValidator {
 
-    private final TimeEntryRepository timeEntryRepository;
+    private final ProjectTimeEntryRepository timeEntryRepository;
 
     private static final BigDecimal MAX_HOURS_PER_DAY = new BigDecimal("24.00");
     private static final BigDecimal MIN_HOURS = new BigDecimal("0.01");

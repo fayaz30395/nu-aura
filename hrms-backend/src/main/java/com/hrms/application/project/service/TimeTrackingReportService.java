@@ -2,7 +2,7 @@ package com.hrms.application.project.service;
 
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.project.TimeEntry;
-import com.hrms.infrastructure.project.repository.TimeEntryRepository;
+import com.hrms.infrastructure.project.repository.ProjectTimeEntryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TimeTrackingReportService {
 
-    private final TimeEntryRepository timeEntryRepository;
+    private final ProjectTimeEntryRepository timeEntryRepository;
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
 
     /**

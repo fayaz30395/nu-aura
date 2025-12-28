@@ -1,9 +1,9 @@
 package com.hrms.api.project.controller;
 
 import com.hrms.api.project.dto.*;
+import com.hrms.application.project.service.ProjectTimesheetService;
 import com.hrms.application.project.service.TimeTrackingReportService;
 import com.hrms.application.project.service.TimeTrackingReportService.*;
-import com.hrms.application.project.service.TimeTrackingService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.project.TimeEntry;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,11 @@ import java.util.UUID;
 import static com.hrms.common.security.Permission.*;
 
 @RestController
-@RequestMapping("/api/v1/time-tracking")
+@RequestMapping("/api/v1/project-timesheets")
 @RequiredArgsConstructor
-public class TimeTrackingController {
+public class ProjectTimesheetController {
 
-    private final TimeTrackingService timeTrackingService;
+    private final ProjectTimesheetService projectTimesheetService;
     private final TimeTrackingReportService reportService;
 
     // ==================== Time Entry Endpoints ====================
@@ -34,7 +34,7 @@ public class TimeTrackingController {
     @PostMapping("/entries")
     @RequiresPermission(TIMESHEET_SUBMIT)
     public ResponseEntity<TimeEntryResponse> createTimeEntry(@RequestBody TimeEntryRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(timeTrackingService.createTimeEntry(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectTimesheetService.createTimeEntry(request));
     }
 
     @PutMapping("/entries/{id}")
@@ -42,13 +42,13 @@ public class TimeTrackingController {
     public ResponseEntity<TimeEntryResponse> updateTimeEntry(
             @PathVariable UUID id,
             @RequestBody TimeEntryRequest request) {
-        return ResponseEntity.ok(timeTrackingService.updateTimeEntry(id, request));
+        return ResponseEntity.ok(projectTimesheetService.updateTimeEntry(id, request));
     }
 
     @PatchMapping("/entries/{id}/submit")
     @RequiresPermission(TIMESHEET_SUBMIT)
     public ResponseEntity<TimeEntryResponse> submitTimeEntry(@PathVariable UUID id) {
-        return ResponseEntity.ok(timeTrackingService.submitTimeEntry(id));
+        return ResponseEntity.ok(projectTimesheetService.submitTimeEntry(id));
     }
 
     @PatchMapping("/entries/{id}/approve")
@@ -56,7 +56,7 @@ public class TimeTrackingController {
     public ResponseEntity<TimeEntryResponse> approveTimeEntry(
             @PathVariable UUID id,
             @RequestParam UUID approverId) {
-        return ResponseEntity.ok(timeTrackingService.approveTimeEntry(id, approverId));
+        return ResponseEntity.ok(projectTimesheetService.approveTimeEntry(id, approverId));
     }
 
     @PatchMapping("/entries/{id}/reject")
@@ -65,31 +65,31 @@ public class TimeTrackingController {
             @PathVariable UUID id,
             @RequestParam UUID approverId,
             @RequestParam String reason) {
-        return ResponseEntity.ok(timeTrackingService.rejectTimeEntry(id, approverId, reason));
+        return ResponseEntity.ok(projectTimesheetService.rejectTimeEntry(id, approverId, reason));
     }
 
     @GetMapping("/entries/{id}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<TimeEntryResponse> getTimeEntryById(@PathVariable UUID id) {
-        return ResponseEntity.ok(timeTrackingService.getTimeEntryById(id));
+        return ResponseEntity.ok(projectTimesheetService.getTimeEntryById(id));
     }
 
     @GetMapping("/entries")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<Page<TimeEntryResponse>> getAllTimeEntries(Pageable pageable) {
-        return ResponseEntity.ok(timeTrackingService.getAllTimeEntries(pageable));
+        return ResponseEntity.ok(projectTimesheetService.getAllTimeEntries(pageable));
     }
 
     @GetMapping("/entries/employee/{employeeId}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntriesByEmployee(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(timeTrackingService.getTimeEntriesByEmployee(employeeId));
+        return ResponseEntity.ok(projectTimesheetService.getTimeEntriesByEmployee(employeeId));
     }
 
     @GetMapping("/entries/project/{projectId}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntriesByProject(@PathVariable UUID projectId) {
-        return ResponseEntity.ok(timeTrackingService.getTimeEntriesByProject(projectId));
+        return ResponseEntity.ok(projectTimesheetService.getTimeEntriesByProject(projectId));
     }
 
     @GetMapping("/entries/employee/{employeeId}/date-range")
@@ -98,20 +98,20 @@ public class TimeTrackingController {
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(timeTrackingService.getTimeEntriesByDateRange(employeeId, startDate, endDate));
+        return ResponseEntity.ok(projectTimesheetService.getTimeEntriesByDateRange(employeeId, startDate, endDate));
     }
 
     @GetMapping("/entries/status/{status}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntriesByStatus(
             @PathVariable TimeEntry.TimeEntryStatus status) {
-        return ResponseEntity.ok(timeTrackingService.getTimeEntriesByStatus(status));
+        return ResponseEntity.ok(projectTimesheetService.getTimeEntriesByStatus(status));
     }
 
     @DeleteMapping("/entries/{id}")
     @RequiresPermission(TIMESHEET_SUBMIT)
     public ResponseEntity<Void> deleteTimeEntry(@PathVariable UUID id) {
-        timeTrackingService.deleteTimeEntry(id);
+        projectTimesheetService.deleteTimeEntry(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -120,7 +120,7 @@ public class TimeTrackingController {
     @PostMapping("/members")
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<ProjectMemberResponse> addProjectMember(@RequestBody ProjectMemberRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(timeTrackingService.addProjectMember(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectTimesheetService.addProjectMember(request));
     }
 
     @PutMapping("/members/{id}")
@@ -128,37 +128,37 @@ public class TimeTrackingController {
     public ResponseEntity<ProjectMemberResponse> updateProjectMember(
             @PathVariable UUID id,
             @RequestBody ProjectMemberRequest request) {
-        return ResponseEntity.ok(timeTrackingService.updateProjectMember(id, request));
+        return ResponseEntity.ok(projectTimesheetService.updateProjectMember(id, request));
     }
 
     @GetMapping("/members/{id}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<ProjectMemberResponse> getProjectMemberById(@PathVariable UUID id) {
-        return ResponseEntity.ok(timeTrackingService.getProjectMemberById(id));
+        return ResponseEntity.ok(projectTimesheetService.getProjectMemberById(id));
     }
 
     @GetMapping("/members/project/{projectId}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<ProjectMemberResponse>> getProjectMembers(@PathVariable UUID projectId) {
-        return ResponseEntity.ok(timeTrackingService.getProjectMembers(projectId));
+        return ResponseEntity.ok(projectTimesheetService.getProjectMembers(projectId));
     }
 
     @GetMapping("/members/employee/{employeeId}")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<ProjectMemberResponse>> getEmployeeProjects(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(timeTrackingService.getEmployeeProjects(employeeId));
+        return ResponseEntity.ok(projectTimesheetService.getEmployeeProjects(employeeId));
     }
 
     @GetMapping("/members/project/{projectId}/active")
     @RequiresPermission({PROJECT_VIEW, TIMESHEET_SUBMIT})
     public ResponseEntity<List<ProjectMemberResponse>> getActiveProjectMembers(@PathVariable UUID projectId) {
-        return ResponseEntity.ok(timeTrackingService.getActiveProjectMembers(projectId));
+        return ResponseEntity.ok(projectTimesheetService.getActiveProjectMembers(projectId));
     }
 
     @DeleteMapping("/members/{id}")
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<Void> removeProjectMember(@PathVariable UUID id) {
-        timeTrackingService.removeProjectMember(id);
+        projectTimesheetService.removeProjectMember(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -219,6 +219,6 @@ public class TimeTrackingController {
     public ResponseEntity<BigDecimal> calculateOvertimeForDate(
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate) {
-        return ResponseEntity.ok(timeTrackingService.calculateOvertimeForDate(employeeId, workDate));
+        return ResponseEntity.ok(projectTimesheetService.calculateOvertimeForDate(employeeId, workDate));
     }
 }
