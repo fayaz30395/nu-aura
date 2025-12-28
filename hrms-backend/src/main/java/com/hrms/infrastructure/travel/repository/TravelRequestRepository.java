@@ -18,6 +18,8 @@ public interface TravelRequestRepository extends JpaRepository<TravelRequest, UU
 
     List<TravelRequest> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId);
 
+    Page<TravelRequest> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId, Pageable pageable);
+
     Optional<TravelRequest> findByIdAndTenantId(UUID id, UUID tenantId);
 
     Optional<TravelRequest> findByRequestNumberAndTenantId(String requestNumber, UUID tenantId);
@@ -25,6 +27,12 @@ public interface TravelRequestRepository extends JpaRepository<TravelRequest, UU
     Page<TravelRequest> findByTenantId(UUID tenantId, Pageable pageable);
 
     List<TravelRequest> findByTenantIdAndStatus(UUID tenantId, TravelRequest.TravelStatus status);
+
+    Page<TravelRequest> findByTenantIdAndStatus(UUID tenantId, TravelRequest.TravelStatus status, Pageable pageable);
+
+    Page<TravelRequest> findByTenantIdAndStatusIn(UUID tenantId, List<TravelRequest.TravelStatus> statuses, Pageable pageable);
+
+    List<TravelRequest> findByTenantIdAndDepartureDateBetweenAndStatus(UUID tenantId, LocalDate startDate, LocalDate endDate, TravelRequest.TravelStatus status);
 
     @Query("SELECT t FROM TravelRequest t WHERE t.tenantId = :tenantId AND t.status = 'PENDING_APPROVAL'")
     List<TravelRequest> findPendingApprovals(@Param("tenantId") UUID tenantId);

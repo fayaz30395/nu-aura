@@ -18,6 +18,8 @@ public interface EmployeeLoanRepository extends JpaRepository<EmployeeLoan, UUID
 
     List<EmployeeLoan> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId);
 
+    Page<EmployeeLoan> findByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId, Pageable pageable);
+
     Optional<EmployeeLoan> findByIdAndTenantId(UUID id, UUID tenantId);
 
     Optional<EmployeeLoan> findByLoanNumberAndTenantId(String loanNumber, UUID tenantId);
@@ -25,6 +27,10 @@ public interface EmployeeLoanRepository extends JpaRepository<EmployeeLoan, UUID
     Page<EmployeeLoan> findByTenantId(UUID tenantId, Pageable pageable);
 
     List<EmployeeLoan> findByTenantIdAndStatus(UUID tenantId, EmployeeLoan.LoanStatus status);
+
+    Page<EmployeeLoan> findByTenantIdAndStatus(UUID tenantId, EmployeeLoan.LoanStatus status, Pageable pageable);
+
+    List<EmployeeLoan> findByTenantIdAndStatusIn(UUID tenantId, List<EmployeeLoan.LoanStatus> statuses);
 
     @Query("SELECT l FROM EmployeeLoan l WHERE l.tenantId = :tenantId AND l.employeeId = :employeeId AND l.status IN ('DISBURSED', 'ACTIVE')")
     List<EmployeeLoan> findActiveLoans(@Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);

@@ -341,6 +341,41 @@ public final class Permission {
     public static final String PREBOARDING_CREATE = "PREBOARDING:CREATE";
     public static final String PREBOARDING_MANAGE = "PREBOARDING:MANAGE";
 
+    // Travel Management
+    public static final String TRAVEL_VIEW = "TRAVEL:VIEW";
+    public static final String TRAVEL_CREATE = "TRAVEL:CREATE";
+    public static final String TRAVEL_UPDATE = "TRAVEL:UPDATE";
+    public static final String TRAVEL_APPROVE = "TRAVEL:APPROVE";
+    public static final String TRAVEL_VIEW_ALL = "TRAVEL:VIEW_ALL";
+    public static final String TRAVEL_MANAGE = "TRAVEL:MANAGE";
+
+    // Employee Loans
+    public static final String LOAN_VIEW = "LOAN:VIEW";
+    public static final String LOAN_CREATE = "LOAN:CREATE";
+    public static final String LOAN_UPDATE = "LOAN:UPDATE";
+    public static final String LOAN_APPROVE = "LOAN:APPROVE";
+    public static final String LOAN_VIEW_ALL = "LOAN:VIEW_ALL";
+    public static final String LOAN_MANAGE = "LOAN:MANAGE";
+
+    // Time Tracking
+    public static final String TIME_TRACKING_VIEW = "TIME_TRACKING:VIEW";
+    public static final String TIME_TRACKING_CREATE = "TIME_TRACKING:CREATE";
+    public static final String TIME_TRACKING_UPDATE = "TIME_TRACKING:UPDATE";
+    public static final String TIME_TRACKING_APPROVE = "TIME_TRACKING:APPROVE";
+    public static final String TIME_TRACKING_VIEW_ALL = "TIME_TRACKING:VIEW_ALL";
+    public static final String TIME_TRACKING_MANAGE = "TIME_TRACKING:MANAGE";
+
+    // Calendar Integration
+    public static final String CALENDAR_VIEW = "CALENDAR:VIEW";
+    public static final String CALENDAR_CREATE = "CALENDAR:CREATE";
+    public static final String CALENDAR_UPDATE = "CALENDAR:UPDATE";
+    public static final String CALENDAR_DELETE = "CALENDAR:DELETE";
+    public static final String CALENDAR_MANAGE = "CALENDAR:MANAGE";
+    public static final String CALENDAR_SYNC = "CALENDAR:SYNC";
+
+    // Notification Create (for SMS controller)
+    public static final String NOTIFICATION_CREATE = "NOTIFICATION:CREATE";
+
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");
     }
