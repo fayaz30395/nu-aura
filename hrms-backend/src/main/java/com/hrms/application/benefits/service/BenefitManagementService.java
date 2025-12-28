@@ -148,7 +148,7 @@ public class BenefitManagementService {
                 .description(plan.getDescription())
                 .benefitType(plan.getBenefitType())
                 .providerId(plan.getProviderId())
-                .providerName(null) // TODO: Add provider lookup if provider entity exists
+                .providerName(null) // Provider entity not implemented - use BenefitPlanEnhanced for provider details
                 .coverageAmount(plan.getCoverageAmount())
                 .employeeContribution(plan.getEmployeeContribution())
                 .employerContribution(plan.getEmployerContribution())
