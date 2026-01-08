@@ -6,6 +6,7 @@ import {
   Page,
   EmployeeImportPreview,
   EmployeeImportResult,
+  TalentProfile,
 } from '../types/employee';
 
 class EmployeeService {
@@ -103,6 +104,11 @@ class EmployeeService {
         },
       }
     );
+    return response.data;
+  }
+
+  async getTalentProfile(id: string): Promise<TalentProfile> {
+    const response = await apiClient.get<TalentProfile>(`/employees/${id}/talent-profile`);
     return response.data;
   }
 }

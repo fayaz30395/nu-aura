@@ -98,3 +98,53 @@ export interface HolidayEvent {
   date: string;
   type: string;
 }
+
+export interface OrganizationHealth {
+  healthScore: OverallHealth;
+  turnover: TurnoverMetrics;
+  diversity: DiversityMetrics;
+  tenure: TenureMetrics;
+  engagement: EngagementMetrics;
+  training: TrainingMetrics;
+}
+
+export interface OverallHealth {
+  score: number;
+  status: 'CRITICAL' | 'WARNING' | 'GOOD' | 'EXCELLENT';
+  trend: number;
+}
+
+export interface TurnoverMetrics {
+  annualTurnoverRate: number;
+  monthlyExits: number;
+  monthlyJoiners: number;
+  trend: DataPoint[];
+}
+
+export interface DiversityMetrics {
+  genderDistribution: Record<string, number>;
+  departmentDistribution: Record<string, number>;
+  genderParityIndex: number;
+}
+
+export interface TenureMetrics {
+  averageTenureYears: number;
+  tenureDistribution: Record<string, number>;
+}
+
+export interface EngagementMetrics {
+  overallEngagementScore: number;
+  participationRate: number;
+  engagementTrend: DataPoint[];
+}
+
+export interface TrainingMetrics {
+  completionRate: number;
+  totalTrainingHours: number;
+  activeLearners: number;
+}
+
+export interface DataPoint {
+  label: string;
+  value: number;
+}

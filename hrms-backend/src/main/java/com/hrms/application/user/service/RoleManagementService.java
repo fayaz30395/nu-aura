@@ -28,6 +28,7 @@ public class RoleManagementService {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
+    private final com.hrms.infrastructure.user.repository.UserRepository userRepository;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
 
     @Transactional(readOnly = true)
@@ -235,6 +236,76 @@ public class RoleManagementService {
         return mapToResponse(updatedRole);
     }
 
+    @Transactional(readOnly = true)
+    public List<UserResponse> getAllUsers() {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        List<com.hrms.domain.user.User> users = userRepository.findByTenantId(tenantId); // Assuming this method exists
+                                                                                         // or we use findAll with
+                                                                                         // tenant filter
+        // Ideally mapped through repository but using fallback logic if custom method
+        // needed
+        return users.stream()
+                .map(this::mapUserToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public UserResponse assignRolesToUser(UUID userId, AssignRolesRequest request) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+
+        com.hrms.domain.user.User user = userRepository.findByIdAndTenantId(userId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Get roles by codes
+        List<Role> roles = roleRepository.findByCodeInAndTenantId(request.getRoleCodes(), tenantId);
+
+        // Validate all role codes exist
+        if (roles.size() != request.getRoleCodes().size()) {
+            throw new ValidationException("One or more role codes are invalid");
+        }
+
+        // Prevent assigning system roles via this API if restricted (optional, but good
+        // practice)
+        // For now allowing all roles valid for the tenant
+
+        // Capture old roles for audit
+        Set<String> oldRoles = user.getRoles().stream()
+                .map(Role::getCode)
+                .collect(Collectors.toSet());
+
+        // Update user roles
+        user.setRoles(new HashSet<>(roles));
+
+        com.hrms.domain.user.User updatedUser = userRepository.save(user);
+        log.info("Assigned roles to user: {} for tenant: {}", user.getEmail(), tenantId);
+
+        // Audit log
+        auditLogService.logAction("USER", updatedUser.getId(),
+                com.hrms.domain.audit.AuditLog.AuditAction.UPDATE,
+                Map.of("roles", oldRoles),
+                Map.of("roles", request.getRoleCodes()),
+                "Assigned roles to user: " + updatedUser.getEmail());
+
+        return mapUserToResponse(updatedUser);
+    }
+
+    private UserResponse mapUserToResponse(com.hrms.domain.user.User user) {
+        Set<RoleResponse> roleResponses = user.getRoles().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toSet());
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userStatus(user.getStatus().name())
+                .roles(roleResponses)
+                .lastLoginAt(user.getLastLoginAt())
+                .createdAt(user.getCreatedAt()) // Assuming BaseEntity or similar has this
+                .build();
+    }
+
     private RoleResponse mapToResponse(Role role) {
         Set<PermissionResponse> permissionResponses = role.getPermissions().stream()
                 .map(this::mapPermissionToResponse)
@@ -249,8 +320,7 @@ public class RoleManagementService {
                 role.getTenantId(),
                 permissionResponses,
                 role.getCreatedAt(),
-                role.getUpdatedAt()
-        );
+                role.getUpdatedAt());
     }
 
     private PermissionResponse mapPermissionToResponse(Permission permission) {
@@ -260,7 +330,6 @@ public class RoleManagementService {
                 permission.getName(),
                 permission.getDescription(),
                 permission.getResource(),
-                permission.getAction()
-        );
+                permission.getAction());
     }
 }

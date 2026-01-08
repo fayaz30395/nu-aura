@@ -34,3 +34,8 @@ export interface UpdateRoleRequest {
 export interface AssignPermissionsRequest {
   permissionCodes: string[];
 }
+
+export interface RoleWithDetails extends Role {
+  expanded?: boolean;
+  permissionCount?: number;
+}

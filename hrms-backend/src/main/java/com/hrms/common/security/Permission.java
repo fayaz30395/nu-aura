@@ -69,6 +69,7 @@ public final class Permission {
     // Training
     public static final String TRAINING_VIEW = "TRAINING:VIEW";
     public static final String TRAINING_CREATE = "TRAINING:CREATE";
+    public static final String TRAINING_EDIT = "TRAINING:EDIT";
     public static final String TRAINING_ENROLL = "TRAINING:ENROLL";
     public static final String TRAINING_APPROVE = "TRAINING:APPROVE";
 
@@ -146,6 +147,7 @@ public final class Permission {
     public static final String SYSTEM_ADMIN = "SYSTEM:ADMIN";
     public static final String ROLE_MANAGE = "ROLE:MANAGE";
     public static final String PERMISSION_MANAGE = "PERMISSION:MANAGE";
+    public static final String USER_VIEW = "USER:VIEW";
     public static final String USER_MANAGE = "USER:MANAGE";
     public static final String TENANT_MANAGE = "TENANT:MANAGE";
     public static final String AUDIT_VIEW = "AUDIT:VIEW";
@@ -272,6 +274,7 @@ public final class Permission {
 
     // Multi-Channel Notifications
     public static final String NOTIFICATION_VIEW = "NOTIFICATION:VIEW";
+    public static final String NOTIFICATION_CREATE = "NOTIFICATION:CREATE";
     public static final String NOTIFICATION_MANAGE = "NOTIFICATION:MANAGE";
     public static final String NOTIFICATION_SEND = "NOTIFICATION:SEND";
 
@@ -379,9 +382,6 @@ public final class Permission {
     public static final String CALENDAR_DELETE = "CALENDAR:DELETE";
     public static final String CALENDAR_MANAGE = "CALENDAR:MANAGE";
     public static final String CALENDAR_SYNC = "CALENDAR:SYNC";
-
-    // Notification Create (for SMS controller)
-    public static final String NOTIFICATION_CREATE = "NOTIFICATION:CREATE";
 
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");

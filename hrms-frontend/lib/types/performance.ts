@@ -559,3 +559,35 @@ export const FEEDBACK_TYPE_LABELS: Record<FeedbackType, string> = {
   GENERAL: 'General',
   REQUEST: 'Request',
 };
+
+// ==================== Performance Revolution Types ====================
+
+export interface OKRGraphResponse {
+  nodes: OKRNode[];
+  links: OKRLink[];
+}
+
+export interface OKRNode {
+  id: string;
+  title: string;
+  type: string;
+  progress: number;
+  ownerName: string;
+}
+
+export interface OKRLink {
+  source: string;
+  target: string;
+}
+
+export interface PerformanceSpiderResponse {
+  metrics: SpiderData[];
+}
+
+export interface SpiderData {
+  subject: string;
+  self: number;
+  peer: number;
+  manager: number;
+  fullMark: number;
+}

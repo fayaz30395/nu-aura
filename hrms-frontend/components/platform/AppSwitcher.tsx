@@ -13,7 +13,31 @@ import {
   DollarSign,
   Check
 } from 'lucide-react';
-import platformService, { UserAppAccess } from '@/lib/services/platform.service';
+export interface UserAppAccess {
+  id: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  applicationCode: string;
+  applicationName: string;
+  status: string;
+  grantedAt: string;
+  roleCodes: string[];
+  permissions: string[];
+}
+
+const DEFAULT_APPS: UserAppAccess[] = [{
+  id: '1',
+  userId: '',
+  userEmail: '',
+  userName: '',
+  applicationCode: 'HRMS',
+  applicationName: 'NU-HRMS',
+  status: 'ACTIVE',
+  grantedAt: new Date().toISOString(),
+  roleCodes: ['USER'],
+  permissions: []
+}];
 
 interface AppSwitcherProps {
   currentAppCode?: string;
@@ -48,12 +72,12 @@ const getAppColor = (code: string) => {
 
 export default function AppSwitcher({ currentAppCode = 'HRMS', onAppSwitch }: AppSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [apps, setApps] = useState<UserAppAccess[]>([]);
+  const [apps, setApps] = useState<UserAppAccess[]>(DEFAULT_APPS);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadMyApps();
+    // static apps for now since platform service was removed
   }, []);
 
   useEffect(() => {
@@ -66,31 +90,6 @@ export default function AppSwitcher({ currentAppCode = 'HRMS', onAppSwitch }: Ap
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const loadMyApps = async () => {
-    try {
-      setLoading(true);
-      const myApps = await platformService.getMyApplications();
-      setApps(myApps);
-    } catch (error) {
-      console.error('Failed to load applications:', error);
-      // Set default HRMS app if API fails
-      setApps([{
-        id: '1',
-        userId: '',
-        userEmail: '',
-        userName: '',
-        applicationCode: 'HRMS',
-        applicationName: 'NU-HRMS',
-        status: 'ACTIVE',
-        grantedAt: new Date().toISOString(),
-        roleCodes: [],
-        permissions: []
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAppClick = (app: UserAppAccess) => {
     if (app.applicationCode === currentAppCode) {
@@ -175,11 +174,10 @@ export default function AppSwitcher({ currentAppCode = 'HRMS', onAppSwitch }: Ap
                       <button
                         key={app.id}
                         onClick={() => handleAppClick(app)}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                          isActive
-                            ? 'bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 shadow-sm'
-                            : 'hover:bg-surface-100 dark:hover:bg-surface-800 border border-transparent'
-                        }`}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${isActive
+                          ? 'bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 shadow-sm'
+                          : 'hover:bg-surface-100 dark:hover:bg-surface-800 border border-transparent'
+                          }`}
                       >
                         <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${getAppColor(app.applicationCode)} flex items-center justify-center flex-shrink-0 shadow-sm`}>
                           <Icon className="w-6 h-6 text-white" />

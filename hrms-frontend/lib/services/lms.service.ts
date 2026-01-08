@@ -109,6 +109,44 @@ export interface LmsDashboard {
   recentEnrollments: CourseEnrollment[];
 }
 
+export interface SkillGapReport {
+  employeeName: string;
+  department: string;
+  gaps: GapDetail[];
+}
+
+export interface GapDetail {
+  skillName: string;
+  requiredLevel: number;
+  currentLevel: number;
+  gapLevel: 'CRITICAL' | 'MODERATE' | 'LOW';
+  recommendedCourses: SuggestedCourse[];
+}
+
+export interface SuggestedCourse {
+  courseId: string;
+  title: string;
+  difficulty: string;
+}
+
+export interface CourseCatalogResponse {
+  courses: CourseSummaryDto[];
+}
+
+export interface CourseSummaryDto {
+  id: string;
+  title: string;
+  code: string;
+  shortDescription: string;
+  thumbnailUrl: string;
+  difficultyLevel: string;
+  durationHours: number;
+  skillsCovered: string[];
+  isMandatory: boolean;
+  totalEnrollments: number;
+  avgRating: number;
+}
+
 class LmsService {
   async createCourse(data: CourseRequest): Promise<Course> {
     const response = await apiClient.post<Course>('/lms/courses', data);
@@ -189,6 +227,20 @@ class LmsService {
   async getAdminDashboard(): Promise<any> {
     const response = await apiClient.get('/lms/admin/dashboard');
     return response.data;
+  }
+
+  async getSkillGaps(employeeId: string): Promise<SkillGapReport> {
+    const response = await apiClient.get<SkillGapReport>(`/lms/employees/${employeeId}/skill-gaps`);
+    return response.data;
+  }
+
+  async getCatalog(page: number = 0, size: number = 10): Promise<CourseCatalogResponse> {
+    const response = await apiClient.get<CourseCatalogResponse>('/lms/catalog', { params: { page, size } });
+    return response.data;
+  }
+
+  async enrollEmployee(courseId: string, employeeId: string): Promise<void> {
+    await apiClient.post(`/lms/courses/${courseId}/enroll`, null, { params: { employeeId } });
   }
 }
 

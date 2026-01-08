@@ -23,4 +23,6 @@ public class OnboardingProcessRequest {
     private UUID assignedBuddyId;
 
     private String notes;
+
+    private UUID templateId;
 }
