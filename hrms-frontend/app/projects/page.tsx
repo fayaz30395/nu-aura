@@ -158,6 +158,7 @@ export default function ProjectsPage() {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching projects...', { searchQuery, currentPage, statusFilter, priorityFilter });
       let response;
       if (searchQuery.trim()) {
         response = await projectService.searchProjects(searchQuery, currentPage, 20);
@@ -169,13 +170,26 @@ export default function ProjectsPage() {
           priorityFilter || undefined
         );
       }
-      setProjects(response.content);
-      setTotalElements(response.totalElements);
-      setTotalPages(response.totalPages);
+      console.log('Projects response:', response);
+      setProjects(response.content || []);
+      setTotalElements(response.totalElements || 0);
+      setTotalPages(response.totalPages || 0);
     } catch (err: any) {
       console.error('Error fetching projects:', err);
-      setError(err.response?.data?.message || 'Failed to load projects');
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response,
+        status: err.response?.status,
+        data: err.response?.data
+      });
+      const errorMessage = err.response?.data?.message
+        || err.response?.data?.error
+        || err.message
+        || 'Failed to load projects. Please try again.';
+      setError(errorMessage);
       setProjects([]);
+      setTotalElements(0);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
@@ -301,6 +315,7 @@ export default function ProjectsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setError(null); // Clear previous errors
     try {
       if (isEditing && selectedProject) {
         const updateData: UpdateProjectRequest = {
@@ -314,8 +329,10 @@ export default function ProjectsPage() {
           budget: formData.budget,
           currency: formData.currency,
         };
+        console.log('Updating project:', updateData);
         await projectService.updateProject(selectedProject.id, updateData);
       } else {
+        console.log('Creating project with data:', formData);
         await projectService.createProject(formData);
       }
       setShowAddModal(false);
@@ -323,7 +340,12 @@ export default function ProjectsPage() {
       fetchProjects();
     } catch (err: any) {
       console.error('Error saving project:', err);
-      setError(err.response?.data?.message || 'Failed to save project');
+      console.error('Error response:', err.response);
+      const errorMessage = err.response?.data?.message
+        || err.response?.data?.error
+        || err.message
+        || 'Failed to save project. Please check all required fields.';
+      setError(errorMessage);
     } finally {
       setSaving(false);
     }
@@ -453,7 +475,7 @@ export default function ProjectsPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => {}}>
+            <Button variant="outline" onClick={() => { }}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -812,22 +834,20 @@ export default function ProjectsPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('basic')}
-                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === 'basic'
-                      ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-                  }`}
+                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'basic'
+                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    }`}
                 >
                   Basic Information
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('team')}
-                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === 'team'
-                      ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-                  }`}
+                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'team'
+                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    }`}
                 >
                   Team
                 </button>
@@ -893,7 +913,23 @@ export default function ProjectsPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                        Priority
+                        Status *
+                      </label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                        className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="PLANNED">Planned</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="ON_HOLD">On Hold</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        Priority *
                       </label>
                       <select
                         value={formData.priority}
@@ -906,6 +942,9 @@ export default function ProjectsPage() {
                         <option value="CRITICAL">Critical</option>
                       </select>
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Project Value ($)
@@ -917,6 +956,21 @@ export default function ProjectsPage() {
                         className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="0.00"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        Currency
+                      </label>
+                      <select
+                        value={formData.currency}
+                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                        className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="INR">INR</option>
+                      </select>
                     </div>
                   </div>
 

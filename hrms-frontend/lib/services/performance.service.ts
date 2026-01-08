@@ -11,6 +11,8 @@ import {
   FeedbackRequest,
   ReviewCycle,
   ReviewCycleRequest,
+  OKRGraphResponse,
+  PerformanceSpiderResponse,
 } from '../types/performance';
 
 interface PaginatedResponse<T> {
@@ -331,3 +333,15 @@ export const reviewCycleService = {
 
 // Export performanceReviewService as alias for reviewService
 export const performanceReviewService = reviewService;
+
+export const performanceRevolutionService = {
+  getOKRGraph: async (): Promise<OKRGraphResponse> => {
+    const response = await apiClient.get<OKRGraphResponse>('/performance/revolution/okr-graph');
+    return response.data;
+  },
+
+  getPerformanceSpider: async (employeeId: string): Promise<PerformanceSpiderResponse> => {
+    const response = await apiClient.get<PerformanceSpiderResponse>(`/performance/revolution/spider/${employeeId}`);
+    return response.data;
+  },
+};

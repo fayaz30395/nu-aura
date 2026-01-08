@@ -2,30 +2,29 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  ZoomIn,
-  ZoomOut,
-  LayoutList,
-  ArrowLeft,
-  Loader2,
-  AlertCircle,
-  Filter,
-  Download,
-  Flag,
-  Users,
-  Clock,
-} from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, LayoutList, ArrowLeft, Loader2, AlertCircle, Download, Flag, Users, Clock, LayoutGrid, List } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, Button, Badge } from '@/components/ui';
+import { Card, CardContent, Button } from '@/components/ui';
 import { projectService } from '@/lib/services/project.service';
 import { taskService } from '@/lib/services/task.service';
 import { Project } from '@/lib/types/project';
 import { TaskListItem } from '@/lib/types/task';
+import { CalendarEvent, GanttTask, STATUS_COLORS, PRIORITY_COLORS } from '@/lib/types/project-calendar';
+import { CalendarGridView } from '@/components/projects/CalendarGridView';
+import { TaskDetailsModal } from '@/components/projects/TaskDetailsModal';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { hasPermission } from '@/lib/utils';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
+type ViewMode = 'timeline' | 'calendar';
+
+// Extended task type for internal use to handle missing properties in TaskListItem
+type TaskWithProject = TaskListItem & {
+  projectId: string;
+  projectName: string;
+  createdAt?: string;
+  startDate?: string;
+};
 
 interface GanttItem {
   id: string;
@@ -41,39 +40,36 @@ interface GanttItem {
   dependencies?: string[];
 }
 
-const STATUS_COLORS = {
-  PLANNED: '#94a3b8',
-  IN_PROGRESS: '#3b82f6',
-  ON_HOLD: '#f59e0b',
-  COMPLETED: '#10b981',
-  CANCELLED: '#ef4444',
-  BACKLOG: '#6b7280',
-  TODO: '#64748b',
-  IN_REVIEW: '#8b5cf6',
-  BLOCKED: '#dc2626',
-  DONE: '#059669',
-};
-
-const PRIORITY_COLORS: Record<string, string> = {
-  LOW: '#22c55e',
-  MEDIUM: '#fb923c',
-  HIGH: '#ef4444',
-  CRITICAL: '#991b1b',
-};
-
 export default function ProjectCalendarPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [tasks, setTasks] = useState<TaskListItem[]>([]);
+  const [tasks, setTasks] = useState<TaskWithProject[]>([]);
+
+  // Permission Check
+  const canEditTasks = useMemo(() => {
+    if (!user?.roles) return false;
+    // Check for specific task write permission or general project write permission
+    return hasPermission(user.roles, 'tasks:write') || hasPermission(user.roles, 'projects:write');
+  }, [user]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // View State
+  const [viewMode, setViewMode] = useState<ViewMode>('timeline');
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Filters
   const [statusFilter, setStatusFilter] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('');
   const [showProjects, setShowProjects] = useState(true);
   const [showTasks, setShowTasks] = useState(true);
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
+
+  // Modal State
+  const [selectedTask, setSelectedTask] = useState<GanttTask | CalendarEvent | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch data
   const fetchData = useCallback(async () => {
@@ -85,14 +81,29 @@ export default function ProjectCalendarPage() {
 
       // Fetch tasks for all projects
       if (showTasks) {
-        const allTasks: TaskListItem[] = [];
-        for (const project of projectsResponse.content) {
-          try {
-            const tasksResponse = await taskService.getProjectTasks(project.id, { size: 100 });
-            allTasks.push(...tasksResponse.content);
-          } catch (err) {
-            console.error(`Error fetching tasks for project ${project.id}:`, err);
-          }
+        const allTasks: TaskWithProject[] = [];
+        const visibleProjects = projectsResponse.content;
+
+        if (visibleProjects.length > 0) {
+          const promises = visibleProjects.map(p =>
+            taskService.getProjectTasks(p.id, { size: 100 })
+              .then(res => ({
+                content: res.content.map(t => ({
+                  ...t,
+                  projectId: p.id,
+                  projectName: p.name,
+                  // Cast to any to safely access potentially missing fields if backend sends them
+                  // or undefined if not present
+                  createdAt: (t as any).createdAt,
+                  startDate: (t as any).startDate,
+                }))
+              }))
+              .catch(e => ({ content: [] }))
+          );
+          const results = await Promise.all(promises);
+          results.forEach(res => {
+            if ('content' in res) allTasks.push(...res.content);
+          });
         }
         setTasks(allTasks);
       }
@@ -108,7 +119,53 @@ export default function ProjectCalendarPage() {
     fetchData();
   }, [fetchData]);
 
-  // Convert projects and tasks to Gantt items
+  // Convert to CalendarEvents for Grid View
+  const calendarEvents = useMemo(() => {
+    const events: CalendarEvent[] = [];
+
+    if (showProjects) {
+      projects.forEach(p => {
+        events.push({
+          id: p.id,
+          title: p.name,
+          type: 'project',
+          startDate: new Date(p.startDate),
+          endDate: p.expectedEndDate ? new Date(p.expectedEndDate) : new Date(p.startDate),
+          status: p.status,
+          priority: p.priority as any,
+          color: STATUS_COLORS[p.status] || '#3b82f6',
+          description: p.description,
+        });
+      });
+    }
+
+    if (showTasks) {
+      tasks.forEach(t => {
+        if (t.dueDate) {
+          // Basic start date inference: startDate > createdAt > today
+          const startStr = t.startDate || t.createdAt;
+          const start = startStr ? new Date(startStr) : new Date();
+
+          events.push({
+            id: t.id,
+            title: t.title,
+            type: t.type === 'MILESTONE' ? 'milestone' : 'task',
+            startDate: start,
+            endDate: new Date(t.dueDate),
+            status: t.status,
+            priority: t.priority as any,
+            color: t.type === 'MILESTONE' ? '#f59e0b' : (STATUS_COLORS[t.status] || '#64748b'),
+            projectId: t.projectId,
+            projectName: t.projectName,
+          });
+        }
+      });
+    }
+
+    return events;
+  }, [projects, tasks, showProjects, showTasks]);
+
+  // Convert projects and tasks to Gantt items (Timeline View)
   const ganttItems = useMemo(() => {
     const items: GanttItem[] = [];
 
@@ -132,10 +189,11 @@ export default function ProjectCalendarPage() {
 
         // Add tasks if expanded
         if (showTasks && expandedProjects.has(project.id)) {
-          const projectTasks = tasks.filter((t) => t.type !== 'MILESTONE');
+          const projectTasks = tasks.filter((t) => t.projectId === project.id && t.type !== 'MILESTONE');
           projectTasks.forEach((task) => {
             if (task.dueDate) {
-              const taskStart = new Date(startDate);
+              const startStr = task.startDate || task.createdAt;
+              const taskStart = startStr ? new Date(startStr) : new Date(startDate);
               const taskEnd = new Date(task.dueDate);
 
               items.push({
@@ -155,7 +213,7 @@ export default function ProjectCalendarPage() {
           });
 
           // Add milestones
-          const milestones = tasks.filter((t) => t.type === 'MILESTONE');
+          const milestones = tasks.filter((t) => t.projectId === project.id && t.type === 'MILESTONE');
           milestones.forEach((milestone) => {
             if (milestone.dueDate) {
               const milestoneDate = new Date(milestone.dueDate);
@@ -182,9 +240,8 @@ export default function ProjectCalendarPage() {
 
   // Calculate timeline range
   const timelineRange = useMemo(() => {
-    const today = new Date();
     const startOfView = new Date(currentDate);
-    let endOfView = new Date(currentDate);
+    const endOfView = new Date(currentDate);
 
     switch (zoomLevel) {
       case 'day':
@@ -277,40 +334,62 @@ export default function ProjectCalendarPage() {
 
   const handlePrevious = () => {
     const newDate = new Date(currentDate);
-    switch (zoomLevel) {
-      case 'day':
-        newDate.setDate(newDate.getDate() - 7);
-        break;
-      case 'week':
-        newDate.setDate(newDate.getDate() - 28);
-        break;
-      case 'month':
-        newDate.setMonth(newDate.getMonth() - 3);
-        break;
-      case 'quarter':
-        newDate.setMonth(newDate.getMonth() - 6);
-        break;
+    if (viewMode === 'calendar') {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else {
+      switch (zoomLevel) {
+        case 'day': newDate.setDate(newDate.getDate() - 7); break;
+        case 'week': newDate.setDate(newDate.getDate() - 28); break;
+        case 'month': newDate.setMonth(newDate.getMonth() - 3); break;
+        case 'quarter': newDate.setMonth(newDate.getMonth() - 6); break;
+      }
     }
     setCurrentDate(newDate);
   };
 
   const handleNext = () => {
     const newDate = new Date(currentDate);
-    switch (zoomLevel) {
-      case 'day':
-        newDate.setDate(newDate.getDate() + 7);
-        break;
-      case 'week':
-        newDate.setDate(newDate.getDate() + 28);
-        break;
-      case 'month':
-        newDate.setMonth(newDate.getMonth() + 3);
-        break;
-      case 'quarter':
-        newDate.setMonth(newDate.getMonth() + 6);
-        break;
+    if (viewMode === 'calendar') {
+      newDate.setMonth(newDate.getMonth() + 1);
+    } else {
+      switch (zoomLevel) {
+        case 'day': newDate.setDate(newDate.getDate() + 7); break;
+        case 'week': newDate.setDate(newDate.getDate() + 28); break;
+        case 'month': newDate.setMonth(newDate.getMonth() + 3); break;
+        case 'quarter': newDate.setMonth(newDate.getMonth() + 6); break;
+      }
     }
     setCurrentDate(newDate);
+  };
+
+  const handleEventClick = (event: CalendarEvent | GanttItem) => {
+    // If it has progress, treat as GanttTask to preserve progress editing in Modal
+    if ('progress' in event) {
+      setSelectedTask(event as unknown as GanttTask);
+    } else {
+      setSelectedTask(event);
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleUpdateStatus = async (taskId: string, status: string) => {
+    if (!canEditTasks) {
+      console.warn('Unauthorized attempt to update status');
+      return;
+    }
+    try {
+      await taskService.updateTaskStatus(taskId, status as any);
+      fetchData(); // Refresh data
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Failed to update status', error);
+    }
+  };
+
+  const handleUpdateProgress = async (taskId: string, progress: number) => {
+    // Assuming taskService handles progress updates via updateTask or similar
+    // For now, simple refresh if implemented
+    console.log('Update progress', taskId, progress);
   };
 
   const breadcrumbs = [
@@ -347,18 +426,37 @@ export default function ProjectCalendarPage() {
                 Project Calendar
               </h1>
               <p className="text-surface-600 dark:text-surface-400">
-                Gantt view of projects and tasks
+                Visualize projects and tasks
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <div className="flex bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('timeline')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
+                  ? 'bg-white dark:bg-surface-700 text-primary-600 shadow-sm'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                  }`}
+              >
+                <LayoutList className="h-4 w-4" />
+                Timeline
+              </button>
+              <button
+                onClick={() => setViewMode('calendar')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
+                  ? 'bg-white dark:bg-surface-700 text-primary-600 shadow-sm'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                  }`}
+              >
+                <CalendarIcon className="h-4 w-4" />
+                Calendar
+              </button>
+            </div>
+
             <Button variant="outline" onClick={() => router.push('/projects')}>
-              <LayoutList className="h-4 w-4 mr-2" />
+              <List className="h-4 w-4 mr-2" />
               List View
-            </Button>
-            <Button variant="outline" onClick={() => {}}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
             </Button>
           </div>
         </div>
@@ -429,23 +527,25 @@ export default function ProjectCalendarPage() {
                 </div>
               </div>
 
-              {/* Zoom Controls */}
+              {/* Navigation Controls */}
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg">
-                  {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
-                    <button
-                      key={level}
-                      onClick={() => setZoomLevel(level)}
-                      className={`px-3 py-1.5 text-sm rounded capitalize ${
-                        zoomLevel === level
+                {viewMode === 'timeline' && (
+                  <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg mr-2">
+                    {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
+                      <button
+                        key={level}
+                        onClick={() => setZoomLevel(level)}
+                        className={`px-3 py-1.5 text-sm rounded capitalize ${zoomLevel === level
                           ? 'bg-white dark:bg-surface-700 shadow text-primary-600 dark:text-primary-400'
                           : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-                      }`}
-                    >
-                      {level}
-                    </button>
-                  ))}
-                </div>
+                          }`}
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 <div className="flex items-center gap-1">
                   <button
                     onClick={handlePrevious}
@@ -455,9 +555,9 @@ export default function ProjectCalendarPage() {
                   </button>
                   <button
                     onClick={() => setCurrentDate(new Date())}
-                    className="px-3 py-2 text-sm rounded hover:bg-surface-100 dark:hover:bg-surface-800"
+                    className="px-3 py-2 text-sm rounded hover:bg-surface-100 dark:hover:bg-surface-800 font-medium"
                   >
-                    Today
+                    {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </button>
                   <button
                     onClick={handleNext}
@@ -471,163 +571,179 @@ export default function ProjectCalendarPage() {
           </CardContent>
         </Card>
 
-        {/* Gantt Chart */}
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <div className="min-w-[1200px]">
-                {/* Header */}
-                <div className="flex border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50 sticky top-0 z-10">
-                  <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700 font-medium text-surface-700 dark:text-surface-300">
-                    Project / Task
+        {/* TIMELINE (GANTT) VIEW */}
+        {viewMode === 'timeline' && (
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <div className="min-w-[1200px]">
+                  {/* Header */}
+                  <div className="flex border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50 sticky top-0 z-10">
+                    <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700 font-medium text-surface-700 dark:text-surface-300">
+                      Project / Task
+                    </div>
+                    <div className="flex-1 flex">
+                      {timelineColumns.map((col, idx) => (
+                        <div
+                          key={idx}
+                          className={`flex-1 p-3 text-center text-xs font-medium border-r border-surface-200 dark:border-surface-700 ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'
+                            }`}
+                        >
+                          {col.label}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex-1 flex">
-                    {timelineColumns.map((col, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex-1 p-3 text-center text-xs font-medium border-r border-surface-200 dark:border-surface-700 ${
-                          col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'
-                        }`}
-                      >
-                        {col.label}
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Gantt Rows */}
-                <div className="relative">
-                  {ganttItems.map((item, idx) => {
-                    const position = calculatePosition(item.startDate, item.endDate);
-                    const isProject = item.type === 'project';
-                    const isMilestone = item.type === 'milestone';
-                    const isExpanded = expandedProjects.has(item.id);
+                  {/* Gantt Rows */}
+                  <div className="relative">
+                    {ganttItems.map((item, idx) => {
+                      const position = calculatePosition(item.startDate, item.endDate);
+                      const isProject = item.type === 'project';
+                      const isMilestone = item.type === 'milestone';
+                      const isExpanded = expandedProjects.has(item.id);
 
-                    return (
-                      <div
-                        key={item.id}
-                        className={`flex border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 ${
-                          isProject ? 'bg-surface-50/50 dark:bg-surface-900/30' : ''
-                        }`}
-                      >
-                        {/* Name Column */}
-                        <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700">
-                          <div className="flex items-center gap-2">
-                            {isProject && (
-                              <button
-                                onClick={() => toggleProjectExpansion(item.id)}
-                                className="p-0.5 hover:bg-surface-200 dark:hover:bg-surface-700 rounded"
-                              >
-                                <ChevronRight
-                                  className={`h-4 w-4 transition-transform ${
-                                    isExpanded ? 'rotate-90' : ''
-                                  }`}
-                                />
-                              </button>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <div className={`truncate ${isProject ? 'font-medium text-surface-900 dark:text-white' : 'text-sm text-surface-700 dark:text-surface-300'}`}>
-                                {item.name}
-                              </div>
-                              <div className="flex items-center gap-2 mt-1">
-                                {item.priority && (
-                                  <span
-                                    className="px-1.5 py-0.5 text-xs rounded"
-                                    style={{ backgroundColor: PRIORITY_COLORS[item.priority] + '20', color: PRIORITY_COLORS[item.priority] }}
-                                  >
-                                    {item.priority}
+                      return (
+                        <div
+                          key={item.id}
+                          className={`flex border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 ${isProject ? 'bg-surface-50/50 dark:bg-surface-900/30' : ''
+                            }`}
+                        >
+                          {/* Name Column */}
+                          <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700">
+                            <div className="flex items-center gap-2">
+                              {isProject && (
+                                <button
+                                  onClick={() => toggleProjectExpansion(item.id)}
+                                  className="p-0.5 hover:bg-surface-200 dark:hover:bg-surface-700 rounded"
+                                >
+                                  <ChevronRight
+                                    className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''
+                                      }`}
+                                  />
+                                </button>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className={`truncate ${isProject ? 'font-medium text-surface-900 dark:text-white' : 'text-sm text-surface-700 dark:text-surface-300'}`}>
+                                  {item.name}
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  {item.priority && (
+                                    <span
+                                      className="px-1.5 py-0.5 text-xs rounded"
+                                      style={{ backgroundColor: PRIORITY_COLORS[item.priority] + '20', color: PRIORITY_COLORS[item.priority] }}
+                                    >
+                                      {item.priority}
+                                    </span>
+                                  )}
+                                  <span className="text-xs text-surface-500">
+                                    {item.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                    {' → '}
+                                    {item.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                   </span>
-                                )}
-                                <span className="text-xs text-surface-500">
-                                  {item.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                  {' → '}
-                                  {item.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                </span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Timeline Column */}
-                        <div className="flex-1 relative p-2">
-                          {isMilestone ? (
-                            <div
-                              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 cursor-pointer"
-                              style={{
-                                left: position.left,
-                                backgroundColor: item.color,
-                              }}
-                              title={`${item.name} - ${item.startDate.toLocaleDateString()}`}
-                            />
-                          ) : (
-                            <div
-                              className="absolute top-1/2 -translate-y-1/2 h-8 rounded cursor-pointer group transition-all hover:h-10"
-                              style={{
-                                left: position.left,
-                                width: position.width,
-                                backgroundColor: item.color + 'E6',
-                              }}
-                              onClick={() => isProject ? router.push(`/projects/${item.id}`) : null}
-                              title={`${item.name} - ${item.progress}%`}
-                            >
-                              {/* Progress bar */}
+                          {/* Timeline Column */}
+                          <div className="flex-1 relative p-2">
+                            {isMilestone ? (
                               <div
-                                className="h-full rounded bg-white/30"
-                                style={{ width: `${item.progress}%` }}
+                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 cursor-pointer"
+                                style={{
+                                  left: position.left,
+                                  backgroundColor: item.color,
+                                }}
+                                title={`${item.name} - ${item.startDate.toLocaleDateString()}`}
+                                onClick={() => handleEventClick(item)}
                               />
-                              {/* Label */}
-                              <span className="absolute inset-0 flex items-center px-2 text-xs font-medium text-white truncate">
-                                {item.progress}%
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {/* Today marker */}
-                  {(() => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    if (today >= timelineRange.start && today <= timelineRange.end) {
-                      const position = calculatePosition(today, today);
-                      return (
-                        <div
-                          className="absolute top-0 bottom-0 w-0.5 bg-primary-500 pointer-events-none z-20"
-                          style={{ left: position.left }}
-                        >
-                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary-500 rounded-full" />
+                            ) : (
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 h-8 rounded cursor-pointer group transition-all hover:h-10"
+                                style={{
+                                  left: position.left,
+                                  width: position.width,
+                                  backgroundColor: item.color + 'E6',
+                                }}
+                                onClick={() => isProject ? router.push(`/projects/${item.id}`) : handleEventClick(item)}
+                                title={`${item.name} - ${item.progress}%`}
+                              >
+                                {/* Progress bar */}
+                                <div
+                                  className="h-full rounded bg-white/30"
+                                  style={{ width: `${item.progress}%` }}
+                                />
+                                {/* Label */}
+                                <span className="absolute inset-0 flex items-center px-2 text-xs font-medium text-white truncate">
+                                  {item.progress}%
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       );
-                    }
-                    return null;
-                  })()}
-                </div>
+                    })}
 
-                {/* Empty State */}
-                {ganttItems.length === 0 && !loading && (
-                  <div className="p-12 text-center">
-                    <CalendarIcon className="h-12 w-12 mx-auto text-surface-400 mb-4" />
-                    <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
-                      No Projects Found
-                    </h3>
-                    <p className="text-surface-600 dark:text-surface-400 mb-4">
-                      {statusFilter || priorityFilter
-                        ? 'No projects match your filters.'
-                        : 'Create your first project to see it on the timeline.'}
-                    </p>
-                    <Button onClick={() => router.push('/projects')}>
-                      View All Projects
-                    </Button>
+                    {/* Today marker */}
+                    {(() => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      if (today >= timelineRange.start && today <= timelineRange.end) {
+                        const position = calculatePosition(today, today);
+                        return (
+                          <div
+                            className="absolute top-0 bottom-0 w-0.5 bg-primary-500 pointer-events-none z-20"
+                            style={{ left: position.left }}
+                          >
+                            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary-500 rounded-full" />
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
-                )}
+
+                  {/* Empty State */}
+                  {ganttItems.length === 0 && !loading && (
+                    <div className="p-12 text-center">
+                      <CalendarIcon className="h-12 w-12 mx-auto text-surface-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
+                        No Projects Found
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-400 mb-4">
+                        {statusFilter || priorityFilter
+                          ? 'No projects match your filters.'
+                          : 'Create your first project to see it on the timeline.'}
+                      </p>
+                      <Button onClick={() => router.push('/projects')}>
+                        View All Projects
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* CALENDAR GRID VIEW */}
+        {viewMode === 'calendar' && (
+          <Card className="h-[800px]">
+            <CardContent className="p-4 h-full">
+              <CalendarGridView
+                currentDate={currentDate}
+                onDateChange={setCurrentDate}
+                events={calendarEvents}
+                onEventClick={handleEventClick}
+                viewMode="month"
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Legend */}
+        {/* Only show for timeline, or show universally if consistent */}
         <Card>
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-6">
@@ -661,84 +777,21 @@ export default function ProjectCalendarPage() {
                   ))}
                 </div>
               </div>
-              <div>
-                <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
-                  Symbols
-                </h4>
-                <div className="flex flex-wrap gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rotate-45 bg-amber-500" />
-                    <span className="text-xs text-surface-600 dark:text-surface-400">Milestone</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-0.5 h-4 bg-primary-500" />
-                    <span className="text-xs text-surface-600 dark:text-surface-400">Today</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900">
-                  <CalendarIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-surface-500">Total Projects</p>
-                  <p className="text-xl font-bold text-surface-900 dark:text-white">{projects.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900">
-                  <Clock className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-surface-500">In Progress</p>
-                  <p className="text-xl font-bold text-surface-900 dark:text-white">
-                    {projects.filter((p) => p.status === 'IN_PROGRESS').length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900">
-                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-surface-500">Total Tasks</p>
-                  <p className="text-xl font-bold text-surface-900 dark:text-white">{tasks.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900">
-                  <Flag className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-surface-500">Milestones</p>
-                  <p className="text-xl font-bold text-surface-900 dark:text-white">
-                    {tasks.filter((t) => t.type === 'MILESTONE').length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Task Details Modal */}
+        {selectedTask && (
+          <TaskDetailsModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            task={selectedTask}
+            onUpdateStatus={canEditTasks ? handleUpdateStatus : undefined}
+            onUpdateProgress={canEditTasks ? handleUpdateProgress : undefined}
+            readonly={!canEditTasks}
+          />
+        )}
       </div>
     </AppLayout>
   );

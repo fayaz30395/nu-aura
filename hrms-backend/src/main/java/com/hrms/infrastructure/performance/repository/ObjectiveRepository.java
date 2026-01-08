@@ -17,6 +17,8 @@ public interface ObjectiveRepository extends JpaRepository<Objective, UUID> {
 
     Page<Objective> findAllByTenantId(UUID tenantId, Pageable pageable);
 
+    List<Objective> findAllByTenantId(UUID tenantId);
+
     Page<Objective> findAllByTenantIdAndOwnerId(UUID tenantId, UUID ownerId, Pageable pageable);
 
     Page<Objective> findAllByTenantIdAndCycleId(UUID tenantId, UUID cycleId, Pageable pageable);
@@ -42,7 +44,8 @@ public interface ObjectiveRepository extends JpaRepository<Objective, UUID> {
     List<Objective> findByParentObjective(@Param("tenantId") UUID tenantId, @Param("parentId") UUID parentId);
 
     @Query("SELECT o FROM Objective o WHERE o.tenantId = :tenantId AND o.departmentId = :departmentId AND o.status = 'ACTIVE'")
-    List<Objective> findActiveDepartmentObjectives(@Param("tenantId") UUID tenantId, @Param("departmentId") UUID departmentId);
+    List<Objective> findActiveDepartmentObjectives(@Param("tenantId") UUID tenantId,
+            @Param("departmentId") UUID departmentId);
 
     @Query("SELECT o FROM Objective o WHERE o.tenantId = :tenantId AND o.teamId = :teamId AND o.status = 'ACTIVE'")
     List<Objective> findActiveTeamObjectives(@Param("tenantId") UUID tenantId, @Param("teamId") UUID teamId);

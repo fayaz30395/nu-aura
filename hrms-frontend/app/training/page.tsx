@@ -24,8 +24,10 @@ import {
   Loader2,
   Download,
   Play,
+  Target,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { SkillGapAnalysis } from '@/components/training/SkillGapAnalysis';
 import {
   Card,
   CardContent,
@@ -54,7 +56,7 @@ import {
   EnrollmentStatus,
 } from '@/lib/types/training';
 
-type TabType = 'my-trainings' | 'catalog' | 'manage';
+type TabType = 'my-trainings' | 'catalog' | 'growth-roadmap' | 'manage';
 
 const categoryOptions = [
   { value: TrainingCategory.TECHNICAL, label: 'Technical' },
@@ -509,36 +511,43 @@ export default function TrainingPage() {
           <div className="flex border-b border-surface-200 dark:border-surface-700">
             <button
               onClick={() => setActiveTab('my-trainings')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'my-trainings'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'my-trainings'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <BookOpen className="h-4 w-4 inline-block mr-2" />
               My Trainings
             </button>
             <button
               onClick={() => setActiveTab('catalog')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'catalog'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'catalog'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <GraduationCap className="h-4 w-4 inline-block mr-2" />
               Course Catalog
             </button>
             <button
               onClick={() => setActiveTab('manage')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'manage'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'manage'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <Edit className="h-4 w-4 inline-block mr-2" />
               Manage Programs
+            </button>
+            <button
+              onClick={() => setActiveTab('growth-roadmap')}
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'growth-roadmap'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                }`}
+            >
+              <Target className="h-4 w-4 inline-block mr-2" />
+              Growth Roadmap
             </button>
           </div>
         </div>
@@ -984,6 +993,10 @@ export default function TrainingPage() {
             )}
           </div>
         )}
+        {/* Tab Content: Growth Roadmap */}
+        {activeTab === 'growth-roadmap' && user?.employeeId && (
+          <SkillGapAnalysis employeeId={user.employeeId} />
+        )}
 
         {/* Create/Edit Program Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
@@ -1260,8 +1273,8 @@ export default function TrainingPage() {
                               enrollment.status === EnrollmentStatus.COMPLETED
                                 ? 'success'
                                 : enrollment.status === EnrollmentStatus.IN_PROGRESS
-                                ? 'warning'
-                                : 'default'
+                                  ? 'warning'
+                                  : 'default'
                             }
                           >
                             {enrollment.status.replace('_', ' ')}

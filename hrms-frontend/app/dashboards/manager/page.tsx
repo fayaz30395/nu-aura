@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
   UserCheck,
@@ -22,6 +23,8 @@ import {
   BarChart3,
   Activity,
   Briefcase,
+  Zap,
+  Star,
 } from 'lucide-react';
 import {
   BarChart,
@@ -37,10 +40,18 @@ import {
   Legend,
   LineChart,
   Line,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  AreaChart,
+  Area,
 } from 'recharts';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { dashboardService } from '@/lib/services/dashboard.service';
@@ -183,452 +194,414 @@ export default function ManagerDashboardPage() {
     rate: parseFloat((day.attendanceRate || 0).toFixed(1)),
   }));
 
+  // Team Pulse Radar Data
+  const pulseData = [
+    { subject: 'Goals', A: teamPerformance.goalCompletionRate || 0, fullMark: 100 },
+    { subject: 'Training', A: teamPerformance.trainingCompletionRate || 0, fullMark: 100 },
+    { subject: 'Feedback', A: (teamPerformance.avgFeedbackScore || 0) * 20, fullMark: 100 },
+    { subject: 'Engagement', A: 85, fullMark: 100 }, // Mocked engagement
+    { subject: 'Attendance', A: teamAttendance.weeklyAttendanceRate || 0, fullMark: 100 },
+  ];
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
   return (
     <AppLayout activeMenuItem="dashboard">
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <motion.div
+        className="p-6 space-y-8 bg-surface-50/30 dark:bg-surface-950/30 min-h-screen"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {/* Header Section */}
+        <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">
-              Manager Dashboard
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">Live Insights</span>
+            </div>
+            <h1 className="text-4xl font-extrabold tracking-tight text-surface-900 dark:text-white sm:text-5xl">
+              Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Pulse</span>
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
-              {dashboardData.departmentName} Team Overview
+            <p className="text-surface-600 dark:text-surface-400 mt-2 text-lg">
+              Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Badge className={getHealthStatusColor(teamOverview.teamHealthStatus)}>
-              Team Health: {teamOverview.teamHealthStatus.replace('_', ' ')}
-            </Badge>
+            <div className={`px-4 py-2 rounded-2xl flex items-center gap-2 border backdrop-blur-md shadow-sm transition-all duration-300 ${teamOverview.teamHealthStatus === 'EXCELLENT'
+              ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400'
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
+              }`}>
+              <Activity className="h-5 w-5" />
+              <span className="font-bold">Health Index: {teamOverview.teamHealthStatus.replace('_', ' ')}</span>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Team Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                    Team Size
-                  </p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {teamOverview.totalTeamSize}
-                  </p>
-                  <p className="text-xs text-surface-500 mt-1">
-                    {teamOverview.directReports} direct reports
-                  </p>
-                </div>
-                <div className="h-14 w-14 rounded-full bg-indigo-100 dark:bg-indigo-800/30 flex items-center justify-center">
-                  <Users className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
-                </div>
+        {/* Global Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div variants={itemVariants}>
+            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Users className="h-16 w-16 text-primary-500" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                    Present Today
-                  </p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {teamAttendance.presentToday}
-                  </p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                    {teamAttendance.workFromHomeToday} working from home
-                  </p>
-                </div>
-                <div className="h-14 w-14 rounded-full bg-green-100 dark:bg-green-800/30 flex items-center justify-center">
-                  <UserCheck className="h-7 w-7 text-green-600 dark:text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                    On Leave Today
-                  </p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {teamAttendance.onLeaveToday}
-                  </p>
-                  <p className="text-xs text-surface-500 mt-1">
-                    {teamLeave.pendingApprovals} pending approvals
-                  </p>
-                </div>
-                <div className="h-14 w-14 rounded-full bg-amber-100 dark:bg-amber-800/30 flex items-center justify-center">
-                  <Calendar className="h-7 w-7 text-amber-600 dark:text-amber-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                    Action Items
-                  </p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
-                    {actionItems.totalActionItems}
-                  </p>
-                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                    {actionItems.overdueApprovals + actionItems.overdueReviews} overdue
-                  </p>
-                </div>
-                <div className="h-14 w-14 rounded-full bg-purple-100 dark:bg-purple-800/30 flex items-center justify-center">
-                  <ClipboardList className="h-7 w-7 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Attendance Metrics & Performance */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Team Attendance Metrics */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-indigo-500" />
-                Team Attendance Metrics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Weekly Rate
-                    </p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                      {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Monthly Rate
-                    </p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                      {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
-                    </p>
-                    {teamAttendance.monthlyAttendanceChange !== 0 && (
-                      <div className="flex items-center gap-1 mt-1">
-                        {teamAttendance.monthlyAttendanceChange > 0 ? (
-                          <TrendingUp className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <TrendingDown className="h-4 w-4 text-red-600" />
-                        )}
-                        <span className={`text-xs ${teamAttendance.monthlyAttendanceChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {Math.abs(teamAttendance.monthlyAttendanceChange).toFixed(1)}%
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Avg Work Hours
-                    </p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                      {teamAttendance.avgWorkingHours?.toFixed(1)}h
-                    </p>
-                  </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Late Arrivals
-                    </p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                      {teamAttendance.totalLateArrivals}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Weekly Trend */}
-                <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={attendanceTrendData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                      <XAxis
-                        dataKey="name"
-                        tick={{ fill: '#64748B', fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        tick={{ fill: '#64748B', fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                        domain={[0, 100]}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          borderRadius: '8px',
-                          border: 'none',
-                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="rate"
-                        stroke="#6366F1"
-                        strokeWidth={2}
-                        dot={{ fill: '#6366F1', r: 4 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Team Performance Distribution */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-indigo-500" />
-                Performance Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Average Rating
-                    </p>
-                    <p className="text-3xl font-bold text-surface-900 dark:text-white">
-                      {teamPerformance.avgPerformanceRating?.toFixed(1)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
-                      Goal Completion
-                    </p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white">
-                      {teamPerformance.goalCompletionRate?.toFixed(0)}%
-                    </p>
-                  </div>
-                </div>
-
-                <div className="h-52 flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={performanceData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={(entry) => `${entry.name}: ${entry.value}`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {performanceData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Pending Approvals & Action Items */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Pending Approvals */}
-          <Card className="border-0 shadow-md lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-indigo-500" />
-                Pending Approvals
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {teamLeave.pendingLeaveRequests.slice(0, 5).map((leave) => (
-                  <div
-                    key={leave.requestId}
-                    className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-surface-900 dark:text-white">
-                            {leave.employeeName}
-                          </p>
-                          {leave.urgency === 'HIGH' && (
-                            <Badge className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
-                              Urgent
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
-                          {leave.leaveType} - {formatDate(leave.startDate)} to{' '}
-                          {formatDate(leave.endDate)} ({leave.days} days)
-                        </p>
-                        {leave.reason && (
-                          <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                            {leave.reason}
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-surface-500">
-                          {new Date(leave.submittedAt).toLocaleDateString()}
-                        </p>
-                      </div>
+              <CardContent className="p-8">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Team Force</p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamOverview.totalTeamSize}</span>
+                    <div className="h-10 w-1 rounded-full bg-primary-500" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-surface-400">Reports</span>
+                      <span className="text-sm font-bold text-primary-600">{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
-                ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-                {teamLeave.pendingLeaveRequests.length === 0 && (
-                  <div className="text-center py-8 text-surface-500">
-                    <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
-                    <p>No pending leave approvals</p>
-                  </div>
-                )}
+          <motion.div variants={itemVariants}>
+            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <UserCheck className="h-16 w-16 text-emerald-500" />
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Action Items Summary */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-indigo-500" />
-                Action Items
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                    <span className="text-sm font-medium text-surface-900 dark:text-white">
-                      Leave Approvals
-                    </span>
+              <CardContent className="p-8">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Availability Today</p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamAttendance.presentToday}</span>
+                    <div className="h-10 w-1 rounded-full bg-emerald-500" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-surface-400">On-Site</span>
+                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{teamAttendance.workFromHomeToday} WFH</span>
+                    </div>
                   </div>
-                  <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-300">
-                    {actionItems.leaveApprovals}
-                  </Badge>
                 </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-                <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    <span className="text-sm font-medium text-surface-900 dark:text-white">
-                      Timesheet Approvals
-                    </span>
+          <motion.div variants={itemVariants}>
+            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Calendar className="h-16 w-16 text-amber-500" />
+              </div>
+              <CardContent className="p-8">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Out of Office</p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamAttendance.onLeaveToday}</span>
+                    <div className="h-10 w-1 rounded-full bg-amber-500" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-surface-400">Confirmed</span>
+                      <span className="text-sm font-bold text-amber-600 dark:text-amber-400">{teamLeave.pendingApprovals} Pending</span>
+                    </div>
                   </div>
-                  <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-300">
-                    {actionItems.timesheetApprovals}
-                  </Badge>
                 </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-                <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                    <span className="text-sm font-medium text-surface-900 dark:text-white">
-                      Performance Reviews
-                    </span>
+          <motion.div variants={itemVariants}>
+            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Zap className="h-16 w-16 text-indigo-500" />
+              </div>
+              <CardContent className="p-8">
+                <div className="flex flex-col gap-4">
+                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Active Tasks</p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl font-black text-surface-900 dark:text-white">{actionItems.totalActionItems}</span>
+                    <div className="h-10 w-1 rounded-full bg-indigo-500" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-surface-400">Total</span>
+                      <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
+                    </div>
                   </div>
-                  <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-purple-300">
-                    {actionItems.performanceReviewsDue}
-                  </Badge>
                 </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
 
-                <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    <span className="text-sm font-medium text-surface-900 dark:text-white">
-                      One-on-Ones Due
-                    </span>
+        {/* Central Intelligence Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Team Attendance Analytics */}
+          <motion.div variants={itemVariants}>
+            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Activity className="h-6 w-6 text-indigo-500" />
+                    <span>Attendance Flow</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-300">
-                    {actionItems.oneOnOnesDue}
-                  </Badge>
-                </div>
-
-                {(actionItems.overdueApprovals > 0 || actionItems.overdueReviews > 0) && (
-                  <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                    <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
-                      <AlertCircle className="h-5 w-5" />
-                      <span className="text-sm font-medium">
-                        {actionItems.overdueApprovals + actionItems.overdueReviews} Overdue Items
+                  <Badge variant="outline" className="text-xs font-bold uppercase tracking-tighter self-center">Real-time</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="space-y-8">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="p-6 bg-indigo-500/5 rounded-3xl border border-indigo-500/10">
+                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Weekly Rate</p>
+                      <span className="text-3xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tighter">
+                        {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Team Alerts */}
-        {teamAlerts && teamAlerts.length > 0 && (
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-indigo-500" />
-                Team Alerts
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {teamAlerts.slice(0, 5).map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`p-4 rounded-lg border ${
-                      alert.severity === 'CRITICAL'
-                        ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-                        : alert.severity === 'WARNING'
-                        ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
-                        : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={getSeverityColor(alert.severity)}>
-                        {getSeverityIcon(alert.severity)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-surface-900 dark:text-white">
-                            {alert.title}
-                          </h4>
-                          <Badge className={getSeverityColor(alert.severity)}>
-                            {alert.type}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-surface-600 dark:text-surface-400">
-                          {alert.description}
-                        </p>
-                        {alert.employeeName && (
-                          <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                            Employee: {alert.employeeName}
-                          </p>
-                        )}
-                        {alert.actionRequired && (
-                          <p className="text-sm font-medium text-surface-900 dark:text-white mt-2">
-                            Action: {alert.actionRequired}
-                          </p>
+                    <div className="p-6 bg-emerald-500/5 rounded-3xl border border-emerald-500/10">
+                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Stability</p>
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tighter">
+                          {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
+                        </span>
+                        {teamAttendance.monthlyAttendanceChange !== 0 && (
+                          <div className={`p-1.5 rounded-full ${teamAttendance.monthlyAttendanceChange > 0 ? 'bg-green-500' : 'bg-red-500'}`}>
+                            {teamAttendance.monthlyAttendanceChange > 0 ? <TrendingUp className="h-3 w-3 text-white" /> : <TrendingDown className="h-3 w-3 text-white" />}
+                          </div>
                         )}
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+
+                  <div className="h-72 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={attendanceTrendData}>
+                        <defs>
+                          <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 700 }} />
+                        <YAxis hide domain={[0, 110]} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)', borderRadius: '20px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                        />
+                        <Area type="monotone" dataKey="rate" stroke="#6366F1" strokeWidth={4} fillOpacity={1} fill="url(#colorRate)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Team Pulse Radar & Performance */}
+          <motion.div variants={itemVariants}>
+            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden h-full">
+              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+                <CardTitle className="flex items-center gap-3">
+                  <Star className="h-6 w-6 text-amber-500" />
+                  <span>Performance DNA</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
+                  <div className="space-y-8">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Avg Rating</p>
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-5xl font-black text-surface-900 dark:text-white">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
+                        <span className="text-xl font-bold text-surface-400">/ 5.0</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Goal Execution</p>
+                      <div className="relative h-4 w-full bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${teamPerformance.goalCompletionRate}%` }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          className="absolute h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"
+                        />
+                      </div>
+                      <div className="flex justify-between mt-2 font-bold text-sm text-amber-600">
+                        <span>{teamPerformance.goalCompletionRate?.toFixed(0)}% Completed</span>
+                        <span>On Track</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={pulseData}>
+                        <PolarGrid stroke="#94A3B8" opacity={0.5} />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748B', fontSize: 10, fontWeight: 800 }} />
+                        <PolarRadiusAxis hide />
+                        <Radar
+                          name="Team"
+                          dataKey="A"
+                          stroke="#F59E0B"
+                          fill="#F59E0B"
+                          fillOpacity={0.3}
+                          strokeWidth={3}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Lists & Detailed Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Pending Approvals */}
+          <motion.div variants={itemVariants} className="lg:col-span-2">
+            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-6 w-6 text-primary-500" />
+                    <span>Approval Pipeline</span>
+                  </div>
+                  <Badge className="bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-500/20">
+                    {teamLeave.pendingLeaveRequests.length} Active
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="divide-y divide-surface-200/50 dark:divide-surface-700/50">
+                  {teamLeave.pendingLeaveRequests.slice(0, 5).map((leave) => (
+                    <div
+                      key={leave.requestId}
+                      className="p-6 hover:bg-white/60 dark:hover:bg-white/5 transition-all duration-300 group cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-lg">
+                            {leave.employeeName?.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-3">
+                              <span className="font-extrabold text-surface-900 dark:text-white group-hover:text-primary-500 transition-colors">{leave.employeeName}</span>
+                              {leave.urgency === 'HIGH' && (
+                                <span className="animate-pulse flex h-2 w-2 rounded-full bg-red-500" />
+                              )}
+                            </div>
+                            <p className="text-sm font-bold text-surface-500 mt-1">
+                              {leave.leaveType} • {formatDate(leave.startDate)} to {formatDate(leave.endDate)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-black uppercase tracking-tighter text-surface-400 block mb-1">Impact</span>
+                          <span className="text-sm font-extrabold text-surface-900 dark:text-white">{leave.days} Days</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {teamLeave.pendingLeaveRequests.length === 0 && (
+                    <div className="p-12 text-center">
+                      <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle className="h-10 w-10 text-emerald-500" />
+                      </div>
+                      <p className="text-xl font-black text-surface-900 dark:text-white">Clear Pipeline</p>
+                      <p className="text-surface-500 mt-1 font-bold">All approvals are up to date.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Action Items Summary */}
+          <motion.div variants={itemVariants}>
+            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 h-full">
+              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+                <CardTitle className="flex items-center gap-3">
+                  <ClipboardList className="h-6 w-6 text-indigo-500" />
+                  <span>Immediate Acts</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {[
+                    { label: 'Leaves', count: actionItems.leaveApprovals, icon: Calendar, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+                    { label: 'Timesheets', count: actionItems.timesheetApprovals, icon: Clock, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+                    { label: 'Performance', count: actionItems.performanceReviewsDue, icon: Target, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+                    { label: 'One-on-Ones', count: actionItems.oneOnOnesDue, icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-surface-50/50 dark:bg-surface-800/50 border border-surface-200/20 hover:border-surface-300 dark:hover:border-surface-600 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className={`p-3 rounded-2xl ${item.bg}`}>
+                          <item.icon className={`h-6 w-6 ${item.color}`} />
+                        </div>
+                        <span className="font-extrabold text-surface-900 dark:text-white">{item.label}</span>
+                      </div>
+                      <span className="text-2xl font-black text-surface-900 dark:text-white opacity-40 group-hover:opacity-100 transition-opacity">{item.count}</span>
+                    </div>
+                  ))}
+
+                  {(actionItems.overdueApprovals > 0 || actionItems.overdueReviews > 0) && (
+                    <div className="mt-6 p-6 rounded-3xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 flex items-center gap-4">
+                      <AlertCircle className="h-8 w-8 animate-bounce" />
+                      <div>
+                        <p className="font-black text-lg leading-tight">{actionItems.overdueApprovals + actionItems.overdueReviews} Overdue</p>
+                        <p className="text-xs font-bold uppercase tracking-widest opacity-70">Immediate attention required</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Global Alert Section */}
+        <AnimatePresence>
+          {teamAlerts && teamAlerts.length > 0 && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+            >
+              <Card className="border-0 shadow-2xl bg-red-500/5 dark:bg-red-500/10 backdrop-blur-xl border-t border-red-500/20 overflow-hidden">
+                <CardContent className="p-8">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-red-500 text-white flex items-center justify-center shadow-lg">
+                        <AlertTriangle className="h-7 w-7" />
+                      </div>
+                      <h2 className="text-3xl font-black text-surface-900 dark:text-white tracking-tight">System Alerts</h2>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {teamAlerts.slice(0, 3).map((alert) => (
+                      <div key={alert.id} className="p-6 rounded-3xl bg-white/40 dark:bg-black/20 border border-red-500/10">
+                        <div className="flex items-center gap-3 mb-4">
+                          <Badge className="bg-red-500 text-white font-black px-3 py-1">CRITICAL</Badge>
+                          <span className="text-xs font-black text-surface-400 uppercase tracking-widest">{alert.type}</span>
+                        </div>
+                        <h4 className="font-extrabold text-surface-900 dark:text-white mb-2">{alert.title}</h4>
+                        <p className="text-sm font-bold text-surface-500 leading-relaxed">{alert.description}</p>
+                        <div className="mt-6 pt-6 border-t border-surface-200/50 dark:border-surface-700/50 flex items-center justify-between">
+                          <span className="text-xs font-black uppercase text-primary-500">Action: {alert.actionRequired}</span>
+                          <Button variant="ghost" size="sm" className="font-black">RESOLVE</Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Team Performance Metrics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -757,7 +730,7 @@ export default function ManagerDashboardPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

@@ -25,6 +25,8 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
 
     boolean existsByCodeAndTenantId(String code, UUID tenantId);
 
+    List<Role> findByCodeInAndTenantId(java.util.Collection<String> codes, UUID tenantId);
+
     @Query("SELECT COUNT(u) > 0 FROM User u JOIN u.roles r WHERE r.id = :roleId")
     boolean isRoleAssignedToUsers(@Param("roleId") UUID roleId);
 }

@@ -295,7 +295,10 @@ function LoginPage() {
         const userInfo = await userInfoResponse.json();
 
         // Check if the email domain is allowed
-        if (!userInfo.hd || userInfo.hd !== ALLOWED_DOMAIN) {
+        // Note: hd (hosted domain) might be missing for some Google accounts or flows
+        const domain = userInfo.hd || userInfo.email.split('@')[1];
+
+        if (domain !== ALLOWED_DOMAIN) {
           setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
           setIsGoogleLoading(false);
           return;
@@ -463,11 +466,10 @@ function LoginPage() {
                     autoComplete="email"
                     disabled={isLoading || isLockedOut}
                     placeholder="Enter your email"
-                    className={`block w-full pl-10 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
-                      errors.email
+                    className={`block w-full pl-10 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${errors.email
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
-                    } ${(isLoading || isLockedOut) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${(isLoading || isLockedOut) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                 </div>
                 {errors.email && (
@@ -492,11 +494,10 @@ function LoginPage() {
                     autoComplete="current-password"
                     disabled={isLoading || isLockedOut}
                     placeholder="Enter your password"
-                    className={`block w-full pl-10 pr-12 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
-                      errors.password
+                    className={`block w-full pl-10 pr-12 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${errors.password
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
-                    } ${(isLoading || isLockedOut) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${(isLoading || isLockedOut) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                   <button
                     type="button"
@@ -553,9 +554,8 @@ function LoginPage() {
                       Demo Credentials
                     </span>
                     <ChevronDown
-                      className={`h-4 w-4 text-surface-400 transition-transform ${
-                        showDemoCredentials ? 'rotate-180' : ''
-                      }`}
+                      className={`h-4 w-4 text-surface-400 transition-transform ${showDemoCredentials ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
                   {showDemoCredentials && (

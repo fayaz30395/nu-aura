@@ -27,6 +27,49 @@ export interface OnboardingProcessRequest {
     expectedCompletionDate?: string;
     assignedBuddyId?: string;
     notes?: string;
+    templateId?: string;
+}
+
+export interface OnboardingChecklistTemplate {
+    id: string;
+    name: string;
+    description?: string;
+    applicableFor: 'ALL' | 'DEPARTMENT_SPECIFIC' | 'ROLE_SPECIFIC' | 'LEVEL_SPECIFIC';
+    departmentId?: string;
+    jobLevel?: string;
+    isActive: boolean;
+    isDefault: boolean;
+    estimatedDays?: number;
+}
+
+export interface OnboardingTemplateTask {
+    id: string;
+    templateId: string;
+    taskName: string;
+    description?: string;
+    category: string;
+    isMandatory: boolean;
+    orderSequence: number;
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    estimatedDaysFromStart?: number;
+}
+
+export interface OnboardingTask {
+    id: string;
+    processId: string;
+    employeeId: string;
+    taskName: string;
+    description?: string;
+    category: string;
+    assignedTo?: string;
+    assignedToName?: string;
+    dueDate?: string;
+    completedDate?: string;
+    status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED' | 'BLOCKED';
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    isMandatory: boolean;
+    orderSequence: number;
+    remarks?: string;
 }
 
 export interface OnboardingUpdateProgressRequest {

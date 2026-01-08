@@ -327,3 +327,43 @@ export interface EmployeeImportResult {
   importedEmployees?: ImportedEmployee[];
   failedImports?: FailedImport[];
 }
+
+export interface TalentProfile {
+  employeeId: string;
+  fullName: string;
+  designation: string;
+  department: string;
+  avatarUrl?: string;
+  skills: SkillDto[];
+  achievements: AchievementDto[];
+  timeline: MilestoneDto[];
+  recentFeedback: FeedbackSnippet[];
+}
+
+export interface SkillDto {
+  name: string;
+  level: number;
+  category: string;
+  verified: boolean;
+}
+
+export interface AchievementDto {
+  title: string;
+  description: string;
+  date: string;
+  icon: string;
+}
+
+export interface MilestoneDto {
+  type: 'PROMOTION' | 'PROJECT' | 'JOINED' | 'ANNIVERSARY' | 'UPCOMING';
+  title: string;
+  date: string;
+  status: 'COMPLETED' | 'IN_PROGRESS';
+}
+
+export interface FeedbackSnippet {
+  fromName: string;
+  comment: string;
+  date: string;
+  rating: number;
+}

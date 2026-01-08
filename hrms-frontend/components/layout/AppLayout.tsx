@@ -44,6 +44,8 @@ import {
   HardDrive,
   Inbox,
   Plane,
+  Zap,
+  Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
@@ -318,6 +320,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           href: '/performance',
         },
         {
+          id: 'performance-revolution',
+          label: 'Revolution',
+          icon: <Zap className="h-5 w-5 text-yellow-500" />,
+          href: '/performance/revolution',
+        },
+        {
           id: 'okr',
           label: 'OKR',
           icon: <Target className="h-5 w-5" />,
@@ -454,6 +462,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Reports',
           icon: <Download className="h-5 w-5" />,
           href: '/reports',
+        },
+        {
+          id: 'org-health',
+          label: 'Org Health',
+          icon: <Activity className="h-5 w-5 text-primary-500" />,
+          href: '/analytics/org-health',
         },
       ],
     },
