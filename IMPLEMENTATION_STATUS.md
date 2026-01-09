@@ -220,7 +220,7 @@
 │ Monitoring          │ ████████│ ████████ │ 100% ✅ (Grafana)   │
 │ Integrations        │ ████████│ ████████ │ 100% ✅ (SMS/Payment)│
 │ Deployment          │ ████████│ N/A      │ 100% ✅ (K8s/GCP)   │
-│ E2E Tests           │ ████████│ ████████ │ 100% ✅ (Playwright)│
+│ E2E Tests           │ ███████░│ ███████░ │ 85% ⚠️ (perf/edge cases pending)│
 └─────────────────────┴─────────┴──────────┴──────────────────────┘
 ```
 
