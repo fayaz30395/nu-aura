@@ -48,6 +48,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ALLOCATION_SUMMARY_ROLE_ALLOWLIST } from '@/lib/constants/roles';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
 import { Header } from './Header';
 import type { HeaderProps } from './Header';
@@ -78,7 +79,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   onMenuItemClick,
 }) => {
   const router = useRouter();
-  const { logout, user } = useAuth();
+  const { logout, user, hasHydrated } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -131,6 +132,24 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       console.error('Logout error:', error);
     }
     router.push('/auth/login');
+  };
+
+  const canViewAllocationSummary = React.useMemo(() => {
+    if (!hasHydrated) {
+      return false;
+    }
+    const roleCodes = user?.roles?.map((role) => role.code).filter(Boolean) || [];
+    if (roleCodes.length === 0) {
+      return false;
+    }
+    return roleCodes.some((code) => ALLOCATION_SUMMARY_ROLE_ALLOWLIST.has(code));
+  }, [hasHydrated, user?.roles]);
+
+  const allocationSummaryItem: SidebarItem = {
+    id: 'allocation-summary',
+    label: 'Allocation Summary',
+    icon: <ClipboardList className="h-5 w-5" />,
+    href: '/allocations/summary',
   };
 
   // Navigation sections for HRMS - organized into logical groups
@@ -373,6 +392,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           icon: <BarChart3 className="h-5 w-5" />,
           href: '/resources/workload',
         },
+        ...(canViewAllocationSummary ? [allocationSummaryItem] : []),
         {
           id: 'availability',
           label: 'Availability Calendar',

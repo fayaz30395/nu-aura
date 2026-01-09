@@ -51,8 +51,8 @@ class SearchService {
    */
   async searchEmployees(query: string, limit: number = 5): Promise<SearchResult[]> {
     try {
-      const response = await apiClient.get<Page<Employee>>('/employees/search', {
-        params: { query, page: 0, size: limit },
+      const response = await apiClient.get<Page<Employee>>('/employees', {
+        params: { search: query, page: 0, size: limit },
       });
 
       return response.data.content.map((emp) => ({

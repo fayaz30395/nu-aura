@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Bell,
   Moon,
@@ -99,6 +99,7 @@ const Header: React.FC<HeaderProps> = ({
   className,
 }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { isDark, toggleDarkMode } = useDarkMode();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -406,6 +407,16 @@ const Header: React.FC<HeaderProps> = ({
     .join('')
     .toUpperCase();
 
+  const currentAppCode = pathname?.startsWith('/projects')
+    ? 'PROJECTS'
+    : pathname?.startsWith('/nu-drive')
+      ? 'NUDRIVE'
+      : pathname?.startsWith('/nu-mail')
+        ? 'NUMAIL'
+        : pathname?.startsWith('/nu-calendar')
+          ? 'NUCALENDAR'
+          : 'HRMS';
+
   return (
     <header
       className={cn(
@@ -430,7 +441,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* App Switcher */}
           <div className="hidden md:block">
-            <AppSwitcher currentAppCode="HRMS" />
+            <AppSwitcher currentAppCode={currentAppCode} />
           </div>
 
           {/* Global Search - Desktop */}

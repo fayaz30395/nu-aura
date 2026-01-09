@@ -13,6 +13,7 @@ public class HrmsProperties {
     private Google google = new Google();
     private Bootstrap bootstrap = new Bootstrap();
     private Attendance attendance = new Attendance();
+    private Project project = new Project();
 
     @Data
     public static class Org {
@@ -53,5 +54,10 @@ public class HrmsProperties {
     public static class Attendance {
         private int regularizationWindowDays = 7;
         private String timezone = "UTC";
+    }
+
+    @Data
+    public static class Project {
+        private String codePrefix = "NLG-PRJ-";
     }
 }

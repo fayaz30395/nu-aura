@@ -8,6 +8,16 @@ spring:
     url: ${HRMS_DB_URL:jdbc:postgresql://localhost:5432/hrms}
     username: ${HRMS_DB_USERNAME:hrms}
     password: ${HRMS_DB_PASSWORD:hrms}
+    hikari:
+      maximum-pool-size: ${HRMS_DB_POOL_MAX:5}
+      minimum-idle: ${HRMS_DB_POOL_MIN:0}
+      max-lifetime: ${HRMS_DB_POOL_MAX_LIFETIME_MS:600000}
+      idle-timeout: ${HRMS_DB_POOL_IDLE_TIMEOUT_MS:300000}
+      keepalive-time: ${HRMS_DB_POOL_KEEPALIVE_MS:300000}
+      connection-timeout: ${HRMS_DB_POOL_CONN_TIMEOUT_MS:10000}
+      validation-timeout: ${HRMS_DB_POOL_VALIDATION_TIMEOUT_MS:5000}
+      data-source-properties:
+        tcpKeepAlive: true
   jpa:
     hibernate:
       ddl-auto: validate
@@ -55,3 +65,5 @@ hrms:
   attendance:
     regularization-window-days: ${HRMS_ATT_REG_WINDOW_DAYS:7}
     timezone: ${HRMS_ATT_TIMEZONE:UTC}
+  project:
+    code-prefix: ${HRMS_PROJECT_CODE_PREFIX:NLG-PRJ-}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutGrid,
@@ -11,6 +12,10 @@ import {
   MessageCircle,
   FileText,
   DollarSign,
+  FolderKanban,
+  HardDrive,
+  Mail,
+  Calendar,
   Check
 } from 'lucide-react';
 export interface UserAppAccess {
@@ -20,24 +25,80 @@ export interface UserAppAccess {
   userName: string;
   applicationCode: string;
   applicationName: string;
+  baseUrl?: string;
   status: string;
   grantedAt: string;
   roleCodes: string[];
   permissions: string[];
 }
 
-const DEFAULT_APPS: UserAppAccess[] = [{
-  id: '1',
-  userId: '',
-  userEmail: '',
-  userName: '',
-  applicationCode: 'HRMS',
-  applicationName: 'NU-HRMS',
-  status: 'ACTIVE',
-  grantedAt: new Date().toISOString(),
-  roleCodes: ['USER'],
-  permissions: []
-}];
+const DEFAULT_APPS: UserAppAccess[] = [
+  {
+    id: '1',
+    userId: '',
+    userEmail: '',
+    userName: '',
+    applicationCode: 'HRMS',
+    applicationName: 'NU-HRMS',
+    baseUrl: '/dashboard',
+    status: 'ACTIVE',
+    grantedAt: new Date().toISOString(),
+    roleCodes: ['USER'],
+    permissions: [],
+  },
+  {
+    id: '2',
+    userId: '',
+    userEmail: '',
+    userName: '',
+    applicationCode: 'PROJECTS',
+    applicationName: 'NU-ProjectsAndAllocations',
+    baseUrl: '/projects',
+    status: 'ACTIVE',
+    grantedAt: new Date().toISOString(),
+    roleCodes: ['USER'],
+    permissions: [],
+  },
+  {
+    id: '3',
+    userId: '',
+    userEmail: '',
+    userName: '',
+    applicationCode: 'NUDRIVE',
+    applicationName: 'NU-Drive',
+    baseUrl: '/nu-drive',
+    status: 'ACTIVE',
+    grantedAt: new Date().toISOString(),
+    roleCodes: ['USER'],
+    permissions: [],
+  },
+  {
+    id: '4',
+    userId: '',
+    userEmail: '',
+    userName: '',
+    applicationCode: 'NUMAIL',
+    applicationName: 'NU-Mail',
+    baseUrl: '/nu-mail',
+    status: 'ACTIVE',
+    grantedAt: new Date().toISOString(),
+    roleCodes: ['USER'],
+    permissions: [],
+  },
+  {
+    id: '5',
+    userId: '',
+    userEmail: '',
+    userName: '',
+    applicationCode: 'NUCALENDAR',
+    applicationName: 'NU-Calendar',
+    baseUrl: '/nu-calendar',
+    status: 'ACTIVE',
+    grantedAt: new Date().toISOString(),
+    roleCodes: ['USER'],
+    permissions: [],
+  },
+];
 
 interface AppSwitcherProps {
   currentAppCode?: string;
@@ -48,6 +109,10 @@ interface AppSwitcherProps {
 const getAppIcon = (code: string) => {
   const icons: Record<string, React.ComponentType<{ className?: string }>> = {
     HRMS: Users,
+    PROJECTS: FolderKanban,
+    NUDRIVE: HardDrive,
+    NUMAIL: Mail,
+    NUCALENDAR: Calendar,
     CRM: MessageCircle,
     FLUENCE: BarChart3,
     FINANCE: DollarSign,
@@ -61,6 +126,10 @@ const getAppIcon = (code: string) => {
 const getAppColor = (code: string) => {
   const colors: Record<string, string> = {
     HRMS: 'from-primary-500 to-primary-600',      // NuLogic Blue
+    PROJECTS: 'from-amber-500 to-amber-600',      // Projects Amber
+    NUDRIVE: 'from-sky-500 to-sky-600',           // Drive Blue
+    NUMAIL: 'from-rose-500 to-rose-600',          // Mail Red
+    NUCALENDAR: 'from-indigo-500 to-indigo-600',  // Calendar Indigo
     CRM: 'from-accent-500 to-accent-600',         // NuLogic Pink/Magenta
     FLUENCE: 'from-navy-500 to-navy-600',         // NuLogic Navy
     FINANCE: 'from-teal-500 to-teal-600',         // Teal for Finance
@@ -71,6 +140,7 @@ const getAppColor = (code: string) => {
 };
 
 export default function AppSwitcher({ currentAppCode = 'HRMS', onAppSwitch }: AppSwitcherProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [apps, setApps] = useState<UserAppAccess[]>(DEFAULT_APPS);
   const [loading, setLoading] = useState(false);
@@ -98,7 +168,9 @@ export default function AppSwitcher({ currentAppCode = 'HRMS', onAppSwitch }: Ap
     }
 
     if (onAppSwitch) {
-      onAppSwitch(app.applicationCode);
+      onAppSwitch(app.applicationCode, app.baseUrl);
+    } else if (app.baseUrl) {
+      router.push(app.baseUrl);
     }
     setIsOpen(false);
   };

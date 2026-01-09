@@ -37,8 +37,8 @@ class EmployeeService {
     page: number = 0,
     size: number = 20
   ): Promise<Page<Employee>> {
-    const response = await apiClient.get<Page<Employee>>('/employees/search', {
-      params: { query, page, size },
+    const response = await apiClient.get<Page<Employee>>('/employees', {
+      params: { search: query, page, size },
     });
     return response.data;
   }
