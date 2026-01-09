@@ -38,26 +38,38 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EmployeeResponse> list(UUID userId, Pageable pageable) {
+    public Page<EmployeeResponse> list(UUID userId, String search, Pageable pageable) {
         PermissionScope scope = authorizationService.resolveScope(userId, "EMP", "VIEW");
         Org org = orgService.getOrCreateOrg();
+        String searchTerm = normalizeSearch(search);
         return switch (scope) {
-            case ORG -> employeeRepository.findByOrg_Id(org.getId(), pageable).map(this::toResponse);
+            case ORG -> searchTerm == null
+                    ? employeeRepository.findByOrg_Id(org.getId(), pageable).map(this::toResponse)
+                    : employeeRepository.searchForOrgScope(org.getId(), searchTerm, pageable).map(this::toResponse);
             case DEPARTMENT -> {
                 Employee self = getCurrentEmployee(userId, org);
                 if (self.getDepartmentId() == null) {
                     yield Page.empty(pageable);
                 }
-                yield employeeRepository.findByOrg_IdAndDepartmentId(org.getId(), self.getDepartmentId(), pageable)
-                        .map(this::toResponse);
+                yield searchTerm == null
+                        ? employeeRepository.findByOrg_IdAndDepartmentId(org.getId(), self.getDepartmentId(), pageable)
+                            .map(this::toResponse)
+                        : employeeRepository.searchForDepartmentScope(org.getId(), self.getDepartmentId(), searchTerm, pageable)
+                            .map(this::toResponse);
             }
             case TEAM -> {
                 Employee self = getCurrentEmployee(userId, org);
-                yield employeeRepository.findByOrg_IdAndManager_Id(org.getId(), self.getId(), pageable)
-                        .map(this::toResponse);
+                yield searchTerm == null
+                        ? employeeRepository.findByOrg_IdAndManager_Id(org.getId(), self.getId(), pageable)
+                            .map(this::toResponse)
+                        : employeeRepository.searchForTeamScope(org.getId(), self.getId(), searchTerm, pageable)
+                            .map(this::toResponse);
             }
-            case SELF -> employeeRepository.findByOrg_IdAndUser_Id(org.getId(), userId, pageable)
-                    .map(this::toResponse);
+            case SELF -> searchTerm == null
+                    ? employeeRepository.findByOrg_IdAndUser_Id(org.getId(), userId, pageable)
+                        .map(this::toResponse)
+                    : employeeRepository.searchForSelfScope(org.getId(), userId, searchTerm, pageable)
+                        .map(this::toResponse);
         };
     }
 
@@ -157,6 +169,17 @@ public class EmployeeService {
         } catch (JsonProcessingException ex) {
             throw new IllegalArgumentException("Invalid emergency contact data");
         }
+    }
+
+    private String normalizeSearch(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        return "%" + trimmed.toLowerCase() + "%";
     }
 
     private void ensureEmployeeAccess(UUID userId, Employee target, Org org) {

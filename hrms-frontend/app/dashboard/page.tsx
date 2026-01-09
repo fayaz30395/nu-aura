@@ -367,15 +367,11 @@ export default function DashboardPage() {
       setAnalytics(data);
     } catch (err: any) {
       console.error('Analytics error:', err);
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        setError('Session expired. Please login again.');
-        setTimeout(() => {
-          localStorage.clear();
-          router.push('/auth/login');
-        }, 2000);
-      } else {
-        setError(err.response?.data?.message || 'Failed to load analytics data');
+      if (err.response?.status === 403) {
+        setError('You do not have access to analytics.');
+        return;
       }
+      setError(err.response?.data?.message || 'Failed to load analytics data');
     } finally {
       setIsLoading(false);
     }

@@ -59,34 +59,8 @@ class ApiClient {
             }
           } catch (refreshError) {
             this.clearTokens();
-            window.location.href = '/auth/login';
+            window.location.href = '/auth/login?reason=expired';
             return Promise.reject(refreshError);
-          }
-        }
-
-        // Handle 403 Forbidden - token might be expired or invalid
-        if (error.response?.status === 403 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          try {
-            const refreshToken = this.getRefreshToken();
-            if (refreshToken) {
-              const response = await this.client.post('/auth/refresh', null, {
-                headers: {
-                  'X-Refresh-Token': refreshToken,
-                },
-              });
-
-              const { accessToken, refreshToken: newRefreshToken } = response.data;
-              this.setTokens(accessToken, newRefreshToken);
-
-              originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-              return this.client(originalRequest);
-            }
-          } catch (refreshError) {
-            // Refresh failed - clear tokens but don't auto-redirect
-            // Let the component handle the 403 error
-            return Promise.reject(error);
           }
         }
 
@@ -135,6 +109,7 @@ class ApiClient {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('tenantId');
       localStorage.removeItem('user');
+      localStorage.removeItem('auth-storage');
     }
   }
 

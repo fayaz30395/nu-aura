@@ -39,9 +39,11 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EmployeeResponse>> list(@PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<Page<EmployeeResponse>> list(
+            @RequestParam(value = "search", required = false) String search,
+            @PageableDefault(size = 20) Pageable pageable) {
         UUID userId = SecurityUtils.getCurrentUserId().orElseThrow();
-        return ResponseEntity.ok(employeeService.list(userId, pageable));
+        return ResponseEntity.ok(employeeService.list(userId, search, pageable));
     }
 
     @GetMapping("/{id}")

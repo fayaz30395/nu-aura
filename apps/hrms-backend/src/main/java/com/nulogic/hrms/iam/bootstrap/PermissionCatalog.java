@@ -13,6 +13,8 @@ public final class PermissionCatalog {
             "ANN",
             "REP",
             "AUDIT",
+            "PROJECT",
+            "ALLOCATION",
             "INTEGRATION",
             "SYSTEM"
     );
@@ -26,7 +28,10 @@ public final class PermissionCatalog {
             "EXPORT",
             "UPLOAD",
             "DOWNLOAD",
-            "MANAGE"
+            "MANAGE",
+            "ACTIVATE",
+            "CLOSE",
+            "END"
     );
 
     private PermissionCatalog() {

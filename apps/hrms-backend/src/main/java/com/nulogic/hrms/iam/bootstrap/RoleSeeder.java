@@ -32,34 +32,63 @@ public class RoleSeeder {
 
         Role hrAdmin = ensureRole(org, "HR_ADMIN", "HR admin", true);
         hrAdmin.setPermissions(new java.util.HashSet<>(filter(allPermissions,
-                Set.of("IAM", "ORG", "EMP", "LEAVE", "ATT", "DOC", "ANN", "REP", "AUDIT"),
+                Set.of("IAM", "ORG", "EMP", "LEAVE", "ATT", "DOC", "ANN", "REP", "AUDIT", "PROJECT", "ALLOCATION"),
                 Set.of(PermissionScope.ORG),
-                Set.of("VIEW", "CREATE", "UPDATE", "DELETE", "APPROVE", "EXPORT", "UPLOAD", "DOWNLOAD", "MANAGE"))
+                Set.of("VIEW", "CREATE", "UPDATE", "DELETE", "APPROVE", "EXPORT", "UPLOAD", "DOWNLOAD", "MANAGE",
+                        "ACTIVATE", "CLOSE", "END"))
         ));
         roleRepository.save(hrAdmin);
 
         Role hrExecutive = ensureRole(org, "HR_EXECUTIVE", "HR executive", true);
-        hrExecutive.setPermissions(new java.util.HashSet<>(filter(allPermissions,
+        Set<Permission> hrExecutivePermissions = new java.util.HashSet<>(filter(allPermissions,
                 Set.of("ORG", "EMP", "LEAVE", "ATT", "DOC", "ANN", "REP"),
                 Set.of(PermissionScope.DEPARTMENT),
                 Set.of("VIEW", "CREATE", "UPDATE", "APPROVE", "EXPORT", "UPLOAD", "DOWNLOAD"))
-        ));
+        );
+        hrExecutivePermissions.addAll(filter(allPermissions,
+                Set.of("PROJECT", "ALLOCATION"),
+                Set.of(PermissionScope.DEPARTMENT),
+                Set.of("VIEW", "EXPORT"))
+        );
+        hrExecutive.setPermissions(hrExecutivePermissions);
         roleRepository.save(hrExecutive);
 
         Role manager = ensureRole(org, "MANAGER", "Manager", true);
-        manager.setPermissions(new java.util.HashSet<>(filter(allPermissions,
+        Set<Permission> managerPermissions = new java.util.HashSet<>(filter(allPermissions,
                 Set.of("EMP", "LEAVE", "ATT", "ANN"),
                 Set.of(PermissionScope.TEAM),
                 Set.of("VIEW", "CREATE", "UPDATE", "APPROVE"))
-        ));
+        );
+        managerPermissions.addAll(filter(allPermissions,
+                Set.of("PROJECT"),
+                Set.of(PermissionScope.TEAM),
+                Set.of("VIEW", "CREATE", "UPDATE", "ACTIVATE", "CLOSE", "EXPORT"))
+        );
+        managerPermissions.addAll(filter(allPermissions,
+                Set.of("ALLOCATION"),
+                Set.of(PermissionScope.TEAM),
+                Set.of("VIEW", "CREATE", "UPDATE", "END", "EXPORT"))
+        );
+        manager.setPermissions(managerPermissions);
         roleRepository.save(manager);
 
         Role employee = ensureRole(org, "EMPLOYEE", "Employee", true);
-        employee.setPermissions(new java.util.HashSet<>(filter(allPermissions,
+        Set<Permission> employeePermissions = new java.util.HashSet<>(filter(allPermissions,
                 Set.of("EMP", "LEAVE", "ATT", "DOC", "ANN"),
                 Set.of(PermissionScope.SELF),
                 Set.of("VIEW", "CREATE", "UPDATE", "UPLOAD", "DOWNLOAD"))
-        ));
+        );
+        employeePermissions.addAll(filter(allPermissions,
+                Set.of("PROJECT"),
+                Set.of(PermissionScope.SELF),
+                Set.of("VIEW"))
+        );
+        employeePermissions.addAll(filter(allPermissions,
+                Set.of("ALLOCATION"),
+                Set.of(PermissionScope.SELF),
+                Set.of("VIEW"))
+        );
+        employee.setPermissions(employeePermissions);
         roleRepository.save(employee);
 
         Role itAdmin = ensureRole(org, "IT_ADMIN", "IT admin", true);

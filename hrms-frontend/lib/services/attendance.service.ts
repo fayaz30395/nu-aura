@@ -5,12 +5,57 @@ import {
   Holiday,
   HolidayRequest,
   AttendanceRecord,
+  AttendanceStatus,
   CheckInRequest,
   CheckOutRequest,
   RegularizationRequest,
   Page,
   TimeEntry,
 } from '../types/attendance';
+
+interface AttendanceDayResponse {
+  id: string;
+  employeeId: string;
+  date: string;
+  checkInAt?: string | null;
+  checkOutAt?: string | null;
+  status?: string | null;
+}
+
+const mapAttendanceStatus = (status?: string | null): AttendanceStatus => {
+  switch (status) {
+    case 'PRESENT':
+    case 'REGULARIZED':
+      return 'PRESENT';
+    case 'INCOMPLETE':
+      return 'PENDING_REGULARIZATION';
+    case 'ABSENT':
+      return 'ABSENT';
+    default:
+      return 'ABSENT';
+  }
+};
+
+const mapAttendanceDay = (day: AttendanceDayResponse): AttendanceRecord => {
+  const checkInTime = day.checkInAt || undefined;
+  const checkOutTime = day.checkOutAt || undefined;
+  const timestamp = checkOutTime || checkInTime || new Date().toISOString();
+
+  return {
+    id: day.id,
+    tenantId: '',
+    employeeId: day.employeeId,
+    attendanceDate: day.date,
+    checkInTime,
+    checkOutTime,
+    status: mapAttendanceStatus(day.status),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    regularizationRequested: day.status === 'INCOMPLETE',
+    regularizationApproved: day.status === 'REGULARIZED',
+    isRegularization: day.status === 'REGULARIZED',
+  } as AttendanceRecord;
+};
 
 class AttendanceService {
   // Shift Management
@@ -82,13 +127,13 @@ class AttendanceService {
 
   // Attendance Management
   async checkIn(data: CheckInRequest): Promise<AttendanceRecord> {
-    const response = await apiClient.post<AttendanceRecord>('/attendance/check-in', data);
-    return response.data;
+    const response = await apiClient.post<AttendanceDayResponse>('/attendance/check-in', data);
+    return mapAttendanceDay(response.data);
   }
 
   async checkOut(data: CheckOutRequest): Promise<AttendanceRecord> {
-    const response = await apiClient.post<AttendanceRecord>('/attendance/check-out', data);
-    return response.data;
+    const response = await apiClient.post<AttendanceDayResponse>('/attendance/check-out', data);
+    return mapAttendanceDay(response.data);
   }
 
   async getEmployeeAttendance(
@@ -96,13 +141,16 @@ class AttendanceService {
     page: number = 0,
     size: number = 50
   ): Promise<Page<AttendanceRecord>> {
-    const response = await apiClient.get<Page<AttendanceRecord>>(
+    const response = await apiClient.get<Page<AttendanceDayResponse>>(
       `/attendance/employee/${employeeId}`,
       {
         params: { page, size },
       }
     );
-    return response.data;
+    return {
+      ...response.data,
+      content: (response.data.content || []).map(mapAttendanceDay),
+    };
   }
 
   async getAttendanceByDateRange(
@@ -110,13 +158,13 @@ class AttendanceService {
     startDate: string,
     endDate: string
   ): Promise<AttendanceRecord[]> {
-    const response = await apiClient.get<AttendanceRecord[]>(
+    const response = await apiClient.get<AttendanceDayResponse[]>(
       `/attendance/my-attendance`,
       {
         params: { employeeId, startDate, endDate },
       }
     );
-    return response.data;
+    return (response.data || []).map(mapAttendanceDay);
   }
 
   async getAttendanceByDate(
@@ -124,13 +172,16 @@ class AttendanceService {
     page: number = 0,
     size: number = 100
   ): Promise<Page<AttendanceRecord>> {
-    const response = await apiClient.get<Page<AttendanceRecord>>(
+    const response = await apiClient.get<Page<AttendanceDayResponse>>(
       `/attendance/date/${date}`,
       {
         params: { page, size },
       }
     );
-    return response.data;
+    return {
+      ...response.data,
+      content: (response.data.content || []).map(mapAttendanceDay),
+    };
   }
 
   async getPendingRegularizations(

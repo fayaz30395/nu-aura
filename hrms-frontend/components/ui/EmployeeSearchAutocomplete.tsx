@@ -17,6 +17,14 @@ interface EmployeeSearchAutocompleteProps {
   className?: string;
 }
 
+const getEmployeeName = (employee: Employee) => {
+  const fullName = employee.fullName?.trim();
+  if (fullName) return fullName;
+  const combined = [employee.firstName, employee.lastName].filter(Boolean).join(' ').trim();
+  if (combined) return combined;
+  return employee.workEmail || employee.employeeCode || 'Employee';
+};
+
 export function EmployeeSearchAutocomplete({
   value,
   onChange,
@@ -93,7 +101,7 @@ export function EmployeeSearchAutocomplete({
   }, []);
 
   const handleSelect = (employee: Employee) => {
-    onChange({ id: employee.id, name: employee.fullName });
+    onChange({ id: employee.id, name: getEmployeeName(employee) });
     setQuery('');
     setResults([]);
     setIsOpen(false);
@@ -200,7 +208,9 @@ export function EmployeeSearchAutocomplete({
             role="listbox"
             className="absolute z-50 w-full mt-1 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-auto"
           >
-            {results.map((employee, index) => (
+            {results.map((employee, index) => {
+              const name = getEmployeeName(employee);
+              return (
               <button
                 key={employee.id}
                 role="option"
@@ -214,18 +224,19 @@ export function EmployeeSearchAutocomplete({
                   }`}
               >
                 <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-700 dark:text-primary-300 text-sm font-medium flex-shrink-0">
-                  {getInitials(employee.fullName)}
+                  {getInitials(name)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
-                    {employee.fullName}
+                    {name}
                   </p>
                   <p className="text-xs text-surface-500 truncate">
                     {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
                   </p>
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
         )}
 

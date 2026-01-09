@@ -108,6 +108,7 @@ export interface Employee {
   personalEmail?: string;
   phoneNumber?: string;
   emergencyContactNumber?: string;
+  profilePhotoUrl?: string;
   dateOfBirth?: string; // YYYY-MM-DD
   gender?: Gender;
   address?: string;

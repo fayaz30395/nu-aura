@@ -35,6 +35,7 @@ export default function MyProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [editData, setEditData] = useState<UpdateEmployeeRequest>({});
+  const [photoLoadError, setPhotoLoadError] = useState(false);
 
   useEffect(() => {
     // Wait for hydration before checking authentication
@@ -161,14 +162,27 @@ export default function MyProfilePage() {
     );
   }
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
+  const displayName = employee.fullName
+    || [employee.firstName, employee.lastName].filter(Boolean).join(' ')
+    || employee.workEmail
+    || employee.employeeCode
+    || 'Employee';
+
+  const formatDate = (date?: string) => {
+    if (!date) return 'N/A';
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return 'N/A';
+    return parsed.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
   };
 
+  const formatEnumValue = (value?: string) => {
+    if (!value) return 'N/A';
+    return value.replace(/_/g, ' ');
+  };
 
 
   return (
@@ -245,14 +259,24 @@ export default function MyProfilePage() {
           <CardContent className="relative pt-0">
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full bg-white dark:bg-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
-                  {getInitials(employee.fullName)}
-                </div>
+                {employee.profilePhotoUrl && !photoLoadError ? (
+                  <img
+                    src={employee.profilePhotoUrl}
+                    alt={displayName}
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-white dark:bg-slate-800"
+                    onError={() => setPhotoLoadError(true)}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-white dark:bg-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
+                    {getInitials(displayName)}
+                  </div>
+                )}
                 <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white dark:border-slate-900 rounded-full" />
               </div>
               <div className="flex-1 pb-6">
                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
-                  {employee.fullName}
+                  {displayName}
                 </h2>
                 <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">
                   {employee.designation}
@@ -291,7 +315,7 @@ export default function MyProfilePage() {
                 <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   Full Name
                 </label>
-                <p className="text-slate-900 dark:text-slate-50 mt-1">{employee.fullName}</p>
+                <p className="text-slate-900 dark:text-slate-50 mt-1">{displayName}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -509,7 +533,7 @@ export default function MyProfilePage() {
                   Employment Type
                 </label>
                 <p className="text-slate-900 dark:text-slate-50 mt-1">
-                  {employee.employmentType.replace('_', ' ')}
+                  {formatEnumValue(employee.employmentType)}
                 </p>
               </div>
               <div>
