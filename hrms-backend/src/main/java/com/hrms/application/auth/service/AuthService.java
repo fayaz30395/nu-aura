@@ -96,8 +96,7 @@ public class AuthService {
         com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -108,17 +107,23 @@ public class AuthService {
         userRepository.save(user);
 
         // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Set<String> appPermissions = loadAppPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                HrmsPermissionInitializer.APP_CODE);
         Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
         Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
+        // Find employee context
+        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
         // Generate token with app-aware permissions
         String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps);
+                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                employeeId, locationId, departmentId, teamId);
         String refreshToken = tokenProvider.generateRefreshToken(request.getEmail(), tenantId);
-
-        // Find employee ID if user is linked to an employee
-        Optional<Employee> employee = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -126,7 +131,7 @@ public class AuthService {
                 .tokenType("Bearer")
                 .expiresIn(jwtExpiration)
                 .userId(user.getId())
-                .employeeId(employee.map(Employee::getId).orElse(null))
+                .employeeId(employeeId)
                 .tenantId(tenantId)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
@@ -163,7 +168,8 @@ public class AuthService {
             throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
         }
 
-        // For @nulogic.io accounts, use NuLogic tenant; otherwise use provided or demo tenant
+        // For @nulogic.io accounts, use NuLogic tenant; otherwise use provided or demo
+        // tenant
         UUID tenantId = request.getTenantId();
         if (tenantId == null) {
             if (email.endsWith("@nulogic.io")) {
@@ -181,7 +187,8 @@ public class AuthService {
         // Find user by email - first try specified tenant, then search across tenants
         User user = userRepository.findByEmailAndTenantId(email, tenantId)
                 .or(() -> userRepository.findByEmail(email).stream().findFirst())
-                .orElseThrow(() -> new AuthenticationException("User not found. Please contact your administrator to set up your account."));
+                .orElseThrow(() -> new AuthenticationException(
+                        "User not found. Please contact your administrator to set up your account."));
 
         // Update tenantId to user's actual tenant
         tenantId = user.getTenantId();
@@ -196,17 +203,23 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Set<String> appPermissions = loadAppPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                HrmsPermissionInitializer.APP_CODE);
         Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
         Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
+        // Find employee context
+        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
         // Generate token with app-aware permissions
         String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps);
+                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                employeeId, locationId, departmentId, teamId);
         String refreshToken = tokenProvider.generateRefreshToken(email, tenantId);
-
-        // Find employee ID if user is linked to an employee
-        Optional<Employee> employee = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -214,7 +227,7 @@ public class AuthService {
                 .tokenType("Bearer")
                 .expiresIn(jwtExpiration)
                 .userId(user.getId())
-                .employeeId(employee.map(Employee::getId).orElse(null))
+                .employeeId(employeeId)
                 .tenantId(tenantId)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
@@ -241,13 +254,12 @@ public class AuthService {
     private static class GoogleUserInfo {
         String email;
         String hd; // hosted domain
-        String name;
-        String picture;
     }
 
     /**
      * Get user info from Google using an access token.
-     * This is used when the frontend uses the implicit OAuth flow with custom scopes.
+     * This is used when the frontend uses the implicit OAuth flow with custom
+     * scopes.
      */
     private GoogleUserInfo getUserInfoFromAccessToken(String accessToken) {
         try {
@@ -271,8 +283,6 @@ public class AuthService {
             GoogleUserInfo userInfo = new GoogleUserInfo();
             userInfo.email = json.has("email") ? json.get("email").asText() : null;
             userInfo.hd = json.has("hd") ? json.get("hd").asText() : null;
-            userInfo.name = json.has("name") ? json.get("name").asText() : null;
-            userInfo.picture = json.has("picture") ? json.get("picture").asText() : null;
 
             if (userInfo.email == null) {
                 throw new AuthenticationException("Google access token does not contain email");
@@ -294,17 +304,25 @@ public class AuthService {
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
             // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-            Set<String> appPermissions = loadAppPermissions(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                    HrmsPermissionInitializer.APP_CODE);
             Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
+            // Find employee context
+            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
             // Generate token with app-aware permissions
             String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps);
+                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                    employeeId, locationId, departmentId, teamId);
             String newRefreshToken = tokenProvider.generateRefreshToken(email, tenantId);
 
-            // Find employee ID if user is linked to an employee
-            Optional<Employee> employee = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            // Context already handled above
 
             return AuthResponse.builder()
                     .accessToken(accessToken)
@@ -312,7 +330,7 @@ public class AuthService {
                     .tokenType("Bearer")
                     .expiresIn(jwtExpiration)
                     .userId(user.getId())
-                    .employeeId(employee.map(Employee::getId).orElse(null))
+                    .employeeId(employeeId)
                     .tenantId(tenantId)
                     .email(user.getEmail())
                     .fullName(user.getFullName())
@@ -354,32 +372,59 @@ public class AuthService {
      * Load permissions for a user in a specific application from the NU Platform.
      * Falls back to legacy role-based permissions if no UserAppAccess exists.
      */
-    private Set<String> loadAppPermissions(UUID userId, String appCode) {
+    private Map<String, com.hrms.domain.user.RoleScope> loadAppPermissions(UUID userId, String appCode) {
         Optional<UserAppAccess> access = userAppAccessRepository
                 .findByUserIdAndAppCodeWithPermissions(userId, appCode);
 
+        Map<String, com.hrms.domain.user.RoleScope> permissionScopes = new HashMap<>();
+
         if (access.isPresent()) {
-            return access.get().getAllPermissions();
+            // NU Platform RBAC (AppRole -> AppPermission relations)
+            // Note: AppPermission doesn't currently have a 'Scope' field in the schema
+            // viewed earlier.
+            // For now, we assume AppPermission implies GLOBAL or we need to update that
+            // schema too.
+            // But for Matrix RBAC, we are focusing on the legacy User -> Role ->
+            // RolePermission structure.
+            access.get().getAllPermissions()
+                    .forEach(code -> permissionScopes.put(code, com.hrms.domain.user.RoleScope.GLOBAL));
+            return permissionScopes;
         }
 
-        // Fallback: Load from legacy User->Role->Permission structure
-        // and convert to app-prefixed format
+        // Fallback: Load from legacy User->Role->RolePermission structure (Matrix RBAC)
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            return user.getRoles().stream()
-                    .flatMap(role -> role.getPermissions().stream())
-                    .map(permission -> {
-                        String code = permission.getCode();
-                        // If permission doesn't already have app prefix, add it
-                        if (!code.contains(":") || !code.startsWith(appCode + ":")) {
-                            return appCode + ":" + code;
-                        }
-                        return code;
-                    })
-                    .collect(Collectors.toSet());
+            user.getRoles().forEach(role -> {
+                role.getPermissions().forEach(rp -> {
+                    String code = rp.getPermission().getCode();
+                    // Add app prefix if missing
+                    if (!code.contains(":") || !code.startsWith(appCode + ":")) {
+                        code = appCode + ":" + code;
+                    }
+
+                    com.hrms.domain.user.RoleScope newScope = rp.getScope();
+                    com.hrms.domain.user.RoleScope existingScope = permissionScopes.get(code);
+
+                    if (existingScope == null || isHigherScope(newScope, existingScope)) {
+                        permissionScopes.put(code, newScope);
+                    }
+                });
+            });
         }
 
-        return Collections.emptySet();
+        return permissionScopes;
+    }
+
+    private boolean isHigherScope(com.hrms.domain.user.RoleScope newScope,
+            com.hrms.domain.user.RoleScope existingScope) {
+        // GLOBAL > LOCATION > DEPARTMENT > TEAM > OWN
+        List<com.hrms.domain.user.RoleScope> hierarchy = List.of(
+                com.hrms.domain.user.RoleScope.GLOBAL,
+                com.hrms.domain.user.RoleScope.LOCATION,
+                com.hrms.domain.user.RoleScope.DEPARTMENT,
+                com.hrms.domain.user.RoleScope.TEAM,
+                com.hrms.domain.user.RoleScope.OWN);
+        return hierarchy.indexOf(newScope) < hierarchy.indexOf(existingScope);
     }
 
     /**
@@ -460,7 +505,7 @@ public class AuthService {
 
         // Check if token is expired
         if (user.getPasswordResetTokenExpiry() == null ||
-            user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
+                user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
             throw new AuthenticationException("Password reset token has expired");
         }
 

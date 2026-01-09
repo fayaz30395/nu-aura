@@ -6,7 +6,9 @@ import com.hrms.application.lms.service.LmsService;
 import com.hrms.application.lms.service.SkillGapAnalysisService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.RequiresFeature;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.featureflag.FeatureFlag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/lms")
 @RequiredArgsConstructor
+@RequiresFeature(FeatureFlag.ENABLE_LMS)
 public class LmsController {
 
     private final LmsService lmsService;

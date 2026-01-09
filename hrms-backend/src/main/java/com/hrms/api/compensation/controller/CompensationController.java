@@ -4,7 +4,9 @@ import com.hrms.api.compensation.dto.*;
 import com.hrms.application.compensation.service.CompensationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.RequiresFeature;
 import com.hrms.domain.compensation.CompensationReviewCycle.CycleStatus;
+import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.compensation.SalaryRevision.RevisionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/compensation")
 @RequiredArgsConstructor
 @Slf4j
+@RequiresFeature(FeatureFlag.ENABLE_PAYROLL)
 public class CompensationController {
 
     private final CompensationService compensationService;

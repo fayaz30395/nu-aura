@@ -1,5 +1,6 @@
 package com.hrms.common.security;
 
+import com.hrms.domain.user.RoleScope;
 import org.springframework.stereotype.Component;
 import java.util.*;
 
@@ -18,19 +19,22 @@ public class SecurityContext {
     private static final ThreadLocal<UUID> currentTenantId = new ThreadLocal<>();
     private static final ThreadLocal<String> currentAppCode = new ThreadLocal<>();
     private static final ThreadLocal<Set<String>> currentRoles = new ThreadLocal<>();
-    private static final ThreadLocal<Set<String>> currentPermissions = new ThreadLocal<>();
+    // Store permissions with their max scope (e.g. "EMPLOYEE:READ" -> "GLOBAL")
+    private static final ThreadLocal<Map<String, RoleScope>> currentPermissions = new ThreadLocal<>();
     private static final ThreadLocal<UUID> currentDepartmentId = new ThreadLocal<>();
     private static final ThreadLocal<UUID> currentTeamId = new ThreadLocal<>();
+    private static final ThreadLocal<UUID> currentLocationId = new ThreadLocal<>();
     private static final ThreadLocal<Set<String>> accessibleApps = new ThreadLocal<>();
 
     /**
      * Set current user context (called during authentication)
      */
-    public static void setCurrentUser(UUID userId, UUID employeeId, Set<String> roles, Set<String> permissions) {
+    public static void setCurrentUser(UUID userId, UUID employeeId, Set<String> roles,
+            Map<String, RoleScope> permissions) {
         currentUserId.set(userId);
         currentEmployeeId.set(employeeId);
         currentRoles.set(roles != null ? roles : Collections.emptySet());
-        currentPermissions.set(permissions != null ? permissions : Collections.emptySet());
+        currentPermissions.set(permissions != null ? permissions : Collections.emptyMap());
     }
 
     /**
@@ -51,7 +55,8 @@ public class SecurityContext {
         currentTenantId.set(tenantId);
     }
 
-    public static void setDepartmentAndTeam(UUID departmentId, UUID teamId) {
+    public static void setOrgContext(UUID locationId, UUID departmentId, UUID teamId) {
+        currentLocationId.set(locationId);
         currentDepartmentId.set(departmentId);
         currentTeamId.set(teamId);
     }
@@ -79,7 +84,27 @@ public class SecurityContext {
     }
 
     public static Set<String> getCurrentPermissions() {
-        return currentPermissions.get() != null ? currentPermissions.get() : Collections.emptySet();
+        return currentPermissions.get() != null ? currentPermissions.get().keySet() : Collections.emptySet();
+    }
+
+    public static RoleScope getPermissionScope(String permission) {
+        Map<String, RoleScope> map = currentPermissions.get();
+        if (map == null)
+            return null;
+
+        // Direct match
+        if (map.containsKey(permission))
+            return map.get(permission);
+
+        // App prefixed match (if simple name passed)
+        String appCode = getCurrentAppCode();
+        if (appCode != null && !permission.startsWith(appCode + ":")) {
+            String fullPerm = appCode + ":" + permission;
+            if (map.containsKey(fullPerm))
+                return map.get(fullPerm);
+        }
+
+        return null; // No permission, so no scope
     }
 
     public static UUID getCurrentDepartmentId() {
@@ -90,6 +115,10 @@ public class SecurityContext {
         return currentTeamId.get();
     }
 
+    public static UUID getCurrentLocationId() {
+        return currentLocationId.get();
+    }
+
     public static Set<String> getAccessibleApps() {
         return accessibleApps.get() != null ? accessibleApps.get() : Collections.emptySet();
     }
@@ -98,7 +127,8 @@ public class SecurityContext {
 
     /**
      * Check if user has a specific permission.
-     * Supports both new format (HRMS:EMPLOYEE:READ) and legacy format (EMPLOYEE:READ).
+     * Supports both new format (HRMS:EMPLOYEE:READ) and legacy format
+     * (EMPLOYEE:READ).
      * Also checks for system admin permission.
      */
     public static boolean hasPermission(String permission) {
@@ -134,7 +164,7 @@ public class SecurityContext {
     public static boolean hasPermissionInApp(String appCode, String module, String action) {
         String fullPermission = appCode + ":" + module + ":" + action;
         return getCurrentPermissions().contains(fullPermission) ||
-               getCurrentPermissions().contains(appCode + ":SYSTEM:ADMIN");
+                getCurrentPermissions().contains(appCode + ":SYSTEM:ADMIN");
     }
 
     /**
@@ -220,10 +250,9 @@ public class SecurityContext {
 
     public static boolean isManager() {
         return hasAnyRole(
-            RoleHierarchy.HR_MANAGER,
-            RoleHierarchy.DEPARTMENT_MANAGER,
-            RoleHierarchy.TEAM_LEAD
-        ) || isTenantAdmin();
+                RoleHierarchy.HR_MANAGER,
+                RoleHierarchy.DEPARTMENT_MANAGER,
+                RoleHierarchy.TEAM_LEAD) || isTenantAdmin();
     }
 
     // ==================== Permission Extraction ====================
@@ -269,6 +298,7 @@ public class SecurityContext {
         currentPermissions.remove();
         currentDepartmentId.remove();
         currentTeamId.remove();
+        currentLocationId.remove();
         accessibleApps.remove();
     }
 }

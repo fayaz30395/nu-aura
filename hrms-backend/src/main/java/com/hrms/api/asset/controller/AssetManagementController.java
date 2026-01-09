@@ -22,6 +22,7 @@ import java.util.UUID;
 public class AssetManagementController {
 
     private final AssetManagementService assetService;
+    private final com.hrms.common.security.DataScopeService dataScopeService;
 
     @PostMapping
     @RequiresPermission("SYSTEM_ADMIN")
@@ -65,7 +66,9 @@ public class AssetManagementController {
     @GetMapping
     @RequiresPermission("EMPLOYEE_VIEW_SELF")
     public ResponseEntity<Page<AssetResponse>> getAllAssets(Pageable pageable) {
-        Page<AssetResponse> response = assetService.getAllAssets(pageable);
+        org.springframework.data.jpa.domain.Specification<Asset> spec = dataScopeService
+                .getScopeSpecification("EMPLOYEE_VIEW_SELF");
+        Page<AssetResponse> response = assetService.getAllAssets(spec, pageable);
         return ResponseEntity.ok(response);
     }
 

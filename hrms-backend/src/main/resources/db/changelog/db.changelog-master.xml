@@ -142,6 +142,9 @@
 
     <!-- Add audit columns to all tables that are missing them -->
     <include file="db/changelog/changes/112-add-audit-columns-to-all-tables.sql"/>
+    <include file="db/changelog/changes/113-migrate-role-permissions-to-scoped.xml"/>
+    <include file="db/changelog/changes/114-add-org-context-to-employees.xml"/>
+    <include file="db/changelog/changes/115-add-tenant-id-to-role-permissions.xml"/>
 
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>

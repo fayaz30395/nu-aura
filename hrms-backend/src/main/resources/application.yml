@@ -147,6 +147,16 @@ app:
     client-id: ${GOOGLE_CLIENT_ID:}
     client-secret: ${GOOGLE_CLIENT_SECRET:}
 
+  features:
+    MATRIX_RBAC: true
+    RECRUITMENT: false
+    PAYROLL: true
+    EXPENSE_MANAGEMENT: true
+    ASSET_MANAGEMENT: true
+    PERFORMANCE_REVIEWS: true
+    TRAINING_LMS: false
+    SOCIAL_FEED: false
+
   tenant:
     resolution-strategy: ${TENANT_RESOLUTION_STRATEGY:header}
     header-name: X-Tenant-ID

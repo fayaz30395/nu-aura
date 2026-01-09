@@ -62,7 +62,7 @@ public class AttendanceService {
                 .orElseGet(() -> createAttendanceDay(org, employee, today));
 
         if (day.getCheckInAt() != null) {
-            throw new IllegalArgumentException("Already checked in for today");
+            return toResponse(day);
         }
 
         day.setCheckInAt(OffsetDateTime.now(zoneId()));
@@ -80,6 +80,13 @@ public class AttendanceService {
         LocalDate today = LocalDate.now(zoneId());
         AttendanceDay day = attendanceDayRepository.findByOrg_IdAndEmployee_IdAndAttendanceDate(org.getId(), employee.getId(), today)
                 .orElseGet(() -> createAttendanceDay(org, employee, today));
+
+        if (day.getCheckOutAt() != null) {
+            return toResponse(day);
+        }
+        if (day.getCheckInAt() == null) {
+            throw new IllegalArgumentException("Check in before checking out");
+        }
 
         day.setCheckOutAt(OffsetDateTime.now(zoneId()));
         day.setStatus(determineStatus(day));

@@ -174,6 +174,16 @@ public class LeaveRequestService {
     }
 
     @Transactional(readOnly = true)
+    public Page<LeaveRequest> getAllLeaveRequests(org.springframework.data.jpa.domain.Specification<LeaveRequest> spec,
+            Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> tenantSpec = (root, query, cb) -> cb
+                .equal(root.get("tenantId"), tenantId);
+
+        return leaveRequestRepository.findAll(tenantSpec.and(spec), pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<LeaveRequest> getLeaveRequestsByEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveRequestRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
@@ -185,7 +195,8 @@ public class LeaveRequestService {
         return leaveRequestRepository.findAllByTenantIdAndStatus(tenantId, status, pageable);
     }
 
-    // ======================== WebSocket Notification Helpers ========================
+    // ======================== WebSocket Notification Helpers
+    // ========================
 
     private void notifyLeaveRequestCreated(LeaveRequest leaveRequest) {
         try {
@@ -194,7 +205,8 @@ public class LeaveRequestService {
                     .orElse(null);
             LeaveType leaveType = leaveTypeRepository.findById(leaveRequest.getLeaveTypeId()).orElse(null);
 
-            if (employee == null) return;
+            if (employee == null)
+                return;
 
             String employeeName = employee.getFirstName() + " " + employee.getLastName();
             String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
@@ -240,6 +252,6 @@ public class LeaveRequestService {
             return leaveRequest.getStartDate().format(DATE_FORMATTER);
         }
         return leaveRequest.getStartDate().format(DATE_FORMATTER) + " - " +
-               leaveRequest.getEndDate().format(DATE_FORMATTER);
+                leaveRequest.getEndDate().format(DATE_FORMATTER);
     }
 }

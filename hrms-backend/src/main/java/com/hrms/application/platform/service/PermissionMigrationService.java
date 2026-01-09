@@ -19,7 +19,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service to migrate existing legacy permissions to the new NU Platform RBAC system.
+ * Service to migrate existing legacy permissions to the new NU Platform RBAC
+ * system.
  *
  * This migration:
  * 1. Maps legacy Permission entities to AppPermission entities
@@ -55,7 +56,8 @@ public class PermissionMigrationService {
         try {
             // Get HRMS application
             NuApplication hrmsApp = applicationRepository.findByCode(HrmsPermissionInitializer.APP_CODE)
-                    .orElseThrow(() -> new RuntimeException("HRMS application not found. Run HrmsPermissionInitializer first."));
+                    .orElseThrow(() -> new RuntimeException(
+                            "HRMS application not found. Run HrmsPermissionInitializer first."));
 
             // Step 1: Migrate permissions
             int permissionsMigrated = migratePermissions(hrmsApp, tenantId, result);
@@ -151,7 +153,7 @@ public class PermissionMigrationService {
 
             // Map legacy permissions to new permission codes
             Set<String> newPermissionCodes = legacy.getPermissions().stream()
-                    .map(p -> mapPermissionCode(p.getCode()))
+                    .map(rp -> mapPermissionCode(rp.getPermission().getCode()))
                     .collect(Collectors.toSet());
 
             // Create AppRole
@@ -265,8 +267,7 @@ public class PermissionMigrationService {
                 "RECRUITMENT", "Recruitment",
                 "REPORT", "Reports",
                 "ANNOUNCEMENT", "Communication",
-                "SYSTEM", "Admin"
-        );
+                "SYSTEM", "Admin");
         return categoryMap.getOrDefault(module, "Other");
     }
 
@@ -282,8 +283,7 @@ public class PermissionMigrationService {
                 "HR_MANAGER", 80,
                 "DEPARTMENT_MANAGER", 60,
                 "TEAM_LEAD", 40,
-                "EMPLOYEE", 10
-        );
+                "EMPLOYEE", 10);
         return levelMap.getOrDefault(roleCode, 50);
     }
 
@@ -308,19 +308,57 @@ public class PermissionMigrationService {
         private final Map<String, List<String>> processedUsers = new LinkedHashMap<>();
 
         // Getters and setters
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
-        public int getPermissionsMigrated() { return permissionsMigrated; }
-        public void setPermissionsMigrated(int permissionsMigrated) { this.permissionsMigrated = permissionsMigrated; }
-        public int getRolesMigrated() { return rolesMigrated; }
-        public void setRolesMigrated(int rolesMigrated) { this.rolesMigrated = rolesMigrated; }
-        public int getUsersProcessed() { return usersProcessed; }
-        public void setUsersProcessed(int usersProcessed) { this.usersProcessed = usersProcessed; }
-        public Map<String, String> getMappedPermissions() { return mappedPermissions; }
-        public Map<String, Integer> getMappedRoles() { return mappedRoles; }
-        public Map<String, List<String>> getProcessedUsers() { return processedUsers; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public int getPermissionsMigrated() {
+            return permissionsMigrated;
+        }
+
+        public void setPermissionsMigrated(int permissionsMigrated) {
+            this.permissionsMigrated = permissionsMigrated;
+        }
+
+        public int getRolesMigrated() {
+            return rolesMigrated;
+        }
+
+        public void setRolesMigrated(int rolesMigrated) {
+            this.rolesMigrated = rolesMigrated;
+        }
+
+        public int getUsersProcessed() {
+            return usersProcessed;
+        }
+
+        public void setUsersProcessed(int usersProcessed) {
+            this.usersProcessed = usersProcessed;
+        }
+
+        public Map<String, String> getMappedPermissions() {
+            return mappedPermissions;
+        }
+
+        public Map<String, Integer> getMappedRoles() {
+            return mappedRoles;
+        }
+
+        public Map<String, List<String>> getProcessedUsers() {
+            return processedUsers;
+        }
 
         public void addMappedPermission(String oldCode, String newCode) {
             mappedPermissions.put(oldCode, newCode);

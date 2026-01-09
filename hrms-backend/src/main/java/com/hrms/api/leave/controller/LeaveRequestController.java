@@ -28,6 +28,7 @@ public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
     private final EmployeeRepository employeeRepository;
+    private final com.hrms.common.security.DataScopeService dataScopeService;
 
     @PostMapping
     @RequiresPermission(Permission.LEAVE_REQUEST)
@@ -43,9 +44,9 @@ public class LeaveRequestController {
 
     @GetMapping("/{id}")
     @RequiresPermission({
-        Permission.LEAVE_VIEW_ALL,
-        Permission.LEAVE_VIEW_TEAM,
-        Permission.LEAVE_VIEW_SELF
+            Permission.LEAVE_VIEW_ALL,
+            Permission.LEAVE_VIEW_TEAM,
+            Permission.LEAVE_VIEW_SELF
     })
     public ResponseEntity<LeaveRequestResponse> getLeaveRequest(@PathVariable UUID id) {
         LeaveRequest leaveRequest = leaveRequestService.getLeaveRequestById(id);
@@ -54,19 +55,25 @@ public class LeaveRequestController {
 
     @GetMapping
     @RequiresPermission({
-        Permission.LEAVE_VIEW_ALL,
-        Permission.LEAVE_VIEW_TEAM
+            Permission.LEAVE_VIEW_ALL,
+            Permission.LEAVE_VIEW_TEAM
     })
     public ResponseEntity<Page<LeaveRequestResponse>> getAllLeaveRequests(Pageable pageable) {
-        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(pageable);
+        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
+                ? Permission.LEAVE_VIEW_ALL
+                : Permission.LEAVE_VIEW_TEAM;
+
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = dataScopeService
+                .getScopeSpecification(permission);
+        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(scopeSpec, pageable);
         return ResponseEntity.ok(requests.map(this::toResponse));
     }
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({
-        Permission.LEAVE_VIEW_ALL,
-        Permission.LEAVE_VIEW_TEAM,
-        Permission.LEAVE_VIEW_SELF
+            Permission.LEAVE_VIEW_ALL,
+            Permission.LEAVE_VIEW_TEAM,
+            Permission.LEAVE_VIEW_SELF
     })
     public ResponseEntity<Page<LeaveRequestResponse>> getEmployeeLeaveRequests(
             @PathVariable UUID employeeId,
@@ -77,14 +84,26 @@ public class LeaveRequestController {
 
     @GetMapping("/status/{status}")
     @RequiresPermission({
-        Permission.LEAVE_VIEW_ALL,
-        Permission.LEAVE_VIEW_TEAM
+            Permission.LEAVE_VIEW_ALL,
+            Permission.LEAVE_VIEW_TEAM
     })
     public ResponseEntity<Page<LeaveRequestResponse>> getLeaveRequestsByStatus(
             @PathVariable String status,
             Pageable pageable) {
         LeaveRequest.LeaveRequestStatus leaveStatus = LeaveRequest.LeaveRequestStatus.valueOf(status);
-        Page<LeaveRequest> requests = leaveRequestService.getLeaveRequestsByStatus(leaveStatus, pageable);
+
+        String permission = com.hrms.common.security.SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)
+                ? Permission.LEAVE_VIEW_ALL
+                : Permission.LEAVE_VIEW_TEAM;
+
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> scopeSpec = dataScopeService
+                .getScopeSpecification(permission);
+
+        // Combine status and scope
+        org.springframework.data.jpa.domain.Specification<LeaveRequest> combinedSpec = (root, query, cb) -> cb
+                .and(cb.equal(root.get("status"), leaveStatus), scopeSpec.toPredicate(root, query, cb));
+
+        Page<LeaveRequest> requests = leaveRequestService.getAllLeaveRequests(combinedSpec, pageable);
         return ResponseEntity.ok(requests.map(this::toResponse));
     }
 
@@ -146,7 +165,8 @@ public class LeaveRequestController {
             if (employee.getManagerId() != null) {
                 response.setApproverId(employee.getManagerId());
                 // Get the manager's name
-                Optional<Employee> managerOpt = employeeRepository.findByIdAndTenantId(employee.getManagerId(), tenantId);
+                Optional<Employee> managerOpt = employeeRepository.findByIdAndTenantId(employee.getManagerId(),
+                        tenantId);
                 managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
             }
         }

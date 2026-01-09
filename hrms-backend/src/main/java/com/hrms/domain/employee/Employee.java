@@ -10,11 +10,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "employees", indexes = {
-    @Index(name = "idx_employee_code_tenant", columnList = "employeeCode,tenantId", unique = true),
-    @Index(name = "idx_employee_tenant", columnList = "tenantId"),
-    @Index(name = "idx_employee_department", columnList = "departmentId"),
-    @Index(name = "idx_employee_manager", columnList = "managerId"),
-    @Index(name = "idx_employee_status", columnList = "status")
+        @Index(name = "idx_employee_code_tenant", columnList = "employeeCode,tenantId", unique = true),
+        @Index(name = "idx_employee_tenant", columnList = "tenantId"),
+        @Index(name = "idx_employee_department", columnList = "departmentId"),
+        @Index(name = "idx_employee_manager", columnList = "managerId"),
+        @Index(name = "idx_employee_status", columnList = "status")
 })
 @Getter
 @Setter
@@ -82,6 +82,12 @@ public class Employee extends TenantAware {
     @Column
     private UUID departmentId;
 
+    @Column
+    private UUID officeLocationId;
+
+    @Column
+    private UUID teamId;
+
     @Column(length = 100)
     private String designation;
 
@@ -140,16 +146,16 @@ public class Employee extends TenantAware {
     }
 
     public enum EmployeeLevel {
-        ENTRY,        // Junior/Associate
-        MID,          // Mid-level
-        SENIOR,       // Senior
-        LEAD,         // Lead/Principal
-        MANAGER,      // Manager
+        ENTRY, // Junior/Associate
+        MID, // Mid-level
+        SENIOR, // Senior
+        LEAD, // Lead/Principal
+        MANAGER, // Manager
         SENIOR_MANAGER, // Senior Manager
-        DIRECTOR,     // Director
-        VP,           // Vice President
-        SVP,          // Senior Vice President
-        CXO           // C-level Executive
+        DIRECTOR, // Director
+        VP, // Vice President
+        SVP, // Senior Vice President
+        CXO // C-level Executive
     }
 
     public enum JobRole {
@@ -214,13 +220,13 @@ public class Employee extends TenantAware {
         HR_GENERALIST,
         RECRUITER,
         TALENT_ACQUISITION,
-        HUMAN_RESOURCES,  // Legacy value from seed data
+        HUMAN_RESOURCES, // Legacy value from seed data
 
         // Finance
         ACCOUNTANT,
         FINANCIAL_ANALYST,
         FINANCE_MANAGER,
-        FINANCE,  // Legacy value from seed data
+        FINANCE, // Legacy value from seed data
 
         // Admin & Support
         ADMIN_ASSISTANT,
@@ -240,8 +246,10 @@ public class Employee extends TenantAware {
 
     public String getFullName() {
         StringBuilder name = new StringBuilder(firstName);
-        if (middleName != null) name.append(" ").append(middleName);
-        if (lastName != null) name.append(" ").append(lastName);
+        if (middleName != null)
+            name.append(" ").append(middleName);
+        if (lastName != null)
+            name.append(" ").append(lastName);
         return name.toString();
     }
 

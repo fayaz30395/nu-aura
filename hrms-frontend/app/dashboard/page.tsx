@@ -310,8 +310,14 @@ export default function DashboardPage() {
     }
   };
 
-  // Check if there's an open session (a time entry without checkout)
-  const hasOpenSession = timeEntries.some(e => e.open);
+  const hasCheckedIn = Boolean(todayAttendance?.checkInTime);
+  const hasCheckedOut = Boolean(todayAttendance?.checkOutTime);
+  const hasOpenSession =
+    timeEntries.some(entry => (entry.open ?? !entry.checkOutTime)) ||
+    (timeEntries.length === 0 && hasCheckedIn && !hasCheckedOut);
+  const canCheckIn = !hasOpenSession;
+  const canCheckOut = hasOpenSession;
+  const attendanceComplete = !hasOpenSession && (hasCheckedIn || hasCheckedOut || timeEntries.length > 0);
 
   const handleCheckIn = async () => {
     if (!user?.employeeId) return;
@@ -627,13 +633,19 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center gap-3">
                 {clockError && <span className="text-sm text-red-600">{clockError}</span>}
-                {!hasOpenSession ? (
+                {canCheckIn && (
                   <Button variant="success" onClick={handleCheckIn} isLoading={isClockingIn} leftIcon={<LogIn className="h-4 w-4" />}>
-                    {timeEntries.length > 0 ? 'Check In Again' : 'Check In'}
+                    Check In
                   </Button>
-                ) : (
+                )}
+                {canCheckOut && (
                   <Button variant="destructive" onClick={handleCheckOut} isLoading={isClockingIn} leftIcon={<LogOut className="h-4 w-4" />}>
                     Check Out
+                  </Button>
+                )}
+                {attendanceComplete && (
+                  <Button variant="outline" disabled>
+                    Checked Out
                   </Button>
                 )}
               </div>

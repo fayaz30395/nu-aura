@@ -36,15 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromToken(jwt);
                 UUID tenantId = tokenProvider.getTenantIdFromToken(jwt);
-                UUID userId = tokenProvider.getUserIdFromToken(jwt);
 
                 TenantContext.setCurrentTenant(tenantId);
 
@@ -54,37 +53,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Set<String> tokenRoles = tokenProvider.getRolesFromToken(jwt);
                 Set<String> accessibleApps = tokenProvider.getAccessibleAppsFromToken(jwt);
 
-                // Build authorities from token claims if available (NU Platform format)
                 Collection<GrantedAuthority> authorities;
-                Set<String> permissions;
                 Set<String> roles;
+                Map<String, com.hrms.domain.user.RoleScope> permissionScopes;
 
                 if (!tokenPermissions.isEmpty() || !tokenRoles.isEmpty()) {
                     // Use NU Platform claims from token
                     authorities = new ArrayList<>();
                     tokenRoles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));
                     tokenPermissions.forEach(perm -> authorities.add(new SimpleGrantedAuthority(perm)));
-                    permissions = tokenPermissions;
                     roles = tokenRoles;
+                    permissionScopes = tokenProvider.getPermissionScopesFromToken(jwt);
                 } else {
                     // Fallback: Load from UserDetailsService (legacy mode)
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     authorities = new ArrayList<>(userDetails.getAuthorities());
-                    permissions = authorities.stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> !auth.startsWith("ROLE_"))
-                            .collect(Collectors.toSet());
                     roles = authorities.stream()
                             .map(GrantedAuthority::getAuthority)
                             .filter(auth -> auth.startsWith("ROLE_"))
                             .map(auth -> auth.substring(5))
                             .collect(Collectors.toSet());
+                    // For legacy, everything is GLOBAL or we'd need to fetch from DB (slow in
+                    // filter)
+                    permissionScopes = new HashMap<>();
+                    authorities.stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .filter(auth -> !auth.startsWith("ROLE_"))
+                            .forEach(perm -> permissionScopes.put(perm, com.hrms.domain.user.RoleScope.GLOBAL));
                 }
 
                 // Create authentication with combined authorities
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -93,13 +94,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (userDetails instanceof UserPrincipal) {
                     UserPrincipal principal = (UserPrincipal) userDetails;
 
-                    // Look up employee ID if exists
-                    Optional<Employee> employee = employeeRepository.findByUserIdAndTenantId(principal.getId(), tenantId);
-                    UUID employeeId = employee.map(Employee::getId).orElse(null);
+                    // Extract organizational context from token
+                    UUID employeeId = tokenProvider.getEmployeeIdFromToken(jwt);
+                    UUID locationId = tokenProvider.getLocationIdFromToken(jwt);
+                    UUID departmentId = tokenProvider.getDepartmentIdFromToken(jwt);
+                    UUID teamId = tokenProvider.getTeamIdFromToken(jwt);
+
+                    // If not in token, fallback to legacy DB lookup (optional for reliability)
+                    if (employeeId == null) {
+                        Optional<Employee> employee = employeeRepository.findByUserIdAndTenantId(principal.getId(),
+                                tenantId);
+                        employeeId = employee.map(Employee::getId).orElse(null);
+                        locationId = employee.map(Employee::getOfficeLocationId).orElse(null);
+                        departmentId = employee.map(Employee::getDepartmentId).orElse(null);
+                        teamId = employee.map(Employee::getTeamId).orElse(null);
+                    }
 
                     // Set SecurityContext with NU Platform app-aware data
-                    SecurityContext.setCurrentUser(principal.getId(), employeeId, roles, permissions);
+                    SecurityContext.setCurrentUser(principal.getId(), employeeId, roles, permissionScopes);
                     SecurityContext.setCurrentTenantId(tenantId);
+                    SecurityContext.setOrgContext(locationId, departmentId, teamId);
 
                     // Set app context if available from token
                     if (appCode != null) {

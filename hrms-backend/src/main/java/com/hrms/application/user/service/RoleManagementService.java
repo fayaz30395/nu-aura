@@ -74,7 +74,9 @@ public class RoleManagementService {
                 throw new ValidationException("One or more permission codes are invalid");
             }
 
-            role.setPermissions(new HashSet<>(permissions));
+            for (Permission perm : permissions) {
+                role.addPermission(perm, com.hrms.domain.user.RoleScope.GLOBAL);
+            }
         }
 
         Role savedRole = roleRepository.save(role);
@@ -169,11 +171,14 @@ public class RoleManagementService {
 
         // Capture old permissions for audit
         Set<String> oldPermissions = role.getPermissions().stream()
-                .map(Permission::getCode)
+                .map(rolePerm -> rolePerm.getPermission().getCode())
                 .collect(Collectors.toSet());
 
         // Replace existing permissions with new set
-        role.setPermissions(new HashSet<>(permissions));
+        role.getPermissions().clear();
+        for (Permission perm : permissions) {
+            role.addPermission(perm, com.hrms.domain.user.RoleScope.GLOBAL);
+        }
 
         Role updatedRole = roleRepository.save(role);
         log.info("Updated permissions for role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -204,7 +209,16 @@ public class RoleManagementService {
         List<Permission> permissions = permissionRepository.findByCodeIn(request.getPermissionCodes());
 
         // Add new permissions to existing ones
-        role.getPermissions().addAll(permissions);
+        for (Permission perm : permissions) {
+            // Check if permission already exists to avoid duplicates (though Set handles
+            // it, RolePermission logic might not)
+            boolean exists = role.getPermissions().stream()
+                    .anyMatch(rp -> rp.getPermission().equals(perm));
+
+            if (!exists) {
+                role.addPermission(perm, com.hrms.domain.user.RoleScope.GLOBAL);
+            }
+        }
 
         Role updatedRole = roleRepository.save(role);
         log.info("Added permissions to role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -228,7 +242,9 @@ public class RoleManagementService {
         List<Permission> permissions = permissionRepository.findByCodeIn(request.getPermissionCodes());
 
         // Remove permissions from existing ones
-        role.getPermissions().removeAll(permissions);
+        for (Permission perm : permissions) {
+            role.removePermission(perm);
+        }
 
         Role updatedRole = roleRepository.save(role);
         log.info("Removed permissions from role: {} for tenant: {}", updatedRole.getCode(), tenantId);
@@ -323,7 +339,8 @@ public class RoleManagementService {
                 role.getUpdatedAt());
     }
 
-    private PermissionResponse mapPermissionToResponse(Permission permission) {
+    private PermissionResponse mapPermissionToResponse(com.hrms.domain.user.RolePermission rolePermission) {
+        Permission permission = rolePermission.getPermission();
         return new PermissionResponse(
                 permission.getId(),
                 permission.getCode(),
