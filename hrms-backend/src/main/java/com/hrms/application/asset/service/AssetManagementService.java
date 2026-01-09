@@ -127,12 +127,18 @@ public class AssetManagementService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AssetResponse> getAllAssets(Pageable pageable) {
+    public Page<AssetResponse> getAllAssets(org.springframework.data.jpa.domain.Specification<Asset> spec,
+            Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return assetRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToAssetResponse);
+
+        org.springframework.data.jpa.domain.Specification<Asset> finalSpec = (root, query, cb) -> cb
+                .equal(root.get("tenantId"), tenantId);
+
+        if (spec != null) {
+            finalSpec = finalSpec.and(spec);
+        }
+
+        return assetRepository.findAll(finalSpec, pageable).map(this::mapToAssetResponse);
     }
 
     @Transactional(readOnly = true)

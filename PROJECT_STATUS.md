@@ -1,6 +1,6 @@
 # NU-AURA HRMS Platform - Project Status
 
-**Last Updated:** December 23, 2025
+**Last Updated:** January 10, 2026
 
 ## Recent Accomplishments
 
@@ -71,14 +71,9 @@ npx playwright test
 1. **E2E Test Performance** - Auth setup takes ~60s on first run; subsequent tests use cached auth state
 2. **Gantt Page Loading** - Page shows loading spinner while fetching projects/tasks from API
 
-## Next Steps (Suggested)
+## Current Priorities
 
-1. Add more project calendar features (calendar view, task details modal)
-2. Implement expense approval workflow
-3. Add employee self-service features
-4. Performance optimization for large datasets
-5. Mobile responsive improvements
-6. Additional E2E test coverage for edge cases
+See `BACKLOG.md` for the unified, prioritized list of pending work.
 
 ## Architecture Notes
 

@@ -1,5 +1,6 @@
 package com.hrms.api.auth.dto;
 
+import com.hrms.common.validation.SkipSanitization;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 @Data
 public class GoogleLoginRequest {
     @NotBlank(message = "Google credential is required")
+    @SkipSanitization
     private String credential;
 
     private UUID tenantId;

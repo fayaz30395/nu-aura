@@ -37,7 +37,6 @@ export default function MyAttendancePage() {
   const [showRegularizationModal, setShowRegularizationModal] = useState(false);
   const [regularizationReason, setRegularizationReason] = useState('');
   const [regularizingRecord, setRegularizingRecord] = useState<AttendanceRecord | null>(null);
-  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]); // Today's time entries for button logic
   const [selectedDateTimeEntries, setSelectedDateTimeEntries] = useState<TimeEntry[]>([]); // Selected date's time entries
   const [isLoadingTimeEntries, setIsLoadingTimeEntries] = useState(false);
 
@@ -80,7 +79,7 @@ export default function MyAttendancePage() {
 
       // Load today's time entries and set today as selected
       setSelectedDate(new Date());
-      await loadTimeEntries(today, true);
+      await loadTimeEntries(today);
     } catch (err: any) {
       console.error('Failed to load attendance:', err);
       setError(err.response?.data?.message || 'Failed to load attendance');
@@ -89,20 +88,14 @@ export default function MyAttendancePage() {
     }
   };
 
-  const loadTimeEntries = async (date: string, isToday: boolean = false) => {
+  const loadTimeEntries = async (date: string) => {
     try {
       setIsLoadingTimeEntries(true);
       const entries = await attendanceService.getMyTimeEntries(user!.employeeId!, date);
-      if (isToday) {
-        setTimeEntries(entries);
-      }
       setSelectedDateTimeEntries(entries);
     } catch (err: any) {
       console.error('Failed to load time entries:', err);
       // Don't show error for time entries - it's not critical
-      if (isToday) {
-        setTimeEntries([]);
-      }
       setSelectedDateTimeEntries([]);
     } finally {
       setIsLoadingTimeEntries(false);
@@ -112,7 +105,7 @@ export default function MyAttendancePage() {
   const handleDateSelect = async (day: Date) => {
     setSelectedDate(day);
     const dateStr = getLocalDateString(day);
-    await loadTimeEntries(dateStr, false);
+    await loadTimeEntries(dateStr);
   };
 
   const handleCheckIn = async () => {
@@ -197,6 +190,12 @@ export default function MyAttendancePage() {
     const m = minutes % 60;
     return `${h}h ${m}m`;
   };
+
+  const hasCheckedIn = Boolean(todayAttendance?.checkInTime);
+  const hasCheckedOut = Boolean(todayAttendance?.checkOutTime);
+  const canCheckIn = !hasCheckedIn;
+  const canCheckOut = hasCheckedIn && !hasCheckedOut;
+  const attendanceComplete = hasCheckedIn && hasCheckedOut;
 
   const getStatusColor = (status: AttendanceStatus) => {
     switch (status) {
@@ -352,37 +351,34 @@ export default function MyAttendancePage() {
                 )}
               </div>
               <div className="flex gap-3">
-                {(() => {
-                  // Determine if there's an open session using time entries (most accurate)
-                  const hasOpenSession = timeEntries.some(e => e.open);
-
-                  return (
-                    <>
-                      {/* Show Check In button if no open session */}
-                      {!hasOpenSession && (
-                        <button
-                          onClick={handleCheckIn}
-                          disabled={isCheckingIn}
-                          className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <LogIn className="h-5 w-5" />
-                          {isCheckingIn ? 'Checking In...' : timeEntries.length > 0 ? 'Check In Again' : 'Check In'}
-                        </button>
-                      )}
-                      {/* Show Check Out button if there's an open session */}
-                      {hasOpenSession && (
-                        <button
-                          onClick={handleCheckOut}
-                          disabled={isCheckingIn}
-                          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <LogOut className="h-5 w-5" />
-                          {isCheckingIn ? 'Checking Out...' : 'Check Out'}
-                        </button>
-                      )}
-                    </>
-                  );
-                })()}
+                {canCheckIn && (
+                  <button
+                    onClick={handleCheckIn}
+                    disabled={isCheckingIn}
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <LogIn className="h-5 w-5" />
+                    {isCheckingIn ? 'Checking In...' : 'Check In'}
+                  </button>
+                )}
+                {canCheckOut && (
+                  <button
+                    onClick={handleCheckOut}
+                    disabled={isCheckingIn}
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    {isCheckingIn ? 'Checking Out...' : 'Check Out'}
+                  </button>
+                )}
+                {attendanceComplete && (
+                  <button
+                    disabled
+                    className="flex items-center gap-2 px-6 py-3 border border-slate-300 text-slate-500 rounded-lg cursor-not-allowed"
+                  >
+                    Checked Out
+                  </button>
+                )}
               </div>
             </div>
           </CardContent>

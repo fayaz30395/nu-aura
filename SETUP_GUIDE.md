@@ -187,7 +187,7 @@ export SPRING_REDIS_PORT=6379
 export JWT_SECRET=your-secret-key-change-in-production-must-be-at-least-256-bits-long
 
 # Google OAuth (optional)
-export GOOGLE_CLIENT_ID=your-google-client-id
+export GOOGLE_CLIENT_ID=514794327964-8lm67aeibugoqi8aafidleuejngtchst.apps.googleusercontent.com
 export GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 # MinIO - File Storage (optional)

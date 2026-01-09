@@ -5,6 +5,7 @@ import com.hrms.application.attendance.service.AttendanceImportService;
 import com.hrms.application.attendance.service.AttendanceRecordService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class AttendanceController {
 
     private final AttendanceRecordService attendanceService;
     private final AttendanceImportService attendanceImportService;
+    private final com.hrms.common.security.DataScopeService dataScopeService;
 
     // ===================== Single Check-In/Out =====================
 
@@ -40,12 +42,12 @@ public class AttendanceController {
     public ResponseEntity<AttendanceResponse> checkIn(@Valid @RequestBody CheckInRequest request) {
         LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
         AttendanceRecord record = attendanceService.checkIn(
-            request.getEmployeeId(),
-            checkInTime,
-            request.getSource(),
-            request.getLocation(),
-            request.getIp(),
-            request.getAttendanceDate()  // Pass client's local date to handle timezone differences
+                request.getEmployeeId(),
+                checkInTime,
+                request.getSource(),
+                request.getLocation(),
+                request.getIp(),
+                request.getAttendanceDate() // Pass client's local date to handle timezone differences
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(record));
     }
@@ -53,19 +55,21 @@ public class AttendanceController {
     @PostMapping("/check-out")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<AttendanceResponse> checkOut(@Valid @RequestBody CheckOutRequest request) {
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime() : LocalDateTime.now();
+        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
+                : LocalDateTime.now();
         AttendanceRecord record = attendanceService.checkOut(
-            request.getEmployeeId(),
-            checkOutTime,
-            request.getSource(),
-            request.getLocation(),
-            request.getIp(),
-            request.getAttendanceDate()  // Pass client's local date to handle timezone differences
+                request.getEmployeeId(),
+                checkOutTime,
+                request.getSource(),
+                request.getLocation(),
+                request.getIp(),
+                request.getAttendanceDate() // Pass client's local date to handle timezone differences
         );
         return ResponseEntity.ok(toResponse(record));
     }
 
-    // ===================== Self-Service Attendance (My Attendance) =====================
+    // ===================== Self-Service Attendance (My Attendance)
+    // =====================
 
     @GetMapping("/my-attendance")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
@@ -86,48 +90,48 @@ public class AttendanceController {
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
     }
 
-    // ===================== Multi Check-In/Out (Break Tracking) =====================
+    // ===================== Multi Check-In/Out (Break Tracking)
+    // =====================
 
     @PostMapping("/multi-check-in")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckIn(@Valid @RequestBody MultiCheckInRequest request) {
         LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
         AttendanceTimeEntry entry = attendanceService.multiCheckIn(
-            request.getEmployeeId(),
-            checkInTime,
-            request.getEntryType(),
-            request.getSource(),
-            request.getLocation(),
-            request.getIp(),
-            request.getNotes()
-        );
+                request.getEmployeeId(),
+                checkInTime,
+                request.getEntryType(),
+                request.getSource(),
+                request.getLocation(),
+                request.getIp(),
+                request.getNotes());
         return ResponseEntity.status(HttpStatus.CREATED).body(toTimeEntryResponse(entry));
     }
 
     @PostMapping("/multi-check-out")
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckOut(@Valid @RequestBody MultiCheckOutRequest request) {
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime() : LocalDateTime.now();
+        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
+                : LocalDateTime.now();
         AttendanceTimeEntry entry = attendanceService.multiCheckOut(
-            request.getEmployeeId(),
-            request.getTimeEntryId(),
-            checkOutTime,
-            request.getSource(),
-            request.getLocation(),
-            request.getIp()
-        );
+                request.getEmployeeId(),
+                request.getTimeEntryId(),
+                checkOutTime,
+                request.getSource(),
+                request.getLocation(),
+                request.getIp());
         return ResponseEntity.ok(toTimeEntryResponse(entry));
     }
 
     @GetMapping("/time-entries/{attendanceRecordId}")
-    @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
+    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntries(@PathVariable UUID attendanceRecordId) {
         List<AttendanceTimeEntry> entries = attendanceService.getTimeEntries(attendanceRecordId);
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
     }
 
     @GetMapping("/employee/{employeeId}/time-entries")
-    @RequiresPermission({Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM})
+    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntriesForDate(
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -142,26 +146,25 @@ public class AttendanceController {
     public ResponseEntity<BulkAttendanceResponse> bulkCheckIn(@Valid @RequestBody BulkCheckInRequest request) {
         LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : LocalDateTime.now();
         AttendanceRecordService.BulkResult result = attendanceService.bulkCheckIn(
-            request.getEmployeeIds(),
-            checkInTime,
-            request.getSource(),
-            request.getLocation(),
-            request.getIp()
-        );
+                request.getEmployeeIds(),
+                checkInTime,
+                request.getSource(),
+                request.getLocation(),
+                request.getIp());
         return ResponseEntity.status(HttpStatus.CREATED).body(toBulkResponse(result));
     }
 
     @PostMapping("/bulk-check-out")
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     public ResponseEntity<BulkAttendanceResponse> bulkCheckOut(@Valid @RequestBody BulkCheckOutRequest request) {
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime() : LocalDateTime.now();
+        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
+                : LocalDateTime.now();
         AttendanceRecordService.BulkResult result = attendanceService.bulkCheckOut(
-            request.getEmployeeIds(),
-            checkOutTime,
-            request.getSource(),
-            request.getLocation(),
-            request.getIp()
-        );
+                request.getEmployeeIds(),
+                checkOutTime,
+                request.getSource(),
+                request.getLocation(),
+                request.getIp());
         return ResponseEntity.ok(toBulkResponse(result));
     }
 
@@ -169,8 +172,8 @@ public class AttendanceController {
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission({
-        Permission.ATTENDANCE_VIEW_ALL,
-        Permission.ATTENDANCE_VIEW_TEAM
+            Permission.ATTENDANCE_VIEW_ALL,
+            Permission.ATTENDANCE_VIEW_TEAM
     })
     public ResponseEntity<Page<AttendanceResponse>> getEmployeeAttendance(
             @PathVariable UUID employeeId,
@@ -181,8 +184,8 @@ public class AttendanceController {
 
     @GetMapping("/employee/{employeeId}/range")
     @RequiresPermission({
-        Permission.ATTENDANCE_VIEW_ALL,
-        Permission.ATTENDANCE_VIEW_TEAM
+            Permission.ATTENDANCE_VIEW_ALL,
+            Permission.ATTENDANCE_VIEW_TEAM
     })
     public ResponseEntity<List<AttendanceResponse>> getEmployeeAttendanceByRange(
             @PathVariable UUID employeeId,
@@ -195,7 +198,23 @@ public class AttendanceController {
     @GetMapping("/pending-regularizations")
     @RequiresPermission(Permission.ATTENDANCE_APPROVE)
     public ResponseEntity<Page<AttendanceResponse>> getPendingRegularizations(Pageable pageable) {
-        Page<AttendanceRecord> records = attendanceService.getPendingRegularizations(pageable);
+        org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec = dataScopeService
+                .getScopeSpecification(Permission.ATTENDANCE_APPROVE);
+        Page<AttendanceRecord> records = attendanceService.getPendingRegularizations(scopeSpec, pageable);
+        return ResponseEntity.ok(records.map(this::toResponse));
+    }
+
+    @GetMapping("/all")
+    @RequiresPermission({ Permission.ATTENDANCE_VIEW_ALL, Permission.ATTENDANCE_VIEW_TEAM })
+    public ResponseEntity<Page<AttendanceResponse>> getAllAttendance(Pageable pageable) {
+        // Use highest applicable permission for scope resolution
+        String permission = SecurityContext.hasPermission(Permission.ATTENDANCE_VIEW_ALL)
+                ? Permission.ATTENDANCE_VIEW_ALL
+                : Permission.ATTENDANCE_VIEW_TEAM;
+
+        org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec = dataScopeService
+                .getScopeSpecification(permission);
+        Page<AttendanceRecord> records = attendanceService.getAllAttendance(scopeSpec, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
     }
 
@@ -244,8 +263,7 @@ public class AttendanceController {
                                     .rowNumber(0)
                                     .errorMessage("File is empty")
                                     .build()))
-                            .build()
-            );
+                            .build());
         }
 
         String filename = file.getOriginalFilename();
@@ -258,8 +276,7 @@ public class AttendanceController {
                                     .rowNumber(0)
                                     .errorMessage("Invalid file format. Please upload an Excel file (.xlsx or .xls)")
                                     .build()))
-                            .build()
-            );
+                            .build());
         }
 
         BulkAttendanceImportResponse response = attendanceImportService.importFromExcel(file);
@@ -293,15 +310,15 @@ public class AttendanceController {
 
     private BulkAttendanceResponse toBulkResponse(AttendanceRecordService.BulkResult result) {
         return BulkAttendanceResponse.builder()
-            .successCount(result.successful().size())
-            .failureCount(result.failed().size())
-            .successful(result.successful().stream().map(this::toResponse).collect(Collectors.toList()))
-            .failed(result.failed().stream()
-                .map(f -> BulkAttendanceResponse.FailedEntry.builder()
-                    .employeeId(f.employeeId())
-                    .error(f.error())
-                    .build())
-                .collect(Collectors.toList()))
-            .build();
+                .successCount(result.successful().size())
+                .failureCount(result.failed().size())
+                .successful(result.successful().stream().map(this::toResponse).collect(Collectors.toList()))
+                .failed(result.failed().stream()
+                        .map(f -> BulkAttendanceResponse.FailedEntry.builder()
+                                .employeeId(f.employeeId())
+                                .error(f.error())
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
     }
 }

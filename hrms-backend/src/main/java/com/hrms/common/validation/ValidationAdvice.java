@@ -52,6 +52,9 @@ public class ValidationAdvice {
 
             try {
                 field.setAccessible(true);
+                if (field.isAnnotationPresent(SkipSanitization.class)) {
+                    continue;
+                }
                 Object value = field.get(obj);
 
                 if (value instanceof String stringValue) {

@@ -5,11 +5,14 @@ import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.*;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.*;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,7 @@ public class RecruitmentManagementService {
     private final CandidateRepository candidateRepository;
     private final InterviewRepository interviewRepository;
     private final EmployeeRepository employeeRepository;
+    private final DataScopeService dataScopeService;
 
     // ==================== Job Opening Operations ====================
 
@@ -104,10 +108,12 @@ public class RecruitmentManagementService {
     @Transactional(readOnly = true)
     public Page<JobOpeningResponse> getAllJobOpenings(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return jobOpeningRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToJobOpeningResponse);
+
+        Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(Permission.RECRUITMENT_VIEW);
+
+        return jobOpeningRepository.findAll(Specification.where(tenantSpec).and(scopeSpec), pageable)
+                .map(this::mapToJobOpeningResponse);
     }
 
     @Transactional(readOnly = true)
@@ -203,10 +209,12 @@ public class RecruitmentManagementService {
     @Transactional(readOnly = true)
     public Page<CandidateResponse> getAllCandidates(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return candidateRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToCandidateResponse);
+
+        Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(Permission.CANDIDATE_VIEW);
+
+        return candidateRepository.findAll(Specification.where(tenantSpec).and(scopeSpec), pageable)
+                .map(this::mapToCandidateResponse);
     }
 
     @Transactional(readOnly = true)

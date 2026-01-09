@@ -1,6 +1,6 @@
 # Nulogic HRMS + Project Management - Implementation Status
 
-**Last Updated:** December 21, 2025 (Session 11)
+**Last Updated:** January 10, 2026
 **Reference:** KEKA-Style 100 Prompts Playbook
 
 ---
@@ -9,11 +9,21 @@
 
 | Category | Status | Completion |
 |----------|--------|------------|
-| **Backend API** | Production Ready | 100% |
-| **Frontend UI** | Production Ready | 95% |
+| **Backend API** | Mostly Complete | 95% |
+| **Frontend UI** | In Progress | 85% |
 | **Infrastructure** | Complete | 100% |
-| **PM Module** | Complete | 98% |
-| **Overall** | Production Ready | 98% |
+| **PM Module** | Mostly Complete | 92% |
+| **Overall** | In Progress | 90% |
+
+---
+
+## Known Gaps (See `BACKLOG.md`)
+- Recruitment applicant tracking workflow is missing (Applicant entity + pipeline).
+- Implicit role automation is not implemented.
+- Offer management + e-signature is not implemented.
+- Reporting UI, Manager/HR dashboards, and onboarding/documents UI need parity.
+- Google Drive integration is frontend-only (no backend policy layer).
+- Tests compile with warnings; some backend tests are failing after RBAC changes.
 
 ---
 
@@ -56,7 +66,7 @@
 | 26 | Gmail API Strategy | ⚠️ Deviation | Using SMTP instead of Gmail API |
 | 27 | Gmail Send Implementation | ✅ Complete | SMTP-based |
 | 28 | Google Cloud Storage | ⚠️ Deviation | Using MinIO/S3 |
-| 29 | Google Drive Integration | ❌ Missing | Not implemented |
+| 29 | Google Drive Integration | ⚠️ Partial | Frontend-only; backend policy layer missing |
 | 30 | Secrets Management | ✅ Complete | .env based |
 | 31 | Global Validations + DTO | ✅ Complete | Jakarta validation |
 | 32 | Pagination/Filtering | ✅ Complete | Standard patterns |
@@ -88,7 +98,7 @@
 ### HRMS Features BEYOND Playbook (Implemented):
 - ✅ Payroll Processing (full statutory compliance)
 - ✅ Performance Management (OKRs, 360 feedback)
-- ✅ Recruitment (AI-powered screening)
+- ⚠️ Recruitment (AI screening present; applicant workflow still pending)
 - ✅ Benefits Management
 - ✅ Training/LMS
 - ✅ Wellness Programs
@@ -120,7 +130,7 @@
 | 86 | Timesheet Locking | ⚠️ | - | Basic locking |
 | 87 | Project Templates | ❌ | - | Not implemented |
 | 88 | Imports/Exports | ⚠️ | - | Partial |
-| 89-92 | E2E Tests & Optimization | ❌ | - | Needs work |
+| 89-92 | E2E Tests & Optimization | ⚠️ | - | Coverage exists; edge cases/perf pending |
 
 ---
 
@@ -196,13 +206,13 @@
 │ Attendance          │ ████████│ ████████ │ 100% ✅              │
 │ Payroll             │ ████████│ ███████░ │ 90% ✅              │
 │ Performance         │ ████████│ ███████░ │ 90% ✅              │
-│ Recruitment         │ ████████│ ████████ │ 95% ✅              │
+│ Recruitment         │ ████████│ ███████░ │ 85% ⚠️              │
 │ Projects            │ ████████│ ████████ │ 100% ✅              │
 │ Tasks               │ ████████│ ████████ │ 100% ✅              │
 │ Timesheets          │ ████████│ ████████ │ 100% ✅              │
 │ Resource Mgmt       │ ████████│ ████████ │ 100% ✅              │
-│ Benefits            │ ████████│ ███████░ │ 90% ✅              │
-│ Training/LMS        │ ████████│ ███████░ │ 90% ✅              │
+│ Benefits            │ ████████│ ███████░ │ 80% ⚠️              │
+│ Training/LMS        │ ████████│ ███████░ │ 80% ⚠️              │
 │ Analytics           │ ████████│ ████████ │ 100% ✅ (3 Dashboards)│
 │ Global Search       │ ████████│ ████████ │ 100% ✅ (Cmd+K)     │
 │ Travel Management   │ ████████│ ████████ │ 100% ✅ (NEW)       │
@@ -321,27 +331,10 @@
 
 ---
 
-## Next Priority Features
+## Current Priorities
 
-### P0 - Immediate (Frontend Enhancement)
-1. [x] Task Management UI within Projects (DONE - Session 3)
-2. [x] Employee search/autocomplete in Resource modal (DONE - Session 4)
-3. [x] Utilization Reports dashboard (DONE - Session 5)
+See `BACKLOG.md` for the unified, prioritized list of pending work.
 
-### P1 - High Priority
-4. [ ] Project Calendar/Gantt view
-5. [ ] Real-time notifications (WebSocket)
-6. [ ] Analytics dashboard with charts
-
-### P2 - Medium Priority
-7. [ ] Benefits management UI
-8. [ ] Training/LMS UI
-9. [ ] Expense reporting UI
-
-### P3 - Low Priority
-10. [ ] Google Drive integration
-11. [ ] E2E Playwright tests
-12. [ ] Production deployment manifests
 ### 2025-12-17 (Session 5)
 **Utilization Dashboard Implementation & Refactoring:**
 - **Code Quality Refactoring:**
