@@ -707,23 +707,59 @@ export function CreateAllocationModal({
                 onFocus={() => setShowEmployeeDropdown(true)}
               />
               {showEmployeeDropdown && employeeSearch && (
-                <div className="absolute z-10 w-full mt-1 max-h-48 overflow-y-auto bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
+                <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
                   {filteredEmployees.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-surface-500">No employees found</div>
                   ) : (
-                    filteredEmployees.slice(0, 10).map((emp) => (
-                      <button
-                        key={emp.id}
-                        type="button"
-                        onClick={() => handleAddEmployee(emp)}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-surface-100 dark:hover:bg-surface-700 flex items-center justify-between"
-                      >
-                        <span>
-                          {emp.employeeCode} - {emp.firstName} {emp.lastName}
-                        </span>
-                        <span className="text-xs text-surface-500">{emp.designation}</span>
-                      </button>
-                    ))
+                    filteredEmployees.slice(0, 10).map((emp) => {
+                      const capacityInfo = employeeCapacities.get(emp.id);
+                      const availableCapacity = capacityInfo ? Math.max(0, 100 - capacityInfo.total) : null;
+                      const isLoading = loadingCapacity === emp.id;
+                      const isFullyAllocated = availableCapacity !== null && availableCapacity <= 0;
+
+                      return (
+                        <button
+                          key={emp.id}
+                          type="button"
+                          onClick={() => handleAddEmployee(emp)}
+                          disabled={isLoading || isFullyAllocated}
+                          className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between ${
+                            isFullyAllocated
+                              ? 'bg-surface-50 dark:bg-surface-900 opacity-60 cursor-not-allowed'
+                              : 'hover:bg-surface-100 dark:hover:bg-surface-700'
+                          }`}
+                        >
+                          <div>
+                            <div className="font-medium">
+                              {emp.employeeCode} - {emp.firstName} {emp.lastName}
+                            </div>
+                            <div className="text-xs text-surface-500">{emp.designation}</div>
+                          </div>
+                          <div className="text-right">
+                            {isLoading ? (
+                              <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                            ) : availableCapacity !== null ? (
+                              <div className={`text-xs font-medium ${
+                                isFullyAllocated
+                                  ? 'text-red-500'
+                                  : availableCapacity <= 25
+                                    ? 'text-amber-500'
+                                    : 'text-green-500'
+                              }`}>
+                                {isFullyAllocated ? (
+                                  <span className="flex items-center gap-1">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    Fully Allocated
+                                  </span>
+                                ) : (
+                                  `${availableCapacity}% available`
+                                )}
+                              </div>
+                            ) : null}
+                          </div>
+                        </button>
+                      );
+                    })
                   )}
                 </div>
               )}
