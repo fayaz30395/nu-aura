@@ -1,6 +1,5 @@
 package com.hrms.common.security;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -20,11 +19,8 @@ import java.util.Arrays;
  */
 @Aspect
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class PermissionAspect {
-
-    private final SecurityContext securityContext;
 
     /**
      * Intercepts methods with @RequiresPermission annotation and enforces permission checks
@@ -53,17 +49,21 @@ public class PermissionAspect {
         String[] anyOfPermissions = requiresPermission.value();
         String[] allOfPermissions = requiresPermission.allOf();
 
+        // Debug logging for permission troubleshooting
+        log.debug("Permission check for method: {} - User permissions: {}, AppCode: {}",
+                method.getName(), SecurityContext.getCurrentPermissions(), SecurityContext.getCurrentAppCode());
+
         // Check if user is system admin (bypass all checks)
-        if (securityContext.hasPermission(Permission.SYSTEM_ADMIN)) {
+        if (SecurityContext.hasPermission(Permission.SYSTEM_ADMIN)) {
             log.debug("User has SYSTEM_ADMIN permission - bypassing check for method: {}", method.getName());
             return joinPoint.proceed();
         }
 
         // Validate OR logic permissions (user needs ANY of these)
         if (anyOfPermissions.length > 0) {
-            if (!securityContext.hasAnyPermission(anyOfPermissions)) {
-                log.warn("Access denied - User lacks required permissions (ANY OF: {}) for method: {}",
-                        Arrays.toString(anyOfPermissions), method.getName());
+            if (!SecurityContext.hasAnyPermission(anyOfPermissions)) {
+                log.warn("Access denied - User lacks required permissions (ANY OF: {}) for method: {}. User has: {}",
+                        Arrays.toString(anyOfPermissions), method.getName(), SecurityContext.getCurrentPermissions());
                 throw new AccessDeniedException(
                         "Insufficient permissions. Required any of: " + Arrays.toString(anyOfPermissions)
                 );
@@ -74,9 +74,9 @@ public class PermissionAspect {
 
         // Validate AND logic permissions (user needs ALL of these)
         if (allOfPermissions.length > 0) {
-            if (!securityContext.hasAllPermissions(allOfPermissions)) {
-                log.warn("Access denied - User lacks required permissions (ALL OF: {}) for method: {}",
-                        Arrays.toString(allOfPermissions), method.getName());
+            if (!SecurityContext.hasAllPermissions(allOfPermissions)) {
+                log.warn("Access denied - User lacks required permissions (ALL OF: {}) for method: {}. User has: {}",
+                        Arrays.toString(allOfPermissions), method.getName(), SecurityContext.getCurrentPermissions());
                 throw new AccessDeniedException(
                         "Insufficient permissions. Required all of: " + Arrays.toString(allOfPermissions)
                 );

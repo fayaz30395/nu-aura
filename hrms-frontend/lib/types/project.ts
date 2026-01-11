@@ -11,6 +11,8 @@ export interface Project {
   projectManagerId?: string;
   projectManagerName?: string;
   clientName?: string;
+  clientContact?: string;
+  clientNotes?: string;
   budget?: number;
   currency?: string;
   createdAt: string;
@@ -44,6 +46,8 @@ export interface CreateProjectRequest {
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   projectManagerId?: string;
   clientName?: string;
+  clientContact?: string;
+  clientNotes?: string;
   budget?: number;
   currency?: string;
 }

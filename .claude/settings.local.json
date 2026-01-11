@@ -49,7 +49,14 @@
       "Bash(psql:*)",
       "Bash(brew services:*)",
       "Bash(/opt/homebrew/opt/postgresql@16/bin/psql:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(PGPASSWORD=hrms_pass psql:*)",
+      "Bash(docker ps:*)",
+      "Bash(brew install:*)",
+      "Bash(export PATH=\"/opt/homebrew/opt/libpq/bin:$PATH\")",
+      "Bash(PGPASSWORD=npg_xwHjDEtfb4o2 psql:*)",
+      "Bash(/opt/homebrew/opt/libpq/bin/psql:*)",
+      "Bash(./mvnw compile:*)"
     ]
   }
 }

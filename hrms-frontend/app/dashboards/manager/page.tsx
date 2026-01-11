@@ -194,12 +194,12 @@ export default function ManagerDashboardPage() {
     rate: parseFloat((day.attendanceRate || 0).toFixed(1)),
   }));
 
-  // Team Pulse Radar Data
+  // Team Pulse Radar Data - all values from real API data
   const pulseData = [
     { subject: 'Goals', A: teamPerformance.goalCompletionRate || 0, fullMark: 100 },
     { subject: 'Training', A: teamPerformance.trainingCompletionRate || 0, fullMark: 100 },
     { subject: 'Feedback', A: (teamPerformance.avgFeedbackScore || 0) * 20, fullMark: 100 },
-    { subject: 'Engagement', A: 85, fullMark: 100 }, // Mocked engagement
+    { subject: 'Engagement', A: teamPerformance.engagementScore || 0, fullMark: 100 },
     { subject: 'Attendance', A: teamAttendance.weeklyAttendanceRate || 0, fullMark: 100 },
   ];
 

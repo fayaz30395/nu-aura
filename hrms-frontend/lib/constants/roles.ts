@@ -4,6 +4,12 @@ export const ROLE_CODES = {
   HR_EXECUTIVE: 'HR_EXECUTIVE',
   HR_ADMIN: 'HR_ADMIN',
   SUPER_ADMIN: 'SUPER_ADMIN',
+  // Nu-TMS specific roles
+  PROJECT_LEADER: 'PROJECT_LEADER',
+  DELIVERY_LEAD: 'DELIVERY_LEAD',
+  VP: 'VP',
+  CEO: 'CEO',
+  OPERATIONS_HEAD: 'OPERATIONS_HEAD',
 } as const;
 
 export const ALLOCATION_SUMMARY_ROLE_ALLOWLIST = new Set<string>([
@@ -12,4 +18,21 @@ export const ALLOCATION_SUMMARY_ROLE_ALLOWLIST = new Set<string>([
   ROLE_CODES.HR_EXECUTIVE,
   ROLE_CODES.HR_ADMIN,
   ROLE_CODES.SUPER_ADMIN,
+]);
+
+// Senior Management - Full access to utilization dashboard, bench reports, all projects
+export const SENIOR_MANAGEMENT_ROLES = new Set<string>([
+  ROLE_CODES.CEO,
+  ROLE_CODES.VP,
+  ROLE_CODES.OPERATIONS_HEAD,
+  ROLE_CODES.HR_ADMIN,
+  ROLE_CODES.DELIVERY_LEAD,
+  ROLE_CODES.SUPER_ADMIN,
+]);
+
+// Project Leaders and above - Can manage allocations for their projects
+export const PROJECT_LEADER_AND_ABOVE_ROLES = new Set<string>([
+  ...SENIOR_MANAGEMENT_ROLES,
+  ROLE_CODES.PROJECT_LEADER,
+  ROLE_CODES.MANAGER,
 ]);

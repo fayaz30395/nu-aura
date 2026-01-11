@@ -380,27 +380,27 @@ public class AuthService {
 
         if (access.isPresent()) {
             // NU Platform RBAC (AppRole -> AppPermission relations)
-            // Note: AppPermission doesn't currently have a 'Scope' field in the schema
-            // viewed earlier.
-            // For now, we assume AppPermission implies GLOBAL or we need to update that
-            // schema too.
-            // But for Matrix RBAC, we are focusing on the legacy User -> Role ->
-            // RolePermission structure.
             access.get().getAllPermissions()
                     .forEach(code -> permissionScopes.put(code, com.hrms.domain.user.RoleScope.GLOBAL));
+            log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
             return permissionScopes;
         }
 
         // Fallback: Load from legacy User->Role->RolePermission structure (Matrix RBAC)
+        log.debug("No UserAppAccess found for user {}, falling back to legacy role permissions", userId);
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
+            log.debug("User {} has {} roles", userId, user.getRoles().size());
             user.getRoles().forEach(role -> {
+                log.debug("Processing role: {} with {} permissions", role.getCode(), role.getPermissions().size());
                 role.getPermissions().forEach(rp -> {
                     String code = rp.getPermission().getCode();
+                    String originalCode = code;
                     // Add app prefix if missing
                     if (!code.contains(":") || !code.startsWith(appCode + ":")) {
                         code = appCode + ":" + code;
                     }
+                    log.debug("Permission: {} -> {} (scope: {})", originalCode, code, rp.getScope());
 
                     com.hrms.domain.user.RoleScope newScope = rp.getScope();
                     com.hrms.domain.user.RoleScope existingScope = permissionScopes.get(code);
@@ -412,6 +412,7 @@ public class AuthService {
             });
         }
 
+        log.info("Loaded permissions for user {}: {}", userId, permissionScopes.keySet());
         return permissionScopes;
     }
 

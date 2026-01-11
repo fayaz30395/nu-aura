@@ -117,155 +117,35 @@ const getRevisionStatusColor = (status: RevisionStatus) => {
   return colors[status] || 'default';
 };
 
-// Mock data
-const mockCycles: CompensationReviewCycle[] = [
-  {
-    id: '1',
-    name: 'Annual Review 2025',
-    description: 'Annual compensation review for all eligible employees',
-    cycleType: 'ANNUAL' as CycleType,
-    fiscalYear: 2025,
-    startDate: '2025-01-01',
-    endDate: '2025-03-31',
-    effectiveDate: '2025-04-01',
-    status: 'IN_PROGRESS' as CycleStatus,
-    budgetAmount: 5000000,
-    utilizedAmount: 2750000,
-    minIncrementPercentage: 3,
-    maxIncrementPercentage: 25,
-    averageIncrementTarget: 8,
-    totalEmployees: 450,
-    revisionsDrafted: 320,
-    revisionsApproved: 180,
-    revisionsApplied: 0,
-    currency: 'USD',
-  },
-  {
-    id: '2',
-    name: 'Q4 Special Increment',
-    description: 'Special increment for high performers',
-    cycleType: 'SPECIAL' as CycleType,
-    fiscalYear: 2024,
-    startDate: '2024-10-01',
-    endDate: '2024-12-15',
-    effectiveDate: '2025-01-01',
-    status: 'COMPLETED' as CycleStatus,
-    budgetAmount: 1000000,
-    utilizedAmount: 920000,
-    totalEmployees: 85,
-    revisionsDrafted: 85,
-    revisionsApproved: 82,
-    revisionsApplied: 82,
-    currency: 'USD',
-  },
-  {
-    id: '3',
-    name: 'Mid-Year Review 2025',
-    description: 'Mid-year performance and compensation review',
-    cycleType: 'MID_YEAR' as CycleType,
-    fiscalYear: 2025,
-    startDate: '2025-06-01',
-    endDate: '2025-07-31',
-    effectiveDate: '2025-08-01',
-    status: 'DRAFT' as CycleStatus,
-    budgetAmount: 2000000,
-    totalEmployees: 0,
-    revisionsDrafted: 0,
-    revisionsApproved: 0,
-    revisionsApplied: 0,
-    currency: 'USD',
-  },
-];
-
-const mockRevisions: SalaryRevision[] = [
-  {
-    id: '1',
-    employeeId: 'emp-1',
-    employeeName: 'John Smith',
-    employeeCode: 'EMP001',
-    department: 'Engineering',
-    designation: 'Senior Software Engineer',
-    reviewCycleId: '1',
-    reviewCycleName: 'Annual Review 2025',
-    revisionType: 'ANNUAL_INCREMENT' as RevisionType,
-    previousSalary: 95000,
-    newSalary: 105000,
-    incrementAmount: 10000,
-    incrementPercentage: 10.53,
-    effectiveDate: '2025-04-01',
-    status: 'PENDING_APPROVAL' as RevisionStatus,
-    performanceRating: 4.5,
-    justification: 'Exceptional performance and key contributions to platform redesign',
-    currency: 'USD',
-  },
-  {
-    id: '2',
-    employeeId: 'emp-2',
-    employeeName: 'Sarah Johnson',
-    employeeCode: 'EMP002',
-    department: 'Product',
-    designation: 'Product Manager',
-    previousDesignation: 'Associate Product Manager',
-    newDesignation: 'Product Manager',
-    reviewCycleId: '1',
-    reviewCycleName: 'Annual Review 2025',
-    revisionType: 'PROMOTION' as RevisionType,
-    previousSalary: 75000,
-    newSalary: 95000,
-    incrementAmount: 20000,
-    incrementPercentage: 26.67,
-    effectiveDate: '2025-04-01',
-    status: 'APPROVED' as RevisionStatus,
-    performanceRating: 4.8,
-    justification: 'Promotion to Product Manager role based on outstanding leadership',
-    currency: 'USD',
-  },
-  {
-    id: '3',
-    employeeId: 'emp-3',
-    employeeName: 'Michael Chen',
-    employeeCode: 'EMP003',
-    department: 'Engineering',
-    designation: 'Staff Engineer',
-    reviewCycleId: '1',
-    reviewCycleName: 'Annual Review 2025',
-    revisionType: 'RETENTION' as RevisionType,
-    previousSalary: 150000,
-    newSalary: 175000,
-    incrementAmount: 25000,
-    incrementPercentage: 16.67,
-    effectiveDate: '2025-04-01',
-    status: 'PENDING_REVIEW' as RevisionStatus,
-    performanceRating: 4.7,
-    justification: 'Retention package for key technical leader',
-    currency: 'USD',
-  },
-  {
-    id: '4',
-    employeeId: 'emp-4',
-    employeeName: 'Emily Davis',
-    employeeCode: 'EMP004',
-    department: 'Sales',
-    designation: 'Sales Representative',
-    reviewCycleId: '1',
-    reviewCycleName: 'Annual Review 2025',
-    revisionType: 'ANNUAL_INCREMENT' as RevisionType,
-    previousSalary: 55000,
-    newSalary: 59000,
-    incrementAmount: 4000,
-    incrementPercentage: 7.27,
-    effectiveDate: '2025-04-01',
-    status: 'DRAFT' as RevisionStatus,
-    performanceRating: 3.8,
-    currency: 'USD',
-  },
-];
-
 export default function CompensationPage() {
   const [activeTab, setActiveTab] = useState<'cycles' | 'revisions' | 'pending'>('cycles');
-  const [cycles, setCycles] = useState<CompensationReviewCycle[]>(mockCycles);
-  const [revisions, setRevisions] = useState<SalaryRevision[]>(mockRevisions);
-  const [loading, setLoading] = useState(false);
+  const [cycles, setCycles] = useState<CompensationReviewCycle[]>([]);
+  const [revisions, setRevisions] = useState<SalaryRevision[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch compensation data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [cyclesResponse, revisionsResponse] = await Promise.all([
+          compensationService.getAllCycles(0, 100),
+          compensationService.getAllRevisions(0, 100),
+        ]);
+        setCycles(cyclesResponse.content || []);
+        setRevisions(revisionsResponse.content || []);
+      } catch (err) {
+        console.error('Failed to fetch compensation data:', err);
+        setError('Failed to load compensation data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCycle, setSelectedCycle] = useState<CompensationReviewCycle | null>(null);
   const [selectedRevision, setSelectedRevision] = useState<SalaryRevision | null>(null);
@@ -347,7 +227,31 @@ export default function CompensationPage() {
           </Button>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-4" />
+              <p className="text-surface-600 dark:text-surface-400">Loading compensation data...</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-red-500" />
+                <p className="text-red-700 dark:text-red-400">{error}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats Cards */}
+        {!loading && !error && (
+        <>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="p-4">
@@ -463,9 +367,11 @@ export default function CompensationPage() {
             </button>
           </nav>
         </div>
+        </>
+        )}
 
         {/* Content */}
-        {activeTab === 'cycles' && (
+        {activeTab === 'cycles' && !loading && !error && (
           <div className="space-y-4">
             {/* Active Cycle Banner */}
             {activeCycle && (
@@ -576,7 +482,7 @@ export default function CompensationPage() {
           </div>
         )}
 
-        {activeTab === 'revisions' && (
+        {activeTab === 'revisions' && !loading && !error && (
           <div className="space-y-4">
             {/* Search */}
             <div className="flex gap-4">
@@ -686,7 +592,7 @@ export default function CompensationPage() {
           </div>
         )}
 
-        {activeTab === 'pending' && (
+        {activeTab === 'pending' && !loading && !error && (
           <div className="space-y-4">
             {pendingRevisions.length === 0 ? (
               <Card>
