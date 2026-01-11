@@ -45,6 +45,10 @@ public class UpdateEmployeeRequest {
 
     private String designation;
 
+    private Employee.EmployeeLevel level;
+
+    private Employee.JobRole jobRole;
+
     private UUID managerId;
 
     private Employee.EmploymentType employmentType;

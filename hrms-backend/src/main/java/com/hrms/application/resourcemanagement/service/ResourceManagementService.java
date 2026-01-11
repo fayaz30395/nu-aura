@@ -418,12 +418,21 @@ public class ResourceManagementService {
 
         public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
-                List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId);
+                // Only include ACTIVE employees in workload dashboard
+                List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
+                                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                                .collect(Collectors.toList());
                 List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId, Pageable.unpaged())
                                 .getContent();
 
-                List<EmployeeWorkload> workloads = allEmployees.stream()
+                // First, map ALL active employees to workloads (before applying filters)
+                // This ensures employees with no allocations are included
+                List<EmployeeWorkload> allWorkloads = allEmployees.stream()
                                 .map(emp -> getEmployeeWorkload(emp.getId()))
+                                .collect(Collectors.toList());
+
+                // Apply filters for display (but keep all for summary calculation)
+                List<EmployeeWorkload> workloads = allWorkloads.stream()
                                 .filter(wl -> applyFilters(wl, filters))
                                 .collect(Collectors.toList());
 

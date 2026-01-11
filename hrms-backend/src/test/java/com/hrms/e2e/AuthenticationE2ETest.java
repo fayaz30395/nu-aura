@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.*;
 import java.util.Set;
+import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -210,7 +211,7 @@ class AuthenticationE2ETest {
         assertThat(accessToken).isNotEmpty();
 
         // Set up security context with the test user ID
-        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Set.of());
+        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Map.of());
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
 
@@ -269,7 +270,7 @@ class AuthenticationE2ETest {
         changePasswordRequest.put("confirmPassword", "AnotherNewPassword789!");
 
         // Set up security context with the test user ID
-        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Set.of());
+        SecurityContext.setCurrentUser(testUserId, null, Set.of("EMPLOYEE"), Map.of());
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
 

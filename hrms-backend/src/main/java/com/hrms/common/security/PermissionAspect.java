@@ -53,9 +53,10 @@ public class PermissionAspect {
         log.debug("Permission check for method: {} - User permissions: {}, AppCode: {}",
                 method.getName(), SecurityContext.getCurrentPermissions(), SecurityContext.getCurrentAppCode());
 
-        // Check if user is system admin (bypass all checks)
-        if (SecurityContext.hasPermission(Permission.SYSTEM_ADMIN)) {
-            log.debug("User has SYSTEM_ADMIN permission - bypassing check for method: {}", method.getName());
+        // Check if user is system admin or super admin (bypass all checks)
+        // This checks for SUPER_ADMIN role, legacy SYSTEM:ADMIN, and app-prefixed HRMS:SYSTEM:ADMIN
+        if (SecurityContext.isSuperAdmin()) {
+            log.debug("User is Super Admin - bypassing check for method: {}", method.getName());
             return joinPoint.proceed();
         }
 

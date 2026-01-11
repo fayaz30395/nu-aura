@@ -56,7 +56,8 @@
       "Bash(export PATH=\"/opt/homebrew/opt/libpq/bin:$PATH\")",
       "Bash(PGPASSWORD=npg_xwHjDEtfb4o2 psql:*)",
       "Bash(/opt/homebrew/opt/libpq/bin/psql:*)",
-      "Bash(./mvnw compile:*)"
+      "Bash(./mvnw compile:*)",
+      "Bash(grep:*)"
     ]
   }
 }

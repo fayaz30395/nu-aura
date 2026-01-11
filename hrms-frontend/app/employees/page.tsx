@@ -223,6 +223,12 @@ export default function EmployeesPage() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
+              onClick={() => router.push('/employees/change-requests')}
+              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
+            >
+              Change Requests
+            </button>
+            <button
               onClick={() => router.push('/employees/import')}
               className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
             >

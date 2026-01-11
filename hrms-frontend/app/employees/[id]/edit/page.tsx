@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
+import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
 import { Employee, UpdateEmployeeRequest, Department } from '@/lib/types/employee';
+import { CreateEmploymentChangeRequest } from '@/lib/types/employment-change-request';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType, CustomFieldValueRequest } from '@/lib/types/custom-fields';
 import { customFieldsApi } from '@/lib/api/custom-fields';
 import { AppLayout } from '@/components/layout';
+import { AlertCircle, Clock } from 'lucide-react';
 
 export default function EditEmployeePage() {
   const router = useRouter();
@@ -23,6 +26,8 @@ export default function EditEmployeePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentTab, setCurrentTab] = useState('basic');
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, CustomFieldValueRequest>>({});
+  const [changeRequestCreated, setChangeRequestCreated] = useState(false);
+  const [changeRequestReason, setChangeRequestReason] = useState('');
 
   const [formData, setFormData] = useState<UpdateEmployeeRequest>({
     employeeCode: '',
@@ -121,33 +126,100 @@ export default function EditEmployeePage() {
     }
   };
 
+  // Check if employment fields have changed (these require HR approval)
+  const hasEmploymentFieldChanges = (): boolean => {
+    if (!employee) return false;
+    return (
+      formData.designation !== employee.designation ||
+      formData.level !== employee.level ||
+      formData.jobRole !== employee.jobRole ||
+      formData.departmentId !== employee.departmentId ||
+      formData.managerId !== (employee.managerId || '') ||
+      formData.employmentType !== employee.employmentType ||
+      formData.status !== employee.status ||
+      formData.confirmationDate !== (employee.confirmationDate || '')
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setSaving(true);
       setError(null);
+      setChangeRequestCreated(false);
 
-      // Clean up empty optional fields
+      // Check if employment fields have changed
+      const employmentChanges = hasEmploymentFieldChanges();
+
+      // Build employment change request if needed
+      if (employmentChanges && employee) {
+        const changeRequest: CreateEmploymentChangeRequest = {
+          employeeId: employeeId,
+          reason: changeRequestReason || 'Employment details update',
+        };
+
+        // Only include fields that have changed
+        if (formData.designation !== employee.designation) {
+          changeRequest.newDesignation = formData.designation;
+        }
+        if (formData.level !== employee.level) {
+          changeRequest.newLevel = formData.level;
+        }
+        if (formData.jobRole !== employee.jobRole) {
+          changeRequest.newJobRole = formData.jobRole;
+        }
+        if (formData.departmentId !== employee.departmentId) {
+          changeRequest.newDepartmentId = formData.departmentId;
+        }
+        if (formData.managerId !== (employee.managerId || '')) {
+          changeRequest.newManagerId = formData.managerId || undefined;
+        }
+        if (formData.employmentType !== employee.employmentType) {
+          changeRequest.newEmploymentType = formData.employmentType;
+        }
+        if (formData.status !== employee.status) {
+          changeRequest.newEmployeeStatus = formData.status;
+        }
+        if (formData.confirmationDate !== (employee.confirmationDate || '')) {
+          changeRequest.newConfirmationDate = formData.confirmationDate || undefined;
+        }
+
+        await employmentChangeRequestService.createChangeRequest(changeRequest);
+        setChangeRequestCreated(true);
+      }
+
+      // Clean up empty optional fields for non-employment updates
       const submitData: UpdateEmployeeRequest = {
-        ...formData,
         employeeCode: formData.employeeCode || undefined,
+        firstName: formData.firstName,
         middleName: formData.middleName || undefined,
         lastName: formData.lastName || undefined,
         personalEmail: formData.personalEmail || undefined,
         phoneNumber: formData.phoneNumber || undefined,
         emergencyContactNumber: formData.emergencyContactNumber || undefined,
         dateOfBirth: formData.dateOfBirth || undefined,
+        gender: formData.gender,
         address: formData.address || undefined,
         city: formData.city || undefined,
         state: formData.state || undefined,
         postalCode: formData.postalCode || undefined,
         country: formData.country || undefined,
-        confirmationDate: formData.confirmationDate || undefined,
-        managerId: formData.managerId || undefined,
         bankAccountNumber: formData.bankAccountNumber || undefined,
         bankName: formData.bankName || undefined,
         bankIfscCode: formData.bankIfscCode || undefined,
         taxId: formData.taxId || undefined,
+        // Employment fields: only include if NO change request was created
+        // (i.e., they haven't changed from original values)
+        ...(employmentChanges ? {} : {
+          designation: formData.designation,
+          level: formData.level,
+          jobRole: formData.jobRole,
+          departmentId: formData.departmentId,
+          managerId: formData.managerId || undefined,
+          employmentType: formData.employmentType,
+          status: formData.status,
+          confirmationDate: formData.confirmationDate || undefined,
+        }),
       };
 
       await employeeService.updateEmployee(employeeId, submitData);
@@ -164,7 +236,12 @@ export default function EditEmployeePage() {
         });
       }
 
-      router.push(`/employees/${employeeId}`);
+      if (employmentChanges) {
+        // Show success message for change request, don't navigate away
+        setSaving(false);
+      } else {
+        router.push(`/employees/${employeeId}`);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to update employee');
       console.error('Error updating employee:', err);
@@ -244,6 +321,40 @@ export default function EditEmployeePage() {
         {error && (
           <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Change Request Success Message */}
+        {changeRequestCreated && (
+          <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+            <div className="flex items-start gap-3">
+              <Clock className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Employment Change Request Submitted
+                </p>
+                <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                  Your changes to employment details have been submitted for HR Manager approval.
+                  Other profile updates have been saved immediately.
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/employees/${employeeId}`)}
+                    className="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                  >
+                    View Employee
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/employees/change-requests')}
+                    className="px-3 py-1.5 bg-white dark:bg-green-800 text-green-700 dark:text-green-200 text-sm rounded border border-green-300 dark:border-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors"
+                  >
+                    View All Requests
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -546,6 +657,36 @@ export default function EditEmployeePage() {
             {/* Employment Tab */}
             {currentTab === 'employment' && (
               <div className="space-y-4">
+                {/* Approval Notice */}
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-md p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                        HR Manager Approval Required
+                      </p>
+                      <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                        Changes to employment details (designation, level, department, manager, etc.)
+                        will be submitted for HR Manager approval before they take effect.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Change Reason */}
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Reason for Changes
+                  </label>
+                  <textarea
+                    value={changeRequestReason}
+                    onChange={(e) => setChangeRequestReason(e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
