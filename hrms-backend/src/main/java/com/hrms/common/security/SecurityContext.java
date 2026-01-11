@@ -129,7 +129,9 @@ public class SecurityContext {
      * Check if user has a specific permission.
      * Supports both new format (HRMS:EMPLOYEE:READ) and legacy format
      * (EMPLOYEE:READ).
-     * Also checks for system admin permission.
+     * Also checks for system admin permission and permission hierarchy.
+     *
+     * Permission hierarchy: MANAGE implies all actions (MARK, READ, VIEW_ALL, VIEW_TEAM, etc.)
      */
     public static boolean hasPermission(String permission) {
         Set<String> permissions = getCurrentPermissions();
@@ -152,10 +154,62 @@ public class SecurityContext {
 
         // If permission doesn't have app prefix, try adding current app prefix
         if (appCode != null && !permission.startsWith(appCode + ":")) {
-            return permissions.contains(appCode + ":" + permission);
+            String fullPermission = appCode + ":" + permission;
+            if (permissions.contains(fullPermission)) {
+                return true;
+            }
+        }
+
+        // Check permission hierarchy: MODULE:MANAGE implies MODULE:* (any action)
+        // Extract module from permission (e.g., "ATTENDANCE:MARK" -> "ATTENDANCE")
+        String module = extractModule(permission, appCode);
+        if (module != null) {
+            // Check if user has MANAGE permission for this module
+            String managePermission = module + ":MANAGE";
+            if (permissions.contains(managePermission)) {
+                return true;
+            }
+            // Also check with app prefix
+            if (appCode != null) {
+                String fullManagePermission = appCode + ":" + module + ":MANAGE";
+                if (permissions.contains(fullManagePermission)) {
+                    return true;
+                }
+            }
+
+            // Check if user has READ permission and requested action is VIEW_*
+            if (permission.contains(":VIEW")) {
+                String readPermission = module + ":READ";
+                if (permissions.contains(readPermission)) {
+                    return true;
+                }
+                if (appCode != null && permissions.contains(appCode + ":" + readPermission)) {
+                    return true;
+                }
+            }
         }
 
         return false;
+    }
+
+    /**
+     * Extract module name from a permission string.
+     * E.g., "ATTENDANCE:MARK" -> "ATTENDANCE", "HRMS:ATTENDANCE:MARK" -> "ATTENDANCE"
+     */
+    private static String extractModule(String permission, String appCode) {
+        if (permission == null) return null;
+
+        String[] parts;
+        // Remove app prefix if present
+        if (appCode != null && permission.startsWith(appCode + ":")) {
+            permission = permission.substring(appCode.length() + 1);
+        }
+
+        parts = permission.split(":");
+        if (parts.length >= 2) {
+            return parts[0]; // Return the module part
+        }
+        return null;
     }
 
     /**

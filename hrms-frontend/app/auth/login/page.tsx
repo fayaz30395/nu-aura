@@ -220,6 +220,7 @@ function LoginPage() {
   };
 
   const onSubmit = async (data: LoginFormData) => {
+    console.log('[LoginPage] Form submitted for:', data.email);
     if (isLockedOut) {
       setError(`Too many login attempts. Please try again in ${formatLockoutTime(remainingLockoutTime)}`);
       return;
@@ -229,10 +230,12 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await login({
+      console.log('[LoginPage] Calling login function...');
+      await login({
         email: data.email,
         password: data.password,
       });
+      console.log('[LoginPage] Login function returned successfully');
 
       // Reset rate limiting on successful login
       resetLoginAttempts();
@@ -246,6 +249,7 @@ function LoginPage() {
 
       // Role-based redirect
       const returnUrl = searchParams.get('returnUrl');
+      console.log('[LoginPage] Redirecting to:', returnUrl || '/dashboard');
       if (returnUrl) {
         router.push(returnUrl);
       } else {
@@ -254,6 +258,7 @@ function LoginPage() {
         router.push('/dashboard');
       }
     } catch (err: any) {
+      console.error('[LoginPage] Login error:', err);
       incrementLoginAttempts();
 
       const attemptsRemaining = RATE_LIMIT_MAX_ATTEMPTS - (loginAttempts + 1);

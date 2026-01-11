@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   LayoutDashboard,
   Users,
@@ -41,8 +42,6 @@ import {
   Package,
   UserMinus,
   Mail,
-  HardDrive,
-  Inbox,
   Plane,
   Zap,
   Activity,
@@ -110,12 +109,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     onSidebarCollapsedChange?.(collapsed);
   }, [onSidebarCollapsedChange]);
 
-  const handleMenuItemClick = (item: SidebarItem) => {
+  const handleMenuItemClick = useCallback((item: SidebarItem) => {
     if (item.href) {
+      // Use startTransition for smoother navigation
       router.push(item.href);
     }
     onMenuItemClick?.(item);
-  };
+  }, [router, onMenuItemClick]);
 
   const handleProfile = () => {
     router.push('/me/profile');
@@ -175,30 +175,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Executive',
           icon: <TrendingUp className="h-5 w-5" />,
           href: '/dashboards/executive',
-        },
-      ],
-    },
-    {
-      id: 'nu-apps',
-      label: 'Nu Apps',
-      items: [
-        {
-          id: 'nu-drive',
-          label: 'NU-Drive',
-          icon: <HardDrive className="h-5 w-5" />,
-          href: '/nu-drive',
-        },
-        {
-          id: 'nu-mail',
-          label: 'Nu-Mail',
-          icon: <Inbox className="h-5 w-5" />,
-          href: '/nu-mail',
-        },
-        {
-          id: 'nu-calendar',
-          label: 'NU-Calendar',
-          icon: <Calendar className="h-5 w-5" />,
-          href: '/nu-calendar',
         },
       ],
     },
@@ -571,8 +547,31 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     },
   ];
 
-  // Flatten sections to items for backward compatibility
-  const menuItems: SidebarItem[] = menuSections.flatMap(section => section.items);
+  // Flatten sections to items for backward compatibility (memoized)
+  const menuItems: SidebarItem[] = useMemo(() =>
+    menuSections.flatMap(section => section.items),
+    [menuSections]
+  );
+
+  // Prefetch all menu item hrefs for faster navigation
+  useEffect(() => {
+    // Delay prefetching to not block initial render
+    const timeoutId = setTimeout(() => {
+      menuItems.forEach(item => {
+        if (item.href) {
+          router.prefetch(item.href);
+        }
+        // Also prefetch children hrefs
+        item.children?.forEach(child => {
+          if (child.href) {
+            router.prefetch(child.href);
+          }
+        });
+      });
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [menuItems, router]);
 
   return (
     <div className={cn('flex h-screen overflow-hidden bg-surface-50 dark:bg-surface-950', className)}>

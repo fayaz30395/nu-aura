@@ -5,8 +5,6 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import {
   Bell,
-  Moon,
-  Sun,
   ChevronDown,
   LogOut,
   Settings,
@@ -28,7 +26,6 @@ import {
 } from 'lucide-react';
 import { GlobalSearch } from './GlobalSearch';
 import { cn } from '@/lib/utils';
-import { useDarkMode } from './DarkModeProvider';
 import AppSwitcher from '../platform/AppSwitcher';
 import { formatDistanceToNow } from 'date-fns';
 import { useWebSocket } from '@/lib/contexts/WebSocketContext';
@@ -100,7 +97,6 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isDark, toggleDarkMode } = useDarkMode();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { unreadCount, notifications, markAsRead, markAllAsRead } = useWebSocket();
@@ -469,24 +465,6 @@ const Header: React.FC<HeaderProps> = ({
             <HelpCircle className="h-5 w-5" />
           </button>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className={cn(
-              'p-2.5 rounded-xl transition-all duration-300',
-              'text-surface-500 hover:text-surface-700 hover:bg-surface-100',
-              'dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100'
-            )}
-            aria-label="Toggle theme"
-          >
-            {mounted && (
-              isDark ? (
-                <Sun className="h-5 w-5 text-amber-500" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )
-            )}
-          </button>
 
 
           {/* Notifications */}
