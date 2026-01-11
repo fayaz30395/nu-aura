@@ -21,13 +21,16 @@ import {
   WorkloadHeatmap,
   EmployeeWorkloadCard,
   WorkloadSummaryStats,
+  EmployeeAllocationDetailModal,
 } from '@/components/resource-management';
+import { AllocationEditData } from '@/components/resource-management/EmployeeAllocationDetailModal';
 import {
   WorkloadDashboardData,
   WorkloadFilterOptions,
   EmployeeWorkload,
   DepartmentWorkload,
   AllocationStatus,
+  AllocationApprovalRequest,
 } from '@/lib/types/resource-management';
 import { resourceManagementService } from '@/lib/services/resource-management.service';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
@@ -42,12 +45,43 @@ const dateRangeOptions: { key: DateRangeKey; label: string }[] = [
   { key: 'last3Months', label: 'Last 3 Months' },
 ];
 
-const statusFilterOptions: { key: AllocationStatus; label: string }[] = [
-  { key: 'OVER_ALLOCATED', label: 'Over Allocated' },
-  { key: 'OPTIMAL', label: 'Optimal' },
-  { key: 'UNDER_UTILIZED', label: 'Under Utilized' },
-  { key: 'UNASSIGNED', label: 'Unassigned' },
+const statusFilterOptions: { key: AllocationStatus; label: string; color: string }[] = [
+  { key: 'OVER_ALLOCATED', label: 'Over Allocated', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
+  { key: 'OPTIMAL', label: 'Optimal', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+  { key: 'UNDER_UTILIZED', label: 'Under Utilized', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
+  { key: 'UNASSIGNED', label: 'Unassigned', color: 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400' },
 ];
+
+type AllocationRange = '0-25' | '25-50' | '50-75' | '75-100' | '100+';
+
+const allocationRangeOptions: { key: AllocationRange; label: string; min: number; max: number }[] = [
+  { key: '0-25', label: '0-25%', min: 0, max: 25 },
+  { key: '25-50', label: '25-50%', min: 25, max: 50 },
+  { key: '50-75', label: '50-75%', min: 50, max: 75 },
+  { key: '75-100', label: '75-100%', min: 75, max: 100 },
+  { key: '100+', label: '100%+', min: 100, max: Infinity },
+];
+
+// Helper function to calculate active allocation from employee data
+const calculateActiveAllocation = (employee: EmployeeWorkload): number => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return employee.allocations.reduce((total, allocation) => {
+    const startDate = new Date(allocation.startDate);
+    const endDate = allocation.endDate ? new Date(allocation.endDate) : null;
+    const isActive = startDate <= today && (!endDate || endDate >= today);
+    return isActive ? total + allocation.allocationPercentage : total;
+  }, 0);
+};
+
+// Helper function to calculate dynamic status based on active allocation
+const calculateDynamicStatus = (activeAllocation: number): AllocationStatus => {
+  if (activeAllocation > 100) return 'OVER_ALLOCATED';
+  if (activeAllocation >= 70) return 'OPTIMAL';
+  if (activeAllocation > 0) return 'UNDER_UTILIZED';
+  return 'UNASSIGNED';
+};
 
 export default function WorkloadDashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -55,8 +89,15 @@ export default function WorkloadDashboardPage() {
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>('thisMonth');
   const [selectedStatus, setSelectedStatus] = useState<AllocationStatus[]>([]);
+  const [selectedRanges, setSelectedRanges] = useState<AllocationRange[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Employee detail modal state
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeWorkload | null>(null);
+  const [showEmployeeModal, setShowEmployeeModal] = useState(false);
+  const [allocationHistory, setAllocationHistory] = useState<AllocationApprovalRequest[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const [dashboardData, setDashboardData] = useState<WorkloadDashboardData | null>(null);
 
@@ -119,19 +160,43 @@ export default function WorkloadDashboardPage() {
     fetchData();
   }, [dateRange, selectedStatus]);
 
-  // Filter employees by search
+  // Filter employees by search, status, and allocation range
   const filteredEmployees = useMemo(() => {
-    if (!dashboardData) return [];
-    if (!searchQuery) return dashboardData.employeeWorkloads;
+    if (!dashboardData?.employeeWorkloads) return [];
 
-    const query = searchQuery.toLowerCase();
-    return dashboardData.employeeWorkloads.filter(
-      (emp) =>
-        emp.employeeName.toLowerCase().includes(query) ||
-        emp.employeeCode.toLowerCase().includes(query) ||
-        emp.departmentName?.toLowerCase().includes(query)
-    );
-  }, [dashboardData, searchQuery]);
+    return dashboardData.employeeWorkloads.filter((emp) => {
+      // Calculate active allocation for filtering
+      const activeAllocation = calculateActiveAllocation(emp);
+      const dynamicStatus = calculateDynamicStatus(activeAllocation);
+
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          emp.employeeName.toLowerCase().includes(query) ||
+          emp.employeeCode.toLowerCase().includes(query) ||
+          emp.departmentName?.toLowerCase().includes(query);
+        if (!matchesSearch) return false;
+      }
+
+      // Status filter (using dynamic status)
+      if (selectedStatus.length > 0 && !selectedStatus.includes(dynamicStatus)) {
+        return false;
+      }
+
+      // Allocation range filter
+      if (selectedRanges.length > 0) {
+        const matchesRange = selectedRanges.some((rangeKey) => {
+          const range = allocationRangeOptions.find((r) => r.key === rangeKey);
+          if (!range) return false;
+          return activeAllocation >= range.min && activeAllocation < range.max;
+        });
+        if (!matchesRange) return false;
+      }
+
+      return true;
+    });
+  }, [dashboardData, searchQuery, selectedStatus, selectedRanges]);
 
   const handleExport = async () => {
     try {
@@ -161,6 +226,79 @@ export default function WorkloadDashboardPage() {
         ? prev.filter((s) => s !== status)
         : [...prev, status]
     );
+  };
+
+  const toggleRangeFilter = (range: AllocationRange) => {
+    setSelectedRanges((prev) =>
+      prev.includes(range)
+        ? prev.filter((r) => r !== range)
+        : [...prev, range]
+    );
+  };
+
+  // Handle employee click to show details modal
+  const handleEmployeeClick = async (employee: EmployeeWorkload) => {
+    setSelectedEmployee(employee);
+    setShowEmployeeModal(true);
+    setLoadingHistory(true);
+    setAllocationHistory([]);
+    try {
+      const history = await resourceManagementService.getEmployeeAllocationHistory(employee.employeeId);
+      setAllocationHistory(history.content);
+    } catch (err) {
+      console.error('Error fetching allocation history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  // Close employee detail modal
+  const handleCloseEmployeeModal = () => {
+    setShowEmployeeModal(false);
+    setSelectedEmployee(null);
+    setAllocationHistory([]);
+  };
+
+  // Handle edit allocation
+  const handleEditAllocation = (employeeId: string, data: AllocationEditData) => {
+    // Update the local state to reflect changes
+    if (dashboardData && selectedEmployee) {
+      // Update allocation in selectedEmployee
+      const updatedAllocations = selectedEmployee.allocations.map((allocation) =>
+        allocation.projectId === data.projectId
+          ? {
+              ...allocation,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              allocationPercentage: data.allocationPercentage,
+            }
+          : allocation
+      );
+
+      const updatedEmployee = {
+        ...selectedEmployee,
+        allocations: updatedAllocations,
+        totalAllocation: updatedAllocations.reduce(
+          (sum, a) => sum + a.allocationPercentage,
+          0
+        ),
+      };
+
+      setSelectedEmployee(updatedEmployee);
+
+      // Also update in dashboard data
+      const updatedEmployeeWorkloads = dashboardData.employeeWorkloads?.map((emp) =>
+        emp.employeeId === employeeId ? updatedEmployee : emp
+      );
+
+      setDashboardData({
+        ...dashboardData,
+        employeeWorkloads: updatedEmployeeWorkloads,
+      });
+
+      // TODO: Make API call to persist changes
+      // await resourceManagementService.updateAllocation(employeeId, data);
+    }
   };
 
   return (
@@ -208,12 +346,31 @@ export default function WorkloadDashboardPage() {
 
           {/* Status filters */}
           <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Status:</span>
             {statusFilterOptions.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => toggleStatusFilter(opt.key)}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                   selectedStatus.includes(opt.key)
+                    ? opt.color
+                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-400'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Allocation range filters */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Allocation:</span>
+            {allocationRangeOptions.map((opt) => (
+              <button
+                key={opt.key}
+                onClick={() => toggleRangeFilter(opt.key)}
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                  selectedRanges.includes(opt.key)
                     ? 'bg-primary-600 text-white'
                     : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-400'
                 }`}
@@ -302,11 +459,11 @@ export default function WorkloadDashboardPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {dashboardData.employeeWorkloads
+                      {(dashboardData.employeeWorkloads || [])
                         .filter((e) => e.allocationStatus === 'OVER_ALLOCATED')
                         .slice(0, 5).length > 0 ? (
                         <div className="space-y-3">
-                          {dashboardData.employeeWorkloads
+                          {(dashboardData.employeeWorkloads || [])
                             .filter((e) => e.allocationStatus === 'OVER_ALLOCATED')
                             .slice(0, 5)
                             .map((emp) => (
@@ -314,6 +471,7 @@ export default function WorkloadDashboardPage() {
                                 key={emp.employeeId}
                                 workload={emp}
                                 showProjects={false}
+                                onViewDetails={() => handleEmployeeClick(emp)}
                               />
                             ))}
                         </div>
@@ -335,11 +493,11 @@ export default function WorkloadDashboardPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {dashboardData.employeeWorkloads
+                      {(dashboardData.employeeWorkloads || [])
                         .filter((e) => e.allocationStatus === 'UNDER_UTILIZED')
                         .slice(0, 5).length > 0 ? (
                         <div className="space-y-3">
-                          {dashboardData.employeeWorkloads
+                          {(dashboardData.employeeWorkloads || [])
                             .filter((e) => e.allocationStatus === 'UNDER_UTILIZED')
                             .slice(0, 5)
                             .map((emp) => (
@@ -347,6 +505,7 @@ export default function WorkloadDashboardPage() {
                                 key={emp.employeeId}
                                 workload={emp}
                                 showProjects={false}
+                                onViewDetails={() => handleEmployeeClick(emp)}
                               />
                             ))}
                         </div>
@@ -369,7 +528,7 @@ export default function WorkloadDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {dashboardData.departmentWorkloads.map((dept) => (
+                        {(dashboardData.departmentWorkloads || []).map((dept) => (
                           <DepartmentCard key={dept.departmentId} department={dept} />
                         ))}
                       </div>
@@ -382,7 +541,11 @@ export default function WorkloadDashboardPage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
-                      <EmployeeWorkloadCard key={emp.employeeId} workload={emp} />
+                      <EmployeeWorkloadCard
+                        key={emp.employeeId}
+                        workload={emp}
+                        onViewDetails={() => handleEmployeeClick(emp)}
+                      />
                     ))
                   ) : (
                     <div className="col-span-full">
@@ -398,7 +561,7 @@ export default function WorkloadDashboardPage() {
 
               {activeTab === 'departments' && (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {dashboardData.departmentWorkloads.map((dept) => (
+                  {(dashboardData.departmentWorkloads || []).map((dept) => (
                     <DepartmentCard key={dept.departmentId} department={dept} expanded />
                   ))}
                 </div>
@@ -411,8 +574,11 @@ export default function WorkloadDashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <WorkloadHeatmap
-                      data={dashboardData.heatmapData}
-                      onEmployeeClick={(id) => console.log('Employee clicked:', id)}
+                      data={dashboardData.heatmapData || []}
+                      onEmployeeClick={(id) => {
+                        const employee = dashboardData.employeeWorkloads?.find(e => e.employeeId === id);
+                        if (employee) handleEmployeeClick(employee);
+                      }}
                     />
                   </CardContent>
                 </Card>
@@ -421,6 +587,16 @@ export default function WorkloadDashboardPage() {
           </>
         )}
       </div>
+
+      {/* Employee Allocation Detail Modal */}
+      <EmployeeAllocationDetailModal
+        isOpen={showEmployeeModal}
+        onClose={handleCloseEmployeeModal}
+        employee={selectedEmployee}
+        allocationHistory={allocationHistory}
+        loadingHistory={loadingHistory}
+        onEditAllocation={handleEditAllocation}
+      />
     </AppLayout>
   );
 }

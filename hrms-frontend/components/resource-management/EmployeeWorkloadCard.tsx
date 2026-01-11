@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import {
   EmployeeWorkload,
@@ -8,6 +8,7 @@ import {
   getAllocationStatusLabel,
   formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
+  AllocationStatus,
 } from '@/lib/types/resource-management';
 import { User, Briefcase, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
 
@@ -27,9 +28,41 @@ export function EmployeeWorkloadCard({
   showProjects = true,
   className,
 }: EmployeeWorkloadCardProps) {
-  const statusColor = getAllocationStatusColor(workload.allocationStatus);
-  const statusLabel = getAllocationStatusLabel(workload.allocationStatus);
-  const isOverAllocated = workload.totalAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
+  // Calculate active allocation based on current date (only count allocations where today is within the date range)
+  const { activeAllocation, activeAllocations, dynamicStatus } = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const active = workload.allocations.filter((allocation) => {
+      const startDate = new Date(allocation.startDate);
+      const endDate = allocation.endDate ? new Date(allocation.endDate) : null;
+      return startDate <= today && (!endDate || endDate >= today);
+    });
+
+    const activeTotal = active.reduce((total, a) => total + a.allocationPercentage, 0);
+
+    // Calculate dynamic status based on active allocation
+    let status: AllocationStatus;
+    if (activeTotal > ALLOCATION_THRESHOLDS.OVER_ALLOCATED) {
+      status = 'OVER_ALLOCATED';
+    } else if (activeTotal >= ALLOCATION_THRESHOLDS.OPTIMAL_MIN) {
+      status = 'OPTIMAL';
+    } else if (activeTotal > 0) {
+      status = 'UNDER_UTILIZED';
+    } else {
+      status = 'UNASSIGNED';
+    }
+
+    return {
+      activeAllocation: activeTotal,
+      activeAllocations: active,
+      dynamicStatus: status,
+    };
+  }, [workload.allocations]);
+
+  const statusColor = getAllocationStatusColor(dynamicStatus);
+  const statusLabel = getAllocationStatusLabel(dynamicStatus);
+  const isOverAllocated = activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
 
   return (
     <div
@@ -90,12 +123,12 @@ export function EmployeeWorkloadCard({
       {/* Allocation gauge */}
       <div className="mt-4 space-y-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-surface-600 dark:text-surface-400">Total Allocation</span>
+          <span className="text-surface-600 dark:text-surface-400">Active Allocation</span>
           <span
             className="font-semibold"
             style={{ color: statusColor }}
           >
-            {formatAllocationPercentage(workload.totalAllocation)}
+            {formatAllocationPercentage(activeAllocation)}
           </span>
         </div>
 
@@ -107,7 +140,7 @@ export function EmployeeWorkloadCard({
               isOverAllocated ? 'bg-red-500' : 'bg-green-500'
             )}
             style={{
-              width: `${Math.min((workload.totalAllocation / 150) * 100, 100)}%`,
+              width: `${Math.min((activeAllocation / 150) * 100, 100)}%`,
             }}
           />
           {/* 100% marker */}
@@ -118,14 +151,14 @@ export function EmployeeWorkloadCard({
         </div>
       </div>
 
-      {/* Project allocations */}
-      {showProjects && workload.allocations.length > 0 && (
+      {/* Project allocations - show only active projects */}
+      {showProjects && activeAllocations.length > 0 && (
         <div className="mt-4 space-y-2">
           <p className="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">
-            Projects ({workload.projectCount})
+            Active Projects ({activeAllocations.length})
           </p>
           <div className="space-y-1.5">
-            {workload.allocations.slice(0, 3).map((allocation) => (
+            {activeAllocations.slice(0, 3).map((allocation) => (
               <div
                 key={allocation.projectId}
                 className="flex items-center justify-between rounded-lg bg-surface-50 px-3 py-2 dark:bg-surface-700/50"
@@ -144,9 +177,9 @@ export function EmployeeWorkloadCard({
                 </span>
               </div>
             ))}
-            {workload.allocations.length > 3 && (
+            {activeAllocations.length > 3 && (
               <p className="text-center text-xs text-surface-500 dark:text-surface-400">
-                +{workload.allocations.length - 3} more projects
+                +{activeAllocations.length - 3} more projects
               </p>
             )}
           </div>
