@@ -101,6 +101,7 @@ export function CreateAllocationModal({
   useEffect(() => {
     if (isOpen) {
       setLoadingData(true);
+      setError(null);
       Promise.all([
         employeeService.getAllEmployees(0, 100),
         projectService.getAllProjects(0, 100),
@@ -111,7 +112,15 @@ export function CreateAllocationModal({
         })
         .catch((err) => {
           console.error('Failed to load data:', err);
-          setError('Failed to load employees and projects');
+          const errorMessage = err?.response?.data?.message || err?.message || 'Unknown error';
+          const statusCode = err?.response?.status;
+          if (statusCode === 403) {
+            setError('Access denied. You may not have permission to view employees or projects.');
+          } else if (statusCode === 401) {
+            setError('Session expired. Please log in again.');
+          } else {
+            setError(`Failed to load data: ${errorMessage}`);
+          }
         })
         .finally(() => setLoadingData(false));
     }
@@ -142,10 +151,10 @@ export function CreateAllocationModal({
 
     try {
       setLoadingCapacity(employeeId);
-      const projects = await projectService.getEmployeeProjects(employeeId);
+      const allocations = await projectService.getEmployeeAllocations(employeeId);
       // Only count active allocations
-      const activeAllocations = projects.filter((p) => p.isActive);
-      const totalAllocated = activeAllocations.reduce((sum, p) => sum + p.allocationPercentage, 0);
+      const activeAllocations = allocations.filter((a) => a.isActive);
+      const totalAllocated = activeAllocations.reduce((sum, a) => sum + a.allocationPercentage, 0);
 
       setEmployeeCapacities((prev) => {
         const newMap = new Map(prev);

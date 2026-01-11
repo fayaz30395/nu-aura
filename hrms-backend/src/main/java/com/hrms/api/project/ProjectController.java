@@ -114,4 +114,11 @@ public class ProjectController {
         List<ProjectResponse> projects = projectService.getEmployeeProjects(employeeId);
         return ResponseEntity.ok(projects);
     }
+
+    @GetMapping("/employee/{employeeId}/allocations")
+    @RequiresPermission(Permission.PROJECT_VIEW)
+    public ResponseEntity<List<ProjectEmployeeResponse>> getEmployeeAllocations(@PathVariable UUID employeeId) {
+        List<ProjectEmployeeResponse> allocations = projectService.getEmployeeAllocations(employeeId);
+        return ResponseEntity.ok(allocations);
+    }
 }

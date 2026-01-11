@@ -212,6 +212,29 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get all allocations for an employee across all projects.
+     * Returns ProjectEmployeeResponse with allocation percentages and status.
+     */
+    @Transactional(readOnly = true)
+    public List<ProjectEmployeeResponse> getEmployeeAllocations(UUID employeeId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        List<ProjectEmployee> projectEmployees = projectEmployeeRepository
+                .findAllByEmployeeIdAndTenantId(employeeId, tenantId);
+
+        return projectEmployees.stream()
+                .map(pe -> {
+                    ProjectEmployeeResponse response = ProjectEmployeeResponse.fromProjectEmployee(pe);
+                    // Enrich with project name
+                    projectRepository.findById(pe.getProjectId())
+                            .filter(p -> p.getTenantId().equals(tenantId))
+                            .ifPresent(project -> response.setProjectName(project.getName()));
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void deleteProject(UUID projectId) {
         UUID tenantId = TenantContext.getCurrentTenant();
