@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="115-add-tenant-id-to-role-permissions" author="system">
+        <addColumn tableName="role_permissions">
+            <column name="tenant_id" type="uuid"/>
+        </addColumn>
+
+        <sql>
+            UPDATE role_permissions rp
+            SET tenant_id = r.tenant_id
+            FROM roles r
+            WHERE rp.role_id = r.id
+              AND rp.tenant_id IS NULL;
+        </sql>
+
+        <addNotNullConstraint tableName="role_permissions" columnName="tenant_id" columnDataType="uuid"/>
+
+        <createIndex indexName="idx_role_permissions_tenant" tableName="role_permissions">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="role_permissions" baseColumnNames="tenant_id"
+                                 constraintName="fk_role_permissions_tenant"
+                                 referencedTableName="tenants" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

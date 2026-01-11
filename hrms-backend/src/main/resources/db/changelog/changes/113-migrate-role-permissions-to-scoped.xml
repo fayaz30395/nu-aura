@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="113-migrate-role-permissions-to-scoped" author="system">
+        <!-- 1. Drop existing primary key -->
+        <dropPrimaryKey tableName="role_permissions" constraintName="role_permissions_pkey"/>
+
+        <!-- 2. Add id column as primary key -->
+        <addColumn tableName="role_permissions">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- 3. Add scope column with default GLOBAL -->
+        <addColumn tableName="role_permissions">
+            <column name="scope" type="varchar(50)" defaultValue="GLOBAL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- 4. Add auditing columns from BaseEntity -->
+        <addColumn tableName="role_permissions">
+            <column name="created_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValueNumeric="0"/>
+        </addColumn>
+
+        <!-- 5. Add unique constraint back for role_id + permission_id -->
+        <addUniqueConstraint tableName="role_permissions" columnNames="role_id,permission_id" 
+                             constraintName="uk_role_permission_unique"/>
+    </changeSet>
+
+</databaseChangeLog>
