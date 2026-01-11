@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
+import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -110,11 +111,11 @@ class PayrollE2ETest {
 
     private void setupSecurityContext() {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "PAYROLL_ADMIN"));
-        Set<String> permissions = new HashSet<>();
-        permissions.add(Permission.SYSTEM_ADMIN);
-        permissions.add("HRMS:PAYROLL:VIEW_SELF");
-        permissions.add("HRMS:PAYROLL:PROCESS");
-        permissions.add("HRMS:PAYROLL:APPROVE");
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
+        permissions.put("HRMS:PAYROLL:VIEW_SELF", RoleScope.GLOBAL);
+        permissions.put("HRMS:PAYROLL:PROCESS", RoleScope.GLOBAL);
+        permissions.put("HRMS:PAYROLL:APPROVE", RoleScope.GLOBAL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_USER_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

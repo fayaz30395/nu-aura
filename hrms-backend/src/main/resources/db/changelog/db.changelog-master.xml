@@ -146,6 +146,9 @@
     <include file="db/changelog/changes/114-add-org-context-to-employees.xml"/>
     <include file="db/changelog/changes/115-add-tenant-id-to-role-permissions.xml"/>
 
+    <!-- Employment Change Requests for HR Approval Workflow -->
+    <include file="db/changelog/changes/116-create-employment-change-requests-table.xml"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 

@@ -7,8 +7,11 @@ import com.hrms.common.security.Permission;
 import jakarta.annotation.PostConstruct;
 
 import java.util.Set;
+import java.util.Map;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.UUID;
+import com.hrms.domain.user.RoleScope;
 
 /**
  * Test configuration to set up SecurityContext for integration tests
@@ -33,8 +36,8 @@ public class TestSecurityConfig {
         Set<String> roles = new HashSet<>();
         roles.add("ADMIN");
 
-        Set<String> permissions = new HashSet<>();
-        permissions.add(Permission.SYSTEM_ADMIN); // This bypasses all permission checks
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL); // This bypasses all permission checks
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

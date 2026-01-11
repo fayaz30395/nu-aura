@@ -21,9 +21,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import com.hrms.domain.user.RoleScope;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -55,8 +58,8 @@ class RoleControllerIntegrationTest {
         Set<String> roles = new HashSet<>();
         roles.add("ADMIN");
 
-        Set<String> permissions = new HashSet<>();
-        permissions.add(Permission.SYSTEM_ADMIN);
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

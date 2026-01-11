@@ -149,6 +149,8 @@ public class EmployeeService {
         if (request.getConfirmationDate() != null) employee.setConfirmationDate(request.getConfirmationDate());
         if (request.getDepartmentId() != null) employee.setDepartmentId(request.getDepartmentId());
         if (request.getDesignation() != null) employee.setDesignation(request.getDesignation());
+        if (request.getLevel() != null) employee.setLevel(request.getLevel());
+        if (request.getJobRole() != null) employee.setJobRole(request.getJobRole());
         if (request.getManagerId() != null) employee.setManagerId(request.getManagerId());
         if (request.getEmploymentType() != null) employee.setEmploymentType(request.getEmploymentType());
         if (request.getStatus() != null) employee.setStatus(request.getStatus());

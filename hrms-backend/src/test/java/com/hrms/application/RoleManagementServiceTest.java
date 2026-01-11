@@ -21,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import com.hrms.domain.user.RolePermission;
+import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -83,7 +85,23 @@ class RoleManagementServiceTest {
         role.setDescription("Developer role");
         role.setIsSystemRole(false);
         role.setTenantId(tenantId);
-        role.setPermissions(new HashSet<>(Arrays.asList(permission1, permission2)));
+
+        // Create RolePermission objects for each permission
+        RolePermission rp1 = RolePermission.builder()
+                .role(role)
+                .permission(permission1)
+                .scope(RoleScope.GLOBAL)
+                .build();
+        rp1.setTenantId(tenantId);
+
+        RolePermission rp2 = RolePermission.builder()
+                .role(role)
+                .permission(permission2)
+                .scope(RoleScope.GLOBAL)
+                .build();
+        rp2.setTenantId(tenantId);
+
+        role.setPermissions(new HashSet<>(Arrays.asList(rp1, rp2)));
         role.setCreatedAt(LocalDateTime.now());
         role.setUpdatedAt(LocalDateTime.now());
     }
@@ -368,7 +386,9 @@ class RoleManagementServiceTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(role.getPermissions()).contains(permission3);
+        assertThat(role.getPermissions())
+                .extracting(RolePermission::getPermission)
+                .contains(permission3);
 
         verify(roleRepository).findByIdAndTenantIdWithPermissions(roleId, tenantId);
         verify(permissionRepository).findByCodeIn(new HashSet<>(Arrays.asList("USER_DELETE")));
@@ -392,7 +412,9 @@ class RoleManagementServiceTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(role.getPermissions()).doesNotContain(permission1);
+        assertThat(role.getPermissions())
+                .extracting(RolePermission::getPermission)
+                .doesNotContain(permission1);
 
         verify(roleRepository).findByIdAndTenantIdWithPermissions(roleId, tenantId);
         verify(permissionRepository).findByCodeIn(new HashSet<>(Arrays.asList("USER_READ")));

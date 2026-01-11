@@ -5,12 +5,9 @@ import { cn } from '@/lib/utils';
 import {
   EmployeeWorkload,
   getAllocationStatusColor,
-  getAllocationStatusLabel,
-  formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
   AllocationStatus,
 } from '@/lib/types/resource-management';
-import { User, Briefcase, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
 
 interface EmployeeWorkloadCardProps {
   workload: EmployeeWorkload;
@@ -20,7 +17,7 @@ interface EmployeeWorkloadCardProps {
 }
 
 /**
- * Card displaying an employee's workload summary
+ * Clean, minimal employee workload row/card
  */
 export function EmployeeWorkloadCard({
   workload,
@@ -28,7 +25,6 @@ export function EmployeeWorkloadCard({
   showProjects = true,
   className,
 }: EmployeeWorkloadCardProps) {
-  // Calculate active allocation based on current date (only count allocations where today is within the date range)
   const { activeAllocation, activeAllocations, dynamicStatus } = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -41,7 +37,6 @@ export function EmployeeWorkloadCard({
 
     const activeTotal = active.reduce((total, a) => total + a.allocationPercentage, 0);
 
-    // Calculate dynamic status based on active allocation
     let status: AllocationStatus;
     if (activeTotal > ALLOCATION_THRESHOLDS.OVER_ALLOCATED) {
       status = 'OVER_ALLOCATED';
@@ -53,150 +48,93 @@ export function EmployeeWorkloadCard({
       status = 'UNASSIGNED';
     }
 
-    return {
-      activeAllocation: activeTotal,
-      activeAllocations: active,
-      dynamicStatus: status,
-    };
+    return { activeAllocation: activeTotal, activeAllocations: active, dynamicStatus: status };
   }, [workload.allocations]);
 
   const statusColor = getAllocationStatusColor(dynamicStatus);
-  const statusLabel = getAllocationStatusLabel(dynamicStatus);
   const isOverAllocated = activeAllocation > ALLOCATION_THRESHOLDS.OVER_ALLOCATED;
 
   return (
     <div
       className={cn(
-        'rounded-xl border bg-white p-4 transition-all dark:bg-surface-800',
-        isOverAllocated
-          ? 'border-red-200 dark:border-red-800'
-          : 'border-surface-200 dark:border-surface-700',
-        onViewDetails && 'cursor-pointer hover:shadow-md',
+        'group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors',
+        'hover:bg-surface-50 dark:hover:bg-surface-800/50',
+        onViewDetails && 'cursor-pointer',
         className
       )}
       onClick={onViewDetails}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-full',
-              isOverAllocated
-                ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-                : 'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400'
-            )}
-          >
-            <User className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="font-medium text-surface-900 dark:text-surface-50">
-              {workload.employeeName}
-            </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
-              {workload.designation || workload.employeeCode}
-            </p>
-          </div>
-        </div>
+      {/* Avatar with initials */}
+      <div
+        className={cn(
+          'flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-sm font-medium',
+          isOverAllocated
+            ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+            : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
+        )}
+      >
+        {getInitials(workload.employeeName)}
+      </div>
 
-        {/* Status badge */}
+      {/* Name and role */}
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
+          <span className="truncate text-sm font-medium text-surface-900 dark:text-surface-100">
+            {workload.employeeName}
+          </span>
           {workload.hasPendingApprovals && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-              <Clock className="h-3 w-3" />
-              Pending
-            </span>
+            <span className="flex h-2 w-2 rounded-full bg-amber-400" title="Pending approval" />
           )}
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
-            style={{
-              backgroundColor: `${statusColor}20`,
-              color: statusColor,
-            }}
-          >
-            {isOverAllocated && <AlertTriangle className="h-3 w-3" />}
-            {statusLabel}
-          </span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
+          <span className="truncate">{workload.designation || workload.employeeCode}</span>
+          {showProjects && activeAllocations.length > 0 && (
+            <>
+              <span>·</span>
+              <span>{activeAllocations.length} project{activeAllocations.length !== 1 ? 's' : ''}</span>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Allocation gauge */}
-      <div className="mt-4 space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-surface-600 dark:text-surface-400">Active Allocation</span>
-          <span
-            className="font-semibold"
-            style={{ color: statusColor }}
-          >
-            {formatAllocationPercentage(activeAllocation)}
-          </span>
-        </div>
-
-        {/* Progress bar */}
-        <div className="relative h-2 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
-          <div
-            className={cn(
-              'absolute left-0 top-0 h-full rounded-full transition-all',
-              isOverAllocated ? 'bg-red-500' : 'bg-green-500'
-            )}
-            style={{
-              width: `${Math.min((activeAllocation / 150) * 100, 100)}%`,
-            }}
-          />
-          {/* 100% marker */}
-          <div
-            className="absolute top-0 h-full w-0.5 bg-surface-500"
-            style={{ left: '66.67%' }}
-          />
-        </div>
-      </div>
-
-      {/* Project allocations - show only active projects */}
-      {showProjects && activeAllocations.length > 0 && (
-        <div className="mt-4 space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-surface-500 dark:text-surface-400">
-            Active Projects ({activeAllocations.length})
-          </p>
-          <div className="space-y-1.5">
-            {activeAllocations.slice(0, 3).map((allocation) => (
-              <div
-                key={allocation.projectId}
-                className="flex items-center justify-between rounded-lg bg-surface-50 px-3 py-2 dark:bg-surface-700/50"
-              >
-                <div className="flex items-center gap-2">
-                  <Briefcase className="h-3.5 w-3.5 text-surface-400" />
-                  <span className="text-sm text-surface-700 dark:text-surface-300">
-                    {allocation.projectName}
-                  </span>
-                  {allocation.isPendingApproval && (
-                    <Clock className="h-3 w-3 text-amber-500" />
-                  )}
-                </div>
-                <span className="text-sm font-medium text-surface-900 dark:text-surface-50">
-                  {formatAllocationPercentage(allocation.allocationPercentage)}
-                </span>
-              </div>
-            ))}
-            {activeAllocations.length > 3 && (
-              <p className="text-center text-xs text-surface-500 dark:text-surface-400">
-                +{activeAllocations.length - 3} more projects
-              </p>
-            )}
+      {/* Allocation bar */}
+      <div className="flex items-center gap-3">
+        <div className="w-24">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] text-surface-400">
+              {activeAllocations.length > 0 ? activeAllocations[0].projectName.substring(0, 12) : ''}
+            </span>
+          </div>
+          <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+            <div
+              className={cn(
+                'absolute left-0 top-0 h-full rounded-full transition-all',
+                isOverAllocated ? 'bg-red-500' : activeAllocation >= 70 ? 'bg-green-500' : 'bg-amber-400'
+              )}
+              style={{ width: `${Math.min(activeAllocation, 100)}%` }}
+            />
           </div>
         </div>
-      )}
 
-      {/* View details link */}
-      {onViewDetails && (
-        <div className="mt-4 flex items-center justify-end">
-          <span className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400">
-            View Details
-            <ChevronRight className="h-4 w-4" />
-          </span>
-        </div>
-      )}
+        {/* Percentage */}
+        <span
+          className="w-12 text-right text-sm font-semibold tabular-nums"
+          style={{ color: statusColor }}
+        >
+          {Math.round(activeAllocation)}%
+        </span>
+      </div>
     </div>
   );
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
 }
 
 export default EmployeeWorkloadCard;

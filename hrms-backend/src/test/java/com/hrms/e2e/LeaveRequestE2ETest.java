@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -156,12 +157,12 @@ class LeaveRequestE2ETest {
 
     private void setupSecurityContext() {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "EMPLOYEE"));
-        Set<String> permissions = new HashSet<>();
-        permissions.add(Permission.SYSTEM_ADMIN);
-        permissions.add("HRMS:LEAVE:REQUEST");
-        permissions.add("HRMS:LEAVE:VIEW_SELF");
-        permissions.add("HRMS:LEAVE:CANCEL");
-        permissions.add("HRMS:LEAVE:APPROVE");
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
+        permissions.put("HRMS:LEAVE:REQUEST", RoleScope.GLOBAL);
+        permissions.put("HRMS:LEAVE:VIEW_SELF", RoleScope.GLOBAL);
+        permissions.put("HRMS:LEAVE:CANCEL", RoleScope.GLOBAL);
+        permissions.put("HRMS:LEAVE:APPROVE", RoleScope.GLOBAL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

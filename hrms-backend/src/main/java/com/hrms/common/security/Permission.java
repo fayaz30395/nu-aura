@@ -16,6 +16,13 @@ public final class Permission {
     public static final String EMPLOYEE_VIEW_TEAM = "EMPLOYEE:VIEW_TEAM";
     public static final String EMPLOYEE_VIEW_SELF = "EMPLOYEE:VIEW_SELF";
 
+    // Employment Change Requests
+    public static final String EMPLOYMENT_CHANGE_VIEW = "EMPLOYMENT_CHANGE:VIEW";
+    public static final String EMPLOYMENT_CHANGE_VIEW_ALL = "EMPLOYMENT_CHANGE:VIEW_ALL";
+    public static final String EMPLOYMENT_CHANGE_CREATE = "EMPLOYMENT_CHANGE:CREATE";
+    public static final String EMPLOYMENT_CHANGE_APPROVE = "EMPLOYMENT_CHANGE:APPROVE";
+    public static final String EMPLOYMENT_CHANGE_CANCEL = "EMPLOYMENT_CHANGE:CANCEL";
+
     // Leave Management
     public static final String LEAVE_REQUEST = "LEAVE:REQUEST";
     public static final String LEAVE_APPROVE = "LEAVE:APPROVE";

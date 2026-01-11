@@ -47,7 +47,7 @@ import {
   Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ALLOCATION_SUMMARY_ROLE_ALLOWLIST, SENIOR_MANAGEMENT_ROLES, PROJECT_LEADER_AND_ABOVE_ROLES } from '@/lib/constants/roles';
+import { SENIOR_MANAGEMENT_ROLES, PROJECT_LEADER_AND_ABOVE_ROLES } from '@/lib/constants/roles';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
 import { Header } from './Header';
 import type { HeaderProps } from './Header';
@@ -140,11 +140,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return user?.roles?.map((role) => role.code).filter(Boolean) || [];
   }, [hasHydrated, user?.roles]);
 
-  const canViewAllocationSummary = React.useMemo(() => {
-    if (roleCodes.length === 0) return false;
-    return roleCodes.some((code) => ALLOCATION_SUMMARY_ROLE_ALLOWLIST.has(code));
-  }, [roleCodes]);
-
   // Senior Management: CEO, VP, Operations Head, HR Admin, Delivery Leads
   const isSeniorManagement = React.useMemo(() => {
     if (roleCodes.length === 0) return false;
@@ -156,13 +151,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     if (roleCodes.length === 0) return false;
     return roleCodes.some((code) => PROJECT_LEADER_AND_ABOVE_ROLES.has(code));
   }, [roleCodes]);
-
-  const allocationSummaryItem: SidebarItem = {
-    id: 'allocation-summary',
-    label: 'Allocation Summary',
-    icon: <ClipboardList className="h-5 w-5" />,
-    href: '/allocations/summary',
-  };
 
   // Build Resource Management items based on user role
   const resourceManagementItems: SidebarItem[] = React.useMemo(() => {
@@ -176,32 +164,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         icon: <BarChart3 className="h-5 w-5" />,
         href: '/resources',
       });
-
-      items.push({
-        id: 'bench-report',
-        label: 'Bench Report',
-        icon: <Users className="h-5 w-5" />,
-        href: '/resources/bench',
-      });
     }
-
-    // Allocations - Project Leaders and above
-    if (isProjectLeaderOrAbove) {
-      items.push({
-        id: 'allocations',
-        label: 'Allocations',
-        icon: <ClipboardList className="h-5 w-5" />,
-        href: '/resources/allocations',
-      });
-    }
-
-    // Projects - All users (data filtered by role on backend)
-    items.push({
-      id: 'projects-tms',
-      label: 'Projects',
-      icon: <Briefcase className="h-5 w-5" />,
-      href: '/resources/projects',
-    });
 
     // My Allocations - For team members to view their own
     if (!isProjectLeaderOrAbove) {
@@ -213,21 +176,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       });
     }
 
-    // Allocation Summary - conditional
-    if (canViewAllocationSummary) {
-      items.push(allocationSummaryItem);
-    }
-
-    // Timesheets - All users
-    items.push({
-      id: 'timesheets',
-      label: 'Timesheets',
-      icon: <Timer className="h-5 w-5" />,
-      href: '/timesheets',
-    });
-
     return items;
-  }, [isSeniorManagement, isProjectLeaderOrAbove, canViewAllocationSummary, allocationSummaryItem]);
+  }, [isSeniorManagement, isProjectLeaderOrAbove]);
 
   // Navigation sections for HRMS - organized into logical groups
   const menuSections: SidebarSection[] = [

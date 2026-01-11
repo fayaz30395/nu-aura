@@ -17,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
+import com.hrms.domain.user.RoleScope;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -47,8 +48,8 @@ class WebSocketNotificationE2ETest {
     @BeforeEach
     void setUp() {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN"));
-        Set<String> permissions = new HashSet<>();
-        permissions.add(Permission.SYSTEM_ADMIN);
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

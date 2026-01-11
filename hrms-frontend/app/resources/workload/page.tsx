@@ -2,19 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
-import {
-  Users,
-  Filter,
-  Download,
-  RefreshCw,
-  AlertCircle,
-  Search,
-  Calendar,
-  Building2,
-  ChevronDown,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Users, Download, RefreshCw, AlertCircle, Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
@@ -33,6 +21,7 @@ import {
   AllocationApprovalRequest,
 } from '@/lib/types/resource-management';
 import { resourceManagementService } from '@/lib/services/resource-management.service';
+import { cn } from '@/lib/utils';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
 type ViewTab = 'overview' | 'employees' | 'departments' | 'heatmap';
@@ -169,12 +158,13 @@ export default function WorkloadDashboardPage() {
       const activeAllocation = calculateActiveAllocation(emp);
       const dynamicStatus = calculateDynamicStatus(activeAllocation);
 
-      // Search filter
+      // Search filter (name, code, ID, department)
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const matchesSearch =
           emp.employeeName.toLowerCase().includes(query) ||
           emp.employeeCode.toLowerCase().includes(query) ||
+          emp.employeeId.toLowerCase().includes(query) ||
           emp.departmentName?.toLowerCase().includes(query);
         if (!matchesSearch) return false;
       }
@@ -303,82 +293,101 @@ export default function WorkloadDashboardPage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6 p-6">
+      <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-              Workload Dashboard
+            <h1 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              Resource Utilization
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-              Monitor employee allocation and resource utilization
+            <p className="text-sm text-surface-500 dark:text-surface-400">
+              {dateRangeOptions.find(o => o.key === selectedDateRange)?.label}
             </p>
           </div>
-
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={fetchData} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchData}
+              disabled={loading}
+              className="rounded-md p-2 text-surface-500 hover:bg-surface-100 hover:text-surface-700 dark:hover:bg-surface-800 dark:hover:text-surface-300"
+            >
+              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+            </button>
+            <button
+              onClick={handleExport}
+              className="inline-flex items-center gap-1.5 rounded-md border border-surface-200 bg-white px-3 py-1.5 text-sm font-medium text-surface-700 hover:bg-surface-50 dark:border-surface-700 dark:bg-surface-800 dark:text-surface-300 dark:hover:bg-surface-700"
+            >
+              <Download className="h-4 w-4" />
               Export
-            </Button>
+            </button>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Date range selector */}
-          <div className="relative">
-            <select
-              value={selectedDateRange}
-              onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-              className="appearance-none rounded-lg border border-surface-200 bg-white py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
-            >
-              {dateRangeOptions.map((opt) => (
-                <option key={opt.key} value={opt.key}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <Calendar className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
-          </div>
+        {/* Filters - clean horizontal bar */}
+        <div className="flex items-center gap-4">
+          {/* Date range */}
+          <select
+            value={selectedDateRange}
+            onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
+            className="rounded-md border border-surface-200 bg-white px-3 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+          >
+            {dateRangeOptions.map((opt) => (
+              <option key={opt.key} value={opt.key}>{opt.label}</option>
+            ))}
+          </select>
 
-          {/* Status filters */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Status:</span>
+          <div className="h-6 w-px bg-surface-200 dark:bg-surface-700" />
+
+          {/* Status pills */}
+          <div className="flex items-center gap-1">
             {statusFilterOptions.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => toggleStatusFilter(opt.key)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={cn(
+                  'rounded-full px-3 py-1 text-xs font-medium transition-all',
                   selectedStatus.includes(opt.key)
                     ? opt.color
-                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-400'
-                }`}
+                    : 'text-surface-500 hover:bg-surface-100 dark:text-surface-400 dark:hover:bg-surface-800'
+                )}
               >
                 {opt.label}
               </button>
             ))}
           </div>
 
-          {/* Allocation range filters */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-surface-500 dark:text-surface-400">Allocation:</span>
+          <div className="h-6 w-px bg-surface-200 dark:bg-surface-700" />
+
+          {/* Allocation range pills */}
+          <div className="flex items-center gap-1">
             {allocationRangeOptions.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => toggleRangeFilter(opt.key)}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={cn(
+                  'rounded-full px-3 py-1 text-xs font-medium transition-all',
                   selectedRanges.includes(opt.key)
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-700 dark:text-surface-400'
-                }`}
+                    ? 'bg-surface-900 text-white dark:bg-surface-100 dark:text-surface-900'
+                    : 'text-surface-500 hover:bg-surface-100 dark:text-surface-400 dark:hover:bg-surface-800'
+                )}
               >
                 {opt.label}
               </button>
             ))}
           </div>
+
+          {/* Clear */}
+          {(selectedStatus.length > 0 || selectedRanges.length > 0 || searchQuery) && (
+            <button
+              onClick={() => {
+                setSelectedStatus([]);
+                setSelectedRanges([]);
+                setSearchQuery('');
+              }}
+              className="text-xs text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+            >
+              Clear all
+            </button>
+          )}
 
           {/* Search */}
           <div className="relative ml-auto">
@@ -388,31 +397,27 @@ export default function WorkloadDashboardPage() {
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64 rounded-lg border border-surface-200 bg-white py-2 pl-10 pr-4 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="w-56 rounded-md border border-surface-200 bg-white py-1.5 pl-9 pr-3 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
             />
           </div>
         </div>
 
         {/* Error state */}
         {error && (
-          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-            <AlertCircle className="h-5 w-5" />
-            <span>{error}</span>
-            <Button variant="ghost" size="sm" onClick={fetchData} className="ml-auto">
+          <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <span className="flex-1">{error}</span>
+            <button onClick={fetchData} className="font-medium hover:underline">
               Retry
-            </Button>
+            </button>
           </div>
         )}
 
         {/* Loading state */}
         {loading && !dashboardData && (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
-              ))}
-            </div>
-            <Skeleton className="h-96 rounded-xl" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-64 rounded-lg" />
           </div>
         )}
 
@@ -427,18 +432,19 @@ export default function WorkloadDashboardPage() {
               <nav className="-mb-px flex gap-6">
                 {[
                   { key: 'overview', label: 'Overview' },
-                  { key: 'employees', label: 'By Employee' },
-                  { key: 'departments', label: 'By Department' },
+                  { key: 'employees', label: 'Team' },
+                  { key: 'departments', label: 'Departments' },
                   { key: 'heatmap', label: 'Heatmap' },
                 ].map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as ViewTab)}
-                    className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+                    className={cn(
+                      'border-b-2 pb-3 text-sm font-medium transition-colors',
                       activeTab === tab.key
-                        ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200'
-                    }`}
+                        ? 'border-surface-900 text-surface-900 dark:border-surface-100 dark:text-surface-100'
+                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-300'
+                    )}
                   >
                     {tab.label}
                   </button>
@@ -447,98 +453,137 @@ export default function WorkloadDashboardPage() {
             </div>
 
             {/* Tab content */}
-            <div className="mt-6">
+            <div>
               {activeTab === 'overview' && (
-                <div className="grid gap-6 lg:grid-cols-2">
-                  {/* Over-allocated employees */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                        <AlertCircle className="h-5 w-5" />
-                        Over-Allocated Employees
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {(dashboardData.employeeWorkloads || [])
-                        .filter((e) => e.allocationStatus === 'OVER_ALLOCATED')
-                        .slice(0, 5).length > 0 ? (
-                        <div className="space-y-3">
-                          {(dashboardData.employeeWorkloads || [])
-                            .filter((e) => e.allocationStatus === 'OVER_ALLOCATED')
-                            .slice(0, 5)
-                            .map((emp) => (
-                              <EmployeeWorkloadCard
-                                key={emp.employeeId}
-                                workload={emp}
-                                showProjects={false}
-                                onViewDetails={() => handleEmployeeClick(emp)}
-                              />
-                            ))}
-                        </div>
-                      ) : (
-                        <EmptyState
-                          title="No over-allocated employees"
-                          icon={<Users className="h-12 w-12" />}
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
+                <div className="grid gap-8 lg:grid-cols-2">
+                  {/* Over-allocated */}
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-medium text-red-600 dark:text-red-400">
+                        Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                      {(() => {
+                        const overAllocated = filteredEmployees
+                          .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED')
+                          .slice(0, 5);
+                        return overAllocated.length > 0 ? (
+                          overAllocated.map((emp) => (
+                            <EmployeeWorkloadCard
+                              key={emp.employeeId}
+                              workload={emp}
+                              showProjects={false}
+                              onViewDetails={() => handleEmployeeClick(emp)}
+                            />
+                          ))
+                        ) : (
+                          <p className="py-8 text-center text-sm text-surface-500">No over-allocated employees</p>
+                        );
+                      })()}
+                    </div>
+                  </div>
 
-                  {/* Under-utilized employees */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
-                        <Users className="h-5 w-5" />
-                        Under-Utilized Employees
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {(dashboardData.employeeWorkloads || [])
-                        .filter((e) => e.allocationStatus === 'UNDER_UTILIZED')
-                        .slice(0, 5).length > 0 ? (
-                        <div className="space-y-3">
-                          {(dashboardData.employeeWorkloads || [])
-                            .filter((e) => e.allocationStatus === 'UNDER_UTILIZED')
-                            .slice(0, 5)
-                            .map((emp) => (
-                              <EmployeeWorkloadCard
-                                key={emp.employeeId}
-                                workload={emp}
-                                showProjects={false}
-                                onViewDetails={() => handleEmployeeClick(emp)}
-                              />
-                            ))}
-                        </div>
-                      ) : (
-                        <EmptyState
-                          title="No under-utilized employees"
-                          icon={<Users className="h-12 w-12" />}
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
+                  {/* Under-utilized */}
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                        Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                      {(() => {
+                        const underUtilized = filteredEmployees
+                          .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED')
+                          .slice(0, 5);
+                        return underUtilized.length > 0 ? (
+                          underUtilized.map((emp) => (
+                            <EmployeeWorkloadCard
+                              key={emp.employeeId}
+                              workload={emp}
+                              showProjects={false}
+                              onViewDetails={() => handleEmployeeClick(emp)}
+                            />
+                          ))
+                        ) : (
+                          <p className="py-8 text-center text-sm text-surface-500">No under-utilized employees</p>
+                        );
+                      })()}
+                    </div>
+                  </div>
 
-                  {/* Department breakdown */}
-                  <Card className="lg:col-span-2">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Building2 className="h-5 w-5" />
-                        Department Overview
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {(dashboardData.departmentWorkloads || []).map((dept) => (
-                          <DepartmentCard key={dept.departmentId} department={dept} />
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {/* Unassigned */}
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-medium text-surface-500 dark:text-surface-400">
+                        Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                      {(() => {
+                        const unassigned = filteredEmployees
+                          .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED')
+                          .slice(0, 5);
+                        return unassigned.length > 0 ? (
+                          unassigned.map((emp) => (
+                            <EmployeeWorkloadCard
+                              key={emp.employeeId}
+                              workload={emp}
+                              showProjects={false}
+                              onViewDetails={() => handleEmployeeClick(emp)}
+                            />
+                          ))
+                        ) : (
+                          <p className="py-8 text-center text-sm text-surface-500">No unassigned employees</p>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Optimal */}
+                  <div>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="text-sm font-medium text-green-600 dark:text-green-400">
+                        Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
+                      </h3>
+                    </div>
+                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                      {(() => {
+                        const optimal = filteredEmployees
+                          .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL')
+                          .slice(0, 5);
+                        return optimal.length > 0 ? (
+                          optimal.map((emp) => (
+                            <EmployeeWorkloadCard
+                              key={emp.employeeId}
+                              workload={emp}
+                              showProjects={false}
+                              onViewDetails={() => handleEmployeeClick(emp)}
+                            />
+                          ))
+                        ) : (
+                          <p className="py-8 text-center text-sm text-surface-500">No optimally allocated employees</p>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Departments */}
+                  <div className="lg:col-span-2">
+                    <h3 className="mb-3 text-sm font-medium text-surface-900 dark:text-surface-100">
+                      By Department
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                      {(dashboardData.departmentWorkloads || []).map((dept) => (
+                        <DepartmentCard key={dept.departmentId} department={dept} />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 
               {activeTab === 'employees' && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
                       <EmployeeWorkloadCard
@@ -548,11 +593,11 @@ export default function WorkloadDashboardPage() {
                       />
                     ))
                   ) : (
-                    <div className="col-span-full">
+                    <div className="py-12">
                       <EmptyState
                         title="No employees found"
                         description="Try adjusting your search or filters"
-                        icon={<Users className="h-12 w-12" />}
+                        icon={<Users className="h-10 w-10" />}
                       />
                     </div>
                   )}
@@ -568,20 +613,15 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'heatmap' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Workload Heatmap</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <WorkloadHeatmap
-                      data={dashboardData.heatmapData || []}
-                      onEmployeeClick={(id) => {
-                        const employee = dashboardData.employeeWorkloads?.find(e => e.employeeId === id);
-                        if (employee) handleEmployeeClick(employee);
-                      }}
-                    />
-                  </CardContent>
-                </Card>
+                <div className="rounded-lg border border-surface-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-900">
+                  <WorkloadHeatmap
+                    data={dashboardData.heatmapData || []}
+                    onEmployeeClick={(id) => {
+                      const employee = dashboardData.employeeWorkloads?.find(e => e.employeeId === id);
+                      if (employee) handleEmployeeClick(employee);
+                    }}
+                  />
+                </div>
               )}
             </div>
           </>
@@ -602,7 +642,7 @@ export default function WorkloadDashboardPage() {
 }
 
 /**
- * Department summary card
+ * Department card - clean minimal design
  */
 function DepartmentCard({
   department,
@@ -611,67 +651,46 @@ function DepartmentCard({
   department: DepartmentWorkload;
   expanded?: boolean;
 }) {
+  const avgAllocation = Math.round(department.averageAllocation);
+  const allocationColor = avgAllocation > 100 ? 'text-red-600' : avgAllocation >= 70 ? 'text-green-600' : 'text-amber-600';
+
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100 dark:bg-primary-900/30">
-            <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-surface-900 dark:text-surface-50">
-              {department.departmentName}
-            </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
-              {department.employeeCount} employees
-            </p>
+    <div className="rounded-lg border border-surface-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-900">
+      <div className="flex items-start justify-between">
+        <div>
+          <h3 className="text-sm font-medium text-surface-900 dark:text-surface-100">
+            {department.departmentName}
+          </h3>
+          <p className="mt-0.5 text-xs text-surface-500">
+            {department.employeeCount} members · {department.activeProjects} projects
+          </p>
+        </div>
+        <span className={cn('text-xl font-semibold tabular-nums', allocationColor)}>
+          {avgAllocation}%
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-100 dark:bg-surface-800">
+        <div
+          className={cn(
+            'h-full rounded-full transition-all',
+            avgAllocation > 100 ? 'bg-red-500' : avgAllocation >= 70 ? 'bg-green-500' : 'bg-amber-400'
+          )}
+          style={{ width: `${Math.min(avgAllocation, 100)}%` }}
+        />
+      </div>
+
+      {expanded && (
+        <div className="mt-3 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-3">
+            <span className="text-red-600">{department.overAllocatedCount} over</span>
+            <span className="text-green-600">{department.optimalCount} optimal</span>
+            <span className="text-amber-600">{department.underUtilizedCount} under</span>
+            <span className="text-surface-400">{department.unassignedCount} free</span>
           </div>
         </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-          <div className="rounded-lg bg-surface-50 p-2 dark:bg-surface-700/50">
-            <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
-              {Math.round(department.averageAllocation)}%
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Avg Allocation</p>
-          </div>
-          <div className="rounded-lg bg-surface-50 p-2 dark:bg-surface-700/50">
-            <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
-              {department.activeProjects}
-            </p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">Active Projects</p>
-          </div>
-        </div>
-
-        {expanded && (
-          <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs">
-            <div>
-              <p className="font-semibold text-red-600 dark:text-red-400">
-                {department.overAllocatedCount}
-              </p>
-              <p className="text-surface-500">Over</p>
-            </div>
-            <div>
-              <p className="font-semibold text-green-600 dark:text-green-400">
-                {department.optimalCount}
-              </p>
-              <p className="text-surface-500">Optimal</p>
-            </div>
-            <div>
-              <p className="font-semibold text-amber-600 dark:text-amber-400">
-                {department.underUtilizedCount}
-              </p>
-              <p className="text-surface-500">Under</p>
-            </div>
-            <div>
-              <p className="font-semibold text-surface-500">
-                {department.unassignedCount}
-              </p>
-              <p className="text-surface-500">Free</p>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
