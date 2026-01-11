@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@lombok.extern.slf4j.Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -122,6 +123,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (!accessibleApps.isEmpty()) {
                         SecurityContext.setAccessibleApps(accessibleApps);
                     }
+
+                    // Debug logging for permission troubleshooting
+                    log.debug("JWT Auth - User: {}, AppCode: {}, Roles: {}, Permissions: {}",
+                            username, appCode, roles, permissionScopes.keySet());
                 }
             }
         } catch (Exception ex) {

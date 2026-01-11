@@ -3,7 +3,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { ChevronRight, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
+import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
+
+const STORAGE_KEY_COLLAPSED_SECTIONS = 'sidebar-collapsed-sections';
 
 export interface SidebarItem {
   id: string;
@@ -280,11 +282,14 @@ const SidebarMenuItem: React.FC<{
   );
 };
 
-// Section divider with label
+// Section divider with label - collapsible
 const SectionDivider: React.FC<{
   label: string;
+  sectionId: string;
   isCollapsed: boolean;
-}> = ({ label, isCollapsed }) => {
+  isSectionExpanded: boolean;
+  onToggleSection: (sectionId: string) => void;
+}> = ({ label, sectionId, isCollapsed, isSectionExpanded, onToggleSection }) => {
   if (isCollapsed) {
     return (
       <div className="px-3 py-2">
@@ -294,11 +299,20 @@ const SectionDivider: React.FC<{
   }
 
   return (
-    <div className="px-3 py-2">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500">
+    <button
+      onClick={() => onToggleSection(sectionId)}
+      className="w-full flex items-center justify-between px-3 py-2 group hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-md transition-colors"
+    >
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
         {label}
       </span>
-    </div>
+      <ChevronDown
+        className={cn(
+          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-200',
+          !isSectionExpanded && '-rotate-90'
+        )}
+      />
+    </button>
   );
 };
 
@@ -322,6 +336,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const [isHovering, setIsHovering] = useState(false);
     const [openFlyoverId, setOpenFlyoverId] = useState<string | null>(null);
     const [flyoverTriggerRect, setFlyoverTriggerRect] = useState<DOMRect | null>(null);
+    const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
     // Load collapsed state from localStorage
     useEffect(() => {
@@ -331,6 +346,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           const parsedCollapsed = savedCollapsed === 'true';
           setIsCollapsed(parsedCollapsed);
           onCollapsedChange?.(parsedCollapsed);
+        }
+
+        // Load collapsed sections
+        const savedCollapsedSections = localStorage.getItem(STORAGE_KEY_COLLAPSED_SECTIONS);
+        if (savedCollapsedSections) {
+          try {
+            const parsed = JSON.parse(savedCollapsedSections);
+            setCollapsedSections(new Set(parsed));
+          } catch (e) {
+            // Ignore parse errors
+          }
         }
       }
     }, [onCollapsedChange]);
@@ -364,6 +390,22 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const handleCloseFlyover = useCallback(() => {
       setOpenFlyoverId(null);
       setFlyoverTriggerRect(null);
+    }, []);
+
+    const handleToggleSection = useCallback((sectionId: string) => {
+      setCollapsedSections(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(sectionId)) {
+          newSet.delete(sectionId);
+        } else {
+          newSet.add(sectionId);
+        }
+        // Persist to localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(STORAGE_KEY_COLLAPSED_SECTIONS, JSON.stringify([...newSet]));
+        }
+        return newSet;
+      });
     }, []);
 
     // Group items by section
@@ -480,35 +522,60 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            {groupedItems.map((section, sectionIndex) => (
-              <div key={section.id}>
-                {sectionIndex > 0 && (
-                  <SectionDivider label={section.label} isCollapsed={isCollapsed} />
-                )}
-                {sectionIndex === 0 && !isCollapsed && (
-                  <div className="px-3 py-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500">
-                      {section.label}
-                    </span>
-                  </div>
-                )}
+            {groupedItems.map((section, sectionIndex) => {
+              const isSectionExpanded = !collapsedSections.has(section.id);
 
-                <div className="space-y-0.5">
-                  {section.items.map((item) => (
-                    <SidebarMenuItem
-                      key={item.id}
-                      item={item}
-                      isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
+              return (
+                <div key={section.id}>
+                  {sectionIndex > 0 && (
+                    <SectionDivider
+                      label={section.label}
+                      sectionId={section.id}
                       isCollapsed={isCollapsed}
-                      onItemClick={onItemClick}
-                      activeId={activeId}
-                      openFlyoverId={openFlyoverId}
-                      onToggleFlyover={handleToggleFlyover}
+                      isSectionExpanded={isSectionExpanded}
+                      onToggleSection={handleToggleSection}
                     />
-                  ))}
+                  )}
+                  {sectionIndex === 0 && !isCollapsed && (
+                    <button
+                      onClick={() => handleToggleSection(section.id)}
+                      className="w-full flex items-center justify-between px-3 py-2 group hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-md transition-colors"
+                    >
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
+                        {section.label}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-200',
+                          !isSectionExpanded && '-rotate-90'
+                        )}
+                      />
+                    </button>
+                  )}
+
+                  {/* Collapsible items container */}
+                  <div
+                    className={cn(
+                      'space-y-0.5 overflow-hidden transition-all duration-200',
+                      isSectionExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                    )}
+                  >
+                    {section.items.map((item) => (
+                      <SidebarMenuItem
+                        key={item.id}
+                        item={item}
+                        isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
+                        isCollapsed={isCollapsed}
+                        onItemClick={onItemClick}
+                        activeId={activeId}
+                        openFlyoverId={openFlyoverId}
+                        onToggleFlyover={handleToggleFlyover}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </nav>
 
           {/* Footer */}

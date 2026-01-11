@@ -399,6 +399,7 @@ export interface TeamPerformance {
   avgFeedbackScore: number;
   pendingTrainings: number;
   trainingCompletionRate: number;
+  engagementScore: number;
   performanceConcerns: PerformanceConcern[];
 }
 
