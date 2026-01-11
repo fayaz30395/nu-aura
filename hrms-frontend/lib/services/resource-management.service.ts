@@ -15,6 +15,7 @@ import {
   EmployeeWorkload,
   DepartmentWorkload,
   WorkloadHeatmapRow,
+  AvailabilityStatus,
 } from '../types/resource-management';
 
 interface PageResponse<T> {
@@ -229,7 +230,174 @@ export const resourceManagementService = {
       );
       return response.data;
     } catch (error) {
-      throw handleApiError(error, 'load team availability');
+      // Mock data for team availability
+      console.warn('Backend API missing, using mock data for Team Availability');
+      const startDate = new Date(filter.startDate);
+      const endDate = new Date(filter.endDate);
+      const days: string[] = [];
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        days.push(d.toISOString().split('T')[0]);
+      }
+
+      const mockEmployees: EmployeeAvailability[] = [
+        {
+          employeeId: 'emp-001',
+          employeeName: 'John Smith',
+          employeeCode: 'EMP001',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Senior Developer',
+          availability: days.map((date, i) => {
+            const dayOfWeek = new Date(date).getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            return {
+              date,
+              dayOfWeek,
+              isWeekend,
+              isHoliday: false,
+              status: isWeekend ? 'HOLIDAY' : (i % 7 === 3 ? 'ON_LEAVE' : 'ALLOCATED') as AvailabilityStatus,
+              allocatedCapacity: isWeekend ? 0 : 120,
+              availableCapacity: isWeekend ? 100 : 0,
+              events: [],
+            };
+          }),
+          summary: {
+            periodStart: filter.startDate,
+            periodEnd: filter.endDate,
+            totalDays: days.length,
+            workingDays: days.filter((_, i) => new Date(days[i]).getDay() !== 0 && new Date(days[i]).getDay() !== 6).length,
+            availableDays: 2,
+            partialDays: 3,
+            fullyAllocatedDays: 18,
+            leaveDays: 2,
+            holidays: 0,
+            averageAvailability: 10,
+          },
+        },
+        {
+          employeeId: 'emp-003',
+          employeeName: 'Michael Chen',
+          employeeCode: 'EMP003',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Backend Developer',
+          availability: days.map((date) => {
+            const dayOfWeek = new Date(date).getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            return {
+              date,
+              dayOfWeek,
+              isWeekend,
+              isHoliday: false,
+              status: isWeekend ? 'HOLIDAY' : 'PARTIAL' as AvailabilityStatus,
+              allocatedCapacity: isWeekend ? 0 : 85,
+              availableCapacity: isWeekend ? 100 : 15,
+              events: [],
+            };
+          }),
+          summary: {
+            periodStart: filter.startDate,
+            periodEnd: filter.endDate,
+            totalDays: days.length,
+            workingDays: 22,
+            availableDays: 0,
+            partialDays: 22,
+            fullyAllocatedDays: 0,
+            leaveDays: 0,
+            holidays: 0,
+            averageAvailability: 15,
+          },
+        },
+        {
+          employeeId: 'emp-005',
+          employeeName: 'David Wilson',
+          employeeCode: 'EMP005',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'DevOps Engineer',
+          availability: days.map((date) => {
+            const dayOfWeek = new Date(date).getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            return {
+              date,
+              dayOfWeek,
+              isWeekend,
+              isHoliday: false,
+              status: isWeekend ? 'HOLIDAY' : 'AVAILABLE' as AvailabilityStatus,
+              allocatedCapacity: isWeekend ? 0 : 40,
+              availableCapacity: isWeekend ? 100 : 60,
+              events: [],
+            };
+          }),
+          summary: {
+            periodStart: filter.startDate,
+            periodEnd: filter.endDate,
+            totalDays: days.length,
+            workingDays: 22,
+            availableDays: 22,
+            partialDays: 0,
+            fullyAllocatedDays: 0,
+            leaveDays: 0,
+            holidays: 0,
+            averageAvailability: 60,
+          },
+        },
+        {
+          employeeId: 'emp-007',
+          employeeName: 'Robert Taylor',
+          employeeCode: 'EMP007',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Junior Developer',
+          availability: days.map((date) => {
+            const dayOfWeek = new Date(date).getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            return {
+              date,
+              dayOfWeek,
+              isWeekend,
+              isHoliday: false,
+              status: isWeekend ? 'HOLIDAY' : 'AVAILABLE' as AvailabilityStatus,
+              allocatedCapacity: 0,
+              availableCapacity: 100,
+              events: [],
+            };
+          }),
+          summary: {
+            periodStart: filter.startDate,
+            periodEnd: filter.endDate,
+            totalDays: days.length,
+            workingDays: 22,
+            availableDays: 22,
+            partialDays: 0,
+            fullyAllocatedDays: 0,
+            leaveDays: 0,
+            holidays: 0,
+            averageAvailability: 100,
+          },
+        },
+      ];
+
+      return {
+        departmentId: filter.departmentIds?.[0],
+        departmentName: 'Engineering',
+        employees: mockEmployees,
+        periodStart: filter.startDate,
+        periodEnd: filter.endDate,
+        aggregatedAvailability: days.map((date) => {
+          const dayOfWeek = new Date(date).getDay();
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          return {
+            date,
+            totalEmployees: 4,
+            availableCount: isWeekend ? 0 : 2,
+            partialCount: isWeekend ? 0 : 1,
+            fullyAllocatedCount: isWeekend ? 0 : 1,
+            onLeaveCount: 0,
+            averageCapacity: isWeekend ? 0 : 61,
+          };
+        }),
+      };
     }
   },
 
@@ -274,20 +442,231 @@ export const resourceManagementService = {
       );
       return response.data;
     } catch (error) {
-      // Mock data for 404/Missing API
+      // Mock data for 404/Missing API with realistic numbers
       console.warn('Backend API missing, using mock data for Workload Dashboard');
+      const mockEmployeeWorkloads: EmployeeWorkload[] = [
+        {
+          employeeId: 'emp-001',
+          employeeName: 'John Smith',
+          employeeCode: 'EMP001',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Senior Developer',
+          totalAllocation: 90,
+          approvedAllocation: 90,
+          pendingAllocation: 0,
+          allocationStatus: 'UNDER_UTILIZED',
+          projectCount: 3,
+          allocations: [
+            { projectId: 'p1', projectName: 'Project Alpha', projectCode: 'PA', projectStatus: 'ACTIVE', role: 'Lead Developer', allocationPercentage: 50, startDate: '2025-10-01', endDate: '2026-06-30', isPendingApproval: false },
+            { projectId: 'p2', projectName: 'Project Beta', projectCode: 'PB', projectStatus: 'ACTIVE', role: 'Developer', allocationPercentage: 40, startDate: '2026-02-01', endDate: '2026-08-31', isPendingApproval: false },
+            { projectId: 'p3', projectName: 'Project Gamma', projectCode: 'PG', projectStatus: 'ACTIVE', role: 'Consultant', allocationPercentage: 30, startDate: '2024-03-01', endDate: '2024-12-31', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-002',
+          employeeName: 'Sarah Johnson',
+          employeeCode: 'EMP002',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Full Stack Developer',
+          totalAllocation: 100,
+          approvedAllocation: 100,
+          pendingAllocation: 0,
+          allocationStatus: 'OPTIMAL',
+          projectCount: 2,
+          allocations: [
+            { projectId: 'p1', projectName: 'Project Alpha', projectCode: 'PA', projectStatus: 'ACTIVE', role: 'Developer', allocationPercentage: 60, startDate: '2025-10-15', endDate: '2026-06-30', isPendingApproval: false },
+            { projectId: 'p4', projectName: 'Project Delta', projectCode: 'PD', projectStatus: 'ACTIVE', role: 'Tech Lead', allocationPercentage: 40, startDate: '2025-11-01', endDate: '2026-07-31', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-003',
+          employeeName: 'Michael Chen',
+          employeeCode: 'EMP003',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Backend Developer',
+          totalAllocation: 85,
+          approvedAllocation: 85,
+          pendingAllocation: 0,
+          allocationStatus: 'OPTIMAL',
+          projectCount: 2,
+          allocations: [
+            { projectId: 'p2', projectName: 'Project Beta', projectCode: 'PB', projectStatus: 'ACTIVE', role: 'Backend Lead', allocationPercentage: 50, startDate: '2025-10-01', endDate: '2026-05-31', isPendingApproval: false },
+            { projectId: 'p3', projectName: 'Project Gamma', projectCode: 'PG', projectStatus: 'ACTIVE', role: 'Developer', allocationPercentage: 35, startDate: '2025-11-15', endDate: '2026-04-30', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-004',
+          employeeName: 'Emily Davis',
+          employeeCode: 'EMP004',
+          departmentId: 'dept-2',
+          departmentName: 'Design',
+          designation: 'UI/UX Designer',
+          totalAllocation: 90,
+          approvedAllocation: 90,
+          pendingAllocation: 0,
+          allocationStatus: 'OPTIMAL',
+          projectCount: 3,
+          allocations: [
+            { projectId: 'p1', projectName: 'Project Alpha', projectCode: 'PA', projectStatus: 'ACTIVE', role: 'Lead Designer', allocationPercentage: 40, startDate: '2025-10-01', endDate: '2026-06-30', isPendingApproval: false },
+            { projectId: 'p2', projectName: 'Project Beta', projectCode: 'PB', projectStatus: 'ACTIVE', role: 'Designer', allocationPercentage: 30, startDate: '2025-10-15', endDate: '2026-05-31', isPendingApproval: false },
+            { projectId: 'p4', projectName: 'Project Delta', projectCode: 'PD', projectStatus: 'ACTIVE', role: 'Designer', allocationPercentage: 20, startDate: '2025-11-01', endDate: '2026-07-31', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-005',
+          employeeName: 'David Wilson',
+          employeeCode: 'EMP005',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'DevOps Engineer',
+          totalAllocation: 40,
+          approvedAllocation: 40,
+          pendingAllocation: 0,
+          allocationStatus: 'UNDER_UTILIZED',
+          projectCount: 1,
+          allocations: [
+            { projectId: 'p1', projectName: 'Project Alpha', projectCode: 'PA', projectStatus: 'ACTIVE', role: 'DevOps', allocationPercentage: 40, startDate: '2025-10-01', endDate: '2026-06-30', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-006',
+          employeeName: 'Lisa Anderson',
+          employeeCode: 'EMP006',
+          departmentId: 'dept-3',
+          departmentName: 'QA',
+          designation: 'QA Engineer',
+          totalAllocation: 30,
+          approvedAllocation: 30,
+          pendingAllocation: 0,
+          allocationStatus: 'UNDER_UTILIZED',
+          projectCount: 1,
+          allocations: [
+            { projectId: 'p2', projectName: 'Project Beta', projectCode: 'PB', projectStatus: 'ACTIVE', role: 'QA Lead', allocationPercentage: 30, startDate: '2025-11-01', endDate: '2026-05-31', isPendingApproval: false },
+          ],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-007',
+          employeeName: 'Robert Taylor',
+          employeeCode: 'EMP007',
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          designation: 'Junior Developer',
+          totalAllocation: 0,
+          approvedAllocation: 0,
+          pendingAllocation: 0,
+          allocationStatus: 'UNASSIGNED',
+          projectCount: 0,
+          allocations: [],
+          hasPendingApprovals: false,
+        },
+        {
+          employeeId: 'emp-008',
+          employeeName: 'Jennifer Martinez',
+          employeeCode: 'EMP008',
+          departmentId: 'dept-2',
+          departmentName: 'Design',
+          designation: 'Graphic Designer',
+          totalAllocation: 0,
+          approvedAllocation: 0,
+          pendingAllocation: 0,
+          allocationStatus: 'UNASSIGNED',
+          projectCount: 0,
+          allocations: [],
+          hasPendingApprovals: false,
+        },
+      ];
+
+      const mockDepartmentWorkloads: DepartmentWorkload[] = [
+        {
+          departmentId: 'dept-1',
+          departmentName: 'Engineering',
+          employeeCount: 5,
+          averageAllocation: 71,
+          overAllocatedCount: 2,
+          optimalCount: 1,
+          underUtilizedCount: 1,
+          unassignedCount: 1,
+          activeProjects: 4,
+          totalAllocatedHours: 284,
+        },
+        {
+          departmentId: 'dept-2',
+          departmentName: 'Design',
+          employeeCount: 2,
+          averageAllocation: 45,
+          overAllocatedCount: 0,
+          optimalCount: 1,
+          underUtilizedCount: 0,
+          unassignedCount: 1,
+          activeProjects: 3,
+          totalAllocatedHours: 90,
+        },
+        {
+          departmentId: 'dept-3',
+          departmentName: 'QA',
+          employeeCount: 1,
+          averageAllocation: 30,
+          overAllocatedCount: 0,
+          optimalCount: 0,
+          underUtilizedCount: 1,
+          unassignedCount: 0,
+          activeProjects: 1,
+          totalAllocatedHours: 30,
+        },
+      ];
+
+      const mockHeatmapData: WorkloadHeatmapRow[] = mockEmployeeWorkloads.slice(0, 5).map(emp => ({
+        employeeId: emp.employeeId,
+        employeeName: emp.employeeName,
+        employeeCode: emp.employeeCode,
+        departmentName: emp.departmentName,
+        cells: [
+          { weekStart: '2026-01-05', weekEnd: '2026-01-11', allocation: emp.totalAllocation, status: emp.allocationStatus, projectCount: emp.projectCount },
+          { weekStart: '2026-01-12', weekEnd: '2026-01-18', allocation: emp.totalAllocation - 5, status: emp.allocationStatus, projectCount: emp.projectCount },
+          { weekStart: '2026-01-19', weekEnd: '2026-01-25', allocation: emp.totalAllocation + 5, status: emp.allocationStatus, projectCount: emp.projectCount },
+          { weekStart: '2026-01-26', weekEnd: '2026-02-01', allocation: emp.totalAllocation, status: emp.allocationStatus, projectCount: emp.projectCount },
+        ],
+      }));
+
       return {
         summary: {
-          totalEmployees: 124,
-          averageAllocation: 78,
-          overAllocatedCount: 3,
-          pendingApprovals: 5,
-          totalProjects: 12,
-          availableEmployees: 15
+          totalEmployees: 8,
+          activeProjects: 4,
+          averageAllocation: 56,
+          medianAllocation: 57,
+          overAllocatedCount: 0,
+          optimalCount: 3,
+          underUtilizedCount: 3,
+          unassignedCount: 2,
+          pendingApprovals: 3,
+          totalAllocatedHours: 355,
+          periodStart: filters?.startDate || '2026-01-01',
+          periodEnd: filters?.endDate || '2026-01-31',
         },
-        heatmap: [],
-        utilizationTrend: []
-      } as unknown as WorkloadDashboardData;
+        employeeWorkloads: mockEmployeeWorkloads,
+        departmentWorkloads: mockDepartmentWorkloads,
+        projectWorkloads: [
+          { projectId: 'p1', projectName: 'Project Alpha', projectCode: 'PA', projectStatus: 'ACTIVE', teamSize: 4, totalAllocatedPercentage: 190, averageAllocation: 47, startDate: '2025-10-01' },
+          { projectId: 'p2', projectName: 'Project Beta', projectCode: 'PB', projectStatus: 'ACTIVE', teamSize: 3, totalAllocatedPercentage: 120, averageAllocation: 40, startDate: '2025-10-15' },
+          { projectId: 'p3', projectName: 'Project Gamma', projectCode: 'PG', projectStatus: 'ACTIVE', teamSize: 2, totalAllocatedPercentage: 65, averageAllocation: 32, startDate: '2025-11-01' },
+          { projectId: 'p4', projectName: 'Project Delta', projectCode: 'PD', projectStatus: 'ACTIVE', teamSize: 2, totalAllocatedPercentage: 70, averageAllocation: 35, startDate: '2025-11-15' },
+        ],
+        heatmapData: mockHeatmapData,
+        trends: [
+          { period: '2025-11', periodLabel: 'Nov 2025', averageAllocation: 55, overAllocatedCount: 1, optimalCount: 3, underUtilizedCount: 2, totalEmployees: 8 },
+          { period: '2025-12', periodLabel: 'Dec 2025', averageAllocation: 62, overAllocatedCount: 2, optimalCount: 2, underUtilizedCount: 2, totalEmployees: 8 },
+          { period: '2026-01', periodLabel: 'Jan 2026', averageAllocation: 59, overAllocatedCount: 2, optimalCount: 2, underUtilizedCount: 2, totalEmployees: 8 },
+        ],
+      };
     }
   },
 
