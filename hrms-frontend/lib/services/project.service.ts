@@ -71,4 +71,10 @@ export const projectService = {
     const response = await apiClient.get<ProjectEmployee[]>(`/projects/employee/${employeeId}`);
     return response.data;
   },
+
+  // Get employee's allocations across all projects (with allocation percentages)
+  getEmployeeAllocations: async (employeeId: string): Promise<ProjectEmployee[]> => {
+    const response = await apiClient.get<ProjectEmployee[]>(`/projects/employee/${employeeId}/allocations`);
+    return response.data;
+  },
 };
