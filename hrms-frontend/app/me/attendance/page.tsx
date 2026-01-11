@@ -373,10 +373,12 @@ export default function MyAttendancePage() {
                 )}
                 {attendanceComplete && (
                   <button
-                    disabled
-                    className="flex items-center gap-2 px-6 py-3 border border-slate-300 text-slate-500 rounded-lg cursor-not-allowed"
+                    onClick={handleCheckIn}
+                    disabled={isCheckingIn}
+                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Checked Out
+                    <LogIn className="h-5 w-5" />
+                    {isCheckingIn ? 'Checking In...' : 'Check In Again'}
                   </button>
                 )}
               </div>

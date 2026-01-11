@@ -4,6 +4,8 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -17,7 +19,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LeaveType extends TenantAware {
+public class LeaveType extends TenantAware implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "leave_code", nullable = false, length = 50)
     private String leaveCode;

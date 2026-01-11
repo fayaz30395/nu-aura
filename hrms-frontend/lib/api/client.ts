@@ -1,6 +1,8 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+
+console.log('[ApiClient] Initialized with API_URL:', API_URL);
 
 class ApiClient {
   private client: AxiosInstance;
@@ -34,8 +36,12 @@ class ApiClient {
     );
 
     this.client.interceptors.response.use(
-      (response) => response,
+      (response: AxiosResponse) => {
+        console.log('[ApiClient] Response:', response.config.method?.toUpperCase(), response.config.url, response.status);
+        return response;
+      },
       async (error) => {
+        console.error('[ApiClient] Error:', error.config?.method?.toUpperCase(), error.config?.url, error.response?.status, error.message);
         const originalRequest = error.config;
 
         // Handle 401 Unauthorized - try to refresh token

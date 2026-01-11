@@ -70,12 +70,16 @@ export const useAuth = create<AuthState>()(
       },
 
       login: async (credentials: LoginRequest) => {
+        console.log('[Auth] Login started for:', credentials.email);
         set({ isLoading: true });
         try {
+          console.log('[Auth] Calling authApi.login...');
           const response = await authApi.login(credentials);
+          console.log('[Auth] Login response received:', { userId: response.userId, email: response.email });
 
           apiClient.setTokens(response.accessToken, response.refreshToken);
           apiClient.setTenantId(response.tenantId);
+          console.log('[Auth] Tokens and tenantId set');
 
           // Extract roles and permissions from JWT token
           const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);
@@ -98,8 +102,11 @@ export const useAuth = create<AuthState>()(
             localStorage.setItem('user', JSON.stringify(user));
           }
 
+          console.log('[Auth] Setting user and isAuthenticated:', { userId: user.id, email: user.email });
           set({ user, isAuthenticated: true, isLoading: false });
+          console.log('[Auth] Login completed successfully');
         } catch (error) {
+          console.error('[Auth] Login failed:', error);
           set({ isLoading: false });
           throw error;
         }

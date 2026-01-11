@@ -17,9 +17,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="light" data-mantine-color-scheme="light" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript defaultColorScheme="auto" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                document.documentElement.setAttribute('data-mantine-color-scheme', 'light');
+                try {
+                  localStorage.removeItem('darkMode');
+                  localStorage.removeItem('mantine-color-scheme-value');
+                  localStorage.setItem('mantine-color-scheme-value', 'light');
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <Providers>

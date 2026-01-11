@@ -222,7 +222,7 @@ export default function MyDashboardPage() {
 
   if (!hasHydrated || isLoading) {
     return (
-      <AppLayout activeMenuItem="profile" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
+      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="flex items-center justify-center min-h-[400px]">
           <Loading />
         </div>
@@ -232,7 +232,7 @@ export default function MyDashboardPage() {
 
   if (!dashboard) {
     return (
-      <AppLayout activeMenuItem="profile" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
+      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="text-center py-12">
           <p className="text-surface-500">Failed to load dashboard data</p>
         </div>
@@ -242,7 +242,7 @@ export default function MyDashboardPage() {
 
   return (
     <AppLayout
-      activeMenuItem="profile"
+      activeMenuItem="my-dashboard"
       breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
     >
       <div className="space-y-6">

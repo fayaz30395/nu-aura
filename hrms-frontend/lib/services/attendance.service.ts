@@ -13,47 +13,72 @@ import {
   TimeEntry,
 } from '../types/attendance';
 
+// Backend AttendanceResponse structure
 interface AttendanceDayResponse {
   id: string;
   employeeId: string;
-  date: string;
-  checkInAt?: string | null;
-  checkOutAt?: string | null;
+  attendanceDate: string;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  checkInSource?: string | null;
+  checkOutSource?: string | null;
   status?: string | null;
+  workDurationMinutes?: number;
+  breakDurationMinutes?: number;
+  overtimeMinutes?: number;
+  isLate?: boolean;
+  lateByMinutes?: number;
+  isEarlyDeparture?: boolean;
+  earlyDepartureMinutes?: number;
+  regularizationRequested?: boolean;
+  regularizationApproved?: boolean;
+  regularizationReason?: string | null;
 }
 
 const mapAttendanceStatus = (status?: string | null): AttendanceStatus => {
   switch (status) {
     case 'PRESENT':
+      return 'PRESENT';
     case 'REGULARIZED':
       return 'PRESENT';
     case 'INCOMPLETE':
       return 'PENDING_REGULARIZATION';
     case 'ABSENT':
       return 'ABSENT';
+    case 'HALF_DAY':
+      return 'HALF_DAY';
+    case 'ON_LEAVE':
+      return 'ON_LEAVE';
+    case 'WEEKLY_OFF':
+      return 'WEEKLY_OFF';
+    case 'HOLIDAY':
+      return 'HOLIDAY';
     default:
       return 'ABSENT';
   }
 };
 
 const mapAttendanceDay = (day: AttendanceDayResponse): AttendanceRecord => {
-  const checkInTime = day.checkInAt || undefined;
-  const checkOutTime = day.checkOutAt || undefined;
-  const timestamp = checkOutTime || checkInTime || new Date().toISOString();
-
   return {
     id: day.id,
     tenantId: '',
     employeeId: day.employeeId,
-    attendanceDate: day.date,
-    checkInTime,
-    checkOutTime,
+    attendanceDate: day.attendanceDate,
+    checkInTime: day.checkInTime || undefined,
+    checkOutTime: day.checkOutTime || undefined,
     status: mapAttendanceStatus(day.status),
-    createdAt: timestamp,
-    updatedAt: timestamp,
-    regularizationRequested: day.status === 'INCOMPLETE',
-    regularizationApproved: day.status === 'REGULARIZED',
-    isRegularization: day.status === 'REGULARIZED',
+    workDurationMinutes: day.workDurationMinutes,
+    breakDurationMinutes: day.breakDurationMinutes,
+    overtimeMinutes: day.overtimeMinutes,
+    isLate: day.isLate,
+    lateByMinutes: day.lateByMinutes,
+    isEarlyDeparture: day.isEarlyDeparture,
+    earlyDepartureMinutes: day.earlyDepartureMinutes,
+    regularizationRequested: day.regularizationRequested || false,
+    regularizationApproved: day.regularizationApproved || false,
+    regularizationReason: day.regularizationReason || undefined,
+    createdAt: day.checkInTime || new Date().toISOString(),
+    updatedAt: day.checkOutTime || day.checkInTime || new Date().toISOString(),
   } as AttendanceRecord;
 };
 

@@ -38,7 +38,18 @@
       "Bash(# Create database /opt/homebrew/Cellar/postgresql@16/16.11/bin/createdb hrms_dev || echo \"\"Database may already exist or error\"\" # List databases to verify /opt/homebrew/Cellar/postgresql@16/16.11/bin/psql -l)",
       "Bash(xargs:*)",
       "Bash(git log:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(# Check for duplicate cloudbuild.yaml files find . -name \"\"cloudbuild.yaml\"\" -type f)",
+      "Bash(# Move any remaining loose docs mv docs/ATTENDANCE_TIMEZONE_FIX.md docs/development/ || true # Verify docs structure find docs -type f -name \"\"*.md\"\")",
+      "Bash(__NEW_LINE_c8b91c0966dbaf49__ echo \"\")",
+      "Bash(__NEW_LINE_73e2e2d1264b1f1b__ echo \"\")",
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(npm run dev:*)",
+      "Bash(mvn:*)",
+      "Bash(psql:*)",
+      "Bash(brew services:*)",
+      "Bash(/opt/homebrew/opt/postgresql@16/bin/psql:*)",
+      "Bash(python3:*)"
     ]
   }
 }
