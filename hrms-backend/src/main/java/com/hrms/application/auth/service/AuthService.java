@@ -388,7 +388,8 @@ public class AuthService {
 
         // Fallback: Load from legacy User->Role->RolePermission structure (Matrix RBAC)
         log.debug("No UserAppAccess found for user {}, falling back to legacy role permissions", userId);
-        User user = userRepository.findById(userId).orElse(null);
+        // Use the new method that eagerly fetches roles and permissions
+        User user = userRepository.findByIdWithRolesAndPermissions(userId).orElse(null);
         if (user != null) {
             log.debug("User {} has {} roles", userId, user.getRoles().size());
             user.getRoles().forEach(role -> {

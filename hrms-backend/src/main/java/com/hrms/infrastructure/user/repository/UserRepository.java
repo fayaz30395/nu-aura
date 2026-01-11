@@ -2,7 +2,8 @@ package com.hrms.infrastructure.user.repository;
 
 import com.hrms.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,4 +33,15 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Used for Google SSO where email uniquely identifies the user.
      */
     Optional<User> findByEmail(String email);
+
+    /**
+     * Find user by ID with roles and permissions eagerly fetched.
+     * Used for authentication to load all permissions in one query.
+     */
+    @Query("SELECT DISTINCT u FROM User u " +
+           "LEFT JOIN FETCH u.roles r " +
+           "LEFT JOIN FETCH r.permissions rp " +
+           "LEFT JOIN FETCH rp.permission " +
+           "WHERE u.id = :userId")
+    Optional<User> findByIdWithRolesAndPermissions(@Param("userId") UUID userId);
 }
