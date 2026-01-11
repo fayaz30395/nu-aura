@@ -792,79 +792,127 @@ export function CreateAllocationModal({
                     </tr>
                   </thead>
                   <tbody>
-                    {allocations.map((allocation) => (
-                      <tr
-                        key={allocation.employeeId}
-                        className="border-t border-surface-200 dark:border-surface-700"
-                      >
-                        <td className="px-4 py-3">
-                          <div className="font-medium text-surface-800 dark:text-surface-200">
-                            {allocation.employeeName}
-                          </div>
-                          <div className="text-xs text-surface-500">{allocation.employeeCode}</div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Input
-                            type="text"
-                            placeholder="e.g., Developer"
-                            value={allocation.role}
-                            onChange={(e) =>
-                              handleAllocationChange(allocation.employeeId, 'role', e.target.value)
-                            }
-                            className="text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center justify-center gap-1">
+                    {allocations.map((allocation) => {
+                      const totalWithThis = allocation.existingAllocations + allocation.allocationPercentage;
+                      const isAtCapacity = allocation.allocationPercentage >= allocation.availableCapacity;
+                      const isNearCapacity = allocation.availableCapacity - allocation.allocationPercentage <= 10;
+
+                      return (
+                        <tr
+                          key={allocation.employeeId}
+                          className="border-t border-surface-200 dark:border-surface-700"
+                        >
+                          <td className="px-4 py-3">
+                            <div className="font-medium text-surface-800 dark:text-surface-200">
+                              {allocation.employeeName}
+                            </div>
+                            <div className="text-xs text-surface-500">{allocation.employeeCode}</div>
+                            {/* Capacity indicator */}
+                            <div className="mt-1 flex items-center gap-2">
+                              <div className="flex-1 h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                                {/* Existing allocations (gray) */}
+                                <div className="h-full flex">
+                                  <div
+                                    className="h-full bg-surface-400 dark:bg-surface-500"
+                                    style={{ width: `${allocation.existingAllocations}%` }}
+                                  />
+                                  {/* This allocation (colored) */}
+                                  <div
+                                    className={`h-full ${
+                                      isAtCapacity
+                                        ? 'bg-amber-500'
+                                        : isNearCapacity
+                                          ? 'bg-yellow-500'
+                                          : 'bg-primary-500'
+                                    }`}
+                                    style={{ width: `${allocation.allocationPercentage}%` }}
+                                  />
+                                </div>
+                              </div>
+                              <span className={`text-[10px] font-medium whitespace-nowrap ${
+                                isAtCapacity ? 'text-amber-600' : 'text-surface-500'
+                              }`}>
+                                {totalWithThis}%
+                              </span>
+                            </div>
+                            {allocation.existingAllocations > 0 && (
+                              <div className="text-[10px] text-surface-400 mt-0.5">
+                                {allocation.existingAllocations}% in other projects
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
                             <Input
-                              type="number"
-                              min="5"
-                              max="100"
-                              value={allocation.allocationPercentage}
+                              type="text"
+                              placeholder="e.g., Developer"
+                              value={allocation.role}
                               onChange={(e) =>
-                                handleAllocationChange(
-                                  allocation.employeeId,
-                                  'allocationPercentage',
-                                  parseInt(e.target.value) || 0
-                                )
+                                handleAllocationChange(allocation.employeeId, 'role', e.target.value)
                               }
-                              className="w-20 text-center text-sm"
+                              className="text-sm"
                             />
-                            <Percent className="h-4 w-4 text-surface-400" />
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Input
-                            type="date"
-                            value={allocation.startDate}
-                            onChange={(e) =>
-                              handleAllocationChange(allocation.employeeId, 'startDate', e.target.value)
-                            }
-                            className="text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <Input
-                            type="date"
-                            value={allocation.endDate}
-                            onChange={(e) =>
-                              handleAllocationChange(allocation.employeeId, 'endDate', e.target.value)
-                            }
-                            min={allocation.startDate}
-                            className="text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveEmployee(allocation.employeeId)}
-                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="flex items-center gap-1">
+                                <Input
+                                  type="number"
+                                  min="5"
+                                  max={allocation.availableCapacity}
+                                  value={allocation.allocationPercentage}
+                                  onChange={(e) =>
+                                    handleAllocationChange(
+                                      allocation.employeeId,
+                                      'allocationPercentage',
+                                      parseInt(e.target.value) || 0
+                                    )
+                                  }
+                                  className={`w-20 text-center text-sm ${
+                                    isAtCapacity ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20' : ''
+                                  }`}
+                                />
+                                <Percent className="h-4 w-4 text-surface-400" />
+                              </div>
+                              <div className={`text-[10px] ${
+                                isAtCapacity ? 'text-amber-600 font-medium' : 'text-surface-400'
+                              }`}>
+                                max: {allocation.availableCapacity}%
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <Input
+                              type="date"
+                              value={allocation.startDate}
+                              onChange={(e) =>
+                                handleAllocationChange(allocation.employeeId, 'startDate', e.target.value)
+                              }
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <Input
+                              type="date"
+                              value={allocation.endDate}
+                              onChange={(e) =>
+                                handleAllocationChange(allocation.employeeId, 'endDate', e.target.value)
+                              }
+                              min={allocation.startDate}
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveEmployee(allocation.employeeId)}
+                              className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
