@@ -7,6 +7,7 @@ Multi-tenant HRMS platform for employees, attendance, payroll, performance, and 
 | Document | Description |
 |----------|-------------|
 | [Technical Architecture](architecture/TECHNICAL_ARCHITECTURE.md) | System design, tech stack, layers |
+| [UI Architecture](architecture/UI_ARCHITECTURE.md) | Frontend components, state, integrations |
 | [Security & RBAC](architecture/SECURITY_REQUIREMENTS.md) | Auth, permissions, data protection |
 | [RBAC Details](architecture/RBAC_DOCUMENTATION.md) | Role hierarchy, permission matrix |
 | [API Specifications](api/API_SPECIFICATIONS.md) | REST endpoints, request/response |
