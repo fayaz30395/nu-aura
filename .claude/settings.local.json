@@ -57,7 +57,10 @@
       "Bash(PGPASSWORD=npg_xwHjDEtfb4o2 psql:*)",
       "Bash(/opt/homebrew/opt/libpq/bin/psql:*)",
       "Bash(./mvnw compile:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(comm -23:*)",
+      "Bash(./gradlew compileTestJava:*)"
     ]
   }
 }
