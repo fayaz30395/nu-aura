@@ -960,7 +960,7 @@
 
         <!-- Project 1: E-Commerce Platform -->
         <insert tableName="projects">
-            <column name="id" value="p01e8400-e29b-41d4-a716-446655440001"/>
+            <column name="id" value="b01e8400-e29b-41d4-a716-446655440001"/>
             <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
             <column name="project_code" value="PROJ-001"/>
             <column name="name" value="E-Commerce Platform"/>
@@ -980,7 +980,7 @@
 
         <!-- Project 2: Mobile Banking App -->
         <insert tableName="projects">
-            <column name="id" value="p01e8400-e29b-41d4-a716-446655440002"/>
+            <column name="id" value="b01e8400-e29b-41d4-a716-446655440002"/>
             <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
             <column name="project_code" value="PROJ-002"/>
             <column name="name" value="Mobile Banking App"/>
@@ -1000,7 +1000,7 @@
 
         <!-- Project 3: Healthcare Portal -->
         <insert tableName="projects">
-            <column name="id" value="p01e8400-e29b-41d4-a716-446655440003"/>
+            <column name="id" value="b01e8400-e29b-41d4-a716-446655440003"/>
             <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
             <column name="project_code" value="PROJ-003"/>
             <column name="name" value="Healthcare Portal"/>
@@ -1020,7 +1020,7 @@
 
         <!-- Project 4: Internal Tools Dashboard -->
         <insert tableName="projects">
-            <column name="id" value="p01e8400-e29b-41d4-a716-446655440004"/>
+            <column name="id" value="b01e8400-e29b-41d4-a716-446655440004"/>
             <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
             <column name="project_code" value="PROJ-004"/>
             <column name="name" value="Internal Tools Dashboard"/>
@@ -1039,7 +1039,7 @@
 
         <!-- Project 5: AI Chatbot Integration -->
         <insert tableName="projects">
-            <column name="id" value="p01e8400-e29b-41d4-a716-446655440005"/>
+            <column name="id" value="b01e8400-e29b-41d4-a716-446655440005"/>
             <column name="tenant_id" value="550e8400-e29b-41d4-a716-446655440000"/>
             <column name="project_code" value="PROJ-005"/>
             <column name="name" value="AI Chatbot Integration"/>
@@ -1149,15 +1149,15 @@
 
         <sql>
             -- Create attendance records for all employees for the past 7 days
-            INSERT INTO attendances (id, tenant_id, employee_id, attendance_date, check_in_time, check_out_time, work_hours, status, created_at, updated_at, version)
+            INSERT INTO attendance_records (id, tenant_id, employee_id, attendance_date, check_in_time, check_out_time, work_duration_minutes, status, created_at, updated_at, version)
             SELECT
                 gen_random_uuid(),
                 '550e8400-e29b-41d4-a716-446655440000',
                 e.id,
-                CURRENT_DATE - (d.day_offset || ' days')::INTERVAL,
+                (CURRENT_DATE - (d.day_offset || ' days')::INTERVAL)::DATE,
                 (CURRENT_DATE - (d.day_offset || ' days')::INTERVAL) + TIME '09:00:00' + (RANDOM() * INTERVAL '30 minutes'),
                 (CURRENT_DATE - (d.day_offset || ' days')::INTERVAL) + TIME '18:00:00' + (RANDOM() * INTERVAL '60 minutes'),
-                8.0 + ROUND((RANDOM() * 2 - 1)::NUMERIC, 2),
+                480 + FLOOR(RANDOM() * 60 - 30)::INTEGER,
                 'PRESENT',
                 NOW(),
                 NOW(),
