@@ -152,4 +152,7 @@
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 
+    <!-- Mock Data: 5 Projects, 3 Managers, 10 Developers, 1 HR Manager, 4 HR Staff -->
+    <include file="db/changelog/changes/100-seed-mock-data.xml"/>
+
 </databaseChangeLog>
