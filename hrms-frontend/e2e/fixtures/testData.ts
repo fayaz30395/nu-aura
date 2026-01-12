@@ -3,28 +3,67 @@
  * Contains mock data for testing various features
  */
 
+/**
+ * Mock Users for E2E Testing
+ * These credentials match the seeded mock data in 100-seed-mock-data.xml
+ */
 export const testUsers = {
   admin: {
-    email: 'admin@demo.com',
+    email: 'admin@nulogic.io',
     password: 'password',
     role: 'Admin',
+    name: 'Admin User',
   },
   hrManager: {
-    email: 'admin@demo.com',
+    email: 'priya.sharma@nulogic.io',
     password: 'password',
     role: 'HR Manager',
+    name: 'Priya Sharma',
   },
+  hrStaff: [
+    { email: 'neha.gupta@nulogic.io', password: 'password', role: 'HR Staff', name: 'Neha Gupta' },
+    { email: 'amit.kumar@nulogic.io', password: 'password', role: 'HR Staff', name: 'Amit Kumar' },
+    { email: 'sneha.reddy@nulogic.io', password: 'password', role: 'HR Staff', name: 'Sneha Reddy' },
+    { email: 'rahul.verma@nulogic.io', password: 'password', role: 'HR Staff', name: 'Rahul Verma' },
+  ],
+  managers: [
+    { email: 'rajesh.kumar@nulogic.io', password: 'password', role: 'Manager', name: 'Rajesh Kumar', project: 'NuAura HRMS' },
+    { email: 'sunita.patel@nulogic.io', password: 'password', role: 'Manager', name: 'Sunita Patel', project: 'E-Commerce Platform' },
+    { email: 'vikram.singh@nulogic.io', password: 'password', role: 'Manager', name: 'Vikram Singh', project: 'Mobile Banking App' },
+  ],
+  developers: [
+    { email: 'ankit.sharma@nulogic.io', password: 'password', role: 'Developer', name: 'Ankit Sharma' },
+    { email: 'meera.nair@nulogic.io', password: 'password', role: 'Developer', name: 'Meera Nair' },
+    { email: 'sanjay.gupta@nulogic.io', password: 'password', role: 'Developer', name: 'Sanjay Gupta' },
+    { email: 'kavitha.menon@nulogic.io', password: 'password', role: 'Developer', name: 'Kavitha Menon' },
+    { email: 'arun.krishnan@nulogic.io', password: 'password', role: 'Developer', name: 'Arun Krishnan' },
+    { email: 'divya.iyer@nulogic.io', password: 'password', role: 'Developer', name: 'Divya Iyer' },
+    { email: 'karthik.rajan@nulogic.io', password: 'password', role: 'Developer', name: 'Karthik Rajan' },
+    { email: 'pooja.hegde@nulogic.io', password: 'password', role: 'Developer', name: 'Pooja Hegde' },
+    { email: 'manoj.pillai@nulogic.io', password: 'password', role: 'Developer', name: 'Manoj Pillai' },
+    { email: 'lakshmi.nambiar@nulogic.io', password: 'password', role: 'Developer', name: 'Lakshmi Nambiar' },
+  ],
   manager: {
-    email: 'admin@demo.com',
+    email: 'rajesh.kumar@nulogic.io',
     password: 'password',
     role: 'Manager',
+    name: 'Rajesh Kumar',
   },
   employee: {
-    email: 'admin@demo.com',
+    email: 'ankit.sharma@nulogic.io',
     password: 'password',
     role: 'Employee',
+    name: 'Ankit Sharma',
   },
 };
+
+export const mockProjects = [
+  { code: 'HRMS-001', name: 'NuAura HRMS', manager: 'Rajesh Kumar', status: 'IN_PROGRESS' },
+  { code: 'ECOM-001', name: 'E-Commerce Platform', manager: 'Sunita Patel', status: 'IN_PROGRESS' },
+  { code: 'BANK-001', name: 'Mobile Banking App', manager: 'Vikram Singh', status: 'IN_PROGRESS' },
+  { code: 'CRM-001', name: 'CRM System', manager: 'Rajesh Kumar', status: 'PLANNING' },
+  { code: 'AI-001', name: 'AI Analytics Dashboard', manager: 'Sunita Patel', status: 'PLANNING' },
+];
 
 export const testEmployee = {
   basic: {

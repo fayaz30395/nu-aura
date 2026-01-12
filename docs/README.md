@@ -10,6 +10,7 @@ Multi-tenant HRMS platform for employees, attendance, payroll, performance, and 
 | [UI Architecture](architecture/UI_ARCHITECTURE.md) | Frontend components, state, integrations |
 | [Security & RBAC](architecture/SECURITY_REQUIREMENTS.md) | Auth, permissions, data protection |
 | [RBAC Details](architecture/RBAC_DOCUMENTATION.md) | Role hierarchy, permission matrix |
+| [SSO Implementation](architecture/SSO-IMPLEMENTATION.md) | Google OAuth, SSO setup |
 | [API Specifications](api/API_SPECIFICATIONS.md) | REST endpoints, request/response |
 | [Database Schema](api/DATABASE_SCHEMA.md) | Data models, relationships |
 | [Functional Requirements](api/FUNCTIONAL_REQUIREMENTS.md) | Feature specifications |
@@ -22,12 +23,14 @@ Multi-tenant HRMS platform for employees, attendance, payroll, performance, and 
 | [Developer Guide](development/DEVELOPER_GUIDE.md) | Coding standards, workflow |
 | [Backend Guide](development/BACKEND_README.md) | Spring Boot specifics |
 | [Frontend Guide](development/FRONTEND_README.md) | Next.js specifics |
+| [Mock Users & API](development/MOCK_USERS_API.md) | Test credentials, API examples |
 
 ## Operations
 
 | Document | Description |
 |----------|-------------|
 | [Deployment Guide](operations/DEPLOYMENT_GUIDE.md) | Docker, K8s, CI/CD |
+| [Deployment Checklist](operations/DEPLOYMENT_CHECKLIST.md) | Pre-deploy verification |
 | [Testing Requirements](operations/TESTING_REQUIREMENTS.md) | Unit, integration, E2E |
 
 ## Project Status
@@ -62,4 +65,4 @@ Multi-tenant HRMS platform for employees, attendance, payroll, performance, and 
 - **Expenses**: Claims, approvals, reimbursements
 
 ---
-*Last Updated: January 12, 2026*
+*Last Updated: January 13, 2026*
