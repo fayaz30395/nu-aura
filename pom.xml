@@ -14,7 +14,7 @@
     <modules>
         <module>modules/common</module>
         <module>modules/pm</module>
-        <module>hrms-backend</module>
+        <module>backend</module>
     </modules>
 
     <parent>
