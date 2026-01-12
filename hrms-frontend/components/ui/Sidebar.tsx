@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
 
@@ -134,36 +135,64 @@ const ChildrenFlyover: React.FC<{
 
         {/* Children items */}
         <div className="py-2 max-h-[400px] overflow-y-auto">
-          {item.children?.map((child) => (
-            <button
-              key={child.id}
-              onClick={() => {
-                onItemClick?.(child);
-                onClose();
-              }}
-              className={cn(
-                'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors',
-                activeId === child.id
-                  ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-medium'
-                  : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200'
-              )}
-            >
-              {child.icon && (
-                <span className={cn(
-                  "w-5 h-5 flex items-center justify-center",
-                  activeId === child.id ? 'text-primary-600 dark:text-primary-400' : 'text-surface-400'
-                )}>
-                  {child.icon}
-                </span>
-              )}
-              <span className="flex-1 text-left truncate">{child.label}</span>
-              {child.badge && (
-                <span className="text-xs bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 px-1.5 py-0.5 rounded-full">
-                  {child.badge}
-                </span>
-              )}
-            </button>
-          ))}
+          {item.children?.map((child) => {
+            const childClasses = cn(
+              'w-full flex items-center gap-3 px-4 py-2.5 text-sm',
+              activeId === child.id
+                ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-medium'
+                : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200'
+            );
+
+            const childContent = (
+              <>
+                {child.icon && (
+                  <span className={cn(
+                    "w-5 h-5 flex items-center justify-center",
+                    activeId === child.id ? 'text-primary-600 dark:text-primary-400' : 'text-surface-400'
+                  )}>
+                    {child.icon}
+                  </span>
+                )}
+                <span className="flex-1 text-left truncate">{child.label}</span>
+                {child.badge && (
+                  <span className="text-xs bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 px-1.5 py-0.5 rounded-full">
+                    {child.badge}
+                  </span>
+                )}
+              </>
+            );
+
+            // Use Link for instant navigation
+            if (child.href) {
+              return (
+                <Link
+                  key={child.id}
+                  href={child.href}
+                  onClick={() => {
+                    onItemClick?.(child);
+                    onClose();
+                  }}
+                  className={childClasses}
+                  prefetch={true}
+                >
+                  {childContent}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                key={child.id}
+                onClick={() => {
+                  onItemClick?.(child);
+                  onClose();
+                }}
+                className={childClasses}
+              >
+                {childContent}
+              </button>
+            );
+          })}
         </div>
 
         {/* Footer */}
@@ -187,96 +216,121 @@ const SidebarMenuItem: React.FC<{
   openFlyoverId: string | null;
   onToggleFlyover: (itemId: string, rect: DOMRect | null) => void;
 }> = ({ item, isActive, isCollapsed, onItemClick, activeId, openFlyoverId, onToggleFlyover }) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const elementRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const hasChildren = item.children && item.children.length > 0;
   const isFlyoverOpen = openFlyoverId === item.id;
 
   const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
     if (hasChildren) {
+      e.preventDefault();
+      e.stopPropagation();
       // Toggle flyover for items with children
       if (isFlyoverOpen) {
         onToggleFlyover(item.id, null);
       } else {
-        const rect = buttonRef.current?.getBoundingClientRect() || null;
+        const rect = elementRef.current?.getBoundingClientRect() || null;
         onToggleFlyover(item.id, rect);
       }
     } else {
-      // Direct click for items without children
+      // Let Link handle navigation naturally for speed
       onItemClick?.(item);
     }
   };
 
-  return (
-    <div className="relative">
-      <button
-        ref={buttonRef}
-        onClick={handleClick}
-        className={cn(
-          'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150',
-          isActive || isFlyoverOpen
-            ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
-            : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200',
-          item.disabled && 'cursor-not-allowed opacity-50'
-        )}
-        disabled={item.disabled}
-      >
-        {/* Active indicator */}
-        {(isActive || isFlyoverOpen) && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-500 rounded-r-full" />
-        )}
+  const commonClasses = cn(
+    'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
+    isActive || isFlyoverOpen
+      ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
+      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200',
+    item.disabled && 'cursor-not-allowed opacity-50'
+  );
 
-        {item.icon && (
-          <span
-            className={cn(
-              'flex items-center justify-center w-6 h-6 transition-colors flex-shrink-0',
-              isActive || isFlyoverOpen
-                ? 'text-primary-600 dark:text-primary-400'
-                : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-200'
-            )}
-          >
-            {item.icon}
-          </span>
-        )}
+  const content = (
+    <>
+      {/* Active indicator */}
+      {(isActive || isFlyoverOpen) && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-500 rounded-r-full" />
+      )}
 
-        {!isCollapsed && (
-          <div className="flex flex-1 items-center justify-between min-w-0">
-            <span className="truncate">{item.label}</span>
-            <div className="flex items-center gap-2">
-              {item.badge && (
-                <span className={cn(
-                  'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium',
-                  isActive || isFlyoverOpen
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-surface-200 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
-                )}>
-                  {item.badge}
-                </span>
-              )}
-              {hasChildren && (
-                <ChevronRight
-                  className={cn(
-                    'h-4 w-4 text-surface-400 transition-transform duration-200'
-                  )}
-                />
-              )}
-            </div>
-          </div>
-        )}
+      {item.icon && (
+        <span
+          className={cn(
+            'flex items-center justify-center w-6 h-6 flex-shrink-0',
+            isActive || isFlyoverOpen
+              ? 'text-primary-600 dark:text-primary-400'
+              : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-200'
+          )}
+        >
+          {item.icon}
+        </span>
+      )}
 
-        {/* Tooltip for collapsed state (items without children) */}
-        {isCollapsed && !hasChildren && (
-          <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-lg pointer-events-none">
-            {item.label}
+      {!isCollapsed && (
+        <div className="flex flex-1 items-center justify-between min-w-0">
+          <span className="truncate">{item.label}</span>
+          <div className="flex items-center gap-2">
             {item.badge && (
-              <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs">
+              <span className={cn(
+                'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium',
+                isActive || isFlyoverOpen
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-surface-200 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
+              )}>
                 {item.badge}
               </span>
             )}
+            {hasChildren && (
+              <ChevronRight
+                className={cn(
+                  'h-4 w-4 text-surface-400'
+                )}
+              />
+            )}
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Tooltip for collapsed state (items without children) */}
+      {isCollapsed && !hasChildren && (
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-lg pointer-events-none">
+          {item.label}
+          {item.badge && (
+            <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs">
+              {item.badge}
+            </span>
+          )}
+        </div>
+      )}
+    </>
+  );
+
+  // Use Link for items with href (no children) for instant navigation
+  if (item.href && !hasChildren) {
+    return (
+      <div className="relative">
+        <Link
+          ref={elementRef as React.Ref<HTMLAnchorElement>}
+          href={item.href}
+          onClick={handleClick}
+          className={commonClasses}
+          prefetch={true}
+        >
+          {content}
+        </Link>
+      </div>
+    );
+  }
+
+  // Use button for items with children or no href
+  return (
+    <div className="relative">
+      <button
+        ref={elementRef as React.Ref<HTMLButtonElement>}
+        onClick={handleClick}
+        className={commonClasses}
+        disabled={item.disabled}
+      >
+        {content}
       </button>
     </div>
   );
