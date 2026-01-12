@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   LayoutDashboard,
   Users,
@@ -10,7 +9,6 @@ import {
   Clock,
   FileText,
   BarChart3,
-  Briefcase,
   DollarSign,
   GitBranch,
   User,
@@ -47,7 +45,6 @@ import {
   Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SENIOR_MANAGEMENT_ROLES, PROJECT_LEADER_AND_ABOVE_ROLES } from '@/lib/constants/roles';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
 import { Header } from './Header';
 import type { HeaderProps } from './Header';
@@ -110,12 +107,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   }, [onSidebarCollapsedChange]);
 
   const handleMenuItemClick = useCallback((item: SidebarItem) => {
-    if (item.href) {
-      // Use startTransition for smoother navigation
-      router.push(item.href);
-    }
+    // Link handles navigation, just notify parent
     onMenuItemClick?.(item);
-  }, [router, onMenuItemClick]);
+  }, [onMenuItemClick]);
 
   const handleProfile = () => {
     router.push('/me/profile');
@@ -133,51 +127,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     }
     router.push('/auth/login');
   };
-
-  // Role-based access checks
-  const roleCodes = React.useMemo(() => {
-    if (!hasHydrated) return [];
-    return user?.roles?.map((role) => role.code).filter(Boolean) || [];
-  }, [hasHydrated, user?.roles]);
-
-  // Senior Management: CEO, VP, Operations Head, HR Admin, Delivery Leads
-  const isSeniorManagement = React.useMemo(() => {
-    if (roleCodes.length === 0) return false;
-    return roleCodes.some((code) => SENIOR_MANAGEMENT_ROLES.has(code));
-  }, [roleCodes]);
-
-  // Project Leaders and above: Can manage allocations
-  const isProjectLeaderOrAbove = React.useMemo(() => {
-    if (roleCodes.length === 0) return false;
-    return roleCodes.some((code) => PROJECT_LEADER_AND_ABOVE_ROLES.has(code));
-  }, [roleCodes]);
-
-  // Build Resource Management items based on user role
-  const resourceManagementItems: SidebarItem[] = React.useMemo(() => {
-    const items: SidebarItem[] = [];
-
-    // Dashboard with Utilization - Senior Management only
-    if (isSeniorManagement) {
-      items.push({
-        id: 'resource-dashboard',
-        label: 'Utilization Dashboard',
-        icon: <BarChart3 className="h-5 w-5" />,
-        href: '/resources',
-      });
-    }
-
-    // My Allocations - For team members to view their own
-    if (!isProjectLeaderOrAbove) {
-      items.push({
-        id: 'my-allocations',
-        label: 'My Allocations',
-        icon: <Calendar className="h-5 w-5" />,
-        href: '/me/allocations',
-      });
-    }
-
-    return items;
-  }, [isSeniorManagement, isProjectLeaderOrAbove]);
 
   // Navigation sections for HRMS - organized into logical groups
   const menuSections: SidebarSection[] = [
@@ -371,18 +320,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           icon: <BookOpen className="h-5 w-5" />,
           href: '/learning',
         },
-        {
-          id: 'projects',
-          label: 'Projects',
-          icon: <Briefcase className="h-5 w-5" />,
-          href: '/projects',
-        },
       ],
-    },
-    {
-      id: 'resource-management',
-      label: 'Resource Management',
-      items: resourceManagementItems,
     },
     {
       id: 'compensation-benefits',
@@ -547,26 +485,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     menuSections.flatMap(section => section.items),
     [menuSections]
   );
-
-  // Prefetch all menu item hrefs for faster navigation
-  useEffect(() => {
-    // Delay prefetching to not block initial render
-    const timeoutId = setTimeout(() => {
-      menuItems.forEach(item => {
-        if (item.href) {
-          router.prefetch(item.href);
-        }
-        // Also prefetch children hrefs
-        item.children?.forEach(child => {
-          if (child.href) {
-            router.prefetch(child.href);
-          }
-        });
-      });
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, [menuItems, router]);
 
   return (
     <div className={cn('flex h-screen overflow-hidden bg-surface-50 dark:bg-surface-950', className)}>
