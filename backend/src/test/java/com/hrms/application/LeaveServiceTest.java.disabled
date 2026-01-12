@@ -1,0 +1,246 @@
+package com.hrms.application;
+
+import com.hrms.api.leave.dto.CreateLeaveRequestDTO;
+import com.hrms.api.leave.dto.LeaveRequestDTO;
+import com.hrms.application.leave.LeaveService;
+import com.hrms.common.exception.BusinessException;
+import com.hrms.common.exception.ResourceNotFoundException;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.leave.*;
+import com.hrms.infrastructure.employee.EmployeeRepository;
+import com.hrms.infrastructure.leave.LeaveBalanceRepository;
+import com.hrms.infrastructure.leave.LeaveRequestRepository;
+import com.hrms.infrastructure.leave.LeaveTypeRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class LeaveServiceTest {
+
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
+
+    @Mock
+    private LeaveTypeRepository leaveTypeRepository;
+
+    @Mock
+    private LeaveBalanceRepository leaveBalanceRepository;
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+
+    @InjectMocks
+    private LeaveService leaveService;
+
+    private UUID tenantId;
+    private UUID employeeId;
+    private UUID leaveTypeId;
+    private UUID leaveRequestId;
+    private Employee employee;
+    private LeaveType leaveType;
+    private LeaveBalance leaveBalance;
+    private LeaveRequest leaveRequest;
+
+    @BeforeEach
+    void setUp() {
+        tenantId = UUID.randomUUID();
+        employeeId = UUID.randomUUID();
+        leaveTypeId = UUID.randomUUID();
+        leaveRequestId = UUID.randomUUID();
+
+        employee = Employee.builder()
+                .id(employeeId)
+                .tenantId(tenantId)
+                .employeeCode("EMP001")
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        leaveType = LeaveType.builder()
+                .id(leaveTypeId)
+                .tenantId(tenantId)
+                .leaveName("Annual Leave")
+                .leaveCode("AL")
+                .isPaid(true)
+                .maxDaysPerYear(BigDecimal.valueOf(20))
+                .isActive(true)
+                .build();
+
+        leaveBalance = LeaveBalance.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .employeeId(employeeId)
+                .leaveTypeId(leaveTypeId)
+                .year(LocalDate.now().getYear())
+                .openingBalance(BigDecimal.valueOf(20))
+                .accrued(BigDecimal.ZERO)
+                .used(BigDecimal.valueOf(5))
+                .pending(BigDecimal.ZERO)
+                .available(BigDecimal.valueOf(15))
+                .build();
+
+        leaveRequest = LeaveRequest.builder()
+                .id(leaveRequestId)
+                .tenantId(tenantId)
+                .employeeId(employeeId)
+                .leaveTypeId(leaveTypeId)
+                .requestNumber("LR-2024-001")
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(3))
+                .totalDays(BigDecimal.valueOf(3))
+                .reason("Family vacation")
+                .status(LeaveStatus.PENDING)
+                .build();
+    }
+
+    @Test
+    void applyLeave_Success() {
+        // Given
+        CreateLeaveRequestDTO request = CreateLeaveRequestDTO.builder()
+                .employeeId(employeeId)
+                .leaveTypeId(leaveTypeId)
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(3))
+                .totalDays(BigDecimal.valueOf(3))
+                .reason("Family vacation")
+                .build();
+
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+        when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(employeeId, leaveTypeId, LocalDate.now().getYear()))
+                .thenReturn(Optional.of(leaveBalance));
+        when(leaveRequestRepository.save(any(LeaveRequest.class))).thenReturn(leaveRequest);
+
+        // When
+        LeaveRequestDTO result = leaveService.applyLeave(tenantId, request);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getRequestNumber()).isEqualTo("LR-2024-001");
+        assertThat(result.getStatus()).isEqualTo(LeaveStatus.PENDING);
+
+        verify(leaveRequestRepository).save(any(LeaveRequest.class));
+        verify(leaveBalanceRepository).save(any(LeaveBalance.class)); // Balance should be updated
+    }
+
+    @Test
+    void applyLeave_InsufficientBalance_ThrowsException() {
+        // Given
+        CreateLeaveRequestDTO request = CreateLeaveRequestDTO.builder()
+                .employeeId(employeeId)
+                .leaveTypeId(leaveTypeId)
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(20))
+                .totalDays(BigDecimal.valueOf(20)) // More than available balance
+                .reason("Long vacation")
+                .build();
+
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+        when(leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId)).thenReturn(Optional.of(leaveType));
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(employeeId, leaveTypeId, LocalDate.now().getYear()))
+                .thenReturn(Optional.of(leaveBalance));
+
+        // When & Then
+        assertThatThrownBy(() -> leaveService.applyLeave(tenantId, request))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("Insufficient leave balance");
+
+        verify(leaveRequestRepository, never()).save(any());
+    }
+
+    @Test
+    void approveLeave_Success() {
+        // Given
+        UUID approverId = UUID.randomUUID();
+
+        when(leaveRequestRepository.findByIdAndTenantId(leaveRequestId, tenantId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.save(any(LeaveRequest.class))).thenReturn(leaveRequest);
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(any(), any(), anyInt()))
+                .thenReturn(Optional.of(leaveBalance));
+
+        // When
+        LeaveRequestDTO result = leaveService.approveLeave(tenantId, leaveRequestId, approverId);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getStatus()).isEqualTo(LeaveStatus.APPROVED);
+
+        verify(leaveRequestRepository).save(any(LeaveRequest.class));
+        verify(leaveBalanceRepository).save(any(LeaveBalance.class)); // Balance should be updated from pending to used
+    }
+
+    @Test
+    void rejectLeave_Success() {
+        // Given
+        UUID approverId = UUID.randomUUID();
+        String reason = "Not approved due to project deadline";
+
+        when(leaveRequestRepository.findByIdAndTenantId(leaveRequestId, tenantId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.save(any(LeaveRequest.class))).thenReturn(leaveRequest);
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(any(), any(), anyInt()))
+                .thenReturn(Optional.of(leaveBalance));
+
+        // When
+        LeaveRequestDTO result = leaveService.rejectLeave(tenantId, leaveRequestId, approverId, reason);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getStatus()).isEqualTo(LeaveStatus.REJECTED);
+        assertThat(result.getRejectionReason()).isEqualTo(reason);
+
+        verify(leaveRequestRepository).save(any(LeaveRequest.class));
+        verify(leaveBalanceRepository).save(any(LeaveBalance.class)); // Balance should be restored
+    }
+
+    @Test
+    void cancelLeave_Success() {
+        // Given
+        String reason = "Plans changed";
+
+        when(leaveRequestRepository.findByIdAndTenantId(leaveRequestId, tenantId)).thenReturn(Optional.of(leaveRequest));
+        when(leaveRequestRepository.save(any(LeaveRequest.class))).thenReturn(leaveRequest);
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(any(), any(), anyInt()))
+                .thenReturn(Optional.of(leaveBalance));
+
+        // When
+        LeaveRequestDTO result = leaveService.cancelLeave(tenantId, leaveRequestId, reason);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getStatus()).isEqualTo(LeaveStatus.CANCELLED);
+
+        verify(leaveRequestRepository).save(any(LeaveRequest.class));
+        verify(leaveBalanceRepository).save(any(LeaveBalance.class)); // Balance should be restored
+    }
+
+    @Test
+    void approveLeave_NotPending_ThrowsException() {
+        // Given
+        LeaveRequest approvedRequest = leaveRequest;
+        approvedRequest.setStatus(LeaveStatus.APPROVED);
+        UUID approverId = UUID.randomUUID();
+
+        when(leaveRequestRepository.findByIdAndTenantId(leaveRequestId, tenantId)).thenReturn(Optional.of(approvedRequest));
+
+        // When & Then
+        assertThatThrownBy(() -> leaveService.approveLeave(tenantId, leaveRequestId, approverId))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining("can only be approved");
+
+        verify(leaveRequestRepository, never()).save(any());
+    }
+}

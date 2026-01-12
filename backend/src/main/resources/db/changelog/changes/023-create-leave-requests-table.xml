@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="023-create-leave-requests-table" author="hrms">
+        <createTable tableName="leave_requests">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="leave_type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="request_number" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_days" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_half_day" type="BOOLEAN" defaultValue="false"/>
+            <column name="half_day_period" type="VARCHAR(20)"/>
+            <column name="reason" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="document_path" type="TEXT"/>
+            <column name="applied_on" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved_by" type="UUID"/>
+            <column name="approved_on" type="TIMESTAMP"/>
+            <column name="rejection_reason" type="TEXT"/>
+            <column name="cancelled_on" type="TIMESTAMP"/>
+            <column name="cancellation_reason" type="TEXT"/>
+            <column name="comments" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="leave_requests"
+                                 baseColumnNames="employee_id"
+                                 constraintName="fk_leave_request_employee"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="leave_requests"
+                                 baseColumnNames="leave_type_id"
+                                 constraintName="fk_leave_request_type"
+                                 referencedTableName="leave_types"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addUniqueConstraint tableName="leave_requests"
+                             columnNames="tenant_id, request_number"
+                             constraintName="uk_leave_request_number"/>
+
+        <createIndex tableName="leave_requests" indexName="idx_leave_requests_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="leave_requests" indexName="idx_leave_requests_employee_id">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="leave_requests" indexName="idx_leave_requests_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="leave_requests" indexName="idx_leave_requests_dates">
+            <column name="start_date"/>
+            <column name="end_date"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

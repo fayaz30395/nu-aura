@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="056-create-overtime-policies-table" author="hrms">
+        <createTable tableName="overtime_policies">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="policy_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="policy_code" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="department_id" type="uuid"/>
+            <column name="is_default" type="boolean" defaultValueBoolean="false"/>
+            <column name="is_active" type="boolean" defaultValueBoolean="true"/>
+
+            <!-- Daily overtime settings -->
+            <column name="daily_threshold_hours" type="decimal(5,2)" defaultValue="8.00"/>
+            <column name="daily_ot_multiplier" type="decimal(3,2)" defaultValue="1.50"/>
+            <column name="daily_max_ot_hours" type="decimal(5,2)"/>
+
+            <!-- Weekly overtime settings -->
+            <column name="weekly_threshold_hours" type="decimal(5,2)" defaultValue="40.00"/>
+            <column name="weekly_ot_multiplier" type="decimal(3,2)" defaultValue="1.50"/>
+            <column name="weekly_max_ot_hours" type="decimal(5,2)"/>
+
+            <!-- Weekend overtime -->
+            <column name="weekend_ot_multiplier" type="decimal(3,2)" defaultValue="2.00"/>
+
+            <!-- Holiday overtime -->
+            <column name="holiday_ot_multiplier" type="decimal(3,2)" defaultValue="2.50"/>
+
+            <!-- Night shift overtime -->
+            <column name="night_shift_ot_multiplier" type="decimal(3,2)" defaultValue="1.75"/>
+
+            <!-- Approval settings -->
+            <column name="requires_pre_approval" type="boolean" defaultValueBoolean="true"/>
+            <column name="auto_approve_limit_hours" type="decimal(5,2)"/>
+
+            <!-- Calculation settings -->
+            <column name="round_to_nearest_minutes" type="integer" defaultValue="15"/>
+            <column name="minimum_ot_minutes" type="integer" defaultValue="30"/>
+            <column name="count_break_time" type="boolean" defaultValueBoolean="false"/>
+
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="overtime_policies" indexName="idx_ot_policy_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="overtime_policies" indexName="idx_ot_policy_active">
+            <column name="is_active"/>
+        </createIndex>
+        <createIndex tableName="overtime_policies" indexName="idx_ot_policy_default">
+            <column name="is_default"/>
+        </createIndex>
+
+        <!-- Unique constraint -->
+        <addUniqueConstraint tableName="overtime_policies"
+                             columnNames="tenant_id, policy_code"
+                             constraintName="uk_ot_policy_tenant_code"/>
+    </changeSet>
+
+</databaseChangeLog>

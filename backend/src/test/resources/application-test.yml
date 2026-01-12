@@ -1,0 +1,108 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=RUNSCRIPT FROM 'classpath:schema-h2.sql'
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+        globally_quoted_identifiers: true
+
+  sql:
+    init:
+      mode: never
+
+  liquibase:
+    enabled: false
+
+  # Disable Redis for tests - use in-memory cache instead
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  cache:
+    type: simple
+    cache-names:
+      - dashboardMetrics
+      - dashboardAnalytics
+      - employeeMetrics
+      - attendanceMetrics
+      - leaveMetrics
+      - payrollMetrics
+
+  mail:
+    host: localhost
+    port: 25
+
+  # Disable autoconfiguration for services not needed in tests
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+# Disable health checks for external services in tests
+management:
+  health:
+    redis:
+      enabled: false
+    mail:
+      enabled: false
+    db:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: false
+
+app:
+  jwt:
+    secret: test-secret-key-for-testing-purposes-must-be-at-least-256-bits-long-for-jwt-hs512
+    expiration: 3600000
+    refresh-expiration: 86400000
+
+  tenant:
+    resolution-strategy: header
+    header-name: X-Tenant-ID
+
+  frontend:
+    url: http://localhost:3000
+
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin
+    bucket: hrms-test-files
+
+# Disable AI features in tests
+ai:
+  openai:
+    api-key: test-key
+    base-url: http://localhost:8081
+
+# Minimize logging in tests
+logging:
+  level:
+    root: WARN
+    com.hrms: INFO
+    org.springframework.test: WARN
+    org.hibernate: WARN
+    org.springframework.boot.autoconfigure: ERROR
+
+# Disable Swagger in tests
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

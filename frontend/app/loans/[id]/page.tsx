@@ -1,0 +1,370 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { loanService } from '@/lib/services/loan.service';
+import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
+import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Wallet,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  FileText,
+  Banknote,
+} from 'lucide-react';
+
+export default function LoanDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const [loan, setLoan] = useState<EmployeeLoan | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    loadLoan();
+  }, [isAuthenticated, hasHydrated, router, params.id]);
+
+  const loadLoan = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await loanService.getLoanById(params.id as string);
+      setLoan(data);
+    } catch (error) {
+      console.error('Error loading loan:', error);
+      setError('Failed to load loan details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusConfig = (status: LoanStatus) => {
+    const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
+      DRAFT: {
+        bg: 'bg-surface-100 dark:bg-surface-800',
+        text: 'text-surface-600 dark:text-surface-400',
+        icon: FileText,
+      },
+      PENDING_APPROVAL: {
+        bg: 'bg-amber-100 dark:bg-amber-900/30',
+        text: 'text-amber-700 dark:text-amber-400',
+        icon: Clock,
+      },
+      APPROVED: {
+        bg: 'bg-blue-100 dark:bg-blue-900/30',
+        text: 'text-blue-700 dark:text-blue-400',
+        icon: CheckCircle,
+      },
+      REJECTED: {
+        bg: 'bg-red-100 dark:bg-red-900/30',
+        text: 'text-red-700 dark:text-red-400',
+        icon: XCircle,
+      },
+      DISBURSED: {
+        bg: 'bg-purple-100 dark:bg-purple-900/30',
+        text: 'text-purple-700 dark:text-purple-400',
+        icon: Banknote,
+      },
+      ACTIVE: {
+        bg: 'bg-emerald-100 dark:bg-emerald-900/30',
+        text: 'text-emerald-700 dark:text-emerald-400',
+        icon: TrendingUp,
+      },
+      CLOSED: {
+        bg: 'bg-green-100 dark:bg-green-900/30',
+        text: 'text-green-700 dark:text-green-400',
+        icon: CheckCircle,
+      },
+      DEFAULTED: {
+        bg: 'bg-red-200 dark:bg-red-900/50',
+        text: 'text-red-800 dark:text-red-300',
+        icon: AlertCircle,
+      },
+    };
+    return configs[status] || configs.DRAFT;
+  };
+
+  if (loading) {
+    return (
+      <AppLayout activeMenuItem="loans">
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+            <p className="text-surface-600 dark:text-surface-400">Loading loan details...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (error || !loan) {
+    return (
+      <AppLayout activeMenuItem="loans">
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <AlertCircle className="h-12 w-12 text-red-500" />
+            <p className="text-surface-600 dark:text-surface-400">{error || 'Loan not found'}</p>
+            <button
+              onClick={() => router.push('/loans')}
+              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
+            >
+              Back to Loans
+            </button>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  const statusConfig = getStatusConfig(loan.status);
+  const StatusIcon = statusConfig.icon;
+  const progress = loan.approvedAmount
+    ? ((loan.amountRepaid / (loan.totalPayable || loan.approvedAmount)) * 100)
+    : 0;
+
+  return (
+    <AppLayout activeMenuItem="loans">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
+              </h1>
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+              >
+                <StatusIcon className="h-4 w-4" />
+                {loan.status.replace('_', ' ')}
+              </span>
+            </div>
+            <p className="text-surface-500 dark:text-surface-400 mt-1">
+              {loanService.getLoanTypeLabel(loan.loanType)}
+            </p>
+          </div>
+        </div>
+
+        {/* Amount Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="text-sm text-surface-500 dark:text-surface-400">
+                {loan.approvedAmount ? 'Approved Amount' : 'Requested Amount'}
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              {loanService.formatCurrency(loan.approvedAmount || loan.requestedAmount)}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <span className="text-sm text-surface-500 dark:text-surface-400">Amount Repaid</span>
+            </div>
+            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              {loanService.formatCurrency(loan.amountRepaid)}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
+                <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <span className="text-sm text-surface-500 dark:text-surface-400">
+                Remaining Balance
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              {loanService.formatCurrency(loan.remainingBalance)}
+            </p>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
+          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                Repayment Progress
+              </h3>
+              <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                {progress.toFixed(1)}% Complete
+              </span>
+            </div>
+            <div className="h-3 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-sm text-surface-500 dark:text-surface-400">
+              <span>Paid: {loanService.formatCurrency(loan.amountRepaid)}</span>
+              <span>Remaining: {loanService.formatCurrency(loan.remainingBalance)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Loan Details */}
+        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+            Loan Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Interest Rate</p>
+              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                {loan.interestRate}% per annum
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Loan Term</p>
+              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                {loan.termMonths} months
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Monthly Payment</p>
+              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                {loan.monthlyPayment ? loanService.formatCurrency(loan.monthlyPayment) : 'N/A'}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Repayment Frequency</p>
+              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                {loan.repaymentFrequency.replace('_', ' ')}
+              </p>
+            </div>
+            {loan.nextPaymentDate && (
+              <div>
+                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Next Payment Date</p>
+                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                  {new Date(loan.nextPaymentDate).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+            )}
+            <div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Request Date</p>
+              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                {new Date(loan.requestDate).toLocaleDateString('en-IN', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Purpose */}
+        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+            Purpose
+          </h3>
+          <p className="text-surface-700 dark:text-surface-300">{loan.purpose}</p>
+          {loan.notes && (
+            <>
+              <h4 className="text-sm font-medium text-surface-500 dark:text-surface-400 mt-4 mb-2">
+                Additional Notes
+              </h4>
+              <p className="text-surface-600 dark:text-surface-400">{loan.notes}</p>
+            </>
+          )}
+        </div>
+
+        {/* Approval Info */}
+        {loan.approvedDate && (
+          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+              Approval Information
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Approved By</p>
+                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                  {loan.approverName || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Approved Date</p>
+                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                  {new Date(loan.approvedDate).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </p>
+              </div>
+              {loan.disbursedDate && (
+                <div>
+                  <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Disbursed Date</p>
+                  <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                    {new Date(loan.disbursedDate).toLocaleDateString('en-IN', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Rejection Reason */}
+        {loan.status === 'REJECTED' && loan.rejectionReason && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <XCircle className="h-5 w-5 text-red-500" />
+              <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
+                Rejection Reason
+              </h3>
+            </div>
+            <p className="text-red-600 dark:text-red-300">{loan.rejectionReason}</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => router.push('/loans')}
+            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+          >
+            Back to Loans
+          </button>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

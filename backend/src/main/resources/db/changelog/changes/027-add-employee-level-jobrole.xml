@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="027-add-employee-level-jobrole" author="hrms">
+        <sql>
+            ALTER TABLE employees ADD COLUMN level VARCHAR(50);
+            ALTER TABLE employees ADD COLUMN job_role VARCHAR(50);
+
+            CREATE INDEX idx_employee_level ON employees(level);
+            CREATE INDEX idx_employee_jobrole ON employees(job_role);
+
+            ALTER TABLE employees ADD CONSTRAINT fk_employee_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

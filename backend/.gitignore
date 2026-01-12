@@ -1,0 +1,12 @@
+target/
+.DS_Store
+*.log
+*.iml
+.idea/
+
+# Environment files with secrets - NEVER commit these
+.env
+.env.local
+.env.*.local
+application-local.yml
+
