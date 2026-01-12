@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="036-fix-payslips-column-types" author="hrms">
+        <sql>
+            ALTER TABLE payslips ALTER COLUMN tenant_id TYPE UUID USING tenant_id::uuid;
+            ALTER TABLE payslips ALTER COLUMN employee_id TYPE UUID USING employee_id::uuid;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

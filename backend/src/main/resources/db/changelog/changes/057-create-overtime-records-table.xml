@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="057-create-overtime-records-table" author="hrms">
+        <createTable tableName="overtime_records">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attendance_record_id" type="uuid"/>
+            <column name="overtime_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shift_id" type="uuid"/>
+            <column name="regular_hours" type="decimal(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actual_hours" type="decimal(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="overtime_hours" type="decimal(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="overtime_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="multiplier" type="decimal(3,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_hours" type="decimal(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_pre_approved" type="boolean" defaultValueBoolean="false"/>
+            <column name="approved_by" type="uuid"/>
+            <column name="approved_at" type="timestamp"/>
+            <column name="rejected_by" type="uuid"/>
+            <column name="rejected_at" type="timestamp"/>
+            <column name="rejection_reason" type="text"/>
+            <column name="payroll_run_id" type="uuid"/>
+            <column name="processed_in_payroll" type="boolean" defaultValueBoolean="false"/>
+            <column name="processed_at" type="timestamp"/>
+            <column name="notes" type="text"/>
+            <column name="auto_calculated" type="boolean" defaultValueBoolean="true"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_employee">
+            <column name="employee_id"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_date">
+            <column name="overtime_date"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_attendance">
+            <column name="attendance_record_id"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_payroll">
+            <column name="payroll_run_id"/>
+        </createIndex>
+        <createIndex tableName="overtime_records" indexName="idx_ot_record_processed">
+            <column name="processed_in_payroll"/>
+        </createIndex>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint
+                baseTableName="overtime_records"
+                baseColumnNames="employee_id"
+                constraintName="fk_ot_record_employee"
+                referencedTableName="employees"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="overtime_records"
+                baseColumnNames="attendance_record_id"
+                constraintName="fk_ot_record_attendance"
+                referencedTableName="attendance_records"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <addForeignKeyConstraint
+                baseTableName="overtime_records"
+                baseColumnNames="shift_id"
+                constraintName="fk_ot_record_shift"
+                referencedTableName="shifts"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <addForeignKeyConstraint
+                baseTableName="overtime_records"
+                baseColumnNames="payroll_run_id"
+                constraintName="fk_ot_record_payroll"
+                referencedTableName="payroll_runs"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+    </changeSet>
+
+</databaseChangeLog>

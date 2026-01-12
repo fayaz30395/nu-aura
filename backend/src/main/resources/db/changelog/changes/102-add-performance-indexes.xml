@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Performance indexes for frequently queried columns -->
+
+    <!-- Employee table indexes -->
+    <changeSet id="102-idx-employees-tenant-status" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_employees_tenant_status"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_employees_tenant_status" tableName="employees">
+            <column name="tenant_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-employees-department" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_employees_department"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_employees_department" tableName="employees">
+            <column name="tenant_id"/>
+            <column name="department_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-employees-manager" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_employees_manager"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_employees_manager" tableName="employees">
+            <column name="tenant_id"/>
+            <column name="manager_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-employees-employee-code" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_employees_employee_code"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_employees_employee_code" tableName="employees">
+            <column name="tenant_id"/>
+            <column name="employee_code"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Attendance table indexes -->
+    <changeSet id="102-idx-attendance-employee-date" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_attendance_employee_date"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_attendance_employee_date" tableName="attendance_records">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+            <column name="attendance_date"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-attendance-date" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_attendance_date"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_attendance_date" tableName="attendance_records">
+            <column name="tenant_id"/>
+            <column name="attendance_date"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Leave requests indexes -->
+    <changeSet id="102-idx-leave-requests-employee" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_leave_requests_employee"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_leave_requests_employee" tableName="leave_requests">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-leave-requests-dates" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_leave_requests_dates"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_leave_requests_dates" tableName="leave_requests">
+            <column name="tenant_id"/>
+            <column name="start_date"/>
+            <column name="end_date"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Department indexes -->
+    <changeSet id="102-idx-departments-code" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_departments_code"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_departments_code" tableName="departments">
+            <column name="tenant_id"/>
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-departments-parent" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_departments_parent"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_departments_parent" tableName="departments">
+            <column name="tenant_id"/>
+            <column name="parent_department_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Users table indexes -->
+    <changeSet id="102-idx-users-email" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_users_tenant_email"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_users_tenant_email" tableName="users">
+            <column name="tenant_id"/>
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Leave balances indexes -->
+    <changeSet id="102-idx-leave-balances-employee" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_leave_balances_employee"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_leave_balances_employee" tableName="leave_balances">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+            <column name="year"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Notifications indexes -->
+    <changeSet id="102-idx-notifications-user" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_notifications_user"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_notifications_user" tableName="notifications">
+            <column name="tenant_id"/>
+            <column name="user_id"/>
+            <column name="is_read"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Performance reviews indexes -->
+    <changeSet id="102-idx-performance-reviews-employee" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_performance_reviews_employee"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_performance_reviews_employee" tableName="performance_reviews">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+            <column name="cycle_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Audit logs indexes -->
+    <changeSet id="102-idx-audit-logs-entity" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_audit_logs_entity"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_audit_logs_entity" tableName="audit_logs">
+            <column name="tenant_id"/>
+            <column name="entity_type"/>
+            <column name="entity_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="102-idx-audit-logs-timestamp" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_audit_logs_timestamp"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_audit_logs_timestamp" tableName="audit_logs">
+            <column name="tenant_id"/>
+            <column name="created_at" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Projects indexes -->
+    <changeSet id="102-idx-projects-code" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_projects_code"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_projects_code" tableName="projects">
+            <column name="tenant_id"/>
+            <column name="project_code"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Time entries indexes - already has indexes in 066-create-time-tracking-tables.xml -->
+
+</databaseChangeLog>

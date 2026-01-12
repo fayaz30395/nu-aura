@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="020-create-attendance-records-table" author="hrms">
+        <createTable tableName="attendance_records">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shift_id" type="UUID"/>
+            <column name="attendance_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_in_time" type="TIMESTAMP"/>
+            <column name="check_out_time" type="TIMESTAMP"/>
+            <column name="check_in_source" type="VARCHAR(50)"/>
+            <column name="check_out_source" type="VARCHAR(50)"/>
+            <column name="check_in_location" type="TEXT"/>
+            <column name="check_out_location" type="TEXT"/>
+            <column name="check_in_ip" type="VARCHAR(50)"/>
+            <column name="check_out_ip" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_duration_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="break_duration_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="overtime_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="is_late" type="BOOLEAN" defaultValue="false"/>
+            <column name="late_by_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="is_early_departure" type="BOOLEAN" defaultValue="false"/>
+            <column name="early_departure_minutes" type="INTEGER" defaultValue="0"/>
+            <column name="is_half_day" type="BOOLEAN" defaultValue="false"/>
+            <column name="is_overtime" type="BOOLEAN" defaultValue="false"/>
+            <column name="notes" type="TEXT"/>
+            <column name="regularization_requested" type="BOOLEAN" defaultValue="false"/>
+            <column name="regularization_approved" type="BOOLEAN" defaultValue="false"/>
+            <column name="regularization_reason" type="TEXT"/>
+            <column name="approved_by" type="UUID"/>
+            <column name="approved_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="attendance_records"
+                                 baseColumnNames="employee_id"
+                                 constraintName="fk_attendance_employee"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="attendance_records"
+                                 baseColumnNames="shift_id"
+                                 constraintName="fk_attendance_shift"
+                                 referencedTableName="shifts"
+                                 referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
+
+        <addUniqueConstraint tableName="attendance_records"
+                             columnNames="tenant_id, employee_id, attendance_date"
+                             constraintName="uk_attendance_employee_date"/>
+
+        <createIndex tableName="attendance_records" indexName="idx_attendance_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="attendance_records" indexName="idx_attendance_employee_id">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="attendance_records" indexName="idx_attendance_date">
+            <column name="attendance_date"/>
+        </createIndex>
+
+        <createIndex tableName="attendance_records" indexName="idx_attendance_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

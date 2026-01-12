@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="054-create-shift-assignments-table" author="hrms">
+        <createTable tableName="shift_assignments">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shift_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignment_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_from" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effective_to" type="date"/>
+            <column name="assignment_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_recurring" type="boolean" defaultValueBoolean="false"/>
+            <column name="recurrence_pattern" type="varchar(50)"/>
+            <column name="assigned_by" type="uuid"/>
+            <column name="notes" type="text"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_employee">
+            <column name="employee_id"/>
+        </createIndex>
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_shift">
+            <column name="shift_id"/>
+        </createIndex>
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_date">
+            <column name="assignment_date"/>
+        </createIndex>
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_effective">
+            <column name="effective_from"/>
+            <column name="effective_to"/>
+        </createIndex>
+        <createIndex tableName="shift_assignments" indexName="idx_shift_assign_status">
+            <column name="status"/>
+        </createIndex>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint
+                baseTableName="shift_assignments"
+                baseColumnNames="employee_id"
+                constraintName="fk_shift_assign_employee"
+                referencedTableName="employees"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="shift_assignments"
+                baseColumnNames="shift_id"
+                constraintName="fk_shift_assign_shift"
+                referencedTableName="shifts"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

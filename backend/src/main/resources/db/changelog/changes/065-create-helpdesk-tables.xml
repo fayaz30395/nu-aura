@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create ticket_categories table -->
+    <changeSet id="065-create-ticket-categories-table" author="hrms">
+        <createTable tableName="ticket_categories">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="default_assignee_id" type="UUID"/>
+            <column name="sla_hours" type="INT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_order" type="INT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="ticket_categories" indexName="idx_ticket_categories_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="ticket_categories" indexName="idx_ticket_categories_active">
+            <column name="tenant_id"/>
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create tickets table -->
+    <changeSet id="065-create-tickets-table" author="hrms">
+        <createTable tableName="tickets">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ticket_number" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="UUID"/>
+            <column name="subject" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="priority" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_to" type="UUID"/>
+            <column name="assigned_at" type="TIMESTAMP"/>
+            <column name="resolved_at" type="TIMESTAMP"/>
+            <column name="closed_at" type="TIMESTAMP"/>
+            <column name="resolution_notes" type="TEXT"/>
+            <column name="due_date" type="TIMESTAMP"/>
+            <column name="tags" type="VARCHAR(500)"/>
+            <column name="attachment_urls" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_employee">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_category">
+            <column name="tenant_id"/>
+            <column name="category_id"/>
+        </createIndex>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_status">
+            <column name="tenant_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_assigned">
+            <column name="tenant_id"/>
+            <column name="assigned_to"/>
+        </createIndex>
+
+        <createIndex tableName="tickets" indexName="idx_tickets_number">
+            <column name="ticket_number"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create ticket_comments table -->
+    <changeSet id="065-create-ticket-comments-table" author="hrms">
+        <createTable tableName="ticket_comments">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ticket_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commenter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="comment" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_internal" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attachment_urls" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="ticket_comments" indexName="idx_ticket_comments_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="ticket_comments" indexName="idx_ticket_comments_ticket">
+            <column name="tenant_id"/>
+            <column name="ticket_id"/>
+        </createIndex>
+
+        <createIndex tableName="ticket_comments" indexName="idx_ticket_comments_commenter">
+            <column name="tenant_id"/>
+            <column name="commenter_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

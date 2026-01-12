@@ -1,0 +1,21 @@
+export const ROLE_CODES = {
+  EMPLOYEE: 'EMPLOYEE',
+  MANAGER: 'MANAGER',
+  HR_EXECUTIVE: 'HR_EXECUTIVE',
+  HR_ADMIN: 'HR_ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  DELIVERY_LEAD: 'DELIVERY_LEAD',
+  VP: 'VP',
+  CEO: 'CEO',
+  OPERATIONS_HEAD: 'OPERATIONS_HEAD',
+} as const;
+
+// Senior Management - Full access to utilization dashboard, reports
+export const SENIOR_MANAGEMENT_ROLES = new Set<string>([
+  ROLE_CODES.CEO,
+  ROLE_CODES.VP,
+  ROLE_CODES.OPERATIONS_HEAD,
+  ROLE_CODES.HR_ADMIN,
+  ROLE_CODES.DELIVERY_LEAD,
+  ROLE_CODES.SUPER_ADMIN,
+]);
