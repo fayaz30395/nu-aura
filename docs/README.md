@@ -34,6 +34,7 @@ Multi-tenant HRMS platform for employees, attendance, payroll, performance, and 
 
 | Document | Description |
 |----------|-------------|
+| [Implementation Status](project/IMPLEMENTATION_STATUS.md) | Module-wise completion breakdown |
 | [Project Status](project/PROJECT_STATUS.md) | Current state, recent commits |
 | [Backlog](project/BACKLOG.md) | Prioritized pending work (P0-P3) |
 
