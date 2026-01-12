@@ -60,7 +60,8 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "Bash(comm -23:*)",
-      "Bash(./gradlew compileTestJava:*)"
+      "Bash(./gradlew compileTestJava:*)",
+      "Bash(du:*)"
     ]
   }
 }

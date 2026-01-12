@@ -8,18 +8,18 @@ WORKDIR /app
 COPY pom.xml .
 COPY modules/common/pom.xml modules/common/
 COPY modules/pm/pom.xml modules/pm/
-COPY hrms-backend/pom.xml hrms-backend/
+COPY backend/pom.xml backend/
 
 # Download dependencies (cached layer)
-RUN mvn dependency:go-offline -B -pl hrms-backend -am || true
+RUN mvn dependency:go-offline -B -pl backend -am || true
 
 # Copy source code
 COPY modules/common/src modules/common/src
 COPY modules/pm/src modules/pm/src
-COPY hrms-backend/src hrms-backend/src
+COPY backend/src backend/src
 
 # Build the application
-RUN mvn clean package -DskipTests -B -pl hrms-backend -am
+RUN mvn clean package -DskipTests -B -pl backend -am
 
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
@@ -34,10 +34,10 @@ RUN addgroup -g 1001 -S hrms && \
 RUN apk add --no-cache curl
 
 # Copy JAR from builder
-COPY --from=build /app/hrms-backend/target/*.jar app.jar
+COPY --from=build /app/backend/target/*.jar app.jar
 
 # Copy environment file
-COPY .env.production .env
+COPY config/.env.production .env
 
 # Change ownership
 RUN chown -R hrms:hrms /app

@@ -53,3 +53,15 @@ Thumbs.db
 # Test coverage
 coverage/
 .nyc_output/
+
+# Credentials and secrets
+**/client_secret*.json
+**/credentials*.json
+**/*_credentials.json
+
+# Generated files
+COMPONENTS_CREATED.txt
+LAYOUT_FILES_CREATED.txt
+
+# Claude
+.claude/
