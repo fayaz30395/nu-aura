@@ -1,6 +1,8 @@
 package com.hrms.application.letter.service;
 
 import com.hrms.api.letter.dto.*;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,7 @@ public class LetterService {
     private final GeneratedLetterRepository letterRepository;
     private final EmployeeRepository employeeRepository;
     private final ObjectMapper objectMapper;
+    private final DataScopeService dataScopeService;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
 
@@ -211,7 +215,12 @@ public class LetterService {
     @Transactional(readOnly = true)
     public Page<GeneratedLetterResponse> getAllLetters(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return letterRepository.findByTenantId(tenantId, pageable)
+        // Apply scope-based filtering using DataScopeService
+        Specification<GeneratedLetter> scopeSpec = dataScopeService.getScopeSpecification(Permission.LETTER_TEMPLATE_VIEW);
+        Specification<GeneratedLetter> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<GeneratedLetter> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+
+        return letterRepository.findAll(combinedSpec, pageable)
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));
     }
 
@@ -233,7 +242,13 @@ public class LetterService {
     @Transactional(readOnly = true)
     public Page<GeneratedLetterResponse> getPendingApprovals(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return letterRepository.findPendingApprovals(tenantId, pageable)
+        // Apply scope-based filtering for approvals using LETTER_APPROVE permission
+        Specification<GeneratedLetter> scopeSpec = dataScopeService.getScopeSpecification(Permission.LETTER_APPROVE);
+        Specification<GeneratedLetter> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<GeneratedLetter> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), LetterStatus.PENDING_APPROVAL);
+        Specification<GeneratedLetter> combinedSpec = Specification.where(tenantSpec).and(statusSpec).and(scopeSpec);
+
+        return letterRepository.findAll(combinedSpec, pageable)
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));
     }
 

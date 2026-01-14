@@ -1,6 +1,8 @@
 package com.hrms.application.esignature.service;
 
 import com.hrms.api.esignature.dto.*;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.esignature.SignatureApproval;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ public class ESignatureService {
     private final SignatureRequestRepository signatureRequestRepository;
     private final SignatureApprovalRepository signatureApprovalRepository;
     private final EmployeeRepository employeeRepository;
+    private final DataScopeService dataScopeService;
 
     // ==================== Signature Request Operations ====================
 
@@ -171,10 +175,13 @@ public class ESignatureService {
     @Transactional(readOnly = true)
     public Page<SignatureRequestResponse> getAllSignatureRequests(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return signatureRequestRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable
-        ).map(this::mapToSignatureRequestResponse);
+        // Apply scope-based filtering using DataScopeService
+        Specification<SignatureRequest> scopeSpec = dataScopeService.getScopeSpecification(Permission.ESIGNATURE_VIEW);
+        Specification<SignatureRequest> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<SignatureRequest> combinedSpec = Specification.where(tenantSpec).and(scopeSpec);
+
+        return signatureRequestRepository.findAll(combinedSpec, pageable)
+                .map(this::mapToSignatureRequestResponse);
     }
 
     @Transactional(readOnly = true)
