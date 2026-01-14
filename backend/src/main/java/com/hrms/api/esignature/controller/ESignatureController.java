@@ -3,6 +3,7 @@ package com.hrms.api.esignature.controller;
 import com.hrms.api.esignature.dto.*;
 import com.hrms.application.esignature.service.ESignatureService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.esignature.SignatureRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +29,8 @@ public class ESignatureController {
     @RequiresPermission(ESIGNATURE_REQUEST)
     @PostMapping("/requests")
     public ResponseEntity<SignatureRequestResponse> createSignatureRequest(
-            @RequestBody SignatureRequestRequest request,
-            @RequestParam UUID createdBy) {
+            @RequestBody SignatureRequestRequest request) {
+        UUID createdBy = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eSignatureService.createSignatureRequest(request, createdBy));
     }
@@ -52,8 +53,8 @@ public class ESignatureController {
     @PatchMapping("/requests/{id}/cancel")
     public ResponseEntity<SignatureRequestResponse> cancelSignatureRequest(
             @PathVariable UUID id,
-            @RequestParam UUID cancelledBy,
             @RequestParam String reason) {
+        UUID cancelledBy = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(eSignatureService.cancelSignatureRequest(id, cancelledBy, reason));
     }
 

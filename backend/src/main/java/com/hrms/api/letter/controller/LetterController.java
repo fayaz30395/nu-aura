@@ -3,6 +3,7 @@ package com.hrms.api.letter.controller;
 import com.hrms.api.letter.dto.*;
 import com.hrms.application.letter.service.LetterService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -84,9 +85,9 @@ public class LetterController {
     @PostMapping("/generate")
     @RequiresPermission(LETTER_GENERATE)
     public ResponseEntity<GeneratedLetterResponse> generateLetter(
-            @Valid @RequestBody GenerateLetterRequest request,
-            @RequestParam UUID generatedBy) {
-        log.info("Generating letter for employee: {}", request.getEmployeeId());
+            @Valid @RequestBody GenerateLetterRequest request) {
+        UUID generatedBy = SecurityContext.getCurrentEmployeeId();
+        log.info("Generating letter for employee: {} by: {}", request.getEmployeeId(), generatedBy);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(letterService.generateLetter(request, generatedBy));
     }
@@ -137,18 +138,18 @@ public class LetterController {
     @RequiresPermission(LETTER_APPROVE)
     public ResponseEntity<GeneratedLetterResponse> approveLetter(
             @PathVariable UUID letterId,
-            @RequestParam UUID approverId,
             @RequestParam(required = false) String comments) {
-        log.info("Approving letter: {}", letterId);
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
+        log.info("Approving letter: {} by: {}", letterId, approverId);
         return ResponseEntity.ok(letterService.approveLetter(letterId, approverId, comments));
     }
 
     @PostMapping("/{letterId}/issue")
     @RequiresPermission(LETTER_ISSUE)
     public ResponseEntity<GeneratedLetterResponse> issueLetter(
-            @PathVariable UUID letterId,
-            @RequestParam UUID issuerId) {
-        log.info("Issuing letter: {}", letterId);
+            @PathVariable UUID letterId) {
+        UUID issuerId = SecurityContext.getCurrentEmployeeId();
+        log.info("Issuing letter: {} by: {}", letterId, issuerId);
         return ResponseEntity.ok(letterService.issueLetter(letterId, issuerId));
     }
 
@@ -162,8 +163,8 @@ public class LetterController {
     @PostMapping("/{letterId}/downloaded")
     @RequiresPermission(SELF_SERVICE_VIEW_LETTERS)
     public ResponseEntity<Void> markLetterDownloaded(
-            @PathVariable UUID letterId,
-            @RequestParam UUID employeeId) {
+            @PathVariable UUID letterId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         letterService.markLetterDownloaded(letterId, employeeId);
         return ResponseEntity.ok().build();
     }

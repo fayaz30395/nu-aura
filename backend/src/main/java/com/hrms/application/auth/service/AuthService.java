@@ -379,9 +379,30 @@ public class AuthService {
         Map<String, com.hrms.domain.user.RoleScope> permissionScopes = new HashMap<>();
 
         if (access.isPresent()) {
-            // NU Platform RBAC (AppRole -> AppPermission relations)
-            access.get().getAllPermissions()
-                    .forEach(code -> permissionScopes.put(code, com.hrms.domain.user.RoleScope.GLOBAL));
+            // NU Platform RBAC (AppRole -> AppPermission relations with scopes)
+            UserAppAccess userAccess = access.get();
+
+            // Load permissions from roles
+            userAccess.getRoles().forEach(appRole -> {
+                appRole.getPermissions().forEach(appPerm -> {
+                    String code = appPerm.getCode();
+                    // Default to ALL scope for NU Platform permissions (admin-level)
+                    // In future, AppPermission could have its own scope field
+                    com.hrms.domain.user.RoleScope newScope = com.hrms.domain.user.RoleScope.ALL;
+                    com.hrms.domain.user.RoleScope existingScope = permissionScopes.get(code);
+                    if (existingScope == null || newScope.isMorePermissiveThan(existingScope)) {
+                        permissionScopes.put(code, newScope);
+                    }
+                });
+            });
+
+            // Also load direct permissions
+            userAccess.getDirectPermissions().forEach(appPerm -> {
+                String code = appPerm.getCode();
+                com.hrms.domain.user.RoleScope newScope = com.hrms.domain.user.RoleScope.ALL;
+                permissionScopes.putIfAbsent(code, newScope);
+            });
+
             log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
             return permissionScopes;
         }
