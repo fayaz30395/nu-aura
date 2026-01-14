@@ -35,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private ScopeContextService scopeContextService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
@@ -123,6 +126,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (!accessibleApps.isEmpty()) {
                         SecurityContext.setAccessibleApps(accessibleApps);
                     }
+
+                    // Load scope-related context data (reportees for TEAM, custom targets for CUSTOM)
+                    scopeContextService.populateScopeContext(
+                            principal.getId(), employeeId, tenantId, permissionScopes);
 
                     // Debug logging for permission troubleshooting
                     log.debug("JWT Auth - User: {}, AppCode: {}, Roles: {}, Permissions: {}",
