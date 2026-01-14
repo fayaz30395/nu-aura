@@ -2,6 +2,7 @@ package com.hrms.api.home.controller;
 
 import com.hrms.api.home.dto.*;
 import com.hrms.application.home.service.HomeService;
+import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import static com.hrms.common.security.Permission.*;
 
 @RestController
 @RequestMapping("/api/home")
@@ -24,6 +27,7 @@ public class HomeController {
 
     @GetMapping("/birthdays")
     @Operation(summary = "Get upcoming birthdays", description = "Returns employees with birthdays in the next N days")
+    @RequiresPermission(DASHBOARD_VIEW)
     public ResponseEntity<List<BirthdayResponse>> getUpcomingBirthdays(
             @Parameter(description = "Number of days to look ahead (default 7)")
             @RequestParam(defaultValue = "7") int days) {
@@ -33,6 +37,7 @@ public class HomeController {
 
     @GetMapping("/anniversaries")
     @Operation(summary = "Get upcoming work anniversaries", description = "Returns employees with work anniversaries in the next N days")
+    @RequiresPermission(DASHBOARD_VIEW)
     public ResponseEntity<List<WorkAnniversaryResponse>> getUpcomingAnniversaries(
             @Parameter(description = "Number of days to look ahead (default 7)")
             @RequestParam(defaultValue = "7") int days) {
@@ -42,6 +47,7 @@ public class HomeController {
 
     @GetMapping("/new-joinees")
     @Operation(summary = "Get new joinees", description = "Returns employees who joined in the last N days")
+    @RequiresPermission(DASHBOARD_VIEW)
     public ResponseEntity<List<NewJoineeResponse>> getNewJoinees(
             @Parameter(description = "Number of days to look back (default 30)")
             @RequestParam(defaultValue = "30") int days) {
@@ -51,6 +57,7 @@ public class HomeController {
 
     @GetMapping("/on-leave")
     @Operation(summary = "Get employees on leave today", description = "Returns employees who are on approved leave today")
+    @RequiresPermission(DASHBOARD_VIEW)
     public ResponseEntity<List<OnLeaveEmployeeResponse>> getEmployeesOnLeaveToday() {
         log.debug("Getting employees on leave today");
         return ResponseEntity.ok(homeService.getEmployeesOnLeaveToday());
@@ -58,6 +65,7 @@ public class HomeController {
 
     @GetMapping("/attendance/{employeeId}")
     @Operation(summary = "Get today's attendance status", description = "Returns the current attendance status for an employee")
+    @RequiresPermission(ATTENDANCE_MARK)
     public ResponseEntity<AttendanceTodayResponse> getAttendanceToday(
             @Parameter(description = "Employee ID")
             @PathVariable UUID employeeId) {
@@ -67,6 +75,7 @@ public class HomeController {
 
     @GetMapping("/holidays")
     @Operation(summary = "Get upcoming holidays", description = "Returns holidays in the next N days")
+    @RequiresPermission(DASHBOARD_VIEW)
     public ResponseEntity<List<UpcomingHolidayResponse>> getUpcomingHolidays(
             @Parameter(description = "Number of days to look ahead (default 30)")
             @RequestParam(defaultValue = "30") int days) {
