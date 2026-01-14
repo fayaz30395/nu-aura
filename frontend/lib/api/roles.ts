@@ -1,5 +1,14 @@
 import { apiClient } from './client';
-import { Role, Permission, CreateRoleRequest, UpdateRoleRequest, AssignPermissionsRequest } from '../types/roles';
+import {
+  Role,
+  Permission,
+  CreateRoleRequest,
+  UpdateRoleRequest,
+  AssignPermissionsRequest,
+  AssignPermissionsWithScopeRequest,
+  UpdatePermissionScopeRequest,
+  RoleScope
+} from '../types/roles';
 
 export const rolesApi = {
   getAllRoles: async (): Promise<Role[]> => {
@@ -26,6 +35,7 @@ export const rolesApi = {
     await apiClient.delete(`/roles/${id}`);
   },
 
+  // Legacy permission assignment (without scopes)
   assignPermissions: async (id: string, data: AssignPermissionsRequest): Promise<Role> => {
     const response = await apiClient.put<Role>(`/roles/${id}/permissions`, data);
     return response.data;
@@ -38,6 +48,17 @@ export const rolesApi = {
 
   removePermissions: async (id: string, data: AssignPermissionsRequest): Promise<Role> => {
     const response = await apiClient.delete<Role>(`/roles/${id}/permissions`, { data });
+    return response.data;
+  },
+
+  // New scope-aware permission assignment (Keka-style RBAC)
+  assignPermissionsWithScope: async (id: string, data: AssignPermissionsWithScopeRequest): Promise<Role> => {
+    const response = await apiClient.put<Role>(`/roles/${id}/permissions-with-scope`, data);
+    return response.data;
+  },
+
+  updatePermissionScope: async (roleId: string, permissionCode: string, data: UpdatePermissionScopeRequest): Promise<Role> => {
+    const response = await apiClient.patch<Role>(`/roles/${roleId}/permissions/${permissionCode}/scope`, data);
     return response.data;
   },
 };

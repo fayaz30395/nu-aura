@@ -28,6 +28,7 @@ spring:
       hibernate:
         format_sql: true
         default_schema: public
+        tenant_identifier_resolver: com.hrms.common.config.TenantIdentifierResolver
     open-in-view: false
 
   liquibase:

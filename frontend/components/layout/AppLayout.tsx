@@ -43,6 +43,7 @@ import {
   Plane,
   Zap,
   Activity,
+  Home,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
@@ -63,25 +64,41 @@ export interface AppLayoutProps {
   onMenuItemClick?: (item: SidebarItem) => void;
 }
 
+const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
+
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   breadcrumbs = [],
   headerProps = {},
   className,
   showBreadcrumbs = true,
-  sidebarCollapsed: initialCollapsed = false,
+  sidebarCollapsed: initialCollapsed,
   onSidebarCollapsedChange,
   activeMenuItem = 'dashboard',
   onMenuItemClick,
 }) => {
   const router = useRouter();
   const { logout, user, hasHydrated } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
+  // Initialize from localStorage to persist across page refreshes
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    }
+    return initialCollapsed ?? false;
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Sync sidebar collapsed state from localStorage on client hydration
+    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    if (saved !== null) {
+      setIsCollapsed(saved === 'true');
+    }
   }, []);
 
   // Keyboard shortcut for toggling sidebar (Cmd/Ctrl + B)
@@ -92,6 +109,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         setIsCollapsed(prev => {
           const newValue = !prev;
           onSidebarCollapsedChange?.(newValue);
+          // Persist to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newValue));
+          }
           return newValue;
         });
       }
@@ -104,6 +125,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const handleSidebarCollapsedChange = useCallback((collapsed: boolean) => {
     setIsCollapsed(collapsed);
     onSidebarCollapsedChange?.(collapsed);
+    // Persist to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(collapsed));
+    }
   }, [onSidebarCollapsedChange]);
 
   const handleMenuItemClick = useCallback((item: SidebarItem) => {
@@ -134,6 +159,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       id: 'main',
       label: 'Main',
       items: [
+        {
+          id: 'home',
+          label: 'Home',
+          icon: <Home className="h-5 w-5" />,
+          href: '/home',
+        },
         {
           id: 'dashboard',
           label: 'Dashboard',
@@ -216,7 +247,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           id: 'org-chart',
           label: 'Org Chart',
           icon: <GitBranch className="h-5 w-5" />,
-          href: '/organization-chart',
+          href: '/org-chart',
         },
       ],
     },

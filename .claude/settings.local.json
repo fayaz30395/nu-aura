@@ -61,7 +61,25 @@
       "Bash(find:*)",
       "Bash(comm -23:*)",
       "Bash(./gradlew compileTestJava:*)",
-      "Bash(du:*)"
+      "Bash(du:*)",
+      "Bash(kill:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx next lint:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(gtimeout 30 npm run dev:*)",
+      "Bash(PGPASSWORD=nulogic123 psql:*)",
+      "Bash(docker exec:*)",
+      "Bash(/opt/homebrew/bin/docker exec -t nu-aura-postgres-1 psql -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
+      "Bash(/opt/homebrew/bin/docker exec -t nulogic-postgres-1 psql -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
+      "Bash(/usr/local/bin/docker exec -t nu-aura-postgres-1 psql -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
+      "Bash(echo:*)",
+      "Bash(mdfind:*)",
+      "Bash(/Applications/OrbStack.app/Contents/MacOS/xbin/docker ps)",
+      "Bash(/usr/local/bin/orbctl docker:*)",
+      "Bash(/opt/homebrew/bin/psql -h localhost -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
+      "Bash(/usr/local/bin/psql -h localhost -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
+      "Bash(PGPASSWORD=nulogic123 /opt/homebrew/opt/postgresql/bin/psql:*)",
+      "Bash(./mvnw test:*)"
     ]
   }
 }

@@ -84,4 +84,31 @@ public class RoleController {
         RoleResponse role = roleManagementService.removePermissions(id, request);
         return ResponseEntity.ok(role);
     }
+
+    /**
+     * Assign permissions with specific scopes to a role (Keka-style RBAC).
+     * Supports ALL, LOCATION, DEPARTMENT, TEAM, SELF, and CUSTOM scopes.
+     */
+    @PutMapping("/{id}/permissions-with-scope")
+    @RequiresPermission(ROLE_MANAGE)
+    public ResponseEntity<RoleResponse> assignPermissionsWithScope(
+            @PathVariable UUID id,
+            @Valid @RequestBody AssignPermissionsWithScopeRequest request) {
+        RoleResponse role = roleManagementService.assignPermissionsWithScope(id, request);
+        return ResponseEntity.ok(role);
+    }
+
+    /**
+     * Update scope for a single permission on a role.
+     */
+    @PatchMapping("/{roleId}/permissions/{permissionCode}/scope")
+    @RequiresPermission(ROLE_MANAGE)
+    public ResponseEntity<RoleResponse> updatePermissionScope(
+            @PathVariable UUID roleId,
+            @PathVariable String permissionCode,
+            @Valid @RequestBody UpdatePermissionScopeRequest request) {
+        RoleResponse role = roleManagementService.updatePermissionScope(
+                roleId, permissionCode, request.getScope(), request.getCustomTargets());
+        return ResponseEntity.ok(role);
+    }
 }

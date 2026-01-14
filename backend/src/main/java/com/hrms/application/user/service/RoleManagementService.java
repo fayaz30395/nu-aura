@@ -5,8 +5,8 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
-import com.hrms.domain.user.Permission;
-import com.hrms.domain.user.Role;
+import com.hrms.domain.user.*;
+import com.hrms.infrastructure.user.repository.CustomScopeTargetRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,6 +24,7 @@ public class RoleManagementService {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
+    private final CustomScopeTargetRepository customScopeTargetRepository;
     private final com.hrms.infrastructure.user.repository.UserRepository userRepository;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
 
@@ -193,6 +190,153 @@ public class RoleManagementService {
         return mapToResponse(updatedRole);
     }
 
+    /**
+     * Assign permissions with specific scopes to a role (Keka-style RBAC).
+     * Supports ALL, LOCATION, DEPARTMENT, TEAM, SELF, and CUSTOM scopes.
+     */
+    @Transactional
+    public RoleResponse assignPermissionsWithScope(UUID roleId, AssignPermissionsWithScopeRequest request) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+
+        Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+
+        // Prevent modifying system roles
+        if (role.getIsSystemRole()) {
+            throw new BusinessException("Cannot modify permissions for system role");
+        }
+
+        // Capture old permissions for audit
+        Set<String> oldPermissions = role.getPermissions().stream()
+                .map(rp -> rp.getPermission().getCode() + ":" + rp.getScope())
+                .collect(Collectors.toSet());
+
+        // Get permission codes from request
+        Set<String> permissionCodes = request.getPermissions().stream()
+                .map(PermissionScopeRequest::getPermissionCode)
+                .collect(Collectors.toSet());
+
+        // Fetch all permissions by code
+        List<Permission> permissions = permissionRepository.findByCodeIn(permissionCodes);
+        Map<String, Permission> permissionMap = permissions.stream()
+                .collect(Collectors.toMap(Permission::getCode, p -> p));
+
+        // Validate all permission codes exist
+        for (String code : permissionCodes) {
+            if (!permissionMap.containsKey(code)) {
+                throw new ValidationException("Permission code not found: " + code);
+            }
+        }
+
+        // Replace or update permissions
+        if (request.isReplaceAll()) {
+            role.getPermissions().clear();
+        }
+
+        for (PermissionScopeRequest permReq : request.getPermissions()) {
+            Permission permission = permissionMap.get(permReq.getPermissionCode());
+            RoleScope scope = permReq.getScope();
+
+            // Validate CUSTOM scope has targets
+            if (scope == RoleScope.CUSTOM &&
+                (permReq.getCustomTargets() == null || permReq.getCustomTargets().isEmpty())) {
+                throw new ValidationException("CUSTOM scope requires at least one target for permission: " +
+                    permReq.getPermissionCode());
+            }
+
+            // Find existing or create new RolePermission
+            RolePermission rolePermission = role.getPermissions().stream()
+                    .filter(rp -> rp.getPermission().getCode().equals(permReq.getPermissionCode()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (rolePermission != null) {
+                // Update existing permission scope
+                rolePermission.setScope(scope);
+                // Clear existing custom targets and add new ones
+                rolePermission.getCustomTargets().clear();
+            } else {
+                // Add new permission with scope
+                rolePermission = role.addPermission(permission, scope);
+            }
+
+            // Add custom targets if CUSTOM scope
+            if (scope == RoleScope.CUSTOM && permReq.getCustomTargets() != null) {
+                for (PermissionScopeRequest.CustomTargetRequest targetReq : permReq.getCustomTargets()) {
+                    CustomScopeTarget target = CustomScopeTarget.builder()
+                            .targetType(targetReq.getTargetType())
+                            .targetId(targetReq.getTargetId())
+                            .build();
+                    rolePermission.addCustomTarget(target);
+                }
+            }
+        }
+
+        Role updatedRole = roleRepository.save(role);
+        log.info("Updated permissions with scopes for role: {} for tenant: {}", updatedRole.getCode(), tenantId);
+
+        // Audit log
+        Set<String> newPermissions = updatedRole.getPermissions().stream()
+                .map(rp -> rp.getPermission().getCode() + ":" + rp.getScope())
+                .collect(Collectors.toSet());
+
+        auditLogService.logAction("ROLE", updatedRole.getId(),
+                com.hrms.domain.audit.AuditLog.AuditAction.PERMISSION_CHANGE,
+                Map.of("permissions", oldPermissions),
+                Map.of("permissions", newPermissions),
+                "Assigned permissions with scopes to role: " + updatedRole.getName());
+
+        return mapToResponse(updatedRole);
+    }
+
+    /**
+     * Update scope for a single permission on a role.
+     */
+    @Transactional
+    public RoleResponse updatePermissionScope(UUID roleId, String permissionCode, RoleScope newScope,
+                                               Set<PermissionScopeRequest.CustomTargetRequest> customTargets) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+
+        Role role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+
+        if (role.getIsSystemRole()) {
+            throw new BusinessException("Cannot modify permissions for system role");
+        }
+
+        RolePermission rolePermission = role.getPermissions().stream()
+                .filter(rp -> rp.getPermission().getCode().equals(permissionCode))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Permission " + permissionCode + " not found on role"));
+
+        // Validate CUSTOM scope has targets
+        if (newScope == RoleScope.CUSTOM && (customTargets == null || customTargets.isEmpty())) {
+            throw new ValidationException("CUSTOM scope requires at least one target");
+        }
+
+        RoleScope oldScope = rolePermission.getScope();
+        rolePermission.setScope(newScope);
+
+        // Handle custom targets
+        rolePermission.getCustomTargets().clear();
+        if (newScope == RoleScope.CUSTOM && customTargets != null) {
+            for (PermissionScopeRequest.CustomTargetRequest targetReq : customTargets) {
+                CustomScopeTarget target = CustomScopeTarget.builder()
+                        .targetType(targetReq.getTargetType())
+                        .targetId(targetReq.getTargetId())
+                        .build();
+                rolePermission.addCustomTarget(target);
+            }
+        }
+
+        Role updatedRole = roleRepository.save(role);
+        log.info("Updated scope for permission {} on role {} from {} to {}",
+                permissionCode, role.getCode(), oldScope, newScope);
+
+        return mapToResponse(updatedRole);
+    }
+
     @Transactional
     public RoleResponse addPermissions(UUID roleId, AssignPermissionsRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -339,14 +483,33 @@ public class RoleManagementService {
                 role.getUpdatedAt());
     }
 
-    private PermissionResponse mapPermissionToResponse(com.hrms.domain.user.RolePermission rolePermission) {
+    private PermissionResponse mapPermissionToResponse(RolePermission rolePermission) {
         Permission permission = rolePermission.getPermission();
-        return new PermissionResponse(
-                permission.getId(),
-                permission.getCode(),
-                permission.getName(),
-                permission.getDescription(),
-                permission.getResource(),
-                permission.getAction());
+
+        // Map custom targets if CUSTOM scope
+        Set<PermissionResponse.CustomTargetResponse> customTargetResponses = null;
+        if (rolePermission.getScope() == RoleScope.CUSTOM &&
+            rolePermission.getCustomTargets() != null &&
+            !rolePermission.getCustomTargets().isEmpty()) {
+            customTargetResponses = rolePermission.getCustomTargets().stream()
+                    .map(target -> PermissionResponse.CustomTargetResponse.builder()
+                            .id(target.getId())
+                            .targetType(target.getTargetType())
+                            .targetId(target.getTargetId())
+                            .targetName(null) // TODO: Resolve target name from Employee/Department/Location service
+                            .build())
+                    .collect(Collectors.toSet());
+        }
+
+        return PermissionResponse.builder()
+                .id(permission.getId())
+                .code(permission.getCode())
+                .name(permission.getName())
+                .description(permission.getDescription())
+                .resource(permission.getResource())
+                .action(permission.getAction())
+                .scope(rolePermission.getScope())
+                .customTargets(customTargetResponses)
+                .build();
     }
 }

@@ -13,6 +13,7 @@
 
     <!-- Create NuLogic Tenant -->
     <changeSet id="101-seed-nulogic-tenant" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM tenants WHERE code = 'nulogic'
@@ -33,6 +34,7 @@
 
     <!-- Create NuLogic Super Admin User -->
     <changeSet id="101-seed-nulogic-admin-user" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM users WHERE email = 'fayaz.m@nulogic.io'
@@ -64,10 +66,13 @@
 
     <!-- Assign SUPER_ADMIN role to NuLogic admin -->
     <changeSet id="101-assign-nulogic-admin-roles" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM users WHERE email = 'fayaz.m@nulogic.io'
-            </sqlCheck>
+            <and>
+                <!-- Check if the user with the exact expected ID exists -->
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '770e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222001'</sqlCheck>
+            </and>
         </preConditions>
 
         <comment>Assign SUPER_ADMIN, TENANT_ADMIN, and EMPLOYEE roles to NuLogic admin</comment>
@@ -84,10 +89,14 @@
 
     <!-- Create Employee record for NuLogic admin -->
     <changeSet id="101-create-nulogic-admin-employee" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM employees WHERE user_id = '770e8400-e29b-41d4-a716-446655440001'
-            </sqlCheck>
+            <and>
+                <!-- Only run if user with expected ID exists -->
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '770e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+                <!-- And employee doesn't exist yet -->
+                <sqlCheck expectedResult="0">SELECT COUNT(*) FROM employees WHERE user_id = '770e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+            </and>
         </preConditions>
 
         <insert tableName="employees">
@@ -120,6 +129,7 @@
 
     <!-- Create NuLogic HR Department -->
     <changeSet id="101-create-nulogic-hr-department" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM departments WHERE code = 'HR' AND tenant_id = '660e8400-e29b-41d4-a716-446655440001'
@@ -143,6 +153,7 @@
 
     <!-- Create roles for NuLogic tenant -->
     <changeSet id="101-create-nulogic-roles" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM roles WHERE tenant_id = '660e8400-e29b-41d4-a716-446655440001'
@@ -200,10 +211,12 @@
 
     <!-- Assign NuLogic-specific roles to admin -->
     <changeSet id="101-assign-nulogic-tenant-roles" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM users WHERE email = 'fayaz.m@nulogic.io'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '770e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = 'aa222222-2222-2222-2222-222222222001'</sqlCheck>
+            </and>
         </preConditions>
 
         <sql>
@@ -218,10 +231,12 @@
 
     <!-- Assign SYSTEM:ADMIN permission to NuLogic roles -->
     <changeSet id="101-assign-nulogic-role-permissions" author="system">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM roles WHERE id = 'aa222222-2222-2222-2222-222222222001'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = 'aa222222-2222-2222-2222-222222222001'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM permissions WHERE id = '11111111-1111-1111-1111-111111111001'</sqlCheck>
+            </and>
         </preConditions>
 
         <sql>

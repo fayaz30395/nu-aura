@@ -2,12 +2,14 @@ package com.hrms.application.announcement.service;
 
 import com.hrms.api.announcement.dto.AnnouncementDto;
 import com.hrms.api.announcement.dto.CreateAnnouncementRequest;
+import com.hrms.application.common.service.ContentViewService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.announcement.Announcement;
 import com.hrms.domain.announcement.Announcement.*;
 import com.hrms.domain.announcement.AnnouncementRead;
+import com.hrms.domain.common.ContentView.ContentType;
 import com.hrms.infrastructure.announcement.repository.AnnouncementRepository;
 import com.hrms.infrastructure.announcement.repository.AnnouncementReadRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -34,6 +36,7 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementReadRepository announcementReadRepository;
     private final EmployeeRepository employeeRepository;
+    private final ContentViewService contentViewService;
 
     public AnnouncementDto createAnnouncement(CreateAnnouncementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -235,6 +238,8 @@ public class AnnouncementService {
         // Check if already read
         if (announcementReadRepository.existsByAnnouncementIdAndEmployeeIdAndTenantId(
                 announcementId, employeeId, tenantId)) {
+            // Still record in generic view system (tracks repeat views)
+            contentViewService.recordView(ContentType.ANNOUNCEMENT, announcementId, employeeId, "direct");
             return;
         }
 
@@ -253,6 +258,9 @@ public class AnnouncementService {
                 .build();
         read.setTenantId(tenantId);
         announcementReadRepository.save(read);
+
+        // Also record in generic content view system
+        contentViewService.recordView(ContentType.ANNOUNCEMENT, announcementId, employeeId, "direct");
 
         log.debug("Marked announcement {} as read by employee {}", announcementId, employeeId);
     }

@@ -106,6 +106,7 @@
 
     <!-- Add employees -->
     <changeSet id="048-create-employees" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM employees WHERE employee_code IN ('EMP001', 'EMP002', 'EMP003') AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'

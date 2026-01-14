@@ -211,7 +211,7 @@ export default function TeamDirectory() {
   };
 
   return (
-    <AppLayout activeMenuItem="employees">
+    <AppLayout activeMenuItem="team-directory">
       <div className="space-y-6">
         {/* Header */}
         <motion.div

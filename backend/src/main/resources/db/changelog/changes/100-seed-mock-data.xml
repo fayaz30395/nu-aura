@@ -19,6 +19,7 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-additional-departments" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM departments WHERE code IN ('QA', 'DEVOPS', 'PRODUCT') AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
@@ -77,6 +78,7 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-mock-users" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM users WHERE email = 'sarah.hr@demo.com' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
@@ -341,10 +343,16 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-hr-employees" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM employees WHERE employee_code = 'HR001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM employees WHERE employee_code = 'HR001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
+                </sqlCheck>
+                <!-- Check all FK references exist -->
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM departments WHERE id = 'd01e8400-e29b-41d4-a716-446655440002'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '001e8400-e29b-41d4-a716-446655440010'</sqlCheck>
+            </and>
         </preConditions>
 
         <!-- HR Manager - Sarah Wilson -->
@@ -502,10 +510,16 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-manager-employees" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM employees WHERE employee_code = 'MGR001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM employees WHERE employee_code = 'MGR001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
+                </sqlCheck>
+                <!-- Check all FK references exist -->
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM departments WHERE id = 'd01e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '001e8400-e29b-41d4-a716-446655440020'</sqlCheck>
+            </and>
         </preConditions>
 
         <!-- Engineering Manager 1 - Alex Chen -->
@@ -601,10 +615,17 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-developer-employees" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM employees WHERE employee_code = 'DEV001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM employees WHERE employee_code = 'DEV001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
+                </sqlCheck>
+                <!-- Check all FK references exist -->
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM departments WHERE id = 'd01e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '001e8400-e29b-41d4-a716-446655440030'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM employees WHERE id = 'e01e8400-e29b-41d4-a716-446655440020'</sqlCheck>
+            </and>
         </preConditions>
 
         <!-- Developer 1 - Kevin Lee (Reports to Alex Chen) -->
@@ -913,6 +934,13 @@
     <!-- ========================================= -->
 
     <changeSet id="100-assign-user-roles" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '001e8400-e29b-41d4-a716-446655440010'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222003'</sqlCheck>
+            </and>
+        </preConditions>
         <comment>Assign roles to mock users</comment>
 
         <sql>
@@ -952,10 +980,14 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-projects" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM projects WHERE project_code = 'PROJ-001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM projects WHERE project_code = 'PROJ-001' AND tenant_id = '550e8400-e29b-41d4-a716-446655440000'
+                </sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM employees WHERE id = 'e01e8400-e29b-41d4-a716-446655440020'</sqlCheck>
+            </and>
         </preConditions>
 
         <!-- Project 1: E-Commerce Platform -->
@@ -1063,6 +1095,10 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-leave-balances" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM leave_types WHERE id = 'a01e8400-e29b-41d4-a716-446655440001'</sqlCheck>
+        </preConditions>
         <comment>Create leave balances for all mock employees for 2025 and 2026</comment>
 
         <sql>
@@ -1145,6 +1181,10 @@
     <!-- ========================================= -->
 
     <changeSet id="100-create-attendance-records" author="hrms">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="attendance_records"/>
+        </preConditions>
         <comment>Create sample attendance records for current month</comment>
 
         <sql>

@@ -36,7 +36,7 @@ public class Role extends TenantAware {
     @Builder.Default
     private Set<RolePermission> permissions = new HashSet<>();
 
-    public void addPermission(Permission permission, RoleScope scope) {
+    public RolePermission addPermission(Permission permission, RoleScope scope) {
         RolePermission rolePermission = RolePermission.builder()
                 .role(this)
                 .permission(permission)
@@ -44,6 +44,7 @@ public class Role extends TenantAware {
                 .build();
         rolePermission.setTenantId(getTenantId());
         this.permissions.add(rolePermission);
+        return rolePermission;
     }
 
     public void removePermission(Permission permission) {
