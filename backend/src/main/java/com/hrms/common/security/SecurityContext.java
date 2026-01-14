@@ -24,7 +24,14 @@ public class SecurityContext {
     private static final ThreadLocal<UUID> currentDepartmentId = new ThreadLocal<>();
     private static final ThreadLocal<UUID> currentTeamId = new ThreadLocal<>();
     private static final ThreadLocal<UUID> currentLocationId = new ThreadLocal<>();
+    private static final ThreadLocal<Set<UUID>> currentLocationIds = new ThreadLocal<>();
     private static final ThreadLocal<Set<String>> accessibleApps = new ThreadLocal<>();
+    // Direct + indirect reportees for TEAM scope
+    private static final ThreadLocal<Set<UUID>> allReporteeIds = new ThreadLocal<>();
+    // Custom scope targets per permission (permission -> target IDs by type)
+    private static final ThreadLocal<Map<String, Set<UUID>>> customEmployeeIds = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Set<UUID>>> customDepartmentIds = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, Set<UUID>>> customLocationIds = new ThreadLocal<>();
 
     /**
      * Set current user context (called during authentication)
@@ -59,6 +66,48 @@ public class SecurityContext {
         currentLocationId.set(locationId);
         currentDepartmentId.set(departmentId);
         currentTeamId.set(teamId);
+    }
+
+    /**
+     * Set multiple location IDs for users with access to multiple locations
+     */
+    public static void setCurrentLocationIds(Set<UUID> locationIds) {
+        currentLocationIds.set(locationIds != null ? locationIds : Collections.emptySet());
+    }
+
+    /**
+     * Set all reportee IDs (direct + indirect) for TEAM scope filtering
+     */
+    public static void setAllReporteeIds(Set<UUID> reporteeIds) {
+        allReporteeIds.set(reporteeIds != null ? reporteeIds : Collections.emptySet());
+    }
+
+    /**
+     * Set custom scope targets for a specific permission
+     */
+    public static void setCustomScopeTargets(String permission,
+                                              Set<UUID> employeeIds,
+                                              Set<UUID> departmentIds,
+                                              Set<UUID> locationIds) {
+        if (customEmployeeIds.get() == null) {
+            customEmployeeIds.set(new HashMap<>());
+        }
+        if (customDepartmentIds.get() == null) {
+            customDepartmentIds.set(new HashMap<>());
+        }
+        if (customLocationIds.get() == null) {
+            customLocationIds.set(new HashMap<>());
+        }
+
+        if (employeeIds != null && !employeeIds.isEmpty()) {
+            customEmployeeIds.get().put(permission, employeeIds);
+        }
+        if (departmentIds != null && !departmentIds.isEmpty()) {
+            customDepartmentIds.get().put(permission, departmentIds);
+        }
+        if (locationIds != null && !locationIds.isEmpty()) {
+            customLocationIds.get().put(permission, locationIds);
+        }
     }
 
     // ==================== Getters ====================
@@ -117,6 +166,56 @@ public class SecurityContext {
 
     public static UUID getCurrentLocationId() {
         return currentLocationId.get();
+    }
+
+    /**
+     * Get all location IDs the user has access to (for LOCATION scope with multiple locations)
+     */
+    public static Set<UUID> getCurrentLocationIds() {
+        Set<UUID> ids = currentLocationIds.get();
+        if (ids != null && !ids.isEmpty()) {
+            return ids;
+        }
+        // Fallback to single location
+        UUID singleLocation = getCurrentLocationId();
+        if (singleLocation != null) {
+            return Set.of(singleLocation);
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Get all reportee IDs (direct + indirect) for TEAM scope filtering
+     */
+    public static Set<UUID> getAllReporteeIds() {
+        return allReporteeIds.get() != null ? allReporteeIds.get() : Collections.emptySet();
+    }
+
+    /**
+     * Get custom employee IDs for CUSTOM scope filtering
+     */
+    public static Set<UUID> getCustomEmployeeIds(String permission) {
+        Map<String, Set<UUID>> map = customEmployeeIds.get();
+        if (map == null) return Collections.emptySet();
+        return map.getOrDefault(permission, Collections.emptySet());
+    }
+
+    /**
+     * Get custom department IDs for CUSTOM scope filtering
+     */
+    public static Set<UUID> getCustomDepartmentIds(String permission) {
+        Map<String, Set<UUID>> map = customDepartmentIds.get();
+        if (map == null) return Collections.emptySet();
+        return map.getOrDefault(permission, Collections.emptySet());
+    }
+
+    /**
+     * Get custom location IDs for CUSTOM scope filtering
+     */
+    public static Set<UUID> getCustomLocationIds(String permission) {
+        Map<String, Set<UUID>> map = customLocationIds.get();
+        if (map == null) return Collections.emptySet();
+        return map.getOrDefault(permission, Collections.emptySet());
     }
 
     public static Set<String> getAccessibleApps() {
@@ -353,6 +452,11 @@ public class SecurityContext {
         currentDepartmentId.remove();
         currentTeamId.remove();
         currentLocationId.remove();
+        currentLocationIds.remove();
         accessibleApps.remove();
+        allReporteeIds.remove();
+        customEmployeeIds.remove();
+        customDepartmentIds.remove();
+        customLocationIds.remove();
     }
 }

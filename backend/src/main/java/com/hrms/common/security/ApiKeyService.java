@@ -1,7 +1,7 @@
 package com.hrms.common.security;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +14,16 @@ import java.util.*;
  * Service for managing API keys for external integrations.
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class ApiKeyService {
 
     private final ApiKeyRepository apiKeyRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public ApiKeyService(@Lazy ApiKeyRepository apiKeyRepository, PasswordEncoder passwordEncoder) {
+        this.apiKeyRepository = apiKeyRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private static final String API_KEY_PREFIX = "hrms_";
     private static final int API_KEY_LENGTH = 32;

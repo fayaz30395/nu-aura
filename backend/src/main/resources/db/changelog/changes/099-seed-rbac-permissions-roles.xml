@@ -11,6 +11,10 @@
     <!-- ========================================= -->
 
     <changeSet id="099-seed-permissions" author="system">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM permissions WHERE code = 'EMPLOYEE:READ'</sqlCheck>
+        </preConditions>
 
         <!-- Employee Management Permissions -->
         <insert tableName="permissions">
@@ -503,6 +507,10 @@
     <!-- ========================================= -->
 
     <changeSet id="099-seed-roles" author="system">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE code = 'SUPER_ADMIN'</sqlCheck>
+        </preConditions>
 
         <!-- SUPER_ADMIN - Full platform access across all tenants -->
         <insert tableName="roles">
@@ -596,6 +604,10 @@
     <!-- ========================================= -->
 
     <changeSet id="099-seed-role-permissions" author="system">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM role_permissions WHERE role_id = '22222222-2222-2222-2222-222222222001'</sqlCheck>
+        </preConditions>
 
         <!-- SUPER_ADMIN gets SYSTEM:ADMIN permission (bypasses all checks) -->
         <insert tableName="role_permissions">
@@ -929,11 +941,20 @@
     <!-- ========================================= -->
 
     <changeSet id="099-assign-admin-role" author="system">
-        <!-- Check if admin user exists -->
+        <validCheckSum>ANY</validCheckSum>
+        <!-- Check if admin user exists, role exists, AND role not already assigned -->
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="1">
-                SELECT COUNT(*) FROM users WHERE id = '660e8400-e29b-41d4-a716-446655440000'
-            </sqlCheck>
+            <and>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM users WHERE id = '660e8400-e29b-41d4-a716-446655440000'
+                </sqlCheck>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222001'
+                </sqlCheck>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM user_roles WHERE user_id = '660e8400-e29b-41d4-a716-446655440000' AND role_id = '22222222-2222-2222-2222-222222222001'
+                </sqlCheck>
+            </and>
         </preConditions>
 
         <comment>Assign SUPER_ADMIN role to admin user for testing RBAC</comment>
@@ -958,6 +979,10 @@
     <!-- ========================================= -->
 
     <changeSet id="099-assign-employee-role-to-all-users" author="system">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222007'</sqlCheck>
+        </preConditions>
         <comment>Assign EMPLOYEE role to all existing users without roles for basic dashboard access</comment>
 
         <sql>
@@ -978,6 +1003,14 @@
     <!-- ========================================= -->
 
     <changeSet id="099-ensure-admin-roles" author="system">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN" onFailMessage="Skipping: roles not seeded yet or already assigned">
+            <and>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE id = '660e8400-e29b-41d4-a716-446655440000'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222001'</sqlCheck>
+                <sqlCheck expectedResult="0">SELECT COUNT(*) FROM user_roles WHERE user_id = '660e8400-e29b-41d4-a716-446655440000' AND role_id = '22222222-2222-2222-2222-222222222001'</sqlCheck>
+            </and>
+        </preConditions>
         <comment>Ensure admin user has SUPER_ADMIN, TENANT_ADMIN and EMPLOYEE roles</comment>
 
         <sql>
@@ -996,6 +1029,10 @@
     <!-- ========================================= -->
 
     <changeSet id="099-ensure-all-users-have-employee-role" author="system" runAlways="true">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM roles WHERE id = '22222222-2222-2222-2222-222222222007'</sqlCheck>
+        </preConditions>
         <comment>Ensure all users have EMPLOYEE role for basic dashboard access - runs every time</comment>
 
         <sql>

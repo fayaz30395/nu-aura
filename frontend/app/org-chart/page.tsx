@@ -213,7 +213,7 @@ export default function OrgChartPage() {
   };
 
   return (
-    <AppLayout activeMenuItem="employees">
+    <AppLayout activeMenuItem="org-chart">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">

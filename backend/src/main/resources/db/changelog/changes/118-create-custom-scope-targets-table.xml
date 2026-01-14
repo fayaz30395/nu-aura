@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create custom_scope_targets table for Keka-style CUSTOM scope support -->
+    <changeSet id="118-create-custom-scope-targets-table" author="system">
+        <createTable tableName="custom_scope_targets">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_permission_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+            <column name="version" type="bigint" defaultValueNumeric="0"/>
+        </createTable>
+
+        <!-- Add foreign key to role_permissions -->
+        <addForeignKeyConstraint
+                baseTableName="custom_scope_targets"
+                baseColumnNames="role_permission_id"
+                constraintName="fk_custom_scope_target_role_permission"
+                referencedTableName="role_permissions"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Add foreign key to tenants -->
+        <addForeignKeyConstraint
+                baseTableName="custom_scope_targets"
+                baseColumnNames="tenant_id"
+                constraintName="fk_custom_scope_target_tenant"
+                referencedTableName="tenants"
+                referencedColumnNames="id"/>
+
+        <!-- Add unique constraint to prevent duplicate targets -->
+        <addUniqueConstraint
+                tableName="custom_scope_targets"
+                columnNames="role_permission_id,target_type,target_id"
+                constraintName="uk_custom_scope_target"/>
+
+        <!-- Create indexes for efficient querying -->
+        <createIndex tableName="custom_scope_targets" indexName="idx_custom_scope_target_role_permission">
+            <column name="role_permission_id"/>
+        </createIndex>
+
+        <createIndex tableName="custom_scope_targets" indexName="idx_custom_scope_target_type_id">
+            <column name="target_type"/>
+            <column name="target_id"/>
+        </createIndex>
+
+        <createIndex tableName="custom_scope_targets" indexName="idx_custom_scope_target_tenant">
+            <column name="tenant_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Migrate existing GLOBAL scope values to ALL for Keka alignment -->
+    <changeSet id="118-migrate-scope-values" author="system">
+        <comment>Migrate legacy scope values (GLOBAL->ALL, OWN->SELF) for Keka alignment</comment>
+        <sql>
+            UPDATE role_permissions SET scope = 'ALL' WHERE scope = 'GLOBAL';
+            UPDATE role_permissions SET scope = 'SELF' WHERE scope = 'OWN';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

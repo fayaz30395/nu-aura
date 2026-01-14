@@ -1,5 +1,8 @@
 # Role-Based Access Control (RBAC) - Complete Guide
 
+Note: Keka-style RBAC requirements and deltas are tracked in
+`docs/architecture/RBAC_KEKA_REQUIREMENTS.md`.
+
 ## Overview
 
 The HRMS platform now has a comprehensive **Role-Based Access Control (RBAC)** system that provides:

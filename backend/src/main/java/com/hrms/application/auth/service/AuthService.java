@@ -419,14 +419,9 @@ public class AuthService {
 
     private boolean isHigherScope(com.hrms.domain.user.RoleScope newScope,
             com.hrms.domain.user.RoleScope existingScope) {
-        // GLOBAL > LOCATION > DEPARTMENT > TEAM > OWN
-        List<com.hrms.domain.user.RoleScope> hierarchy = List.of(
-                com.hrms.domain.user.RoleScope.GLOBAL,
-                com.hrms.domain.user.RoleScope.LOCATION,
-                com.hrms.domain.user.RoleScope.DEPARTMENT,
-                com.hrms.domain.user.RoleScope.TEAM,
-                com.hrms.domain.user.RoleScope.OWN);
-        return hierarchy.indexOf(newScope) < hierarchy.indexOf(existingScope);
+        // Use the new RoleScope.isMorePermissiveThan method
+        // Scope hierarchy: ALL(100) > LOCATION(80) > DEPARTMENT(60) > TEAM(40) > SELF(20) > CUSTOM(10)
+        return newScope.isMorePermissiveThan(existingScope);
     }
 
     /**

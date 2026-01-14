@@ -149,10 +149,19 @@
     <!-- Employment Change Requests for HR Approval Workflow -->
     <include file="db/changelog/changes/116-create-employment-change-requests-table.xml"/>
 
+    <!-- Poll tables for social wall -->
+    <include file="db/changelog/changes/117-create-poll-tables.xml"/>
+
     <!-- PM Module Changelogs -->
     <include file="db/pm-changelog/db.changelog-master.xml"/>
 
     <!-- Mock Data: 5 Projects, 3 Managers, 10 Developers, 1 HR Manager, 4 HR Staff -->
     <include file="db/changelog/changes/100-seed-mock-data.xml"/>
+
+    <!-- Keka-style RBAC: Custom scope targets and scope value migration -->
+    <include file="db/changelog/changes/118-create-custom-scope-targets-table.xml"/>
+
+    <!-- Generic content view tracking (for announcements, posts, documents, etc.) -->
+    <include file="db/changelog/changes/119-create-content-views-table.xml"/>
 
 </databaseChangeLog>

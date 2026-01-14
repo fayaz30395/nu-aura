@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="119-create-content-views-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="content_views"/>
+            </not>
+        </preConditions>
+        <comment>Create generic content_views table for tracking views across all content types</comment>
+        <createTable tableName="content_views">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="view_duration_seconds" type="INT"/>
+            <column name="view_source" type="VARCHAR(50)"/>
+            <column name="view_count" type="INT" defaultValueNumeric="1"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_viewed_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- Unique constraint: one view record per employee per content -->
+        <addUniqueConstraint
+                tableName="content_views"
+                columnNames="tenant_id, content_type, content_id, employee_id"
+                constraintName="uk_content_view_unique"/>
+
+        <!-- Index for querying views by content -->
+        <createIndex indexName="idx_content_view_content" tableName="content_views">
+            <column name="tenant_id"/>
+            <column name="content_type"/>
+            <column name="content_id"/>
+        </createIndex>
+
+        <!-- Index for querying views by employee -->
+        <createIndex indexName="idx_content_view_employee" tableName="content_views">
+            <column name="tenant_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+
+        <!-- Index for time-based queries -->
+        <createIndex indexName="idx_content_view_created" tableName="content_views">
+            <column name="tenant_id"/>
+            <column name="created_at"/>
+        </createIndex>
+
+        <!-- Foreign key to employees -->
+        <addForeignKeyConstraint
+                baseTableName="content_views"
+                baseColumnNames="employee_id"
+                constraintName="fk_content_view_employee"
+                referencedTableName="employees"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <!-- Foreign key to tenants -->
+        <addForeignKeyConstraint
+                baseTableName="content_views"
+                baseColumnNames="tenant_id"
+                constraintName="fk_content_view_tenant"
+                referencedTableName="tenants"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

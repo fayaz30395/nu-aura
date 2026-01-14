@@ -25,7 +25,7 @@ public class ESignatureController {
 
     // ==================== Signature Request Endpoints ====================
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_REQUEST)
     @PostMapping("/requests")
     public ResponseEntity<SignatureRequestResponse> createSignatureRequest(
             @RequestBody SignatureRequestRequest request,
@@ -34,7 +34,7 @@ public class ESignatureController {
                 .body(eSignatureService.createSignatureRequest(request, createdBy));
     }
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_MANAGE)
     @PutMapping("/requests/{id}")
     public ResponseEntity<SignatureRequestResponse> updateSignatureRequest(
             @PathVariable UUID id,
@@ -42,13 +42,13 @@ public class ESignatureController {
         return ResponseEntity.ok(eSignatureService.updateSignatureRequest(id, request));
     }
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_REQUEST)
     @PatchMapping("/requests/{id}/send")
     public ResponseEntity<SignatureRequestResponse> sendForSignature(@PathVariable UUID id) {
         return ResponseEntity.ok(eSignatureService.sendForSignature(id));
     }
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_MANAGE)
     @PatchMapping("/requests/{id}/cancel")
     public ResponseEntity<SignatureRequestResponse> cancelSignatureRequest(
             @PathVariable UUID id,
@@ -57,39 +57,39 @@ public class ESignatureController {
         return ResponseEntity.ok(eSignatureService.cancelSignatureRequest(id, cancelledBy, reason));
     }
 
-    @RequiresPermission({DOCUMENT_VIEW, EMPLOYEE_VIEW_SELF})
+    @RequiresPermission({ESIGNATURE_VIEW, ESIGNATURE_SIGN})
     @GetMapping("/requests/{id}")
     public ResponseEntity<SignatureRequestResponse> getSignatureRequestById(@PathVariable UUID id) {
         return ResponseEntity.ok(eSignatureService.getSignatureRequestById(id));
     }
 
-    @RequiresPermission({DOCUMENT_VIEW, EMPLOYEE_VIEW_SELF})
+    @RequiresPermission(ESIGNATURE_VIEW)
     @GetMapping("/requests")
     public ResponseEntity<Page<SignatureRequestResponse>> getAllSignatureRequests(Pageable pageable) {
         return ResponseEntity.ok(eSignatureService.getAllSignatureRequests(pageable));
     }
 
-    @RequiresPermission({DOCUMENT_VIEW, EMPLOYEE_VIEW_SELF})
+    @RequiresPermission({ESIGNATURE_VIEW, ESIGNATURE_REQUEST})
     @GetMapping("/requests/creator/{creatorId}")
     public ResponseEntity<List<SignatureRequestResponse>> getSignatureRequestsByCreator(
             @PathVariable UUID creatorId) {
         return ResponseEntity.ok(eSignatureService.getSignatureRequestsByCreator(creatorId));
     }
 
-    @RequiresPermission({DOCUMENT_VIEW, EMPLOYEE_VIEW_SELF})
+    @RequiresPermission(ESIGNATURE_VIEW)
     @GetMapping("/requests/status/{status}")
     public ResponseEntity<List<SignatureRequestResponse>> getSignatureRequestsByStatus(
             @PathVariable SignatureRequest.SignatureStatus status) {
         return ResponseEntity.ok(eSignatureService.getSignatureRequestsByStatus(status));
     }
 
-    @RequiresPermission({DOCUMENT_VIEW, EMPLOYEE_VIEW_SELF})
+    @RequiresPermission(ESIGNATURE_VIEW)
     @GetMapping("/requests/templates")
     public ResponseEntity<List<SignatureRequestResponse>> getTemplates() {
         return ResponseEntity.ok(eSignatureService.getTemplates());
     }
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_MANAGE)
     @DeleteMapping("/requests/{id}")
     public ResponseEntity<Void> deleteSignatureRequest(@PathVariable UUID id) {
         eSignatureService.deleteSignatureRequest(id);
@@ -98,7 +98,7 @@ public class ESignatureController {
 
     // ==================== Signature Approval Endpoints ====================
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_REQUEST)
     @PostMapping("/requests/{requestId}/signers")
     public ResponseEntity<SignatureApprovalResponse> addSigner(
             @PathVariable UUID requestId,
@@ -107,7 +107,7 @@ public class ESignatureController {
                 .body(eSignatureService.addSigner(requestId, request));
     }
 
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ESIGNATURE_SIGN)
     @PostMapping("/approvals/{approvalId}/sign")
     public ResponseEntity<SignatureApprovalResponse> signDocument(
             @PathVariable UUID approvalId,
@@ -115,7 +115,7 @@ public class ESignatureController {
         return ResponseEntity.ok(eSignatureService.signDocument(approvalId, request));
     }
 
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ESIGNATURE_SIGN)
     @PostMapping("/approvals/{approvalId}/decline")
     public ResponseEntity<SignatureApprovalResponse> declineDocument(
             @PathVariable UUID approvalId,
@@ -123,21 +123,21 @@ public class ESignatureController {
         return ResponseEntity.ok(eSignatureService.declineDocument(approvalId, reason));
     }
 
-    @RequiresPermission(DOCUMENT_APPROVE)
+    @RequiresPermission(ESIGNATURE_VIEW)
     @GetMapping("/requests/{requestId}/approvals")
     public ResponseEntity<List<SignatureApprovalResponse>> getApprovalsByRequest(
             @PathVariable UUID requestId) {
         return ResponseEntity.ok(eSignatureService.getApprovalsByRequest(requestId));
     }
 
-    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    @RequiresPermission(ESIGNATURE_SIGN)
     @GetMapping("/approvals/signer/{signerId}/pending")
     public ResponseEntity<List<SignatureApprovalResponse>> getPendingApprovalsBySigner(
             @PathVariable UUID signerId) {
         return ResponseEntity.ok(eSignatureService.getPendingApprovalsBySigner(signerId));
     }
 
-    @RequiresPermission(DOCUMENT_UPLOAD)
+    @RequiresPermission(ESIGNATURE_MANAGE)
     @DeleteMapping("/approvals/{approvalId}")
     public ResponseEntity<Void> removeSigner(@PathVariable UUID approvalId) {
         eSignatureService.removeSigner(approvalId);
