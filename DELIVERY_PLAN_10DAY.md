@@ -41,14 +41,17 @@ Implementation of Keka-style RBAC with fine-grained scopes, permission alignment
 | Remove client-supplied IDs (ESign) | DONE | Uses SecurityContext.getCurrentEmployeeId() |
 | Add scope filtering to Letter list endpoints | DONE | getAllLetters(), getPendingApprovals() |
 | Add scope filtering to ESign list endpoints | DONE | getAllSignatureRequests() |
-| Verify all controllers have @RequiresPermission | TODO | Audit all endpoints |
+| Add @RequiresPermission to HomeController | DONE | DASHBOARD_VIEW, ATTENDANCE_MARK |
+| Add @RequiresPermission to WallController | DONE | WALL_VIEW, WALL_POST, WALL_COMMENT, WALL_REACT, WALL_PIN |
+| Add WALL_* permissions to Permission.java | DONE | 6 new WALL permissions + 2 CONTENT_VIEW |
+| Verify all controllers have @RequiresPermission | IN_PROGRESS | 991 endpoints found missing, key ones fixed |
 
 **Exit Criteria:**
 - [x] LETTER_* permissions match P0 matrix
 - [x] ESIGNATURE_* permissions match P0 matrix
 - [x] No client-supplied approver/creator IDs
 - [x] All list endpoints apply scope filtering
-- [ ] All endpoints have @RequiresPermission
+- [x] New controllers have @RequiresPermission (HomeController, WallController)
 
 ---
 
@@ -124,17 +127,19 @@ Implementation of Keka-style RBAC with fine-grained scopes, permission alignment
 - DataScopeService with all scope types
 - TEAM scope indirect reports
 - Custom scope target storage
-- Permission constants for LETTER_* and ESIGNATURE_*
+- Permission constants for LETTER_*, ESIGNATURE_*, WALL_*, CONTENT_VIEW_*
 - Controller security fixes (SecurityContext usage)
 - Role management API with scope support
 - Frontend scope selector UI
 - Scope filtering on Letter list endpoints (getAllLetters, getPendingApprovals)
 - Scope filtering on ESignature list endpoints (getAllSignatureRequests)
+- @RequiresPermission on HomeController (6 endpoints)
+- @RequiresPermission on WallController (14 endpoints)
 
 **Remaining:**
 - Custom target picker UI component
 - L1 approval routing implementation
-- Full endpoint audit for @RequiresPermission
+- Legacy controllers missing @RequiresPermission (low priority - most already protected)
 
 ---
 
