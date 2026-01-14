@@ -390,6 +390,18 @@ public final class Permission {
     public static final String CALENDAR_MANAGE = "CALENDAR:MANAGE";
     public static final String CALENDAR_SYNC = "CALENDAR:SYNC";
 
+    // Organization Wall
+    public static final String WALL_VIEW = "WALL:VIEW";
+    public static final String WALL_POST = "WALL:POST";
+    public static final String WALL_COMMENT = "WALL:COMMENT";
+    public static final String WALL_REACT = "WALL:REACT";
+    public static final String WALL_MANAGE = "WALL:MANAGE";
+    public static final String WALL_PIN = "WALL:PIN";
+
+    // Content Views (generic view tracking)
+    public static final String CONTENT_VIEW_READ = "CONTENT_VIEW:READ";
+    public static final String CONTENT_VIEW_MANAGE = "CONTENT_VIEW:MANAGE";
+
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");
     }

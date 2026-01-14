@@ -2,6 +2,7 @@ package com.hrms.api.wall.controller;
 
 import com.hrms.api.wall.dto.*;
 import com.hrms.application.wall.service.WallService;
+import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.wall.model.WallPost;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import static com.hrms.common.security.Permission.*;
 
 import java.util.UUID;
 
@@ -33,7 +35,7 @@ public class WallController {
 
     @PostMapping("/posts")
     @Operation(summary = "Create a new post", description = "Create a new post, poll, or praise on the organization wall")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_POST)
     public ResponseEntity<WallPostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         WallPostResponse response = wallService.createPost(request, employeeId);
@@ -42,7 +44,7 @@ public class WallController {
 
     @GetMapping("/posts")
     @Operation(summary = "Get all posts", description = "Get paginated list of posts from the organization wall")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<WallPostResponse>> getPosts(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -52,7 +54,7 @@ public class WallController {
 
     @GetMapping("/posts/type/{type}")
     @Operation(summary = "Get posts by type", description = "Get posts filtered by type (POST, POLL, or PRAISE)")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<WallPostResponse>> getPostsByType(
             @PathVariable WallPost.PostType type,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -63,7 +65,7 @@ public class WallController {
 
     @GetMapping("/posts/{postId}")
     @Operation(summary = "Get post by ID", description = "Get a specific post by its ID")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<WallPostResponse> getPost(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         WallPostResponse post = wallService.getPostById(postId, employeeId);
@@ -72,7 +74,7 @@ public class WallController {
 
     @DeleteMapping("/posts/{postId}")
     @Operation(summary = "Delete a post", description = "Delete a post (only the author can delete)")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Void> deletePost(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.deletePost(postId, employeeId);
@@ -81,7 +83,7 @@ public class WallController {
 
     @PatchMapping("/posts/{postId}/pin")
     @Operation(summary = "Pin/unpin a post", description = "Pin or unpin a post (admin only)")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
+    @RequiresPermission(WALL_PIN)
     public ResponseEntity<WallPostResponse> pinPost(
             @PathVariable UUID postId,
             @RequestParam boolean pinned) {
@@ -93,7 +95,7 @@ public class WallController {
 
     @PostMapping("/posts/{postId}/reactions")
     @Operation(summary = "Add reaction to post", description = "Add a reaction (like, love, celebrate, etc.) to a post")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_REACT)
     public ResponseEntity<Void> addReaction(
             @PathVariable UUID postId,
             @Valid @RequestBody ReactionRequest request) {
@@ -104,7 +106,7 @@ public class WallController {
 
     @DeleteMapping("/posts/{postId}/reactions")
     @Operation(summary = "Remove reaction from post", description = "Remove your reaction from a post")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_REACT)
     public ResponseEntity<Void> removeReaction(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.removeReaction(postId, employeeId);
@@ -115,7 +117,7 @@ public class WallController {
 
     @PostMapping("/posts/{postId}/comments")
     @Operation(summary = "Add comment to post", description = "Add a comment or reply to a post")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_COMMENT)
     public ResponseEntity<CommentResponse> addComment(
             @PathVariable UUID postId,
             @Valid @RequestBody CreateCommentRequest request) {
@@ -126,7 +128,7 @@ public class WallController {
 
     @GetMapping("/posts/{postId}/comments")
     @Operation(summary = "Get comments for post", description = "Get paginated list of comments for a post")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<CommentResponse>> getComments(
             @PathVariable UUID postId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -136,7 +138,7 @@ public class WallController {
 
     @DeleteMapping("/comments/{commentId}")
     @Operation(summary = "Delete a comment", description = "Delete a comment (only the author can delete)")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_COMMENT)
     public ResponseEntity<Void> deleteComment(@PathVariable UUID commentId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.deleteComment(commentId, employeeId);
@@ -147,7 +149,7 @@ public class WallController {
 
     @PostMapping("/posts/{postId}/vote")
     @Operation(summary = "Vote on a poll", description = "Cast or change your vote on a poll")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<WallPostResponse> vote(
             @PathVariable UUID postId,
             @Valid @RequestBody VoteRequest request) {
@@ -158,7 +160,7 @@ public class WallController {
 
     @DeleteMapping("/posts/{postId}/vote")
     @Operation(summary = "Remove vote from poll", description = "Remove your vote from a poll")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Void> removeVote(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.removeVote(postId, employeeId);
@@ -169,7 +171,7 @@ public class WallController {
 
     @GetMapping("/praise/employee/{employeeId}")
     @Operation(summary = "Get praise for employee", description = "Get all praise posts received by an employee")
-    @PreAuthorize("isAuthenticated()")
+    @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<WallPostResponse>> getPraiseForEmployee(
             @PathVariable UUID employeeId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
