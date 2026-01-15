@@ -73,8 +73,8 @@ public class WallController {
     }
 
     @DeleteMapping("/posts/{postId}")
-    @Operation(summary = "Delete a post", description = "Delete a post (only the author can delete)")
-    @RequiresPermission(WALL_VIEW)
+    @Operation(summary = "Delete a post", description = "Delete a post (author can delete own, admin with WALL_MANAGE can delete any)")
+    @RequiresPermission({WALL_POST, WALL_MANAGE})
     public ResponseEntity<Void> deletePost(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.deletePost(postId, employeeId);
@@ -149,7 +149,7 @@ public class WallController {
 
     @PostMapping("/posts/{postId}/vote")
     @Operation(summary = "Vote on a poll", description = "Cast or change your vote on a poll")
-    @RequiresPermission(WALL_VIEW)
+    @RequiresPermission(WALL_REACT)
     public ResponseEntity<WallPostResponse> vote(
             @PathVariable UUID postId,
             @Valid @RequestBody VoteRequest request) {
@@ -160,7 +160,7 @@ public class WallController {
 
     @DeleteMapping("/posts/{postId}/vote")
     @Operation(summary = "Remove vote from poll", description = "Remove your vote from a poll")
-    @RequiresPermission(WALL_VIEW)
+    @RequiresPermission(WALL_REACT)
     public ResponseEntity<Void> removeVote(@PathVariable UUID postId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.removeVote(postId, employeeId);

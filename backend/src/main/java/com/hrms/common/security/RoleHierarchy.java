@@ -183,6 +183,14 @@ public final class RoleHierarchy {
             Permission.ANNOUNCEMENT_CREATE,
             Permission.SHIFT_MANAGE,
             Permission.OVERTIME_MANAGE,
+            // Wall management for HR
+            Permission.WALL_VIEW,
+            Permission.WALL_POST,
+            Permission.WALL_COMMENT,
+            Permission.WALL_REACT,
+            Permission.WALL_MANAGE,
+            Permission.WALL_PIN,
+            Permission.DASHBOARD_VIEW,
             FieldPermission.EMPLOYEE_SALARY_VIEW,
             FieldPermission.EMPLOYEE_BANK_VIEW,
             FieldPermission.EMPLOYEE_TAX_ID_VIEW
@@ -265,6 +273,7 @@ public final class RoleHierarchy {
             Permission.LEAVE_VIEW_SELF,
             Permission.ATTENDANCE_MARK,
             Permission.ATTENDANCE_REGULARIZE,
+            Permission.ATTENDANCE_VIEW_SELF,
             Permission.PAYROLL_VIEW_SELF,
             Permission.REVIEW_VIEW,
             Permission.GOAL_CREATE,
@@ -302,7 +311,13 @@ public final class RoleHierarchy {
             Permission.FEEDBACK_360_VIEW,
             Permission.FEEDBACK_360_SUBMIT,
             Permission.MEETING_VIEW,
-            Permission.MEETING_CREATE
+            Permission.MEETING_CREATE,
+            // Dashboard & Wall access for all employees
+            Permission.DASHBOARD_VIEW,
+            Permission.WALL_VIEW,
+            Permission.WALL_POST,
+            Permission.WALL_COMMENT,
+            Permission.WALL_REACT
         ));
     }
 

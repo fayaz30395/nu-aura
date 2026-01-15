@@ -111,10 +111,10 @@ class HomeService {
   }
 
   /**
-   * Get today's attendance status for an employee
+   * Get today's attendance status for the current logged-in user
    */
-  async getAttendanceToday(employeeId: string): Promise<AttendanceTodayResponse> {
-    const response = await apiClient.get<AttendanceTodayResponse>(`/home/attendance/${employeeId}`);
+  async getMyAttendanceToday(): Promise<AttendanceTodayResponse> {
+    const response = await apiClient.get<AttendanceTodayResponse>('/home/attendance/me');
     return response.data;
   }
 

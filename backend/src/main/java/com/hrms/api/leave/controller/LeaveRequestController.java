@@ -5,6 +5,7 @@ import com.hrms.api.leave.dto.LeaveRequestResponse;
 import com.hrms.application.leave.service.LeaveRequestService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
@@ -50,6 +51,11 @@ public class LeaveRequestController {
     })
     public ResponseEntity<LeaveRequestResponse> getLeaveRequest(@PathVariable UUID id) {
         LeaveRequest leaveRequest = leaveRequestService.getLeaveRequestById(id);
+
+        // Enforce scope: validate the user can access this leave request
+        String permission = determineViewPermission();
+        validateLeaveRequestAccess(leaveRequest, permission);
+
         return ResponseEntity.ok(toResponse(leaveRequest));
     }
 
@@ -78,6 +84,10 @@ public class LeaveRequestController {
     public ResponseEntity<Page<LeaveRequestResponse>> getEmployeeLeaveRequests(
             @PathVariable UUID employeeId,
             Pageable pageable) {
+        // Enforce scope: validate the user can access this employee's leave requests
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
+
         Page<LeaveRequest> requests = leaveRequestService.getLeaveRequestsByEmployee(employeeId, pageable);
         return ResponseEntity.ok(requests.map(this::toResponse));
     }
@@ -110,8 +120,9 @@ public class LeaveRequestController {
     @PostMapping("/{id}/approve")
     @RequiresPermission(Permission.LEAVE_APPROVE)
     public ResponseEntity<LeaveRequestResponse> approveLeaveRequest(
-            @PathVariable UUID id,
-            @RequestParam UUID approverId) {
+            @PathVariable UUID id) {
+        // L1 Approval: Use current user as approver - service validates manager relationship
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
         LeaveRequest approved = leaveRequestService.approveLeaveRequest(id, approverId);
         return ResponseEntity.ok(toResponse(approved));
     }
@@ -120,8 +131,9 @@ public class LeaveRequestController {
     @RequiresPermission(Permission.LEAVE_REJECT)
     public ResponseEntity<LeaveRequestResponse> rejectLeaveRequest(
             @PathVariable UUID id,
-            @RequestParam UUID approverId,
             @RequestParam String reason) {
+        // L1 Approval: Use current user as approver - service validates manager relationship
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
         LeaveRequest rejected = leaveRequestService.rejectLeaveRequest(id, approverId, reason);
         return ResponseEntity.ok(toResponse(rejected));
     }
@@ -178,5 +190,149 @@ public class LeaveRequestController {
         }
 
         return response;
+    }
+
+    // ==================== Scope Validation Helpers ====================
+
+    /**
+     * Determines which view permission the user has (in priority order).
+     */
+    private String determineViewPermission() {
+        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)) {
+            return Permission.LEAVE_VIEW_ALL;
+        }
+        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM)) {
+            return Permission.LEAVE_VIEW_TEAM;
+        }
+        return Permission.LEAVE_VIEW_SELF;
+    }
+
+    /**
+     * Validates that the current user can access a specific leave request based on their scope.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateLeaveRequestAccess(LeaveRequest leaveRequest, String permission) {
+        validateEmployeeAccess(leaveRequest.getEmployeeId(), permission);
+    }
+
+    /**
+     * Validates that the current user can access data for a specific employee based on their scope.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // Super admin (includes system admin and SUPER_ADMIN role) bypasses all checks
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+
+        com.hrms.domain.user.RoleScope scope = SecurityContext.getPermissionScope(permission);
+        if (scope == null) {
+            throw new org.springframework.security.access.AccessDeniedException("No access to leave requests");
+        }
+
+        switch (scope) {
+            case ALL:
+                // ALL scope: can access any employee's data
+                return;
+
+            case LOCATION:
+                // LOCATION scope: target employee must be in same location
+                if (isEmployeeInUserLocations(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case DEPARTMENT:
+                // DEPARTMENT scope: target employee must be in same department
+                if (isEmployeeInUserDepartment(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case TEAM:
+                // TEAM scope: target must be self or a reportee
+                if (targetEmployeeId.equals(currentEmployeeId) || isReportee(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case SELF:
+                // SELF scope: can only access own data
+                if (targetEmployeeId.equals(currentEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case CUSTOM:
+                // CUSTOM scope: check if target is in custom targets
+                if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
+                    return;
+                }
+                break;
+        }
+
+        throw new org.springframework.security.access.AccessDeniedException(
+                "You do not have permission to access this employee's leave requests");
+    }
+
+    private boolean isReportee(UUID employeeId) {
+        java.util.Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        return reporteeIds != null && reporteeIds.contains(employeeId);
+    }
+
+    private boolean isEmployeeInUserLocations(UUID employeeId) {
+        java.util.Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        if (locationIds == null || locationIds.isEmpty()) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
+                .orElse(false);
+    }
+
+    private boolean isEmployeeInUserDepartment(UUID employeeId) {
+        UUID departmentId = SecurityContext.getCurrentDepartmentId();
+        if (departmentId == null) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .map(emp -> departmentId.equals(emp.getDepartmentId()))
+                .orElse(false);
+    }
+
+    private boolean isInCustomTargets(UUID employeeId, String permission) {
+        // Check if employee is directly in custom employee targets
+        java.util.Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
+        if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
+            return true;
+        }
+
+        // Check if employee's department is in custom department targets
+        java.util.Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
+        if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
+                    && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
+                return true;
+            }
+        }
+
+        // Check if employee's location is in custom location targets
+        java.util.Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
+        if (customLocationIds != null && !customLocationIds.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
+                    && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
