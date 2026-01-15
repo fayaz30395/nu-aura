@@ -57,20 +57,18 @@ public class ExpenseClaimController {
     @PostMapping("/{claimId}/approve")
     @RequiresPermission(Permission.EXPENSE_APPROVE)
     public ResponseEntity<ExpenseClaimResponse> approveExpenseClaim(
-            @PathVariable UUID claimId,
-            @RequestParam UUID approverId) {
-        log.info("Approving expense claim: {} by {}", claimId, approverId);
-        return ResponseEntity.ok(expenseClaimService.approveExpenseClaim(claimId, approverId));
+            @PathVariable UUID claimId) {
+        log.info("Approving expense claim: {}", claimId);
+        return ResponseEntity.ok(expenseClaimService.approveExpenseClaim(claimId));
     }
 
     @PostMapping("/{claimId}/reject")
     @RequiresPermission(Permission.EXPENSE_APPROVE)
     public ResponseEntity<ExpenseClaimResponse> rejectExpenseClaim(
             @PathVariable UUID claimId,
-            @RequestParam UUID rejecterId,
             @RequestParam String reason) {
-        log.info("Rejecting expense claim: {} by {}", claimId, rejecterId);
-        return ResponseEntity.ok(expenseClaimService.rejectExpenseClaim(claimId, rejecterId, reason));
+        log.info("Rejecting expense claim: {}", claimId);
+        return ResponseEntity.ok(expenseClaimService.rejectExpenseClaim(claimId, reason));
     }
 
     @PostMapping("/{claimId}/pay")

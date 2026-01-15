@@ -71,15 +71,11 @@ class ExpenseService {
   // Approve or reject a claim
   async processApproval(
     claimId: string,
-    approverId: string,
     approval: ApprovalRequest
   ): Promise<ExpenseClaim> {
     const response = await apiClient.post<ExpenseClaim>(
       `/expenses/${claimId}/approve`,
-      approval,
-      {
-        params: { approverId },
-      }
+      approval
     );
     return response.data;
   }
