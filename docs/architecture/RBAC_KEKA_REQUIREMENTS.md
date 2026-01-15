@@ -1,6 +1,6 @@
 # Keka-Style RBAC Requirements (NU-AURA)
 
-Last Updated: 2026-01-13 (draft)
+Last Updated: 2026-01-15
 
 ## Purpose
 Define the target RBAC model to match Keka-style behavior, based on current implementation.
@@ -9,102 +9,155 @@ This document highlights current capabilities and required deltas.
 See `docs/architecture/RBAC_P0_MATRIX.md` for the P0 scope matrix template.
 
 ## Required RBAC Behavior (Keka-style)
-- Access levels must support: All, Location, Department, Team (direct + indirect), Self, Custom list.
+- Access levels must support: ALL, LOCATION, DEPARTMENT, TEAM (direct + indirect), SELF, CUSTOM.
 - Users can hold multiple roles; effective permission is the union of all roles.
 - For a given permission, the most permissive scope wins.
 - Custom scope is allowed for any permission and can target specific entities.
 - Approval workflows use L1 approval only (reporting manager).
 - UI must expose role permission scopes and custom targets similar to Keka.
 
-## Current Implementation Snapshot
+## Current Implementation Status
 
-Backend
-- Roles and permissions:
-  - Multiple roles per user via `user_roles` (`backend/src/main/java/com/hrms/domain/user/User.java`).
-  - Role permissions are stored in `role_permissions` with `RoleScope` (`backend/src/main/java/com/hrms/domain/user/RolePermission.java`).
-- Scope types:
-  - `RoleScope` includes GLOBAL, LOCATION, DEPARTMENT, TEAM, OWN
-    (`backend/src/main/java/com/hrms/domain/user/RoleScope.java`).
-  - No CUSTOM scope in `RoleScope` today.
-- Scope enforcement:
-  - `DataScopeService` applies scope filters using `SecurityContext.getPermissionScope`
-    (`backend/src/main/java/com/hrms/common/security/DataScopeService.java`).
-  - TEAM scope uses a single `teamId` from context; indirect reports are not included.
-- Permission checks:
-  - `@RequiresPermission` is enforced via `PermissionAspect`, but it does not enforce scope.
-- Role management:
-  - `RoleManagementService` assigns permissions with `RoleScope.GLOBAL` only, no scope input.
-- Platform RBAC:
-  - App-level roles in `app_roles` + `app_role_permissions` have no scope.
-  - Auth uses app roles first; scope is GLOBAL in that path.
+### Backend - COMPLETED
 
-Frontend
-- Role/permission UIs (`frontend/app/admin/roles/page.tsx`,
-  `frontend/app/admin/permissions/page.tsx`) allow assigning permissions,
-  but do not support scope or custom targets.
+#### Roles and Permissions
+- Multiple roles per user via `user_roles` (`backend/src/main/java/com/hrms/domain/user/User.java`).
+- Role permissions stored in `role_permissions` with `RoleScope` (`backend/src/main/java/com/hrms/domain/user/RolePermission.java`).
 
-## Required Changes (Delta to Implement)
+#### Scope Types - COMPLETED
+- `RoleScope` enum includes: **ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM**
+  (`backend/src/main/java/com/hrms/domain/user/RoleScope.java`).
+- Legacy aliases `GLOBAL -> ALL` and `OWN -> SELF` are supported for backward compatibility.
+- Scope ranking implemented: ALL(100) > LOCATION(80) > DEPARTMENT(60) > TEAM(40) > SELF(20) > CUSTOM(10).
 
-### 1) Scope Model
-- Extend `RoleScope` to include CUSTOM (and optionally ALL if GLOBAL is renamed).
-- Introduce storage for custom scope targets:
-  - Option A: add `scope_type` and `scope_value` to `role_permissions`.
-  - Option B: new `role_permission_scopes` table with target type + target id.
-  - Targets should include: Employee, Team, Department, Location, Project (as needed).
+#### Custom Scope Targets - COMPLETED
+- `CustomScopeTarget` entity stores targets per role-permission (`backend/src/main/java/com/hrms/domain/user/CustomScopeTarget.java`).
+- Target types supported: `EMPLOYEE`, `DEPARTMENT`, `LOCATION`.
+- Repository: `CustomScopeTargetRepository` with finder methods.
+- Database table: `custom_scope_targets` (migration `118-create-custom-scope-targets-table.xml`).
 
-### 2) Permission Scope Resolution
-- When a user has multiple roles:
-  - Pick the most permissive scope per permission (GLOBAL > LOCATION > DEPARTMENT > TEAM > OWN).
-  - If any role grants GLOBAL for a permission, ignore custom lists.
-  - If only CUSTOM scopes exist for a permission, union all custom targets.
-- Update token claims to include scope + custom targets or load them from DB on request.
+#### Scope Enforcement - COMPLETED
+- `DataScopeService` applies scope filters using JPA Specifications:
+  - **ALL**: No filtering (full access).
+  - **LOCATION**: Filters by `officeLocationId` or `locationId`.
+  - **DEPARTMENT**: Filters by `departmentId`.
+  - **TEAM**: Filters by current user + all direct/indirect reportees.
+  - **SELF**: Filters by current user's `employeeId` or `userId`.
+  - **CUSTOM**: Filters by explicitly selected employee, department, or location IDs.
+- `SecurityContext` stores permission scopes and custom targets per permission in ThreadLocal.
+- Custom target IDs are loaded during authentication via `AuthService.loadCustomScopeTargets()`.
 
-### 3) Data Scope Enforcement
-- Update `DataScopeService`:
-  - Support CUSTOM by filtering entities by allowed ids.
-  - Expand TEAM scope to include indirect reports (org hierarchy).
-- Add `OrgHierarchyService` to compute team subtree.
+#### Scope Resolution - COMPLETED
+- `PermissionScopeMerger` merges permissions across multiple roles:
+  - Most permissive scope wins (higher rank).
+  - For CUSTOM scope, targets are unioned across roles.
+- `AuthService.buildPermissionMap()` uses the merger for token/context setup.
 
-### 4) Role and Permission Admin UI
-- Update role management UI to assign scope per permission:
-  - Scope picker: All, Location, Department, Team, Self, Custom.
-  - Custom selector: pick specific entities (multi-select).
-- Add effective-permission view for a user:
-  - List permissions, scope, and originating roles.
+#### Endpoint Scope Enforcement - COMPLETED
+- Leave endpoints enforce scope:
+  - `GET /api/v1/leave-requests/{id}` validates access based on scope.
+  - `GET /api/v1/leave-requests/employee/{employeeId}` validates employee access.
+  - Scope validation helpers in `LeaveRequestController`.
+- Tests: `LeaveRequestControllerScopeTest` covers SELF, TEAM, DEPARTMENT, ALL scope scenarios.
 
-### 5) L1 Approval Flow (Reporting Manager)
-- Standardize approval routing to L1 only:
-  - Leave requests
-  - Attendance regularization
-  - Expense approvals
-  - Offer approvals (if applicable)
-- L1 resolution uses reporting manager from org hierarchy.
+#### L1 Approval Flow - COMPLETED
+- Leave approval routed to L1 (reporting manager) only:
+  - `LeaveRequestService.validateApproverIsManager()` enforces manager relationship.
+  - Controller uses `SecurityContext.getCurrentEmployeeId()` as approver (no client input).
+- Letter approval already uses `SecurityContext.getCurrentEmployeeId()`.
+- Tests: `LeaveRequestServiceTest` covers L1 approval validation.
 
-### 6) RBAC Consistency and Tests
-- Ensure every new endpoint uses `@RequiresPermission`.
-- Enforce scope checks in services/repositories.
-- Add tests for:
-  - Scope resolution across multiple roles
-  - CUSTOM scope filtering
-  - TEAM scope with indirect reports
-  - L1 approval routing
+#### Role Management Service - COMPLETED
+- `RoleManagementService.assignPermissionsWithScopes()` accepts scope and custom targets.
+- API endpoint: `PUT /api/v1/roles/{roleId}/permissions-with-scope`.
+- DTO: `AssignPermissionsWithScopeRequest` with `PermissionScopeRequest` list.
 
-## Recommended Phased Implementation
+### Frontend - COMPLETED
 
-Phase 0 (Baseline)
-- Add CUSTOM scope data model (DB + entity + DTOs).
-- Update `RoleManagementService` and role endpoints to accept scope data.
-- Extend `AuthService` permission resolution for scopes.
-- Add UI primitives for scope selection.
+#### Role Management UI
+- Role permissions page (`frontend/app/admin/roles/page.tsx`) supports:
+  - Scope selection per permission via `ScopeSelector` component.
+  - Custom target picker with search for employees, departments, locations.
+  - Save button disabled when CUSTOM scope has no targets selected.
 
-Phase 1 (P0 coverage)
-- Apply scope handling to ATS + Offers + Employee visibility.
-- Add L1 approval only routing to P0 workflows.
+#### Custom Target Picker - COMPLETED
+- `CustomTargetPicker.tsx` component with:
+  - Tabbed interface for Employee/Department/Location selection.
+  - Debounced search with API integration.
+  - Module-level caching for office locations.
+  - Badge display for selected targets.
 
-Phase 2 (System-wide)
-- Roll out scope-based controls to remaining modules.
-- Expand custom target selectors and reporting UI.
+#### Scope Selector - COMPLETED
+- `ScopeSelector.tsx` component with:
+  - Icons for each scope type.
+  - Compact mode option.
+  - Integration with CustomTargetPicker for CUSTOM scope.
+
+## API Endpoints
+
+### Role Permission Management
+```
+GET    /api/v1/roles/{roleId}/permissions          - Get permissions for role
+POST   /api/v1/roles/{roleId}/permissions          - Assign permissions (basic)
+PUT    /api/v1/roles/{roleId}/permissions-with-scope  - Assign permissions with scopes and targets
+DELETE /api/v1/roles/{roleId}/permissions/{code}   - Remove permission from role
+```
+
+### Leave Requests (Scope-Enforced)
+```
+GET    /api/v1/leave-requests/{id}                 - Get by ID (scope validated)
+GET    /api/v1/leave-requests/employee/{empId}     - Get by employee (scope validated)
+GET    /api/v1/leave-requests                      - Get all (spec-based filtering)
+POST   /api/v1/leave-requests/{id}/approve         - Approve (L1 manager only)
+POST   /api/v1/leave-requests/{id}/reject          - Reject (L1 manager only)
+```
+
+## Files Modified/Created
+
+### Backend
+- `domain/user/RoleScope.java` - Extended with CUSTOM, ranking, legacy aliases
+- `domain/user/CustomScopeTarget.java` - New entity for custom targets
+- `domain/user/TargetType.java` - Enum: EMPLOYEE, DEPARTMENT, LOCATION
+- `infrastructure/user/repository/CustomScopeTargetRepository.java` - New repository
+- `common/security/SecurityContext.java` - Added custom target storage
+- `common/security/DataScopeService.java` - Added CUSTOM scope handling
+- `application/user/service/PermissionScopeMerger.java` - New scope merger
+- `application/user/service/RoleManagementService.java` - Extended for scopes
+- `application/auth/service/AuthService.java` - Loads custom targets
+- `api/user/controller/RoleController.java` - New endpoint
+- `api/user/dto/AssignPermissionsWithScopeRequest.java` - New DTO
+- `api/user/dto/PermissionScopeRequest.java` - New DTO
+- `api/leave/controller/LeaveRequestController.java` - Scope validation added
+- `application/leave/service/LeaveRequestService.java` - L1 approval validation
+- `resources/db/changelog/changes/118-create-custom-scope-targets-table.xml` - Migration
+
+### Frontend
+- `components/admin/ScopeSelector.tsx` - Scope dropdown with icons
+- `components/admin/CustomTargetPicker.tsx` - Custom target search/select
+- `app/admin/roles/page.tsx` - Integrated scope management
+- `lib/types/roles.ts` - Extended types
+- `lib/api/roles.ts` - New API methods
+
+### Tests
+- `api/leave/LeaveRequestControllerScopeTest.java` - 11 scope enforcement tests
+- `application/leave/service/LeaveRequestServiceTest.java` - L1 approval tests
+
+## Remaining Work
+
+### Phase 2 - Additional Module Coverage
+- [ ] Apply scope enforcement to attendance endpoints
+- [ ] Apply scope enforcement to employee directory endpoints
+- [ ] Apply scope enforcement to expense endpoints
+- [ ] Add scope to ATS/recruitment endpoints
+
+### Phase 3 - Enhanced Features
+- [ ] Effective permission viewer for users
+- [ ] Audit logging for permission changes
+- [ ] Bulk permission assignment UI
+- [ ] Role cloning with scope preservation
 
 ## Notes
-- This plan builds on the existing RBAC foundation rather than replacing it.
-- Platform RBAC and legacy RBAC should converge on a single scoped model.
+- This implementation builds on the existing RBAC foundation rather than replacing it.
+- Platform RBAC and legacy RBAC converge on the scoped model.
+- CUSTOM scope always includes user's own data as a fallback.
+- Legacy scope names (GLOBAL, OWN) are supported for backward compatibility.

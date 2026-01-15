@@ -4,10 +4,10 @@ import React from 'react';
 import {
   RoleScope,
   CustomTarget,
-  TargetType,
   SCOPE_LABELS,
   SCOPE_DESCRIPTIONS,
 } from '@/lib/types/roles';
+import { CustomTargetPicker } from './CustomTargetPicker';
 
 interface ScopeSelectorProps {
   value: RoleScope;
@@ -19,6 +19,41 @@ interface ScopeSelectorProps {
 }
 
 const SCOPE_ORDER: RoleScope[] = ['ALL', 'LOCATION', 'DEPARTMENT', 'TEAM', 'SELF', 'CUSTOM'];
+
+// Scope icons for visual clarity
+const SCOPE_ICONS: Record<RoleScope, React.ReactNode> = {
+  ALL: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  LOCATION: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  DEPARTMENT: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  ),
+  TEAM: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+  ),
+  SELF: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+  ),
+  CUSTOM: (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+    </svg>
+  ),
+};
 
 export function ScopeSelector({
   value,
@@ -37,143 +72,31 @@ export function ScopeSelector({
             type="button"
             onClick={() => onChange(scope)}
             disabled={disabled}
-            className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors ${
               value === scope
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500'
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             title={SCOPE_DESCRIPTIONS[scope]}
           >
-            {SCOPE_LABELS[scope]}
+            {SCOPE_ICONS[scope]}
+            <span>{SCOPE_LABELS[scope]}</span>
           </button>
         ))}
       </div>
 
       {showDescription && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {SCOPE_DESCRIPTIONS[value]}
         </p>
       )}
 
       {value === 'CUSTOM' && onCustomTargetsChange && (
-        <CustomTargetSelector
+        <CustomTargetPicker
           targets={customTargets}
           onChange={onCustomTargetsChange}
           disabled={disabled}
         />
-      )}
-    </div>
-  );
-}
-
-interface CustomTargetSelectorProps {
-  targets: CustomTarget[];
-  onChange: (targets: CustomTarget[]) => void;
-  disabled?: boolean;
-}
-
-function CustomTargetSelector({ targets, onChange, disabled }: CustomTargetSelectorProps) {
-  const [newTargetType, setNewTargetType] = React.useState<TargetType>('EMPLOYEE');
-  const [newTargetId, setNewTargetId] = React.useState('');
-
-  const addTarget = () => {
-    if (!newTargetId.trim()) return;
-
-    const newTarget: CustomTarget = {
-      targetType: newTargetType,
-      targetId: newTargetId.trim(),
-    };
-
-    // Avoid duplicates
-    const exists = targets.some(
-      t => t.targetType === newTarget.targetType && t.targetId === newTarget.targetId
-    );
-
-    if (!exists) {
-      onChange([...targets, newTarget]);
-    }
-
-    setNewTargetId('');
-  };
-
-  const removeTarget = (index: number) => {
-    onChange(targets.filter((_, i) => i !== index));
-  };
-
-  const getTargetTypeLabel = (type: TargetType) => {
-    switch (type) {
-      case 'EMPLOYEE': return 'Employee';
-      case 'DEPARTMENT': return 'Department';
-      case 'LOCATION': return 'Location';
-    }
-  };
-
-  const getTargetTypeBadgeColor = (type: TargetType) => {
-    switch (type) {
-      case 'EMPLOYEE': return 'bg-blue-100 text-blue-800';
-      case 'DEPARTMENT': return 'bg-green-100 text-green-800';
-      case 'LOCATION': return 'bg-purple-100 text-purple-800';
-    }
-  };
-
-  return (
-    <div className="space-y-3 p-3 bg-gray-50 rounded-md border border-gray-200">
-      <p className="text-sm font-medium text-gray-700">Custom Targets</p>
-
-      {/* Add new target */}
-      <div className="flex gap-2">
-        <select
-          value={newTargetType}
-          onChange={(e) => setNewTargetType(e.target.value as TargetType)}
-          disabled={disabled}
-          className="px-2 py-1.5 text-sm border border-gray-300 rounded-md"
-        >
-          <option value="EMPLOYEE">Employee</option>
-          <option value="DEPARTMENT">Department</option>
-          <option value="LOCATION">Location</option>
-        </select>
-        <input
-          type="text"
-          value={newTargetId}
-          onChange={(e) => setNewTargetId(e.target.value)}
-          placeholder="Enter ID..."
-          disabled={disabled}
-          className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded-md"
-        />
-        <button
-          type="button"
-          onClick={addTarget}
-          disabled={disabled || !newTargetId.trim()}
-          className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Add
-        </button>
-      </div>
-
-      {/* Target list */}
-      {targets.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
-          {targets.map((target, index) => (
-            <span
-              key={`${target.targetType}-${target.targetId}-${index}`}
-              className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full ${getTargetTypeBadgeColor(target.targetType)}`}
-            >
-              <span className="font-medium">{getTargetTypeLabel(target.targetType)}:</span>
-              <span>{target.targetName || target.targetId}</span>
-              {!disabled && (
-                <button
-                  type="button"
-                  onClick={() => removeTarget(index)}
-                  className="ml-1 hover:text-red-600"
-                >
-                  &times;
-                </button>
-              )}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-gray-400 italic">No custom targets selected</p>
       )}
     </div>
   );

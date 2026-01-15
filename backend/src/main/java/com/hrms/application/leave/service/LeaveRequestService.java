@@ -71,6 +71,9 @@ public class LeaveRequestService {
                 .filter(lr -> lr.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
 
+        // L1 Approval: Validate that approver is the employee's manager
+        validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
+
         request.approve(approverId);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
@@ -93,6 +96,9 @@ public class LeaveRequestService {
                 .filter(lr -> lr.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new IllegalArgumentException("Leave request not found"));
 
+        // L1 Approval: Validate that approver is the employee's manager
+        validateApproverIsManager(request.getEmployeeId(), approverId, tenantId);
+
         request.reject(approverId, reason);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
@@ -100,6 +106,23 @@ public class LeaveRequestService {
         notifyLeaveRejected(saved, reason);
 
         return saved;
+    }
+
+    /**
+     * Validates that the approver is the direct manager of the employee.
+     * This enforces L1 (single-level) approval routing.
+     */
+    private void validateApproverIsManager(UUID employeeId, UUID approverId, UUID tenantId) {
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+
+        if (employee.getManagerId() == null) {
+            throw new IllegalStateException("Employee has no manager assigned. Cannot process approval.");
+        }
+
+        if (!employee.getManagerId().equals(approverId)) {
+            throw new IllegalArgumentException("Only the employee's direct manager can approve/reject leave requests");
+        }
     }
 
     public LeaveRequest cancelLeaveRequest(UUID id, String reason) {

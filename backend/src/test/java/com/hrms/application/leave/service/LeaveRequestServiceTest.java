@@ -1,7 +1,9 @@
 package com.hrms.application.leave.service;
 
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +34,9 @@ class LeaveRequestServiceTest {
     @Mock
     private LeaveBalanceService leaveBalanceService;
 
+    @Mock
+    private EmployeeRepository employeeRepository;
+
     @InjectMocks
     private LeaveRequestService leaveRequestService;
 
@@ -40,8 +45,9 @@ class LeaveRequestServiceTest {
     private UUID tenantId;
     private UUID employeeId;
     private UUID leaveTypeId;
-    private UUID approverId;
+    private UUID managerId;
     private LeaveRequest leaveRequest;
+    private Employee employee;
 
     @BeforeAll
     static void setUpClass() {
@@ -58,9 +64,17 @@ class LeaveRequestServiceTest {
         tenantId = UUID.randomUUID();
         employeeId = UUID.randomUUID();
         leaveTypeId = UUID.randomUUID();
-        approverId = UUID.randomUUID();
+        managerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+
+        // Create employee with manager for L1 approval tests
+        employee = new Employee();
+        employee.setId(employeeId);
+        employee.setTenantId(tenantId);
+        employee.setManagerId(managerId);
+        employee.setFirstName("John");
+        employee.setLastName("Doe");
 
         leaveRequest = LeaveRequest.builder()
                 .employeeId(employeeId)
@@ -116,15 +130,18 @@ class LeaveRequestServiceTest {
     class ApproveLeaveRequestTests {
 
         @Test
-        @DisplayName("Should approve leave request successfully")
+        @DisplayName("Should approve leave request successfully when approver is manager")
         void shouldApproveLeaveRequestSuccessfully() {
             UUID requestId = leaveRequest.getId();
             when(leaveRequestRepository.findById(requestId))
                     .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
             when(leaveRequestRepository.save(any(LeaveRequest.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            LeaveRequest result = leaveRequestService.approveLeaveRequest(requestId, approverId);
+            // Approve with the manager ID (L1 approval)
+            LeaveRequest result = leaveRequestService.approveLeaveRequest(requestId, managerId);
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
@@ -138,9 +155,43 @@ class LeaveRequestServiceTest {
             when(leaveRequestRepository.findById(requestId))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, approverId))
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("not found");
+        }
+
+        @Test
+        @DisplayName("Should throw exception when approver is not the employee's manager")
+        void shouldThrowExceptionWhenApproverIsNotManager() {
+            UUID requestId = leaveRequest.getId();
+            UUID nonManagerId = UUID.randomUUID();
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, nonManagerId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("direct manager");
+        }
+
+        @Test
+        @DisplayName("Should throw exception when employee has no manager assigned")
+        void shouldThrowExceptionWhenEmployeeHasNoManager() {
+            UUID requestId = leaveRequest.getId();
+            Employee employeeWithoutManager = new Employee();
+            employeeWithoutManager.setId(employeeId);
+            employeeWithoutManager.setTenantId(tenantId);
+            employeeWithoutManager.setManagerId(null);
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employeeWithoutManager));
+
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("no manager assigned");
         }
     }
 
@@ -149,20 +200,39 @@ class LeaveRequestServiceTest {
     class RejectLeaveRequestTests {
 
         @Test
-        @DisplayName("Should reject leave request successfully")
+        @DisplayName("Should reject leave request successfully when rejector is manager")
         void shouldRejectLeaveRequestSuccessfully() {
             UUID requestId = leaveRequest.getId();
             String rejectionReason = "Insufficient staff coverage";
             when(leaveRequestRepository.findById(requestId))
                     .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
             when(leaveRequestRepository.save(any(LeaveRequest.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
-            LeaveRequest result = leaveRequestService.rejectLeaveRequest(requestId, approverId, rejectionReason);
+            // Reject with the manager ID (L1 approval)
+            LeaveRequest result = leaveRequestService.rejectLeaveRequest(requestId, managerId, rejectionReason);
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.REJECTED);
             verify(leaveBalanceService, never()).deductLeave(any(), any(), any(BigDecimal.class));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when rejector is not the employee's manager")
+        void shouldThrowExceptionWhenRejectorIsNotManager() {
+            UUID requestId = leaveRequest.getId();
+            UUID nonManagerId = UUID.randomUUID();
+            String rejectionReason = "Insufficient staff coverage";
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+
+            assertThatThrownBy(() -> leaveRequestService.rejectLeaveRequest(requestId, nonManagerId, rejectionReason))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("direct manager");
         }
     }
 

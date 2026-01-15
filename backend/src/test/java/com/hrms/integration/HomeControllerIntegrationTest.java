@@ -205,19 +205,9 @@ class HomeControllerIntegrationTest {
 
         @Test
         @WithMockUser(username = "user@test.com", roles = {"USER"})
-        @DisplayName("GET /api/home/attendance/{employeeId} - endpoint is reachable")
+        @DisplayName("GET /api/home/attendance/me - endpoint is reachable")
         void getAttendanceToday_endpointIsReachable() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/attendance/{employeeId}", TEST_EMPLOYEE_ID)
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(statusIs200Or500());
-        }
-
-        @Test
-        @WithMockUser(username = "user@test.com", roles = {"USER"})
-        @DisplayName("GET /api/home/attendance/{employeeId} - should handle random UUID")
-        void getAttendanceToday_shouldHandleRandomUuid() throws Exception {
-            UUID randomEmployeeId = UUID.randomUUID();
-            mockMvc.perform(get(BASE_URL + "/attendance/{employeeId}", randomEmployeeId)
+            mockMvc.perform(get(BASE_URL + "/attendance/me")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(statusIs200Or500());
         }
@@ -268,15 +258,6 @@ class HomeControllerIntegrationTest {
 
         @Test
         @WithMockUser(username = "user@test.com", roles = {"USER"})
-        @DisplayName("GET /api/home/attendance/invalid - should return 400 or 500 for invalid UUID")
-        void getAttendanceToday_shouldReturn400Or500ForInvalidUuid() throws Exception {
-            mockMvc.perform(get(BASE_URL + "/attendance/invalid-uuid")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(statusIs200Or400Or500());
-        }
-
-        @Test
-        @WithMockUser(username = "user@test.com", roles = {"USER"})
         @DisplayName("GET /api/home/birthdays - should handle negative days gracefully")
         void getUpcomingBirthdays_shouldHandleNegativeDays() throws Exception {
             mockMvc.perform(get(BASE_URL + "/birthdays")
@@ -302,7 +283,7 @@ class HomeControllerIntegrationTest {
             mockMvc.perform(get(BASE_URL + "/new-joinees")).andExpect(statusIs200Or500());
             mockMvc.perform(get(BASE_URL + "/on-leave")).andExpect(statusIs200Or500());
             mockMvc.perform(get(BASE_URL + "/holidays")).andExpect(statusIs200Or500());
-            mockMvc.perform(get(BASE_URL + "/attendance/" + TEST_EMPLOYEE_ID)).andExpect(statusIs200Or500());
+            mockMvc.perform(get(BASE_URL + "/attendance/me")).andExpect(statusIs200Or500());
         }
 
         @Test

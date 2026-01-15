@@ -164,7 +164,7 @@ describe('HomeService', () => {
     });
   });
 
-  describe('getAttendanceToday', () => {
+  describe('getMyAttendanceToday', () => {
     const employeeId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('should fetch attendance for NOT_MARKED status', async () => {
@@ -179,9 +179,9 @@ describe('HomeService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-      const result = await homeService.getAttendanceToday(employeeId);
+      const result = await homeService.getMyAttendanceToday();
 
-      expect(mockedApiClient.get).toHaveBeenCalledWith(`/home/attendance/${employeeId}`);
+      expect(mockedApiClient.get).toHaveBeenCalledWith('/home/attendance/me');
       expect(result).toEqual(mockAttendance);
       expect(result.canCheckIn).toBe(true);
       expect(result.canCheckOut).toBe(false);
@@ -202,7 +202,7 @@ describe('HomeService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-      const result = await homeService.getAttendanceToday(employeeId);
+      const result = await homeService.getMyAttendanceToday();
 
       expect(result.status).toBe('PRESENT');
       expect(result.isCheckedIn).toBe(true);
@@ -221,7 +221,7 @@ describe('HomeService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-      const result = await homeService.getAttendanceToday(employeeId);
+      const result = await homeService.getMyAttendanceToday();
 
       expect(result.status).toBe('HOLIDAY');
       expect(result.canCheckIn).toBe(false);
@@ -239,7 +239,7 @@ describe('HomeService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-      const result = await homeService.getAttendanceToday(employeeId);
+      const result = await homeService.getMyAttendanceToday();
 
       expect(result.status).toBe('WEEKLY_OFF');
     });
@@ -256,7 +256,7 @@ describe('HomeService', () => {
 
       mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-      const result = await homeService.getAttendanceToday(employeeId);
+      const result = await homeService.getMyAttendanceToday();
 
       expect(result.status).toBe('ON_LEAVE');
       expect(result.canCheckIn).toBe(false);
@@ -372,7 +372,7 @@ describe('HomeService', () => {
 
         mockedApiClient.get.mockResolvedValueOnce({ data: mockAttendance });
 
-        const result = await homeService.getAttendanceToday('1');
+        const result = await homeService.getMyAttendanceToday();
         expect(validStatuses).toContain(result.status);
       }
     });

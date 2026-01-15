@@ -26,6 +26,7 @@ The release must follow Keka-style RBAC, including multi-role support, scope-bas
 custom scope lists, L1 approvals, and UI parity for role/permission management.
 See `docs/architecture/RBAC_KEKA_REQUIREMENTS.md` for full details and deltas.
 P0 matrix template: `docs/architecture/RBAC_P0_MATRIX.md`.
+Delivery tracking: `docs/project/DELIVERY_PLAN_10DAY.md`.
 
 ## Phase 0 - Foundation and Alignment
 Goal: establish a stable baseline before P0 delivery.

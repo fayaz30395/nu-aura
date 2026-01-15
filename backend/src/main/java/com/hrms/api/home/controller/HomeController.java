@@ -3,6 +3,7 @@ package com.hrms.api.home.controller;
 import com.hrms.api.home.dto.*;
 import com.hrms.application.home.service.HomeService;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -63,12 +64,11 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getEmployeesOnLeaveToday());
     }
 
-    @GetMapping("/attendance/{employeeId}")
-    @Operation(summary = "Get today's attendance status", description = "Returns the current attendance status for an employee")
-    @RequiresPermission(ATTENDANCE_MARK)
-    public ResponseEntity<AttendanceTodayResponse> getAttendanceToday(
-            @Parameter(description = "Employee ID")
-            @PathVariable UUID employeeId) {
+    @GetMapping("/attendance/me")
+    @Operation(summary = "Get today's attendance status", description = "Returns the current attendance status for the logged-in user")
+    @RequiresPermission(ATTENDANCE_VIEW_SELF)
+    public ResponseEntity<AttendanceTodayResponse> getAttendanceToday() {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.debug("Getting today's attendance for employee {}", employeeId);
         return ResponseEntity.ok(homeService.getAttendanceToday(employeeId));
     }

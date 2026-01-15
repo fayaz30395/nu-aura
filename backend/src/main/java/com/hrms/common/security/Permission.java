@@ -41,6 +41,7 @@ public final class Permission {
     public static final String ATTENDANCE_APPROVE = "ATTENDANCE:APPROVE";
     public static final String ATTENDANCE_VIEW_ALL = "ATTENDANCE:VIEW_ALL";
     public static final String ATTENDANCE_VIEW_TEAM = "ATTENDANCE:VIEW_TEAM";
+    public static final String ATTENDANCE_VIEW_SELF = "ATTENDANCE:VIEW_SELF";
     public static final String ATTENDANCE_REGULARIZE = "ATTENDANCE:REGULARIZE";
 
     // Office Location & Geofencing
@@ -397,10 +398,6 @@ public final class Permission {
     public static final String WALL_REACT = "WALL:REACT";
     public static final String WALL_MANAGE = "WALL:MANAGE";
     public static final String WALL_PIN = "WALL:PIN";
-
-    // Content Views (generic view tracking)
-    public static final String CONTENT_VIEW_READ = "CONTENT_VIEW:READ";
-    public static final String CONTENT_VIEW_MANAGE = "CONTENT_VIEW:MANAGE";
 
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");

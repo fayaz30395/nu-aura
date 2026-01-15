@@ -12,6 +12,7 @@ import {
   PermissionScopeRequest,
   SCOPE_LABELS,
 } from '@/lib/types/roles';
+import { ScopeSelector } from '@/components/admin/ScopeSelector';
 
 // Permission with scope tracking for the modal
 interface PermissionWithScope {
@@ -185,6 +186,15 @@ export default function RolesPage() {
       const newMap = new Map(prev);
       const current = newMap.get(code) || { scope: 'ALL', customTargets: [] };
       newMap.set(code, { ...current, scope });
+      return newMap;
+    });
+  };
+
+  const updatePermissionCustomTargets = (code: string, customTargets: CustomTarget[]) => {
+    setPermissionScopes((prev) => {
+      const newMap = new Map(prev);
+      const current = newMap.get(code) || { scope: 'CUSTOM', customTargets: [] };
+      newMap.set(code, { ...current, customTargets });
       return newMap;
     });
   };
@@ -619,24 +629,6 @@ export default function RolesPage() {
                               </div>
                             </label>
 
-                            {/* Scope selector - only show when permission is selected */}
-                            {isSelected && !selectedRole.isSystemRole && (
-                              <div className="flex-shrink-0">
-                                <select
-                                  value={currentScope}
-                                  onChange={(e) => updatePermissionScope(permission.code, e.target.value as RoleScope)}
-                                  className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100"
-                                >
-                                  <option value="ALL">All (Org-wide)</option>
-                                  <option value="LOCATION">Location</option>
-                                  <option value="DEPARTMENT">Department</option>
-                                  <option value="TEAM">Team</option>
-                                  <option value="SELF">Self Only</option>
-                                  <option value="CUSTOM">Custom</option>
-                                </select>
-                              </div>
-                            )}
-
                             {/* Show current scope badge for system roles */}
                             {isSelected && selectedRole.isSystemRole && (
                               <span className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -644,6 +636,19 @@ export default function RolesPage() {
                               </span>
                             )}
                           </div>
+
+                          {/* Scope selector with custom target picker - only show when permission is selected */}
+                          {isSelected && !selectedRole.isSystemRole && (
+                            <div className="mt-3 pl-6">
+                              <ScopeSelector
+                                value={currentScope}
+                                onChange={(scope) => updatePermissionScope(permission.code, scope)}
+                                customTargets={scopeData?.customTargets || []}
+                                onCustomTargetsChange={(targets) => updatePermissionCustomTargets(permission.code, targets)}
+                                showDescription={false}
+                              />
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -653,10 +658,25 @@ export default function RolesPage() {
             </div>
 
             {/* Summary */}
-            <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-2">
               <p className="text-sm text-surface-700 dark:text-surface-300">
                 <strong>{selectedPermissions.length}</strong> permission(s) selected
               </p>
+              {/* Show warning for CUSTOM scopes without targets */}
+              {(() => {
+                const customScopesWithoutTargets = selectedPermissions.filter(code => {
+                  const scopeData = permissionScopes.get(code);
+                  return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
+                });
+                if (customScopesWithoutTargets.length > 0) {
+                  return (
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                      <strong>{customScopesWithoutTargets.length}</strong> permission(s) have CUSTOM scope but no targets selected
+                    </p>
+                  );
+                }
+                return null;
+              })()}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
@@ -671,14 +691,26 @@ export default function RolesPage() {
               >
                 Cancel
               </button>
-              {!selectedRole.isSystemRole && (
-                <button
-                  onClick={handleAssignPermissions}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-blue-500 dark:hover:bg-primary-500"
-                >
-                  Save Permissions
-                </button>
-              )}
+              {!selectedRole.isSystemRole && (() => {
+                const hasInvalidCustomScopes = selectedPermissions.some(code => {
+                  const scopeData = permissionScopes.get(code);
+                  return scopeData?.scope === 'CUSTOM' && (!scopeData.customTargets || scopeData.customTargets.length === 0);
+                });
+                return (
+                  <button
+                    onClick={handleAssignPermissions}
+                    disabled={hasInvalidCustomScopes}
+                    title={hasInvalidCustomScopes ? 'Please add targets for all CUSTOM scope permissions' : undefined}
+                    className={`px-4 py-2 rounded-lg ${
+                      hasInvalidCustomScopes
+                        ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                        : 'bg-primary-500 text-white hover:bg-primary-600 dark:bg-blue-500 dark:hover:bg-primary-500'
+                    }`}
+                  >
+                    Save Permissions
+                  </button>
+                );
+              })()}
             </div>
           </div>
         </div>

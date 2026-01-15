@@ -128,7 +128,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (user?.employeeId) {
-      loadAttendanceData(user.employeeId);
+      loadAttendanceData();
     }
   }, [user?.employeeId]);
 
@@ -162,9 +162,9 @@ export default function HomePage() {
     }
   };
 
-  const loadAttendanceData = async (employeeId: string) => {
+  const loadAttendanceData = async () => {
     try {
-      const attendance = await homeService.getAttendanceToday(employeeId);
+      const attendance = await homeService.getMyAttendanceToday();
       setAttendanceToday(attendance);
     } catch (err) {
       console.error('Error loading attendance:', err);
@@ -176,7 +176,7 @@ export default function HomePage() {
     try {
       setClockActionLoading(true);
       await attendanceService.checkIn({ employeeId: user.employeeId, source: 'WEB' });
-      await loadAttendanceData(user.employeeId);
+      await loadAttendanceData();
     } catch (err: any) {
       console.error('Error clocking in:', err);
       alert(err.response?.data?.message || 'Failed to clock in');
@@ -190,7 +190,7 @@ export default function HomePage() {
     try {
       setClockActionLoading(true);
       await attendanceService.checkOut({ employeeId: user.employeeId, source: 'WEB' });
-      await loadAttendanceData(user.employeeId);
+      await loadAttendanceData();
     } catch (err: any) {
       console.error('Error clocking out:', err);
       alert(err.response?.data?.message || 'Failed to clock out');
