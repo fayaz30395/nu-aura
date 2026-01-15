@@ -288,6 +288,14 @@ class LeaveRequestScopeIntegrationTest {
     @Nested
     @DisplayName("LOCATION Scope Tests")
     class LocationScopeTests {
+        /*
+         * Note: LOCATION and DEPARTMENT scope require Employee records to exist in the database
+         * to verify location/department matching. These tests verify the negative cases (access denied)
+         * when employees don't exist. Positive LOCATION/DEPARTMENT scope tests with actual employees
+         * are covered in dedicated integration tests that set up full User+Employee fixtures.
+         *
+         * The CUSTOM scope tests above demonstrate the positive case for scope enforcement.
+         */
 
         private static final UUID SHARED_LOCATION_ID = UUID.randomUUID();
 
@@ -423,6 +431,29 @@ class LeaveRequestScopeIntegrationTest {
             // Cannot access others
             mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
                     .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser(username = "customuser@test.com", roles = {"CUSTOM_ROLE"})
+        @DisplayName("CUSTOM scope: Multiple custom employee targets work correctly")
+        void customScopeWithMultipleEmployeeTargets() throws Exception {
+            // User has CUSTOM scope with both REPORTEE and OTHER employee as targets
+            setupCustomScope(CURRENT_EMPLOYEE_ID,
+                    Set.of(REPORTEE_EMPLOYEE_ID, OTHER_EMPLOYEE_ID), null, null);
+
+            // Can access first target
+            mockMvc.perform(get(BASE_URL + "/" + reporteeLeaveRequest.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.reason").value("Reportee vacation"));
+
+            // Can access second target
+            mockMvc.perform(get(BASE_URL + "/" + otherLeaveRequest.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.reason").value("Other's vacation"));
+
+            // Can also access own
+            mockMvc.perform(get(BASE_URL + "/" + ownLeaveRequest.getId()))
+                    .andExpect(status().isOk());
         }
     }
 
@@ -613,4 +644,5 @@ class LeaveRequestScopeIntegrationTest {
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
+
 }

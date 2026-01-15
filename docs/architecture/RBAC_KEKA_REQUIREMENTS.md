@@ -68,7 +68,7 @@ See `docs/architecture/RBAC_P0_MATRIX.md` for the P0 scope matrix template.
 - Tests: `LeaveRequestServiceTest` covers L1 approval validation.
 
 #### Role Management Service - COMPLETED
-- `RoleManagementService.assignPermissionsWithScopes()` accepts scope and custom targets.
+- `RoleManagementService.assignPermissionsWithScope()` accepts scope and custom targets.
 - API endpoint: `PUT /api/v1/roles/{roleId}/permissions-with-scope`.
 - DTO: `AssignPermissionsWithScopeRequest` with `PermissionScopeRequest` list.
 
