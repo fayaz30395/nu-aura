@@ -150,7 +150,7 @@ export default function ExpenseClaims() {
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        expenseService.processApproval(claimId, user.employeeId!, { action: 'APPROVE' })
+        expenseService.processApproval(claimId, { action: 'APPROVE' })
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
@@ -170,7 +170,7 @@ export default function ExpenseClaims() {
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        expenseService.processApproval(claimId, user.employeeId!, {
+        expenseService.processApproval(claimId, {
           action: 'REJECT',
           rejectionReason: bulkRejectReason,
         })
@@ -282,7 +282,7 @@ export default function ExpenseClaims() {
     if (!user?.employeeId) return;
 
     try {
-      await expenseService.processApproval(claimId, user.employeeId, { action: 'APPROVE' });
+      await expenseService.processApproval(claimId, { action: 'APPROVE' });
       loadClaims();
       showNotification('Expense claim approved successfully!', 'success');
     } catch (err) {
@@ -298,7 +298,7 @@ export default function ExpenseClaims() {
     if (!reason) return;
 
     try {
-      await expenseService.processApproval(claimId, user.employeeId, {
+      await expenseService.processApproval(claimId, {
         action: 'REJECT',
         rejectionReason: reason
       });
