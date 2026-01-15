@@ -272,7 +272,7 @@ class ExpenseClaimServiceTest {
             when(employeeRepository.findByIdAndTenantId(any(), any()))
                     .thenReturn(Optional.of(employee));
 
-            ExpenseClaimResponse result = expenseClaimService.approveExpenseClaim(claimId, approverId);
+            ExpenseClaimResponse result = expenseClaimService.approveExpenseClaim(claimId);
 
             assertThat(result).isNotNull();
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
@@ -284,7 +284,7 @@ class ExpenseClaimServiceTest {
             when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> expenseClaimService.approveExpenseClaim(claimId, approverId))
+            assertThatThrownBy(() -> expenseClaimService.approveExpenseClaim(claimId))
                     .isInstanceOf(EntityNotFoundException.class);
         }
     }
@@ -306,7 +306,7 @@ class ExpenseClaimServiceTest {
             when(employeeRepository.findByIdAndTenantId(any(), any()))
                     .thenReturn(Optional.of(employee));
 
-            ExpenseClaimResponse result = expenseClaimService.rejectExpenseClaim(claimId, approverId, reason);
+            ExpenseClaimResponse result = expenseClaimService.rejectExpenseClaim(claimId, reason);
 
             assertThat(result).isNotNull();
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
