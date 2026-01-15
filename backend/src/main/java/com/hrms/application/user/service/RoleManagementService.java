@@ -2,10 +2,17 @@ package com.hrms.application.user.service;
 
 import com.hrms.api.user.dto.*;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
+import com.hrms.domain.employee.Department;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.attendance.OfficeLocation;
 import com.hrms.domain.user.*;
+import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.CustomScopeTargetRepository;
 import com.hrms.infrastructure.user.repository.PermissionRepository;
 import com.hrms.infrastructure.user.repository.RoleRepository;
@@ -27,6 +34,9 @@ public class RoleManagementService {
     private final CustomScopeTargetRepository customScopeTargetRepository;
     private final com.hrms.infrastructure.user.repository.UserRepository userRepository;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final OfficeLocationRepository officeLocationRepository;
 
     @Transactional(readOnly = true)
     public List<RoleResponse> getAllRoles() {
@@ -496,7 +506,7 @@ public class RoleManagementService {
                             .id(target.getId())
                             .targetType(target.getTargetType())
                             .targetId(target.getTargetId())
-                            .targetName(null) // TODO: Resolve target name from Employee/Department/Location service
+                            .targetName(resolveTargetName(target))
                             .build())
                     .collect(Collectors.toSet());
         }
@@ -511,5 +521,30 @@ public class RoleManagementService {
                 .scope(rolePermission.getScope())
                 .customTargets(customTargetResponses)
                 .build();
+    }
+
+    /**
+     * Resolve target name for EMPLOYEE, DEPARTMENT, or LOCATION custom scope targets.
+     * Performs tenant-scoped lookup and returns a user-friendly name.
+     */
+    private String resolveTargetName(CustomScopeTarget target) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        switch (target.getTargetType()) {
+            case EMPLOYEE:
+                return employeeRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+                    .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+                    .orElse("Unknown Employee");
+            case DEPARTMENT:
+                return departmentRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+                    .map(Department::getName)
+                    .orElse("Unknown Department");
+            case LOCATION:
+                return officeLocationRepository.findByIdAndTenantId(target.getTargetId(), tenantId)
+                    .map(OfficeLocation::getLocationName)
+                    .orElse("Unknown Location");
+            default:
+                return "Unknown";
+        }
     }
 }
