@@ -31,6 +31,7 @@ public final class Permission {
     public static final String LEAVE_VIEW_ALL = "LEAVE:VIEW_ALL";
     public static final String LEAVE_VIEW_TEAM = "LEAVE:VIEW_TEAM";
     public static final String LEAVE_VIEW_SELF = "LEAVE:VIEW_SELF";
+    public static final String LEAVE_MANAGE = "LEAVE:MANAGE";
 
     // Department/Organizational Structure
     public static final String DEPARTMENT_MANAGE = "DEPARTMENT:MANAGE";
@@ -43,6 +44,7 @@ public final class Permission {
     public static final String ATTENDANCE_VIEW_TEAM = "ATTENDANCE:VIEW_TEAM";
     public static final String ATTENDANCE_VIEW_SELF = "ATTENDANCE:VIEW_SELF";
     public static final String ATTENDANCE_REGULARIZE = "ATTENDANCE:REGULARIZE";
+    public static final String ATTENDANCE_MANAGE = "ATTENDANCE:MANAGE";
 
     // Office Location & Geofencing
     public static final String OFFICE_LOCATION_VIEW = "OFFICE_LOCATION:VIEW";
@@ -69,6 +71,8 @@ public final class Permission {
 
     // Recruitment
     public static final String RECRUITMENT_VIEW = "RECRUITMENT:VIEW";
+    public static final String RECRUITMENT_VIEW_ALL = "RECRUITMENT:VIEW_ALL";
+    public static final String RECRUITMENT_VIEW_TEAM = "RECRUITMENT:VIEW_TEAM";
     public static final String RECRUITMENT_CREATE = "RECRUITMENT:CREATE";
     public static final String RECRUITMENT_MANAGE = "RECRUITMENT:MANAGE";
     public static final String CANDIDATE_VIEW = "CANDIDATE:VIEW";

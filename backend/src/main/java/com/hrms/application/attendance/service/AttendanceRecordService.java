@@ -387,6 +387,14 @@ public class AttendanceRecordService {
     }
 
     @Transactional(readOnly = true)
+    public AttendanceRecord getAttendanceRecordById(UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return attendanceRecordRepository.findById(id)
+                .filter(a -> a.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Attendance record not found"));
+    }
+
+    @Transactional(readOnly = true)
     public Page<AttendanceRecord> getAttendanceByEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return attendanceRecordRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
@@ -394,7 +402,9 @@ public class AttendanceRecordService {
 
     @Transactional(readOnly = true)
     public List<AttendanceRecord> getAttendanceByDateRange(UUID employeeId, LocalDate startDate, LocalDate endDate) {
-        return attendanceRecordRepository.findAllByEmployeeIdAndAttendanceDateBetween(employeeId, startDate, endDate);
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return attendanceRecordRepository.findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+                tenantId, employeeId, startDate, endDate);
     }
 
     @Transactional(readOnly = true)
@@ -423,6 +433,18 @@ public class AttendanceRecordService {
                 .equal(root.get("tenantId"), tenantId);
 
         return attendanceRecordRepository.findAll(tenantSpec.and(spec), pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AttendanceRecord> getAttendanceByDate(LocalDate date,
+            org.springframework.data.jpa.domain.Specification<AttendanceRecord> scopeSpec, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        org.springframework.data.jpa.domain.Specification<AttendanceRecord> tenantSpec = (root, query, cb) -> cb
+                .equal(root.get("tenantId"), tenantId);
+        org.springframework.data.jpa.domain.Specification<AttendanceRecord> dateSpec = (root, query, cb) -> cb
+                .equal(root.get("attendanceDate"), date);
+
+        return attendanceRecordRepository.findAll(tenantSpec.and(dateSpec).and(scopeSpec), pageable);
     }
 
     // ===================== Private Helper Methods =====================
