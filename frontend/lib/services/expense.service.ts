@@ -10,9 +10,7 @@ import {
 class ExpenseService {
   // Create a new expense claim
   async createClaim(employeeId: string, data: CreateExpenseClaimRequest): Promise<ExpenseClaim> {
-    const response = await apiClient.post<ExpenseClaim>('/expenses', data, {
-      params: { employeeId },
-    });
+    const response = await apiClient.post<ExpenseClaim>(`/expenses/employees/${employeeId}`, data);
     return response.data;
   }
 
@@ -36,15 +34,15 @@ class ExpenseService {
     page: number = 0,
     size: number = 50
   ): Promise<Page<ExpenseClaim>> {
-    const response = await apiClient.get<Page<ExpenseClaim>>('/expenses/my-claims', {
-      params: { employeeId, page, size },
+    const response = await apiClient.get<Page<ExpenseClaim>>(`/expenses/employees/${employeeId}`, {
+      params: { page, size },
     });
     return response.data;
   }
 
   // Get pending claims for approval
   async getPendingClaims(page: number = 0, size: number = 50): Promise<Page<ExpenseClaim>> {
-    const response = await apiClient.get<Page<ExpenseClaim>>('/expenses/pending', {
+    const response = await apiClient.get<Page<ExpenseClaim>>('/expenses/pending-approvals', {
       params: { page, size },
     });
     return response.data;
@@ -68,16 +66,34 @@ class ExpenseService {
     return response.data;
   }
 
-  // Approve or reject a claim
+  // Approve a claim
+  async approveClaim(claimId: string): Promise<ExpenseClaim> {
+    const response = await apiClient.post<ExpenseClaim>(`/expenses/${claimId}/approve`);
+    return response.data;
+  }
+
+  // Reject a claim
+  async rejectClaim(claimId: string, reason: string): Promise<ExpenseClaim> {
+    const response = await apiClient.post<ExpenseClaim>(
+      `/expenses/${claimId}/reject`,
+      null,
+      {
+        params: { reason },
+      }
+    );
+    return response.data;
+  }
+
+  // Approve or reject a claim (DEPRECATED - use approveClaim or rejectClaim)
   async processApproval(
     claimId: string,
     approval: ApprovalRequest
   ): Promise<ExpenseClaim> {
-    const response = await apiClient.post<ExpenseClaim>(
-      `/expenses/${claimId}/approve`,
-      approval
-    );
-    return response.data;
+    if (approval.action === 'APPROVE') {
+      return this.approveClaim(claimId);
+    } else {
+      return this.rejectClaim(claimId, approval.rejectionReason || '');
+    }
   }
 
   // Update an existing claim (only for DRAFT status)

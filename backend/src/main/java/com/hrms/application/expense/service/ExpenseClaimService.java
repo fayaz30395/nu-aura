@@ -184,10 +184,7 @@ public class ExpenseClaimService {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getAllExpenseClaims(Pageable pageable) {
-        String permission = SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL)
-                ? Permission.EXPENSE_VIEW_ALL
-                : Permission.EXPENSE_VIEW_TEAM;
-
+        String permission = determineViewPermission();
         Specification<ExpenseClaim> scopeSpec = dataScopeService.getScopeSpecification(permission);
         return getAllExpenseClaims(scopeSpec, pageable);
     }
@@ -215,10 +212,7 @@ public class ExpenseClaimService {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByStatus(ExpenseClaim.ExpenseStatus status, Pageable pageable) {
-        String permission = SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL)
-                ? Permission.EXPENSE_VIEW_ALL
-                : Permission.EXPENSE_VIEW_TEAM;
-
+        String permission = determineViewPermission();
         Specification<ExpenseClaim> scopeSpec = dataScopeService.getScopeSpecification(permission);
         return getExpenseClaimsByStatus(status, scopeSpec, pageable);
     }
@@ -254,10 +248,7 @@ public class ExpenseClaimService {
 
     @Transactional(readOnly = true)
     public Page<ExpenseClaimResponse> getExpenseClaimsByDateRange(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        String permission = SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL)
-                ? Permission.EXPENSE_VIEW_ALL
-                : Permission.EXPENSE_VIEW_TEAM;
-
+        String permission = determineViewPermission();
         Specification<ExpenseClaim> scopeSpec = dataScopeService.getScopeSpecification(permission);
         return getExpenseClaimsByDateRange(startDate, endDate, scopeSpec, pageable);
     }
@@ -274,10 +265,7 @@ public class ExpenseClaimService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getExpenseSummary(LocalDate startDate, LocalDate endDate) {
-        String permission = SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL)
-                ? Permission.EXPENSE_VIEW_ALL
-                : Permission.EXPENSE_VIEW_TEAM;
-
+        String permission = determineViewPermission();
         Specification<ExpenseClaim> scopeSpec = dataScopeService.getScopeSpecification(permission);
         return getExpenseSummary(startDate, endDate, scopeSpec);
     }
