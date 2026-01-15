@@ -183,6 +183,17 @@
             <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
         </insert>
 
+        <insert tableName="permissions">
+            <column name="id" value="11111111-1111-1111-1111-111111111208"/>
+            <column name="code" value="LEAVE:MANAGE"/>
+            <column name="name" value="Manage Leave"/>
+            <column name="description" value="Full leave management including all view and action permissions"/>
+            <column name="resource" value="LEAVE"/>
+            <column name="action" value="MANAGE"/>
+            <column name="created_at" valueDate="2024-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
+        </insert>
+
         <!-- Department Permissions -->
         <insert tableName="permissions">
             <column name="id" value="11111111-1111-1111-1111-111111111301"/>
@@ -258,6 +269,17 @@
             <column name="description" value="Request attendance regularization"/>
             <column name="resource" value="ATTENDANCE"/>
             <column name="action" value="REGULARIZE"/>
+            <column name="created_at" valueDate="2024-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="id" value="11111111-1111-1111-1111-111111110409"/>
+            <column name="code" value="ATTENDANCE:MANAGE"/>
+            <column name="name" value="Manage Attendance"/>
+            <column name="description" value="Full attendance management permissions"/>
+            <column name="resource" value="ATTENDANCE"/>
+            <column name="action" value="MANAGE"/>
             <column name="created_at" valueDate="2024-01-01T00:00:00"/>
             <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
         </insert>
@@ -555,6 +577,29 @@
             <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
         </insert>
 
+        <!-- Recruitment Permissions -->
+        <insert tableName="permissions">
+            <column name="id" value="11111111-1111-1111-1111-111111111a01"/>
+            <column name="code" value="RECRUITMENT:VIEW_ALL"/>
+            <column name="name" value="View All Recruitment Data"/>
+            <column name="description" value="View all recruitment, jobs, and candidates across organization"/>
+            <column name="resource" value="RECRUITMENT"/>
+            <column name="action" value="VIEW_ALL"/>
+            <column name="created_at" valueDate="2024-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="id" value="11111111-1111-1111-1111-111111111a02"/>
+            <column name="code" value="RECRUITMENT:VIEW_TEAM"/>
+            <column name="name" value="View Team Recruitment Data"/>
+            <column name="description" value="View team recruitment, jobs, and candidates"/>
+            <column name="resource" value="RECRUITMENT"/>
+            <column name="action" value="VIEW_TEAM"/>
+            <column name="created_at" valueDate="2024-01-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-01-01T00:00:00"/>
+        </insert>
+
         <!-- Attendance View Self -->
         <insert tableName="permissions">
             <column name="id" value="11111111-1111-1111-1111-111111111406"/>
@@ -754,6 +799,10 @@
         <insert tableName="role_permissions">
             <column name="role_id" value="22222222-2222-2222-2222-222222222003"/>
             <column name="permission_id" value="11111111-1111-1111-1111-111111111205"/><!-- LEAVE:VIEW_ALL -->
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" value="22222222-2222-2222-2222-222222222003"/>
+            <column name="permission_id" value="11111111-1111-1111-1111-111111111208"/><!-- LEAVE:MANAGE -->
         </insert>
         <!-- Departments -->
         <insert tableName="role_permissions">
@@ -1084,6 +1133,16 @@
         <insert tableName="role_permissions">
             <column name="role_id" value="22222222-2222-2222-2222-222222222003"/>
             <column name="permission_id" value="11111111-1111-1111-1111-111111112101"/><!-- DASHBOARD:VIEW -->
+        </insert>
+
+        <!-- HR_MANAGER - Recruitment and Attendance Management -->
+        <insert tableName="role_permissions">
+            <column name="role_id" value="22222222-2222-2222-2222-222222222003"/>
+            <column name="permission_id" value="11111111-1111-1111-1111-111111111a01"/><!-- RECRUITMENT:VIEW_ALL -->
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" value="22222222-2222-2222-2222-222222222003"/>
+            <column name="permission_id" value="11111111-1111-1111-1111-111111110409"/><!-- ATTENDANCE:MANAGE -->
         </insert>
 
     </changeSet>
