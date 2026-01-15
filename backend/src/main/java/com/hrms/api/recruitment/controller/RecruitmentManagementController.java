@@ -52,8 +52,10 @@ public class RecruitmentManagementController {
 
     @GetMapping("/job-openings/status/{status}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
-    public ResponseEntity<List<JobOpeningResponse>> getJobOpeningsByStatus(@PathVariable JobOpening.JobStatus status) {
-        return ResponseEntity.ok(recruitmentService.getJobOpeningsByStatus(status));
+    public ResponseEntity<Page<JobOpeningResponse>> getJobOpeningsByStatus(
+            @PathVariable JobOpening.JobStatus status,
+            Pageable pageable) {
+        return ResponseEntity.ok(recruitmentService.getJobOpeningsByStatus(status, pageable));
     }
 
     @DeleteMapping("/job-openings/{id}")
@@ -93,8 +95,10 @@ public class RecruitmentManagementController {
 
     @GetMapping("/candidates/job-opening/{jobOpeningId}")
     @RequiresPermission(Permission.CANDIDATE_VIEW)
-    public ResponseEntity<List<CandidateResponse>> getCandidatesByJobOpening(@PathVariable UUID jobOpeningId) {
-        return ResponseEntity.ok(recruitmentService.getCandidatesByJobOpening(jobOpeningId));
+    public ResponseEntity<Page<CandidateResponse>> getCandidatesByJobOpening(
+            @PathVariable UUID jobOpeningId,
+            Pageable pageable) {
+        return ResponseEntity.ok(recruitmentService.getCandidatesByJobOpening(jobOpeningId, pageable));
     }
 
     @DeleteMapping("/candidates/{id}")
@@ -128,8 +132,10 @@ public class RecruitmentManagementController {
 
     @GetMapping("/interviews/candidate/{candidateId}")
     @RequiresPermission(Permission.RECRUITMENT_VIEW)
-    public ResponseEntity<List<InterviewResponse>> getInterviewsByCandidate(@PathVariable UUID candidateId) {
-        return ResponseEntity.ok(recruitmentService.getInterviewsByCandidate(candidateId));
+    public ResponseEntity<Page<InterviewResponse>> getInterviewsByCandidate(
+            @PathVariable UUID candidateId,
+            Pageable pageable) {
+        return ResponseEntity.ok(recruitmentService.getInterviewsByCandidate(candidateId, pageable));
     }
 
     @DeleteMapping("/interviews/{id}")

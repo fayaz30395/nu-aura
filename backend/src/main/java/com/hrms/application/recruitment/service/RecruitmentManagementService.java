@@ -3,20 +3,25 @@ package com.hrms.application.recruitment.service;
 import com.hrms.api.recruitment.dto.*;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.*;
+import com.hrms.domain.user.RoleScope;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.*;
 import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -102,6 +107,11 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+
+        // Enforce scope: validate the user can access this job opening
+        String permission = determineViewPermission();
+        validateJobOpeningAccess(jobOpening, permission);
+
         return mapToJobOpeningResponse(jobOpening);
     }
 
@@ -117,11 +127,18 @@ public class RecruitmentManagementService {
     }
 
     @Transactional(readOnly = true)
-    public List<JobOpeningResponse> getJobOpeningsByStatus(JobOpening.JobStatus status) {
+    public Page<JobOpeningResponse> getJobOpeningsByStatus(JobOpening.JobStatus status, Pageable pageable) {
+        String permission = determineViewPermission();
+        Specification<JobOpening> scopeSpec = dataScopeService.getScopeSpecification(permission);
+
         UUID tenantId = TenantContext.getCurrentTenant();
-        return jobOpeningRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToJobOpeningResponse)
-                .collect(Collectors.toList());
+        Specification<JobOpening> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<JobOpening> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), status);
+
+        return jobOpeningRepository.findAll(
+                Specification.where(tenantSpec).and(statusSpec).and(scopeSpec),
+                pageable
+        ).map(this::mapToJobOpeningResponse);
     }
 
     public void deleteJobOpening(UUID jobOpeningId) {
@@ -203,6 +220,11 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        // Enforce scope: validate the user can access this candidate
+        String permission = determineViewPermission();
+        validateCandidateAccess(candidate, permission);
+
         return mapToCandidateResponse(candidate);
     }
 
@@ -218,11 +240,18 @@ public class RecruitmentManagementService {
     }
 
     @Transactional(readOnly = true)
-    public List<CandidateResponse> getCandidatesByJobOpening(UUID jobOpeningId) {
+    public Page<CandidateResponse> getCandidatesByJobOpening(UUID jobOpeningId, Pageable pageable) {
+        String permission = determineViewPermission();
+        Specification<Candidate> scopeSpec = dataScopeService.getScopeSpecification(permission);
+
         UUID tenantId = TenantContext.getCurrentTenant();
-        return candidateRepository.findByTenantIdAndJobOpeningId(tenantId, jobOpeningId).stream()
-                .map(this::mapToCandidateResponse)
-                .collect(Collectors.toList());
+        Specification<Candidate> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Candidate> jobSpec = (root, query, cb) -> cb.equal(root.get("jobOpeningId"), jobOpeningId);
+
+        return candidateRepository.findAll(
+                Specification.where(tenantSpec).and(jobSpec).and(scopeSpec),
+                pageable
+        ).map(this::mapToCandidateResponse);
     }
 
     public void deleteCandidate(UUID candidateId) {
@@ -289,15 +318,33 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+
+        // Enforce scope: validate the user can access this interview
+        String permission = determineViewPermission();
+        validateInterviewAccess(interview, permission);
+
         return mapToInterviewResponse(interview);
     }
 
     @Transactional(readOnly = true)
-    public List<InterviewResponse> getInterviewsByCandidate(UUID candidateId) {
+    public Page<InterviewResponse> getInterviewsByCandidate(UUID candidateId, Pageable pageable) {
+        String permission = determineViewPermission();
+
+        // First validate access to the candidate
         UUID tenantId = TenantContext.getCurrentTenant();
-        return interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId).stream()
-                .map(this::mapToInterviewResponse)
-                .collect(Collectors.toList());
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+        validateCandidateAccess(candidate, permission);
+
+        // Apply scope filtering to interviews
+        Specification<Interview> scopeSpec = dataScopeService.getScopeSpecification(permission);
+        Specification<Interview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Interview> candidateSpec = (root, query, cb) -> cb.equal(root.get("candidateId"), candidateId);
+
+        return interviewRepository.findAll(
+                Specification.where(tenantSpec).and(candidateSpec).and(scopeSpec),
+                pageable
+        ).map(this::mapToInterviewResponse);
     }
 
     public void deleteInterview(UUID interviewId) {
@@ -431,5 +478,196 @@ public class RecruitmentManagementService {
                 .createdAt(interview.getCreatedAt())
                 .updatedAt(interview.getUpdatedAt())
                 .build();
+    }
+
+    // ==================== Scope Validation Helpers ====================
+
+    /**
+     * Determines which view permission the user has (in priority order).
+     * Returns the actual permission that has a scope assigned, not just any permission that passes
+     * hasPermission() check. This ensures getPermissionScope() can find the scope for validation.
+     *
+     * Note: Checks for explicit RECRUITMENT_VIEW_* and CANDIDATE_VIEW permissions first, then falls back to RECRUITMENT:MANAGE.
+     * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled by @RequiresPermission
+     * for access control, and this method ensures scope enforcement works for users with only MANAGE.
+     */
+    private String determineViewPermission() {
+        // Check recruitment view permissions in priority order (highest to lowest privilege)
+        if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL) != null) {
+            return Permission.RECRUITMENT_VIEW_ALL;
+        }
+        if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_TEAM) != null) {
+            return Permission.RECRUITMENT_VIEW_TEAM;
+        }
+        if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW) != null) {
+            return Permission.RECRUITMENT_VIEW;
+        }
+
+        // Check candidate view permissions
+        if (SecurityContext.getPermissionScope(Permission.CANDIDATE_VIEW) != null) {
+            return Permission.CANDIDATE_VIEW;
+        }
+
+        // Fallback to RECRUITMENT:MANAGE - users with MANAGE permission can view with that permission's scope
+        RoleScope manageScope = SecurityContext.getPermissionScope(Permission.RECRUITMENT_MANAGE);
+        if (manageScope != null) {
+            return Permission.RECRUITMENT_MANAGE;
+        }
+
+        // Final fallback: user passed @RequiresPermission check but has no scoped permission
+        // This can happen with system admin. Return VIEW as safest default for scope lookup.
+        return Permission.RECRUITMENT_VIEW;
+    }
+
+    /**
+     * Validates that the current user can access a specific job opening based on their scope.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateJobOpeningAccess(JobOpening jobOpening, String permission) {
+        if (jobOpening.getHiringManagerId() != null) {
+            validateEmployeeAccess(jobOpening.getHiringManagerId(), permission);
+        }
+    }
+
+    /**
+     * Validates that the current user can access a specific candidate based on their scope.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateCandidateAccess(Candidate candidate, String permission) {
+        if (candidate.getAssignedRecruiterId() != null) {
+            validateEmployeeAccess(candidate.getAssignedRecruiterId(), permission);
+        }
+    }
+
+    /**
+     * Validates that the current user can access a specific interview based on their scope.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateInterviewAccess(Interview interview, String permission) {
+        if (interview.getInterviewerId() != null) {
+            validateEmployeeAccess(interview.getInterviewerId(), permission);
+        }
+    }
+
+    /**
+     * Validates that the current user can access data for a specific employee based on their scope.
+     * This is used to check access to hiring managers, recruiters, and interviewers.
+     * Throws AccessDeniedException if access is not allowed.
+     */
+    private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // Super admin (includes system admin and SUPER_ADMIN role) bypasses all checks
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+
+        RoleScope scope = SecurityContext.getPermissionScope(permission);
+        if (scope == null) {
+            throw new AccessDeniedException("No access to recruitment data");
+        }
+
+        switch (scope) {
+            case ALL:
+                // ALL scope: can access any employee's data
+                return;
+
+            case LOCATION:
+                // LOCATION scope: target employee must be in same location
+                if (isEmployeeInUserLocations(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case DEPARTMENT:
+                // DEPARTMENT scope: target employee must be in same department
+                if (isEmployeeInUserDepartment(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case TEAM:
+                // TEAM scope: target must be self or a reportee
+                if (targetEmployeeId.equals(currentEmployeeId) || isReportee(targetEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case SELF:
+                // SELF scope: can only access own data
+                if (targetEmployeeId.equals(currentEmployeeId)) {
+                    return;
+                }
+                break;
+
+            case CUSTOM:
+                // CUSTOM scope: check if target is in custom targets
+                if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
+                    return;
+                }
+                break;
+        }
+
+        throw new AccessDeniedException(
+                "You do not have permission to access this recruitment data");
+    }
+
+    private boolean isReportee(UUID employeeId) {
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        return reporteeIds != null && reporteeIds.contains(employeeId);
+    }
+
+    private boolean isEmployeeInUserLocations(UUID employeeId) {
+        Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
+        if (locationIds == null || locationIds.isEmpty()) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
+                .orElse(false);
+    }
+
+    private boolean isEmployeeInUserDepartment(UUID employeeId) {
+        UUID departmentId = SecurityContext.getCurrentDepartmentId();
+        if (departmentId == null) {
+            return false;
+        }
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .map(emp -> departmentId.equals(emp.getDepartmentId()))
+                .orElse(false);
+    }
+
+    private boolean isInCustomTargets(UUID employeeId, String permission) {
+        // Check if employee is directly in custom employee targets
+        Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
+        if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
+            return true;
+        }
+
+        // Check if employee's department is in custom department targets
+        Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
+        if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
+                    && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
+                return true;
+            }
+        }
+
+        // Check if employee's location is in custom location targets
+        Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
+        if (customLocationIds != null && !customLocationIds.isEmpty()) {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
+                    && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package com.hrms.api.recruitment.controller;
 
 import com.hrms.api.recruitment.dto.ai.*;
 import com.hrms.application.ai.service.AIRecruitmentService;
+import com.hrms.application.recruitment.service.RecruitmentManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class AIRecruitmentController {
 
     private final AIRecruitmentService aiRecruitmentService;
+    private final RecruitmentManagementService recruitmentManagementService;
 
     // ==================== RESUME PARSING ====================
 
@@ -59,6 +61,10 @@ public class AIRecruitmentController {
     public ResponseEntity<CandidateMatchResponse> calculateMatchScore(
             @RequestParam UUID candidateId,
             @RequestParam UUID jobOpeningId) {
+        // Validate scope access to both candidate and job opening
+        recruitmentManagementService.getCandidateById(candidateId);
+        recruitmentManagementService.getJobOpeningById(jobOpeningId);
+
         CandidateMatchResponse response = aiRecruitmentService.calculateMatchScore(candidateId, jobOpeningId);
         return ResponseEntity.ok(response);
     }
@@ -69,6 +75,9 @@ public class AIRecruitmentController {
     @GetMapping("/ranked-candidates/{jobOpeningId}")
     @RequiresPermission(Permission.CANDIDATE_VIEW)
     public ResponseEntity<List<CandidateMatchResponse>> getRankedCandidates(@PathVariable UUID jobOpeningId) {
+        // Validate scope access to job opening
+        recruitmentManagementService.getJobOpeningById(jobOpeningId);
+
         List<CandidateMatchResponse> rankedCandidates = aiRecruitmentService.rankCandidatesForJob(jobOpeningId);
         return ResponseEntity.ok(rankedCandidates);
     }
@@ -95,8 +104,15 @@ public class AIRecruitmentController {
     public ResponseEntity<InterviewQuestionsResponse> generateInterviewQuestions(
             @PathVariable UUID jobOpeningId,
             @RequestParam(required = false) UUID candidateId) {
-        InterviewQuestionsResponse response;
+        // Validate scope access to job opening
+        recruitmentManagementService.getJobOpeningById(jobOpeningId);
 
+        // Validate scope access to candidate if provided
+        if (candidateId != null) {
+            recruitmentManagementService.getCandidateById(candidateId);
+        }
+
+        InterviewQuestionsResponse response;
         if (candidateId != null) {
             response = aiRecruitmentService.generateInterviewQuestions(jobOpeningId, candidateId);
         } else {
