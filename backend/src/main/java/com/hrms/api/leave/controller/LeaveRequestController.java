@@ -196,14 +196,33 @@ public class LeaveRequestController {
 
     /**
      * Determines which view permission the user has (in priority order).
+     * Returns the actual permission that has a scope assigned, not just any permission that passes
+     * hasPermission() check. This ensures getPermissionScope() can find the scope for validation.
+     *
+     * Note: Checks for explicit LEAVE_VIEW_* permissions first, then falls back to LEAVE:MANAGE.
+     * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled by @RequiresPermission
+     * for access control, and this method ensures scope enforcement works for users with only MANAGE.
      */
     private String determineViewPermission() {
-        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL)) {
+        // Check specific view permissions in priority order (highest to lowest privilege)
+        if (SecurityContext.getPermissionScope(Permission.LEAVE_VIEW_ALL) != null) {
             return Permission.LEAVE_VIEW_ALL;
         }
-        if (SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM)) {
+        if (SecurityContext.getPermissionScope(Permission.LEAVE_VIEW_TEAM) != null) {
             return Permission.LEAVE_VIEW_TEAM;
         }
+        if (SecurityContext.getPermissionScope(Permission.LEAVE_VIEW_SELF) != null) {
+            return Permission.LEAVE_VIEW_SELF;
+        }
+
+        // Fallback to LEAVE:MANAGE - users with MANAGE permission can view with that permission's scope
+        com.hrms.domain.user.RoleScope manageScope = SecurityContext.getPermissionScope("LEAVE:MANAGE");
+        if (manageScope != null) {
+            return "LEAVE:MANAGE";
+        }
+
+        // Final fallback: user passed @RequiresPermission check but has no scoped permission
+        // This can happen with system admin. Return SELF as safest default for scope lookup.
         return Permission.LEAVE_VIEW_SELF;
     }
 
