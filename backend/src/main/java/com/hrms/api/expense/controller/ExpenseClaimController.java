@@ -90,19 +90,34 @@ public class ExpenseClaimController {
     }
 
     @GetMapping("/{claimId}")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<ExpenseClaimResponse> getExpenseClaim(@PathVariable UUID claimId) {
         return ResponseEntity.ok(expenseClaimService.getExpenseClaim(claimId));
     }
 
     @GetMapping
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<Page<ExpenseClaimResponse>> getAllExpenseClaims(Pageable pageable) {
         return ResponseEntity.ok(expenseClaimService.getAllExpenseClaims(pageable));
     }
 
     @GetMapping("/employees/{employeeId}")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByEmployee(
             @PathVariable UUID employeeId,
             Pageable pageable) {
@@ -110,7 +125,12 @@ public class ExpenseClaimController {
     }
 
     @GetMapping("/status/{status}")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByStatus(
             @PathVariable ExpenseClaim.ExpenseStatus status,
             Pageable pageable) {
@@ -124,7 +144,12 @@ public class ExpenseClaimController {
     }
 
     @GetMapping("/date-range")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<Page<ExpenseClaimResponse>> getExpenseClaimsByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -133,7 +158,12 @@ public class ExpenseClaimController {
     }
 
     @GetMapping("/summary")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<Map<String, Object>> getExpenseSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -141,13 +171,23 @@ public class ExpenseClaimController {
     }
 
     @GetMapping("/categories")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<ExpenseClaim.ExpenseCategory[]> getCategories() {
         return ResponseEntity.ok(ExpenseClaim.ExpenseCategory.values());
     }
 
     @GetMapping("/statuses")
-    @RequiresPermission(Permission.EXPENSE_VIEW)
+    @RequiresPermission({
+            Permission.EXPENSE_VIEW,
+            Permission.EXPENSE_VIEW_TEAM,
+            Permission.EXPENSE_VIEW_ALL,
+            Permission.EXPENSE_MANAGE
+    })
     public ResponseEntity<ExpenseClaim.ExpenseStatus[]> getStatuses() {
         return ResponseEntity.ok(ExpenseClaim.ExpenseStatus.values());
     }

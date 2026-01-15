@@ -137,6 +137,50 @@ class ExpenseClaimScopeIntegrationTest {
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
         }
+
+        @Test
+        @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
+        @DisplayName("SELF scope with only EXPENSE_VIEW permission: List endpoints return self results")
+        void selfScopeWithOnlyExpenseViewPermission() throws Exception {
+            // Setup: User has only EXPENSE_VIEW with SELF scope (no VIEW_TEAM/VIEW_ALL)
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
+            permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), CURRENT_EMPLOYEE_ID, Set.of("EMPLOYEE"), permissions);
+            SecurityContext.setCurrentTenantId(TENANT_ID);
+
+            // Test getAllExpenseClaims - should return only own expenses
+            mockMvc.perform(get(BASE_URL)
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content[?(@.employeeId == '" + CURRENT_EMPLOYEE_ID + "')]").exists());
+
+            // Test getExpenseClaimsByStatus - should return only own expenses with that status
+            mockMvc.perform(get(BASE_URL + "/status/DRAFT")
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray());
+
+            // Test getExpenseClaimsByDateRange - should return only own expenses in date range
+            LocalDate startDate = LocalDate.now().minusDays(30);
+            LocalDate endDate = LocalDate.now();
+            mockMvc.perform(get(BASE_URL + "/date-range")
+                            .param("startDate", startDate.toString())
+                            .param("endDate", endDate.toString())
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray());
+
+            // Test getExpenseSummary - should return summary for only own expenses
+            mockMvc.perform(get(BASE_URL + "/summary")
+                            .param("startDate", startDate.toString())
+                            .param("endDate", endDate.toString()))
+                    .andExpect(status().isOk());
+        }
     }
 
     // ==================== TEAM Scope Tests ====================
