@@ -84,6 +84,31 @@ public class Candidate {
     @Column(name = "assigned_recruiter_id")
     private UUID assignedRecruiterId;
 
+    // Offer-related fields
+    @Column(name = "offered_ctc")
+    private BigDecimal offeredCtc;
+
+    @Column(name = "offered_designation", length = 200)
+    private String offeredDesignation;
+
+    @Column(name = "proposed_joining_date")
+    private LocalDate proposedJoiningDate;
+
+    @Column(name = "offer_letter_id")
+    private UUID offerLetterId;
+
+    @Column(name = "offer_extended_date")
+    private LocalDate offerExtendedDate;
+
+    @Column(name = "offer_accepted_date")
+    private LocalDate offerAcceptedDate;
+
+    @Column(name = "offer_declined_date")
+    private LocalDate offerDeclinedDate;
+
+    @Column(name = "offer_decline_reason", columnDefinition = "TEXT")
+    private String offerDeclineReason;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
