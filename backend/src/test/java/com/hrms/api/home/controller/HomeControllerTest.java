@@ -58,7 +58,7 @@ class HomeControllerTest {
     private EmployeeRepository employeeRepository;
 
     @Test
-    @DisplayName("GET /api/home/birthdays - should return upcoming birthdays")
+    @DisplayName("GET /api/v1/home/birthdays - should return upcoming birthdays")
     @WithMockUser
     void getUpcomingBirthdays_shouldReturnBirthdays() throws Exception {
         // Given
@@ -75,7 +75,7 @@ class HomeControllerTest {
         when(homeService.getUpcomingBirthdays(7)).thenReturn(List.of(birthday));
 
         // When & Then
-        mockMvc.perform(get("/api/home/birthdays")
+        mockMvc.perform(get("/api/v1/home/birthdays")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -86,14 +86,14 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/home/birthdays - should accept custom days parameter")
+    @DisplayName("GET /api/v1/home/birthdays - should accept custom days parameter")
     @WithMockUser
     void getUpcomingBirthdays_shouldAcceptCustomDays() throws Exception {
         // Given
         when(homeService.getUpcomingBirthdays(14)).thenReturn(Collections.emptyList());
 
         // When & Then
-        mockMvc.perform(get("/api/home/birthdays")
+        mockMvc.perform(get("/api/v1/home/birthdays")
                         .param("days", "14")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -102,7 +102,7 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/home/anniversaries - should return work anniversaries")
+    @DisplayName("GET /api/v1/home/anniversaries - should return work anniversaries")
     @WithMockUser
     void getUpcomingAnniversaries_shouldReturnAnniversaries() throws Exception {
         // Given
@@ -121,7 +121,7 @@ class HomeControllerTest {
         when(homeService.getUpcomingWorkAnniversaries(7)).thenReturn(List.of(anniversary));
 
         // When & Then
-        mockMvc.perform(get("/api/home/anniversaries")
+        mockMvc.perform(get("/api/v1/home/anniversaries")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -132,7 +132,7 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/home/new-joinees - should return new joinees")
+    @DisplayName("GET /api/v1/home/new-joinees - should return new joinees")
     @WithMockUser
     void getNewJoinees_shouldReturnJoinees() throws Exception {
         // Given
@@ -148,7 +148,7 @@ class HomeControllerTest {
         when(homeService.getNewJoinees(30)).thenReturn(List.of(joinee));
 
         // When & Then
-        mockMvc.perform(get("/api/home/new-joinees")
+        mockMvc.perform(get("/api/v1/home/new-joinees")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -158,7 +158,7 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/home/on-leave - should return employees on leave today")
+    @DisplayName("GET /api/v1/home/on-leave - should return employees on leave today")
     @WithMockUser
     void getEmployeesOnLeaveToday_shouldReturnOnLeaveEmployees() throws Exception {
         // Given
@@ -175,7 +175,7 @@ class HomeControllerTest {
         when(homeService.getEmployeesOnLeaveToday()).thenReturn(List.of(onLeave));
 
         // When & Then
-        mockMvc.perform(get("/api/home/on-leave")
+        mockMvc.perform(get("/api/v1/home/on-leave")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -184,12 +184,12 @@ class HomeControllerTest {
                 .andExpect(jsonPath("$[0].leaveType", is("Sick Leave")));
     }
 
-    // Note: The /api/home/attendance/me endpoint uses SecurityContext.getCurrentEmployeeId()
+    // Note: The /api/v1/home/attendance/me endpoint uses SecurityContext.getCurrentEmployeeId()
     // internally, so it requires proper SecurityContext setup which is handled by the
     // integration tests. These unit tests verify the endpoint mapping and response structure.
 
     @Test
-    @DisplayName("GET /api/home/holidays - should return upcoming holidays")
+    @DisplayName("GET /api/v1/home/holidays - should return upcoming holidays")
     @WithMockUser
     void getUpcomingHolidays_shouldReturnHolidays() throws Exception {
         // Given
@@ -207,7 +207,7 @@ class HomeControllerTest {
         when(homeService.getUpcomingHolidays(30)).thenReturn(List.of(holiday));
 
         // When & Then
-        mockMvc.perform(get("/api/home/holidays")
+        mockMvc.perform(get("/api/v1/home/holidays")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -218,14 +218,14 @@ class HomeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/home/holidays - should accept custom days parameter")
+    @DisplayName("GET /api/v1/home/holidays - should accept custom days parameter")
     @WithMockUser
     void getUpcomingHolidays_shouldAcceptCustomDays() throws Exception {
         // Given
         when(homeService.getUpcomingHolidays(90)).thenReturn(Collections.emptyList());
 
         // When & Then
-        mockMvc.perform(get("/api/home/holidays")
+        mockMvc.perform(get("/api/v1/home/holidays")
                         .param("days", "90")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))

@@ -156,6 +156,14 @@ class LeaveRequestE2ETest {
     }
 
     private void setupSecurityContext() {
+        setupSecurityContext(testEmployeeId != null ? testEmployeeId : TEST_EMPLOYEE_ID);
+    }
+
+    private void setupManagerSecurityContext() {
+        setupSecurityContext(TEST_MANAGER_ID);
+    }
+
+    private void setupSecurityContext(UUID currentEmployeeId) {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "EMPLOYEE"));
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
@@ -164,7 +172,7 @@ class LeaveRequestE2ETest {
         permissions.put("HRMS:LEAVE:CANCEL", RoleScope.GLOBAL);
         permissions.put("HRMS:LEAVE:APPROVE", RoleScope.GLOBAL);
 
-        SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_EMPLOYEE_ID, roles, permissions);
+        SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
@@ -274,10 +282,10 @@ class LeaveRequestE2ETest {
         assertThat(createdLeaveRequestId).isNotNull();
 
         // Set up manager context
-        setupSecurityContext();
+        setupManagerSecurityContext();
 
         mockMvc.perform(post(BASE_URL + "/" + createdLeaveRequestId + "/approve")
-                        .param("approverId", TEST_USER_ID.toString()))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("APPROVED"))
                 .andExpect(jsonPath("$.approvedBy").exists());
@@ -319,8 +327,8 @@ class LeaveRequestE2ETest {
         );
 
         // Reject the leave request - uses POST with query params
+        setupManagerSecurityContext();
         mockMvc.perform(post(BASE_URL + "/" + newRequestId + "/reject")
-                        .param("approverId", TEST_USER_ID.toString())
                         .param("reason", "Project deadline - cannot approve"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("REJECTED"))
@@ -418,9 +426,9 @@ class LeaveRequestE2ETest {
         assertThat(created.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.PENDING);
 
         // Approve via service
-        LeaveRequest approved = leaveRequestService.approveLeaveRequest(created.getId(), TEST_USER_ID);
+        LeaveRequest approved = leaveRequestService.approveLeaveRequest(created.getId(), TEST_MANAGER_ID);
         assertThat(approved.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
-        assertThat(approved.getApprovedBy()).isEqualTo(TEST_USER_ID);
+        assertThat(approved.getApprovedBy()).isEqualTo(TEST_MANAGER_ID);
     }
 
     // ==================== Validation Tests ====================

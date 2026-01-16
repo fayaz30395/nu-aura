@@ -2,9 +2,13 @@ package com.hrms.application.expense.service;
 
 import com.hrms.api.expense.dto.ExpenseClaimRequest;
 import com.hrms.api.expense.dto.ExpenseClaimResponse;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
+import com.hrms.domain.user.RoleScope;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,10 +22,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +33,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,10 +47,14 @@ class ExpenseClaimServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private DataScopeService dataScopeService;
+
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
 
     private UUID tenantId;
     private UUID employeeId;
@@ -56,11 +66,13 @@ class ExpenseClaimServiceTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @BeforeEach
@@ -71,6 +83,16 @@ class ExpenseClaimServiceTest {
         approverId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(approverId);
+        securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.EXPENSE_VIEW_ALL))
+                .thenReturn(RoleScope.ALL);
+        securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.EXPENSE_VIEW))
+                .thenReturn(RoleScope.ALL);
+        securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.EXPENSE_APPROVE))
+                .thenReturn(RoleScope.ALL);
+        Specification<Object> scopeSpec = (root, query, cb) -> cb.conjunction();
+        lenient().when(dataScopeService.getScopeSpecification(anyString())).thenReturn(scopeSpec);
 
         employee = Employee.builder()
                 .firstName("John")
@@ -400,7 +422,7 @@ class ExpenseClaimServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAllByTenantId(tenantId, pageable)).thenReturn(page);
+            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -433,8 +455,7 @@ class ExpenseClaimServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findAllByStatusAndTenantId(ExpenseClaim.ExpenseStatus.DRAFT, tenantId, pageable))
-                    .thenReturn(page);
+            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -452,7 +473,7 @@ class ExpenseClaimServiceTest {
             expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findByStatuses(any(), any(), any())).thenReturn(page);
+            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -470,8 +491,7 @@ class ExpenseClaimServiceTest {
             LocalDate endDate = LocalDate.of(2025, 1, 31);
             Page<ExpenseClaim> page = new PageImpl<>(List.of(expenseClaim));
 
-            when(expenseClaimRepository.findByDateRange(tenantId, startDate, endDate, pageable))
-                    .thenReturn(page);
+            when(expenseClaimRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
                     .thenReturn(Optional.of(employee));
 
@@ -493,21 +513,17 @@ class ExpenseClaimServiceTest {
             LocalDate startDate = LocalDate.of(2025, 1, 1);
             LocalDate endDate = LocalDate.of(2025, 1, 31);
 
-            when(expenseClaimRepository.countByStatus(any(), any())).thenReturn(5L);
-            when(expenseClaimRepository.sumByStatusAndDateRange(any(), any(), any(), any()))
-                    .thenReturn(new BigDecimal("1000.00"));
-            List<Object[]> categoryStats = new ArrayList<>();
-            categoryStats.add(new Object[]{ExpenseClaim.ExpenseCategory.TRAVEL, 3L, new BigDecimal("750.00")});
-            when(expenseClaimRepository.getCategoryStats(tenantId, startDate, endDate))
-                    .thenReturn(categoryStats);
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
+            when(expenseClaimRepository.findAll(any(Specification.class)))
+                    .thenReturn(List.of(expenseClaim));
 
             Map<String, Object> result = expenseClaimService.getExpenseSummary(startDate, endDate);
 
             assertThat(result).isNotNull();
             assertThat(result).containsKey("statusCounts");
             assertThat(result).containsKey("amountByStatus");
-            assertThat(result).containsKey("categoryStats");
-            assertThat(result).containsKey("dateRange");
+            assertThat(result).containsKey("totalAmount");
+            assertThat(result).containsKey("totalClaims");
         }
     }
 }
