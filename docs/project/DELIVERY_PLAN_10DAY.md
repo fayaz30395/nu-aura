@@ -1,214 +1,276 @@
 # NU-AURA 10-Day Delivery Plan
 
+**Last Updated:** 2026-01-16
+**Author:** Fayaz
+**Status:** All Phases Complete ✅
+
 ## Overview
-Implementation of Keka-style RBAC with fine-grained scopes, permission alignment, and UI parity.
 
-## RBAC Architecture Note
+Keka-style RBAC implementation with fine-grained scopes (ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM), permission alignment across all modules, and complete UI parity.
 
-**Supported Path:** Legacy RBAC using `permissions` and `role_permissions` tables (seeded in `099-seed-rbac-permissions-roles.xml`).
-
-The app-level RBAC system (`app_permissions`, `app_role_permissions` in `086-create-nu-platform-tables.sql`) exists for future NU Platform multi-app support but is **not currently integrated** with `@RequiresPermission`. All permission enforcement uses the legacy RBAC path.
-
-## Phase Tracking
-
-### Phase 0: RBAC Core Foundation (Days 1-2)
-**Status: COMPLETED**
-
-| Task | Status | Notes |
-|------|--------|-------|
-| Add CUSTOM scope to RoleScope enum | DONE | ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM |
-| Create CustomScopeTarget entity | DONE | Stores employee/department/location targets |
-| Create custom_scope_targets table (migration 118) | DONE | With indexes and FK constraints |
-| Update DataScopeService for CUSTOM scope | DONE | Handles custom target filtering |
-| Update TEAM scope for indirect reports | DONE | Recursive hierarchy traversal |
-| Create ScopeContextService | DONE | Loads reportees + custom targets |
-| Update JwtAuthenticationFilter | DONE | Populates scope context on auth |
-| Migrate GLOBAL→ALL, OWN→SELF | DONE | In migration 118 |
-
-**Exit Criteria:**
-- [x] RoleScope enum has all 6 scopes
-- [x] CustomScopeTarget entity persists targets
-- [x] DataScopeService filters by all scope types
-- [x] TEAM scope includes indirect reports
-- [x] SecurityContext populated with scope data
-
-**Evidence:**
-- `RoleScope.java` - enum with ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM
-- `CustomScopeTarget.java` - entity for storing custom targets
-- `DataScopeService.java` - getScopeSpecification() with CUSTOM handling
-- Migration `118-create-custom-scope-targets-table.xml`
+**Architecture:** Legacy RBAC using `permissions` and `role_permissions` tables (seeded in `099-seed-rbac-permissions-roles.xml`). App-level RBAC (`app_permissions`) exists for future NU Platform but is not currently integrated.
 
 ---
 
-### Phase 1: Permission & Controller Alignment (Days 3-4)
-**Status: COMPLETED**
+## Phase Summary
 
-| Task | Status | Notes |
-|------|--------|-------|
-| Define LETTER_* permissions in Permission.java | DONE | LETTER:TEMPLATE_VIEW, GENERATE, APPROVE, ISSUE |
-| Define ESIGNATURE_* permissions | DONE | ESIGNATURE:VIEW, REQUEST, SIGN, MANAGE |
-| Update LetterController permissions | DONE | Uses @RequiresPermission with LETTER_* |
-| Update ESignatureController permissions | DONE | Uses @RequiresPermission with ESIGNATURE_* |
-| Remove client-supplied IDs (Letter) | DONE | Uses SecurityContext.getCurrentEmployeeId() |
-| Remove client-supplied IDs (ESign) | DONE | Uses SecurityContext.getCurrentEmployeeId() |
-| Add scope filtering to Letter list endpoints | DONE | getAllLetters(), getPendingApprovals() |
-| Add scope filtering to ESign list endpoints | DONE | getAllSignatureRequests() |
-| Add @RequiresPermission to HomeController | DONE | DASHBOARD_VIEW, ATTENDANCE_VIEW_SELF |
-| Add @RequiresPermission to WallController | DONE | WALL_VIEW, WALL_POST, WALL_COMMENT, WALL_REACT, WALL_PIN, WALL_MANAGE |
-| Add WALL_* permissions to Permission.java | DONE | 6 WALL permissions + ATTENDANCE_VIEW_SELF |
-| Seed WALL_* permissions in migration | DONE | 099-seed-rbac-permissions-roles.xml |
-| Add WALL_* to RoleHierarchy defaults | DONE | EMPLOYEE gets basic WALL access, HR_MANAGER gets MANAGE+PIN+DASHBOARD |
-| Fix WallController permission mapping | DONE | DELETE uses {WALL_POST, WALL_MANAGE}, votes use WALL_REACT |
-| Fix HomeController attendance endpoint | DONE | Changed to /attendance/me with SecurityContext enforcement |
-| Update frontend/tests for endpoint change | DONE | home.service.ts, tests updated |
-| Verify high-risk controllers secured | DONE | PayrollController, UserController, RoleController, DataMigrationController |
+### Phase 0: RBAC Core Foundation ✅
+**Days 1-2 | Status: COMPLETED**
 
-**Exit Criteria:**
-- [x] LETTER_* permissions match P0 matrix
-- [x] ESIGNATURE_* permissions match P0 matrix
-- [x] No client-supplied approver/creator IDs
-- [x] All list endpoints apply scope filtering
-- [x] HomeController has correct permissions (DASHBOARD_VIEW, ATTENDANCE_VIEW_SELF)
-- [x] WallController has correct permissions ({WALL_POST, WALL_MANAGE} for delete, WALL_REACT for polls)
-- [x] WALL_* and DASHBOARD_VIEW permissions seeded in database
-- [x] Role defaults include WALL_* and DASHBOARD_VIEW (EMPLOYEE + HR_MANAGER)
-- [x] High-risk controllers have @RequiresPermission
-- [x] Attendance endpoint enforces self-only access via SecurityContext
-- [x] Frontend and tests updated for /attendance/me endpoint
+**Deliverables:**
+- RoleScope enum with 6 scopes (ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM)
+- CustomScopeTarget entity + database table (migration 118)
+- DataScopeService with CUSTOM scope support
+- TEAM scope with indirect reports (recursive hierarchy)
+- ScopeContextService for loading reportees + custom targets
+- JwtAuthenticationFilter populates SecurityContext with scope data
+- Migrated GLOBAL→ALL, OWN→SELF
 
 **Evidence:**
-- `WallController.java:77` - `@RequiresPermission({WALL_POST, WALL_MANAGE})` for delete
-- `HomeController.java:67-73` - `/attendance/me` with SecurityContext.getCurrentEmployeeId()
-- `099-seed-rbac-permissions-roles.xml:479-568` - WALL_*, DASHBOARD_VIEW, ATTENDANCE_VIEW_SELF seeded
-- `099-seed-rbac-permissions-roles.xml:1083-1087` - HR_MANAGER gets DASHBOARD_VIEW
-- `RoleHierarchy.java:306-311` - EMPLOYEE gets WALL_* and DASHBOARD_VIEW
-- `home.service.ts:116-118` - getMyAttendanceToday() calls /attendance/me
-- `HomeControllerIntegrationTest.java:210` - tests /attendance/me
+- `RoleScope.java` - 6 scope enum values
+- `CustomScopeTarget.java` - entity
+- `DataScopeService.java` - getScopeSpecification()
+- `118-create-custom-scope-targets-table.xml` - migration
 
 ---
 
-### Phase 2: Role Management API & Scope Assignment (Days 5-6)
-**Status: COMPLETED**
+### Phase 1: Permission & Controller Alignment ✅
+**Days 3-4 | Status: COMPLETED**
 
-| Task | Status | Notes |
-|------|--------|-------|
-| RoleManagementService accepts scope data | DONE | assignPermissionsWithScope() |
-| RoleController exposes scope endpoints | DONE | PUT /permissions-with-scope |
-| AuthService preserves scope from RolePermission | DONE | Loads scope per permission |
-| PermissionScopeMerger for multi-role | DONE | Most permissive scope wins |
+**Deliverables:**
+- LETTER_*, ESIGNATURE_*, WALL_*, DASHBOARD_VIEW, ATTENDANCE_VIEW_SELF permissions
+- @RequiresPermission on all controllers (Letter, ESignature, Home, Wall)
+- Removed client-supplied IDs (uses SecurityContext.getCurrentEmployeeId())
+- Scope filtering on Letter/ESignature list endpoints
+- Self-only enforcement on /attendance/me endpoint
+- Permission seeding in 099-seed-rbac-permissions-roles.xml
+- RoleHierarchy defaults updated (EMPLOYEE, HR_MANAGER)
+- High-risk controllers verified (Payroll, User, Role, DataMigration)
 
-**Exit Criteria:**
-- [x] API accepts scope + custom targets
-- [x] Scopes persisted in role_permissions table
-- [x] Custom targets persisted in custom_scope_targets
-- [x] Multi-role merging uses most permissive scope
+**Security Fixes:**
+- Letter/ESignature: No client-supplied creator/approver IDs
+- Home: /attendance/me enforces self-only via SecurityContext
+- Wall: Correct permission mappings (DELETE uses {WALL_POST, WALL_MANAGE})
+
+**Evidence:**
+- `WallController.java:77` - DELETE permission
+- `HomeController.java:67-73` - /attendance/me endpoint
+- `099-seed-rbac-permissions-roles.xml:479-568` - WALL_* permissions
+- `RoleHierarchy.java:306-311` - EMPLOYEE defaults
+
+---
+
+### Phase 2: Role Management API ✅
+**Days 5-6 | Status: COMPLETED**
+
+**Deliverables:**
+- RoleManagementService.assignPermissionsWithScope()
+- RoleController PUT /permissions-with-scope endpoint
+- AuthService preserves scope from RolePermission
+- PermissionScopeMerger for multi-role scope resolution (most permissive wins)
+- Scopes persisted in role_permissions.scope column
+- Custom targets persisted in custom_scope_targets table
 
 **Evidence:**
 - `RoleManagementService.java` - assignPermissionsWithScope()
-- `RoleController.java` - PUT /permissions-with-scope endpoint
-- `PermissionScopeMerger.java` - merges scopes across roles
+- `RoleController.java` - PUT endpoint
+- `PermissionScopeMerger.java` - merge logic
 
 ---
 
-### Phase 3: Frontend UI Parity (Days 7-8)
-**Status: COMPLETED**
+### Phase 3: Frontend UI Parity ✅
+**Days 7-8 | Status: COMPLETED**
 
-| Task | Status | Notes |
-|------|--------|-------|
-| Scope selector in role permissions modal | DONE | Dropdown per permission with icons |
-| Custom target picker component | DONE | Search & select employees/departments/locations |
-| Frontend types for scope | DONE | RoleScope, CustomTarget types |
-| API client for scope endpoints | DONE | assignPermissionsWithScope() |
-| Inline custom target picker in permissions modal | DONE | Expands when CUSTOM scope selected |
-| Validation warning for CUSTOM without targets | DONE | Amber warning in summary section |
-
-**Exit Criteria:**
-- [x] Admin can select scope per permission
-- [x] Admin can select custom targets (employees, departments, locations)
-- [x] Visual scope icons on scope selector buttons
-- [x] Validation warning for CUSTOM scope without targets selected
+**Deliverables:**
+- Scope selector dropdown per permission with visual icons
+- CustomTargetPicker component (search employees/departments/locations)
+- Frontend types (RoleScope, CustomTarget)
+- API client for assignPermissionsWithScope()
+- Inline custom target picker in permissions modal
+- Validation warning for CUSTOM scope without targets
 
 **Evidence:**
-- `CustomTargetPicker.tsx:40-56` - Module-level cache for office locations
-- `CustomTargetPicker.tsx:119-137` - Search with cached locations filtering
-- `ScopeSelector.tsx:24-56` - Scope icons and CustomTargetPicker integration
-- `app/admin/roles/page.tsx:640-651` - ScopeSelector used per permission in modal
-- `app/admin/roles/page.tsx:694-713` - Save disabled when CUSTOM has zero targets
+- `CustomTargetPicker.tsx:40-56` - Location cache
+- `ScopeSelector.tsx:24-56` - Icons + integration
+- `app/admin/roles/page.tsx:640-651` - Modal usage
+- `app/admin/roles/page.tsx:694-713` - Validation
 
 ---
 
-### Phase 4: L1 Approval & Workflow (Days 9-10)
-**Status: COMPLETED**
+### Phase 4: L1 Approval & Workflow ✅
+**Days 9-10 | Status: COMPLETED**
 
-| Task | Status | Notes |
-|------|--------|-------|
-| L1 approval routing (Letter) | DONE | HR workflow - uses SecurityContext, scope-filtered |
-| L1 approval routing (Leave) | DONE | Manager-only validation enforced |
-| Verify approval security | DONE | Uses SecurityContext for approver |
-| Remove client-supplied approverId (Leave) | DONE | Now derived from SecurityContext |
-| Manager validation in LeaveRequestService | DONE | validateApproverIsManager() added |
+**Deliverables:**
+- Leave approvals route to immediate manager only (L1)
+- Manager validation enforced (validateApproverIsManager())
+- No client-supplied approver IDs (uses SecurityContext)
+- Letter HR workflow (HR → HR Manager → HR) with scope filtering
 
-**Exit Criteria:**
-- [x] Leave approvals route to immediate manager only
-- [x] No multi-level approval chains (L1 only)
-- [x] Manager resolved from Employee.managerId
-- [x] No client-supplied approver IDs in leave endpoints
+**Design:**
+- **Letters:** Permission-based HR workflow with scope filtering
+- **Leave:** Employee workflow with direct manager L1 approval
 
 **Evidence:**
-- `LeaveRequestController.java:111-130` - Removed approverId param, uses SecurityContext
-- `LeaveRequestService.java:111-126` - validateApproverIsManager() enforces L1 routing
-- `LetterController.java:142` - Already uses SecurityContext.getCurrentEmployeeId()
+- `LeaveRequestController.java:111-130` - SecurityContext usage
+- `LeaveRequestService.java:111-126` - validateApproverIsManager()
 
-**Design Note:**
-Letters follow HR workflow (HR generates → HR Manager approves → HR issues) where approval is permission-based via LETTER_APPROVE with data scope filtering. Leave follows employee workflow where direct manager approval is required.
+---
+
+## Phase 1.5: Expense/Recruitment/Attendance RBAC ✅
+
+**Added After Phase 4 | Status: COMPLETED**
+
+### Expense Module
+**Security Fixes:**
+- Removed client-supplied approverId/rejecterId (CRITICAL)
+- Added scope filtering to 6 list endpoints
+- Added scope validation to get-by-id endpoint
+- Frontend API route alignment
+
+**Tests:** 39/39 passing (SELF, TEAM, ALL, LOCATION*, CUSTOM, admin bypass)
+- *LOCATION/DEPARTMENT tests are negative cases only (require Employee fixtures for positive tests)
+
+**Files:**
+- `ExpenseClaimController.java` - Permission guards
+- `ExpenseClaimService.java` - DataScopeService integration
+- `expense.service.ts` - Removed approverId param
+- `ExpenseClaimScopeIntegrationTest.java` - 39 tests
+
+**Commits:**
+- `58a9933` - Expense RBAC implementation
+- `addaecf` - Expense RBAC tests
+- `cb05ad7` - Scope determination fixes
+
+### Recruitment Module
+**Scope Enforcement:**
+- List endpoints: getJobOpeningsByStatus, getCandidatesByJobOpening, getInterviewsByCandidate
+- Get-by-id validation: getJobOpeningById, getCandidateById, getInterviewById
+- Field mappings: hiringManagerId, assignedRecruiterId, interviewerId
+
+**Tests:** 14/14 passing (SELF, TEAM, CUSTOM, ALL)
+- **Note:** Uses mixed permissions (RECRUITMENT_VIEW, CANDIDATE_VIEW, RECRUITMENT_MANAGE)
+
+**Files:**
+- `RecruitmentManagementService.java` - Scope filtering + validation
+- `RecruitmentManagementController.java` - Multiple permission types
+- `RecruitmentScopeIntegrationTest.java` - 14 tests
+
+**Commit:**
+- `bfad374` - Recruitment RBAC + Attendance endpoint
+
+### Attendance Module
+**New Endpoint:**
+- `GET /attendance/date/{date}` with TEAM/ALL scope filtering
+- Addresses frontend API mismatch
+
+**Files:**
+- `AttendanceController.java` - New endpoint
+- `AttendanceRecordService.java` - Service method
+
+**Commit:**
+- `bfad374` - Attendance date endpoint
+
+### Additional Enhancements
+**Custom Target Names:**
+- Resolves TODO in RoleManagementService.java
+- Displays human-readable names for CUSTOM scope targets
+- Tenant-scoped lookups (EMPLOYEE/DEPARTMENT/LOCATION)
+
+**Commit:**
+- `da4163c` - Custom target names
+
+**Permission Seeding:**
+- RECRUITMENT_VIEW_ALL, RECRUITMENT_VIEW_TEAM, ATTENDANCE_MANAGE
+- RoleHierarchy defaults updated (HR_MANAGER, TEAM_LEAD)
+
+**Commit:**
+- `d113b38` - Permission seeding
+
+**Workload Persistence:**
+- PUT /allocation endpoint with validation
+- Frontend service integration
+- Tenant-safe with comprehensive validation
+
+**Files:**
+- `ResourceManagementController.java` - Endpoint
+- `AllocationDTOs.java` - UpdateAllocationRequest
+- `ResourceManagementService.java` - updateAllocation()
+- `resource-management.service.ts` - Frontend
 
 ---
 
 ## Standards Enforcement
 
-### Mandatory for All Endpoints
-- `@RequiresPermission` annotation required
-- List endpoints must use `DataScopeService.getScopeSpecification()`
-- No client-supplied user IDs for security operations
-- Self-only endpoints must use `SecurityContext.getCurrentEmployeeId()`
+### Mandatory Requirements
+- ✅ @RequiresPermission annotation on all endpoints
+- ✅ List endpoints use DataScopeService.getScopeSpecification()
+- ✅ No client-supplied user IDs for security operations
+- ✅ Self-only endpoints use SecurityContext.getCurrentEmployeeId()
+- ✅ All queries filtered by TenantContext
 
-### Permission Naming Convention
-- Format: `MODULE:ACTION` (e.g., `LETTER:GENERATE`)
-- Actions: VIEW, CREATE, UPDATE, DELETE, MANAGE, APPROVE
+### Permission Naming
+Format: `MODULE:ACTION` (e.g., `LETTER:GENERATE`)
+Actions: VIEW, CREATE, UPDATE, DELETE, MANAGE, APPROVE
 
 ---
 
-## Current Progress Summary
+## Test Coverage
 
-**Completed:**
-- RBAC core infrastructure (scopes, entities, migrations)
-- DataScopeService with all scope types
-- TEAM scope indirect reports
-- Custom scope target storage
-- Permission constants for LETTER_*, ESIGNATURE_*, WALL_*, DASHBOARD_VIEW, ATTENDANCE_VIEW_SELF
-- Controller security fixes (SecurityContext usage)
-- Role management API with scope support
-- Frontend scope selector UI
-- Scope filtering on Letter list endpoints (getAllLetters, getPendingApprovals)
-- Scope filtering on ESignature list endpoints (getAllSignatureRequests)
-- @RequiresPermission on HomeController (6 endpoints with correct permissions)
-- @RequiresPermission on WallController (14 endpoints with correct permissions)
-- WALL_* and DASHBOARD_VIEW permissions seeded in 099-seed-rbac-permissions-roles.xml
-- WALL_* and DASHBOARD_VIEW added to RoleHierarchy.java defaults (EMPLOYEE, HR_MANAGER)
-- High-risk controllers verified: PayrollController, UserController, RoleController, DataMigrationController
-- Self-only enforcement on attendance endpoint via SecurityContext
-- Frontend home.service.ts updated for /attendance/me
-- All tests updated for /attendance/me endpoint
-- Unused CONTENT_VIEW_* permissions removed
-- CustomTargetPicker UI component with search and filtering
-- ScopeSelector with icons and CustomTargetPicker integration
-- Inline custom target picker in role permissions modal
-- Validation warning for CUSTOM scope without targets
+| Module | Tests | Status |
+|--------|-------|--------|
+| Expense | 39 | ✅ PASSING |
+| Recruitment | 14 | ✅ PASSING |
+| Leave | 28 | ✅ PASSING |
+| **Total** | **81** | **✅ ALL PASSING** |
 
-**Remaining:**
-- None - All phases completed
+---
+
+## Deployment
+
+### Pre-Deployment
+- [x] All 81 tests passing
+- [x] Database migrations validated
+- [x] Frontend/backend synchronized
+
+### Migration
+```bash
+# Liquibase auto-applies:
+# - 118-create-custom-scope-targets-table.xml
+# - 099-seed-rbac-permissions-roles.xml
+```
+
+### Verification
+- [ ] Expense approvals scoped to TEAM/SELF
+- [ ] Recruitment lists filtered by scope
+- [ ] Attendance /date/{date} works
+- [ ] Workload allocation edits persist
+- [ ] Custom target names display correctly
+
+---
+
+## References
+
+- [Implementation Report](RBAC_PHASE1_IMPLEMENTATION_REPORT.md) - Technical details
+- [Executive Summary](RBAC_PHASE1_EXEC_SUMMARY.md) - Quick reference
+- [RBAC Requirements](../architecture/RBAC_KEKA_REQUIREMENTS.md) - Canonical specs
+- [Implementation Summary](../../RBAC_IMPLEMENTATION_SUMMARY.md) - Task tracking
+- [Final Validation Summary](../../FINAL_VALIDATION_SUMMARY.md) - Corrections recap
+- [Validation Summary (Detailed)](../../VALIDATION_SUMMARY_CORRECTED.md) - Full validation details
+
+## Future Enhancements
+
+1. **Test Coverage Improvements**
+   - Add positive LOCATION/DEPARTMENT scope tests with Employee fixtures
+   - Add integration test for workload update endpoint (PUT /allocation)
+   - Add performance benchmarks for scope filtering
+
+2. **Code Improvements**
+   - Consolidate Recruitment permissions (currently uses VIEW/CANDIDATE_VIEW/MANAGE)
+   - Add automated permission audit script
+   - Cache permission scopes in Redis for better performance
 
 ---
 
 ## Architecture Changes
-See [ARCH_CHANGELOG.md](../architecture/ARCH_CHANGELOG.md) for detailed change log.
+
+See [ARCH_CHANGELOG.md](../architecture/ARCH_CHANGELOG.md) for detailed changelog.
