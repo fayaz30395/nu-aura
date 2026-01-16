@@ -28,7 +28,7 @@ public class HomeController {
 
     @GetMapping("/birthdays")
     @Operation(summary = "Get upcoming birthdays", description = "Returns employees with birthdays in the next N days")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<BirthdayResponse>> getUpcomingBirthdays(
             @Parameter(description = "Number of days to look ahead (default 7)")
             @RequestParam(defaultValue = "7") int days) {
@@ -38,7 +38,7 @@ public class HomeController {
 
     @GetMapping("/anniversaries")
     @Operation(summary = "Get upcoming work anniversaries", description = "Returns employees with work anniversaries in the next N days")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<WorkAnniversaryResponse>> getUpcomingAnniversaries(
             @Parameter(description = "Number of days to look ahead (default 7)")
             @RequestParam(defaultValue = "7") int days) {
@@ -48,7 +48,7 @@ public class HomeController {
 
     @GetMapping("/new-joinees")
     @Operation(summary = "Get new joinees", description = "Returns employees who joined in the last N days")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<NewJoineeResponse>> getNewJoinees(
             @Parameter(description = "Number of days to look back (default 30)")
             @RequestParam(defaultValue = "30") int days) {
@@ -58,7 +58,7 @@ public class HomeController {
 
     @GetMapping("/on-leave")
     @Operation(summary = "Get employees on leave today", description = "Returns employees who are on approved leave today")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<OnLeaveEmployeeResponse>> getEmployeesOnLeaveToday() {
         log.debug("Getting employees on leave today");
         return ResponseEntity.ok(homeService.getEmployeesOnLeaveToday());
@@ -75,7 +75,7 @@ public class HomeController {
 
     @GetMapping("/holidays")
     @Operation(summary = "Get upcoming holidays", description = "Returns holidays in the next N days")
-    @RequiresPermission(DASHBOARD_VIEW)
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<UpcomingHolidayResponse>> getUpcomingHolidays(
             @Parameter(description = "Number of days to look ahead (default 30)")
             @RequestParam(defaultValue = "30") int days) {
