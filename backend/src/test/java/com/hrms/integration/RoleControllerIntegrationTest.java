@@ -245,9 +245,10 @@ class RoleControllerIntegrationTest {
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void assignPermissions_Success() throws Exception {
         // First create a role
+        String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8);
         CreateRoleRequest createRequest = new CreateRoleRequest();
-        createRequest.setCode("PERM_TEST_ROLE_" + UUID.randomUUID().toString().substring(0, 8));
-        createRequest.setName("Permission Test Role");
+        createRequest.setCode("PERM_TEST_ROLE_" + uniqueSuffix);
+        createRequest.setName("Permission Test Role " + uniqueSuffix);
 
         String createResponse = mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -275,9 +276,10 @@ class RoleControllerIntegrationTest {
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void addPermissions_Success() throws Exception {
         // First create a role with one permission
+        String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8);
         CreateRoleRequest createRequest = new CreateRoleRequest();
-        createRequest.setCode("ADD_PERM_ROLE_" + UUID.randomUUID().toString().substring(0, 8));
-        createRequest.setName("Add Permission Test Role");
+        createRequest.setCode("ADD_PERM_ROLE_" + uniqueSuffix);
+        createRequest.setName("Add Permission Test Role " + uniqueSuffix);
         createRequest.setPermissionCodes(new HashSet<>(Arrays.asList("EMPLOYEE:READ")));
 
         String createResponse = mockMvc.perform(post(BASE_URL)
@@ -306,9 +308,10 @@ class RoleControllerIntegrationTest {
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     void removePermissions_Success() throws Exception {
         // First create a role with multiple permissions
+        String uniqueSuffix = UUID.randomUUID().toString().substring(0, 8);
         CreateRoleRequest createRequest = new CreateRoleRequest();
-        createRequest.setCode("REMOVE_PERM_ROLE_" + UUID.randomUUID().toString().substring(0, 8));
-        createRequest.setName("Remove Permission Test Role");
+        createRequest.setCode("REMOVE_PERM_ROLE_" + uniqueSuffix);
+        createRequest.setName("Remove Permission Test Role " + uniqueSuffix);
         createRequest.setPermissionCodes(new HashSet<>(Arrays.asList("EMPLOYEE:READ", "EMPLOYEE:UPDATE")));
 
         String createResponse = mockMvc.perform(post(BASE_URL)

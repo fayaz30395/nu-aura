@@ -623,8 +623,8 @@ class AttendanceRecordServiceTest {
         void shouldGetAttendanceByDateRange() {
             LocalDate startDate = LocalDate.now().minusDays(7);
             LocalDate endDate = LocalDate.now();
-            when(attendanceRecordRepository.findAllByEmployeeIdAndAttendanceDateBetween(
-                    employeeId, startDate, endDate))
+            when(attendanceRecordRepository.findAllByTenantIdAndEmployeeIdAndAttendanceDateBetween(
+                    tenantId, employeeId, startDate, endDate))
                     .thenReturn(List.of(attendanceRecord));
 
             List<AttendanceRecord> result = attendanceRecordService.getAttendanceByDateRange(

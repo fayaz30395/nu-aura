@@ -223,6 +223,7 @@ class AuthControllerTest {
             ChangePasswordRequest request = new ChangePasswordRequest();
             request.setCurrentPassword("oldPassword123");
             request.setNewPassword("newPassword456");
+            request.setConfirmPassword("newPassword456");
 
             try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
                 securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
@@ -270,6 +271,7 @@ class AuthControllerTest {
             ResetPasswordRequest request = new ResetPasswordRequest();
             request.setToken("valid-reset-token");
             request.setNewPassword("newSecurePassword123");
+            request.setConfirmPassword("newSecurePassword123");
 
             doNothing().when(authService).resetPassword(any(ResetPasswordRequest.class));
 

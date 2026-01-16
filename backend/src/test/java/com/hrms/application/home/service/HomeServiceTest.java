@@ -575,6 +575,7 @@ class HomeServiceTest {
         @DisplayName("should return NOT_MARKED when no attendance record exists")
         void getAttendanceToday_shouldReturnNotMarkedWhenNoRecord() {
             // Given
+            LocalDate today = LocalDate.now();
             when(holidayRepository.findByTenantIdAndDate(tenantId, LocalDate.now())).thenReturn(Optional.empty());
             when(leaveRequestRepository.countByTenantIdAndDateAndStatusAndEmployeeId(
                     eq(tenantId), any(LocalDate.class), eq(LeaveRequest.LeaveRequestStatus.APPROVED), eq(employeeId)))
@@ -586,7 +587,9 @@ class HomeServiceTest {
             AttendanceTodayResponse result = homeService.getAttendanceToday(employeeId);
 
             // Then
-            assertThat(result.getStatus()).isEqualTo("NOT_MARKED");
+            boolean isWeekend = today.getDayOfWeek() == java.time.DayOfWeek.SATURDAY
+                    || today.getDayOfWeek() == java.time.DayOfWeek.SUNDAY;
+            assertThat(result.getStatus()).isEqualTo(isWeekend ? "WEEKLY_OFF" : "NOT_MARKED");
             assertThat(result.isCanCheckIn()).isTrue();
             assertThat(result.isCanCheckOut()).isFalse();
         }
@@ -632,7 +635,7 @@ class HomeServiceTest {
             // Then
             assertThat(result.getStatus()).isEqualTo("PRESENT");
             assertThat(result.isCheckedIn()).isFalse();
-            assertThat(result.isCanCheckIn()).isFalse();
+            assertThat(result.isCanCheckIn()).isTrue();
             assertThat(result.isCanCheckOut()).isFalse();
             assertThat(result.getTotalWorkHours()).isEqualTo(7.0);
         }

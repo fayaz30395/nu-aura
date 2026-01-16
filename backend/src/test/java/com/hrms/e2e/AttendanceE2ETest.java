@@ -115,6 +115,10 @@ class AttendanceE2ETest {
     }
 
     private void setupSecurityContext() {
+        setupSecurityContext(testEmployeeId != null ? testEmployeeId : TEST_USER_ID);
+    }
+
+    private void setupSecurityContext(UUID currentEmployeeId) {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "EMPLOYEE"));
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
@@ -122,7 +126,7 @@ class AttendanceE2ETest {
         permissions.put("HRMS:ATTENDANCE:VIEW_SELF", RoleScope.GLOBAL);
         permissions.put("HRMS:ATTENDANCE:REGULARIZE", RoleScope.GLOBAL);
 
-        SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_USER_ID, roles, permissions);
+        SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);
     }
@@ -654,6 +658,7 @@ class AttendanceE2ETest {
                     .andExpect(status().isCreated());
 
             // Get my time entries
+            setupSecurityContext(myTimeEmployeeId);
             mockMvc.perform(get(BASE_URL + "/my-time-entries")
                             .param("date", today.toString()))
                     .andExpect(status().isOk())
