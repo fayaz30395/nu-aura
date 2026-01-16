@@ -166,6 +166,11 @@ public class DataScopeService {
         // Try managerId for entities that track manager
         tryAddPredicate(predicates, () -> root.get("managerId").in(teamIds));
 
+        // Try recruiter/manager fields used in recruitment flows
+        tryAddPredicate(predicates, () -> root.get("hiringManagerId").in(teamIds));
+        tryAddPredicate(predicates, () -> root.get("assignedRecruiterId").in(teamIds));
+        tryAddPredicate(predicates, () -> root.get("interviewerId").in(teamIds));
+
         // Try createdBy for user-created entities
         UUID userId = SecurityContext.getCurrentUserId();
         if (userId != null) {
@@ -201,6 +206,7 @@ public class DataScopeService {
             tryAddPredicate(predicates, () -> cb.equal(root.get("employee").get("id"), employeeId));
             tryAddPredicate(predicates, () -> cb.equal(root.get("hiringManagerId"), employeeId));
             tryAddPredicate(predicates, () -> cb.equal(root.get("assignedRecruiterId"), employeeId));
+            tryAddPredicate(predicates, () -> cb.equal(root.get("interviewerId"), employeeId));
             tryAddPredicate(predicates, () -> cb.equal(root.get("signerId"), employeeId));
         }
 
@@ -224,6 +230,9 @@ public class DataScopeService {
             tryAddPredicate(predicates, () -> root.get("employeeId").in(customEmployeeIds));
             tryAddPredicate(predicates, () -> root.get("employee").get("id").in(customEmployeeIds));
             tryAddPredicate(predicates, () -> root.get("id").in(customEmployeeIds)); // For Employee entity itself
+            tryAddPredicate(predicates, () -> root.get("hiringManagerId").in(customEmployeeIds));
+            tryAddPredicate(predicates, () -> root.get("assignedRecruiterId").in(customEmployeeIds));
+            tryAddPredicate(predicates, () -> root.get("interviewerId").in(customEmployeeIds));
         }
 
         // Filter by custom department IDs

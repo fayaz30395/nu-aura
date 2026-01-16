@@ -293,8 +293,8 @@ export default function DashboardPage() {
       // Use utility function for consistent local timezone handling
       const today = getLocalDateString();
       const [attendanceData, entriesData] = await Promise.all([
-        attendanceService.getAttendanceByDateRange(user.employeeId, today, today),
-        attendanceService.getMyTimeEntries(user.employeeId, today).catch(() => [] as TimeEntry[]),
+        attendanceService.getAttendanceByDateRange(today, today),
+        attendanceService.getMyTimeEntries(today).catch(() => [] as TimeEntry[]),
       ]);
 
       if (attendanceData.length > 0) {

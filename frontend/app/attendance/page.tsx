@@ -74,8 +74,8 @@ export default function AttendancePage() {
       const lastWeekStr = getDateOffsetString(-6);
 
       const [todayData, weeklyData] = await Promise.all([
-        attendanceService.getAttendanceByDateRange(user.employeeId, todayStr, todayStr),
-        attendanceService.getAttendanceByDateRange(user.employeeId, lastWeekStr, todayStr)
+        attendanceService.getAttendanceByDateRange(todayStr, todayStr),
+        attendanceService.getAttendanceByDateRange(lastWeekStr, todayStr)
       ]);
 
       if (todayData.length > 0) {

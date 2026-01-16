@@ -108,7 +108,6 @@ export default function MyDashboardPage() {
       try {
         const today = format(new Date(), 'yyyy-MM-dd');
         const attendance = await attendanceService.getAttendanceByDateRange(
-          user.employeeId,
           today,
           today
         );

@@ -216,9 +216,9 @@ public class LeaveRequestController {
         }
 
         // Fallback to LEAVE:MANAGE - users with MANAGE permission can view with that permission's scope
-        com.hrms.domain.user.RoleScope manageScope = SecurityContext.getPermissionScope("LEAVE:MANAGE");
+        com.hrms.domain.user.RoleScope manageScope = SecurityContext.getPermissionScope(Permission.LEAVE_MANAGE);
         if (manageScope != null) {
-            return "LEAVE:MANAGE";
+            return Permission.LEAVE_MANAGE;
         }
 
         // Final fallback: user passed @RequiresPermission check but has no scoped permission

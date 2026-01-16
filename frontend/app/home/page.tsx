@@ -398,11 +398,13 @@ export default function HomePage() {
                 <div>
                   <p className="text-sm text-surface-500 dark:text-surface-400">Status</p>
                   <p className="font-medium text-surface-900 dark:text-surface-50">
-                    {clockStatus.status === 'PRESENT' && attendanceToday?.checkInTime
-                      ? `Clocked in at ${new Date(attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
-                      : clockStatus.status === 'HOLIDAY' ? 'Holiday'
+                    {clockStatus.status === 'HOLIDAY' ? 'Holiday'
                       : clockStatus.status === 'WEEKLY_OFF' ? 'Day Off'
                       : clockStatus.status === 'ON_LEAVE' ? 'On Leave'
+                      : attendanceToday?.checkInTime && !attendanceToday?.checkOutTime
+                        ? `Clocked in at ${new Date(attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+                      : attendanceToday?.checkInTime && attendanceToday?.checkOutTime
+                        ? `Completed`
                       : 'Not clocked in'}
                   </p>
                 </div>

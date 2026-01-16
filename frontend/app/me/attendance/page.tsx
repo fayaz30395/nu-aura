@@ -61,7 +61,6 @@ export default function MyAttendancePage() {
       const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
 
       const data = await attendanceService.getAttendanceByDateRange(
-        user!.employeeId!,
         startOfMonth,
         endOfMonth
       );
@@ -91,7 +90,7 @@ export default function MyAttendancePage() {
   const loadTimeEntries = async (date: string) => {
     try {
       setIsLoadingTimeEntries(true);
-      const entries = await attendanceService.getMyTimeEntries(user!.employeeId!, date);
+      const entries = await attendanceService.getMyTimeEntries(date);
       setSelectedDateTimeEntries(entries);
     } catch (err: any) {
       console.error('Failed to load time entries:', err);
