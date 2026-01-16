@@ -287,23 +287,53 @@ public class HomeService {
                     .build();
         }
 
-        // Check if today is a weekend (can be customized based on company policy)
+        // Check if today is a weekend
         DayOfWeek dayOfWeek = today.getDayOfWeek();
-        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-            return AttendanceTodayResponse.builder()
-                    .employeeId(employeeId)
-                    .date(today)
-                    .status("WEEKLY_OFF")
-                    .isCheckedIn(false)
-                    .canCheckIn(true) // May allow check-in on weekends for some roles
-                    .canCheckOut(false)
-                    .build();
-        }
+        boolean isWeekend = dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
 
         // Check if employee is on leave today
         Long leaveCount = leaveRequestRepository.countByTenantIdAndDateAndStatusAndEmployeeId(
                 tenantId, today, LeaveRequest.LeaveRequestStatus.APPROVED, employeeId);
-        if (leaveCount != null && leaveCount > 0) {
+        boolean isOnLeave = leaveCount != null && leaveCount > 0;
+
+        // Check attendance record first - this takes priority over weekend/leave status
+        // because user may have already clocked in
+        Optional<AttendanceRecord> attendanceOpt = attendanceRecordRepository.findByTenantIdAndEmployeeIdAndDate(
+                tenantId, employeeId, today);
+
+        if (attendanceOpt.isPresent()) {
+            AttendanceRecord record = attendanceOpt.get();
+            boolean hasCheckedIn = record.getCheckInTime() != null;
+            boolean hasCheckedOut = record.getCheckOutTime() != null;
+            boolean isCurrentlyCheckedIn = hasCheckedIn && !hasCheckedOut;
+
+            // Convert workDurationMinutes to decimal hours
+            Double totalWorkHours = null;
+            if (record.getWorkDurationMinutes() != null && record.getWorkDurationMinutes() > 0) {
+                totalWorkHours = record.getWorkDurationMinutes() / 60.0;
+            }
+
+            // After clock-out, allow clock-in again for another session
+            // canCheckIn: true if not currently checked in (either never checked in, or already checked out)
+            // canCheckOut: true only if currently checked in (checked in but not yet checked out)
+            return AttendanceTodayResponse.builder()
+                    .attendanceId(record.getId())
+                    .employeeId(employeeId)
+                    .date(today)
+                    .status(record.getStatus().name())
+                    .checkInTime(record.getCheckInTime())
+                    .checkOutTime(record.getCheckOutTime())
+                    .totalWorkHours(totalWorkHours)
+                    .isCheckedIn(isCurrentlyCheckedIn)
+                    .canCheckIn(!isCurrentlyCheckedIn) // Can clock in if not currently clocked in
+                    .canCheckOut(isCurrentlyCheckedIn) // Can clock out only if currently clocked in
+                    .source(record.getCheckInSource())
+                    .location(record.getCheckInLocation())
+                    .build();
+        }
+
+        // No attendance record exists - check weekend/leave status
+        if (isOnLeave) {
             return AttendanceTodayResponse.builder()
                     .employeeId(employeeId)
                     .date(today)
@@ -314,38 +344,18 @@ public class HomeService {
                     .build();
         }
 
-        // Check attendance record using the tenant-aware method
-        Optional<AttendanceRecord> attendanceOpt = attendanceRecordRepository.findByTenantIdAndEmployeeIdAndDate(
-                tenantId, employeeId, today);
-
-        if (attendanceOpt.isPresent()) {
-            AttendanceRecord record = attendanceOpt.get();
-            boolean isCheckedIn = record.getCheckInTime() != null;
-            boolean isCheckedOut = record.getCheckOutTime() != null;
-
-            // Convert workDurationMinutes to decimal hours
-            Double totalWorkHours = null;
-            if (record.getWorkDurationMinutes() != null && record.getWorkDurationMinutes() > 0) {
-                totalWorkHours = record.getWorkDurationMinutes() / 60.0;
-            }
-
+        if (isWeekend) {
             return AttendanceTodayResponse.builder()
-                    .attendanceId(record.getId())
                     .employeeId(employeeId)
                     .date(today)
-                    .status(record.getStatus().name())
-                    .checkInTime(record.getCheckInTime())
-                    .checkOutTime(record.getCheckOutTime())
-                    .totalWorkHours(totalWorkHours)
-                    .isCheckedIn(isCheckedIn && !isCheckedOut)
-                    .canCheckIn(!isCheckedIn)
-                    .canCheckOut(isCheckedIn && !isCheckedOut)
-                    .source(record.getCheckInSource())
-                    .location(record.getCheckInLocation())
+                    .status("WEEKLY_OFF")
+                    .isCheckedIn(false)
+                    .canCheckIn(true) // Allow clock-in on weekends if needed
+                    .canCheckOut(false)
                     .build();
         }
 
-        // No attendance record - employee can check in
+        // Normal working day with no attendance record - employee can check in
         return AttendanceTodayResponse.builder()
                 .employeeId(employeeId)
                 .date(today)
