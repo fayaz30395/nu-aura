@@ -250,33 +250,22 @@ export default function WorkloadDashboardPage() {
   };
 
   // Handle edit allocation
-  const handleEditAllocation = (employeeId: string, data: AllocationEditData) => {
-    // Update the local state to reflect changes
-    if (dashboardData && selectedEmployee) {
-      // Update allocation in selectedEmployee
-      const updatedAllocations = selectedEmployee.allocations.map((allocation) =>
-        allocation.projectId === data.projectId
-          ? {
-              ...allocation,
-              startDate: data.startDate,
-              endDate: data.endDate,
-              allocationPercentage: data.allocationPercentage,
-            }
-          : allocation
-      );
+  const handleEditAllocation = async (employeeId: string, data: AllocationEditData) => {
+    if (!dashboardData || !selectedEmployee) {
+      return;
+    }
 
-      const updatedEmployee = {
-        ...selectedEmployee,
-        allocations: updatedAllocations,
-        totalAllocation: updatedAllocations.reduce(
-          (sum, a) => sum + a.allocationPercentage,
-          0
-        ),
-      };
+    try {
+      const updatedEmployee = await resourceManagementService.updateAllocation({
+        employeeId,
+        projectId: data.projectId,
+        allocationPercentage: data.allocationPercentage,
+        startDate: data.startDate,
+        endDate: data.endDate || undefined,
+      });
 
       setSelectedEmployee(updatedEmployee);
 
-      // Also update in dashboard data
       const updatedEmployeeWorkloads = dashboardData.employeeWorkloads?.map((emp) =>
         emp.employeeId === employeeId ? updatedEmployee : emp
       );
@@ -285,9 +274,9 @@ export default function WorkloadDashboardPage() {
         ...dashboardData,
         employeeWorkloads: updatedEmployeeWorkloads,
       });
-
-      // TODO: Make API call to persist changes
-      // await resourceManagementService.updateAllocation(employeeId, data);
+    } catch (err: any) {
+      console.error('Failed to update allocation:', err);
+      setError('Failed to update allocation. Please try again.');
     }
   };
 

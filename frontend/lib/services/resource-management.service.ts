@@ -6,6 +6,7 @@ import {
   ApproveAllocationRequest,
   RejectAllocationRequest,
   AllocationValidationResult,
+  UpdateAllocationRequest,
   EmployeeAvailability,
   TeamAvailabilityView,
   ResourceCalendarFilter,
@@ -680,6 +681,18 @@ export const resourceManagementService = {
       return response.data;
     } catch (error) {
       throw handleApiError(error, 'load employees capacity');
+    }
+  },
+
+  updateAllocation: async (data: UpdateAllocationRequest): Promise<EmployeeWorkload> => {
+    try {
+      const response = await apiClient.put<EmployeeWorkload>(
+        `${BASE_URL}/allocation`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error, 'update allocation');
     }
   },
 

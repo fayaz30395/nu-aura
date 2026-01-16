@@ -307,14 +307,18 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should get job openings by status")
         void shouldGetJobOpeningsByStatus() {
-            when(jobOpeningRepository.findByTenantIdAndStatus(tenantId, JobOpening.JobStatus.OPEN))
-                    .thenReturn(List.of(jobOpening));
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<JobOpening> page = new PageImpl<>(List.of(jobOpening));
+
+            when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
+            when(jobOpeningRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(candidateRepository.findByTenantIdAndJobOpeningId(any(), any())).thenReturn(List.of());
 
-            List<JobOpeningResponse> result = recruitmentManagementService.getJobOpeningsByStatus(JobOpening.JobStatus.OPEN);
+            Page<JobOpeningResponse> result = recruitmentManagementService
+                    .getJobOpeningsByStatus(JobOpening.JobStatus.OPEN, pageable);
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getStatus()).isEqualTo(JobOpening.JobStatus.OPEN);
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).getStatus()).isEqualTo(JobOpening.JobStatus.OPEN);
         }
 
         @Test
@@ -485,14 +489,17 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should get candidates by job opening")
         void shouldGetCandidatesByJobOpening() {
-            when(candidateRepository.findByTenantIdAndJobOpeningId(tenantId, jobOpeningId))
-                    .thenReturn(List.of(candidate));
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Candidate> page = new PageImpl<>(List.of(candidate));
+
+            when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
+            when(candidateRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
 
-            List<CandidateResponse> result = recruitmentManagementService.getCandidatesByJobOpening(jobOpeningId);
+            Page<CandidateResponse> result = recruitmentManagementService.getCandidatesByJobOpening(jobOpeningId, pageable);
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getJobOpeningId()).isEqualTo(jobOpeningId);
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).getJobOpeningId()).isEqualTo(jobOpeningId);
         }
 
         @Test
@@ -618,15 +625,18 @@ class RecruitmentManagementServiceTest {
         @Test
         @DisplayName("Should get interviews by candidate")
         void shouldGetInterviewsByCandidate() {
-            when(interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId))
-                    .thenReturn(List.of(interview));
-            when(candidateRepository.findById(any())).thenReturn(Optional.of(candidate));
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Interview> page = new PageImpl<>(List.of(interview));
+
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(dataScopeService.getScopeSpecification(any())).thenReturn((root, query, cb) -> cb.conjunction());
+            when(interviewRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
             when(jobOpeningRepository.findById(any())).thenReturn(Optional.of(jobOpening));
 
-            List<InterviewResponse> result = recruitmentManagementService.getInterviewsByCandidate(candidateId);
+            Page<InterviewResponse> result = recruitmentManagementService.getInterviewsByCandidate(candidateId, pageable);
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getCandidateId()).isEqualTo(candidateId);
+            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.getContent().get(0).getCandidateId()).isEqualTo(candidateId);
         }
 
         @Test

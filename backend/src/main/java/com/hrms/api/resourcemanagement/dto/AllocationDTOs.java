@@ -64,4 +64,15 @@ public class AllocationDTOs {
         private String message;
         private List<AllocationBreakdown> existingAllocations;
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateAllocationRequest {
+        private UUID employeeId;
+        private UUID projectId;
+        private Integer allocationPercentage;
+        private java.time.LocalDate startDate;
+        private java.time.LocalDate endDate;
+    }
 }

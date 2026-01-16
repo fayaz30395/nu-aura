@@ -81,6 +81,13 @@ public class ResourceManagementController {
                 request.getProjectId(), request.getAllocationPercentage(), LocalDate.now(), null));
     }
 
+    @PutMapping("/allocation")
+    @RequiresPermission(Permission.PROJECT_CREATE)
+    @Operation(summary = "Update an existing allocation")
+    public ResponseEntity<EmployeeWorkload> updateAllocation(@RequestBody UpdateAllocationRequest request) {
+        return ResponseEntity.ok(resourceManagementService.updateAllocation(request));
+    }
+
     @GetMapping("/capacity/over-allocated")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     @Operation(summary = "Get all over-allocated employees")
