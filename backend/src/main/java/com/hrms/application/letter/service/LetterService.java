@@ -11,9 +11,13 @@ import com.hrms.domain.letter.GeneratedLetter;
 import com.hrms.domain.letter.GeneratedLetter.LetterStatus;
 import com.hrms.domain.letter.LetterTemplate;
 import com.hrms.domain.letter.LetterTemplate.LetterCategory;
+import com.hrms.domain.recruitment.Candidate;
+import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.letter.repository.GeneratedLetterRepository;
 import com.hrms.infrastructure.letter.repository.LetterTemplateRepository;
+import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
+import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +42,8 @@ public class LetterService {
     private final LetterTemplateRepository templateRepository;
     private final GeneratedLetterRepository letterRepository;
     private final EmployeeRepository employeeRepository;
+    private final CandidateRepository candidateRepository;
+    private final JobOpeningRepository jobOpeningRepository;
     private final ObjectMapper objectMapper;
     private final DataScopeService dataScopeService;
 
