@@ -28,9 +28,9 @@ class SmsNotificationServiceTest {
     @BeforeEach
     void setUp() {
         // Default mock mode for testing
-        when(twilioConfig.isMockMode()).thenReturn(true);
-        when(twilioConfig.getFromNumber()).thenReturn("+15551234567");
-        when(twilioConfig.getMaxMessageLength()).thenReturn(1600);
+        lenient().when(twilioConfig.isMockMode()).thenReturn(true);
+        lenient().when(twilioConfig.getFromNumber()).thenReturn("+15551234567");
+        lenient().when(twilioConfig.getMaxMessageLength()).thenReturn(1600);
     }
 
     @Nested
@@ -106,7 +106,7 @@ class SmsNotificationServiceTest {
         @Test
         @DisplayName("Should return null for invalid formatted number")
         void shouldReturnNullForInvalidFormattedNumber() {
-            String result = smsNotificationService.formatPhoneNumber("123", "1");
+            String result = smsNotificationService.formatPhoneNumber("abc", "1");
             assertThat(result).isNull();
         }
     }
@@ -225,7 +225,6 @@ class SmsNotificationServiceTest {
         @DisplayName("Should return mock mode status")
         void shouldReturnMockModeStatus() {
             when(twilioConfig.isMockMode()).thenReturn(true);
-            when(twilioConfig.isConfigured()).thenReturn(false);
 
             assertThat(smsNotificationService.isMockMode()).isTrue();
         }

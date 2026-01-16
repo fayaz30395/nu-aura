@@ -3,19 +3,35 @@ package com.hrms.api.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.auth.service.AuthService;
+import com.hrms.common.security.ApiKeyAuthenticationFilter;
+import com.hrms.common.security.ApiKeyService;
+import com.hrms.common.security.JwtTokenProvider;
+import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.RateLimitFilter;
+import com.hrms.common.security.RateLimitingFilter;
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.ScopeContextService;
+import com.hrms.common.security.TenantFilter;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,10 +40,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@ContextConfiguration(classes = {AuthController.class, AuthControllerTest.TestConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @DisplayName("AuthController Integration Tests")
 class AuthControllerTest {
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public AuditorAware<UUID> auditorProvider() {
+            return () -> Optional.of(UUID.randomUUID());
+        }
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,6 +63,36 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private ApiKeyService apiKeyService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private EmployeeRepository employeeRepository;
+
+    @MockBean
+    private ScopeContextService scopeContextService;
+
+    @MockBean
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private RateLimitFilter rateLimitFilter;
+
+    @MockBean
+    private RateLimitingFilter rateLimitingFilter;
+
+    @MockBean
+    private TenantFilter tenantFilter;
 
     private AuthResponse authResponse;
 

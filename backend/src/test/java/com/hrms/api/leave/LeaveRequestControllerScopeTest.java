@@ -317,6 +317,7 @@ class LeaveRequestControllerScopeTest {
     private void setupSecurityContext(UUID employeeId, RoleScope scope, boolean isAdmin) {
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
         securityContextMock.when(SecurityContext::isSystemAdmin).thenReturn(isAdmin);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(isAdmin);
         securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_ALL))
                 .thenReturn(scope == RoleScope.ALL);
         securityContextMock.when(() -> SecurityContext.hasPermission(Permission.LEAVE_VIEW_TEAM))

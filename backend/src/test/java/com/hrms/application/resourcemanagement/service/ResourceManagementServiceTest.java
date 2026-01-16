@@ -82,6 +82,7 @@ class ResourceManagementServiceTest {
                 .build();
         employee.setId(employeeId);
         employee.setTenantId(tenantId);
+        employee.setStatus(Employee.EmployeeStatus.ACTIVE);
 
         project = Project.builder()
                 .projectCode("PRJ001")

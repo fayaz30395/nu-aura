@@ -2,9 +2,12 @@ package com.hrms.application.recruitment.service;
 
 import com.hrms.api.recruitment.dto.*;
 import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.*;
+import com.hrms.domain.user.RoleScope;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.*;
 import org.junit.jupiter.api.*;
@@ -53,6 +56,7 @@ class RecruitmentManagementServiceTest {
     private RecruitmentManagementService recruitmentManagementService;
 
     private static MockedStatic<TenantContext> tenantContextMock;
+    private static MockedStatic<SecurityContext> securityContextMock;
 
     private UUID tenantId;
     private UUID jobOpeningId;
@@ -71,11 +75,13 @@ class RecruitmentManagementServiceTest {
     @BeforeAll
     static void setUpClass() {
         tenantContextMock = mockStatic(TenantContext.class);
+        securityContextMock = mockStatic(SecurityContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         tenantContextMock.close();
+        securityContextMock.close();
     }
 
     @BeforeEach
@@ -90,6 +96,10 @@ class RecruitmentManagementServiceTest {
         interviewerId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(hiringManagerId);
+        securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL))
+                .thenReturn(RoleScope.ALL);
 
         // Setup job opening
         jobOpening = new JobOpening();
