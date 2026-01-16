@@ -127,14 +127,14 @@ Keka-style RBAC implementation with fine-grained scopes (ALL, LOCATION, DEPARTME
 - Added scope validation to get-by-id endpoint
 - Frontend API route alignment
 
-**Tests:** 39/39 passing (SELF, TEAM, ALL, LOCATION*, CUSTOM, admin bypass)
-- *LOCATION/DEPARTMENT tests are negative cases only (require Employee fixtures for positive tests)
+**Tests:** 43/43 passing (SELF, TEAM, ALL, LOCATION, DEPARTMENT, CUSTOM, admin bypass)
+- Location/department positive tests now include Employee fixtures for get-by-id and by-employee coverage.
 
 **Files:**
 - `ExpenseClaimController.java` - Permission guards
 - `ExpenseClaimService.java` - DataScopeService integration
 - `expense.service.ts` - Removed approverId param
-- `ExpenseClaimScopeIntegrationTest.java` - 39 tests
+- `ExpenseClaimScopeIntegrationTest.java` - 43 tests
 
 **Commits:**
 - `58a9933` - Expense RBAC implementation
@@ -147,13 +147,13 @@ Keka-style RBAC implementation with fine-grained scopes (ALL, LOCATION, DEPARTME
 - Get-by-id validation: getJobOpeningById, getCandidateById, getInterviewById
 - Field mappings: hiringManagerId, assignedRecruiterId, interviewerId
 
-**Tests:** 14/14 passing (SELF, TEAM, CUSTOM, ALL)
+**Tests:** 17/17 passing (SELF, TEAM, CUSTOM, ALL, LOCATION, DEPARTMENT)
 - **Note:** Uses mixed permissions (RECRUITMENT_VIEW, CANDIDATE_VIEW, RECRUITMENT_MANAGE)
 
 **Files:**
 - `RecruitmentManagementService.java` - Scope filtering + validation
 - `RecruitmentManagementController.java` - Multiple permission types
-- `RecruitmentScopeIntegrationTest.java` - 14 tests
+- `RecruitmentScopeIntegrationTest.java` - 17 tests
 
 **Commit:**
 - `bfad374` - Recruitment RBAC + Attendance endpoint
@@ -218,10 +218,10 @@ Actions: VIEW, CREATE, UPDATE, DELETE, MANAGE, APPROVE
 
 | Module | Tests | Status |
 |--------|-------|--------|
-| Expense | 39 | ✅ PASSING |
-| Recruitment | 14 | ✅ PASSING |
+| Expense | 43 | ✅ PASSING |
+| Recruitment | 17 | ✅ PASSING |
 | Leave | 28 | ✅ PASSING |
-| **Total** | **81** | **✅ ALL PASSING** |
+| **Total** | **88** | **✅ ALL PASSING** |
 
 ---
 

@@ -1,6 +1,6 @@
 # Final Validation Summary - RBAC + Workload
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-17
 **Author:** Fayaz
 **Status:** Production-ready with documented limitations
 
@@ -13,8 +13,8 @@
    - See: `docs/project/RBAC_PHASE1_IMPLEMENTATION_REPORT.md`
 
 2. **Scope coverage accuracy**
-   - LOCATION scope tests in Expense are negative-only
-   - DEPARTMENT scope has no dedicated positive tests yet
+   - Expense LOCATION/DEPARTMENT tests now include positive coverage
+   - Recruitment LOCATION/DEPARTMENT tests include positive get-by-id coverage
    - See: `docs/project/RBAC_PHASE1_IMPLEMENTATION_REPORT.md` and `docs/project/RBAC_PHASE1_EXEC_SUMMARY.md`
 
 3. **Canonical reference corrected**
@@ -28,12 +28,12 @@
 
 ## Test Results
 
-**Expense RBAC:** 39 integration tests
+**Expense RBAC:** 43 integration tests
 ```bash
 mvn -pl backend -Dtest=ExpenseClaimScopeIntegrationTest test
 ```
 
-**Recruitment RBAC:** 14 integration tests
+**Recruitment RBAC:** 17 integration tests
 ```bash
 mvn -pl backend -Dtest=RecruitmentScopeIntegrationTest test
 ```
@@ -42,9 +42,8 @@ mvn -pl backend -Dtest=RecruitmentScopeIntegrationTest test
 
 ## Known Limitations
 
-- Positive LOCATION/DEPARTMENT scope tests need Employee fixtures
-- Workload update endpoint has no integration test yet
 - Recruitment uses mixed permissions (VIEW/CANDIDATE_VIEW/MANAGE), which increases audit complexity
+- Location-based list filtering relies on entity fields; entities without location fields rely on get-by-id validation
 
 ---
 

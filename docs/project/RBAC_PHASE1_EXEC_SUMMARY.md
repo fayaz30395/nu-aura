@@ -1,6 +1,6 @@
 # RBAC Phase 1 Executive Summary
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-17
 **Author:** Fayaz
 **Status:** Production Ready ✅
 
@@ -12,8 +12,8 @@
 - Added get-by-id access validation across all modules
 
 ### Scope Enforcement
-- **Expense**: 39 integration tests (SELF/TEAM/ALL/LOCATION*/CUSTOM, *negative only)
-- **Recruitment**: 14 integration tests (SELF/TEAM/CUSTOM/ALL, uses RECRUITMENT_VIEW/CANDIDATE_VIEW/RECRUITMENT_MANAGE)
+- **Expense**: 43 integration tests (SELF/TEAM/ALL/LOCATION/DEPARTMENT/CUSTOM)
+- **Recruitment**: 17 integration tests (SELF/TEAM/CUSTOM/ALL/LOCATION/DEPARTMENT, uses RECRUITMENT_VIEW/CANDIDATE_VIEW/RECRUITMENT_MANAGE)
 - **Attendance**: New `/attendance/date/{date}` endpoint with TEAM/ALL filtering
 
 ### Features
@@ -24,10 +24,10 @@
 ## Test Results
 
 ```bash
-# Expense RBAC: 39/39 passing
+# Expense RBAC: 43/43 passing
 mvn -pl backend -Dtest=ExpenseClaimScopeIntegrationTest test
 
-# Recruitment RBAC: 14/14 passing
+# Recruitment RBAC: 17/17 passing
 mvn -pl backend -Dtest=RecruitmentScopeIntegrationTest test
 ```
 
@@ -52,6 +52,4 @@ mvn -pl backend -Dtest=RecruitmentScopeIntegrationTest test
 
 ## Known Gaps
 
-- LOCATION/DEPARTMENT positive scope tests need Employee fixtures
-- Workload update endpoint lacks integration test
 - Recruitment uses mixed permissions (VIEW/CANDIDATE_VIEW/MANAGE)
