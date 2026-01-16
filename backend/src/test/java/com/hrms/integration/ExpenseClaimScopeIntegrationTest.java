@@ -5,9 +5,13 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.expense.ExpenseClaim;
+import com.hrms.domain.user.User;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.expense.repository.ExpenseClaimRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -56,6 +60,12 @@ class ExpenseClaimScopeIntegrationTest {
 
     @Autowired
     private ExpenseClaimRepository expenseClaimRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private static final String BASE_URL = "/api/v1/expenses";
     private static final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
@@ -437,15 +447,12 @@ class ExpenseClaimScopeIntegrationTest {
     @DisplayName("LOCATION Scope Tests")
     class LocationScopeTests {
         /*
-         * Note: LOCATION and DEPARTMENT scope require Employee records to exist in the database
-         * to verify location/department matching. These tests verify the negative cases (access denied)
-         * when employees don't exist. Positive LOCATION/DEPARTMENT scope tests with actual employees
-         * are covered in dedicated integration tests that set up full User+Employee fixtures.
-         *
-         * The CUSTOM scope tests demonstrate the positive case for scope enforcement.
+         * LOCATION scope requires Employee records to exist in the database
+         * to verify location matching. These tests cover both positive and negative cases.
          */
 
         private static final UUID SHARED_LOCATION_ID = UUID.randomUUID();
+        private static final UUID OTHER_LOCATION_ID = UUID.randomUUID();
 
         @Test
         @WithMockUser(username = "locationadmin@test.com", roles = {"LOCATION_ADMIN"})
@@ -496,6 +503,86 @@ class ExpenseClaimScopeIntegrationTest {
                             .param("page", "0")
                             .param("size", "10"))
                     .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser(username = "locationadmin@test.com", roles = {"LOCATION_ADMIN"})
+        @DisplayName("LOCATION scope: Can access same location expense claim by ID")
+        void canAccessSameLocationExpenseClaimById() throws Exception {
+            Employee locationEmployee = createEmployee("LOC-EMP-1", SHARED_LOCATION_ID, null);
+            Employee otherLocationEmployee = createEmployee("LOC-EMP-2", OTHER_LOCATION_ID, null);
+            ExpenseClaim locationClaim = createExpenseClaim(locationEmployee.getId(), "Location claim");
+            ExpenseClaim otherClaim = createExpenseClaim(otherLocationEmployee.getId(), "Other location claim");
+
+            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+
+            mockMvc.perform(get(BASE_URL + "/" + locationClaim.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(locationClaim.getId().toString()));
+
+            mockMvc.perform(get(BASE_URL + "/" + otherClaim.getId()))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser(username = "locationadmin@test.com", roles = {"LOCATION_ADMIN"})
+        @DisplayName("LOCATION scope: Can access expense claims by employee ID in same location")
+        void canAccessExpenseClaimsByEmployeeIdForSameLocation() throws Exception {
+            Employee locationEmployee = createEmployee("LOC-EMP-3", SHARED_LOCATION_ID, null);
+            createExpenseClaim(locationEmployee.getId(), "Location list claim");
+
+            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(SHARED_LOCATION_ID));
+
+            mockMvc.perform(get(BASE_URL + "/employees/" + locationEmployee.getId())
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray());
+        }
+    }
+
+    // ==================== DEPARTMENT Scope Tests ====================
+
+    @Nested
+    @DisplayName("DEPARTMENT Scope Tests")
+    class DepartmentScopeTests {
+
+        private static final UUID SHARED_DEPARTMENT_ID = UUID.randomUUID();
+        private static final UUID OTHER_DEPARTMENT_ID = UUID.randomUUID();
+
+        @Test
+        @WithMockUser(username = "deptadmin@test.com", roles = {"DEPT_ADMIN"})
+        @DisplayName("DEPARTMENT scope: Can access same department expense claim by ID")
+        void canAccessSameDepartmentExpenseClaimById() throws Exception {
+            Employee deptEmployee = createEmployee("DEPT-EMP-1", null, SHARED_DEPARTMENT_ID);
+            Employee otherDeptEmployee = createEmployee("DEPT-EMP-2", null, OTHER_DEPARTMENT_ID);
+            ExpenseClaim deptClaim = createExpenseClaim(deptEmployee.getId(), "Department claim");
+            ExpenseClaim otherClaim = createExpenseClaim(otherDeptEmployee.getId(), "Other department claim");
+
+            setupDepartmentScope(CURRENT_EMPLOYEE_ID, SHARED_DEPARTMENT_ID);
+
+            mockMvc.perform(get(BASE_URL + "/" + deptClaim.getId()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(deptClaim.getId().toString()));
+
+            mockMvc.perform(get(BASE_URL + "/" + otherClaim.getId()))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser(username = "deptadmin@test.com", roles = {"DEPT_ADMIN"})
+        @DisplayName("DEPARTMENT scope: Can access expense claims by employee ID in same department")
+        void canAccessExpenseClaimsByEmployeeIdForSameDepartment() throws Exception {
+            Employee deptEmployee = createEmployee("DEPT-EMP-3", null, SHARED_DEPARTMENT_ID);
+            createExpenseClaim(deptEmployee.getId(), "Department list claim");
+
+            setupDepartmentScope(CURRENT_EMPLOYEE_ID, SHARED_DEPARTMENT_ID);
+
+            mockMvc.perform(get(BASE_URL + "/employees/" + deptEmployee.getId())
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content").isArray());
         }
     }
 
@@ -735,6 +822,32 @@ class ExpenseClaimScopeIntegrationTest {
         return expenseClaimRepository.save(claim);
     }
 
+    private Employee createEmployee(String employeeCodePrefix, UUID locationId, UUID departmentId) {
+        User user = User.builder()
+                .email(employeeCodePrefix.toLowerCase() + "@example.com")
+                .firstName("Test")
+                .lastName("User")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
+                .firstName("Test")
+                .lastName("Employee")
+                .joiningDate(LocalDate.now().minusDays(30))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .officeLocationId(locationId)
+                .departmentId(departmentId)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+        return employeeRepository.save(employee);
+    }
+
     private void setupSelfScope(UUID employeeId) {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
@@ -790,6 +903,18 @@ class ExpenseClaimScopeIntegrationTest {
         SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
         SecurityContext.setCurrentLocationIds(locationIds);
+    }
+
+    private void setupDepartmentScope(UUID employeeId, UUID departmentId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.EXPENSE_VIEW, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_VIEW_ALL, RoleScope.DEPARTMENT);
+        permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setOrgContext(null, departmentId, null);
     }
 
     private void setupCustomScope(UUID employeeId, Set<UUID> customEmployeeIds,

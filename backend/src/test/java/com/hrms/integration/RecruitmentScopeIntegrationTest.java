@@ -4,13 +4,17 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.config.TestSecurityConfig;
+import com.hrms.domain.employee.Employee;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.Interview;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.domain.user.User;
 import com.hrms.domain.user.RoleScope;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -58,6 +62,12 @@ class RecruitmentScopeIntegrationTest {
 
     @Autowired
     private InterviewRepository interviewRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private JobOpening selfJobOpening;
     private JobOpening reporteeJobOpening;
@@ -315,15 +325,102 @@ class RecruitmentScopeIntegrationTest {
         }
     }
 
+    // ==================== LOCATION Scope Tests ====================
+
+    @Nested
+    @DisplayName("LOCATION Scope Tests")
+    class LocationScopeTests {
+
+        @Test
+        @WithMockUser(username = "locationadmin@test.com", roles = { "LOCATION_ADMIN" })
+        @DisplayName("LOCATION scope: Can access recruitment data for employees in same location")
+        void locationCanAccessRecruitmentData() throws Exception {
+            UUID locationId = UUID.randomUUID();
+            Employee hiringManager = createEmployee("LOC-HM", locationId, null);
+            Employee recruiter = createEmployee("LOC-REC", locationId, null);
+            Employee interviewer = createEmployee("LOC-INT", locationId, null);
+
+            JobOpening locationJob = createJobOpening(hiringManager.getId(), "JOB-LOC", JobOpening.JobStatus.OPEN);
+            Candidate locationCandidate = createCandidate(locationJob.getId(), recruiter.getId(), "CAND-LOC");
+            Interview locationInterview = createInterview(locationJob.getId(), locationCandidate.getId(), interviewer.getId());
+
+            setupLocationScope(CURRENT_EMPLOYEE_ID, Set.of(locationId));
+
+            mockMvc.perform(get(BASE_URL + "/job-openings/" + locationJob.getId()))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get(BASE_URL + "/candidates/" + locationCandidate.getId()))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get(BASE_URL + "/interviews/" + locationInterview.getId()))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    // ==================== DEPARTMENT Scope Tests ====================
+
+    @Nested
+    @DisplayName("DEPARTMENT Scope Tests")
+    class DepartmentScopeTests {
+
+        @Test
+        @WithMockUser(username = "deptadmin@test.com", roles = { "DEPT_ADMIN" })
+        @DisplayName("DEPARTMENT scope: Can access recruitment data for employees in same department")
+        void departmentCanAccessRecruitmentData() throws Exception {
+            UUID departmentId = UUID.randomUUID();
+            Employee hiringManager = createEmployee("DEPT-HM", null, departmentId);
+            Employee recruiter = createEmployee("DEPT-REC", null, departmentId);
+            Employee interviewer = createEmployee("DEPT-INT", null, departmentId);
+
+            JobOpening deptJob = createJobOpening(hiringManager.getId(), "JOB-DEPT", JobOpening.JobStatus.OPEN, departmentId);
+            Candidate deptCandidate = createCandidate(deptJob.getId(), recruiter.getId(), "CAND-DEPT");
+            Interview deptInterview = createInterview(deptJob.getId(), deptCandidate.getId(), interviewer.getId());
+
+            setupDepartmentScope(CURRENT_EMPLOYEE_ID, departmentId);
+
+            mockMvc.perform(get(BASE_URL + "/job-openings/" + deptJob.getId()))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get(BASE_URL + "/candidates/" + deptCandidate.getId()))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get(BASE_URL + "/interviews/" + deptInterview.getId()))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @WithMockUser(username = "deptadmin@test.com", roles = { "DEPT_ADMIN" })
+        @DisplayName("DEPARTMENT scope: Filters job openings by status")
+        void departmentFiltersJobOpeningsByStatus() throws Exception {
+            UUID departmentId = UUID.randomUUID();
+            Employee hiringManager = createEmployee("DEPT-HM-2", null, departmentId);
+            createJobOpening(hiringManager.getId(), "JOB-DEPT-OPEN", JobOpening.JobStatus.OPEN, departmentId);
+            createJobOpening(hiringManager.getId(), "JOB-DEPT-CLOSED", JobOpening.JobStatus.CLOSED, departmentId);
+
+            setupDepartmentScope(CURRENT_EMPLOYEE_ID, departmentId);
+
+            mockMvc.perform(get(BASE_URL + "/job-openings/status/OPEN")
+                            .param("page", "0")
+                            .param("size", "10"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(1));
+        }
+    }
+
     // ==================== Helper Methods ====================
 
     private JobOpening createJobOpening(UUID hiringManagerId, String jobCode, JobOpening.JobStatus status) {
+        return createJobOpening(hiringManagerId, jobCode, status, UUID.randomUUID());
+    }
+
+    private JobOpening createJobOpening(UUID hiringManagerId, String jobCode, JobOpening.JobStatus status,
+            UUID departmentId) {
         JobOpening jobOpening = new JobOpening();
         jobOpening.setId(UUID.randomUUID());
         jobOpening.setTenantId(TENANT_ID);
         jobOpening.setJobCode(jobCode);
         jobOpening.setJobTitle("Engineer " + jobCode);
-        jobOpening.setDepartmentId(UUID.randomUUID());
+        jobOpening.setDepartmentId(departmentId);
         jobOpening.setLocation("HQ");
         jobOpening.setEmploymentType(JobOpening.EmploymentType.FULL_TIME);
         jobOpening.setStatus(status);
@@ -362,6 +459,32 @@ class RecruitmentScopeIntegrationTest {
         return interviewRepository.save(interview);
     }
 
+    private Employee createEmployee(String employeeCodePrefix, UUID locationId, UUID departmentId) {
+        User user = User.builder()
+                .email(employeeCodePrefix.toLowerCase() + "@example.com")
+                .firstName("Test")
+                .lastName("User")
+                .passwordHash("test-hash")
+                .status(User.UserStatus.ACTIVE)
+                .build();
+        user.setTenantId(TENANT_ID);
+        User savedUser = userRepository.save(user);
+
+        Employee employee = Employee.builder()
+                .employeeCode(employeeCodePrefix + "-" + UUID.randomUUID().toString().substring(0, 6))
+                .firstName("Test")
+                .lastName("Employee")
+                .joiningDate(LocalDate.now().minusDays(30))
+                .employmentType(Employee.EmploymentType.FULL_TIME)
+                .status(Employee.EmployeeStatus.ACTIVE)
+                .officeLocationId(locationId)
+                .departmentId(departmentId)
+                .user(savedUser)
+                .build();
+        employee.setTenantId(TENANT_ID);
+        return employeeRepository.save(employee);
+    }
+
     private void setupScope(RoleScope scope, UUID employeeId, Set<UUID> reporteeIds) {
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.RECRUITMENT_VIEW, scope);
@@ -387,5 +510,25 @@ class RecruitmentScopeIntegrationTest {
                 customEmployeeIds, Collections.emptySet(), Collections.emptySet());
         SecurityContext.setCustomScopeTargets(Permission.CANDIDATE_VIEW,
                 customEmployeeIds, Collections.emptySet(), Collections.emptySet());
+    }
+
+    private void setupLocationScope(UUID employeeId, Set<UUID> locationIds) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.RECRUITMENT_VIEW, RoleScope.LOCATION);
+        permissions.put(Permission.CANDIDATE_VIEW, RoleScope.LOCATION);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("LOCATION_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setCurrentLocationIds(locationIds);
+    }
+
+    private void setupDepartmentScope(UUID employeeId, UUID departmentId) {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.RECRUITMENT_VIEW, RoleScope.DEPARTMENT);
+        permissions.put(Permission.CANDIDATE_VIEW, RoleScope.DEPARTMENT);
+
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("DEPT_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+        SecurityContext.setOrgContext(null, departmentId, null);
     }
 }
