@@ -140,7 +140,7 @@ export default function MyAttendancePage() {
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
 
-    const days: { date: number; record?: AttendanceRecord; isToday: boolean; isCurrentMonth: boolean }[] = [];
+    const days: { date: number; record?: AttendanceRecord; isToday: boolean; isCurrentMonth: boolean; isPastWorkday: boolean }[] = [];
 
     // Previous month days
     const prevMonthLastDay = new Date(year, month, 0).getDate();
@@ -149,22 +149,33 @@ export default function MyAttendancePage() {
         date: prevMonthLastDay - i,
         isToday: false,
         isCurrentMonth: false,
+        isPastWorkday: false,
       });
     }
 
     // Current month days
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const record = records.find((r) => r.attendanceDate === dateStr);
       const isToday =
         today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
 
+      // Check if this is a past workday (not weekend, not today, and before today)
+      const currentDate = new Date(year, month, day);
+      currentDate.setHours(0, 0, 0, 0); // Normalize to start of day for accurate comparison
+      const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isPast = currentDate.getTime() < today.getTime();
+      const isPastWorkday = isPast && !isWeekend;
+
       days.push({
         date: day,
         record,
         isToday,
         isCurrentMonth: true,
+        isPastWorkday,
       });
     }
 
@@ -175,6 +186,7 @@ export default function MyAttendancePage() {
         date: day,
         isToday: false,
         isCurrentMonth: false,
+        isPastWorkday: false,
       });
     }
 
@@ -392,11 +404,15 @@ export default function MyAttendancePage() {
                             >
                               {day.date}
                             </span>
-                            {day.record && (
+                            {day.record ? (
                               <div
                                 className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full ${getCalendarDotColor(day.record.status)}`}
                               />
-                            )}
+                            ) : day.isPastWorkday ? (
+                              <div
+                                className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-red-500"
+                              />
+                            ) : null}
                           </button>
                         );
                       })}
