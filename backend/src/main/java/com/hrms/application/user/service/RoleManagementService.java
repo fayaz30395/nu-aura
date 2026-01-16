@@ -92,7 +92,7 @@ public class RoleManagementService {
         // Audit log
         auditLogService.logAction("ROLE", savedRole.getId(),
                 com.hrms.domain.audit.AuditLog.AuditAction.CREATE,
-                null, savedRole, "Created role: " + savedRole.getName());
+                null, buildRoleAuditPayload(savedRole), "Created role: " + savedRole.getName());
 
         return mapToResponse(savedRole);
     }
@@ -147,13 +147,14 @@ public class RoleManagementService {
             throw new BusinessException("Cannot delete role that is assigned to users");
         }
 
+        Map<String, Object> deletedRoleAudit = buildRoleAuditPayload(role);
         roleRepository.delete(role);
         log.info("Deleted role: {} for tenant: {}", role.getCode(), tenantId);
 
         // Audit log
         auditLogService.logAction("ROLE", role.getId(),
                 com.hrms.domain.audit.AuditLog.AuditAction.DELETE,
-                role, null, "Deleted role: " + role.getName());
+                deletedRoleAudit, null, "Deleted role: " + role.getName());
     }
 
     @Transactional
@@ -521,6 +522,42 @@ public class RoleManagementService {
                 .scope(rolePermission.getScope())
                 .customTargets(customTargetResponses)
                 .build();
+    }
+
+    private Map<String, Object> buildRoleAuditPayload(Role role) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("id", role.getId());
+        payload.put("code", role.getCode());
+        payload.put("name", role.getName());
+        payload.put("description", role.getDescription());
+        payload.put("isSystemRole", role.getIsSystemRole());
+
+        // Build detailed permission info with scope and custom targets
+        List<Map<String, Object>> permissionDetails = role.getPermissions().stream()
+                .map(rp -> {
+                    Map<String, Object> permInfo = new LinkedHashMap<>();
+                    permInfo.put("code", rp.getPermission().getCode());
+                    permInfo.put("scope", rp.getScope() != null ? rp.getScope().name() : "GLOBAL");
+
+                    // Include custom target IDs for CUSTOM scope
+                    if (rp.getScope() == RoleScope.CUSTOM && rp.getCustomTargets() != null
+                            && !rp.getCustomTargets().isEmpty()) {
+                        List<Map<String, Object>> targets = rp.getCustomTargets().stream()
+                                .map(t -> {
+                                    Map<String, Object> targetInfo = new LinkedHashMap<>();
+                                    targetInfo.put("type", t.getTargetType().name());
+                                    targetInfo.put("id", t.getTargetId());
+                                    return targetInfo;
+                                })
+                                .collect(Collectors.toList());
+                        permInfo.put("customTargets", targets);
+                    }
+                    return permInfo;
+                })
+                .collect(Collectors.toList());
+
+        payload.put("permissions", permissionDetails);
+        return payload;
     }
 
     /**
