@@ -123,6 +123,14 @@ export interface AllocationValidationResult {
   existingAllocations: AllocationBreakdown[];
 }
 
+export interface UpdateAllocationRequest {
+  employeeId: string;
+  projectId: string;
+  allocationPercentage: number;
+  startDate: string;
+  endDate?: string;
+}
+
 // ============================================
 // RESOURCE AVAILABILITY CALENDAR TYPES
 // ============================================

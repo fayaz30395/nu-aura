@@ -134,6 +134,43 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        public EmployeeWorkload updateAllocation(UpdateAllocationRequest request) {
+                if (request == null) {
+                        throw new IllegalArgumentException("Update request is required");
+                }
+                if (request.getEmployeeId() == null || request.getProjectId() == null) {
+                        throw new IllegalArgumentException("Employee and project are required");
+                }
+                if (request.getStartDate() == null) {
+                        throw new IllegalArgumentException("Start date is required");
+                }
+                if (request.getAllocationPercentage() == null) {
+                        throw new IllegalArgumentException("Allocation percentage is required");
+                }
+                if (request.getAllocationPercentage() < 0 || request.getAllocationPercentage() > 100) {
+                        throw new IllegalArgumentException("Allocation percentage must be between 0 and 100");
+                }
+                if (request.getEndDate() != null && request.getEndDate().isBefore(request.getStartDate())) {
+                        throw new IllegalArgumentException("End date cannot be before start date");
+                }
+
+                UUID tenantId = SecurityContext.getCurrentTenantId();
+                employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+                ProjectEmployee assignment = projectEmployeeRepository
+                                .findByProjectIdAndEmployeeIdAndTenantId(
+                                                request.getProjectId(), request.getEmployeeId(), tenantId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
+
+                assignment.setAllocationPercentage(request.getAllocationPercentage());
+                assignment.setStartDate(request.getStartDate());
+                assignment.setEndDate(request.getEndDate());
+                projectEmployeeRepository.save(assignment);
+
+                return getEmployeeWorkload(request.getEmployeeId());
+        }
+
         public List<EmployeeCapacity> getOverAllocatedEmployees(UUID departmentId, Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 List<Employee> employees = departmentId != null
