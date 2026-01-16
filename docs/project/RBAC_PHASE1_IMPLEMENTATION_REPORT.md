@@ -1,6 +1,6 @@
 # RBAC Phase 1 Implementation Report
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-17
 **Author:** Fayaz
 **Status:** ✅ COMPLETE
 
@@ -10,7 +10,7 @@ This report captures the RBAC scope enforcement work completed across the HRMS a
 
 - **Commits on main:** 6 (58a9933 .. d113b38)
 - **Local changes (not committed) include:** Recruitment RBAC integration tests, workload persistence API + UI wiring, this report update
-- **RBAC integration tests:** 39 Expense + 14 Recruitment = 53 passing tests
+- **RBAC integration tests:** 43 Expense + 17 Recruitment = 60 passing tests
 - **Modules updated:** Expense, Recruitment, Attendance, Role Management, Resource Management
 - **Primary security fixes:** removed client-supplied approver IDs, enforced scope validation for list and get-by-id endpoints
 
@@ -60,15 +60,15 @@ public ResponseEntity<ExpenseClaimResponse> approveExpenseClaim(@PathVariable UU
 - `/expenses/pending-approvals` used for pending approvals
 - `approveClaim`/`rejectClaim` split from `processApproval`
 
-**Test Coverage:** 39/39 passing
+**Test Coverage:** 43/43 passing
 - SELF scope (5 tests)
 - TEAM scope (9 tests)
 - ALL scope (6 tests)
-- LOCATION scope (4 tests) - **Negative cases only** (access denial when employee not in DB)
+- LOCATION scope (6 tests, includes positive access)
+- DEPARTMENT scope (2 tests)
 - CUSTOM scope (9 tests)
 - Admin bypass (4 tests)
 - Edge cases (2 tests)
-- **Note:** Positive DEPARTMENT/LOCATION scope tests require Employee fixtures in DB
 
 **Files:**
 - `backend/src/main/java/com/hrms/api/expense/controller/ExpenseClaimController.java`
@@ -112,12 +112,13 @@ Scope enforcement in the service layer aligns with this by checking both RECRUIT
 **AIRecruitmentController hardening:**
 AI endpoints now call `recruitmentManagementService.getCandidateById(...)` and `getJobOpeningById(...)` before AI workflows, so scope validation is enforced in one place.
 
-**Test Coverage:** 14/14 passing
+**Test Coverage:** 17/17 passing
 - SELF scope (7 tests)
 - TEAM scope (4 tests)
 - CUSTOM scope (2 tests)
 - ALL scope (1 test)
-- **Note:** No positive DEPARTMENT scope tests
+- LOCATION scope (1 test)
+- DEPARTMENT scope (2 tests)
 
 **Files:**
 - `backend/src/main/java/com/hrms/application/recruitment/service/RecruitmentManagementService.java`
@@ -207,8 +208,8 @@ Specification<AttendanceRecord> dateSpec = (root, query, cb) ->
 
 ### Expense RBAC Integration Tests
 - **File:** `backend/src/test/java/com/hrms/integration/ExpenseClaimScopeIntegrationTest.java`
-- **Count:** 39 tests
-- **Scopes covered:** SELF, TEAM, ALL, LOCATION (negative-only), CUSTOM, admin bypass, edge cases
+- **Count:** 43 tests
+- **Scopes covered:** SELF, TEAM, ALL, LOCATION, DEPARTMENT, CUSTOM, admin bypass, edge cases
 - **Command:**
   ```bash
   mvn -pl backend -Dtest=ExpenseClaimScopeIntegrationTest test
@@ -216,8 +217,8 @@ Specification<AttendanceRecord> dateSpec = (root, query, cb) ->
 
 ### Recruitment RBAC Integration Tests
 - **File:** `backend/src/test/java/com/hrms/integration/RecruitmentScopeIntegrationTest.java`
-- **Count:** 14 tests
-- **Scopes covered:** SELF, TEAM, CUSTOM, ALL (job opening, candidate, interview flows)
+- **Count:** 17 tests
+- **Scopes covered:** SELF, TEAM, CUSTOM, ALL, LOCATION, DEPARTMENT (job opening, candidate, interview flows)
 - **Command:**
   ```bash
   mvn -pl backend -Dtest=RecruitmentScopeIntegrationTest test
@@ -227,8 +228,8 @@ Specification<AttendanceRecord> dateSpec = (root, query, cb) ->
 - `backend/src/test/java/com/hrms/application/recruitment/service/RecruitmentManagementServiceTest.java` updated for paged method signatures.
 
 ### Scope Coverage Notes
-- LOCATION scope tests in Expense are negative-only (no Employee fixtures to validate positive access).
-- DEPARTMENT scope does not have dedicated positive tests yet.
+- Expense LOCATION/DEPARTMENT scope tests include positive get-by-id and by-employee coverage with Employee fixtures.
+- Recruitment LOCATION/DEPARTMENT scope tests include positive get-by-id coverage; department list filtering is covered for job openings.
 
 ---
 
@@ -295,20 +296,14 @@ Key methods used by scope enforcement:
 
 ## Known Limitations
 
-1. **Positive DEPARTMENT/LOCATION Scope Tests Missing**
-   - Current tests only cover negative cases (access denial when employee not in DB)
-   - Positive tests require Employee+Department+Location fixtures in database
-   - Recommendation: Add comprehensive fixtures in future iteration for full validation
-
-2. **Workload Update Integration Test Missing**
-   - Backend validation logic is comprehensive and tenant-safe
-   - No dedicated integration test for PUT /allocation endpoint
-   - Recommendation: Add ResourceManagementControllerTest in future iteration
-
-3. **Recruitment Permission Complexity**
+1. **Recruitment Permission Complexity**
    - Uses mixed permissions (RECRUITMENT_VIEW, CANDIDATE_VIEW, RECRUITMENT_MANAGE)
    - Not a single uniform permission pattern like Expense module
    - Consider consolidating in future refactor for consistency
+
+2. **Location-based list filtering relies on entity fields**
+   - Location scope filtering in list endpoints depends on `officeLocationId`/`locationId` fields
+   - Entities without those fields rely on get-by-id validation for location scope
 
 ---
 
@@ -317,10 +312,8 @@ Key methods used by scope enforcement:
 **Status:** RBAC Phase 1-2 scope enforcement is complete and production-ready with documented limitations.
 
 **Optional follow-ups:**
-1. Add positive LOCATION/DEPARTMENT scope integration tests with Employee fixtures.
-2. Add workload update integration test (PUT /allocation).
-3. Run full backend test suite for regression confidence.
-4. Commit local changes (RecruitmentScopeIntegrationTest + workload persistence + report updates).
+1. Run full backend test suite for regression confidence.
+2. Review existing test failures in SmsNotificationServiceTest, ResourceManagementServiceTest, RecruitmentManagementServiceTest, LeaveRequestE2ETest.
 
 ---
 
