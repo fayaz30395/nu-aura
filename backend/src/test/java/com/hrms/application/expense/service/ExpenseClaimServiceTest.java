@@ -145,7 +145,7 @@ class ExpenseClaimServiceTest {
             ExpenseClaimResponse result = expenseClaimService.createExpenseClaim(employeeId, request);
 
             assertThat(result).isNotNull();
-            assertThat(result.getCategory()).isEqualTo("Travel");
+            assertThat(result.getCategory()).isEqualTo(ExpenseClaim.ExpenseCategory.TRAVEL);
             assertThat(result.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.DRAFT);
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
         }
