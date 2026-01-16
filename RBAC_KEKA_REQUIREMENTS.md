@@ -1,5 +1,8 @@
 # Keka-Style RBAC Requirements for NU-AURA
 
+**Last Updated:** 2026-01-16
+**Author:** Fayaz
+
 ## Overview
 
 This document outlines the requirements for implementing a Keka-inspired Role-Based Access Control (RBAC) system in NU-AURA. The system provides fine-grained permission control with scope-based data access.

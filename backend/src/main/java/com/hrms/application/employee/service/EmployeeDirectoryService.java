@@ -2,6 +2,9 @@ package com.hrms.application.employee.service;
 
 import com.hrms.api.employee.dto.EmployeeDirectoryResponse;
 import com.hrms.api.employee.dto.EmployeeSearchRequest;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
@@ -29,13 +32,16 @@ public class EmployeeDirectoryService {
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
+    private final DataScopeService dataScopeService;
 
     public Page<EmployeeDirectoryResponse> searchEmployees(EmployeeSearchRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Searching employees for tenant: {} with filters: {}", tenantId, request);
 
         // Build specification for dynamic query
-        Specification<Employee> spec = buildSpecification(tenantId, request);
+        String permission = determineViewPermission();
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(permission);
+        Specification<Employee> spec = Specification.where(scopeSpec).and(buildSpecification(tenantId, request));
 
         // Create pageable with sorting
         Pageable pageable = PageRequest.of(
@@ -132,6 +138,26 @@ public class EmployeeDirectoryService {
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private String determineViewPermission() {
+        if (SecurityContext.getPermissionScope(Permission.EMPLOYEE_VIEW_ALL) != null) {
+            return Permission.EMPLOYEE_VIEW_ALL;
+        }
+        if (SecurityContext.getPermissionScope(Permission.EMPLOYEE_VIEW_DEPARTMENT) != null) {
+            return Permission.EMPLOYEE_VIEW_DEPARTMENT;
+        }
+        if (SecurityContext.getPermissionScope(Permission.EMPLOYEE_VIEW_TEAM) != null) {
+            return Permission.EMPLOYEE_VIEW_TEAM;
+        }
+        if (SecurityContext.getPermissionScope(Permission.EMPLOYEE_VIEW_SELF) != null) {
+            return Permission.EMPLOYEE_VIEW_SELF;
+        }
+        if (SecurityContext.getPermissionScope(Permission.EMPLOYEE_READ) != null) {
+            return Permission.EMPLOYEE_READ;
+        }
+
+        return Permission.EMPLOYEE_VIEW_SELF;
     }
 
     private Sort buildSort(String sortBy, String sortDirection) {

@@ -18,7 +18,7 @@ import java.util.UUID;
 import static com.hrms.common.security.Permission.*;
 
 @RestController
-@RequestMapping("/api/home")
+@RequestMapping("/api/v1/home")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Home", description = "Home page APIs for dashboard widgets")

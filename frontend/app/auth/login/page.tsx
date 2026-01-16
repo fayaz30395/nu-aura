@@ -158,23 +158,8 @@ function LoginPage() {
   }, [lockoutUntil]);
 
   const redirectBasedOnRole = (role: string) => {
-    switch (role?.toUpperCase()) {
-      case 'ADMIN':
-      case 'SUPER_ADMIN':
-        router.push('/dashboard');
-        break;
-      case 'HR_MANAGER':
-      case 'HR':
-        router.push('/dashboard');
-        break;
-      case 'MANAGER':
-        router.push('/dashboard');
-        break;
-      case 'EMPLOYEE':
-      default:
-        router.push('/dashboard');
-        break;
-    }
+    // Default landing page for all users is /home
+    router.push('/home');
   };
 
   const {
@@ -249,13 +234,12 @@ function LoginPage() {
 
       // Role-based redirect
       const returnUrl = searchParams.get('returnUrl');
-      console.log('[LoginPage] Redirecting to:', returnUrl || '/dashboard');
+      console.log('[LoginPage] Redirecting to:', returnUrl || '/home');
       if (returnUrl) {
         router.push(returnUrl);
       } else {
-        // Login sets user in store, just redirect to dashboard
-        // Role-based routing can be handled by middleware or dashboard component
-        router.push('/dashboard');
+        // Login sets user in store, redirect to home page
+        router.push('/home');
       }
     } catch (err: any) {
       console.error('[LoginPage] Login error:', err);
@@ -322,9 +306,9 @@ function LoginPage() {
         // Send access token to backend - backend will validate via Google's tokeninfo endpoint
         await googleLogin({ credential: tokenResponse.access_token, accessToken: true });
 
-        // Redirect to dashboard on success
+        // Redirect to home on success
         const returnUrl = searchParams.get('returnUrl');
-        router.push(returnUrl || '/dashboard');
+        router.push(returnUrl || '/home');
       } catch (err: any) {
         setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
       } finally {
@@ -373,9 +357,9 @@ function LoginPage() {
       // Send credential to backend for verification
       await googleLogin({ credential: credentialResponse.credential });
 
-      // Redirect to dashboard on success
+      // Redirect to home on success
       const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/dashboard');
+      router.push(returnUrl || '/home');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
     } finally {

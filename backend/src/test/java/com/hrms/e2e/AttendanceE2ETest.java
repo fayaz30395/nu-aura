@@ -210,7 +210,6 @@ class AttendanceE2ETest {
     void getTodayAttendance_AfterCheckIn() throws Exception {
         LocalDate today = LocalDate.now();
         mockMvc.perform(get(BASE_URL + "/my-attendance")
-                        .param("employeeId", testEmployeeId.toString())
                         .param("startDate", today.toString())
                         .param("endDate", today.toString()))
                 .andExpect(status().isOk())
@@ -252,7 +251,6 @@ class AttendanceE2ETest {
         // Use my-attendance endpoint to get today's records
         LocalDate today = LocalDate.now();
         mockMvc.perform(get(BASE_URL + "/my-attendance")
-                        .param("employeeId", testEmployeeId.toString())
                         .param("startDate", today.toString())
                         .param("endDate", today.toString()))
                 .andExpect(status().isOk())
@@ -657,7 +655,6 @@ class AttendanceE2ETest {
 
             // Get my time entries
             mockMvc.perform(get(BASE_URL + "/my-time-entries")
-                            .param("employeeId", myTimeEmployeeId.toString())
                             .param("date", today.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())

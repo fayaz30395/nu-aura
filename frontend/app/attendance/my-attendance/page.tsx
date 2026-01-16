@@ -43,7 +43,6 @@ export default function MyAttendancePage() {
       const endDate = getMonthEndString(year, month);
 
       const response = await attendanceService.getAttendanceByDateRange(
-        user.employeeId,
         startDate,
         endDate
       );

@@ -79,7 +79,10 @@
       "Bash(/opt/homebrew/bin/psql -h localhost -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
       "Bash(/usr/local/bin/psql -h localhost -U nulogic -d nulogic -c \"UPDATE databasechangelog SET md5sum = NULL WHERE id = ''048-create-employees'';\")",
       "Bash(PGPASSWORD=nulogic123 /opt/homebrew/opt/postgresql/bin/psql:*)",
-      "Bash(./mvnw test:*)"
+      "Bash(./mvnw test:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(git reset:*)",
+      "Bash(./mvnw clean compile:*)"
     ]
   }
 }

@@ -179,14 +179,13 @@ class AttendanceService {
   }
 
   async getAttendanceByDateRange(
-    employeeId: string,
     startDate: string,
     endDate: string
   ): Promise<AttendanceRecord[]> {
     const response = await apiClient.get<AttendanceDayResponse[]>(
       `/attendance/my-attendance`,
       {
-        params: { employeeId, startDate, endDate },
+        params: { startDate, endDate },
       }
     );
     return (response.data || []).map(mapAttendanceDay);
@@ -233,23 +232,19 @@ class AttendanceService {
     return response.data;
   }
 
-  async approveRegularization(id: string, approverId: string): Promise<AttendanceRecord> {
+  async approveRegularization(id: string): Promise<AttendanceRecord> {
     const response = await apiClient.post<AttendanceRecord>(
-      `/attendance/${id}/approve-regularization`,
-      null,
-      {
-        params: { approverId },
-      }
+      `/attendance/${id}/approve-regularization`
     );
     return response.data;
   }
 
   // Time Entry History (Self-Service)
-  async getMyTimeEntries(employeeId: string, date: string): Promise<TimeEntry[]> {
+  async getMyTimeEntries(date: string): Promise<TimeEntry[]> {
     const response = await apiClient.get<TimeEntry[]>(
       `/attendance/my-time-entries`,
       {
-        params: { employeeId, date },
+        params: { date },
       }
     );
     return response.data;
