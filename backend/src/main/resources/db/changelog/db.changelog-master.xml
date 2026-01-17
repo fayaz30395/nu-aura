@@ -97,6 +97,9 @@
     <!-- Announcements Enhancement with Read/Accept Tracking -->
     <include file="db/changelog/changes/087-create-announcements-tables.sql"/>
 
+    <!-- Letter Templates and Generated Letters tables -->
+    <include file="db/changelog/changes/088-create-letter-tables.xml"/>
+
     <!-- Comprehensive Demo/Seed Data for Testing -->
     <!-- Temporarily disabled while fixing seed data issues -->
     <!-- <include file="db/changelog/changes/100-seed-comprehensive-demo-data.xml"/> -->

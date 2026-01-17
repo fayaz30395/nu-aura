@@ -87,7 +87,8 @@
       "Bash(PGPASSWORD=postgres psql:*)",
       "Bash(/opt/homebrew/bin/psql:*)",
       "Bash(/usr/local/bin/psql:*)",
-      "Bash(PGPASSWORD=hrms_pass /opt/homebrew/opt/postgresql@16/bin/psql:*)"
+      "Bash(PGPASSWORD=hrms_pass /opt/homebrew/opt/postgresql@16/bin/psql:*)",
+      "Bash(npm cache clean:*)"
     ]
   }
 }
