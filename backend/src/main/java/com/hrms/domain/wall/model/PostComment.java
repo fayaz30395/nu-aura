@@ -61,11 +61,11 @@ public class PostComment {
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    private String createdBy;
+    private UUID createdBy;
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private String updatedBy;
+    private UUID updatedBy;
 
     // Constructors
     public PostComment() {}
@@ -173,19 +173,19 @@ public class PostComment {
         this.updatedAt = updatedAt;
     }
 
-    public String getCreatedBy() {
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
-    public String getUpdatedBy() {
+    public UUID getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(String updatedBy) {
+    public void setUpdatedBy(UUID updatedBy) {
         this.updatedBy = updatedBy;
     }
 }

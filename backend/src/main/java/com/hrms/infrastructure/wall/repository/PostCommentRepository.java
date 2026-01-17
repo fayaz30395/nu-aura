@@ -28,4 +28,7 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
 
     @Query("SELECT COUNT(c) FROM PostComment c WHERE c.author.id = :authorId AND c.deleted = false")
     long countByAuthorId(@Param("authorId") UUID authorId);
+
+    @Query("SELECT COUNT(c) FROM PostComment c WHERE c.parentComment.id = :parentCommentId AND c.deleted = false")
+    int countByParentCommentIdAndActiveTrue(@Param("parentCommentId") UUID parentCommentId);
 }
