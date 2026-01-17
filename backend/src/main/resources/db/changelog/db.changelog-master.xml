@@ -173,4 +173,7 @@
     <!-- Allow nullable signer_id for external signers (candidates) -->
     <include file="db/changelog/changes/121-allow-nullable-signer-id.xml"/>
 
+    <!-- Add audit columns to post_comments table -->
+    <include file="db/changelog/changes/122-add-audit-columns-to-post-comments.xml"/>
+
 </databaseChangeLog>

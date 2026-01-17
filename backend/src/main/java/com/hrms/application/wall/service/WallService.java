@@ -354,7 +354,11 @@ public class WallService {
         response.setAuthor(mapToAuthorInfo(comment.getAuthor()));
         response.setContent(comment.getContent());
         response.setParentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null);
-        response.setReplyCount(comment.getReplies().size());
+
+        // Count replies from database instead of using lazy-loaded collection
+        int replyCount = postCommentRepository.countByParentCommentIdAndActiveTrue(comment.getId());
+        response.setReplyCount(replyCount);
+
         response.setCreatedAt(comment.getCreatedAt());
         response.setUpdatedAt(comment.getUpdatedAt());
         return response;
