@@ -3,16 +3,32 @@
 import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
 import { reviewCycleService } from '@/lib/services/performance.service';
-import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus } from '@/lib/types/performance';
+import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ScopeType, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/performance';
+import { departmentService } from '@/lib/services/department.service';
+import { officeLocationService, OfficeLocation } from '@/lib/services/office-location.service';
+import { Department } from '@/lib/types/employee';
+import { Play, Users, CheckCircle, Building2, MapPin } from 'lucide-react';
 
 export default function ReviewCyclesPage() {
   const [cycles, setCycles] = useState<ReviewCycle[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showActivateModal, setShowActivateModal] = useState(false);
+  const [showActivationResult, setShowActivationResult] = useState(false);
+  const [activationResult, setActivationResult] = useState<ActivateCycleResponse | null>(null);
   const [selectedCycle, setSelectedCycle] = useState<ReviewCycle | null>(null);
   const [filterType, setFilterType] = useState<CycleType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<CycleStatus | 'ALL'>('ALL');
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [locations, setLocations] = useState<OfficeLocation[]>([]);
+  const [activateFormData, setActivateFormData] = useState<ActivateCycleRequest>({
+    scopeType: 'ALL',
+    departmentIds: [],
+    locationIds: [],
+    createSelfReviews: true,
+    createManagerReviews: true,
+  });
   const [formData, setFormData] = useState<ReviewCycleRequest>({
     name: '',
     description: '',
@@ -26,7 +42,21 @@ export default function ReviewCyclesPage() {
 
   useEffect(() => {
     loadCycles();
+    loadDepartmentsAndLocations();
   }, []);
+
+  const loadDepartmentsAndLocations = async () => {
+    try {
+      const [deptResponse, locResponse] = await Promise.all([
+        departmentService.getActiveDepartments(),
+        officeLocationService.getActiveLocations(),
+      ]);
+      setDepartments(deptResponse);
+      setLocations(locResponse);
+    } catch (error) {
+      console.error('Error loading departments/locations:', error);
+    }
+  };
 
   const loadCycles = async () => {
     try {
@@ -95,6 +125,52 @@ export default function ReviewCyclesPage() {
   const openDeleteConfirm = (cycle: ReviewCycle) => {
     setSelectedCycle(cycle);
     setShowDeleteConfirm(true);
+  };
+
+  const openActivateModal = (cycle: ReviewCycle) => {
+    setSelectedCycle(cycle);
+    setActivateFormData({
+      scopeType: 'ALL',
+      departmentIds: [],
+      locationIds: [],
+      createSelfReviews: true,
+      createManagerReviews: true,
+    });
+    setShowActivateModal(true);
+  };
+
+  const handleActivate = async () => {
+    if (!selectedCycle) return;
+    try {
+      setLoading(true);
+      const result = await reviewCycleService.activateCycle(selectedCycle.id, activateFormData);
+      setActivationResult(result);
+      setShowActivateModal(false);
+      setShowActivationResult(true);
+      await loadCycles();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to activate review cycle');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDepartmentToggle = (deptId: string) => {
+    setActivateFormData(prev => ({
+      ...prev,
+      departmentIds: prev.departmentIds?.includes(deptId)
+        ? prev.departmentIds.filter(id => id !== deptId)
+        : [...(prev.departmentIds || []), deptId],
+    }));
+  };
+
+  const handleLocationToggle = (locId: string) => {
+    setActivateFormData(prev => ({
+      ...prev,
+      locationIds: prev.locationIds?.includes(locId)
+        ? prev.locationIds.filter(id => id !== locId)
+        : [...(prev.locationIds || []), locId],
+    }));
   };
 
   const resetForm = () => {
@@ -278,6 +354,15 @@ export default function ReviewCyclesPage() {
                 </div>
 
                 <div className="flex gap-2">
+                  {cycle.status === 'PLANNING' && (
+                    <button
+                      onClick={() => openActivateModal(cycle)}
+                      className="flex-1 px-3 py-2 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-sm font-medium flex items-center justify-center gap-1"
+                    >
+                      <Play className="h-4 w-4" />
+                      Activate
+                    </button>
+                  )}
                   <button
                     onClick={() => openEditModal(cycle)}
                     className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
@@ -474,6 +559,254 @@ export default function ReviewCyclesPage() {
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
                 >
                   {loading ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Activate Modal */}
+        {showActivateModal && selectedCycle && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Activate Review Cycle</h2>
+                    <p className="text-sm text-surface-600 dark:text-surface-400">{selectedCycle.name}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Scope Type Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                      Activation Scope
+                    </label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'ALL', departmentIds: [], locationIds: [] })}
+                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                          activateFormData.scopeType === 'ALL'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                        }`}
+                      >
+                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                          All Employees
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'DEPARTMENT', locationIds: [] })}
+                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                          activateFormData.scopeType === 'DEPARTMENT'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                        }`}
+                      >
+                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                          By Department
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'LOCATION', departmentIds: [] })}
+                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
+                          activateFormData.scopeType === 'LOCATION'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                        }`}
+                      >
+                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <span className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-green-700 dark:text-green-400' : ''}`}>
+                          By Location
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Department Selection */}
+                  {activateFormData.scopeType === 'DEPARTMENT' && (
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                        Select Departments
+                      </label>
+                      <div className="border border-surface-300 dark:border-surface-600 rounded-lg max-h-48 overflow-y-auto">
+                        {departments.length === 0 ? (
+                          <p className="p-4 text-sm text-surface-500">No departments available</p>
+                        ) : (
+                          departments.map((dept) => (
+                            <label
+                              key={dept.id}
+                              className="flex items-center gap-3 p-3 hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer border-b border-surface-200 dark:border-surface-700 last:border-b-0"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={activateFormData.departmentIds?.includes(dept.id) || false}
+                                onChange={() => handleDepartmentToggle(dept.id)}
+                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                              />
+                              <span className="text-sm">{dept.name}</span>
+                            </label>
+                          ))
+                        )}
+                      </div>
+                      {activateFormData.departmentIds && activateFormData.departmentIds.length > 0 && (
+                        <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                          {activateFormData.departmentIds.length} department(s) selected
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Location Selection */}
+                  {activateFormData.scopeType === 'LOCATION' && (
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                        Select Locations
+                      </label>
+                      <div className="border border-surface-300 dark:border-surface-600 rounded-lg max-h-48 overflow-y-auto">
+                        {locations.length === 0 ? (
+                          <p className="p-4 text-sm text-surface-500">No locations available</p>
+                        ) : (
+                          locations.map((loc) => (
+                            <label
+                              key={loc.id}
+                              className="flex items-center gap-3 p-3 hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer border-b border-surface-200 dark:border-surface-700 last:border-b-0"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={activateFormData.locationIds?.includes(loc.id) || false}
+                                onChange={() => handleLocationToggle(loc.id)}
+                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                              />
+                              <div>
+                                <span className="text-sm font-medium">{loc.name}</span>
+                                <span className="text-xs text-surface-500 ml-2">{loc.city}, {loc.country}</span>
+                              </div>
+                            </label>
+                          ))
+                        )}
+                      </div>
+                      {activateFormData.locationIds && activateFormData.locationIds.length > 0 && (
+                        <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                          {activateFormData.locationIds.length} location(s) selected
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Review Options */}
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                      Review Types to Create
+                    </label>
+                    <div className="space-y-3">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={activateFormData.createSelfReviews}
+                          onChange={(e) => setActivateFormData({ ...activateFormData, createSelfReviews: e.target.checked })}
+                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                        />
+                        <div>
+                          <span className="text-sm font-medium">Self Reviews</span>
+                          <p className="text-xs text-surface-500">Each employee will receive a self-assessment form</p>
+                        </div>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={activateFormData.createManagerReviews}
+                          onChange={(e) => setActivateFormData({ ...activateFormData, createManagerReviews: e.target.checked })}
+                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                        />
+                        <div>
+                          <span className="text-sm font-medium">Manager Reviews</span>
+                          <p className="text-xs text-surface-500">Managers will receive review forms for their direct reports</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowActivateModal(false);
+                      setSelectedCycle(null);
+                    }}
+                    className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleActivate}
+                    disabled={loading || (activateFormData.scopeType === 'DEPARTMENT' && (!activateFormData.departmentIds || activateFormData.departmentIds.length === 0)) || (activateFormData.scopeType === 'LOCATION' && (!activateFormData.locationIds || activateFormData.locationIds.length === 0))}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Activating...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4" />
+                        Activate Cycle
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Activation Result Modal */}
+        {showActivationResult && activationResult && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+              <div className="flex flex-col items-center text-center">
+                <div className="p-4 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                  <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Cycle Activated!</h2>
+                <p className="text-surface-600 dark:text-surface-400 mb-6">
+                  Review cycle has been successfully activated
+                </p>
+
+                <div className="w-full bg-surface-100 dark:bg-surface-800 rounded-lg p-4 mb-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-primary-600">{activationResult.employeesInScope}</div>
+                      <div className="text-sm text-surface-600 dark:text-surface-400">Employees in Scope</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-green-600">{activationResult.reviewsCreated}</div>
+                      <div className="text-sm text-surface-600 dark:text-surface-400">Reviews Created</div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowActivationResult(false);
+                    setActivationResult(null);
+                    setSelectedCycle(null);
+                  }}
+                  className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+                >
+                  Done
                 </button>
               </div>
             </div>

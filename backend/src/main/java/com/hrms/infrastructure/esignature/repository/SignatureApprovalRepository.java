@@ -42,4 +42,14 @@ public interface SignatureApprovalRepository extends JpaRepository<SignatureAppr
             UUID signatureRequestId,
             SignatureApproval.ApprovalStatus status
     );
+
+    /**
+     * Find signature approval by authentication token (for external signing).
+     */
+    Optional<SignatureApproval> findByAuthenticationToken(String token);
+
+    /**
+     * Find signature approval by email and signature request (for external signing verification).
+     */
+    Optional<SignatureApproval> findBySignatureRequestIdAndSignerEmail(UUID signatureRequestId, String signerEmail);
 }

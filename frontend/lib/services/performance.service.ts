@@ -13,6 +13,8 @@ import {
   ReviewCycleRequest,
   OKRGraphResponse,
   PerformanceSpiderResponse,
+  ActivateCycleRequest,
+  ActivateCycleResponse,
 } from '../types/performance';
 
 interface PaginatedResponse<T> {
@@ -318,6 +320,17 @@ export const reviewCycleService = {
   // Complete a review cycle
   completeCycle: async (id: string): Promise<ReviewCycle> => {
     const response = await apiClient.post<ReviewCycle>(`/review-cycles/${id}/complete`);
+    return response.data;
+  },
+
+  // Activate a review cycle (creates reviews for employees in scope)
+  activateCycle: async (id: string, data: ActivateCycleRequest): Promise<ActivateCycleResponse> => {
+    const response = await apiClient.post<ActivateCycleResponse>(`/review-cycles/${id}/activate`, data);
+    return response.data;
+  },
+  // Alias for activateCycle
+  activate: async (id: string, data: ActivateCycleRequest): Promise<ActivateCycleResponse> => {
+    const response = await apiClient.post<ActivateCycleResponse>(`/review-cycles/${id}/activate`, data);
     return response.data;
   },
 

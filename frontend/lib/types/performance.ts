@@ -170,6 +170,36 @@ export interface ReviewCycle {
   description?: string;
   createdAt?: string;
   updatedAt?: string;
+  // Activation metadata (populated when activating a cycle)
+  employeesInScope?: number;
+  reviewsCreated?: number;
+}
+
+// Activation Types
+export type ScopeType = 'ALL' | 'DEPARTMENT' | 'LOCATION';
+
+export interface ActivateCycleRequest {
+  scopeType: ScopeType;
+  departmentIds?: string[];
+  locationIds?: string[];
+  createSelfReviews?: boolean;
+  createManagerReviews?: boolean;
+}
+
+export interface ActivateCycleResponse {
+  id: string;
+  cycleName: string;
+  cycleType: CycleType;
+  startDate?: string;
+  endDate?: string;
+  selfReviewDeadline?: string;
+  managerReviewDeadline?: string;
+  status: CycleStatus;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  employeesInScope: number;
+  reviewsCreated: number;
 }
 
 export interface ReviewCycleRequest {

@@ -144,4 +144,41 @@ public class ESignatureController {
         eSignatureService.removeSigner(approvalId);
         return ResponseEntity.noContent().build();
     }
+
+    // ==================== External (Token-Based) Signing Endpoints ====================
+    // These endpoints are PUBLIC and do not require authentication
+
+    /**
+     * Get document information for external signer using token from email link.
+     * Public endpoint - no authentication required.
+     */
+    @GetMapping("/external/{token}")
+    public ResponseEntity<ExternalSignatureInfoResponse> getExternalSignatureInfo(
+            @PathVariable String token) {
+        return ResponseEntity.ok(eSignatureService.getExternalSignatureInfo(token));
+    }
+
+    /**
+     * Sign document as external signer (candidate/external party).
+     * Validates token and email before signing.
+     * Public endpoint - no authentication required.
+     */
+    @PostMapping("/external/{token}/sign")
+    public ResponseEntity<SignatureApprovalResponse> signDocumentExternal(
+            @PathVariable String token,
+            @RequestBody ExternalSignRequest request) {
+        return ResponseEntity.ok(eSignatureService.signDocumentExternal(token, request));
+    }
+
+    /**
+     * Decline document as external signer.
+     * Public endpoint - no authentication required.
+     */
+    @PostMapping("/external/{token}/decline")
+    public ResponseEntity<SignatureApprovalResponse> declineDocumentExternal(
+            @PathVariable String token,
+            @RequestParam String signerEmail,
+            @RequestParam(required = false) String reason) {
+        return ResponseEntity.ok(eSignatureService.declineDocumentExternal(token, signerEmail, reason));
+    }
 }

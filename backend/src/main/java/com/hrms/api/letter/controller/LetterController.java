@@ -1,6 +1,7 @@
 package com.hrms.api.letter.controller;
 
 import com.hrms.api.letter.dto.*;
+import com.hrms.application.letter.service.LetterPdfService;
 import com.hrms.application.letter.service.LetterService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
@@ -26,6 +27,7 @@ import static com.hrms.common.security.Permission.*;
 public class LetterController {
 
     private final LetterService letterService;
+    private final LetterPdfService letterPdfService;
 
     // ==================== Template Endpoints ====================
 
@@ -92,6 +94,16 @@ public class LetterController {
                 .body(letterService.generateLetter(request, generatedBy));
     }
 
+    @PostMapping("/generate-offer")
+    @RequiresPermission(RECRUITMENT_MANAGE)
+    public ResponseEntity<GeneratedLetterResponse> generateOfferLetter(
+            @Valid @RequestBody GenerateOfferLetterRequest request) {
+        UUID generatedBy = SecurityContext.getCurrentEmployeeId();
+        log.info("Generating offer letter for candidate: {} by: {}", request.getCandidateId(), generatedBy);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(letterService.generateOfferLetter(request, generatedBy));
+    }
+
     @GetMapping("/{letterId}")
     @RequiresPermission({LETTER_TEMPLATE_VIEW, SELF_SERVICE_VIEW_LETTERS})
     public ResponseEntity<GeneratedLetterResponse> getLetterById(@PathVariable UUID letterId) {
@@ -151,6 +163,23 @@ public class LetterController {
         UUID issuerId = SecurityContext.getCurrentEmployeeId();
         log.info("Issuing letter: {} by: {}", letterId, issuerId);
         return ResponseEntity.ok(letterService.issueLetter(letterId, issuerId));
+    }
+
+    @PostMapping("/{letterId}/issue-with-esign")
+    @RequiresPermission(RECRUITMENT_MANAGE)
+    public ResponseEntity<GeneratedLetterResponse> issueOfferLetterWithESign(
+            @PathVariable UUID letterId) {
+        UUID issuerId = SecurityContext.getCurrentEmployeeId();
+        log.info("Issuing offer letter with e-sign: {} by: {}", letterId, issuerId);
+        return ResponseEntity.ok(letterService.issueOfferLetterWithESign(letterId, issuerId));
+    }
+
+    @PostMapping("/{letterId}/generate-pdf")
+    @RequiresPermission({LETTER_GENERATE, RECRUITMENT_MANAGE})
+    public ResponseEntity<GeneratePdfResponse> generatePdf(@PathVariable UUID letterId) {
+        log.info("Generating PDF for letter: {}", letterId);
+        String pdfUrl = letterPdfService.generatePdf(letterId);
+        return ResponseEntity.ok(new GeneratePdfResponse(letterId, pdfUrl));
     }
 
     @PostMapping("/{letterId}/revoke")

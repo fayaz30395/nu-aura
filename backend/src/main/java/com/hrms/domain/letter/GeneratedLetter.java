@@ -24,8 +24,11 @@ public class GeneratedLetter extends TenantAware {
     @Column(nullable = false)
     private UUID templateId;
 
-    @Column(nullable = false)
+    // Either employeeId or candidateId should be set, not both
     private UUID employeeId;
+
+    // For offer letters to candidates (not yet employees)
+    private UUID candidateId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

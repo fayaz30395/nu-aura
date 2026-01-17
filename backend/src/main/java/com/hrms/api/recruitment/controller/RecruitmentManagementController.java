@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -106,6 +108,32 @@ public class RecruitmentManagementController {
     public ResponseEntity<Void> deleteCandidate(@PathVariable UUID id) {
         recruitmentService.deleteCandidate(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ==================== Offer Response Endpoints ====================
+
+    @PostMapping("/candidates/{id}/accept-offer")
+    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    public ResponseEntity<CandidateResponse> acceptOffer(
+            @PathVariable UUID id,
+            @Valid @RequestBody OfferResponseRequest request) {
+        // Validate that path candidateId matches body candidateId
+        if (request.getCandidateId() != null && !request.getCandidateId().equals(id)) {
+            throw new IllegalArgumentException("Candidate ID in path does not match candidate ID in request body");
+        }
+        return ResponseEntity.ok(recruitmentService.acceptOffer(id, request.getConfirmedJoiningDate()));
+    }
+
+    @PostMapping("/candidates/{id}/decline-offer")
+    @RequiresPermission(Permission.RECRUITMENT_MANAGE)
+    public ResponseEntity<CandidateResponse> declineOffer(
+            @PathVariable UUID id,
+            @Valid @RequestBody OfferResponseRequest request) {
+        // Validate that path candidateId matches body candidateId
+        if (request.getCandidateId() != null && !request.getCandidateId().equals(id)) {
+            throw new IllegalArgumentException("Candidate ID in path does not match candidate ID in request body");
+        }
+        return ResponseEntity.ok(recruitmentService.declineOffer(id, request.getDeclineReason()));
     }
 
     // ==================== Interview Endpoints ====================

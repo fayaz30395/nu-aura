@@ -261,6 +261,65 @@ public class RecruitmentManagementService {
         candidateRepository.delete(candidate);
     }
 
+    // ==================== Offer Response Operations ====================
+
+    /**
+     * Process candidate's acceptance of an offer.
+     * Updates candidate status to OFFER_ACCEPTED and records the acceptance date.
+     */
+    public CandidateResponse acceptOffer(UUID candidateId, java.time.LocalDate confirmedJoiningDate) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Processing offer acceptance for candidate {} in tenant {}", candidateId, tenantId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
+            throw new IllegalStateException("Candidate does not have an active offer to accept. Current status: " + candidate.getStatus());
+        }
+
+        candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
+        candidate.setOfferAcceptedDate(java.time.LocalDate.now());
+
+        // Update joining date if candidate provided a different one
+        if (confirmedJoiningDate != null) {
+            candidate.setProposedJoiningDate(confirmedJoiningDate);
+        }
+
+        // Keep stage at OFFER - candidate moves to JOINED only after actual onboarding/joining
+        // The JOINED stage is set by a separate process when the employee record is created
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+        log.info("Offer accepted by candidate {}", candidateId);
+
+        return mapToCandidateResponse(savedCandidate);
+    }
+
+    /**
+     * Process candidate's decline of an offer.
+     * Updates candidate status to OFFER_DECLINED and records the reason.
+     */
+    public CandidateResponse declineOffer(UUID candidateId, String declineReason) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Processing offer decline for candidate {} in tenant {}", candidateId, tenantId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
+            throw new IllegalStateException("Candidate does not have an active offer to decline. Current status: " + candidate.getStatus());
+        }
+
+        candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
+        candidate.setOfferDeclinedDate(java.time.LocalDate.now());
+        candidate.setOfferDeclineReason(declineReason);
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+        log.info("Offer declined by candidate {} - Reason: {}", candidateId, declineReason);
+
+        return mapToCandidateResponse(savedCandidate);
+    }
+
     // ==================== Interview Operations ====================
 
     public InterviewResponse scheduleInterview(InterviewRequest request) {
