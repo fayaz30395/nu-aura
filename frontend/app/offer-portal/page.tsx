@@ -1,0 +1,507 @@
+'use client';
+
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { publicOfferService, PublicOfferResponse } from '@/lib/services/public-offer.service';
+import {
+  FileText,
+  CheckCircle,
+  XCircle,
+  Calendar,
+  Building,
+  DollarSign,
+  Clock,
+  Loader2,
+  AlertCircle,
+  Download,
+  Mail,
+} from 'lucide-react';
+
+function OfferPortalLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
+      <div className="animate-pulse text-center">
+        <Loader2 className="h-12 w-12 text-primary-500 animate-spin mx-auto mb-4" />
+        <p className="text-surface-600 dark:text-surface-400">Loading offer details...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function OfferPortalWrapper() {
+  return (
+    <Suspense fallback={<OfferPortalLoading />}>
+      <OfferPortalPage />
+    </Suspense>
+  );
+}
+
+function OfferPortalPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+
+  const [offer, setOffer] = useState<PublicOfferResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
+  const [declineReason, setDeclineReason] = useState('');
+
+  useEffect(() => {
+    if (token) {
+      loadOfferDetails();
+    } else {
+      setError('Invalid offer link. Please use the link provided in your email.');
+      setLoading(false);
+    }
+  }, [token]);
+
+  const loadOfferDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Use public endpoint - no authentication required
+      const offerData = await publicOfferService.getOfferByToken(token!);
+
+      if (!offerData.tokenValid) {
+        setError(offerData.errorMessage || 'Invalid or expired offer link');
+        setOffer(null);
+      } else {
+        setOffer(offerData);
+        // Set default joining date
+        if (offerData.proposedJoiningDate) {
+          setConfirmedJoiningDate(offerData.proposedJoiningDate);
+        }
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to load offer details. The link may be invalid or expired.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptOffer = async () => {
+    if (!offer || !offer.email) return;
+    setProcessing(true);
+    try {
+      const response = await publicOfferService.acceptOffer(token!, {
+        email: offer.email,
+        confirmedJoiningDate: confirmedJoiningDate || undefined,
+      });
+      setOffer({
+        ...offer,
+        status: 'OFFER_ACCEPTED',
+        offerAcceptedDate: new Date().toISOString().split('T')[0],
+      });
+      setShowAcceptModal(false);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to accept offer');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDeclineOffer = async () => {
+    if (!offer || !offer.email) return;
+    setProcessing(true);
+    try {
+      await publicOfferService.declineOffer(token!, {
+        email: offer.email,
+        declineReason: declineReason || undefined,
+      });
+      setOffer({
+        ...offer,
+        status: 'OFFER_DECLINED',
+        offerDeclinedDate: new Date().toISOString().split('T')[0],
+      });
+      setShowDeclineModal(false);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to decline offer');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const formatCurrency = (amount: number | undefined) => {
+    if (!amount) return '-';
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const formatDate = (date: string | undefined) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
+  if (loading) {
+    return <OfferPortalLoading />;
+  }
+
+  if (error && !offer) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+              Unable to Load Offer
+            </h1>
+            <p className="text-surface-500 dark:text-surface-400">{error}</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const isOfferPending = offer?.status === 'OFFER_EXTENDED';
+  const isOfferAccepted = offer?.status === 'OFFER_ACCEPTED';
+  const isOfferDeclined = offer?.status === 'OFFER_DECLINED';
+
+  // Extract first and last name initials from candidateName
+  const nameParts = offer?.candidateName?.split(' ') || [];
+  const firstInitial = nameParts[0]?.charAt(0) || '';
+  const lastInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1]?.charAt(0) : '';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 py-8 px-4">
+      <div className="max-w-3xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-10 w-10 text-primary-600 dark:text-primary-400" />
+          </div>
+          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+            Your Offer Letter
+          </h1>
+          <p className="text-surface-600 dark:text-surface-400">
+            {offer?.companyName ? `from ${offer.companyName}` : 'Review your offer details and respond below'}
+          </p>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                <AlertCircle className="h-5 w-5" />
+                <span>{error}</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Status Banner */}
+        {isOfferAccepted && (
+          <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
+            <CardContent className="p-6 text-center">
+              <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-3" />
+              <h2 className="text-xl font-bold text-green-700 dark:text-green-300 mb-2">
+                Offer Accepted!
+              </h2>
+              <p className="text-green-600 dark:text-green-400">
+                Thank you for accepting our offer. We look forward to having you on our team!
+              </p>
+              {offer?.offerAcceptedDate && (
+                <p className="text-sm text-green-500 mt-2">
+                  Accepted on {formatDate(offer.offerAcceptedDate)}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {isOfferDeclined && (
+          <Card className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+            <CardContent className="p-6 text-center">
+              <XCircle className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-3" />
+              <h2 className="text-xl font-bold text-red-700 dark:text-red-300 mb-2">
+                Offer Declined
+              </h2>
+              <p className="text-red-600 dark:text-red-400">
+                This offer has been declined. Thank you for considering us.
+              </p>
+              {offer?.offerDeclinedDate && (
+                <p className="text-sm text-red-500 mt-2">
+                  Declined on {formatDate(offer.offerDeclinedDate)}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Candidate Info */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-700 dark:text-primary-300">
+                  {firstInitial}{lastInitial}
+                </span>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+                  {offer?.candidateName}
+                </h2>
+                <p className="text-surface-500 dark:text-surface-400">{offer?.email}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                <Building className="h-5 w-5 text-surface-400" />
+                <div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Position</p>
+                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                    {offer?.offeredDesignation || offer?.jobTitle || '-'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                <DollarSign className="h-5 w-5 text-surface-400" />
+                <div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Annual CTC</p>
+                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                    {formatCurrency(offer?.offeredCtc)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                <Calendar className="h-5 w-5 text-surface-400" />
+                <div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Proposed Joining Date</p>
+                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                    {formatDate(offer?.proposedJoiningDate)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                <Clock className="h-5 w-5 text-surface-400" />
+                <div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Offer Extended On</p>
+                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                    {formatDate(offer?.offerExtendedDate)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Offer Letter Document */}
+        {offer?.offerLetterId && (
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary-500" />
+                Offer Letter Document
+              </h3>
+              <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                <div>
+                  <p className="font-medium text-surface-900 dark:text-surface-50">
+                    Offer Letter
+                  </p>
+                  {offer.offerLetterReferenceNumber && (
+                    <p className="text-sm text-surface-500 dark:text-surface-400">
+                      Reference: {offer.offerLetterReferenceNumber}
+                    </p>
+                  )}
+                </div>
+                {offer.offerLetterUrl && (
+                  <a
+                    href={offer.offerLetterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download PDF
+                  </a>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Action Buttons */}
+        {isOfferPending && (
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+                Your Response
+              </h3>
+              <p className="text-surface-600 dark:text-surface-400 mb-6">
+                Please review the offer details above and let us know your decision.
+              </p>
+              <div className="flex gap-4">
+                <Button
+                  onClick={() => setShowAcceptModal(true)}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Accept Offer
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeclineModal(true)}
+                  className="flex-1 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+                >
+                  <XCircle className="h-5 w-5 mr-2" />
+                  Decline Offer
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Contact Info */}
+        <Card>
+          <CardContent className="p-6 text-center">
+            <Mail className="h-6 w-6 text-surface-400 mx-auto mb-2" />
+            <p className="text-surface-600 dark:text-surface-400">
+              Have questions? Contact HR at{' '}
+              <a href="mailto:hr@company.com" className="text-primary-600 hover:underline">
+                hr@company.com
+              </a>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Accept Modal */}
+      {showAcceptModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="max-w-md w-full">
+            <CardContent className="p-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                  Accept Offer
+                </h2>
+                <p className="text-surface-600 dark:text-surface-400">
+                  Confirm your acceptance of this offer
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Confirmed Joining Date
+                </label>
+                <input
+                  type="date"
+                  value={confirmedJoiningDate}
+                  onChange={(e) => setConfirmedJoiningDate(e.target.value)}
+                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+                <p className="text-xs text-surface-500 mt-1">
+                  Please confirm your expected joining date
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAcceptModal(false)}
+                  className="flex-1"
+                  disabled={processing}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAcceptOffer}
+                  disabled={processing}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  {processing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm Acceptance'
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Decline Modal */}
+      {showDeclineModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="max-w-md w-full">
+            <CardContent className="p-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                </div>
+                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                  Decline Offer
+                </h2>
+                <p className="text-surface-600 dark:text-surface-400">
+                  We're sorry to hear that. Please let us know why.
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  Reason for Declining (Optional)
+                </label>
+                <textarea
+                  rows={4}
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value)}
+                  placeholder="Please share your reason..."
+                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeclineModal(false)}
+                  className="flex-1"
+                  disabled={processing}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeclineOffer}
+                  disabled={processing}
+                  className="flex-1"
+                >
+                  {processing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm Decline'
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="120-1" author="claude">
+        <comment>Add offer-related fields to candidates table</comment>
+        <addColumn tableName="candidates">
+            <column name="offered_ctc" type="DECIMAL(15,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offered_designation" type="VARCHAR(200)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="proposed_joining_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offer_letter_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offer_extended_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offer_accepted_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offer_declined_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="offer_decline_reason" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="120-2" author="claude">
+        <comment>Add candidate_id to generated_letters for offer letters to candidates</comment>
+        <addColumn tableName="generated_letters">
+            <column name="candidate_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="120-3" author="claude">
+        <comment>Make employee_id nullable in generated_letters for candidate offer letters</comment>
+        <dropNotNullConstraint tableName="generated_letters" columnName="employee_id"/>
+    </changeSet>
+
+    <changeSet id="120-4" author="claude">
+        <comment>Add index on candidate_id in generated_letters</comment>
+        <createIndex tableName="generated_letters" indexName="idx_generated_letters_candidate_id">
+            <column name="candidate_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="120-5" author="claude">
+        <comment>Add index on offer_letter_id in candidates</comment>
+        <createIndex tableName="candidates" indexName="idx_candidates_offer_letter_id">
+            <column name="offer_letter_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
