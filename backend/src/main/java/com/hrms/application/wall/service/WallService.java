@@ -6,7 +6,7 @@ import com.hrms.domain.common.ContentView.ContentType;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.domain.wall.model.*;
-import com.hrms.domain.wall.repository.*;
+import com.hrms.infrastructure.wall.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -140,11 +140,27 @@ public class WallService {
             // Create new reaction
             PostReaction reaction = new PostReaction(post, employee, reactionType);
             postReactionRepository.save(reaction);
+
+            // Update like count on the post
+            post.setLikesCount(post.getLikesCount() + 1);
+            wallPostRepository.save(post);
         }
     }
 
     public void removeReaction(UUID postId, UUID employeeId) {
-        postReactionRepository.deleteByPostIdAndEmployeeId(postId, employeeId);
+        Optional<PostReaction> existingReaction = postReactionRepository
+                .findByPostIdAndEmployeeId(postId, employeeId);
+
+        if (existingReaction.isPresent()) {
+            postReactionRepository.delete(existingReaction.get());
+
+            // Update like count on the post
+            WallPost post = wallPostRepository.findByIdAndActiveTrue(postId).orElse(null);
+            if (post != null && post.getLikesCount() > 0) {
+                post.setLikesCount(post.getLikesCount() - 1);
+                wallPostRepository.save(post);
+            }
+        }
     }
 
     // ==================== COMMENTS ====================
@@ -165,6 +181,11 @@ public class WallService {
         }
 
         PostComment savedComment = postCommentRepository.save(comment);
+
+        // Update comment count on the post
+        post.setCommentsCount(post.getCommentsCount() + 1);
+        wallPostRepository.save(post);
+
         return mapCommentToResponse(savedComment);
     }
 
@@ -184,6 +205,13 @@ public class WallService {
 
         comment.setActive(false);
         postCommentRepository.save(comment);
+
+        // Update comment count on the post
+        WallPost post = comment.getPost();
+        if (post.getCommentsCount() > 0) {
+            post.setCommentsCount(post.getCommentsCount() - 1);
+            wallPostRepository.save(post);
+        }
     }
 
     // ==================== POLLS ====================
@@ -256,9 +284,9 @@ public class WallService {
             response.setPraiseRecipient(mapToAuthorInfo(post.getPraiseRecipient()));
         }
 
-        // Counts
-        response.setLikeCount(post.getLikeCount());
-        response.setCommentCount((int) postCommentRepository.countByPostId(post.getId()));
+        // Counts - use stored counts for performance (updated when reactions/comments are added/removed)
+        response.setLikeCount(post.getLikesCount());
+        response.setCommentCount(post.getCommentsCount());
 
         // Reaction counts by type
         Map<String, Integer> reactionCounts = new HashMap<>();
