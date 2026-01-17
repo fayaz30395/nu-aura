@@ -1,4 +1,4 @@
-package com.hrms.domain.user.repository;
+package com.hrms.infrastructure.user.repository;
 
 import com.hrms.domain.user.model.UserNotificationPreferences;
 import org.springframework.data.jpa.repository.JpaRepository;

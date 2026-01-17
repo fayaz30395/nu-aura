@@ -91,35 +91,35 @@ class WallService {
   // ==================== POSTS ====================
 
   async createPost(request: CreatePostRequest): Promise<WallPostResponse> {
-    const response = await api.post<WallPostResponse>('/api/wall/posts', request);
+    const response = await api.post<WallPostResponse>('/wall/posts', request);
     return response.data;
   }
 
   async getPosts(page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
-    const response = await api.get<PageResponse<WallPostResponse>>('/api/wall/posts', {
+    const response = await api.get<PageResponse<WallPostResponse>>('/wall/posts', {
       params: { page, size },
     });
     return response.data;
   }
 
   async getPostsByType(type: PostType, page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
-    const response = await api.get<PageResponse<WallPostResponse>>(`/api/wall/posts/type/${type}`, {
+    const response = await api.get<PageResponse<WallPostResponse>>(`/wall/posts/type/${type}`, {
       params: { page, size },
     });
     return response.data;
   }
 
   async getPost(postId: string): Promise<WallPostResponse> {
-    const response = await api.get<WallPostResponse>(`/api/wall/posts/${postId}`);
+    const response = await api.get<WallPostResponse>(`/wall/posts/${postId}`);
     return response.data;
   }
 
   async deletePost(postId: string): Promise<void> {
-    await api.delete(`/api/wall/posts/${postId}`);
+    await api.delete(`/wall/posts/${postId}`);
   }
 
   async pinPost(postId: string, pinned: boolean): Promise<WallPostResponse> {
-    const response = await api.patch<WallPostResponse>(`/api/wall/posts/${postId}/pin`, null, {
+    const response = await api.patch<WallPostResponse>(`/wall/posts/${postId}/pin`, null, {
       params: { pinned },
     });
     return response.data;
@@ -128,46 +128,46 @@ class WallService {
   // ==================== REACTIONS ====================
 
   async addReaction(postId: string, reactionType: ReactionType): Promise<void> {
-    await api.post(`/api/wall/posts/${postId}/reactions`, { reactionType });
+    await api.post(`/wall/posts/${postId}/reactions`, { reactionType });
   }
 
   async removeReaction(postId: string): Promise<void> {
-    await api.delete(`/api/wall/posts/${postId}/reactions`);
+    await api.delete(`/wall/posts/${postId}/reactions`);
   }
 
   // ==================== COMMENTS ====================
 
   async addComment(postId: string, request: CreateCommentRequest): Promise<CommentResponse> {
-    const response = await api.post<CommentResponse>(`/api/wall/posts/${postId}/comments`, request);
+    const response = await api.post<CommentResponse>(`/wall/posts/${postId}/comments`, request);
     return response.data;
   }
 
   async getComments(postId: string, page = 0, size = 20): Promise<PageResponse<CommentResponse>> {
-    const response = await api.get<PageResponse<CommentResponse>>(`/api/wall/posts/${postId}/comments`, {
+    const response = await api.get<PageResponse<CommentResponse>>(`/wall/posts/${postId}/comments`, {
       params: { page, size },
     });
     return response.data;
   }
 
   async deleteComment(commentId: string): Promise<void> {
-    await api.delete(`/api/wall/comments/${commentId}`);
+    await api.delete(`/wall/comments/${commentId}`);
   }
 
   // ==================== POLLS ====================
 
   async vote(postId: string, optionId: string): Promise<WallPostResponse> {
-    const response = await api.post<WallPostResponse>(`/api/wall/posts/${postId}/vote`, { optionId });
+    const response = await api.post<WallPostResponse>(`/wall/posts/${postId}/vote`, { optionId });
     return response.data;
   }
 
   async removeVote(postId: string): Promise<void> {
-    await api.delete(`/api/wall/posts/${postId}/vote`);
+    await api.delete(`/wall/posts/${postId}/vote`);
   }
 
   // ==================== PRAISE ====================
 
   async getPraiseForEmployee(employeeId: string, page = 0, size = 10): Promise<PageResponse<WallPostResponse>> {
-    const response = await api.get<PageResponse<WallPostResponse>>(`/api/wall/praise/employee/${employeeId}`, {
+    const response = await api.get<PageResponse<WallPostResponse>>(`/wall/praise/employee/${employeeId}`, {
       params: { page, size },
     });
     return response.data;

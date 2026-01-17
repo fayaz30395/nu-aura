@@ -107,6 +107,12 @@ export default function HomePage() {
   const [postsLoading, setPostsLoading] = useState(false);
   const [postSubmitting, setPostSubmitting] = useState(false);
 
+  // Comments
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [commentSubmitting, setCommentSubmitting] = useState<string | null>(null);
+  const [postComments, setPostComments] = useState<Record<string, any[]>>({});
+
   // Quick links (can be configured by admin)
   const quickLinks: QuickLink[] = [
     { id: '1', title: 'Company Policies', url: '/policies' },
@@ -281,6 +287,47 @@ export default function HomePage() {
       await loadPosts();
     } catch (err) {
       console.error('Error toggling reaction:', err);
+    }
+  };
+
+  // Comment handlers
+  const toggleComments = async (postId: string) => {
+    const newExpanded = new Set(expandedComments);
+    if (newExpanded.has(postId)) {
+      newExpanded.delete(postId);
+    } else {
+      newExpanded.add(postId);
+      // Load comments if not already loaded
+      if (!postComments[postId]) {
+        try {
+          const response = await wallService.getComments(postId, 0, 10);
+          setPostComments(prev => ({ ...prev, [postId]: response.content }));
+        } catch (err) {
+          console.error('Error loading comments:', err);
+        }
+      }
+    }
+    setExpandedComments(newExpanded);
+  };
+
+  const handleCommentSubmit = async (postId: string) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+
+    try {
+      setCommentSubmitting(postId);
+      await wallService.addComment(postId, { content });
+      // Clear input and reload comments
+      setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+      const response = await wallService.getComments(postId, 0, 10);
+      setPostComments(prev => ({ ...prev, [postId]: response.content }));
+      // Reload posts to get updated comment count
+      await loadPosts();
+    } catch (err: any) {
+      console.error('Error adding comment:', err);
+      alert(err.response?.data?.message || 'Failed to add comment');
+    } finally {
+      setCommentSubmitting(null);
     }
   };
 
@@ -924,11 +971,82 @@ export default function HomePage() {
                       <ThumbsUp className="h-4 w-4" />
                       <span className="text-sm">{post.likeCount}</span>
                     </button>
-                    <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-500 transition-colors">
+                    <button
+                      onClick={() => toggleComments(post.id)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors ${expandedComments.has(post.id) ? 'text-primary-600' : 'text-surface-500'}`}
+                    >
                       <MessageSquare className="h-4 w-4" />
                       <span className="text-sm">{post.commentCount}</span>
                     </button>
                   </div>
+
+                  {/* Comments Section */}
+                  {expandedComments.has(post.id) && (
+                    <div className="mt-4 pt-4 border-t border-surface-100 dark:border-surface-800">
+                      {/* Comment Input */}
+                      <div className="flex gap-3 mb-4">
+                        <div className={`w-8 h-8 shrink-0 rounded-full ${getAvatarColor(user?.fullName || 'User')} flex items-center justify-center text-white text-xs font-medium`}>
+                          {getInitials(user?.fullName || 'User')}
+                        </div>
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Write a comment..."
+                            value={commentInputs[post.id] || ''}
+                            onChange={(e) => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleCommentSubmit(post.id);
+                              }
+                            }}
+                            className="flex-1 px-3 py-2 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-surface-900 dark:text-surface-100 placeholder-surface-400 text-sm"
+                          />
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            disabled={!commentInputs[post.id]?.trim() || commentSubmitting === post.id}
+                            onClick={() => handleCommentSubmit(post.id)}
+                          >
+                            {commentSubmitting === post.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Send className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Comments List */}
+                      <div className="space-y-3">
+                        {postComments[post.id]?.map((comment) => (
+                          <div key={comment.id} className="flex gap-3">
+                            <div className={`w-8 h-8 shrink-0 rounded-full ${getAvatarColor(comment.author.fullName)} flex items-center justify-center text-white text-xs font-medium`}>
+                              {getInitials(comment.author.fullName)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="bg-surface-50 dark:bg-surface-800 rounded-lg px-3 py-2">
+                                <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                                  {comment.author.fullName}
+                                </p>
+                                <p className="text-sm text-surface-700 dark:text-surface-300 mt-1">
+                                  {comment.content}
+                                </p>
+                              </div>
+                              <p className="text-xs text-surface-400 mt-1 ml-3">
+                                {formatTimeAgo(comment.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {postComments[post.id]?.length === 0 && (
+                          <p className="text-sm text-surface-400 text-center py-2">
+                            No comments yet. Be the first to comment!
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

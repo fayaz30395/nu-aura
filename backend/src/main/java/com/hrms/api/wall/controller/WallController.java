@@ -21,7 +21,7 @@ import static com.hrms.common.security.Permission.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/wall")
+@RequestMapping("/api/v1/wall")
 @Tag(name = "Organization Wall", description = "APIs for managing organization wall posts, polls, and praise")
 public class WallController {
 

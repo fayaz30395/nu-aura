@@ -4,7 +4,7 @@ import com.hrms.api.user.dto.NotificationPreferencesResponse;
 import com.hrms.api.user.dto.UpdateNotificationPreferencesRequest;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.user.model.UserNotificationPreferences;
-import com.hrms.domain.user.repository.UserNotificationPreferencesRepository;
+import com.hrms.infrastructure.user.repository.UserNotificationPreferencesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

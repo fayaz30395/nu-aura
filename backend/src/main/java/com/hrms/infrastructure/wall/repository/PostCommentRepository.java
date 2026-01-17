@@ -1,4 +1,4 @@
-package com.hrms.domain.wall.repository;
+package com.hrms.infrastructure.wall.repository;
 
 import com.hrms.domain.wall.model.PostComment;
 import org.springframework.data.domain.Page;
