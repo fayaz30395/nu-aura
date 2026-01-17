@@ -61,9 +61,12 @@ export interface GeneratedLetter {
   referenceNumber: string;
   templateId: string;
   templateName?: string;
-  employeeId: string;
+  employeeId?: string;
   employeeName?: string;
   employeeEmail?: string;
+  candidateId?: string;
+  candidateName?: string;
+  candidateEmail?: string;
   category: LetterCategory;
   categoryDisplayName?: string;
   letterTitle: string;
@@ -122,6 +125,21 @@ export interface GenerateLetterRequest {
   expiryDate?: string;
   additionalNotes?: string;
   customPlaceholderValues?: Record<string, string>;
+}
+
+export interface GenerateOfferLetterRequest {
+  templateId: string;
+  candidateId: string;
+  letterTitle?: string;
+  offeredCtc: number;
+  offeredDesignation: string;
+  proposedJoiningDate: string;
+  letterDate?: string;
+  expiryDate?: string;
+  customPlaceholderValues?: Record<string, string>;
+  additionalNotes?: string;
+  submitForApproval?: boolean;
+  sendForESign?: boolean;
 }
 
 export interface LetterTemplatesResponse {

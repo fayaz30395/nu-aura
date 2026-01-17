@@ -10,9 +10,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -75,6 +77,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     long countByTenantId(UUID tenantId);
 
     Long countByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
+
+    // Find employees by status
+    List<Employee> findByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
+
+    // Find employees by department IDs
+    @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.departmentId IN :departmentIds AND e.status = 'ACTIVE'")
+    List<Employee> findByTenantIdAndDepartmentIdIn(@Param("tenantId") UUID tenantId, @Param("departmentIds") Set<UUID> departmentIds);
+
+    // Find employees by location IDs
+    @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.officeLocationId IN :locationIds AND e.status = 'ACTIVE'")
+    List<Employee> findByTenantIdAndOfficeLocationIdIn(@Param("tenantId") UUID tenantId, @Param("locationIds") Set<UUID> locationIds);
 
     Long countByTenantIdAndJoiningDateBetween(UUID tenantId, LocalDate startDate, LocalDate endDate);
 

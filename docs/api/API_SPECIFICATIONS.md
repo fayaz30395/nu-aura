@@ -1369,6 +1369,246 @@ Get workforce composition analytics.
 
 ---
 
+### 9.3 Scheduled Reports
+
+#### 9.3.1 Create Scheduled Report
+
+**POST** `/scheduled-reports`
+
+Create a new scheduled report configuration.
+
+**Required Permission:** `REPORT_CREATE`
+
+##### Request
+```json
+{
+  "scheduleName": "Weekly Attendance Report",
+  "reportType": "ATTENDANCE",
+  "reportDefinitionId": "550e8400-e29b-41d4-a716-446655440001",
+  "frequency": "WEEKLY",
+  "dayOfWeek": 1,
+  "dayOfMonth": null,
+  "timeOfDay": "09:00:00",
+  "recipients": ["hr@company.com", "manager@company.com"],
+  "departmentId": "550e8400-e29b-41d4-a716-446655440010",
+  "status": "ACTIVE",
+  "exportFormat": "EXCEL",
+  "isActive": true
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| scheduleName | string | Yes | Name of the scheduled report |
+| reportType | string | Yes | Type: ATTENDANCE, LEAVE, PAYROLL, PERFORMANCE, ANALYTICS, etc. |
+| reportDefinitionId | UUID | No | Explicit report definition ID (if not provided, looked up from reportType) |
+| frequency | enum | Yes | DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY |
+| dayOfWeek | int | No | 1-7 (Monday-Sunday) for WEEKLY frequency |
+| dayOfMonth | int | No | 1-31 for MONTHLY frequency |
+| timeOfDay | time | Yes | Time to execute (HH:mm:ss) |
+| recipients | array | Yes | List of email addresses to receive report |
+| departmentId | UUID | No | Filter by department |
+| status | string | No | Filter status for report |
+| exportFormat | string | No | EXCEL, PDF, CSV (default: EXCEL) |
+| isActive | boolean | No | Whether schedule is active (default: true) |
+
+##### Response (201 Created)
+```json
+{
+  "status": "SUCCESS",
+  "code": 201,
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440099",
+    "scheduleName": "Weekly Attendance Report",
+    "reportType": "ATTENDANCE",
+    "frequency": "WEEKLY",
+    "dayOfWeek": 1,
+    "dayOfMonth": null,
+    "timeOfDay": "09:00:00",
+    "recipients": ["hr@company.com", "manager@company.com"],
+    "isActive": true,
+    "lastRunAt": null,
+    "nextRunAt": "2026-01-20T09:00:00",
+    "createdAt": "2026-01-17T10:30:00",
+    "createdByName": "Admin User",
+    "departmentId": "550e8400-e29b-41d4-a716-446655440010",
+    "departmentName": "Engineering",
+    "status": "ACTIVE",
+    "exportFormat": "EXCEL"
+  }
+}
+```
+
+---
+
+#### 9.3.2 Update Scheduled Report
+
+**PUT** `/scheduled-reports/{id}`
+
+Update an existing scheduled report configuration.
+
+**Required Permission:** `REPORT_CREATE`
+
+##### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | UUID | Scheduled report ID |
+
+##### Request
+Same as create request.
+
+##### Response (200 OK)
+Same as create response.
+
+---
+
+#### 9.3.3 Get Scheduled Report by ID
+
+**GET** `/scheduled-reports/{id}`
+
+Retrieve a specific scheduled report.
+
+**Required Permission:** `REPORT_VIEW`
+
+##### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | UUID | Scheduled report ID |
+
+##### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440099",
+    "scheduleName": "Weekly Attendance Report",
+    "reportType": "ATTENDANCE",
+    "frequency": "WEEKLY",
+    "dayOfWeek": 1,
+    "dayOfMonth": null,
+    "timeOfDay": "09:00:00",
+    "recipients": ["hr@company.com"],
+    "isActive": true,
+    "lastRunAt": "2026-01-13T09:00:05",
+    "nextRunAt": "2026-01-20T09:00:00",
+    "createdAt": "2026-01-01T10:30:00",
+    "createdByName": "Admin User",
+    "departmentId": "550e8400-e29b-41d4-a716-446655440010",
+    "departmentName": "Engineering",
+    "exportFormat": "EXCEL"
+  }
+}
+```
+
+---
+
+#### 9.3.4 List All Scheduled Reports
+
+**GET** `/scheduled-reports`
+
+Retrieve paginated list of scheduled reports.
+
+**Required Permission:** `REPORT_VIEW`
+
+##### Query Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| page | int | 0 | Page number (0-indexed) |
+| size | int | 20 | Page size (max 100) |
+| sort | string | createdAt,desc | Sort field and direction |
+
+##### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "content": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440099",
+        "scheduleName": "Weekly Attendance Report",
+        "reportType": "ATTENDANCE",
+        "frequency": "WEEKLY",
+        "isActive": true,
+        "nextRunAt": "2026-01-20T09:00:00"
+      }
+    ],
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 20
+    },
+    "totalElements": 5,
+    "totalPages": 1
+  }
+}
+```
+
+---
+
+#### 9.3.5 Get Active Scheduled Reports
+
+**GET** `/scheduled-reports/active`
+
+Retrieve all active scheduled reports.
+
+**Required Permission:** `REPORT_VIEW`
+
+##### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440099",
+      "scheduleName": "Weekly Attendance Report",
+      "reportType": "ATTENDANCE",
+      "frequency": "WEEKLY",
+      "isActive": true,
+      "nextRunAt": "2026-01-20T09:00:00"
+    }
+  ]
+}
+```
+
+---
+
+#### 9.3.6 Delete Scheduled Report
+
+**DELETE** `/scheduled-reports/{id}`
+
+Delete a scheduled report configuration.
+
+**Required Permission:** `REPORT_CREATE`
+
+##### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | UUID | Scheduled report ID |
+
+##### Response (204 No Content)
+No response body.
+
+---
+
+#### 9.3.7 Toggle Scheduled Report Status
+
+**POST** `/scheduled-reports/{id}/toggle-status`
+
+Toggle active/inactive status of a scheduled report.
+
+**Required Permission:** `REPORT_CREATE`
+
+##### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| id | UUID | Scheduled report ID |
+
+##### Response (200 OK)
+Same as get response with updated `isActive` and `nextRunAt` fields.
+
+**Note:** When reactivating, `nextRunAt` is recalculated based on the current time.
+
+---
+
 ## 10. Common Response Codes
 
 | Code | Status | Description |

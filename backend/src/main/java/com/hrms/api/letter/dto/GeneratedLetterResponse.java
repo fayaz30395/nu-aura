@@ -28,6 +28,11 @@ public class GeneratedLetterResponse {
     private String employeeName;
     private String employeeEmail;
 
+    // For offer letters to candidates
+    private UUID candidateId;
+    private String candidateName;
+    private String candidateEmail;
+
     private LetterCategory category;
     private String categoryDisplayName;
     private String letterTitle;
@@ -75,6 +80,7 @@ public class GeneratedLetterResponse {
                 .referenceNumber(entity.getReferenceNumber())
                 .templateId(entity.getTemplateId())
                 .employeeId(entity.getEmployeeId())
+                .candidateId(entity.getCandidateId())
                 .category(entity.getCategory())
                 .categoryDisplayName(formatCategory(entity.getCategory()))
                 .letterTitle(entity.getLetterTitle())

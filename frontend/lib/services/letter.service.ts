@@ -4,6 +4,7 @@ import {
   GeneratedLetter,
   CreateLetterTemplateRequest,
   GenerateLetterRequest,
+  GenerateOfferLetterRequest,
   LetterTemplatesResponse,
   GeneratedLettersResponse,
   LetterCategory,
@@ -108,6 +109,29 @@ export const letterService = {
     const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/generate`, data, {
       params: { generatedBy },
     });
+    return response.data;
+  },
+
+  // Generate offer letter for candidate
+  generateOfferLetter: async (data: GenerateOfferLetterRequest, generatedBy: string): Promise<GeneratedLetter> => {
+    const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/generate-offer`, data, {
+      params: { generatedBy },
+    });
+    return response.data;
+  },
+
+  // Issue offer letter with e-signature
+  issueOfferLetterWithESign: async (letterId: string, issuerId: string): Promise<GeneratedLetter> => {
+    const response = await apiClient.post<GeneratedLetter>(`${BASE_URL}/${letterId}/issue-with-esign`, null, {
+      params: { issuerId },
+    });
+    return response.data;
+  },
+
+  // Generate PDF for a letter and upload to storage
+  // Must be called before issueOfferLetterWithESign
+  generatePdf: async (letterId: string): Promise<{ letterId: string; pdfUrl: string }> => {
+    const response = await apiClient.post<{ letterId: string; pdfUrl: string }>(`${BASE_URL}/${letterId}/generate-pdf`);
     return response.data;
   },
 

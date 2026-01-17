@@ -32,8 +32,8 @@ public class SignatureApproval {
     @Column(name = "signature_request_id", nullable = false)
     private UUID signatureRequestId;
 
-    @Column(name = "signer_id", nullable = false)
-    private UUID signerId; // Employee ID
+    @Column(name = "signer_id") // Nullable for EXTERNAL signers (candidates)
+    private UUID signerId; // Employee ID - null for external signers
 
     @Column(name = "signer_email", nullable = false, length = 255)
     private String signerEmail;

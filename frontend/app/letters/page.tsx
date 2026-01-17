@@ -21,6 +21,8 @@ import {
   FileCheck,
   FilePlus,
   Files,
+  PenTool,
+  UserPlus,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -33,13 +35,16 @@ import {
   ModalFooter,
 } from '@/components/ui';
 import { letterService } from '@/lib/services/letter.service';
+import { recruitmentService } from '@/lib/services/recruitment.service';
 import {
   LetterTemplate,
   GeneratedLetter,
   GenerateLetterRequest,
+  GenerateOfferLetterRequest,
   LetterCategory,
   LetterStatus,
 } from '@/lib/types/letter';
+import { Candidate } from '@/lib/types/recruitment';
 
 const getCategoryLabel = (category: LetterCategory) => {
   const labels: Record<LetterCategory, string> = {
@@ -123,10 +128,12 @@ export default function LettersPage() {
 
   // Modal states
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showOfferLetterModal, setShowOfferLetterModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState<GeneratedLetter | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<LetterTemplate | null>(null);
   const [saving, setSaving] = useState(false);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
 
   // Form state
   const [formData, setFormData] = useState<GenerateLetterRequest>({
@@ -137,6 +144,21 @@ export default function LettersPage() {
     effectiveDate: '',
     expiryDate: '',
     additionalNotes: '',
+  });
+
+  // Offer letter form state
+  const [offerFormData, setOfferFormData] = useState<GenerateOfferLetterRequest>({
+    templateId: '',
+    candidateId: '',
+    letterTitle: '',
+    offeredCtc: 0,
+    offeredDesignation: '',
+    proposedJoiningDate: '',
+    letterDate: new Date().toISOString().split('T')[0],
+    expiryDate: '',
+    additionalNotes: '',
+    submitForApproval: false,
+    sendForESign: false,
   });
 
   const fetchLetters = useCallback(async () => {
@@ -184,10 +206,24 @@ export default function LettersPage() {
     }
   }, []);
 
+  const fetchCandidates = useCallback(async () => {
+    try {
+      const response = await recruitmentService.getAllCandidates(0, 100);
+      // Filter to only show SELECTED candidates for offer letters
+      const eligibleCandidates = response.content.filter(
+        (c) => c.status === 'SELECTED' || c.status === 'OFFER_EXTENDED'
+      );
+      setCandidates(eligibleCandidates);
+    } catch (err: any) {
+      console.error('Error fetching candidates:', err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchLetters();
     fetchTemplates();
-  }, [fetchLetters, fetchTemplates]);
+    fetchCandidates();
+  }, [fetchLetters, fetchTemplates, fetchCandidates]);
 
   const resetForm = () => {
     setFormData({
@@ -202,9 +238,31 @@ export default function LettersPage() {
     setSelectedTemplate(null);
   };
 
+  const resetOfferForm = () => {
+    setOfferFormData({
+      templateId: '',
+      candidateId: '',
+      letterTitle: '',
+      offeredCtc: 0,
+      offeredDesignation: '',
+      proposedJoiningDate: '',
+      letterDate: new Date().toISOString().split('T')[0],
+      expiryDate: '',
+      additionalNotes: '',
+      submitForApproval: false,
+      sendForESign: false,
+    });
+    setSelectedTemplate(null);
+  };
+
   const handleOpenGenerateModal = () => {
     resetForm();
     setShowGenerateModal(true);
+  };
+
+  const handleOpenOfferLetterModal = () => {
+    resetOfferForm();
+    setShowOfferLetterModal(true);
   };
 
   const handleViewDetails = (letter: GeneratedLetter) => {
@@ -216,6 +274,26 @@ export default function LettersPage() {
     const template = templates.find((t) => t.id === templateId);
     setSelectedTemplate(template || null);
     setFormData({ ...formData, templateId });
+  };
+
+  const handleOfferTemplateSelect = (templateId: string) => {
+    const template = templates.find((t) => t.id === templateId);
+    setSelectedTemplate(template || null);
+    setOfferFormData({ ...offerFormData, templateId });
+  };
+
+  const handleCandidateSelect = (candidateId: string) => {
+    const candidate = candidates.find((c) => c.id === candidateId);
+    if (candidate) {
+      setOfferFormData({
+        ...offerFormData,
+        candidateId,
+        offeredDesignation: candidate.currentDesignation || '',
+        offeredCtc: candidate.expectedCtc || 0,
+      });
+    } else {
+      setOfferFormData({ ...offerFormData, candidateId });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -230,6 +308,23 @@ export default function LettersPage() {
     } catch (err: any) {
       console.error('Error generating letter:', err);
       setError(err.response?.data?.message || 'Failed to generate letter');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleOfferLetterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await letterService.generateOfferLetter(offerFormData, 'current-user-id');
+      setShowOfferLetterModal(false);
+      resetOfferForm();
+      fetchLetters();
+      fetchCandidates();
+    } catch (err: any) {
+      console.error('Error generating offer letter:', err);
+      setError(err.response?.data?.message || 'Failed to generate offer letter');
     } finally {
       setSaving(false);
     }
@@ -262,6 +357,16 @@ export default function LettersPage() {
     } catch (err: any) {
       console.error('Error issuing letter:', err);
       setError(err.response?.data?.message || 'Failed to issue letter');
+    }
+  };
+
+  const handleIssueWithESign = async (letter: GeneratedLetter) => {
+    try {
+      await letterService.issueOfferLetterWithESign(letter.id, 'current-user-id');
+      fetchLetters();
+    } catch (err: any) {
+      console.error('Error issuing letter with e-sign:', err);
+      setError(err.response?.data?.message || 'Failed to issue letter with e-signature');
     }
   };
 
@@ -312,10 +417,16 @@ export default function LettersPage() {
               Generate and manage employee letters
             </p>
           </div>
-          <Button onClick={handleOpenGenerateModal}>
-            <Plus className="h-4 w-4 mr-2" />
-            Generate Letter
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleOpenOfferLetterModal}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Generate Offer Letter
+            </Button>
+            <Button onClick={handleOpenGenerateModal}>
+              <Plus className="h-4 w-4 mr-2" />
+              Generate Letter
+            </Button>
+          </div>
         </div>
 
         {/* Error Alert */}
@@ -496,12 +607,21 @@ export default function LettersPage() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
-                                <div className="rounded-full bg-surface-200 dark:bg-surface-700 p-1.5">
-                                  <User className="h-4 w-4 text-surface-600 dark:text-surface-400" />
+                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-teal-100 dark:bg-teal-900' : 'bg-surface-200 dark:bg-surface-700'}`}>
+                                  {letter.candidateId ? (
+                                    <UserPlus className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+                                  ) : (
+                                    <User className="h-4 w-4 text-surface-600 dark:text-surface-400" />
+                                  )}
                                 </div>
-                                <span className="text-sm text-surface-600 dark:text-surface-400">
-                                  {letter.employeeName || 'Employee'}
-                                </span>
+                                <div>
+                                  <span className="text-sm text-surface-600 dark:text-surface-400">
+                                    {letter.candidateName || letter.employeeName || 'N/A'}
+                                  </span>
+                                  {letter.candidateId && (
+                                    <p className="text-xs text-teal-600 dark:text-teal-400">Candidate</p>
+                                  )}
+                                </div>
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
@@ -551,13 +671,24 @@ export default function LettersPage() {
                                     </button>
                                   )}
                                   {letter.status === LetterStatus.APPROVED && (
-                                    <button
-                                      onClick={() => handleIssueLetter(letter)}
-                                      className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2"
-                                    >
-                                      <FileCheck className="h-4 w-4" />
-                                      Issue Letter
-                                    </button>
+                                    <>
+                                      <button
+                                        onClick={() => handleIssueLetter(letter)}
+                                        className="w-full px-3 py-2 text-left text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2"
+                                      >
+                                        <FileCheck className="h-4 w-4" />
+                                        Issue Letter
+                                      </button>
+                                      {letter.candidateId && letter.category === LetterCategory.OFFER && (
+                                        <button
+                                          onClick={() => handleIssueWithESign(letter)}
+                                          className="w-full px-3 py-2 text-left text-sm text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 flex items-center gap-2"
+                                        >
+                                          <PenTool className="h-4 w-4" />
+                                          Issue with E-Sign
+                                        </button>
+                                      )}
+                                    </>
                                   )}
                                   {letter.status === LetterStatus.ISSUED && letter.pdfUrl && (
                                     <a
@@ -943,6 +1074,196 @@ export default function LettersPage() {
               </Button>
             )}
           </ModalFooter>
+        </Modal>
+
+        {/* Offer Letter Modal */}
+        <Modal isOpen={showOfferLetterModal} onClose={() => setShowOfferLetterModal(false)} size="lg">
+          <ModalHeader>
+            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+              Generate Offer Letter
+            </h2>
+          </ModalHeader>
+          <form onSubmit={handleOfferLetterSubmit}>
+            <ModalBody>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Template *
+                  </label>
+                  <select
+                    required
+                    value={offerFormData.templateId}
+                    onChange={(e) => handleOfferTemplateSelect(e.target.value)}
+                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">Select an offer letter template</option>
+                    {templates
+                      .filter((t) => t.category === LetterCategory.OFFER)
+                      .map((template) => (
+                        <option key={template.id} value={template.id}>
+                          {template.name}
+                        </option>
+                      ))}
+                  </select>
+                  {selectedTemplate && (
+                    <p className="mt-1 text-xs text-surface-500">{selectedTemplate.description}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Candidate *
+                  </label>
+                  <select
+                    required
+                    value={offerFormData.candidateId}
+                    onChange={(e) => handleCandidateSelect(e.target.value)}
+                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">Select a candidate</option>
+                    {candidates.map((candidate) => (
+                      <option key={candidate.id} value={candidate.id}>
+                        {candidate.fullName} - {candidate.jobTitle || 'N/A'} ({candidate.status.replace(/_/g, ' ')})
+                      </option>
+                    ))}
+                  </select>
+                  {candidates.length === 0 && (
+                    <p className="mt-1 text-xs text-amber-600">No eligible candidates. Candidates must be in SELECTED status.</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Letter Title
+                  </label>
+                  <input
+                    type="text"
+                    value={offerFormData.letterTitle}
+                    onChange={(e) => setOfferFormData({ ...offerFormData, letterTitle: e.target.value })}
+                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    placeholder="Offer Letter (optional)"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      Offered Designation *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={offerFormData.offeredDesignation}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, offeredDesignation: e.target.value })}
+                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="e.g., Senior Software Engineer"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      Offered CTC (Annual) *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={offerFormData.offeredCtc || ''}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, offeredCtc: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      placeholder="e.g., 1500000"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      Proposed Joining Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={offerFormData.proposedJoiningDate}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, proposedJoiningDate: e.target.value })}
+                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      Letter Date
+                    </label>
+                    <input
+                      type="date"
+                      value={offerFormData.letterDate}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, letterDate: e.target.value })}
+                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Offer Expiry Date
+                  </label>
+                  <input
+                    type="date"
+                    value={offerFormData.expiryDate}
+                    onChange={(e) => setOfferFormData({ ...offerFormData, expiryDate: e.target.value })}
+                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Additional Notes
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={offerFormData.additionalNotes}
+                    onChange={(e) => setOfferFormData({ ...offerFormData, additionalNotes: e.target.value })}
+                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    placeholder="Any additional notes or special conditions..."
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={offerFormData.submitForApproval}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, submitForApproval: e.target.checked })}
+                      className="rounded border-surface-300 dark:border-surface-600 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-surface-700 dark:text-surface-300">Submit for approval</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={offerFormData.sendForESign}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, sendForESign: e.target.checked })}
+                      className="rounded border-surface-300 dark:border-surface-600 text-primary-600 focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-surface-700 dark:text-surface-300">Send for e-signature</span>
+                  </label>
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="outline" type="button" onClick={() => setShowOfferLetterModal(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  'Generate Offer Letter'
+                )}
+              </Button>
+            </ModalFooter>
+          </form>
         </Modal>
       </div>
     </AppLayout>

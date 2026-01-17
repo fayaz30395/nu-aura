@@ -26,4 +26,8 @@ public class ReviewCycleResponse {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Activation metadata (populated when activating a cycle)
+    private Integer employeesInScope;
+    private Integer reviewsCreated;
 }

@@ -8,6 +8,8 @@ import {
   CreateInterviewRequest,
   Page,
   JobStatus,
+  AcceptOfferRequest,
+  DeclineOfferRequest,
 } from '../types/recruitment';
 
 class RecruitmentService {
@@ -75,6 +77,24 @@ class RecruitmentService {
 
   async deleteCandidate(id: string): Promise<void> {
     await apiClient.delete(`/recruitment/candidates/${id}`);
+  }
+
+  // ==================== Offer Response Methods ====================
+
+  async acceptOffer(candidateId: string, data?: AcceptOfferRequest): Promise<Candidate> {
+    const response = await apiClient.post<Candidate>(
+      `/recruitment/candidates/${candidateId}/accept-offer`,
+      data || {}
+    );
+    return response.data;
+  }
+
+  async declineOffer(candidateId: string, data?: DeclineOfferRequest): Promise<Candidate> {
+    const response = await apiClient.post<Candidate>(
+      `/recruitment/candidates/${candidateId}/decline-offer`,
+      data || {}
+    );
+    return response.data;
   }
 
   // ==================== Interview Methods ====================

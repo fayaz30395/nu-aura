@@ -1,10 +1,12 @@
 package com.hrms.api.performance;
 
+import com.hrms.application.performance.dto.ActivateCycleRequest;
 import com.hrms.application.performance.dto.ReviewCycleRequest;
 import com.hrms.application.performance.dto.ReviewCycleResponse;
 import com.hrms.application.performance.service.ReviewCycleService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/review-cycles")
+@Slf4j
 public class ReviewCycleController {
 
     @Autowired
@@ -73,6 +76,17 @@ public class ReviewCycleController {
     @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> completeCycle(@PathVariable UUID id) {
         ReviewCycleResponse response = reviewCycleService.completeCycle(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/activate")
+    @RequiresPermission(Permission.REVIEW_APPROVE)
+    public ResponseEntity<ReviewCycleResponse> activateCycle(
+            @PathVariable UUID id,
+            @RequestBody ActivateCycleRequest request
+    ) {
+        log.info("Activating review cycle {} with scope {}", id, request.getScopeType());
+        ReviewCycleResponse response = reviewCycleService.activateCycle(id, request);
         return ResponseEntity.ok(response);
     }
 }

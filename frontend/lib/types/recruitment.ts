@@ -86,6 +86,14 @@ export interface Candidate {
   notes?: string;
   assignedRecruiterId?: string;
   assignedRecruiterName?: string;
+  offeredCtc?: number;
+  offeredDesignation?: string;
+  proposedJoiningDate?: string;
+  offerLetterId?: string;
+  offerExtendedDate?: string;
+  offerAcceptedDate?: string;
+  offerDeclinedDate?: string;
+  offerDeclineReason?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -163,4 +171,23 @@ export interface Page<T> {
   first: boolean;
   last: boolean;
   empty: boolean;
+}
+
+export type OfferResponse = 'ACCEPTED' | 'DECLINED';
+
+export interface OfferResponseRequest {
+  candidateId: string;
+  response: OfferResponse;
+  declineReason?: string;
+  confirmedJoiningDate?: string;
+  signatureData?: string;
+}
+
+export interface AcceptOfferRequest {
+  confirmedJoiningDate?: string;
+  signatureData?: string;
+}
+
+export interface DeclineOfferRequest {
+  declineReason?: string;
 }

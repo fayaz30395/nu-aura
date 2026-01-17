@@ -21,6 +21,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID>, Jpa
     List<Candidate> findByTenantIdAndCurrentStage(UUID tenantId, Candidate.RecruitmentStage stage);
     
     boolean existsByTenantIdAndEmail(UUID tenantId, String email);
-    
+
     boolean existsByTenantIdAndCandidateCode(UUID tenantId, String candidateCode);
+
+    Optional<Candidate> findByEmailAndTenantId(String email, UUID tenantId);
 }

@@ -164,4 +164,10 @@
     <!-- Generic content view tracking (for announcements, posts, documents, etc.) -->
     <include file="db/changelog/changes/119-create-content-views-table.xml"/>
 
+    <!-- Offer letter support: Add offer fields to candidates and candidate_id to generated_letters -->
+    <include file="db/changelog/changes/120-add-offer-fields-to-candidates.xml"/>
+
+    <!-- Allow nullable signer_id for external signers (candidates) -->
+    <include file="db/changelog/changes/121-allow-nullable-signer-id.xml"/>
+
 </databaseChangeLog>

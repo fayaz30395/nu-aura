@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/Button';
 import { recruitmentService } from '@/lib/services/recruitment.service';
 import { employeeService } from '@/lib/services/employee.service';
 import { Candidate, CreateCandidateRequest, CandidateStatus, CandidateSource, RecruitmentStage, JobOpening } from '@/lib/types/recruitment';
-import { Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X, Eye, ChevronRight, DollarSign } from 'lucide-react';
+import { Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X, Eye, ChevronRight, DollarSign, Send, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { letterService } from '@/lib/services/letter.service';
+import { GenerateOfferLetterRequest, LetterTemplate, LetterCategory } from '@/lib/types/letter';
 
 // Loading fallback
 function CandidatesPageLoading() {
@@ -51,6 +53,24 @@ function CandidatesPage() {
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const [selectedJobFilter, setSelectedJobFilter] = useState<string>(jobIdFilter || '');
 
+  // Offer letter states
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [candidateForOffer, setCandidateForOffer] = useState<Candidate | null>(null);
+  const [templates, setTemplates] = useState<LetterTemplate[]>([]);
+  const [offerLoading, setOfferLoading] = useState(false);
+  const [declineReason, setDeclineReason] = useState('');
+  const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
+  const [offerFormData, setOfferFormData] = useState<GenerateOfferLetterRequest>({
+    templateId: '',
+    candidateId: '',
+    offeredCtc: 0,
+    offeredDesignation: '',
+    proposedJoiningDate: '',
+    submitForApproval: true,
+  });
+
   const [formData, setFormData] = useState<CreateCandidateRequest>({
     candidateCode: '',
     jobOpeningId: jobIdFilter || '',
@@ -78,7 +98,17 @@ function CandidatesPage() {
     loadCandidates();
     loadJobOpenings();
     loadRecruiters();
+    loadOfferTemplates();
   }, [statusFilter, selectedJobFilter]);
+
+  const loadOfferTemplates = async () => {
+    try {
+      const activeTemplates = await letterService.getActiveTemplates();
+      setTemplates(activeTemplates.filter(t => t.category === LetterCategory.OFFER));
+    } catch (err) {
+      console.error('Error loading templates:', err);
+    }
+  };
 
   const loadCandidates = async () => {
     try {
@@ -202,6 +232,84 @@ function CandidatesPage() {
       notes: '',
       assignedRecruiterId: '',
     });
+  };
+
+  // Offer letter handlers
+  const handleOpenOfferModal = (candidate: Candidate) => {
+    setCandidateForOffer(candidate);
+    setOfferFormData({
+      templateId: templates.length > 0 ? templates[0].id : '',
+      candidateId: candidate.id,
+      offeredCtc: candidate.expectedCtc || 0,
+      offeredDesignation: candidate.currentDesignation || '',
+      proposedJoiningDate: '',
+      submitForApproval: true,
+    });
+    setShowOfferModal(true);
+  };
+
+  const handleGenerateOffer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!candidateForOffer) return;
+    setOfferLoading(true);
+    try {
+      await letterService.generateOfferLetter(offerFormData, 'current-user-id');
+      setShowOfferModal(false);
+      setCandidateForOffer(null);
+      loadCandidates();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to generate offer letter');
+    } finally {
+      setOfferLoading(false);
+    }
+  };
+
+  const handleOpenAcceptModal = (candidate: Candidate) => {
+    setCandidateForOffer(candidate);
+    setConfirmedJoiningDate(candidate.proposedJoiningDate || '');
+    setShowAcceptModal(true);
+  };
+
+  const handleAcceptOffer = async () => {
+    if (!candidateForOffer) return;
+    setOfferLoading(true);
+    try {
+      await recruitmentService.acceptOffer(candidateForOffer.id, {
+        confirmedJoiningDate: confirmedJoiningDate || undefined,
+      });
+      setShowAcceptModal(false);
+      setCandidateForOffer(null);
+      setConfirmedJoiningDate('');
+      loadCandidates();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to accept offer');
+    } finally {
+      setOfferLoading(false);
+    }
+  };
+
+  const handleOpenDeclineModal = (candidate: Candidate) => {
+    setCandidateForOffer(candidate);
+    setDeclineReason('');
+    setShowDeclineModal(true);
+  };
+
+  const handleDeclineOffer = async () => {
+    if (!candidateForOffer) return;
+    setOfferLoading(true);
+    try {
+      await recruitmentService.declineOffer(candidateForOffer.id, {
+        declineReason: declineReason || undefined,
+      });
+      setShowDeclineModal(false);
+      setCandidateForOffer(null);
+      setDeclineReason('');
+      loadCandidates();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to decline offer');
+    } finally {
+      setOfferLoading(false);
+    }
   };
 
   const getStatusColor = (status: CandidateStatus) => {
@@ -449,6 +557,33 @@ function CandidatesPage() {
                             >
                               <Calendar className="h-4 w-4" />
                             </button>
+                            {candidate.status === 'SELECTED' && (
+                              <button
+                                onClick={() => handleOpenOfferModal(candidate)}
+                                className="p-2 text-surface-500 hover:text-teal-600 dark:text-surface-400 dark:hover:text-teal-400 transition-colors"
+                                title="Generate Offer Letter"
+                              >
+                                <Send className="h-4 w-4" />
+                              </button>
+                            )}
+                            {candidate.status === 'OFFER_EXTENDED' && (
+                              <>
+                                <button
+                                  onClick={() => handleOpenAcceptModal(candidate)}
+                                  className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
+                                  title="Accept Offer"
+                                >
+                                  <CheckCircle className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleOpenDeclineModal(candidate)}
+                                  className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                                  title="Decline Offer"
+                                >
+                                  <XCircle className="h-4 w-4" />
+                                </button>
+                              </>
+                            )}
                             <button
                               onClick={() => handleEdit(candidate)}
                               className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
@@ -885,6 +1020,160 @@ function CandidatesPage() {
                 </Button>
                 <Button variant="destructive" onClick={handleDelete} className="flex-1">
                   Delete
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Generate Offer Letter Modal */}
+        {showOfferModal && candidateForOffer && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+                    Generate Offer Letter
+                  </h2>
+                  <button onClick={() => setShowOfferModal(false)} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="mb-4 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+                  <p className="text-sm text-teal-700 dark:text-teal-300">
+                    Creating offer letter for <strong>{candidateForOffer.fullName}</strong>
+                  </p>
+                </div>
+
+                <form onSubmit={handleGenerateOffer} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Template *</label>
+                    <select
+                      required
+                      value={offerFormData.templateId}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, templateId: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    >
+                      <option value="">Select Template</option>
+                      {templates.map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered Designation *</label>
+                      <input
+                        type="text"
+                        required
+                        value={offerFormData.offeredDesignation}
+                        onChange={(e) => setOfferFormData({ ...offerFormData, offeredDesignation: e.target.value })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered CTC *</label>
+                      <input
+                        type="number"
+                        required
+                        min="0"
+                        value={offerFormData.offeredCtc || ''}
+                        onChange={(e) => setOfferFormData({ ...offerFormData, offeredCtc: parseFloat(e.target.value) || 0 })}
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Proposed Joining Date *</label>
+                    <input
+                      type="date"
+                      required
+                      value={offerFormData.proposedJoiningDate}
+                      onChange={(e) => setOfferFormData({ ...offerFormData, proposedJoiningDate: e.target.value })}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <Button type="button" variant="outline" onClick={() => setShowOfferModal(false)} className="flex-1">
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={offerLoading} className="flex-1">
+                      {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating...</> : 'Generate Offer'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Accept Offer Modal */}
+        {showAcceptModal && candidateForOffer && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="flex items-center mb-4">
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Accept Offer</h3>
+              </div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-4">
+                Mark offer as accepted for <strong className="text-surface-700 dark:text-surface-300">{candidateForOffer.fullName}</strong>?
+              </p>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Confirmed Joining Date</label>
+                <input
+                  type="date"
+                  value={confirmedJoiningDate}
+                  onChange={(e) => setConfirmedJoiningDate(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => { setShowAcceptModal(false); setCandidateForOffer(null); }} className="flex-1">
+                  Cancel
+                </Button>
+                <Button onClick={handleAcceptOffer} disabled={offerLoading} className="flex-1 bg-green-600 hover:bg-green-700">
+                  {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Processing...</> : 'Accept Offer'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Decline Offer Modal */}
+        {showDeclineModal && candidateForOffer && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="flex items-center mb-4">
+                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Decline Offer</h3>
+              </div>
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-4">
+                Mark offer as declined for <strong className="text-surface-700 dark:text-surface-300">{candidateForOffer.fullName}</strong>?
+              </p>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Decline Reason</label>
+                <textarea
+                  rows={3}
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value)}
+                  placeholder="Optional: Enter reason for declining..."
+                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => { setShowDeclineModal(false); setCandidateForOffer(null); }} className="flex-1">
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeclineOffer} disabled={offerLoading} className="flex-1">
+                  {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Processing...</> : 'Decline Offer'}
                 </Button>
               </div>
             </div>
