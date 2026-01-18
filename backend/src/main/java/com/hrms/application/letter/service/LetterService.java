@@ -451,9 +451,13 @@ public class LetterService {
      * Candidate is an EXTERNAL signer (not an employee), so signerId is null.
      */
     private SignatureRequestResponse createOfferLetterSignatureRequest(GeneratedLetter letter, Candidate candidate, UUID createdBy) {
-        // Validate that PDF URL exists before creating signature request
+        // Auto-generate PDF if it doesn't exist yet
         if (letter.getPdfUrl() == null || letter.getPdfUrl().isBlank()) {
-            throw new BusinessException("Offer letter PDF must be generated before sending for e-signature. Please generate the PDF first.");
+            log.info("PDF not found for letter {}. Auto-generating PDF before sending for e-signature.", letter.getId());
+            String pdfUrl = letterPdfService.generatePdf(letter.getId());
+            letter.setPdfUrl(pdfUrl);
+            letter = letterRepository.save(letter);
+            log.info("PDF auto-generated for letter {}: {}", letter.getId(), pdfUrl);
         }
 
         // Build signature request - signerId is null for EXTERNAL (candidate) signers

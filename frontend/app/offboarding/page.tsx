@@ -33,8 +33,13 @@ import {
 } from '@/components/ui';
 import { exitService } from '@/lib/services/exit.service';
 import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/exit';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
-const getExitTypeLabel = (type: ExitType) => {
+const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
+  if (!type) {
+    return 'Unknown';
+  }
   switch (type) {
     case ExitType.RESIGNATION:
       return 'Resignation';
@@ -47,11 +52,14 @@ const getExitTypeLabel = (type: ExitType) => {
     case ExitType.ABSCONDING:
       return 'Absconding';
     default:
-      return type;
+      return String(type);
   }
 };
 
-const getStatusColor = (status: ExitStatus) => {
+const getStatusColor = (status: ExitStatus | string | null | undefined) => {
+  if (!status) {
+    return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+  }
   switch (status) {
     case ExitStatus.INITIATED:
       return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
@@ -68,7 +76,10 @@ const getStatusColor = (status: ExitStatus) => {
   }
 };
 
-const getExitTypeColor = (type: ExitType) => {
+const getExitTypeColor = (type: ExitType | string | null | undefined) => {
+  if (!type) {
+    return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+  }
   switch (type) {
     case ExitType.RESIGNATION:
       return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
@@ -87,11 +98,18 @@ const getExitTypeColor = (type: ExitType) => {
 
 const formatDate = (date: string | undefined) => {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('en-US', {
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return '-';
+  return parsedDate.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   });
+};
+
+const formatStatusLabel = (status: ExitStatus | string | null | undefined) => {
+  if (!status) return 'Unknown';
+  return String(status).replace(/_/g, ' ');
 };
 
 const formatCurrency = (amount: number | undefined) => {
@@ -105,6 +123,8 @@ const formatCurrency = (amount: number | undefined) => {
 };
 
 export default function OffboardingPage() {
+  const router = useRouter();
+  const { isAuthenticated, user, hasHydrated } = useAuth();
   const [exitProcesses, setExitProcesses] = useState<ExitProcess[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -140,11 +160,20 @@ export default function OffboardingPage() {
   });
 
   const fetchExitProcesses = useCallback(async () => {
+    if (!hasHydrated || !isAuthenticated) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
       const response = await exitService.getAllExitProcesses(currentPage, 20);
-      let filteredProcesses = response.content;
+      const content = Array.isArray((response as any)?.content)
+        ? (response as any).content
+        : Array.isArray(response as any)
+          ? (response as any)
+          : [];
+      let filteredProcesses = content.filter((item: ExitProcess | null | undefined) => Boolean(item));
 
       // Client-side filtering
       if (searchQuery.trim()) {
@@ -164,8 +193,8 @@ export default function OffboardingPage() {
       }
 
       setExitProcesses(filteredProcesses);
-      setTotalElements(response.totalElements);
-      setTotalPages(response.totalPages);
+      setTotalElements(typeof (response as any)?.totalElements === 'number' ? (response as any).totalElements : content.length);
+      setTotalPages(typeof (response as any)?.totalPages === 'number' ? (response as any).totalPages : 1);
     } catch (err: any) {
       console.error('Error fetching exit processes:', err);
       setError(err.response?.data?.message || 'Failed to load exit processes');
@@ -173,11 +202,21 @@ export default function OffboardingPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, statusFilter, typeFilter, currentPage]);
+  }, [searchQuery, statusFilter, typeFilter, currentPage, isAuthenticated, hasHydrated]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      try {
+        router.push('/auth/login');
+      } catch (err) {
+        console.error('Navigation error:', err);
+        window.location.href = '/auth/login';
+      }
+      return;
+    }
     fetchExitProcesses();
-  }, [fetchExitProcesses]);
+  }, [fetchExitProcesses, isAuthenticated, hasHydrated, router]);
 
   const resetForm = () => {
     setFormData({
@@ -500,7 +539,7 @@ export default function OffboardingPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(process.status)}`}>
-                            {process.status.replace('_', ' ')}
+                            {formatStatusLabel(process.status)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
@@ -839,7 +878,7 @@ export default function OffboardingPage() {
               <div className="space-y-6">
                 <div className="flex flex-wrap gap-2">
                   <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(selectedProcess.status)}`}>
-                    {selectedProcess.status.replace('_', ' ')}
+                    {formatStatusLabel(selectedProcess.status)}
                   </span>
                   <span className={`px-3 py-1 text-sm font-medium rounded-full ${getExitTypeColor(selectedProcess.exitType)}`}>
                     {getExitTypeLabel(selectedProcess.exitType)}

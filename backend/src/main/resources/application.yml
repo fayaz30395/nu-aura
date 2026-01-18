@@ -180,6 +180,40 @@ app:
   auth:
     allowed-domain: ${AUTH_ALLOWED_DOMAIN:nulogic.io}
 
+  # API Rate Limiting Configuration (Bucket4j Token Bucket Algorithm)
+  rate-limit:
+    # Authentication endpoints (login, register, etc.)
+    auth:
+      capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}              # Max 10 requests
+      refill-tokens: ${RATE_LIMIT_AUTH_REFILL:10}           # Refill 10 tokens
+      refill-minutes: ${RATE_LIMIT_AUTH_REFILL_MIN:1}       # Every 1 minute
+    # General API endpoints (CRUD operations, queries)
+    api:
+      capacity: ${RATE_LIMIT_API_CAPACITY:100}              # Max 100 requests
+      refill-tokens: ${RATE_LIMIT_API_REFILL:100}           # Refill 100 tokens
+      refill-minutes: ${RATE_LIMIT_API_REFILL_MIN:1}        # Every 1 minute
+    # Export/reporting endpoints (resource-intensive)
+    export:
+      capacity: ${RATE_LIMIT_EXPORT_CAPACITY:5}             # Max 5 requests
+      refill-tokens: ${RATE_LIMIT_EXPORT_REFILL:5}          # Refill 5 tokens
+      refill-minutes: ${RATE_LIMIT_EXPORT_REFILL_MIN:5}     # Every 5 minutes
+    # Wall/Social feed endpoints (comment, post, react)
+    wall:
+      capacity: ${RATE_LIMIT_WALL_CAPACITY:30}              # Max 30 requests
+      refill-tokens: ${RATE_LIMIT_WALL_REFILL:30}           # Refill 30 tokens
+      refill-minutes: ${RATE_LIMIT_WALL_REFILL_MIN:1}       # Every 1 minute
+
+  # Pagination Configuration
+  pagination:
+    # Maximum page size for any paginated endpoint
+    max-page-size: ${PAGINATION_MAX_SIZE:100}
+    # Default page size if not specified
+    default-page-size: ${PAGINATION_DEFAULT_SIZE:20}
+    # Maximum page size for wall comments
+    wall-comments-max-size: ${PAGINATION_WALL_COMMENTS_MAX:50}
+    # Maximum page size for wall posts
+    wall-posts-max-size: ${PAGINATION_WALL_POSTS_MAX:50}
+
 # AI Configuration for recruitment features
 ai:
   openai:
