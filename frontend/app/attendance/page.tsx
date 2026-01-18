@@ -20,6 +20,10 @@ import {
   History,
   TrendingUp,
   Activity,
+  Coffee,
+  BarChart3,
+  Target,
+  ArrowRight,
 } from 'lucide-react';
 import {
   BarChart,
@@ -297,80 +301,120 @@ export default function AttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 md:p-5 lg:p-6 max-w-[1600px] mx-auto space-y-4">
+        {/* Compact Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Attendance</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
-              Track your daily work hours and check-in status
+            <div className="flex items-center gap-2 mb-1">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Attendance</h1>
+            </div>
+            <p className="text-surface-600 dark:text-surface-400 text-xs ml-10">
+              {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </p>
           </div>
-          <div className="text-right">
-            <div className="text-sm font-medium text-surface-500">Current Time</div>
-            <div className="text-xl font-mono font-bold text-surface-900 dark:text-white">
-              {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+
+          {/* Compact Live Clock */}
+          <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-sm border border-surface-200 dark:border-surface-700">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <div className="text-[10px] font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Live Time</div>
+              <div className="text-xl font-mono font-bold text-surface-900 dark:text-white tabular-nums">
+                {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </div>
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-3 text-red-700 dark:text-red-400">
-            <AlertCircle className="h-5 w-5" />
-            <span>{error}</span>
+          <div className="p-3 bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400 shadow-sm">
+            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">Error</p>
+              <p className="text-xs">{error}</p>
+            </div>
           </div>
         )}
 
-        {/* Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Clock & Action Card */}
+        {/* Compact Main Section - Clock In/Out */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Main Attendance Card */}
           <div className="lg:col-span-2">
-            <Card className="h-full bg-gradient-to-br from-indigo-600 to-violet-700 text-white overflow-hidden relative border-0 shadow-xl">
-              <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <Card className="bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 text-white overflow-hidden relative border-0 shadow-lg">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
-              <CardContent className="h-full flex flex-col justify-between p-8 relative z-10">
-                <div className="space-y-1">
-                  <div className="text-indigo-200 font-medium tracking-wide uppercase text-sm">Today</div>
-                  <div className="text-4xl font-bold text-white">
-                    {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              <CardContent className="flex flex-col justify-between p-5 lg:p-6 relative z-10">
+                {/* Compact Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-semibold uppercase tracking-wider">
+                      <div className="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse" />
+                      Today's Shift
+                    </div>
+                    <div className="text-2xl lg:text-3xl font-bold text-white">
+                      {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-4xl lg:text-5xl font-bold font-mono tracking-tight tabular-nums">
+                      {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                    <div className="flex items-center gap-2 text-indigo-100 justify-end mt-1">
+                      <MapPin className="h-3.5 w-3.5" />
+                      <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location pending'}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-8">
-                  <div className="text-center md:text-left">
-                    <div className="text-7xl font-bold font-mono tracking-tighter tabular-nums drop-shadow-lg">
-                      {currentTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                {/* Action Section */}
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-4">
+                    <div>
+                      <div className="text-xs text-indigo-200 mb-0.5">Check In</div>
+                      <div className="text-lg font-bold tabular-nums">
+                        {todayRecord?.checkInTime ? new Date(todayRecord.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                      </div>
                     </div>
-                    <div className="text-indigo-200 mt-2 flex items-center gap-2 justify-center md:justify-start">
-                      <MapPin className="h-4 w-4" />
-                      {todayRecord?.checkInLocation || 'Location Pending'}
-                    </div>
+                    {isCheckedIn && (
+                      <div>
+                        <div className="text-xs text-indigo-200 mb-0.5">Duration</div>
+                        <div className="text-lg font-bold tabular-nums">{formatDuration(currentWorkHours)}</div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="w-full md:w-auto">
+                  {/* Action Button */}
+                  <div>
                     {dayComplete ? (
-                      <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 text-center border border-white/10">
-                        <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-2" />
-                        <h3 className="text-xl font-bold">Shift Complete</h3>
-                        <p className="text-indigo-100">See you tomorrow!</p>
+                      <div className="bg-white/20 backdrop-blur-md rounded-2xl px-5 py-3 text-center border border-white/30">
+                        <CheckCircle className="h-8 w-8 text-emerald-300 mx-auto mb-1" />
+                        <div className="text-sm font-bold">Day Complete!</div>
+                        <div className="text-xs text-indigo-100 mt-0.5">{formatDuration(calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime))} worked</div>
                       </div>
                     ) : !isCheckedIn ? (
                       <Button
                         onClick={handleCheckIn}
                         isLoading={loading}
-                        className="w-full md:w-48 h-16 text-lg bg-white text-indigo-600 hover:bg-white/90 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all rounded-2xl"
+                        className="h-12 px-6 text-base font-semibold bg-white text-indigo-600 hover:bg-white/95 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
-                        <LogIn className="h-6 w-6 mr-2" />
+                        <LogIn className="h-5 w-5 mr-2" />
                         Check In
                       </Button>
                     ) : (
                       <Button
                         onClick={handleCheckOut}
                         isLoading={loading}
-                        className="w-full md:w-48 h-16 text-lg bg-rose-500 text-white hover:bg-rose-600 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all rounded-2xl"
+                        className="h-12 px-6 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
-                        <LogOut className="h-6 w-6 mr-2" />
+                        <LogOut className="h-5 w-5 mr-2" />
                         Check Out
                       </Button>
                     )}
@@ -380,119 +424,210 @@ export default function AttendancePage() {
             </Card>
           </div>
 
-          {/* Today's Stats Cards */}
-          <div className="space-y-4">
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-green-50/50 dark:bg-green-900/10">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Check In</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                    {todayRecord?.checkInTime ? new Date(todayRecord.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
-                  </p>
+          {/* Compact Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
+            {/* Check In Time */}
+            <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
+                    <LogIn className="h-4 w-4 text-white" />
+                  </div>
+                  <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Check In</p>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-green-100 dark:bg-green-800/30 flex items-center justify-center text-green-600 dark:text-green-400">
-                  <LogIn className="h-6 w-6" />
-                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white tabular-nums">
+                  {todayRecord?.checkInTime ? new Date(todayRecord.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                </p>
+                <p className="text-[10px] text-surface-500 dark:text-surface-400 mt-1">
+                  {todayRecord?.checkInTime ? 'Checked in' : 'Not yet'}
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-blue-50/50 dark:bg-blue-900/10">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Work Duration</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                    {formatDuration(currentWorkHours)}
-                  </p>
+            {/* Work Duration */}
+            <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 hover:shadow-lg transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-sm">
+                    <Timer className="h-4 w-4 text-white" />
+                  </div>
+                  <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Duration</p>
                 </div>
-                <div className="h-12 w-12 rounded-xl bg-blue-100 dark:bg-blue-800/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Timer className="h-6 w-6" />
-                </div>
+                <p className="text-2xl font-bold text-surface-900 dark:text-white tabular-nums">
+                  {formatDuration(currentWorkHours)}
+                </p>
+                <p className="text-[10px] text-surface-500 dark:text-surface-400 mt-1">
+                  {isCheckedIn ? 'Working' : 'Not started'}
+                </p>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-shadow bg-purple-50/50 dark:bg-purple-900/10">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Avg Check-in</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white mt-1">
-                    {stats.avgCheckIn}
-                  </p>
-                </div>
-                <div className="h-12 w-12 rounded-xl bg-purple-100 dark:bg-purple-800/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                  <Activity className="h-6 w-6" />
+            {/* Weekly Averages Combined */}
+            <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 hover:shadow-lg transition-shadow col-span-2 lg:col-span-1">
+              <CardContent className="p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
+                        <Activity className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg In</p>
+                    </div>
+                    <p className="text-xl font-bold text-surface-900 dark:text-white tabular-nums">
+                      {stats.avgCheckIn}
+                    </p>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+                        <Target className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg Hrs</p>
+                    </div>
+                    <p className="text-xl font-bold text-surface-900 dark:text-white tabular-nums">
+                      {stats.avgHours}h
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Analytics Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2 border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-indigo-500" />
-                Weekly Hours
-              </CardTitle>
+        {/* Compact Analytics and Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Weekly Chart */}
+          <Card className="lg:col-span-2 border-0 shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="border-b border-surface-200 dark:border-surface-700 pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <BarChart3 className="h-4 w-4 text-white" />
+                  </div>
+                  Weekly Overview
+                </CardTitle>
+                <div className="flex items-center gap-1.5 text-xs text-surface-600 dark:text-surface-400">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Last 7 days
+                </div>
+              </div>
             </CardHeader>
-            <CardContent className="h-80">
+            <CardContent className="pt-4 h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" className="dark:stroke-surface-700" />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748B', fontSize: 12 }}
-                    dy={10}
+                    tick={{ fill: '#9CA3AF', fontSize: 11, fontWeight: 500 }}
+                    dy={8}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#64748B', fontSize: 12 }}
+                    tick={{ fill: '#9CA3AF', fontSize: 11 }}
                   />
                   <Tooltip
-                    cursor={{ fill: '#F1F5F9' }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    cursor={{ fill: '#F3F4F6', opacity: 0.5 }}
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      padding: '8px 12px',
+                      fontSize: '13px'
+                    }}
                   />
-                  <Bar dataKey="hours" radius={[6, 6, 0, 0]}>
+                  <Bar dataKey="hours" radius={[6, 6, 0, 0]} maxBarSize={50}>
                     {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.hours >= 8 ? '#10B981' : entry.isToday ? '#6366F1' : '#F59E0B'} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          entry.hours >= 8
+                            ? '#10B981'
+                            : entry.isToday
+                            ? '#6366F1'
+                            : entry.hours > 0
+                            ? '#F59E0B'
+                            : '#E5E7EB'
+                        }
+                      />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+
+              {/* Legend */}
+              <div className="flex items-center justify-center gap-4 mt-3 text-[10px]">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2.5 w-2.5 rounded bg-emerald-500" />
+                  <span className="text-surface-600 dark:text-surface-400">Full Day (8h+)</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2.5 w-2.5 rounded bg-indigo-500" />
+                  <span className="text-surface-600 dark:text-surface-400">Today</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2.5 w-2.5 rounded bg-amber-500" />
+                  <span className="text-surface-600 dark:text-surface-400">Partial</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          <div className="space-y-4">
-            <Link href="/attendance/my-attendance">
-              <Card className="h-full border-0 shadow-md hover:shadow-xl transition-all cursor-pointer group hover:-translate-y-1">
-                <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-4">
-                  <div className="h-16 w-16 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <History className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+          {/* Quick Actions */}
+          <div className="space-y-3">
+            <Link href="/attendance/my-attendance" className="block group">
+              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                      <History className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-surface-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-surface-900 dark:text-white">View History</h3>
-                    <p className="text-surface-500 text-sm mt-1">Check past attendance logs</p>
-                  </div>
+                  <h3 className="text-base font-bold text-surface-900 dark:text-white mb-0.5">Attendance History</h3>
+                  <p className="text-xs text-surface-600 dark:text-surface-400">View complete records</p>
                 </CardContent>
               </Card>
             </Link>
 
-            <Link href="/attendance/regularization">
-              <Card className="h-full border-0 shadow-md hover:shadow-xl transition-all cursor-pointer group hover:-translate-y-1">
-                <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-4">
-                  <div className="h-16 w-16 rounded-full bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <ClipboardCheck className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+            <Link href="/attendance/regularization" className="block group">
+              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                      <ClipboardCheck className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-surface-400 group-hover:text-orange-600 group-hover:translate-x-1 transition-all" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-surface-900 dark:text-white">Regularize</h3>
-                    <p className="text-surface-500 text-sm mt-1">Fix attendance discrepancies</p>
-                  </div>
+                  <h3 className="text-base font-bold text-surface-900 dark:text-white mb-0.5">Regularization</h3>
+                  <p className="text-xs text-surface-600 dark:text-surface-400">Request corrections</p>
                 </CardContent>
               </Card>
             </Link>
+
+            {/* This Week Info */}
+            <Card className="border-0 shadow-md bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-800 dark:to-gray-800">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Coffee className="h-4 w-4 text-surface-500" />
+                  <h4 className="text-sm font-semibold text-surface-900 dark:text-white">This Week</h4>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-surface-600 dark:text-surface-400">Present Days</span>
+                    <span className="font-bold text-surface-900 dark:text-white">{stats.presentDays}/7</span>
+                  </div>
+                  <div className="h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                      style={{ width: `${(stats.presentDays / 7) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

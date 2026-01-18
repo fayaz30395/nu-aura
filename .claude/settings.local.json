@@ -90,7 +90,11 @@
       "Bash(PGPASSWORD=hrms_pass /opt/homebrew/opt/postgresql@16/bin/psql:*)",
       "Bash(npm cache clean:*)",
       "Bash(git mv:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(tee:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(chmod:*)"
     ]
   }
 }
