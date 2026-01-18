@@ -21,7 +21,7 @@ com/hrms/
 │
 ├── domain/                        # Domain Layer
 │   └── <module>/
-│       └── model/                 # JPA Entities & Domain models
+│       └── [model]/               # JPA Entities & Domain models (optional subfolder)
 │
 ├── infrastructure/                # Infrastructure Layer
 │   └── <module>/
@@ -80,7 +80,7 @@ frontend/
 | API | `com.hrms.api.<module>.controller` | `<Entity>Controller` |
 | API | `com.hrms.api.<module>.dto` | `<Entity>Request`, `<Entity>Response` |
 | Application | `com.hrms.application.<module>.service` | `<Entity>Service` |
-| Domain | `com.hrms.domain.<module>.model` | `<Entity>` (JPA Entity) |
+| Domain | `com.hrms.domain.<module>[.model]` | `<Entity>` (JPA Entity) |
 | Infrastructure | `com.hrms.infrastructure.<module>.repository` | `<Entity>Repository` |
 
 ### Frontend
@@ -91,6 +91,78 @@ frontend/
 | Service | `lib/services/<module>.service.ts` | camelCase export |
 | Types | `lib/types/<module>.ts` | PascalCase interfaces |
 | Components | `components/<feature>/` | PascalCase files |
+
+## Folder Standards
+
+### Backend
+
+**Module Structure (MANDATORY)**:
+
+Every business module MUST follow this exact structure:
+```
+<module>/
+├── api/<module>/
+│   ├── controller/          # REST controllers only
+│   └── dto/                 # Request/Response DTOs
+├── application/<module>/
+│   └── service/             # Business logic services
+├── domain/<module>/         # JPA entities directly here (NO /model subfolder unless >5 entities)
+└── infrastructure/<module>/
+    └── repository/          # Spring Data repositories
+```
+
+**Domain Layer Rules**:
+
+1. **When to use `domain/<module>/` (PREFERRED)**:
+   - Module has 1-5 entities
+   - Entities are cohesive (e.g., Employee, EmployeeSkill)
+   - Example: `domain/employee/Employee.java`, `domain/employee/EmployeeSkill.java`
+
+2. **When to use `domain/<module>/model/`** (ONLY IF NECESSARY):
+   - Module has more than 5 entities
+   - Clear subdomains exist (e.g., payroll has RunCycle, Component, Deduction)
+   - Example: `domain/payroll/model/RunCycle.java`
+
+3. **NEVER DO**:
+   - `domain/<module>/repository/` - Repositories belong in infrastructure
+   - `domain/<module>/service/` - Services belong in application
+   - Mixed approaches (some modules with /model, others without)
+
+**Repository Placement (STRICT)**:
+
+All repositories MUST live in `infrastructure/<module>/repository/`:
+```java
+// CORRECT
+package com.hrms.infrastructure.employee.repository;
+public interface EmployeeRepository extends JpaRepository<Employee, UUID> { }
+
+// WRONG - Never put repositories in domain
+package com.hrms.domain.employee.repository;
+public interface EmployeeRepository { } // VIOLATION!
+```
+
+**Controller Dependency Rules (STRICT)**:
+
+Controllers MUST only depend on services, NEVER repositories:
+```java
+// CORRECT
+@RestController
+public class EmployeeController {
+    private final EmployeeService service; // Good!
+}
+
+// WRONG - Controller bypassing service layer
+@RestController
+public class EmployeeController {
+    private final EmployeeRepository repository; // VIOLATION!
+}
+```
+
+### Frontend
+
+- Route pages live in `app/<module>/page.tsx` and must delegate API calls to `lib/services`.
+- Types live in `lib/types` and should not be duplicated in pages/components.
+- Feature-specific components should live under `components/<feature>` and avoid cross-feature imports.
 
 ## Module Boundaries
 

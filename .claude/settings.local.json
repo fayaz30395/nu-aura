@@ -94,7 +94,10 @@
       "Bash(tee:*)",
       "Bash(npm run test:e2e:*)",
       "Bash(npx playwright install:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(npx eslint:*)",
+      "Bash(node -c:*)",
+      "Bash(awk:*)"
     ]
   }
 }

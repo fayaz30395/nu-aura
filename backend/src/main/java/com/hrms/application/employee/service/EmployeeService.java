@@ -258,4 +258,19 @@ public class EmployeeService {
         employee.terminate();
         employeeRepository.save(employee);
     }
+
+    /**
+     * Retrieves an employee by ID with tenant isolation.
+     * Used by controllers that need to verify employee exists and belongs to current tenant.
+     *
+     * @param employeeId the employee ID
+     * @param tenantId the tenant ID
+     * @return the employee
+     * @throws ResourceNotFoundException if employee not found or doesn't belong to tenant
+     */
+    @Transactional(readOnly = true)
+    public Employee getByIdAndTenant(UUID employeeId, UUID tenantId) {
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+    }
 }

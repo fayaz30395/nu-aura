@@ -7,10 +7,10 @@ import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.attendance.AttendanceTimeEntry;
 import com.hrms.domain.employee.Employee;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -38,7 +38,7 @@ public class AttendanceController {
     private final AttendanceRecordService attendanceService;
     private final AttendanceImportService attendanceImportService;
     private final com.hrms.common.security.DataScopeService dataScopeService;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
     // ===================== Single Check-In/Out =====================
 
@@ -450,9 +450,12 @@ public class AttendanceController {
             return false;
         }
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
-                .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
-                .orElse(false);
+        try {
+            Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
+            return emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isEmployeeInUserDepartment(UUID employeeId) {
@@ -461,9 +464,12 @@ public class AttendanceController {
             return false;
         }
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
-                .map(emp -> departmentId.equals(emp.getDepartmentId()))
-                .orElse(false);
+        try {
+            Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
+            return departmentId.equals(emp.getDepartmentId());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isInCustomTargets(UUID employeeId, String permission) {
@@ -475,20 +481,26 @@ public class AttendanceController {
         java.util.Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
-            if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
-                    && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
-                return true;
+            try {
+                Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
+                if (emp.getDepartmentId() != null && customDepartmentIds.contains(emp.getDepartmentId())) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // Employee not found or access denied
             }
         }
 
         java.util.Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
         if (customLocationIds != null && !customLocationIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
-            if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
-                    && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
-                return true;
+            try {
+                Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
+                if (emp.getOfficeLocationId() != null && customLocationIds.contains(emp.getOfficeLocationId())) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // Employee not found or access denied
             }
         }
 
