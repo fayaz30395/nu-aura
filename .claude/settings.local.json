@@ -104,7 +104,14 @@
       "Bash(for file in development/*.md)",
       "Bash(for file in operations/*.md)",
       "Bash(for file in project/*.md)",
-      "Bash(for file in api/*.md)"
+      "Bash(for file in api/*.md)",
+      "Bash(for file in RBAC_KEKA_REQUIREMENTS.md RBAC_P0_MATRIX.md IMPLEMENTATION_PLAN.md)",
+      "Bash(do)",
+      "Bash(if [ -f \"docs/$file\" ])",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(git rm:*)"
     ]
   }
 }
