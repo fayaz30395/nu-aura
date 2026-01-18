@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -47,6 +48,10 @@ public class WallController {
     @RequiresPermission(WALL_VIEW)
     public ResponseEntity<Page<WallPostResponse>> getPosts(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        // Enforce maximum page size of 50 for posts
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         Page<WallPostResponse> posts = wallService.getPosts(pageable, employeeId);
         return ResponseEntity.ok(posts);
@@ -58,6 +63,10 @@ public class WallController {
     public ResponseEntity<Page<WallPostResponse>> getPostsByType(
             @PathVariable WallPost.PostType type,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        // Enforce maximum page size of 50 for posts
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         Page<WallPostResponse> posts = wallService.getPostsByType(type, pageable, employeeId);
         return ResponseEntity.ok(posts);
@@ -132,6 +141,10 @@ public class WallController {
     public ResponseEntity<Page<CommentResponse>> getComments(
             @PathVariable UUID postId,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        // Enforce maximum page size of 50 for comments
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
         Page<CommentResponse> comments = wallService.getComments(postId, pageable);
         return ResponseEntity.ok(comments);
     }
@@ -175,6 +188,10 @@ public class WallController {
     public ResponseEntity<Page<WallPostResponse>> getPraiseForEmployee(
             @PathVariable UUID employeeId,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        // Enforce maximum page size of 50 for posts
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
         Page<WallPostResponse> praise = wallService.getPraiseForEmployee(employeeId, pageable, currentEmployeeId);
         return ResponseEntity.ok(praise);

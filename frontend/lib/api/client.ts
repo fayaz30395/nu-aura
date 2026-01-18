@@ -75,6 +75,16 @@ class ApiClient {
     );
   }
 
+  private normalizeUrl(url: string): string {
+    const baseUrl = this.client.defaults.baseURL || '';
+    const apiPrefix = '/api/v1';
+    if (baseUrl.endsWith(apiPrefix) && url.startsWith(apiPrefix)) {
+      const normalized = url.slice(apiPrefix.length);
+      return normalized.length > 0 ? normalized : '/';
+    }
+    return url;
+  }
+
   private getAccessToken(): string | null {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('accessToken');
@@ -120,23 +130,23 @@ class ApiClient {
   }
 
   get<T>(url: string, config?: any) {
-    return this.client.get<T>(url, config);
+    return this.client.get<T>(this.normalizeUrl(url), config);
   }
 
   post<T>(url: string, data?: any, config?: any) {
-    return this.client.post<T>(url, data, config);
+    return this.client.post<T>(this.normalizeUrl(url), data, config);
   }
 
   put<T>(url: string, data?: any, config?: any) {
-    return this.client.put<T>(url, data, config);
+    return this.client.put<T>(this.normalizeUrl(url), data, config);
   }
 
   patch<T>(url: string, data?: any, config?: any) {
-    return this.client.patch<T>(url, data, config);
+    return this.client.patch<T>(this.normalizeUrl(url), data, config);
   }
 
   delete<T>(url: string, config?: any) {
-    return this.client.delete<T>(url, config);
+    return this.client.delete<T>(this.normalizeUrl(url), config);
   }
 }
 

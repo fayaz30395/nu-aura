@@ -23,6 +23,7 @@ import java.io.IOException;
  * Rate Limits:
  * - Auth endpoints (/api/v1/auth/**): 10 requests/minute per IP
  * - Export endpoints: 5 requests/5 minutes per user
+ * - Wall endpoints (/api/v1/wall/**): 30 requests/minute per user
  * - General API: 100 requests/minute per user
  */
 @Slf4j
@@ -51,6 +52,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
         } else if (isExportEndpoint(path)) {
             limitType = "export";
             allowed = rateLimitConfig.tryConsumeExport(clientKey);
+        } else if (isWallEndpoint(path)) {
+            limitType = "wall";
+            allowed = rateLimitConfig.tryConsumeWall(clientKey);
         } else if (isApiEndpoint(path)) {
             allowed = rateLimitConfig.tryConsumeApi(clientKey);
         }
@@ -113,6 +117,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
                path.contains("/download") ||
                path.endsWith("/csv") ||
                path.endsWith("/pdf");
+    }
+
+    private boolean isWallEndpoint(String path) {
+        return path.startsWith("/api/v1/wall/");
     }
 
     private boolean isApiEndpoint(String path) {

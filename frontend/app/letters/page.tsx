@@ -45,6 +45,8 @@ import {
   LetterStatus,
 } from '@/lib/types/letter';
 import { Candidate } from '@/lib/types/recruitment';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const getCategoryLabel = (category: LetterCategory) => {
   const labels: Record<LetterCategory, string> = {
@@ -114,6 +116,8 @@ const formatDate = (date: string | undefined) => {
 };
 
 export default function LettersPage() {
+  const router = useRouter();
+  const { isAuthenticated, user, hasHydrated } = useAuth();
   const [letters, setLetters] = useState<GeneratedLetter[]>([]);
   const [templates, setTemplates] = useState<LetterTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,6 +166,10 @@ export default function LettersPage() {
   });
 
   const fetchLetters = useCallback(async () => {
+    if (!hasHydrated || !isAuthenticated) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -195,18 +203,20 @@ export default function LettersPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, statusFilter, categoryFilter, currentPage]);
+  }, [searchQuery, statusFilter, categoryFilter, currentPage, isAuthenticated, hasHydrated]);
 
   const fetchTemplates = useCallback(async () => {
+    if (!hasHydrated || !isAuthenticated) return;
     try {
       const activeTemplates = await letterService.getActiveTemplates();
       setTemplates(activeTemplates);
     } catch (err: any) {
       console.error('Error fetching templates:', err);
     }
-  }, []);
+  }, [isAuthenticated, hasHydrated]);
 
   const fetchCandidates = useCallback(async () => {
+    if (!hasHydrated || !isAuthenticated) return;
     try {
       const response = await recruitmentService.getAllCandidates(0, 100);
       // Filter to only show SELECTED candidates for offer letters
@@ -217,13 +227,23 @@ export default function LettersPage() {
     } catch (err: any) {
       console.error('Error fetching candidates:', err);
     }
-  }, []);
+  }, [isAuthenticated, hasHydrated]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      try {
+        router.push('/auth/login');
+      } catch (err) {
+        console.error('Navigation error:', err);
+        window.location.href = '/auth/login';
+      }
+      return;
+    }
     fetchLetters();
     fetchTemplates();
     fetchCandidates();
-  }, [fetchLetters, fetchTemplates, fetchCandidates]);
+  }, [fetchLetters, fetchTemplates, fetchCandidates, isAuthenticated, hasHydrated, router]);
 
   const resetForm = () => {
     setFormData({

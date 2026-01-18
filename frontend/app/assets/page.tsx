@@ -39,6 +39,8 @@ import {
 } from '@/components/ui';
 import { assetService } from '@/lib/services/asset.service';
 import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/asset';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const getCategoryIcon = (category: AssetCategory) => {
   switch (category) {
@@ -123,6 +125,8 @@ const formatCurrency = (amount: number | undefined) => {
 };
 
 export default function AssetManagementPage() {
+  const router = useRouter();
+  const { isAuthenticated, user, hasHydrated } = useAuth();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -162,6 +166,10 @@ export default function AssetManagementPage() {
   });
 
   const fetchAssets = useCallback(async () => {
+    if (!hasHydrated || !isAuthenticated) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -196,11 +204,21 @@ export default function AssetManagementPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, statusFilter, categoryFilter, currentPage]);
+  }, [searchQuery, statusFilter, categoryFilter, currentPage, isAuthenticated, hasHydrated]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      try {
+        router.push('/auth/login');
+      } catch (err) {
+        console.error('Navigation error:', err);
+        window.location.href = '/auth/login';
+      }
+      return;
+    }
     fetchAssets();
-  }, [fetchAssets]);
+  }, [fetchAssets, isAuthenticated, hasHydrated, router]);
 
   const resetForm = () => {
     setFormData({
