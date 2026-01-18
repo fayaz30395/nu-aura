@@ -446,6 +446,189 @@ public class Employee extends TenantAware {
 5. DELETE
 6. Other actions
 
+### Formatting
+
+**Indentation** (enforced by `.editorconfig`):
+- TypeScript/JavaScript/JSON/YAML: 2 spaces
+- Java/XML/Gradle: 4 spaces
+- No tabs; spaces only
+
+**Whitespace**:
+- UTF-8 encoding
+- LF line endings (not CRLF)
+- Trim trailing whitespace on all lines
+- Insert final newline in every file
+
+**Linting**:
+- Frontend: Run `npm run lint` before committing
+- Backend: Run `mvn verify` to check compilation and style
+- Do not mass-reformat files; only format code you modify
+
+### Error Handling
+
+**HTTP Status Codes**:
+- `400 Bad Request`: Validation errors (include field-level messages)
+- `401 Unauthorized`: Missing or invalid authentication token
+- `403 Forbidden`: Authenticated but insufficient permissions
+- `404 Not Found`: Resource does not exist
+- `409 Conflict`: Duplicate or conflicting resource state
+- `500 Internal Server Error`: Unexpected server failures
+
+**Exception Handling**:
+```java
+@ExceptionHandler(EntityNotFoundException.class)
+public ResponseEntity<ErrorResponse> handleNotFound(EntityNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(ErrorResponse.builder()
+            .message(ex.getMessage())
+            .timestamp(LocalDateTime.now())
+            .build());
+}
+```
+
+**Rules**:
+- Do not expose stack traces or internal error details to clients
+- Log the full exception with context at ERROR level
+- Return user-actionable messages only
+- Include request ID for traceability
+
+### Null Safety
+
+**Backend**:
+```java
+// Use Optional for potentially absent values
+public Optional<Employee> findById(UUID id) {
+    return repository.findById(id);
+}
+
+// Check before accessing
+Optional<Employee> emp = service.findById(id);
+emp.ifPresent(e -> log.info("Found: {}", e.getName()));
+
+// Use orElseThrow for required values
+Employee emp = service.findById(id)
+    .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+```
+
+**Frontend**:
+```typescript
+// Use optional chaining
+const name = employee?.personalInfo?.firstName;
+
+// Provide defaults for arrays
+const items = response?.data ?? [];
+
+// Guard rendering
+{employee && <div>{employee.name}</div>}
+```
+
+**Rules**:
+- Never call `.get()` on Optional without checking `.isPresent()` first
+- Use `@NotNull`, `@Nullable` annotations where appropriate
+- Default collections to empty lists, not null
+- Validate all inputs at API boundaries
+
+### Logging
+
+**Log Levels**:
+- `TRACE`: Fine-grained debug info (disabled in production)
+- `DEBUG`: Developer-focused diagnostics
+- `INFO`: Business events (user login, record created, job started)
+- `WARN`: Recoverable issues (retry attempted, fallback used)
+- `ERROR`: Failures requiring attention (exceptions, failed operations)
+
+**What to Log**:
+```java
+// Good: Business event with context
+log.info("Employee {} onboarded by {}", employeeId, createdBy);
+
+// Good: Error with full context
+log.error("Failed to send email to {}: {}", recipient, e.getMessage(), e);
+
+// Bad: Sensitive data
+log.info("User password: {}", password); // NEVER DO THIS
+
+// Bad: No context
+log.error("Error occurred"); // Too vague
+```
+
+**Rules**:
+- Include tenant ID and user ID in business event logs
+- Never log passwords, tokens, credit cards, or PII
+- Log the exception object (not just `.getMessage()`) for stack traces
+- Use structured logging for metrics (JSON format in production)
+
+### Layer Boundaries
+
+**Strict Dependency Rules**:
+```
+API Layer (Controllers)
+  ↓ may call
+Application Layer (Services)
+  ↓ may call
+Infrastructure Layer (Repositories)
+  ↓ depends on
+Domain Layer (Entities)
+```
+
+**Violations** (DO NOT DO):
+```java
+// BAD: Controller accessing repository directly
+@RestController
+public class EmployeeController {
+    @Autowired
+    private EmployeeRepository repository; // WRONG!
+
+    @GetMapping
+    public List<Employee> getAll() {
+        return repository.findAll(); // Bypass business logic
+    }
+}
+
+// BAD: Service in domain layer
+package com.hrms.domain.employee;
+public class EmployeeService { } // WRONG! Services belong in application layer
+
+// BAD: Repository in domain layer
+package com.hrms.domain.employee.repository;
+public interface EmployeeRepository { } // WRONG! Repositories belong in infrastructure
+```
+
+**Correct Pattern**:
+```java
+// GOOD: Controller delegates to service
+@RestController
+public class EmployeeController {
+    @Autowired
+    private EmployeeService service; // Correct!
+
+    @GetMapping
+    public Page<EmployeeResponse> getAll(Pageable pageable) {
+        return service.getAllEmployees(pageable)
+            .map(EmployeeResponse::from);
+    }
+}
+
+// Service orchestrates business logic
+@Service
+public class EmployeeService {
+    @Autowired
+    private EmployeeRepository repository;
+
+    @Transactional(readOnly = true)
+    public Page<Employee> getAllEmployees(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return repository.findByTenantId(tenantId, pageable);
+    }
+}
+```
+
+**Rules**:
+- Controllers must only call services, never repositories
+- Services contain all business logic and transaction boundaries
+- Repositories contain only data access logic (no business rules)
+- Domain entities are pure data models with minimal logic
+
 ## Debugging
 
 ### Enable Debug Logging

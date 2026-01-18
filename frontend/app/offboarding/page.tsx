@@ -179,17 +179,17 @@ export default function OffboardingPage() {
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         filteredProcesses = filteredProcesses.filter(
-          (p) =>
+          (p: ExitProcess) =>
             p.employeeName?.toLowerCase().includes(query) ||
             p.reasonForLeaving?.toLowerCase().includes(query) ||
             p.newCompany?.toLowerCase().includes(query)
         );
       }
       if (statusFilter) {
-        filteredProcesses = filteredProcesses.filter((p) => p.status === statusFilter);
+        filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.status === statusFilter);
       }
       if (typeFilter) {
-        filteredProcesses = filteredProcesses.filter((p) => p.exitType === typeFilter);
+        filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.exitType === typeFilter);
       }
 
       setExitProcesses(filteredProcesses);
