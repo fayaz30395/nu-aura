@@ -97,7 +97,14 @@
       "Bash(chmod:*)",
       "Bash(npx eslint:*)",
       "Bash(node -c:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(for file in architecture/*.md)",
+      "Bash(do [ -f \"$file\" ])",
+      "Bash(done)",
+      "Bash(for file in development/*.md)",
+      "Bash(for file in operations/*.md)",
+      "Bash(for file in project/*.md)",
+      "Bash(for file in api/*.md)"
     ]
   }
 }
