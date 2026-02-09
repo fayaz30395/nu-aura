@@ -69,6 +69,8 @@ import {
   PostType,
   ReactionType,
 } from '@/lib/services/wall.service';
+import { leaveService } from '@/lib/services/leave.service';
+import { LeaveBalance } from '@/lib/types/leave';
 import { EmployeeDashboardData } from '@/lib/types/dashboard';
 
 interface QuickLink {
@@ -108,6 +110,9 @@ export default function HomePage() {
   // Wall state
   const [wallPosts, setWallPosts] = useState<WallPostResponse[]>([]);
   const [wallLoading, setWallLoading] = useState(false);
+
+  // Leave balance state
+  const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
 
   // Clock update
   useEffect(() => {
@@ -150,6 +155,12 @@ export default function HomePage() {
       setOnLeaveToday(leaveData);
       setAttendanceToday(attendanceData);
       setWallPosts(wallData.content);
+
+      // Fetch leave balances if we have attendance data with employeeId
+      if (attendanceData?.employeeId) {
+        const balances = await leaveService.getEmployeeBalances(attendanceData.employeeId).catch(() => []);
+        setLeaveBalances(balances);
+      }
     } catch (err) {
       console.error('Error loading dashboard:', err);
       setError('Failed to load dashboard data');
@@ -209,7 +220,8 @@ export default function HomePage() {
     });
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name?: string | null) => {
+    if (!name) return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
@@ -439,11 +451,17 @@ export default function HomePage() {
                     <div className="text-center">
                       <div className="w-24 h-24 rounded-full border-4 border-blue-500 flex items-center justify-center mb-3">
                         <div>
-                          <div className="text-3xl font-bold text-gray-900">25.5</div>
+                          <div className="text-3xl font-bold text-gray-900">
+                            {leaveBalances.length > 0
+                              ? leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0).toFixed(1)
+                              : '0'}
+                          </div>
                           <div className="text-xs text-gray-500">Days</div>
                         </div>
                       </div>
-                      <p className="text-xs font-medium text-gray-500">ANNUAL LEAVE</p>
+                      <p className="text-xs font-medium text-gray-500">
+                        {leaveBalances.length > 0 ? 'TOTAL AVAILABLE' : 'NO BALANCE DATA'}
+                      </p>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-4">
@@ -619,7 +637,7 @@ export default function HomePage() {
                               {getInitials(birthday.employeeName)}
                             </div>
                             <p className="text-xs font-medium text-gray-900 text-center max-w-[80px] truncate">
-                              {birthday.employeeName.split(' ')[0]}...
+                              {birthday.employeeName?.split(' ')[0] || 'Unknown'}
                             </p>
                             <p className="text-xs text-gray-500">{birthday.birthdayDate}</p>
                           </div>
@@ -636,12 +654,12 @@ export default function HomePage() {
                   <CardContent className="p-5">
                     <div className="flex items-start gap-3 mb-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                        {getInitials(post.authorName)}
+                        {getInitials(post.author?.fullName)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="text-sm font-semibold text-gray-900">{post.authorName}</h4>
+                            <h4 className="text-sm font-semibold text-gray-900">{post.author?.fullName || 'Unknown'}</h4>
                             <p className="text-xs text-gray-500">
                               {new Date(post.createdAt).toLocaleDateString('en-US', {
                                 day: 'numeric',
