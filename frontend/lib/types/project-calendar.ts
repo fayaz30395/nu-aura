@@ -13,7 +13,7 @@ export interface CalendarEvent {
   taskId?: string;
   description?: string;
   status: string;
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT' | 'CRITICAL';
   color: string;
   assignees?: CalendarEventAssignee[];
 }
@@ -35,7 +35,7 @@ export interface GanttTask {
   duration?: number;
   progress: number;
   status: string;
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT' | 'CRITICAL';
   color: string;
   projectId?: string;
   parentTaskId?: string;
@@ -148,6 +148,7 @@ export const PRIORITY_COLORS: Record<string, string> = {
   LOW: '#22c55e',
   MEDIUM: '#fb923c',
   HIGH: '#ef4444',
+  URGENT: '#dc2626',
   CRITICAL: '#991b1b',
 };
 

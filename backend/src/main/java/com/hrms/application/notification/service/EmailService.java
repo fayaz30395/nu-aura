@@ -24,6 +24,33 @@ import java.util.UUID;
 @Slf4j
 public class EmailService {
 
+    /**
+     * Result object for email operations - provides explicit success/failure status.
+     * Callers can check result.success() and handle failures appropriately.
+     */
+    public record EmailSendResult(
+            boolean success,
+            UUID notificationId,
+            String errorMessage,
+            EmailNotification.EmailStatus status
+    ) {
+        public static EmailSendResult success(UUID notificationId) {
+            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.SENT);
+        }
+
+        public static EmailSendResult queued(UUID notificationId) {
+            return new EmailSendResult(true, notificationId, null, EmailNotification.EmailStatus.PENDING);
+        }
+
+        public static EmailSendResult failure(UUID notificationId, String errorMessage) {
+            return new EmailSendResult(false, notificationId, errorMessage, EmailNotification.EmailStatus.FAILED);
+        }
+
+        public static EmailSendResult failure(String errorMessage) {
+            return new EmailSendResult(false, null, errorMessage, EmailNotification.EmailStatus.FAILED);
+        }
+    }
+
     private final JavaMailSender mailSender;
     private final EmailNotificationRepository emailRepository;
     private final EmailTemplateService templateService;
@@ -34,9 +61,16 @@ public class EmailService {
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
 
+    /**
+     * Send an email asynchronously. Returns a result indicating success or failure.
+     * The email is first persisted as PENDING, then sent. If sending fails,
+     * the result will contain the error details for caller handling.
+     *
+     * @return EmailSendResult with success/failure status and error details if applicable
+     */
     @Async
     @Transactional
-    public void sendEmail(String recipientEmail, String recipientName, EmailNotification.EmailType emailType, Map<String, String> variables) {
+    public EmailSendResult sendEmail(String recipientEmail, String recipientName, EmailNotification.EmailType emailType, Map<String, String> variables) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         try {
@@ -56,18 +90,26 @@ public class EmailService {
                     .build();
 
             notification.setTenantId(tenantId);
-            emailRepository.save(notification);
+            EmailNotification saved = emailRepository.save(notification);
 
-            // Send email
-            sendEmailInternal(notification);
+            // Send email and return result
+            return sendEmailInternal(saved);
 
         } catch (Exception e) {
-            log.error("Error sending email to {}: {}", recipientEmail, e.getMessage(), e);
+            String errorMsg = "Failed to prepare email for " + recipientEmail + ": " + e.getMessage();
+            log.error(errorMsg, e);
+            return EmailSendResult.failure(errorMsg);
         }
     }
 
+    /**
+     * Internal method to send an email. Returns explicit result instead of silently failing.
+     *
+     * @param notification The email notification to send
+     * @return EmailSendResult indicating success or failure with error details
+     */
     @Transactional
-    public void sendEmailInternal(EmailNotification notification) {
+    public EmailSendResult sendEmailInternal(EmailNotification notification) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -85,15 +127,19 @@ public class EmailService {
             emailRepository.save(notification);
 
             log.info("Email sent successfully to {} - Type: {}", notification.getRecipientEmail(), notification.getEmailType());
+            return EmailSendResult.success(notification.getId());
 
         } catch (MessagingException e) {
-            log.error("Failed to send email to {}: {}", notification.getRecipientEmail(), e.getMessage());
+            String errorMsg = "Failed to send email to " + notification.getRecipientEmail() + ": " + e.getMessage();
+            log.error(errorMsg);
 
             // Update notification with error
             notification.setStatus(EmailNotification.EmailStatus.FAILED);
             notification.setErrorMessage(e.getMessage());
             notification.setRetryCount(notification.getRetryCount() + 1);
             emailRepository.save(notification);
+
+            return EmailSendResult.failure(notification.getId(), errorMsg);
         }
     }
 
@@ -152,9 +198,9 @@ public class EmailService {
         };
     }
 
-    // Helper methods for common email types
+    // Helper methods for common email types - all return EmailSendResult for explicit error handling
 
-    public void sendLeaveApprovalEmail(String employeeEmail, String employeeName, String leaveType,
+    public EmailSendResult sendLeaveApprovalEmail(String employeeEmail, String employeeName, String leaveType,
                                        String startDate, String endDate, String duration, String reason) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
@@ -165,10 +211,10 @@ public class EmailService {
             "reason", reason,
             "dashboardUrl", frontendUrl + "/me/leaves"
         );
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_APPROVAL, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_APPROVAL, vars);
     }
 
-    public void sendLeaveRejectionEmail(String employeeEmail, String employeeName, String leaveType,
+    public EmailSendResult sendLeaveRejectionEmail(String employeeEmail, String employeeName, String leaveType,
                                         String startDate, String endDate, String reason, String rejectionReason) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
@@ -179,23 +225,23 @@ public class EmailService {
             "rejectionReason", rejectionReason,
             "dashboardUrl", frontendUrl + "/me/leaves"
         );
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_REJECTION, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_REJECTION, vars);
     }
 
-    public void sendBirthdayEmail(String employeeEmail, String employeeName) {
+    public EmailSendResult sendBirthdayEmail(String employeeEmail, String employeeName) {
         Map<String, String> vars = Map.of("employeeName", employeeName);
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.BIRTHDAY_REMINDER, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.BIRTHDAY_REMINDER, vars);
     }
 
-    public void sendAnniversaryEmail(String employeeEmail, String employeeName, String years) {
+    public EmailSendResult sendAnniversaryEmail(String employeeEmail, String employeeName, String years) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
             "years", years
         );
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.ANNIVERSARY_REMINDER, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.ANNIVERSARY_REMINDER, vars);
     }
 
-    public void sendPayslipReadyEmail(String employeeEmail, String employeeName, String month,
+    public EmailSendResult sendPayslipReadyEmail(String employeeEmail, String employeeName, String month,
                                       String netSalary, String paymentDate) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
@@ -204,10 +250,10 @@ public class EmailService {
             "paymentDate", paymentDate,
             "payslipUrl", frontendUrl + "/me/payslips"
         );
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.PAYSLIP_READY, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.PAYSLIP_READY, vars);
     }
 
-    public void sendWelcomeEmail(String employeeEmail, String employeeName, String department, String joiningDate) {
+    public EmailSendResult sendWelcomeEmail(String employeeEmail, String employeeName, String department, String joiningDate) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
             "email", employeeEmail,
@@ -215,6 +261,6 @@ public class EmailService {
             "joiningDate", joiningDate,
             "portalUrl", frontendUrl
         );
-        sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.WELCOME, vars);
+        return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.WELCOME, vars);
     }
 }

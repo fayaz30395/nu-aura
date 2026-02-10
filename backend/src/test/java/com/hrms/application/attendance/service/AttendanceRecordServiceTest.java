@@ -132,6 +132,28 @@ class AttendanceRecordServiceTest {
         }
 
         @Test
+        @DisplayName("Should throw exception when already checked in")
+        void shouldThrowExceptionWhenAlreadyCheckedIn() {
+            LocalDate checkInDate = checkInTime.toLocalDate();
+            attendanceRecord.setId(UUID.randomUUID());
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "192.168.1.1");
+
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
+                    employeeId, checkInDate, tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(timeEntryRepository.findOpenEntryByAttendanceRecordId(attendanceRecord.getId()))
+                    .thenReturn(Optional.of(AttendanceTimeEntry.builder()
+                            .attendanceRecordId(attendanceRecord.getId())
+                            .checkInTime(checkInTime)
+                            .build()));
+
+            assertThatThrownBy(() -> attendanceRecordService.checkIn(
+                    employeeId, checkInTime, "WEB", "Office", "192.168.1.1"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Already checked in");
+        }
+
+        @Test
         @DisplayName("Should extract date from checkInTime parameter, not use LocalDate.now()")
         void shouldExtractDateFromCheckInTimeParameter() {
             LocalDateTime pastCheckInTime = LocalDateTime.now().minusDays(5).withHour(9).withMinute(0);

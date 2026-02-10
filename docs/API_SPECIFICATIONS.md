@@ -1609,7 +1609,309 @@ Same as get response with updated `isActive` and `nextRunAt` fields.
 
 ---
 
-## 10. Common Response Codes
+## 10. Webhooks API
+
+The Webhooks API enables external systems to receive real-time notifications when events occur in the HRMS platform.
+
+### 10.1 List Webhooks
+
+**GET** `/webhooks`
+
+Get all webhooks for the tenant.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "Slack Notifications",
+      "description": "Send employee events to Slack",
+      "url": "https://hooks.slack.com/services/...",
+      "status": "ACTIVE",
+      "events": ["EMPLOYEE_CREATED", "EMPLOYEE_UPDATED", "LEAVE_APPROVED"],
+      "consecutiveFailures": 0,
+      "lastSuccessAt": "2026-01-11T10:30:00Z",
+      "lastFailureAt": null,
+      "createdAt": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### 10.2 Create Webhook
+
+**POST** `/webhooks`
+
+Create a new webhook subscription.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Request
+```json
+{
+  "name": "HR System Integration",
+  "description": "Sync employee data to external HR system",
+  "url": "https://api.external-hr.com/webhooks/nuaura",
+  "secret": "whsec_abc123...",
+  "events": ["EMPLOYEE_CREATED", "EMPLOYEE_UPDATED", "EMPLOYEE_TERMINATED"],
+  "includePayload": true,
+  "maxRetries": 3,
+  "timeoutSeconds": 30,
+  "customHeaders": {
+    "X-API-Key": "your-api-key"
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| name | string | Yes | Webhook name (max 100 chars) |
+| description | string | No | Description (max 500 chars) |
+| url | string | Yes | Webhook endpoint URL (HTTPS required) |
+| secret | string | No | Shared secret for HMAC signature verification |
+| events | array | Yes | List of event types to subscribe to |
+| includePayload | boolean | No | Include full event payload (default: true) |
+| maxRetries | int | No | Max retry attempts (default: 3, max: 5) |
+| timeoutSeconds | int | No | Request timeout (default: 30, max: 60) |
+| customHeaders | object | No | Additional HTTP headers to include |
+
+#### Supported Event Types
+| Event | Description |
+|-------|-------------|
+| `ALL` | Subscribe to all events |
+| `EMPLOYEE_CREATED` | New employee added |
+| `EMPLOYEE_UPDATED` | Employee data updated |
+| `EMPLOYEE_TERMINATED` | Employee terminated |
+| `LEAVE_REQUESTED` | Leave request submitted |
+| `LEAVE_APPROVED` | Leave request approved |
+| `LEAVE_REJECTED` | Leave request rejected |
+| `ATTENDANCE_CHECKIN` | Employee checked in |
+| `ATTENDANCE_CHECKOUT` | Employee checked out |
+| `PAYROLL_PROCESSED` | Payroll run completed |
+
+#### Response (201 Created)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "name": "HR System Integration",
+    "url": "https://api.external-hr.com/webhooks/nuaura",
+    "status": "ACTIVE",
+    "events": ["EMPLOYEE_CREATED", "EMPLOYEE_UPDATED", "EMPLOYEE_TERMINATED"]
+  },
+  "message": "Webhook created successfully"
+}
+```
+
+---
+
+### 10.3 Update Webhook
+
+**PUT** `/webhooks/{id}`
+
+Update an existing webhook.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Request
+Same as create request (all fields optional for update).
+
+#### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "name": "HR System Integration (Updated)",
+    "status": "ACTIVE"
+  },
+  "message": "Webhook updated successfully"
+}
+```
+
+---
+
+### 10.4 Delete Webhook
+
+**DELETE** `/webhooks/{id}`
+
+Delete a webhook subscription.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Response (204 No Content)
+No response body.
+
+---
+
+### 10.5 Activate/Deactivate Webhook
+
+**POST** `/webhooks/{id}/activate`
+**POST** `/webhooks/{id}/deactivate`
+
+Change webhook status.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "status": "INACTIVE"
+  },
+  "message": "Webhook deactivated"
+}
+```
+
+---
+
+### 10.6 Get Webhook Deliveries
+
+**GET** `/webhooks/{id}/deliveries`
+
+Get delivery history for a webhook.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Query Parameters
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| page | int | 0 | Page number |
+| size | int | 20 | Page size (max 100) |
+| status | enum | - | Filter by status: PENDING, DELIVERED, FAILED |
+
+#### Response (200 OK)
+```json
+{
+  "status": "SUCCESS",
+  "data": {
+    "content": [
+      {
+        "id": "del-001",
+        "eventType": "EMPLOYEE_CREATED",
+        "eventId": "evt-12345",
+        "status": "DELIVERED",
+        "attempts": 1,
+        "responseStatus": 200,
+        "durationMs": 245,
+        "deliveredAt": "2026-01-11T10:30:00Z",
+        "createdAt": "2026-01-11T10:29:59Z"
+      },
+      {
+        "id": "del-002",
+        "eventType": "LEAVE_APPROVED",
+        "eventId": "evt-12346",
+        "status": "FAILED",
+        "attempts": 3,
+        "responseStatus": 500,
+        "errorMessage": "Internal Server Error",
+        "lastAttemptAt": "2026-01-11T11:15:00Z",
+        "createdAt": "2026-01-11T10:45:00Z"
+      }
+    ],
+    "page": 0,
+    "size": 20,
+    "totalElements": 150
+  }
+}
+```
+
+---
+
+### 10.7 Retry Failed Delivery
+
+**POST** `/webhooks/deliveries/{deliveryId}/retry`
+
+Manually retry a failed delivery.
+
+**Required Permission:** `WEBHOOK_MANAGE`
+
+#### Response (202 Accepted)
+```json
+{
+  "status": "SUCCESS",
+  "message": "Delivery retry scheduled"
+}
+```
+
+---
+
+### 10.8 Webhook Payload Format
+
+All webhook deliveries include the following structure:
+
+```json
+{
+  "id": "evt-550e8400-e29b-41d4-a716-446655440099",
+  "type": "EMPLOYEE_CREATED",
+  "timestamp": "2026-01-11T10:30:00Z",
+  "data": {
+    "employeeId": "emp-001",
+    "employeeCode": "EMP001",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@company.com",
+    "department": "Engineering",
+    "joiningDate": "2026-01-11"
+  }
+}
+```
+
+---
+
+### 10.9 Webhook Security
+
+#### Signature Verification
+
+When a secret is configured, all webhook requests include an HMAC-SHA256 signature:
+
+```
+X-Webhook-Signature: sha256=5d41402abc4b2a76b9719d911017c592
+X-Webhook-Event-Id: evt-550e8400-e29b-41d4-a716-446655440099
+X-Webhook-Event-Type: EMPLOYEE_CREATED
+X-Webhook-Timestamp: 1704978600000
+```
+
+**Verification Example (Node.js):**
+```javascript
+const crypto = require('crypto');
+
+function verifySignature(payload, signature, secret) {
+  const expectedSignature = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(payload, 'utf8')
+    .digest('hex');
+
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+}
+```
+
+#### Retry Policy
+
+Failed deliveries are retried with exponential backoff:
+- Attempt 1: Immediate
+- Attempt 2: After 1 minute
+- Attempt 3: After 5 minutes
+- Attempt 4: After 15 minutes
+- Attempt 5: After 1 hour
+
+After 5 consecutive failures, the webhook is automatically paused.
+
+---
+
+## 11. Common Response Codes
 
 | Code | Status | Description |
 |------|--------|-------------|

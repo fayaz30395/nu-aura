@@ -30,7 +30,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { onboardingService } from '@/lib/services/onboarding.service';
-import { OnboardingChecklistTemplate, OnboardingTemplateTask } from '@/lib/types/onboarding';
+import { OnboardingChecklistTemplate, OnboardingTemplateTask, OnboardingTaskCategory, OnboardingTaskPriority } from '@/lib/types/onboarding';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function TemplateEditorPage() {
@@ -390,7 +390,7 @@ export default function TemplateEditorPage() {
                                     <select
                                         className="w-full rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={taskForm.category}
-                                        onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value as any })}
+                                        onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value as OnboardingTaskCategory })}
                                     >
                                         <option value="INFRASTRUCTURE_ACCESS">Infrastructure & Access</option>
                                         <option value="HR_DOCUMENTATION">HR & Documentation</option>
@@ -409,7 +409,7 @@ export default function TemplateEditorPage() {
                                     <select
                                         className="w-full rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={taskForm.priority}
-                                        onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as any })}
+                                        onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as OnboardingTaskPriority })}
                                     >
                                         <option value="HIGH">High Priority</option>
                                         <option value="MEDIUM">Medium Priority</option>

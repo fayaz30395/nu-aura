@@ -9,7 +9,16 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "employee_loans")
+@Table(name = "employee_loans", indexes = {
+    @Index(name = "idx_employee_loan_tenant", columnList = "tenantId"),
+    @Index(name = "idx_employee_loan_tenant_employee", columnList = "tenantId,employee_id"),
+    @Index(name = "idx_employee_loan_status", columnList = "status"),
+    @Index(name = "idx_employee_loan_tenant_status", columnList = "tenantId,status"),
+    @Index(name = "idx_employee_loan_disbursement_date", columnList = "disbursement_date"),
+    @Index(name = "idx_employee_loan_loan_type", columnList = "loan_type")
+}, uniqueConstraints = {
+    @UniqueConstraint(name = "uk_employee_loan_tenant_number", columnNames = {"tenantId", "loan_number"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +30,8 @@ public class EmployeeLoan extends TenantAware {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(name = "loan_number", unique = true)
+    // Note: unique constraint is now tenant-scoped via @UniqueConstraint in @Table
+    @Column(name = "loan_number")
     private String loanNumber;
 
     @Enumerated(EnumType.STRING)

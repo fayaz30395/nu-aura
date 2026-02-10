@@ -111,7 +111,9 @@
       "Bash(then)",
       "Bash(else)",
       "Bash(fi)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(xmllint:*)",
+      "Bash(sort:*)"
     ]
   }
 }

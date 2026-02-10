@@ -35,6 +35,7 @@ import { exitService } from '@/lib/services/exit.service';
 import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/exit';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { extractContent, extractPaginationMeta, isPageResponse } from '@/lib/utils/type-guards';
 
 const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
   if (!type) {
@@ -168,12 +169,9 @@ export default function OffboardingPage() {
     setError(null);
     try {
       const response = await exitService.getAllExitProcesses(currentPage, 20);
-      const content = Array.isArray((response as any)?.content)
-        ? (response as any).content
-        : Array.isArray(response as any)
-          ? (response as any)
-          : [];
-      let filteredProcesses = content.filter((item: ExitProcess | null | undefined) => Boolean(item));
+      // Use type-safe extraction utilities
+      const content = extractContent<ExitProcess>(response);
+      let filteredProcesses = content.filter((item): item is ExitProcess => Boolean(item));
 
       // Client-side filtering
       if (searchQuery.trim()) {
@@ -193,8 +191,9 @@ export default function OffboardingPage() {
       }
 
       setExitProcesses(filteredProcesses);
-      setTotalElements(typeof (response as any)?.totalElements === 'number' ? (response as any).totalElements : content.length);
-      setTotalPages(typeof (response as any)?.totalPages === 'number' ? (response as any).totalPages : 1);
+      const paginationMeta = extractPaginationMeta(response);
+      setTotalElements(paginationMeta.totalElements || content.length);
+      setTotalPages(paginationMeta.totalPages || 1);
     } catch (err: any) {
       console.error('Error fetching exit processes:', err);
       setError(err.response?.data?.message || 'Failed to load exit processes');

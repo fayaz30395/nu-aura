@@ -4,9 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { Holiday, HolidayRequest, HolidayType } from '@/lib/types/attendance';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function HolidayCalendarManagementPage() {
   const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const currentYear = new Date().getFullYear();
 
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -29,8 +35,20 @@ export default function HolidayCalendarManagementPage() {
   });
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadHolidays();
-  }, [selectedYear]);
+  }, [selectedYear, hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadHolidays = async () => {
     try {
@@ -136,14 +154,6 @@ export default function HolidayCalendarManagementPage() {
     return colors[type];
   };
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   const getMonthName = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', { month: 'long' });
   };
@@ -159,9 +169,10 @@ export default function HolidayCalendarManagementPage() {
   }, {} as Record<string, Holiday[]>);
 
   const months = Object.keys(holidaysByMonth).sort((a, b) => {
-    const monthA = new Date(holidaysByMonth[a][0].holidayDate).getMonth();
-    const monthB = new Date(holidaysByMonth[b][0].holidayDate).getMonth();
-    return monthA - monthB;
+    const monthADate = holidaysByMonth[a]?.[0]?.holidayDate;
+    const monthBDate = holidaysByMonth[b]?.[0]?.holidayDate;
+    if (!monthADate || !monthBDate) return 0;
+    return new Date(monthADate).getMonth() - new Date(monthBDate).getMonth();
   });
 
   return (
@@ -263,7 +274,7 @@ export default function HolidayCalendarManagementPage() {
                 <div key={month} className="p-6">
                   <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">{month}</h3>
                   <div className="space-y-3">
-                    {holidaysByMonth[month].map((holiday) => (
+                    {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
                         className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg hover:bg-surface-100 dark:bg-surface-800 transition-colors"

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { rolesApi, permissionsApi } from '@/lib/api/roles';
 import {
   Role,
@@ -13,16 +14,15 @@ import {
   SCOPE_LABELS,
 } from '@/lib/types/roles';
 import { ScopeSelector } from '@/components/admin/ScopeSelector';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 
-// Permission with scope tracking for the modal
-interface PermissionWithScope {
-  code: string;
-  selected: boolean;
-  scope: RoleScope;
-  customTargets: CustomTarget[];
-}
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function RolesPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const [roles, setRoles] = useState<Role[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,8 +44,20 @@ export default function RolesPage() {
   const [showPermissionDropdown, setShowPermissionDropdown] = useState(false);
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadData();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadData = async () => {
     try {
@@ -56,7 +68,6 @@ export default function RolesPage() {
       ]);
       setRoles(rolesData);
       setPermissions(permissionsData);
-      console.log('Loaded roles:', rolesData.length, 'Loaded permissions:', permissionsData.length);
     } catch (error) {
       console.error('Failed to load data:', error);
       alert('Failed to load roles and permissions. Please check if you are logged in and the backend is running.');
@@ -200,10 +211,11 @@ export default function RolesPage() {
   };
 
   const groupedPermissions = permissions.reduce((acc, permission) => {
-    if (!acc[permission.resource]) {
-      acc[permission.resource] = [];
+    const resourceKey = permission.resource ?? 'UNASSIGNED';
+    if (!acc[resourceKey]) {
+      acc[resourceKey] = [];
     }
-    acc[permission.resource].push(permission);
+    acc[resourceKey].push(permission);
     return acc;
   }, {} as Record<string, Permission[]>);
 

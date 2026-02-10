@@ -454,6 +454,125 @@ platform/
 
 ---
 
+## Running Tests
+
+### Backend Tests
+
+```bash
+cd backend
+
+# Run all tests
+mvn test
+
+# Run with coverage report
+mvn test jacoco:report
+# Coverage report: target/site/jacoco/index.html
+
+# Run specific test class
+mvn test -Dtest=WebhookDeliveryServiceTest
+
+# Run integration tests only
+mvn test -Dtest="*IntegrationTest"
+```
+
+### Frontend Tests
+
+```bash
+cd frontend
+
+# Run unit tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm run test -- --watch
+
+# Run E2E tests (requires backend running)
+npm run test:e2e
+
+# Run E2E tests with UI
+npx playwright test --ui
+```
+
+### Test Coverage Requirements
+
+| Area | Minimum Coverage |
+|------|-----------------|
+| Backend Services | 80% |
+| Backend Controllers | 70% |
+| Frontend Components | 60% |
+| Frontend Hooks | 70% |
+
+---
+
+## Development Workflow
+
+### Code Style
+
+**Backend (Java):**
+- Follow Google Java Style Guide
+- Use Lombok annotations for boilerplate reduction
+- Maximum line length: 120 characters
+
+**Frontend (TypeScript):**
+- ESLint + Prettier configuration provided
+- Run `npm run lint` before committing
+- Run `npm run format` to auto-format
+
+### Pre-commit Checks
+
+```bash
+# Backend
+mvn checkstyle:check
+mvn spotbugs:check
+
+# Frontend
+npm run lint
+npm run typecheck
+```
+
+### Branch Naming
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Feature | `feature/JIRA-123-description` | `feature/AURA-456-add-webhook-api` |
+| Bugfix | `bugfix/JIRA-123-description` | `bugfix/AURA-789-fix-leave-calc` |
+| Hotfix | `hotfix/JIRA-123-description` | `hotfix/AURA-111-security-patch` |
+
+---
+
+## Performance Profiling
+
+### Backend
+
+```bash
+# Enable Hibernate statistics
+export HIBERNATE_STATS_ENABLED=true
+
+# Lower slow query threshold
+export SLOW_QUERY_THRESHOLD_MS=100
+
+# Access metrics
+curl http://localhost:8080/actuator/metrics
+curl http://localhost:8080/actuator/prometheus
+```
+
+### Frontend
+
+```bash
+# Analyze bundle size
+npm run build
+ANALYZE=true npm run build
+
+# Performance profiling
+npm run dev -- --experimental-https
+# Use Chrome DevTools Performance tab
+```
+
+---
+
 ## Contact & Support
 
 For issues or questions, contact the development team.

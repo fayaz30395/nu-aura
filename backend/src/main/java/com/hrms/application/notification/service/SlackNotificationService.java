@@ -1,10 +1,11 @@
 package com.hrms.application.notification.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.common.resilience.CircuitBreaker;
+import com.hrms.common.resilience.CircuitBreakerRegistry;
 import com.hrms.common.security.TenantContext;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -23,11 +24,19 @@ import java.util.*;
 /**
  * Service for sending notifications to Slack channels and users.
  * Supports incoming webhooks and Slack Web API.
+ *
+ * <p><strong>RESILIENCE:</strong> Uses circuit breaker pattern to prevent
+ * cascading failures when Slack API is unavailable.</p>
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class SlackNotificationService {
+
+    private final CircuitBreaker circuitBreaker;
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
 
     @Value("${app.slack.webhook-url:}")
     private String defaultWebhookUrl;
@@ -41,12 +50,12 @@ public class SlackNotificationService {
     @Value("${app.slack.default-channel:#hrms-notifications}")
     private String defaultChannel;
 
-    private final ObjectMapper objectMapper;
-    private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .build();
-
     private static final String SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
+
+    public SlackNotificationService(CircuitBreakerRegistry circuitBreakerRegistry, ObjectMapper objectMapper) {
+        this.circuitBreaker = circuitBreakerRegistry.forSlack();
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Send a simple text message to the default channel via webhook.
@@ -66,6 +75,7 @@ public class SlackNotificationService {
 
     /**
      * Send a message to a specific webhook URL.
+     * Uses circuit breaker to prevent cascading failures.
      */
     @Async
     public void sendToWebhook(String webhookUrl, String message,
@@ -75,36 +85,39 @@ public class SlackNotificationService {
             return;
         }
 
-        try {
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("text", message);
+        // Use circuit breaker to protect against Slack API failures
+        circuitBreaker.execute(() -> {
+            try {
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("text", message);
 
-            if (attachments != null && !attachments.isEmpty()) {
-                payload.put("attachments", attachments);
-            }
+                if (attachments != null && !attachments.isEmpty()) {
+                    payload.put("attachments", attachments);
+                }
 
-            if (blocks != null && !blocks.isEmpty()) {
-                payload.put("blocks", blocks);
-            }
+                if (blocks != null && !blocks.isEmpty()) {
+                    payload.put("blocks", blocks);
+                }
 
-            String jsonPayload = objectMapper.writeValueAsString(payload);
+                String jsonPayload = objectMapper.writeValueAsString(payload);
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(webhookUrl))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
-                    .build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(webhookUrl))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                        .build();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() != 200 || !"ok".equals(response.body())) {
-                log.error("Failed to send Slack message: {} - {}", response.statusCode(), response.body());
-            } else {
+                if (response.statusCode() != 200 || !"ok".equals(response.body())) {
+                    throw new RuntimeException("Slack API error: " + response.statusCode() + " - " + response.body());
+                }
+
                 log.debug("Slack message sent successfully");
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Error sending Slack message", e);
             }
-        } catch (IOException | InterruptedException e) {
-            log.error("Error sending Slack message", e);
-        }
+        });
     }
 
     /**

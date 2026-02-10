@@ -7,7 +7,14 @@ import { authApi } from '../api/auth';
 import { LoginRequest, GoogleLoginRequest, User, Role } from '../types/auth';
 import { clearGoogleToken } from '../utils/googleToken';
 
-// Decode JWT token to extract roles and permissions
+/**
+ * Decode JWT token to extract roles and permissions.
+ *
+ * Note: With httpOnly cookies, we can't access the token directly.
+ * The backend now returns roles/permissions in the AuthResponse body
+ * for the frontend to use. This function is kept for backward compatibility
+ * with tokens still in the response body during migration.
+ */
 function decodeJwt(token: string): { roles: string[]; permissions: string[] } {
   try {
     const base64Url = token.split('.')[1];
@@ -60,7 +67,7 @@ interface AuthState {
 export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
-      user: null,
+      user: null as User | null,
       isAuthenticated: false,
       isLoading: false,
       hasHydrated: false,
@@ -70,18 +77,16 @@ export const useAuth = create<AuthState>()(
       },
 
       login: async (credentials: LoginRequest) => {
-        console.log('[Auth] Login started for:', credentials.email);
         set({ isLoading: true });
         try {
-          console.log('[Auth] Calling authApi.login...');
           const response = await authApi.login(credentials);
-          console.log('[Auth] Login response received:', { userId: response.userId, email: response.email });
 
-          apiClient.setTokens(response.accessToken, response.refreshToken);
+          // Tokens are now set via httpOnly cookies by the backend
+          // We only store non-sensitive data client-side
           apiClient.setTenantId(response.tenantId);
-          console.log('[Auth] Tokens and tenantId set');
 
-          // Extract roles and permissions from JWT token
+          // Extract roles and permissions from JWT token in response body
+          // (still available for frontend permission checks during migration)
           const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 
@@ -102,11 +107,8 @@ export const useAuth = create<AuthState>()(
             localStorage.setItem('user', JSON.stringify(user));
           }
 
-          console.log('[Auth] Setting user and isAuthenticated:', { userId: user.id, email: user.email });
           set({ user, isAuthenticated: true, isLoading: false });
-          console.log('[Auth] Login completed successfully');
         } catch (error) {
-          console.error('[Auth] Login failed:', error);
           set({ isLoading: false });
           throw error;
         }
@@ -117,10 +119,10 @@ export const useAuth = create<AuthState>()(
         try {
           const response = await authApi.googleLogin(credentials);
 
-          apiClient.setTokens(response.accessToken, response.refreshToken);
+          // Tokens are now set via httpOnly cookies by the backend
           apiClient.setTenantId(response.tenantId);
 
-          // Extract roles and permissions from JWT token
+          // Extract roles and permissions from JWT token in response body
           const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);
           const roles = convertRolesToObjects(roleStrings, permissionStrings);
 

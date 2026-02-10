@@ -202,7 +202,7 @@ export default function BenefitsPage() {
       if (activeTab === 'plans') {
         const [plans, userEnrollments] = await Promise.all([
           benefitsService.getActivePlans(),
-          benefitsService.getActiveEnrollments(user.employeeId).catch(() => []),
+          benefitsService.getActiveEnrollments(user.employeeId).catch(() => [] as BenefitEnrollment[]),
         ]);
 
         const displayBenefits: DisplayBenefit[] = plans.map((plan) => {
@@ -476,33 +476,30 @@ export default function BenefitsPage() {
           <div className="flex border-b border-surface-200 dark:border-surface-700">
             <button
               onClick={() => setActiveTab('plans')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'plans'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'plans'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <Gift className="h-4 w-4 inline-block mr-2" />
               Benefit Plans
             </button>
             <button
               onClick={() => setActiveTab('enrollments')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'enrollments'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'enrollments'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <CheckCircle className="h-4 w-4 inline-block mr-2" />
               My Enrollments
             </button>
             <button
               onClick={() => setActiveTab('claims')}
-              className={`px-6 py-3 font-medium transition-colors ${
-                activeTab === 'claims'
+              className={`px-6 py-3 font-medium transition-colors ${activeTab === 'claims'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
-              }`}
+                }`}
             >
               <Receipt className="h-4 w-4 inline-block mr-2" />
               Claims

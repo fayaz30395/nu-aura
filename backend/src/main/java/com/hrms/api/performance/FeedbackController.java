@@ -5,6 +5,7 @@ import com.hrms.application.performance.dto.FeedbackResponse;
 import com.hrms.application.performance.service.FeedbackService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class FeedbackController {
 
     @PostMapping
     @RequiresPermission(Permission.REVIEW_VIEW)
-    public ResponseEntity<FeedbackResponse> giveFeedback(@RequestBody FeedbackRequest request) {
+    public ResponseEntity<FeedbackResponse> giveFeedback(@Valid @RequestBody FeedbackRequest request) {
         FeedbackResponse response = feedbackService.giveFeedback(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -52,7 +53,7 @@ public class FeedbackController {
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<FeedbackResponse> updateFeedback(
             @PathVariable UUID id,
-            @RequestBody FeedbackRequest request
+            @Valid @RequestBody FeedbackRequest request
     ) {
         FeedbackResponse response = feedbackService.updateFeedback(id, request);
         return ResponseEntity.ok(response);

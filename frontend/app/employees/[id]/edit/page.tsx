@@ -5,7 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
-import { Employee, UpdateEmployeeRequest, Department } from '@/lib/types/employee';
+import { Employee, UpdateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole, EmployeeStatus } from '@/lib/types/employee';
+import { toGender, toEmploymentType, toEmployeeLevel, toJobRole, toEmployeeStatus } from '@/lib/utils/type-guards';
 import { CreateEmploymentChangeRequest } from '@/lib/types/employment-change-request';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType, CustomFieldValueRequest } from '@/lib/types/custom-fields';
@@ -502,7 +503,7 @@ export default function EditEmployeePage() {
                   <select
                     required
                     value={formData.status || ''}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, status: toEmployeeStatus(e.target.value) })}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="">Select Status</option>
@@ -578,7 +579,7 @@ export default function EditEmployeePage() {
                   </label>
                   <select
                     value={formData.gender || ''}
-                    onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
+                    onChange={(e) => setFormData({ ...formData, gender: toGender(e.target.value) })}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="">Select Gender</option>
@@ -708,7 +709,7 @@ export default function EditEmployeePage() {
                     <select
                       required
                       value={formData.employmentType || ''}
-                      onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as any })}
+                      onChange={(e) => setFormData({ ...formData, employmentType: toEmploymentType(e.target.value) })}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select Type</option>
@@ -746,7 +747,7 @@ export default function EditEmployeePage() {
                     </label>
                     <select
                       value={formData.level || ''}
-                      onChange={(e) => setFormData({ ...formData, level: e.target.value as any })}
+                      onChange={(e) => setFormData({ ...formData, level: toEmployeeLevel(e.target.value) })}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select Level</option>
@@ -768,7 +769,7 @@ export default function EditEmployeePage() {
                     </label>
                     <select
                       value={formData.jobRole || ''}
-                      onChange={(e) => setFormData({ ...formData, jobRole: e.target.value as any })}
+                      onChange={(e) => setFormData({ ...formData, jobRole: toJobRole(e.target.value) })}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select Role</option>

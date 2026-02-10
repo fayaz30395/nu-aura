@@ -6,6 +6,11 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="005-create-comments-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="pm" tableName="project_comments"/>
+            </not>
+        </preConditions>
         <createTable tableName="project_comments" schemaName="pm">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>

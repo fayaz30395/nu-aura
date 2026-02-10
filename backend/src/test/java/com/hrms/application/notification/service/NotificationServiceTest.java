@@ -1,6 +1,7 @@
 package com.hrms.application.notification.service;
 
 import com.hrms.common.security.SecurityContext;
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.notification.Notification;
 import com.hrms.infrastructure.notification.repository.NotificationRepository;
 import org.junit.jupiter.api.*;
@@ -33,6 +34,7 @@ class NotificationServiceTest {
     private NotificationService notificationService;
 
     private static MockedStatic<SecurityContext> securityContextMock;
+    private static MockedStatic<TenantContext> tenantContextMock;
 
     private UUID tenantId;
     private UUID userId;
@@ -41,11 +43,13 @@ class NotificationServiceTest {
     @BeforeAll
     static void setUpClass() {
         securityContextMock = mockStatic(SecurityContext.class);
+        tenantContextMock = mockStatic(TenantContext.class);
     }
 
     @AfterAll
     static void tearDownClass() {
         securityContextMock.close();
+        tenantContextMock.close();
     }
 
     @BeforeEach
@@ -55,6 +59,7 @@ class NotificationServiceTest {
 
         securityContextMock.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+        tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
 
         notification = Notification.builder()
                 .userId(userId)
@@ -151,7 +156,7 @@ class NotificationServiceTest {
         void shouldGetUserNotificationsWithPagination() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Notification> page = new PageImpl<>(List.of(notification));
-            when(notificationRepository.findByUserIdOrderByCreatedAtDesc(eq(userId), any(Pageable.class)))
+            when(notificationRepository.findByTenantIdAndUserIdOrderByCreatedAtDesc(eq(tenantId), eq(userId), any(Pageable.class)))
                     .thenReturn(page);
 
             Page<Notification> result = notificationService.getUserNotifications(userId, 0, 10);
@@ -164,7 +169,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should return empty page when no notifications")
         void shouldReturnEmptyPageWhenNoNotifications() {
-            when(notificationRepository.findByUserIdOrderByCreatedAtDesc(eq(userId), any(Pageable.class)))
+            when(notificationRepository.findByTenantIdAndUserIdOrderByCreatedAtDesc(eq(tenantId), eq(userId), any(Pageable.class)))
                     .thenReturn(Page.empty());
 
             Page<Notification> result = notificationService.getUserNotifications(userId, 0, 10);
@@ -188,7 +193,7 @@ class NotificationServiceTest {
                 notifications.add(n);
             }
 
-            when(notificationRepository.findByUserIdOrderByCreatedAtDesc(eq(userId), any(Pageable.class)))
+            when(notificationRepository.findByTenantIdAndUserIdOrderByCreatedAtDesc(eq(tenantId), eq(userId), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(notifications.subList(0, 5), PageRequest.of(0, 5), 25));
 
             Page<Notification> result = notificationService.getUserNotifications(userId, 0, 5);
@@ -205,7 +210,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should get unread notifications")
         void shouldGetUnreadNotifications() {
-            when(notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId))
+            when(notificationRepository.findByTenantIdAndUserIdAndIsReadFalseOrderByCreatedAtDesc(tenantId, userId))
                     .thenReturn(List.of(notification));
 
             List<Notification> result = notificationService.getUnreadNotifications(userId);
@@ -218,7 +223,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should return empty list when all notifications are read")
         void shouldReturnEmptyListWhenAllRead() {
-            when(notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId))
+            when(notificationRepository.findByTenantIdAndUserIdAndIsReadFalseOrderByCreatedAtDesc(tenantId, userId))
                     .thenReturn(Collections.emptyList());
 
             List<Notification> result = notificationService.getUnreadNotifications(userId);
@@ -234,7 +239,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should return correct unread count")
         void shouldReturnCorrectUnreadCount() {
-            when(notificationRepository.countByUserIdAndIsReadFalse(userId))
+            when(notificationRepository.countByTenantIdAndUserIdAndIsReadFalse(tenantId, userId))
                     .thenReturn(5L);
 
             Long count = notificationService.getUnreadCount(userId);
@@ -245,7 +250,7 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should return zero when no unread notifications")
         void shouldReturnZeroWhenNoUnread() {
-            when(notificationRepository.countByUserIdAndIsReadFalse(userId))
+            when(notificationRepository.countByTenantIdAndUserIdAndIsReadFalse(tenantId, userId))
                     .thenReturn(0L);
 
             Long count = notificationService.getUnreadCount(userId);
@@ -261,27 +266,27 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should get recent notifications within specified hours")
         void shouldGetRecentNotificationsWithinHours() {
-            when(notificationRepository.findRecentNotifications(eq(userId), any(LocalDateTime.class)))
+            when(notificationRepository.findRecentNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class)))
                     .thenReturn(List.of(notification));
 
             List<Notification> result = notificationService.getRecentNotifications(userId, 24);
 
             assertThat(result).isNotNull();
             assertThat(result).hasSize(1);
-            verify(notificationRepository).findRecentNotifications(eq(userId), any(LocalDateTime.class));
+            verify(notificationRepository).findRecentNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
         }
 
         @Test
         @DisplayName("Should handle different hour ranges")
         void shouldHandleDifferentHourRanges() {
-            when(notificationRepository.findRecentNotifications(eq(userId), any(LocalDateTime.class)))
+            when(notificationRepository.findRecentNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class)))
                     .thenReturn(Collections.emptyList());
 
             notificationService.getRecentNotifications(userId, 1);
             notificationService.getRecentNotifications(userId, 12);
             notificationService.getRecentNotifications(userId, 48);
 
-            verify(notificationRepository, times(3)).findRecentNotifications(eq(userId), any(LocalDateTime.class));
+            verify(notificationRepository, times(3)).findRecentNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
         }
     }
 
@@ -293,11 +298,11 @@ class NotificationServiceTest {
         @DisplayName("Should mark notification as read")
         void shouldMarkNotificationAsRead() {
             UUID notificationId = notification.getId();
-            doNothing().when(notificationRepository).markAsRead(eq(notificationId), any(LocalDateTime.class));
+            doNothing().when(notificationRepository).markAsRead(eq(tenantId), eq(notificationId), any(LocalDateTime.class));
 
             notificationService.markAsRead(notificationId);
 
-            verify(notificationRepository).markAsRead(eq(notificationId), any(LocalDateTime.class));
+            verify(notificationRepository).markAsRead(eq(tenantId), eq(notificationId), any(LocalDateTime.class));
         }
     }
 
@@ -308,11 +313,11 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should mark all notifications as read for user")
         void shouldMarkAllNotificationsAsReadForUser() {
-            doNothing().when(notificationRepository).markAllAsReadForUser(eq(userId), any(LocalDateTime.class));
+            doNothing().when(notificationRepository).markAllAsReadForUser(eq(tenantId), eq(userId), any(LocalDateTime.class));
 
             notificationService.markAllAsRead(userId);
 
-            verify(notificationRepository).markAllAsReadForUser(eq(userId), any(LocalDateTime.class));
+            verify(notificationRepository).markAllAsReadForUser(eq(tenantId), eq(userId), any(LocalDateTime.class));
         }
     }
 
@@ -324,11 +329,11 @@ class NotificationServiceTest {
         @DisplayName("Should delete notification by ID")
         void shouldDeleteNotificationById() {
             UUID notificationId = notification.getId();
-            doNothing().when(notificationRepository).deleteById(notificationId);
+            doNothing().when(notificationRepository).deleteByIdAndTenantId(notificationId, tenantId);
 
             notificationService.deleteNotification(notificationId);
 
-            verify(notificationRepository).deleteById(notificationId);
+            verify(notificationRepository).deleteByIdAndTenantId(notificationId, tenantId);
         }
     }
 
@@ -339,23 +344,23 @@ class NotificationServiceTest {
         @Test
         @DisplayName("Should delete old notifications")
         void shouldDeleteOldNotifications() {
-            doNothing().when(notificationRepository).deleteOldNotifications(eq(userId), any(LocalDateTime.class));
+            doNothing().when(notificationRepository).deleteOldNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
 
             notificationService.deleteOldNotifications(userId, 30);
 
-            verify(notificationRepository).deleteOldNotifications(eq(userId), any(LocalDateTime.class));
+            verify(notificationRepository).deleteOldNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
         }
 
         @Test
         @DisplayName("Should handle different days old values")
         void shouldHandleDifferentDaysOldValues() {
-            doNothing().when(notificationRepository).deleteOldNotifications(eq(userId), any(LocalDateTime.class));
+            doNothing().when(notificationRepository).deleteOldNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
 
             notificationService.deleteOldNotifications(userId, 7);
             notificationService.deleteOldNotifications(userId, 30);
             notificationService.deleteOldNotifications(userId, 90);
 
-            verify(notificationRepository, times(3)).deleteOldNotifications(eq(userId), any(LocalDateTime.class));
+            verify(notificationRepository, times(3)).deleteOldNotifications(eq(tenantId), eq(userId), any(LocalDateTime.class));
         }
     }
 
@@ -367,7 +372,7 @@ class NotificationServiceTest {
         @DisplayName("Should get notification by ID")
         void shouldGetNotificationById() {
             UUID notificationId = notification.getId();
-            when(notificationRepository.findById(notificationId))
+            when(notificationRepository.findByIdAndTenantId(notificationId, tenantId))
                     .thenReturn(Optional.of(notification));
 
             Notification result = notificationService.getNotificationById(notificationId);
@@ -380,7 +385,7 @@ class NotificationServiceTest {
         @DisplayName("Should throw exception when notification not found")
         void shouldThrowExceptionWhenNotFound() {
             UUID notificationId = UUID.randomUUID();
-            when(notificationRepository.findById(notificationId))
+            when(notificationRepository.findByIdAndTenantId(notificationId, tenantId))
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> notificationService.getNotificationById(notificationId))

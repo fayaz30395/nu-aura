@@ -1,5 +1,7 @@
 package com.hrms.api.attendance.dto;
 
+import com.hrms.common.validation.ValidLatitude;
+import com.hrms.common.validation.ValidLongitude;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +17,11 @@ import java.math.BigDecimal;
 public class MobileCheckInRequest {
 
     @NotNull(message = "Latitude is required")
+    @ValidLatitude
     private BigDecimal latitude;
 
     @NotNull(message = "Longitude is required")
+    @ValidLongitude
     private BigDecimal longitude;
 
     private BigDecimal accuracy; // GPS accuracy in meters

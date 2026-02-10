@@ -13,7 +13,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "social_posts")
+@Table(name = "social_posts", indexes = {
+    @Index(name = "idx_wall_post_tenant", columnList = "tenant_id"),
+    @Index(name = "idx_wall_post_tenant_author", columnList = "tenant_id,author_id"),
+    @Index(name = "idx_wall_post_tenant_deleted", columnList = "tenant_id,is_deleted"),
+    @Index(name = "idx_wall_post_tenant_type", columnList = "tenant_id,post_type"),
+    @Index(name = "idx_wall_post_created_at", columnList = "created_at"),
+    @Index(name = "idx_wall_post_pinned", columnList = "is_pinned,created_at"),
+    @Index(name = "idx_wall_post_celebrated", columnList = "celebrated_employee_id")
+})
 @EntityListeners(AuditingEntityListener.class)
 public class WallPost {
 

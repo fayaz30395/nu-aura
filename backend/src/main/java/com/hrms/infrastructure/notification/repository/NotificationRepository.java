@@ -11,32 +11,149 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repository for Notification entity with mandatory tenant isolation.
+ *
+ * <p><strong>SECURITY:</strong> All queries MUST include tenantId to prevent cross-tenant data leaks.
+ * The inherited JpaRepository methods (findAll, findById, deleteById) are intentionally
+ * overridden to enforce tenant isolation at the repository level.</p>
+ */
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
-    Page<Notification> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+    // ==================== TENANT-SAFE OVERRIDE METHODS ====================
 
-    List<Notification> findByUserIdAndIsReadFalseOrderByCreatedAtDesc(UUID userId);
+    /**
+     * Find notification by ID with mandatory tenant isolation.
+     * Use this instead of the inherited findById().
+     */
+    @Query("SELECT n FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
+    Optional<Notification> findByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
-    Long countByUserIdAndIsReadFalse(UUID userId);
+    /**
+     * Find all notifications for a tenant with pagination.
+     * Use this instead of the inherited findAll().
+     */
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId ORDER BY n.createdAt DESC")
+    Page<Notification> findAllByTenantId(@Param("tenantId") UUID tenantId, Pageable pageable);
 
-    @Query("SELECT n FROM Notification n WHERE n.userId = :userId AND n.createdAt > :since ORDER BY n.createdAt DESC")
+    /**
+     * Delete notification by ID with mandatory tenant isolation.
+     * Use this instead of the inherited deleteById().
+     */
+    @Modifying
+    @Query("DELETE FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
+    void deleteByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
+
+    /**
+     * Check if notification exists with mandatory tenant isolation.
+     */
+    @Query("SELECT CASE WHEN COUNT(n) > 0 THEN true ELSE false END FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
+    boolean existsByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
+
+    // ==================== USER-SCOPED QUERY METHODS ====================
+
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId ORDER BY n.createdAt DESC")
+    Page<Notification> findByTenantIdAndUserIdOrderByCreatedAtDesc(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId,
+        Pageable pageable
+    );
+
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false ORDER BY n.createdAt DESC")
+    List<Notification> findByTenantIdAndUserIdAndIsReadFalseOrderByCreatedAtDesc(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId
+    );
+
+    /**
+     * Paginated version for unread notifications.
+     * Use this when the user may have many unread notifications.
+     */
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false ORDER BY n.createdAt DESC")
+    Page<Notification> findUnreadNotificationsPaged(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId,
+        Pageable pageable
+    );
+
+    @Query("SELECT COUNT(n) FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false")
+    Long countByTenantIdAndUserIdAndIsReadFalse(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId
+    );
+
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt > :since ORDER BY n.createdAt DESC")
     List<Notification> findRecentNotifications(
+        @Param("tenantId") UUID tenantId,
         @Param("userId") UUID userId,
         @Param("since") LocalDateTime since
     );
 
-    @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.id = :notificationId")
-    void markAsRead(@Param("notificationId") UUID notificationId, @Param("readAt") LocalDateTime readAt);
+    /**
+     * Paginated version for recent notifications.
+     * Use this when querying a longer time window that may return many results.
+     */
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt > :since ORDER BY n.createdAt DESC")
+    Page<Notification> findRecentNotificationsPaged(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId,
+        @Param("since") LocalDateTime since,
+        Pageable pageable
+    );
+
+    // ==================== MODIFICATION METHODS ====================
 
     @Modifying
-    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.userId = :userId AND n.isRead = false")
-    void markAllAsReadForUser(@Param("userId") UUID userId, @Param("readAt") LocalDateTime readAt);
+    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.id = :notificationId")
+    void markAsRead(
+        @Param("tenantId") UUID tenantId,
+        @Param("notificationId") UUID notificationId,
+        @Param("readAt") LocalDateTime readAt
+    );
 
     @Modifying
-    @Query("DELETE FROM Notification n WHERE n.userId = :userId AND n.createdAt < :before")
-    void deleteOldNotifications(@Param("userId") UUID userId, @Param("before") LocalDateTime before);
+    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.isRead = false")
+    void markAllAsReadForUser(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId,
+        @Param("readAt") LocalDateTime readAt
+    );
+
+    @Modifying
+    @Query("DELETE FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId AND n.createdAt < :before")
+    void deleteOldNotifications(
+        @Param("tenantId") UUID tenantId,
+        @Param("userId") UUID userId,
+        @Param("before") LocalDateTime before
+    );
+
+    // ==================== DEPRECATED - DO NOT USE ====================
+
+    /**
+     * @deprecated Use {@link #findByIdAndTenantId(UUID, UUID)} instead.
+     * This method is unsafe for multi-tenant environments.
+     */
+    @Override
+    @Deprecated
+    Optional<Notification> findById(UUID id);
+
+    /**
+     * @deprecated Use {@link #findAllByTenantId(UUID, Pageable)} instead.
+     * This method is unsafe for multi-tenant environments.
+     */
+    @Override
+    @Deprecated
+    List<Notification> findAll();
+
+    /**
+     * @deprecated Use {@link #deleteByIdAndTenantId(UUID, UUID)} instead.
+     * This method is unsafe for multi-tenant environments.
+     */
+    @Override
+    @Deprecated
+    void deleteById(UUID id);
 }

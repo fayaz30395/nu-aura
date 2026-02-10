@@ -3,8 +3,10 @@ package com.hrms.application.leave.service;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
+import com.hrms.application.notification.service.WebSocketNotificationService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +24,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +38,13 @@ class LeaveRequestServiceTest {
     private LeaveBalanceService leaveBalanceService;
 
     @Mock
+    private WebSocketNotificationService webSocketNotificationService;
+
+    @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private LeaveTypeRepository leaveTypeRepository;
 
     @InjectMocks
     private LeaveRequestService leaveRequestService;
@@ -122,6 +131,21 @@ class LeaveRequestServiceTest {
             assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("overlaps");
+        }
+
+        @Test
+        @DisplayName("Should throw exception when balance service indicates insufficient balance")
+        void shouldThrowExceptionWhenInsufficientBalance() {
+            when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(leaveBalanceService.getOrCreateBalance(any(), any(), anyInt()))
+                    .thenThrow(new IllegalStateException("Insufficient leave balance"));
+
+            assertThatThrownBy(() -> leaveRequestService.createLeaveRequest(leaveRequest))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Insufficient");
         }
     }
 
@@ -234,6 +258,22 @@ class LeaveRequestServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("direct manager");
         }
+
+        @Test
+        @DisplayName("Should throw exception when leave request already approved")
+        void shouldThrowExceptionWhenAlreadyApproved() {
+            UUID requestId = leaveRequest.getId();
+            leaveRequest.setStatus(LeaveRequest.LeaveRequestStatus.APPROVED);
+
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Only pending requests can be approved");
+        }
     }
 
     @Nested
@@ -272,6 +312,19 @@ class LeaveRequestServiceTest {
 
             assertThat(result).isNotNull();
             verify(leaveBalanceService).creditLeave(employeeId, leaveTypeId, leaveRequest.getTotalDays());
+        }
+
+        @Test
+        @DisplayName("Should throw exception when cancelling leave request from another tenant")
+        void shouldThrowExceptionWhenCancellingOtherTenantRequest() {
+            UUID requestId = leaveRequest.getId();
+            leaveRequest.setTenantId(UUID.randomUUID());
+            when(leaveRequestRepository.findById(requestId))
+                    .thenReturn(Optional.of(leaveRequest));
+
+            assertThatThrownBy(() -> leaveRequestService.cancelLeaveRequest(requestId, "Not authorized"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("not found");
         }
     }
 

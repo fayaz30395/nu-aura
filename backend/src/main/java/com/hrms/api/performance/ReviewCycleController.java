@@ -6,6 +6,7 @@ import com.hrms.application.performance.dto.ReviewCycleResponse;
 import com.hrms.application.performance.service.ReviewCycleService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class ReviewCycleController {
 
     @PostMapping
     @RequiresPermission(Permission.REVIEW_CREATE)
-    public ResponseEntity<ReviewCycleResponse> createCycle(@RequestBody ReviewCycleRequest request) {
+    public ResponseEntity<ReviewCycleResponse> createCycle(@Valid @RequestBody ReviewCycleRequest request) {
         ReviewCycleResponse response = reviewCycleService.createCycle(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -66,7 +67,7 @@ public class ReviewCycleController {
     @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> updateCycle(
             @PathVariable UUID id,
-            @RequestBody ReviewCycleRequest request
+            @Valid @RequestBody ReviewCycleRequest request
     ) {
         ReviewCycleResponse response = reviewCycleService.updateCycle(id, request);
         return ResponseEntity.ok(response);
@@ -83,7 +84,7 @@ public class ReviewCycleController {
     @RequiresPermission(Permission.REVIEW_APPROVE)
     public ResponseEntity<ReviewCycleResponse> activateCycle(
             @PathVariable UUID id,
-            @RequestBody ActivateCycleRequest request
+            @Valid @RequestBody ActivateCycleRequest request
     ) {
         log.info("Activating review cycle {} with scope {}", id, request.getScopeType());
         ReviewCycleResponse response = reviewCycleService.activateCycle(id, request);

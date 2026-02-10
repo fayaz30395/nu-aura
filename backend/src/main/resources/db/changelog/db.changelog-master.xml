@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
+    <include file="db/changelog/changes/000-drop-pm-schema.xml"/>
     <include file="db/changelog/changes/001-create-tenants-table.xml"/>
     <include file="db/changelog/changes/002-create-permissions-table.xml"/>
     <include file="db/changelog/changes/003-create-roles-table.xml"/>
@@ -60,6 +61,7 @@
     <include file="db/changelog/changes/061-create-survey-tables.xml"/>
     <include file="db/changelog/changes/062-create-benefits-tables.xml"/>
     <include file="db/changelog/changes/063-create-recruitment-tables.xml"/>
+    <include file="db/changelog/changes/080-create-applicants-table.xml"/>
     <include file="db/changelog/changes/064-create-exit-management-tables.xml"/>
     <include file="db/changelog/changes/065-create-helpdesk-tables.xml"/>
     <include file="db/changelog/changes/066-create-time-tracking-tables.xml"/>
@@ -106,6 +108,9 @@
 
     <!-- RBAC Permissions and Roles Seed Data -->
     <include file="db/changelog/changes/099-seed-rbac-permissions-roles.xml"/>
+
+    <!-- RBAC Fix: Add Wall/Recognition permissions to HR_EXECUTIVE, DEPT_MANAGER, TEAM_LEAD -->
+    <include file="db/changelog/changes/100-rbac-wall-recognition-permissions.xml"/>
 
     <!-- NuLogic Admin User - Primary admin with @nulogic.io for Google SSO -->
     <include file="db/changelog/changes/101-seed-nulogic-admin.xml"/>
@@ -175,5 +180,11 @@
 
     <!-- Add audit columns to post_comments table -->
     <include file="db/changelog/changes/122-add-audit-columns-to-post-comments.xml"/>
+
+    <!-- ORM Performance Fixes: Composite indexes and tenant-safe unique constraints -->
+    <include file="db/changelog/changes/123-orm-performance-fixes.xml"/>
+
+    <!-- Webhook delivery system for external integrations -->
+    <include file="db/changelog/changes/124-create-webhook-tables.xml"/>
 
 </databaseChangeLog>

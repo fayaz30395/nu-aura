@@ -3,10 +3,12 @@ package com.hrms.application.employee.service;
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.event.employee.*;
 import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
@@ -17,9 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +33,9 @@ public class EmployeeService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DomainEventPublisher eventPublisher;
 
     @Transactional
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
@@ -99,6 +102,9 @@ public class EmployeeService {
             employee = employeeRepository.save(employee);
         }
 
+        // Publish domain event for employee creation
+        eventPublisher.publish(EmployeeCreatedEvent.of(this, employee));
+
         return EmployeeResponse.fromEmployee(employee);
     }
 
@@ -110,6 +116,14 @@ public class EmployeeService {
                 .filter(e -> e.getTenantId().equals(tenantId))
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
+        // Capture previous values for event tracking
+        Employee.EmployeeStatus previousStatus = employee.getStatus();
+        String previousDesignation = employee.getDesignation();
+        Employee.EmployeeLevel previousLevel = employee.getLevel();
+        UUID previousDepartmentId = employee.getDepartmentId();
+        UUID previousManagerId = employee.getManagerId();
+        Set<String> changedFields = new HashSet<>();
+
         // Update employee code if provided and different from current
         if (request.getEmployeeCode() != null && !request.getEmployeeCode().equals(employee.getEmployeeCode())) {
             // Check if new employee code already exists for another employee
@@ -120,49 +134,146 @@ public class EmployeeService {
                         }
                     });
             employee.setEmployeeCode(request.getEmployeeCode());
+            changedFields.add("employeeCode");
         }
 
-        // Update fields if provided
-        if (request.getFirstName() != null) {
+        // Update fields if provided and track changes
+        if (request.getFirstName() != null && !request.getFirstName().equals(employee.getFirstName())) {
             employee.setFirstName(request.getFirstName());
             if (employee.getUser() != null) {
                 employee.getUser().setFirstName(request.getFirstName());
             }
+            changedFields.add("firstName");
         }
-        if (request.getMiddleName() != null) employee.setMiddleName(request.getMiddleName());
-        if (request.getLastName() != null) {
+        if (request.getMiddleName() != null && !Objects.equals(request.getMiddleName(), employee.getMiddleName())) {
+            employee.setMiddleName(request.getMiddleName());
+            changedFields.add("middleName");
+        }
+        if (request.getLastName() != null && !Objects.equals(request.getLastName(), employee.getLastName())) {
             employee.setLastName(request.getLastName());
             if (employee.getUser() != null) {
                 employee.getUser().setLastName(request.getLastName());
             }
+            changedFields.add("lastName");
         }
-        if (request.getPersonalEmail() != null) employee.setPersonalEmail(request.getPersonalEmail());
-        if (request.getPhoneNumber() != null) employee.setPhoneNumber(request.getPhoneNumber());
-        if (request.getEmergencyContactNumber() != null) employee.setEmergencyContactNumber(request.getEmergencyContactNumber());
-        if (request.getDateOfBirth() != null) employee.setDateOfBirth(request.getDateOfBirth());
-        if (request.getGender() != null) employee.setGender(request.getGender());
-        if (request.getAddress() != null) employee.setAddress(request.getAddress());
-        if (request.getCity() != null) employee.setCity(request.getCity());
-        if (request.getState() != null) employee.setState(request.getState());
-        if (request.getPostalCode() != null) employee.setPostalCode(request.getPostalCode());
-        if (request.getCountry() != null) employee.setCountry(request.getCountry());
-        if (request.getConfirmationDate() != null) employee.setConfirmationDate(request.getConfirmationDate());
-        if (request.getDepartmentId() != null) employee.setDepartmentId(request.getDepartmentId());
-        if (request.getDesignation() != null) employee.setDesignation(request.getDesignation());
-        if (request.getLevel() != null) employee.setLevel(request.getLevel());
-        if (request.getJobRole() != null) employee.setJobRole(request.getJobRole());
-        if (request.getManagerId() != null) employee.setManagerId(request.getManagerId());
-        if (request.getEmploymentType() != null) employee.setEmploymentType(request.getEmploymentType());
-        if (request.getStatus() != null) employee.setStatus(request.getStatus());
-        if (request.getBankAccountNumber() != null) employee.setBankAccountNumber(request.getBankAccountNumber());
-        if (request.getBankName() != null) employee.setBankName(request.getBankName());
-        if (request.getBankIfscCode() != null) employee.setBankIfscCode(request.getBankIfscCode());
-        if (request.getTaxId() != null) employee.setTaxId(request.getTaxId());
+        if (request.getPersonalEmail() != null && !Objects.equals(request.getPersonalEmail(), employee.getPersonalEmail())) {
+            employee.setPersonalEmail(request.getPersonalEmail());
+            changedFields.add("personalEmail");
+        }
+        if (request.getPhoneNumber() != null && !Objects.equals(request.getPhoneNumber(), employee.getPhoneNumber())) {
+            employee.setPhoneNumber(request.getPhoneNumber());
+            changedFields.add("phoneNumber");
+        }
+        if (request.getEmergencyContactNumber() != null && !Objects.equals(request.getEmergencyContactNumber(), employee.getEmergencyContactNumber())) {
+            employee.setEmergencyContactNumber(request.getEmergencyContactNumber());
+            changedFields.add("emergencyContactNumber");
+        }
+        if (request.getDateOfBirth() != null && !Objects.equals(request.getDateOfBirth(), employee.getDateOfBirth())) {
+            employee.setDateOfBirth(request.getDateOfBirth());
+            changedFields.add("dateOfBirth");
+        }
+        if (request.getGender() != null && request.getGender() != employee.getGender()) {
+            employee.setGender(request.getGender());
+            changedFields.add("gender");
+        }
+        if (request.getAddress() != null && !Objects.equals(request.getAddress(), employee.getAddress())) {
+            employee.setAddress(request.getAddress());
+            changedFields.add("address");
+        }
+        if (request.getCity() != null && !Objects.equals(request.getCity(), employee.getCity())) {
+            employee.setCity(request.getCity());
+            changedFields.add("city");
+        }
+        if (request.getState() != null && !Objects.equals(request.getState(), employee.getState())) {
+            employee.setState(request.getState());
+            changedFields.add("state");
+        }
+        if (request.getPostalCode() != null && !Objects.equals(request.getPostalCode(), employee.getPostalCode())) {
+            employee.setPostalCode(request.getPostalCode());
+            changedFields.add("postalCode");
+        }
+        if (request.getCountry() != null && !Objects.equals(request.getCountry(), employee.getCountry())) {
+            employee.setCountry(request.getCountry());
+            changedFields.add("country");
+        }
+        if (request.getConfirmationDate() != null && !Objects.equals(request.getConfirmationDate(), employee.getConfirmationDate())) {
+            employee.setConfirmationDate(request.getConfirmationDate());
+            changedFields.add("confirmationDate");
+        }
+        if (request.getDepartmentId() != null && !Objects.equals(request.getDepartmentId(), employee.getDepartmentId())) {
+            employee.setDepartmentId(request.getDepartmentId());
+            changedFields.add("departmentId");
+        }
+        if (request.getDesignation() != null && !Objects.equals(request.getDesignation(), employee.getDesignation())) {
+            employee.setDesignation(request.getDesignation());
+            changedFields.add("designation");
+        }
+        if (request.getLevel() != null && request.getLevel() != employee.getLevel()) {
+            employee.setLevel(request.getLevel());
+            changedFields.add("level");
+        }
+        if (request.getJobRole() != null && request.getJobRole() != employee.getJobRole()) {
+            employee.setJobRole(request.getJobRole());
+            changedFields.add("jobRole");
+        }
+        if (request.getManagerId() != null && !Objects.equals(request.getManagerId(), employee.getManagerId())) {
+            employee.setManagerId(request.getManagerId());
+            changedFields.add("managerId");
+        }
+        if (request.getEmploymentType() != null && request.getEmploymentType() != employee.getEmploymentType()) {
+            employee.setEmploymentType(request.getEmploymentType());
+            changedFields.add("employmentType");
+        }
+        if (request.getStatus() != null && request.getStatus() != employee.getStatus()) {
+            employee.setStatus(request.getStatus());
+            changedFields.add("status");
+        }
+        if (request.getBankAccountNumber() != null && !Objects.equals(request.getBankAccountNumber(), employee.getBankAccountNumber())) {
+            employee.setBankAccountNumber(request.getBankAccountNumber());
+            changedFields.add("bankAccountNumber");
+        }
+        if (request.getBankName() != null && !Objects.equals(request.getBankName(), employee.getBankName())) {
+            employee.setBankName(request.getBankName());
+            changedFields.add("bankName");
+        }
+        if (request.getBankIfscCode() != null && !Objects.equals(request.getBankIfscCode(), employee.getBankIfscCode())) {
+            employee.setBankIfscCode(request.getBankIfscCode());
+            changedFields.add("bankIfscCode");
+        }
+        if (request.getTaxId() != null && !Objects.equals(request.getTaxId(), employee.getTaxId())) {
+            employee.setTaxId(request.getTaxId());
+            changedFields.add("taxId");
+        }
 
         employee = employeeRepository.save(employee);
 
         if (employee.getUser() != null) {
             userRepository.save(employee.getUser());
+        }
+
+        // Publish domain events based on what changed
+        if (!changedFields.isEmpty()) {
+            eventPublisher.publish(EmployeeUpdatedEvent.of(this, employee, changedFields));
+        }
+
+        // Check for status change
+        if (changedFields.contains("status") && previousStatus != employee.getStatus()) {
+            eventPublisher.publish(EmployeeStatusChangedEvent.of(this, employee, previousStatus, employee.getStatus()));
+        }
+
+        // Check for promotion (level or designation change)
+        if ((changedFields.contains("level") || changedFields.contains("designation")) &&
+            (previousLevel != employee.getLevel() || !Objects.equals(previousDesignation, employee.getDesignation()))) {
+            eventPublisher.publish(EmployeePromotedEvent.of(this, employee,
+                    previousDesignation, employee.getDesignation(),
+                    previousLevel, employee.getLevel()));
+        }
+
+        // Check for department change
+        if (changedFields.contains("departmentId") && !Objects.equals(previousDepartmentId, employee.getDepartmentId())) {
+            eventPublisher.publish(EmployeeDepartmentChangedEvent.of(this, employee,
+                    previousDepartmentId, employee.getDepartmentId(),
+                    previousManagerId, employee.getManagerId()));
         }
 
         return EmployeeResponse.fromEmployee(employee);
@@ -248,6 +359,11 @@ public class EmployeeService {
 
     @Transactional
     public void deleteEmployee(UUID employeeId) {
+        deleteEmployee(employeeId, "Terminated by administrator");
+    }
+
+    @Transactional
+    public void deleteEmployee(UUID employeeId, String terminationReason) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Employee employee = employeeRepository.findById(employeeId)
@@ -257,6 +373,9 @@ public class EmployeeService {
         // Mark as terminated instead of deleting
         employee.terminate();
         employeeRepository.save(employee);
+
+        // Publish termination event
+        eventPublisher.publish(EmployeeTerminatedEvent.of(this, employee, terminationReason));
     }
 
     /**
@@ -272,5 +391,18 @@ public class EmployeeService {
     public Employee getByIdAndTenant(UUID employeeId, UUID tenantId) {
         return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+    }
+
+    /**
+     * Retrieves an employee by ID with tenant isolation, returning Optional.
+     * Useful when the caller wants to handle "not found" cases gracefully.
+     *
+     * @param employeeId the employee ID
+     * @param tenantId the tenant ID
+     * @return Optional containing the employee if found
+     */
+    @Transactional(readOnly = true)
+    public java.util.Optional<Employee> findByIdAndTenant(UUID employeeId, UUID tenantId) {
+        return employeeRepository.findByIdAndTenantId(employeeId, tenantId);
     }
 }

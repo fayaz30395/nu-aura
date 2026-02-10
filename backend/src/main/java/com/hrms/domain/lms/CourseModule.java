@@ -44,8 +44,9 @@ public class CourseModule extends TenantAware {
     @Column(name = "unlock_after_days")
     private Integer unlockAfterDays; // For drip content
 
-    @OneToMany(mappedBy = "moduleId", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("orderIndex ASC")
+    // Note: Contents are loaded via ModuleContentRepository.findByModuleIdOrderByOrderIndexAsc()
+    // Using UUID reference pattern instead of JPA relationship for flexibility
+    @Transient
     @Builder.Default
     private List<ModuleContent> contents = new ArrayList<>();
 }

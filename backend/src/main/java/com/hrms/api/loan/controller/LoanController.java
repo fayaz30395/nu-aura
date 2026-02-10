@@ -1,7 +1,10 @@
 package com.hrms.api.loan.controller;
 
+import com.hrms.api.loan.dto.ApproveLoanRequest;
 import com.hrms.api.loan.dto.CreateLoanRequest;
 import com.hrms.api.loan.dto.EmployeeLoanDto;
+import com.hrms.api.loan.dto.RecordRepaymentRequest;
+import com.hrms.api.loan.dto.RejectLoanRequest;
 import com.hrms.application.loan.service.LoanService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -15,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -49,13 +50,10 @@ public class LoanController {
     @Operation(summary = "Approve loan", description = "Approve a pending loan application")
     public ResponseEntity<EmployeeLoanDto> approveLoan(
             @PathVariable UUID id,
-            @RequestBody(required = false) Map<String, Object> body
+            @Valid @RequestBody(required = false) ApproveLoanRequest request
     ) {
-        BigDecimal approvedAmount = null;
-        if (body != null && body.get("approvedAmount") != null) {
-            approvedAmount = new BigDecimal(body.get("approvedAmount").toString());
-        }
-        return ResponseEntity.ok(loanService.approveLoan(id, approvedAmount));
+        return ResponseEntity.ok(loanService.approveLoan(id,
+                request != null ? request.getApprovedAmount() : null));
     }
 
     @PostMapping("/{id}/reject")
@@ -63,10 +61,9 @@ public class LoanController {
     @Operation(summary = "Reject loan", description = "Reject a pending loan application")
     public ResponseEntity<EmployeeLoanDto> rejectLoan(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body
+            @Valid @RequestBody RejectLoanRequest request
     ) {
-        String reason = body.get("reason");
-        return ResponseEntity.ok(loanService.rejectLoan(id, reason));
+        return ResponseEntity.ok(loanService.rejectLoan(id, request.getReason()));
     }
 
     @PostMapping("/{id}/disburse")
@@ -88,10 +85,9 @@ public class LoanController {
     @Operation(summary = "Record repayment", description = "Record a loan repayment")
     public ResponseEntity<EmployeeLoanDto> recordRepayment(
             @PathVariable UUID id,
-            @RequestBody Map<String, Object> body
+            @Valid @RequestBody RecordRepaymentRequest request
     ) {
-        BigDecimal amount = new BigDecimal(body.get("amount").toString());
-        return ResponseEntity.ok(loanService.recordRepayment(id, amount));
+        return ResponseEntity.ok(loanService.recordRepayment(id, request.getAmount()));
     }
 
     @PostMapping("/{id}/cancel")

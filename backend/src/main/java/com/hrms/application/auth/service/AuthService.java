@@ -339,7 +339,18 @@ public class AuthService {
         throw new AuthenticationException("Invalid or expired refresh token");
     }
 
+    /**
+     * Logout user by revoking their token and clearing security context.
+     * The token is added to a blacklist so it cannot be reused even if not expired.
+     *
+     * @param token The JWT access token to revoke
+     */
     public void logout(String token) {
+        // Revoke the token by adding it to the blacklist
+        if (token != null && !token.isBlank()) {
+            tokenProvider.revokeToken(token);
+            log.info("Token revoked on logout");
+        }
         SecurityContextHolder.clearContext();
     }
 
@@ -364,6 +375,10 @@ public class AuthService {
         user.setPasswordChangedAt(LocalDateTime.now());
 
         userRepository.save(user);
+
+        // Revoke all existing tokens for this user (force re-login on all devices)
+        tokenProvider.revokeAllUserTokens(userId.toString());
+        log.info("All tokens revoked for user {} after password change", userId);
     }
 
     // ==================== NU Platform RBAC Helper Methods ====================

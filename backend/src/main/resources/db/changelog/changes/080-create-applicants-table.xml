@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="080-create-applicants-table" author="system">
+        <createTable tableName="applicants">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="candidate_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_opening_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tenant_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="VARCHAR(30)"/>
+            <column name="applied_date" type="DATE"/>
+            <column name="current_stage_entered_at" type="TIMESTAMP"/>
+            <column name="notes" type="TEXT"/>
+            <column name="rating" type="INTEGER"/>
+            <column name="resume_file_id" type="UUID"/>
+            <column name="rejection_reason" type="TEXT"/>
+            <column name="offered_salary" type="DECIMAL(15,2)"/>
+            <column name="expected_salary" type="DECIMAL(15,2)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+            <column name="updated_by" type="UUID"/>
+            <column name="version" type="BIGINT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="applicants"
+                baseColumnNames="candidate_id"
+                constraintName="fk_applicants_candidate"
+                referencedTableName="candidates"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="applicants"
+                baseColumnNames="job_opening_id"
+                constraintName="fk_applicants_job_opening"
+                referencedTableName="job_openings"
+                referencedColumnNames="id"/>
+
+        <createIndex tableName="applicants" indexName="idx_applicants_tenant_job">
+            <column name="tenant_id"/>
+            <column name="job_opening_id"/>
+        </createIndex>
+
+        <createIndex tableName="applicants" indexName="idx_applicants_tenant_candidate">
+            <column name="tenant_id"/>
+            <column name="candidate_id"/>
+        </createIndex>
+
+        <createIndex tableName="applicants" indexName="idx_applicants_tenant_status">
+            <column name="tenant_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -112,8 +112,9 @@ public class Course extends TenantAware {
     @Builder.Default
     private Integer totalRatings = 0;
 
-    @OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("orderIndex ASC")
+    // Note: Modules are loaded via CourseModuleRepository.findByCourseIdOrderByOrderIndexAsc()
+    // Using UUID reference pattern instead of JPA relationship for flexibility
+    @Transient
     @Builder.Default
     private List<CourseModule> modules = new ArrayList<>();
 

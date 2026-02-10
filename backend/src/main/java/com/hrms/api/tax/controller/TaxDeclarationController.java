@@ -4,6 +4,7 @@ import com.hrms.api.tax.dto.*;
 import com.hrms.application.tax.service.TaxDeclarationService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public class TaxDeclarationController {
 
     @PostMapping
     @RequiresPermission(Permission.TDS_DECLARE)
-    public ResponseEntity<TaxDeclarationResponse> createTaxDeclaration(@RequestBody TaxDeclarationRequest request) {
+    public ResponseEntity<TaxDeclarationResponse> createTaxDeclaration(@Valid @RequestBody TaxDeclarationRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taxDeclarationService.createTaxDeclaration(request));
     }
 
@@ -34,7 +35,7 @@ public class TaxDeclarationController {
     @RequiresPermission(Permission.TDS_DECLARE)
     public ResponseEntity<TaxDeclarationResponse> updateTaxDeclaration(
             @PathVariable UUID id,
-            @RequestBody TaxDeclarationRequest request) {
+            @Valid @RequestBody TaxDeclarationRequest request) {
         return ResponseEntity.ok(taxDeclarationService.updateTaxDeclaration(id, request));
     }
 
@@ -92,7 +93,7 @@ public class TaxDeclarationController {
     @RequiresPermission(Permission.TDS_DECLARE)
     public ResponseEntity<TaxProofResponse> addTaxProof(
             @RequestParam UUID employeeId,
-            @RequestBody TaxProofRequest request) {
+            @Valid @RequestBody TaxProofRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taxDeclarationService.addTaxProof(employeeId, request));
     }

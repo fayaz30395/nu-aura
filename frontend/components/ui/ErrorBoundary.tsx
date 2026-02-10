@@ -10,6 +10,16 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
+  errorId?: string;
+}
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+/**
+ * Generate a unique error ID for production error tracking
+ */
+function generateErrorId(): string {
+  return `ERR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -19,11 +29,26 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return {
+      hasError: true,
+      error,
+      errorId: generateErrorId(),
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    // In production, only log sanitized error info
+    if (isDevelopment) {
+      console.error('ErrorBoundary caught an error:', error, errorInfo);
+    } else {
+      // Log sanitized error for production monitoring
+      console.error('Application error:', {
+        errorId: this.state.errorId,
+        message: error.message,
+        name: error.name,
+        componentStack: errorInfo.componentStack?.split('\n').slice(0, 3).join('\n'),
+      });
+    }
   }
 
   render() {
@@ -56,7 +81,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
               We encountered an unexpected error. Please try refreshing the page.
             </p>
-            {this.state.error && (
+
+            {/* Development: Show full error details */}
+            {isDevelopment && this.state.error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4 mb-6">
                 <p className="text-sm text-red-800 dark:text-red-300 font-mono break-all mb-2">
                   <strong>Error:</strong> {this.state.error.message}
@@ -66,6 +93,19 @@ export class ErrorBoundary extends Component<Props, State> {
                 </p>
               </div>
             )}
+
+            {/* Production: Show only error ID for support reference */}
+            {!isDevelopment && this.state.errorId && (
+              <div className="bg-gray-100 dark:bg-gray-700 rounded p-3 mb-6 text-center">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  Error Reference
+                </p>
+                <p className="text-sm font-mono text-gray-700 dark:text-gray-300 select-all">
+                  {this.state.errorId}
+                </p>
+              </div>
+            )}
+
             <div className="flex gap-3">
               <button
                 onClick={() => window.location.reload()}

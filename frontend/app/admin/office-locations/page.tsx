@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { officeLocationService, OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-location.service';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function OfficeLocationsPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const [locations, setLocations] = useState<OfficeLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -20,8 +28,20 @@ export default function OfficeLocationsPage() {
   });
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadLocations();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadLocations = async () => {
     try {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -36,6 +36,7 @@ import {
   Announcement,
   AnnouncementCategory,
   AnnouncementPriority,
+  TargetAudience,
   getCategoryColor,
   getPriorityColor,
   getCategoryLabel,
@@ -43,6 +44,13 @@ import {
 } from '@/lib/services/announcement.service';
 import { departmentService } from '@/lib/services/department.service';
 import { Department } from '@/lib/types/employee';
+import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
+import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { createLogger } from '@/lib/utils/logger';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+
+const logger = createLogger('Announcements');
 
 const categoryIcons: Record<AnnouncementCategory, React.ElementType> = {
   GENERAL: Bell,
@@ -68,6 +76,7 @@ const priorityLabels: Record<AnnouncementPriority, string> = {
 
 export default function AnnouncementsPage() {
   const { user } = useAuth();
+  const toast = useToast();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,6 +90,9 @@ export default function AnnouncementsPage() {
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Debounce search term to prevent excessive API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // Check if user can edit/delete an announcement (creator or admin)
   const canEditAnnouncement = (announcement: Announcement) => {
@@ -98,55 +110,58 @@ export default function AnnouncementsPage() {
     setShowCreateModal(true);
   };
 
-  // Handle delete announcement
-  const handleDeleteAnnouncement = async (announcementId: string) => {
+  // Handle delete announcement with confirmation
+  const handleDeleteAnnouncement = async () => {
+    if (!showDeleteConfirm) return;
+
     try {
       setIsDeleting(true);
-      await announcementService.deleteAnnouncement(announcementId);
+      await announcementService.deleteAnnouncement(showDeleteConfirm);
       setShowDeleteConfirm(null);
       setSelectedAnnouncement(null);
+      toast.success('Announcement Deleted', 'The announcement has been permanently removed.');
       // Reload announcements
       loadAnnouncements();
       loadPinnedAnnouncements();
     } catch (error) {
-      console.error('Failed to delete announcement:', error);
-      alert('Failed to delete announcement');
+      logger.error('Failed to delete announcement:', error);
+      toast.error('Delete Failed', 'Unable to delete the announcement. Please try again.');
     } finally {
       setIsDeleting(false);
     }
   };
+
+  // Memoized load functions to prevent stale closures
+  const loadAnnouncements = useCallback(async () => {
+    if (!user?.employeeId) return;
+    setLoading(true);
+    try {
+      const response = await announcementService.getActiveAnnouncements(user.employeeId, page, 10);
+      setAnnouncements(response.content || []);
+      setTotalPages(response.totalPages || 0);
+    } catch (error) {
+      logger.error('Error loading announcements:', error);
+      toast.error('Load Failed', 'Unable to load announcements. Please refresh the page.');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.employeeId, page, toast]);
+
+  const loadPinnedAnnouncements = useCallback(async () => {
+    try {
+      const pinned = await announcementService.getPinnedAnnouncements();
+      setPinnedAnnouncements(pinned || []);
+    } catch (error) {
+      logger.error('Error loading pinned announcements:', error);
+    }
+  }, []);
 
   useEffect(() => {
     if (user?.employeeId) {
       loadAnnouncements();
       loadPinnedAnnouncements();
     }
-  }, [page, categoryFilter, priorityFilter, user?.employeeId]);
-
-  const loadAnnouncements = async () => {
-    if (!user?.employeeId) return;
-    setLoading(true);
-    try {
-      // Use getActiveAnnouncements with employeeId for targeted filtering
-      // This will filter announcements based on department, role (manager), and join date
-      const response = await announcementService.getActiveAnnouncements(user.employeeId, page, 10);
-      setAnnouncements(response.content || []);
-      setTotalPages(response.totalPages || 0);
-    } catch (error) {
-      console.error('Error loading announcements:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadPinnedAnnouncements = async () => {
-    try {
-      const pinned = await announcementService.getPinnedAnnouncements();
-      setPinnedAnnouncements(pinned || []);
-    } catch (error) {
-      console.error('Error loading pinned announcements:', error);
-    }
-  };
+  }, [page, categoryFilter, priorityFilter, user?.employeeId, loadAnnouncements, loadPinnedAnnouncements]);
 
   const handleAnnouncementClick = async (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
@@ -160,14 +175,14 @@ export default function AnnouncementsPage() {
           prev.map(a => a.id === announcement.id ? { ...a, isRead: true } : a)
         );
       } catch (error) {
-        console.error('Error marking as read:', error);
+        logger.error('Error marking as read:', error);
       }
     }
   };
 
   const filteredAnnouncements = announcements.filter(a => {
-    const matchesSearch = a.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          a.content.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = a.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                          a.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesCategory = !categoryFilter || a.category === categoryFilter;
     const matchesPriority = !priorityFilter || a.priority === priorityFilter;
     return matchesSearch && matchesCategory && matchesPriority;
@@ -546,7 +561,7 @@ export default function AnnouncementsPage() {
 
                   <div
                     className="prose dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: selectedAnnouncement.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeAnnouncementHtml(selectedAnnouncement.content) }}
                   />
 
                   {selectedAnnouncement.attachmentUrl && (
@@ -627,71 +642,18 @@ export default function AnnouncementsPage() {
           )}
         </AnimatePresence>
 
-        {/* Delete Confirmation Modal */}
-        <AnimatePresence>
-          {showDeleteConfirm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-              onClick={() => setShowDeleteConfirm(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full">
-                      <AlertTriangle className="w-6 h-6 text-red-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Delete Announcement
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        This action cannot be undone
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    Are you sure you want to delete this announcement? All associated data will be permanently removed.
-                  </p>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setShowDeleteConfirm(null)}
-                      disabled={isDeleting}
-                      className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors font-medium"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handleDeleteAnnouncement(showDeleteConfirm)}
-                      disabled={isDeleting}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50"
-                    >
-                      {isDeleting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Deleting...
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={!!showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(null)}
+          onConfirm={handleDeleteAnnouncement}
+          title="Delete Announcement"
+          message="Are you sure you want to delete this announcement? All associated data will be permanently removed. This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={isDeleting}
+        />
         </div>
       </div>
     </AppLayout>
@@ -705,6 +667,7 @@ interface CreateAnnouncementModalProps {
 }
 
 function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnnouncementModalProps) {
+  const toast = useToast();
   const isEditing = !!announcement;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -716,7 +679,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     category: announcement?.category || 'GENERAL',
     priority: announcement?.priority || 'MEDIUM',
     targetAudience: announcement?.targetAudience || 'ALL_EMPLOYEES',
-    targetDepartmentIds: (announcement as any)?.targetDepartmentIds || [],
+    targetDepartmentIds: announcement?.targetDepartmentIds || [],
     isPinned: announcement?.isPinned || false,
     sendEmail: false,
   });
@@ -726,7 +689,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     if (formData.targetAudience === 'SPECIFIC_DEPARTMENTS' && departments.length === 0) {
       loadDepartments();
     }
-  }, [formData.targetAudience]);
+  }, [formData.targetAudience, departments.length]);
 
   const loadDepartments = async () => {
     try {
@@ -734,7 +697,8 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       const depts = await departmentService.getActiveDepartments();
       setDepartments(depts);
     } catch (err) {
-      console.error('Failed to load departments:', err);
+      logger.error('Failed to load departments:', err);
+      toast.error('Load Failed', 'Unable to load departments.');
     } finally {
       setLoadingDepartments(false);
     }
@@ -770,12 +734,17 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     try {
       if (isEditing && announcement) {
         await announcementService.updateAnnouncement(announcement.id, formData);
+        toast.success('Announcement Updated', 'Your announcement has been updated successfully.');
       } else {
         await announcementService.createAnnouncement(formData);
+        toast.success('Announcement Published', 'Your announcement has been published successfully.');
       }
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`);
+      logger.error(`Failed to ${isEditing ? 'update' : 'create'} announcement:`, err);
+      const errorMessage = err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
+      setError(errorMessage);
+      toast.error(isEditing ? 'Update Failed' : 'Publish Failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -882,7 +851,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
             </label>
             <select
               value={formData.targetAudience}
-              onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value as any, targetDepartmentIds: [] })}
+              onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value as TargetAudience, targetDepartmentIds: [] })}
               className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg dark:bg-slate-800 dark:text-white"
             >
               <option value="ALL_EMPLOYEES">All Employees</option>

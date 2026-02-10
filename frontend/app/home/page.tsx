@@ -139,13 +139,13 @@ export default function HomePage() {
         attendanceData,
         wallData,
       ] = await Promise.all([
-        homeService.getUpcomingBirthdays(30).catch(() => []),
-        homeService.getUpcomingAnniversaries(30).catch(() => []),
-        homeService.getNewJoinees(30).catch(() => []),
-        homeService.getUpcomingHolidays(90).catch(() => []),
-        homeService.getEmployeesOnLeaveToday().catch(() => []),
-        homeService.getMyAttendanceToday().catch(() => null),
-        wallService.getPosts(0, 10).catch(() => ({ content: [], totalElements: 0 })),
+        homeService.getUpcomingBirthdays(30).catch(() => [] as BirthdayResponse[]),
+        homeService.getUpcomingAnniversaries(30).catch(() => [] as WorkAnniversaryResponse[]),
+        homeService.getNewJoinees(30).catch(() => [] as NewJoineeResponse[]),
+        homeService.getUpcomingHolidays(90).catch(() => [] as UpcomingHolidayResponse[]),
+        homeService.getEmployeesOnLeaveToday().catch(() => [] as OnLeaveEmployeeResponse[]),
+        homeService.getMyAttendanceToday().catch(() => null as AttendanceTodayResponse | null),
+        wallService.getPosts(0, 10).catch(() => ({ content: [] as WallPostResponse[], totalElements: 0 })),
       ]);
 
       setBirthdays(birthdaysData);
@@ -158,7 +158,7 @@ export default function HomePage() {
 
       // Fetch leave balances if we have attendance data with employeeId
       if (attendanceData?.employeeId) {
-        const balances = await leaveService.getEmployeeBalances(attendanceData.employeeId).catch(() => []);
+        const balances = await leaveService.getEmployeeBalances(attendanceData.employeeId).catch(() => [] as LeaveBalance[]);
         setLeaveBalances(balances);
       }
     } catch (err) {
@@ -290,7 +290,7 @@ export default function HomePage() {
       <div className="min-h-screen bg-gray-50">
         {/* Welcome Banner */}
         <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 px-8 py-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'}} />
+          <div className="absolute inset-0 bg-black/10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
           <div className="relative z-10">
             <h1 className="text-2xl font-bold text-white">
               Welcome {user?.fullName?.split(' ')[0] || 'there'}!
@@ -517,33 +517,30 @@ export default function HomePage() {
                   <div className="flex gap-6 border-b border-gray-200 pb-3 mb-4">
                     <button
                       onClick={() => setActiveWallTab('Post')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${
-                        activeWallTab === 'Post'
-                          ? 'border-indigo-600 text-indigo-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Post'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
                     >
                       <MessageSquare className="w-4 h-4" />
                       <span className="text-sm font-medium">Post</span>
                     </button>
                     <button
                       onClick={() => setActiveWallTab('Poll')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${
-                        activeWallTab === 'Poll'
-                          ? 'border-indigo-600 text-indigo-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Poll'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
                     >
                       <BarChart3 className="w-4 h-4" />
                       <span className="text-sm font-medium">Poll</span>
                     </button>
                     <button
                       onClick={() => setActiveWallTab('Praise')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${
-                        activeWallTab === 'Praise'
-                          ? 'border-indigo-600 text-indigo-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700'
-                      }`}
+                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Praise'
+                        ? 'border-indigo-600 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        }`}
                     >
                       <Heart className="w-4 h-4" />
                       <span className="text-sm font-medium">Praise</span>

@@ -46,6 +46,7 @@ import { DashboardAnalytics } from '@/lib/types/analytics';
 import { AttendanceRecord, TimeEntry } from '@/lib/types/attendance';
 import { onboardingService } from '@/lib/services/onboarding.service';
 import { getLocalDateString, getLocalDateTimeString, getDateOffsetString } from '@/lib/utils/dateUtils';
+import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 
 interface GoogleNotification {
   id: string;
@@ -367,9 +368,7 @@ export default function DashboardPage() {
     try {
       setIsLoading(true);
       setError(null);
-      console.log('Loading analytics...');
       const data = await analyticsService.getDashboardAnalytics();
-      console.log('Analytics loaded:', data);
       setAnalytics(data);
     } catch (err: any) {
       console.error('Analytics error:', err);
@@ -1246,7 +1245,7 @@ export default function DashboardPage() {
                 ) : (
                   <div
                     className="prose prose-sm dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{ __html: emailContent }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailContent) }}
                   />
                 )}
               </div>

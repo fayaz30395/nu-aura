@@ -109,13 +109,11 @@ export default function AvailabilityCalendarPage() {
   };
 
   const handleDayClick = (employeeId: string, date: string) => {
-    console.log('Day clicked:', employeeId, date);
-    // Could open a detail modal here
+    // TODO: Open a detail modal here
   };
 
   const handleEmployeeClick = (employeeId: string) => {
-    console.log('Employee clicked:', employeeId);
-    // Could navigate to employee detail or open modal
+    // TODO: Navigate to employee detail or open modal
   };
 
   // Calculate summary stats

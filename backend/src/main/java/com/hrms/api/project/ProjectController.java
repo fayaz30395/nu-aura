@@ -34,14 +34,15 @@ public class ProjectController {
     @GetMapping
     @RequiresPermission(Permission.PROJECT_VIEW)
     public ResponseEntity<Page<ProjectResponse>> getAllProjects(
+            @RequestParam(required = false) com.hrms.domain.project.Project.ProjectStatus status,
+            @RequestParam(required = false) com.hrms.domain.project.Project.Priority priority,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDirection
-    ) {
+            @RequestParam(defaultValue = "DESC") String sortDirection) {
         Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Page<ProjectResponse> projects = projectService.getAllProjects(pageable);
+        Page<ProjectResponse> projects = projectService.getAllProjects(status, priority, pageable);
         return ResponseEntity.ok(projects);
     }
 
@@ -50,8 +51,7 @@ public class ProjectController {
     public ResponseEntity<Page<ProjectResponse>> searchProjects(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
-    ) {
+            @RequestParam(defaultValue = "20") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjectResponse> projects = projectService.searchProjects(query, pageable);
         return ResponseEntity.ok(projects);
@@ -68,8 +68,7 @@ public class ProjectController {
     @RequiresPermission(Permission.PROJECT_CREATE)
     public ResponseEntity<ProjectResponse> updateProject(
             @PathVariable UUID id,
-            @Valid @RequestBody UpdateProjectRequest request
-    ) {
+            @Valid @RequestBody UpdateProjectRequest request) {
         ProjectResponse response = projectService.updateProject(id, request);
         return ResponseEntity.ok(response);
     }
@@ -85,8 +84,7 @@ public class ProjectController {
     @RequiresPermission(Permission.PROJECT_CREATE)
     public ResponseEntity<ProjectEmployeeResponse> assignEmployee(
             @PathVariable UUID id,
-            @Valid @RequestBody AssignEmployeeRequest request
-    ) {
+            @Valid @RequestBody AssignEmployeeRequest request) {
         ProjectEmployeeResponse response = projectService.assignEmployee(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -95,8 +93,7 @@ public class ProjectController {
     @RequiresPermission(Permission.PROJECT_CREATE)
     public ResponseEntity<Void> removeEmployeeFromProject(
             @PathVariable UUID projectId,
-            @PathVariable UUID employeeId
-    ) {
+            @PathVariable UUID employeeId) {
         projectService.removeEmployeeFromProject(projectId, employeeId);
         return ResponseEntity.noContent().build();
     }

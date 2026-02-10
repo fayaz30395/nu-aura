@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ExitManagementController {
 
     @PostMapping("/processes")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
-    public ResponseEntity<ExitProcessResponse> createExitProcess(@RequestBody ExitProcessRequest request) {
+    public ResponseEntity<ExitProcessResponse> createExitProcess(@Valid @RequestBody ExitProcessRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitProcess(request));
     }
 
@@ -42,7 +43,7 @@ public class ExitManagementController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<ExitProcessResponse> updateExitProcess(
             @PathVariable UUID id,
-            @RequestBody ExitProcessRequest request) {
+            @Valid @RequestBody ExitProcessRequest request) {
         return ResponseEntity.ok(exitService.updateExitProcess(id, request));
     }
 
@@ -89,7 +90,7 @@ public class ExitManagementController {
 
     @PostMapping("/clearances")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
-    public ResponseEntity<ExitClearanceResponse> createExitClearance(@RequestBody ExitClearanceRequest request) {
+    public ResponseEntity<ExitClearanceResponse> createExitClearance(@Valid @RequestBody ExitClearanceRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitClearance(request));
     }
 
@@ -97,7 +98,7 @@ public class ExitManagementController {
     @RequiresPermission(Permission.EMPLOYEE_DELETE)
     public ResponseEntity<ExitClearanceResponse> updateExitClearance(
             @PathVariable UUID id,
-            @RequestBody ExitClearanceRequest request) {
+            @Valid @RequestBody ExitClearanceRequest request) {
         return ResponseEntity.ok(exitService.updateExitClearance(id, request));
     }
 
@@ -125,7 +126,7 @@ public class ExitManagementController {
     @PostMapping("/settlements")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Create a new F&F settlement")
-    public ResponseEntity<FullAndFinalSettlementResponse> createSettlement(@RequestBody FullAndFinalSettlementRequest request) {
+    public ResponseEntity<FullAndFinalSettlementResponse> createSettlement(@Valid @RequestBody FullAndFinalSettlementRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createSettlement(request));
     }
 
@@ -134,7 +135,7 @@ public class ExitManagementController {
     @Operation(summary = "Update an F&F settlement")
     public ResponseEntity<FullAndFinalSettlementResponse> updateSettlement(
             @PathVariable UUID id,
-            @RequestBody FullAndFinalSettlementRequest request) {
+            @Valid @RequestBody FullAndFinalSettlementRequest request) {
         return ResponseEntity.ok(exitService.updateSettlement(id, request));
     }
 
@@ -195,7 +196,7 @@ public class ExitManagementController {
     @PostMapping("/interviews")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Schedule an exit interview")
-    public ResponseEntity<ExitInterviewResponse> createExitInterview(@RequestBody ExitInterviewRequest request) {
+    public ResponseEntity<ExitInterviewResponse> createExitInterview(@Valid @RequestBody ExitInterviewRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createExitInterview(request));
     }
 
@@ -204,7 +205,7 @@ public class ExitManagementController {
     @Operation(summary = "Conduct and record exit interview feedback")
     public ResponseEntity<ExitInterviewResponse> conductExitInterview(
             @PathVariable UUID id,
-            @RequestBody ExitInterviewRequest request) {
+            @Valid @RequestBody ExitInterviewRequest request) {
         return ResponseEntity.ok(exitService.conductExitInterview(id, request));
     }
 
@@ -250,7 +251,7 @@ public class ExitManagementController {
     @PostMapping("/assets")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     @Operation(summary = "Create asset recovery record")
-    public ResponseEntity<AssetRecoveryResponse> createAssetRecovery(@RequestBody AssetRecoveryRequest request) {
+    public ResponseEntity<AssetRecoveryResponse> createAssetRecovery(@Valid @RequestBody AssetRecoveryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exitService.createAssetRecovery(request));
     }
 
@@ -259,7 +260,7 @@ public class ExitManagementController {
     @Operation(summary = "Record asset return")
     public ResponseEntity<AssetRecoveryResponse> recordAssetReturn(
             @PathVariable UUID id,
-            @RequestBody AssetRecoveryRequest request) {
+            @Valid @RequestBody AssetRecoveryRequest request) {
         return ResponseEntity.ok(exitService.recordAssetReturn(id, request));
     }
 

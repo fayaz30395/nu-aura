@@ -35,7 +35,9 @@ class WebSocketService {
     this.isConnecting = true;
 
     return new Promise((resolve, reject) => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      // Remove /api/v1 from the URL if present to get the base WebSocket URL
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+      const baseUrl = apiUrl.replace('/api/v1', '');
       const wsUrl = `${baseUrl}/ws`;
 
       this.client = new Client({
@@ -50,7 +52,9 @@ class WebSocketService {
         heartbeatIncoming: 10000,
         heartbeatOutgoing: 10000,
         onConnect: () => {
-          console.log('[WebSocket] Connected');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[WebSocket] Connected');
+          }
           this.isConnecting = false;
           this.reconnectAttempts = 0;
           this.subscribeToNotifications();
@@ -62,7 +66,9 @@ class WebSocketService {
           reject(new Error(frame.headers['message']));
         },
         onWebSocketClose: () => {
-          console.log('[WebSocket] Connection closed');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[WebSocket] Connection closed');
+          }
           this.isConnecting = false;
           this.handleReconnect();
         },
@@ -148,7 +154,9 @@ class WebSocketService {
     this.reconnectAttempts++;
     const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
 
-    console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    }
 
     setTimeout(() => {
       if (this.userId && this.tenantId) {

@@ -1,23 +1,44 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { getInitials } from '@/lib/utils';
 
 interface EmployeeNode extends Employee {
   subordinates?: EmployeeNode[];
 }
 
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
 export default function OrgHierarchyPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
+
   const [hierarchy, setHierarchy] = useState<EmployeeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadHierarchy();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadHierarchy = async () => {
     try {

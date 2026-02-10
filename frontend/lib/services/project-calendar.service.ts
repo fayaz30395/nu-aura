@@ -10,7 +10,7 @@ import {
   getPriorityColor,
 } from '../types/project-calendar';
 import { Project } from '../types/project';
-import { Task } from '../types/task';
+import { Task, TaskListItem } from '../types/task';
 
 class ProjectCalendarService {
   // Calendar Events
@@ -139,7 +139,7 @@ class ProjectCalendarService {
   }
 
   // Helper: Convert projects and tasks to Gantt tasks
-  convertToGanttTasks(projects: Project[], tasks: Task[]): GanttTask[] {
+  convertToGanttTasks(projects: Project[], tasks: (Task | TaskListItem)[]): GanttTask[] {
     const ganttTasks: GanttTask[] = [];
 
     projects.forEach(project => {

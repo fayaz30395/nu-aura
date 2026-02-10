@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { leaveService } from '@/lib/services/leave.service';
-import { LeaveType, LeaveBalance } from '@/lib/types/leave';
+import { LeaveType, LeaveBalance, HalfDayPeriod } from '@/lib/types/leave';
 
 export default function ApplyLeavePage() {
   const router = useRouter();
@@ -68,7 +68,7 @@ export default function ApplyLeavePage() {
         endDate: formData.endDate,
         totalDays,
         isHalfDay: formData.isHalfDay,
-        halfDayPeriod: formData.isHalfDay ? (formData.halfDayPeriod as any) : undefined,
+        halfDayPeriod: formData.isHalfDay ? (formData.halfDayPeriod as HalfDayPeriod) : undefined,
         reason: formData.reason,
         documentPath: formData.documentPath || undefined,
       });
@@ -178,22 +178,22 @@ export default function ApplyLeavePage() {
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
-                      value="FIRST_HALF"
-                      checked={formData.halfDayPeriod === 'FIRST_HALF'}
+                      value="MORNING"
+                      checked={formData.halfDayPeriod === 'MORNING'}
                       onChange={(e) => setFormData({ ...formData, halfDayPeriod: e.target.value })}
                       className="w-4 h-4 text-primary-600"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">First Half</span>
+                    <span className="text-sm text-surface-700 dark:text-surface-300">First Half (Morning)</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
-                      value="SECOND_HALF"
-                      checked={formData.halfDayPeriod === 'SECOND_HALF'}
+                      value="AFTERNOON"
+                      checked={formData.halfDayPeriod === 'AFTERNOON'}
                       onChange={(e) => setFormData({ ...formData, halfDayPeriod: e.target.value })}
                       className="w-4 h-4 text-primary-600"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Second Half</span>
+                    <span className="text-sm text-surface-700 dark:text-surface-300">Second Half (Afternoon)</span>
                   </label>
                 </div>
               </div>

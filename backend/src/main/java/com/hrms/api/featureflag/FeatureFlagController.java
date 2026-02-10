@@ -3,12 +3,16 @@ package com.hrms.api.featureflag;
 import com.hrms.application.featureflag.FeatureFlagService;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.domain.featureflag.FeatureFlag;
+
+import static com.hrms.common.security.Permission.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +64,9 @@ public class FeatureFlagController {
     }
 
     @PostMapping
-    @RequiresPermission("SYSTEM_ADMIN")
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Create or update a feature flag")
-    public ResponseEntity<FeatureFlag> setFeatureFlag(@RequestBody FeatureFlagRequest request) {
+    public ResponseEntity<FeatureFlag> setFeatureFlag(@Valid @RequestBody FeatureFlagRequest request) {
         FeatureFlag flag = featureFlagService.setFeatureFlag(
                 request.featureKey(),
                 request.enabled(),
@@ -74,14 +78,14 @@ public class FeatureFlagController {
     }
 
     @PostMapping("/{featureKey}/toggle")
-    @RequiresPermission("SYSTEM_ADMIN")
+    @RequiresPermission(SYSTEM_ADMIN)
     @Operation(summary = "Toggle a feature flag on/off")
     public ResponseEntity<FeatureFlag> toggleFeature(@PathVariable String featureKey) {
         return ResponseEntity.ok(featureFlagService.toggleFeature(featureKey));
     }
 
     public record FeatureFlagRequest(
-            String featureKey,
+            @NotBlank(message = "Feature key is required") String featureKey,
             boolean enabled,
             String name,
             String description,

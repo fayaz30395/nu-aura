@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Settings,
@@ -16,6 +16,10 @@ import {
   Layers,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 interface SettingsCard {
   id: string;
@@ -104,6 +108,21 @@ const settingsCards: SettingsCard[] = [
 
 export default function AdminSettingsPage() {
   const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
+
+  useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+    }
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const handleCardClick = (href: string) => {
     router.push(href);

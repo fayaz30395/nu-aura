@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,4 +30,12 @@ public interface ProjectEmployeeRepository extends JpaRepository<ProjectEmployee
 
     @Query("SELECT pe FROM HrmsProjectEmployee pe WHERE pe.tenantId = :tenantId AND pe.isActive = true")
     List<ProjectEmployee> findAllActiveAssignments(@Param("tenantId") UUID tenantId);
+
+    // Paginated versions for large datasets
+    Page<ProjectEmployee> findAllByProjectIdAndTenantId(UUID projectId, UUID tenantId, Pageable pageable);
+
+    Page<ProjectEmployee> findAllByEmployeeIdAndTenantId(UUID employeeId, UUID tenantId, Pageable pageable);
+
+    @Query("SELECT pe FROM HrmsProjectEmployee pe WHERE pe.tenantId = :tenantId AND pe.isActive = true")
+    Page<ProjectEmployee> findAllActiveAssignmentsPaged(@Param("tenantId") UUID tenantId, Pageable pageable);
 }

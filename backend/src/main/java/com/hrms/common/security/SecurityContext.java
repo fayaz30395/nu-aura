@@ -16,7 +16,8 @@ public class SecurityContext {
 
     private static final ThreadLocal<UUID> currentUserId = new ThreadLocal<>();
     private static final ThreadLocal<UUID> currentEmployeeId = new ThreadLocal<>();
-    private static final ThreadLocal<UUID> currentTenantId = new ThreadLocal<>();
+    // NOTE: Tenant ID is now delegated to TenantContext for single source of truth
+    // The currentTenantId ThreadLocal is REMOVED to prevent dual-context bugs
     private static final ThreadLocal<String> currentAppCode = new ThreadLocal<>();
     private static final ThreadLocal<Set<String>> currentRoles = new ThreadLocal<>();
     // Store permissions with their max scope (e.g. "EMPLOYEE:READ" -> "GLOBAL")
@@ -58,8 +59,12 @@ public class SecurityContext {
         accessibleApps.set(apps != null ? apps : Collections.emptySet());
     }
 
+    /**
+     * Set current tenant ID. Delegates to TenantContext for single source of truth.
+     * @deprecated Use TenantContext.setCurrentTenant() directly
+     */
     public static void setCurrentTenantId(UUID tenantId) {
-        currentTenantId.set(tenantId);
+        TenantContext.setCurrentTenant(tenantId);
     }
 
     public static void setOrgContext(UUID locationId, UUID departmentId, UUID teamId) {
@@ -120,8 +125,11 @@ public class SecurityContext {
         return currentEmployeeId.get();
     }
 
+    /**
+     * Get current tenant ID. Delegates to TenantContext for single source of truth.
+     */
     public static UUID getCurrentTenantId() {
-        return currentTenantId.get();
+        return TenantContext.getCurrentTenant();
     }
 
     public static String getCurrentAppCode() {
@@ -445,7 +453,7 @@ public class SecurityContext {
     public static void clear() {
         currentUserId.remove();
         currentEmployeeId.remove();
-        currentTenantId.remove();
+        // Note: TenantContext is cleared separately by filters (TenantFilter, JwtAuthenticationFilter)
         currentAppCode.remove();
         currentRoles.remove();
         currentPermissions.remove();

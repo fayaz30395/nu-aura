@@ -8,18 +8,12 @@ import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
 import {
   LayoutDashboard,
   Users,
-  Calendar,
   Clock,
   Briefcase,
   FileText,
   Shield,
   GitBranch,
   Umbrella,
-  CalendarDays,
-  LogOut,
-  MapPin,
-  Sliders,
-  UserCog,
 } from 'lucide-react';
 
 export default function AdminLayout({

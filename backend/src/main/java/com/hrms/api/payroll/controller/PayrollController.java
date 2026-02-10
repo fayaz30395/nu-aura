@@ -7,10 +7,12 @@ import com.hrms.application.payroll.service.SalaryStructureService;
 import com.lowagie.text.DocumentException;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.payroll.PayrollRun;
 import com.hrms.domain.payroll.PayrollRun.PayrollStatus;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.domain.payroll.SalaryStructure;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,14 +38,14 @@ public class PayrollController {
 
     @PostMapping("/runs")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<PayrollRun> createPayrollRun(@RequestBody PayrollRun payrollRun) {
+    public ResponseEntity<PayrollRun> createPayrollRun(@Valid @RequestBody PayrollRun payrollRun) {
         PayrollRun created = payrollRunService.createPayrollRun(payrollRun);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/runs/{id}")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<PayrollRun> updatePayrollRun(@PathVariable UUID id, @RequestBody PayrollRun payrollRun) {
+    public ResponseEntity<PayrollRun> updatePayrollRun(@PathVariable UUID id, @Valid @RequestBody PayrollRun payrollRun) {
         PayrollRun updated = payrollRunService.updatePayrollRun(id, payrollRun);
         return ResponseEntity.ok(updated);
     }
@@ -89,18 +91,16 @@ public class PayrollController {
 
     @PostMapping("/runs/{id}/process")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<PayrollRun> processPayrollRun(
-            @PathVariable UUID id,
-            @RequestParam UUID processedBy) {
+    public ResponseEntity<PayrollRun> processPayrollRun(@PathVariable UUID id) {
+        UUID processedBy = SecurityContext.getCurrentUserId();
         PayrollRun payrollRun = payrollRunService.processPayrollRun(id, processedBy);
         return ResponseEntity.ok(payrollRun);
     }
 
     @PostMapping("/runs/{id}/approve")
     @RequiresPermission(Permission.PAYROLL_APPROVE)
-    public ResponseEntity<PayrollRun> approvePayrollRun(
-            @PathVariable UUID id,
-            @RequestParam UUID approvedBy) {
+    public ResponseEntity<PayrollRun> approvePayrollRun(@PathVariable UUID id) {
+        UUID approvedBy = SecurityContext.getCurrentUserId();
         PayrollRun payrollRun = payrollRunService.approvePayrollRun(id, approvedBy);
         return ResponseEntity.ok(payrollRun);
     }
@@ -123,14 +123,14 @@ public class PayrollController {
 
     @PostMapping("/payslips")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<Payslip> createPayslip(@RequestBody Payslip payslip) {
+    public ResponseEntity<Payslip> createPayslip(@Valid @RequestBody Payslip payslip) {
         Payslip created = payslipService.createPayslip(payslip);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/payslips/{id}")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<Payslip> updatePayslip(@PathVariable UUID id, @RequestBody Payslip payslip) {
+    public ResponseEntity<Payslip> updatePayslip(@PathVariable UUID id, @Valid @RequestBody Payslip payslip) {
         Payslip updated = payslipService.updatePayslip(id, payslip);
         return ResponseEntity.ok(updated);
     }
@@ -230,7 +230,7 @@ public class PayrollController {
 
     @PostMapping("/salary-structures")
     @RequiresPermission(Permission.PAYROLL_PROCESS)
-    public ResponseEntity<SalaryStructure> createSalaryStructure(@RequestBody SalaryStructure salaryStructure) {
+    public ResponseEntity<SalaryStructure> createSalaryStructure(@Valid @RequestBody SalaryStructure salaryStructure) {
         SalaryStructure created = salaryStructureService.createSalaryStructure(salaryStructure);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -239,7 +239,7 @@ public class PayrollController {
     @RequiresPermission(Permission.PAYROLL_PROCESS)
     public ResponseEntity<SalaryStructure> updateSalaryStructure(
             @PathVariable UUID id,
-            @RequestBody SalaryStructure salaryStructure) {
+            @Valid @RequestBody SalaryStructure salaryStructure) {
         SalaryStructure updated = salaryStructureService.updateSalaryStructure(id, salaryStructure);
         return ResponseEntity.ok(updated);
     }

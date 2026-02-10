@@ -2,9 +2,11 @@ package com.hrms.api.export;
 
 import com.hrms.common.export.ExportFormat;
 import com.hrms.common.export.ExportService;
+import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -30,11 +32,11 @@ public class ExportController {
     private final ExportService exportService;
 
     @PostMapping("/employees")
-    @RequiresPermission("EMPLOYEE:VIEW")
+    @RequiresPermission(Permission.EMPLOYEE_READ)
     @Operation(summary = "Export employee data")
     public ResponseEntity<byte[]> exportEmployees(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,
@@ -48,11 +50,11 @@ public class ExportController {
     }
 
     @PostMapping("/attendance")
-    @RequiresPermission("ATTENDANCE:VIEW")
+    @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     @Operation(summary = "Export attendance data")
     public ResponseEntity<byte[]> exportAttendance(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,
@@ -66,11 +68,11 @@ public class ExportController {
     }
 
     @PostMapping("/leaves")
-    @RequiresPermission("LEAVE:VIEW")
+    @RequiresPermission(Permission.LEAVE_VIEW_ALL)
     @Operation(summary = "Export leave data")
     public ResponseEntity<byte[]> exportLeaves(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,
@@ -84,11 +86,11 @@ public class ExportController {
     }
 
     @PostMapping("/payroll")
-    @RequiresPermission("PAYROLL:VIEW")
+    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
     @Operation(summary = "Export payroll data")
     public ResponseEntity<byte[]> exportPayroll(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,
@@ -102,11 +104,11 @@ public class ExportController {
     }
 
     @PostMapping("/timesheets")
-    @RequiresPermission("TIMESHEET:VIEW")
+    @RequiresPermission(Permission.TIMESHEET_APPROVE)
     @Operation(summary = "Export timesheet data")
     public ResponseEntity<byte[]> exportTimesheets(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,
@@ -120,11 +122,11 @@ public class ExportController {
     }
 
     @PostMapping("/projects")
-    @RequiresPermission("PROJECT:VIEW")
+    @RequiresPermission(Permission.PROJECT_VIEW)
     @Operation(summary = "Export project data")
     public ResponseEntity<byte[]> exportProjects(
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
-            @RequestBody ExportRequest request) throws Exception {
+            @Valid @RequestBody ExportRequest request) throws Exception {
 
         byte[] data = exportService.export(
                 format,

@@ -333,7 +333,7 @@ export default function ExecutiveDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <RechartsPieChart>
                     <Pie
-                      data={data.workforceSummary.byDepartment as any[]}
+                      data={data.workforceSummary.byDepartment}
                       dataKey="count"
                       nameKey="category"
                       cx="50%"

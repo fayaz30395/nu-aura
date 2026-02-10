@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +27,7 @@ public class ApiKeyController {
     private final ApiKeyService apiKeyService;
 
     @PostMapping
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "Create API key", description = "Create a new API key. The raw key is only shown once.")
     public ResponseEntity<ApiKeyCreationResponse> createApiKey(@Valid @RequestBody CreateApiKeyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -54,7 +53,7 @@ public class ApiKeyController {
     }
 
     @GetMapping
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "List API keys", description = "Get all API keys for the current tenant")
     public ResponseEntity<List<ApiKeyResponse>> listApiKeys(
             @RequestParam(defaultValue = "false") boolean includeInactive) {
@@ -72,7 +71,7 @@ public class ApiKeyController {
     }
 
     @DeleteMapping("/{keyId}")
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "Revoke API key", description = "Revoke an API key (soft delete)")
     public ResponseEntity<Void> revokeApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -81,7 +80,7 @@ public class ApiKeyController {
     }
 
     @PostMapping("/{keyId}/regenerate")
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "Regenerate API key", description = "Revoke old key and create a new one with same settings")
     public ResponseEntity<ApiKeyCreationResponse> regenerateApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -100,7 +99,7 @@ public class ApiKeyController {
     }
 
     @PutMapping("/{keyId}/scopes")
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "Update API key scopes", description = "Update the scopes for an existing API key")
     public ResponseEntity<ApiKeyResponse> updateScopes(
             @PathVariable UUID keyId,
@@ -111,7 +110,7 @@ public class ApiKeyController {
     }
 
     @DeleteMapping("/{keyId}/permanent")
-    @PreAuthorize("hasPermission('HRMS:SYSTEM:ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(summary = "Permanently delete API key", description = "Permanently delete an API key")
     public ResponseEntity<Void> deleteApiKey(@PathVariable UUID keyId) {
         UUID tenantId = TenantContext.getCurrentTenant();

@@ -105,10 +105,10 @@ export default function WellnessPage() {
     try {
       setLoading(true);
       const [programsData, challengesData, leaderboardData, pointsData] = await Promise.all([
-        wellnessService.getActivePrograms().catch(() => []),
-        wellnessService.getActiveChallenges().catch(() => []),
-        wellnessService.getLeaderboard(5).catch(() => []),
-        wellnessService.getMyPoints().catch(() => null),
+        wellnessService.getActivePrograms().catch(() => [] as WellnessProgram[]),
+        wellnessService.getActiveChallenges().catch(() => [] as WellnessChallenge[]),
+        wellnessService.getLeaderboard(5).catch(() => [] as LeaderboardEntry[]),
+        wellnessService.getMyPoints().catch(() => null as WellnessPoints | null),
       ]);
 
       setPrograms(programsData);
@@ -420,16 +420,15 @@ export default function WellnessPage() {
                         key={entry.employeeId}
                         className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800"
                       >
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                          index === 0 ? 'bg-yellow-500 text-white' :
-                          index === 1 ? 'bg-gray-400 text-white' :
-                          index === 2 ? 'bg-amber-600 text-white' :
-                          'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
-                        }`}>
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
+                            index === 1 ? 'bg-gray-400 text-white' :
+                              index === 2 ? 'bg-amber-600 text-white' :
+                                'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
+                          }`}>
                           {index === 0 ? <Crown className="h-4 w-4" /> :
-                           index === 1 ? <Medal className="h-4 w-4" /> :
-                           index === 2 ? <Medal className="h-4 w-4" /> :
-                           <span className="text-sm font-medium">{entry.rank}</span>}
+                            index === 1 ? <Medal className="h-4 w-4" /> :
+                              index === 2 ? <Medal className="h-4 w-4" /> :
+                                <span className="text-sm font-medium">{entry.rank}</span>}
                         </div>
                         <div className="flex-1">
                           <p className="font-medium text-surface-900 dark:text-white text-sm">

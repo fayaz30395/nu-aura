@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveRequest, LeaveRequestStatus, LeaveType } from '@/lib/types/leave';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function AdminLeaveRequestsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
 
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
@@ -24,14 +28,18 @@ export default function AdminLeaveRequestsPage() {
 
   useEffect(() => {
     // Wait for auth store to hydrate before checking authentication
-    if (!hasHydrated) return;
+    if (!hasHydrated || !isReady) return;
 
     if (!isAuthenticated) {
       router.push('/auth/login');
     } else {
+      if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+        router.push('/home');
+        return;
+      }
       loadData();
     }
-  }, [hasHydrated, isAuthenticated, selectedStatus]);
+  }, [hasHydrated, isReady, isAuthenticated, selectedStatus, router, hasAnyRole]);
 
   const loadData = async () => {
     try {

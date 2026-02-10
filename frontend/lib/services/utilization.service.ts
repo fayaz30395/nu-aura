@@ -155,21 +155,13 @@ export const utilizationService = {
     if (filters.departmentId) params.append('departmentId', filters.departmentId);
     if (filters.projectId) params.append('projectId', filters.projectId);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/time-tracking/reports/export?${params}`,
+    const response = await apiClient.get<Blob>(
+      `/time-tracking/reports/export?${params}`,
       {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        responseType: 'blob',
       }
     );
-
-    if (!response.ok) {
-      throw new Error('Failed to export report');
-    }
-
-    return response.blob();
+    return response.data;
   },
 };
 

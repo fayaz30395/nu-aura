@@ -1,6 +1,11 @@
 package com.hrms.common.exception;
 
+import com.hrms.common.security.TenantContext;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,24 +20,85 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+/**
+ * Global exception handler with structured error tracking.
+ *
+ * <p><strong>OBSERVABILITY:</strong> All exceptions are logged with:</p>
+ * <ul>
+ *   <li>Request ID correlation (from MDC)</li>
+ *   <li>Tenant context</li>
+ *   <li>Error category and type</li>
+ *   <li>Micrometer metrics for monitoring</li>
+ * </ul>
+ */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final MeterRegistry meterRegistry;
+
+    /**
+     * Track error metrics by category and type.
+     */
+    private void recordErrorMetric(String category, String type, HttpStatus status) {
+        Counter.builder("api.errors")
+                .tag("category", category)
+                .tag("type", type)
+                .tag("status", String.valueOf(status.value()))
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Build error response with request tracking information.
+     */
+    private ErrorResponse buildErrorResponse(HttpStatus status, String error, String message, String path) {
+        String requestId = MDC.get("requestId");
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(error)
+                .message(message)
+                .path(path)
+                .requestId(requestId)
+                .tenantId(tenantId != null ? tenantId.toString() : null)
+                .build();
+    }
+
+    /**
+     * Log error with structured context.
+     */
+    private void logError(String category, String type, Exception ex, HttpStatus status, String path) {
+        String requestId = MDC.get("requestId");
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        log.error("ERROR [{}] category={} type={} status={} path={} tenant={} message={}",
+                requestId, category, type, status.value(), path, tenantId, ex.getMessage());
+
+        // For 5xx errors, log full stack trace
+        if (status.is5xxServerError()) {
+            log.error("Stack trace for request {}", requestId, ex);
+        }
+    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex, WebRequest request) {
 
-        log.error("DataIntegrityViolationException occurred", ex);
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Data Integrity Violation")
-                .message(ex.getMostSpecificCause().getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        logError("database", "data_integrity_violation", ex, status, path);
+        recordErrorMetric("database", "data_integrity_violation", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Data Integrity Violation",
+                ex.getMostSpecificCause().getMessage(), path);
+        errorResponse.setErrorCode("DB_INTEGRITY_VIOLATION");
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -41,6 +107,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex, WebRequest request) {
 
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -48,14 +117,13 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Failed")
-                .message("Invalid input parameters")
-                .errors(errors)
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        logError("validation", "method_argument_invalid", ex, status, path);
+        recordErrorMetric("validation", "method_argument_invalid", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Validation Failed",
+                "Invalid input parameters", path);
+        errorResponse.setErrors(errors);
+        errorResponse.setErrorCode("VALIDATION_FAILED");
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -64,58 +132,64 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.NOT_FOUND;
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        logError("resource", "not_found", ex, status, path);
+        recordErrorMetric("resource", "not_found", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Not Found", ex.getMessage(), path);
+        errorResponse.setErrorCode("RESOURCE_NOT_FOUND");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(
             BadCredentialsException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Unauthorized")
-                .message("Invalid email or password")
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        logError("auth", "bad_credentials", ex, status, path);
+        recordErrorMetric("auth", "bad_credentials", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Unauthorized",
+                "Invalid email or password", path);
+        errorResponse.setErrorCode("BAD_CREDENTIALS");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(
             AccessDeniedException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
-                .message("You don't have permission to access this resource")
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.FORBIDDEN;
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        logError("auth", "access_denied", ex, status, path);
+        recordErrorMetric("auth", "access_denied", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Forbidden",
+                "You don't have permission to access this resource", path);
+        errorResponse.setErrorCode("ACCESS_DENIED");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             ValidationException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Error")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        logError("validation", "validation_error", ex, status, path);
+        recordErrorMetric("validation", "validation_error", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Validation Error", ex.getMessage(), path);
+        errorResponse.setErrorCode("VALIDATION_ERROR");
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -124,73 +198,82 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.CONFLICT.value())
-                .error("Business Rule Violation")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.CONFLICT;
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        logError("business", "business_rule_violation", ex, status, path);
+        recordErrorMetric("business", "business_rule_violation", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Business Rule Violation",
+                ex.getMessage(), path);
+        errorResponse.setErrorCode("BUSINESS_RULE_VIOLATION");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(
             AuthenticationException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Authentication Failed")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        logError("auth", "authentication_failed", ex, status, path);
+        recordErrorMetric("auth", "authentication_failed", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Authentication Failed",
+                ex.getMessage(), path);
+        errorResponse.setErrorCode("AUTHENTICATION_FAILED");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
             DuplicateResourceException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.CONFLICT.value())
-                .error("Duplicate Resource")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.CONFLICT;
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        logError("resource", "duplicate_resource", ex, status, path);
+        recordErrorMetric("resource", "duplicate_resource", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Duplicate Resource",
+                ex.getMessage(), path);
+        errorResponse.setErrorCode("DUPLICATE_RESOURCE");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(
             UnauthorizedException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Unauthorized")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.FORBIDDEN;
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        logError("auth", "unauthorized", ex, status, path);
+        recordErrorMetric("auth", "unauthorized", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Unauthorized",
+                ex.getMessage(), path);
+        errorResponse.setErrorCode("UNAUTHORIZED");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        logError("validation", "illegal_argument", ex, status, path);
+        recordErrorMetric("validation", "illegal_argument", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Bad Request", ex.getMessage(), path);
+        errorResponse.setErrorCode("ILLEGAL_ARGUMENT");
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -199,13 +282,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalStateException(
             IllegalStateException ex, WebRequest request) {
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Invalid State")
-                .message(ex.getMessage())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        logError("state", "illegal_state", ex, status, path);
+        recordErrorMetric("state", "illegal_state", status);
+
+        ErrorResponse errorResponse = buildErrorResponse(status, "Invalid State", ex.getMessage(), path);
+        errorResponse.setErrorCode("ILLEGAL_STATE");
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
@@ -214,16 +298,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
 
-        log.error("Unexpected error occurred", ex);
+        String path = request.getDescription(false).replace("uri=", "");
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
-                .message("An unexpected error occurred")
-                .path(request.getDescription(false).replace("uri=", ""))
-                .build();
+        logError("server", "unexpected_error", ex, status, path);
+        recordErrorMetric("server", "unexpected_error", status);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        ErrorResponse errorResponse = buildErrorResponse(status, "Internal Server Error",
+                "An unexpected error occurred", path);
+        errorResponse.setErrorCode("INTERNAL_ERROR");
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 }

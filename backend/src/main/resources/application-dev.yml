@@ -25,11 +25,18 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        generate_statistics: true
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 100
 
 app:
   jwt:
-    # IMPORTANT: Set JWT_SECRET environment variable in production
-    secret: ${JWT_SECRET:dev-only-secret-change-in-production-must-be-at-least-256-bits-long}
+    # JWT_SECRET is REQUIRED - no default value for security
+    # For local development, set JWT_SECRET in your environment or .env file
+    # Example: export JWT_SECRET="your-dev-secret-at-least-256-bits-long-for-hmac-sha256"
+    secret: ${JWT_SECRET}
     expiration: 3600000
     refresh-expiration: 86400000
 
@@ -46,3 +53,6 @@ logging:
   level:
     com.hrms: DEBUG
     org.springframework.security: DEBUG
+    org.hibernate.stat: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: INFO

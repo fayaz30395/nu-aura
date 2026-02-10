@@ -1,48 +1,48 @@
 package com.hrms.api.statutory.controller;
+
+import com.hrms.application.statutory.service.StatutoryService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.TenantContext;
-import com.hrms.domain.statutory.*;
-import com.hrms.infrastructure.statutory.repository.*;
-import lombok.*;
-import org.springframework.http.*;
+import com.hrms.domain.statutory.ESIConfig;
+import com.hrms.domain.statutory.EmployeeESIRecord;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/statutory/esi")
 @RequiredArgsConstructor
 public class ESIController {
-    private final ESIConfigRepository esiConfigRepository;
-    private final EmployeeESIRecordRepository employeeESIRecordRepository;
+
+    private final StatutoryService statutoryService;
 
     @PostMapping("/config")
     @RequiresPermission(Permission.STATUTORY_MANAGE)
-    public ResponseEntity<ESIConfig> createConfig(@RequestBody ESIConfig config) {
-        config.setId(UUID.randomUUID());
-        config.setTenantId(TenantContext.getCurrentTenant());
-        return ResponseEntity.ok(esiConfigRepository.save(config));
+    public ResponseEntity<ESIConfig> createConfig(@Valid @RequestBody ESIConfig config) {
+        return ResponseEntity.ok(statutoryService.createESIConfig(config));
     }
 
     @GetMapping("/config")
     @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<List<ESIConfig>> getActiveConfigs() {
-        return ResponseEntity.ok(esiConfigRepository.findByTenantIdAndIsActiveTrue(TenantContext.getCurrentTenant()));
+        return ResponseEntity.ok(statutoryService.getActiveESIConfigs());
     }
 
     @PostMapping("/employee")
     @RequiresPermission(Permission.STATUTORY_MANAGE)
-    public ResponseEntity<EmployeeESIRecord> enrollEmployee(@RequestBody EmployeeESIRecord record) {
-        record.setId(UUID.randomUUID());
-        record.setTenantId(TenantContext.getCurrentTenant());
-        return ResponseEntity.ok(employeeESIRecordRepository.save(record));
+    public ResponseEntity<EmployeeESIRecord> enrollEmployee(@Valid @RequestBody EmployeeESIRecord record) {
+        return ResponseEntity.ok(statutoryService.enrollEmployeeESI(record));
     }
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(Permission.STATUTORY_VIEW)
     public ResponseEntity<EmployeeESIRecord> getEmployeeRecord(@PathVariable UUID employeeId) {
-        return employeeESIRecordRepository.findByTenantIdAndEmployeeId(TenantContext.getCurrentTenant(), employeeId)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        return statutoryService.getEmployeeESIRecord(employeeId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

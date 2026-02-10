@@ -10,7 +10,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "expense_claims")
+@Table(name = "expense_claims", indexes = {
+    @Index(name = "idx_expense_claim_tenant", columnList = "tenantId"),
+    @Index(name = "idx_expense_claim_tenant_employee", columnList = "tenantId,employee_id"),
+    @Index(name = "idx_expense_claim_status", columnList = "status"),
+    @Index(name = "idx_expense_claim_tenant_status", columnList = "tenantId,status"),
+    @Index(name = "idx_expense_claim_date", columnList = "claim_date"),
+    @Index(name = "idx_expense_claim_category", columnList = "category"),
+    @Index(name = "idx_expense_claim_submitted_at", columnList = "submitted_at")
+}, uniqueConstraints = {
+    @UniqueConstraint(name = "uk_expense_claim_tenant_number", columnNames = {"tenantId", "claim_number"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +31,8 @@ public class ExpenseClaim extends TenantAware {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(name = "claim_number", unique = true, length = 50)
+    // Note: unique constraint is now tenant-scoped via @UniqueConstraint in @Table
+    @Column(name = "claim_number", length = 50)
     private String claimNumber;
 
     @Column(name = "claim_date", nullable = false)

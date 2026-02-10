@@ -1,8 +1,11 @@
 package com.hrms.common.config;
 
+import com.hrms.common.security.TenantContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -15,14 +18,20 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
+import java.util.UUID;
 
 /**
  * Redis cache configuration for HRMS application.
  * Defines cache names and their TTL (Time To Live) settings.
+ *
+ * <p><strong>SECURITY:</strong> All cache keys are automatically prefixed with
+ * the current tenant ID to prevent cross-tenant data leakage in multi-tenant
+ * environments.</p>
  */
 @Configuration
 @EnableCaching
-public class CacheConfig {
+public class CacheConfig implements CachingConfigurer {
 
     // Cache names
     public static final String LEAVE_TYPES = "leaveTypes";
@@ -36,6 +45,8 @@ public class CacheConfig {
     public static final String EMPLOYEE_BASIC = "employeeBasic";
     public static final String PERMISSIONS = "permissions";
     public static final String ROLES = "roles";
+    public static final String WEBHOOKS = "webhooks";
+    public static final String ACTIVE_WEBHOOKS = "activeWebhooks";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -65,9 +76,54 @@ public class CacheConfig {
         // Short-lived caches (frequent reads but may change) - 15 minutes
         cacheConfigurations.put(EMPLOYEE_BASIC, defaultConfig.entryTtl(Duration.ofMinutes(15)));
 
+        // Webhook caches - medium TTL since webhooks don't change frequently
+        cacheConfigurations.put(WEBHOOKS, defaultConfig.entryTtl(Duration.ofHours(1)));
+        cacheConfigurations.put(ACTIVE_WEBHOOKS, defaultConfig.entryTtl(Duration.ofMinutes(30)));
+
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
+    }
+
+    /**
+     * Tenant-aware key generator that prefixes all cache keys with the current tenant ID.
+     * This prevents cross-tenant cache collisions in multi-tenant environments.
+     *
+     * <p>Key format: {@code tenant:{tenantId}:{className}.{methodName}:{params}}</p>
+     *
+     * @return KeyGenerator that includes tenant ID in all cache keys
+     */
+    @Bean
+    @Override
+    public KeyGenerator keyGenerator() {
+        return (target, method, params) -> {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            StringJoiner joiner = new StringJoiner(":");
+
+            // Prefix with tenant ID (use "global" for tenant-agnostic caches)
+            joiner.add("tenant");
+            joiner.add(tenantId != null ? tenantId.toString() : "global");
+
+            // Add class and method for context
+            joiner.add(target.getClass().getSimpleName());
+            joiner.add(method.getName());
+
+            // Add parameters
+            for (Object param : params) {
+                joiner.add(param != null ? param.toString() : "null");
+            }
+
+            return joiner.toString();
+        };
+    }
+
+    /**
+     * Named key generator for explicit tenant-aware caching.
+     * Use with @Cacheable(keyGenerator = "tenantAwareKeyGenerator")
+     */
+    @Bean("tenantAwareKeyGenerator")
+    public KeyGenerator tenantAwareKeyGenerator() {
+        return keyGenerator();
     }
 }

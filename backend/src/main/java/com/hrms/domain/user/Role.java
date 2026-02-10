@@ -32,7 +32,14 @@ public class Role extends TenantAware {
     @Builder.Default
     private Boolean isSystemRole = false;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    /**
+     * Role permissions - loaded LAZILY to avoid cascading eager loads.
+     *
+     * <p><strong>IMPORTANT:</strong> Always use explicit fetch queries when accessing permissions.
+     * Use {@link com.hrms.infrastructure.user.repository.UserRepository#findByIdWithRolesAndPermissions}
+     * to load the full user -> roles -> permissions hierarchy efficiently.</p>
+     */
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<RolePermission> permissions = new HashSet<>();
 

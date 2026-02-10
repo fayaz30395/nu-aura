@@ -66,8 +66,9 @@ public class Quiz extends TenantAware {
     @Builder.Default
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "quizId", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("orderIndex ASC")
+    // Note: Questions are loaded via QuizQuestionRepository.findByQuizIdOrderByOrderIndexAsc()
+    // Using UUID reference pattern instead of JPA relationship for flexibility
+    @Transient
     @Builder.Default
     private List<QuizQuestion> questions = new ArrayList<>();
 }

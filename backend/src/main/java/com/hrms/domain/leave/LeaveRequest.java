@@ -14,7 +14,10 @@ import java.util.UUID;
     @Index(name = "idx_leave_requests_tenant_id", columnList = "tenantId"),
     @Index(name = "idx_leave_requests_employee_id", columnList = "employeeId"),
     @Index(name = "idx_leave_requests_status", columnList = "status"),
-    @Index(name = "idx_leave_requests_dates", columnList = "startDate,endDate")
+    @Index(name = "idx_leave_requests_dates", columnList = "startDate,endDate"),
+    @Index(name = "idx_leave_requests_employee_status", columnList = "employeeId,status"),
+    @Index(name = "idx_leave_requests_leave_type", columnList = "leave_type_id"),
+    @Index(name = "idx_leave_requests_tenant_employee", columnList = "tenantId,employeeId")
 })
 @Getter
 @Setter

@@ -6,6 +6,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.domain.workflow.*;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class WorkflowService {
     private final ApprovalDelegateRepository approvalDelegateRepository;
     private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
     /**
      * Get user name from employee repository, falling back to UUID prefix if not found.
@@ -354,28 +356,82 @@ public class WorkflowService {
     private UUID determineApprover(WorkflowExecution execution, ApprovalStep step) {
         // Check for delegation first
         LocalDate today = LocalDate.now();
+        UUID tenantId = execution.getTenantId();
+        UUID approverId = null;
 
         switch (step.getApproverType()) {
             case SPECIFIC_USER:
-                return checkDelegation(step.getSpecificUserId(), execution.getTenantId(), today);
+                approverId = step.getSpecificUserId();
+                break;
             case REPORTING_MANAGER:
-                // Would need employee service integration
-                return null;
+                approverId = findReportingManager(execution.getRequesterId(), tenantId);
+                break;
             case DEPARTMENT_HEAD:
-                // Would need department service integration
-                return null;
+                approverId = findDepartmentHead(execution.getDepartmentId(), tenantId);
+                break;
             case HR_MANAGER:
+                approverId = findUserByRoleCode("HR_MANAGER", tenantId);
+                break;
             case FINANCE_MANAGER:
+                approverId = findUserByRoleCode("FINANCE_MANAGER", tenantId);
+                break;
             case CEO:
-                // Would need role-based lookup
-                return null;
+                approverId = findUserByRoleCode("CEO", tenantId);
+                break;
             case ROLE:
             case ANY_OF_ROLE:
-                // Would need role service integration
-                return null;
+                approverId = findUserByRoleId(step.getRoleId(), tenantId);
+                break;
             default:
-                return step.getSpecificUserId();
+                approverId = step.getSpecificUserId();
         }
+
+        if (approverId == null) {
+            log.warn("Could not determine approver for step '{}' with approver type '{}' in workflow execution {}",
+                    step.getStepName(), step.getApproverType(), execution.getId());
+            throw new BusinessException(
+                    "Unable to determine approver for step '" + step.getStepName() +
+                    "'. Please configure an approver for type: " + step.getApproverType());
+        }
+
+        UUID finalApprover = checkDelegation(approverId, tenantId, today);
+
+        // Defensive check: checkDelegation should never return null when given a non-null approver
+        if (finalApprover == null) {
+            log.error("Delegation check returned null for approver {} - falling back to original approver", approverId);
+            return approverId;
+        }
+
+        return finalApprover;
+    }
+
+    private UUID findReportingManager(UUID employeeUserId, UUID tenantId) {
+        return employeeRepository.findByUserIdAndTenantId(employeeUserId, tenantId)
+                .map(employee -> employee.getManagerId())
+                .orElse(null);
+    }
+
+    private UUID findDepartmentHead(UUID departmentId, UUID tenantId) {
+        if (departmentId == null) {
+            return null;
+        }
+        // Find an employee who is marked as department head or has manager role in the department
+        // For now, return null - requires department entity to have headId field
+        log.debug("Department head lookup not fully implemented for department: {}", departmentId);
+        return null;
+    }
+
+    private UUID findUserByRoleCode(String roleCode, UUID tenantId) {
+        List<UUID> userIds = userRepository.findUserIdsByRoleCode(tenantId, roleCode);
+        return userIds.isEmpty() ? null : userIds.get(0);
+    }
+
+    private UUID findUserByRoleId(UUID roleId, UUID tenantId) {
+        if (roleId == null) {
+            return null;
+        }
+        List<UUID> userIds = userRepository.findUserIdsByRoleId(tenantId, roleId);
+        return userIds.isEmpty() ? null : userIds.get(0);
     }
 
     private UUID checkDelegation(UUID originalApprover, UUID tenantId, LocalDate date) {

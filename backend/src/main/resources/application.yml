@@ -29,6 +29,13 @@ spring:
         format_sql: true
         default_schema: public
         tenant_identifier_resolver: com.hrms.common.config.TenantIdentifierResolver
+        # Slow query logging - log queries taking longer than threshold
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: ${SLOW_QUERY_THRESHOLD_MS:200}
+        # Generate Hibernate statistics for monitoring
+        generate_statistics: ${HIBERNATE_STATS_ENABLED:false}
     open-in-view: false
 
   liquibase:
@@ -140,9 +147,22 @@ server:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:}
+    secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:3600000}
     refresh-expiration: ${JWT_REFRESH_EXPIRATION:86400000}
+
+  # Cookie configuration for JWT storage
+  cookie:
+    # Use secure cookies (HTTPS only) - should be true in production
+    secure: ${COOKIE_SECURE:true}
+    # Optional: restrict cookies to specific domain
+    domain: ${COOKIE_DOMAIN:}
+
+  # Security settings
+  security:
+    csrf:
+      # Enable CSRF protection (recommended for cookie-based auth)
+      enabled: ${CSRF_ENABLED:true}
 
   google:
     client-id: ${GOOGLE_CLIENT_ID:}
@@ -150,13 +170,24 @@ app:
 
   features:
     MATRIX_RBAC: true
-    RECRUITMENT: false
+    USER_MANAGEMENT: true
+    ORGANIZATION: true
+    RECRUITMENT: true
     PAYROLL: true
     EXPENSE_MANAGEMENT: true
     ASSET_MANAGEMENT: true
     PERFORMANCE_REVIEWS: true
-    TRAINING_LMS: false
-    SOCIAL_FEED: false
+    TRAINING_LMS: true
+    SOCIAL_FEED: true
+    PSA: true
+    STATUTORY: true
+    LEAVE_MANAGEMENT: true
+    ATTENDANCE: true
+    ONBOARDING_OFFBOARDING: true
+    HELPDESK: true
+    WELLNESS: true
+    TRAVEL: true
+    CALENDAR: true
 
   tenant:
     resolution-strategy: ${TENANT_RESOLUTION_STRATEGY:header}
@@ -249,6 +280,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+# Dev profile: disable secure cookies (localhost doesn't have HTTPS)
+app:
+  cookie:
+    secure: false
+  security:
+    csrf:
+      enabled: false
 
 logging:
   level:

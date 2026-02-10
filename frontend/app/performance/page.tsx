@@ -138,10 +138,10 @@ export default function PerformancePage() {
     const fetchStats = async () => {
       try {
         const [goals, cycles, okrSummary, pending360] = await Promise.all([
-          goalService.getAllGoals().then(r => r.content || []).catch(() => []),
-          reviewCycleService.getAllCycles().catch(() => ({ content: [] })),
-          okrService.getDashboardSummary().catch(() => null),
-          feedback360Service.getMyPendingReviews().catch(() => []),
+          goalService.getAllGoals().then(r => r.content || []).catch(() => [] as any[]),
+          reviewCycleService.getAllCycles().catch(() => ({ content: [] } as any)),
+          okrService.getDashboardSummary().catch(() => null as any),
+          feedback360Service.getMyPendingReviews().catch(() => [] as any[]),
         ]);
 
         const activeGoals = goals.filter((g: any) => g.status === 'ACTIVE' || g.status === 'IN_PROGRESS');

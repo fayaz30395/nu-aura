@@ -14,6 +14,7 @@ import { CalendarGridView } from '@/components/projects/CalendarGridView';
 import { TaskDetailsModal } from '@/components/projects/TaskDetailsModal';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { hasPermission } from '@/lib/utils';
+import { toPriority, toTaskStatus, Priority, TaskStatus } from '@/lib/utils/type-guards';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
 type ViewMode = 'timeline' | 'calendar';
@@ -94,11 +95,11 @@ export default function ProjectCalendarPage() {
                   projectName: p.name,
                   // Cast to any to safely access potentially missing fields if backend sends them
                   // or undefined if not present
-                  createdAt: (t as any).createdAt,
-                  startDate: (t as any).startDate,
+                  createdAt: 'createdAt' in t ? (t as TaskWithProject).createdAt : undefined,
+                  startDate: 'startDate' in t ? (t as TaskWithProject).startDate : undefined,
                 }))
               }))
-              .catch(e => ({ content: [] }))
+              .catch(e => ({ content: [] as TaskWithProject[] }))
           );
           const results = await Promise.all(promises);
           results.forEach(res => {
@@ -132,7 +133,7 @@ export default function ProjectCalendarPage() {
           startDate: new Date(p.startDate),
           endDate: p.expectedEndDate ? new Date(p.expectedEndDate) : new Date(p.startDate),
           status: p.status,
-          priority: p.priority as any,
+          priority: toPriority(p.priority),
           color: STATUS_COLORS[p.status] || '#3b82f6',
           description: p.description,
         });
@@ -153,7 +154,7 @@ export default function ProjectCalendarPage() {
             startDate: start,
             endDate: new Date(t.dueDate),
             status: t.status,
-            priority: t.priority as any,
+            priority: toPriority(t.priority),
             color: t.type === 'MILESTONE' ? '#f59e0b' : (STATUS_COLORS[t.status] || '#64748b'),
             projectId: t.projectId,
             projectName: t.projectName,
@@ -378,7 +379,7 @@ export default function ProjectCalendarPage() {
       return;
     }
     try {
-      await taskService.updateTaskStatus(taskId, status as any);
+      await taskService.updateTaskStatus(taskId, toTaskStatus(status));
       fetchData(); // Refresh data
       setIsModalOpen(false);
     } catch (error) {
@@ -387,9 +388,7 @@ export default function ProjectCalendarPage() {
   };
 
   const handleUpdateProgress = async (taskId: string, progress: number) => {
-    // Assuming taskService handles progress updates via updateTask or similar
-    // For now, simple refresh if implemented
-    console.log('Update progress', taskId, progress);
+    // TODO: Implement progress update via taskService.updateTask
   };
 
   const breadcrumbs = [

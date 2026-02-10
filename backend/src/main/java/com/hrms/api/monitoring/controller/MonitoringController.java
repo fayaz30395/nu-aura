@@ -3,12 +3,13 @@ package com.hrms.api.monitoring.controller;
 import com.hrms.api.monitoring.dto.MetricsResponse;
 import com.hrms.api.monitoring.dto.SystemHealthResponse;
 import com.hrms.api.monitoring.service.MonitoringService;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +34,7 @@ public class MonitoringController {
      * @return System health information including DB, cache, JVM, and API health
      */
     @GetMapping("/health")
-    @PreAuthorize("hasRole('ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(
         summary = "Get system health",
         description = "Returns comprehensive system health status including database, cache, JVM, and API metrics"
@@ -49,7 +50,7 @@ public class MonitoringController {
      * @return Aggregated metrics including system, business, and API metrics
      */
     @GetMapping("/metrics")
-    @PreAuthorize("hasRole('ADMIN')")
+    @RequiresPermission(Permission.SYSTEM_ADMIN)
     @Operation(
         summary = "Get application metrics",
         description = "Returns comprehensive application metrics including system resources, business KPIs, and API performance"

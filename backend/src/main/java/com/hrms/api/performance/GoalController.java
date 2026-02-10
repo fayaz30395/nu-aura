@@ -5,6 +5,7 @@ import com.hrms.application.performance.dto.GoalResponse;
 import com.hrms.application.performance.service.GoalService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,7 @@ public class GoalController {
 
     @PostMapping
     @RequiresPermission(Permission.GOAL_CREATE)
-    public ResponseEntity<GoalResponse> createGoal(@RequestBody GoalRequest request) {
+    public ResponseEntity<GoalResponse> createGoal(@Valid @RequestBody GoalRequest request) {
         GoalResponse response = goalService.createGoal(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -78,7 +79,7 @@ public class GoalController {
     @RequiresPermission(Permission.GOAL_CREATE)
     public ResponseEntity<GoalResponse> updateGoal(
             @PathVariable UUID id,
-            @RequestBody GoalRequest request
+            @Valid @RequestBody GoalRequest request
     ) {
         GoalResponse response = goalService.updateGoal(id, request);
         return ResponseEntity.ok(response);

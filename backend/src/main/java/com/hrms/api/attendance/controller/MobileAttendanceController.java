@@ -5,6 +5,8 @@ import com.hrms.application.attendance.service.MobileAttendanceService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.validation.ValidLatitude;
+import com.hrms.common.validation.ValidLongitude;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -43,8 +45,8 @@ public class MobileAttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     @Operation(summary = "Get mobile attendance dashboard", description = "Returns comprehensive attendance dashboard for mobile app")
     public ResponseEntity<MobileAttendanceDashboard> getDashboard(
-            @RequestParam(required = false) BigDecimal latitude,
-            @RequestParam(required = false) BigDecimal longitude) {
+            @RequestParam(required = false) @ValidLatitude BigDecimal latitude,
+            @RequestParam(required = false) @ValidLongitude BigDecimal longitude) {
         return ResponseEntity.ok(mobileAttendanceService.getDashboard(latitude, longitude));
     }
 
@@ -52,8 +54,8 @@ public class MobileAttendanceController {
     @RequiresPermission(Permission.OFFICE_LOCATION_VIEW)
     @Operation(summary = "Get nearby offices", description = "Returns list of nearby office locations with distance and geofence status")
     public ResponseEntity<List<MobileAttendanceDashboard.NearbyOffice>> getNearbyOffices(
-            @RequestParam BigDecimal latitude,
-            @RequestParam BigDecimal longitude) {
+            @RequestParam @ValidLatitude BigDecimal latitude,
+            @RequestParam @ValidLongitude BigDecimal longitude) {
         return ResponseEntity.ok(mobileAttendanceService.getNearbyOffices(
                 TenantContext.getCurrentTenant(), latitude, longitude));
     }

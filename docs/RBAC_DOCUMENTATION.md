@@ -7,9 +7,9 @@ Note: Keka-style RBAC requirements and deltas are tracked in
 
 The HRMS platform now has a comprehensive **Role-Based Access Control (RBAC)** system that provides:
 
-1. **Granular Permissions** - 60+ permissions across all modules
-2. **Role Hierarchy** - 8 predefined roles from Super Admin to Contractor
-3. **Data Scope** - Control who can see what data (ALL, DEPARTMENT, TEAM, SELF)
+1. **Granular Permissions** - 100+ permissions across all modules
+2. **Role Hierarchy** - 7 predefined roles from Super Admin to Employee
+3. **Data Scope** - Control who can see what data (ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM)
 4. **Multi-Tenant Security** - Tenant isolation built-in
 5. **Permission Inheritance** - Senior roles inherit junior role permissions
 
@@ -17,84 +17,195 @@ The HRMS platform now has a comprehensive **Role-Based Access Control (RBAC)** s
 
 ## Role Hierarchy
 
-### 1. SUPER_ADMIN (Rank: 100)
+| Role | Level | Default | Description |
+|------|-------|---------|-------------|
+| **SUPER_ADMIN** | 100 | No | Full system access - bypasses all permission checks |
+| **TENANT_ADMIN** | 85 | No | Full administrative access within tenant |
+| **HR_MANAGER** | 80 | No | Complete HR management with Wall/Recognition moderation |
+| **HR_EXECUTIVE** | 65 | No | HR operational/viewing access with social features |
+| **DEPARTMENT_MANAGER** | 60 | No | Department-level management with social features |
+| **TEAM_LEAD** | 40 | No | Team-level access with social features |
+| **EMPLOYEE** | 10 | **Yes** | Self-service access (assigned to all users by default) |
+
+### 1. SUPER_ADMIN (Level: 100)
 - **Purpose**: Platform administrator across all tenants
 - **Scope**: ALL
-- **Key Permissions**:
-  - SYSTEM_ADMIN
-  - TENANT_MANAGE
-  - All system-level operations
+- **Key Permissions**: `SYSTEM:ADMIN` - bypasses all permission checks
 
-### 2. TENANT_ADMIN (Rank: 90)
+### 2. TENANT_ADMIN (Level: 85)
 - **Purpose**: Organization administrator
 - **Scope**: ALL (within tenant)
-- **Key Permissions**:
-  - Complete employee management
-  - Payroll processing and approval
-  - User and role management
-  - All reports and analytics
-  - Settings configuration
+- **Key Permissions**: `SYSTEM:ADMIN` - full tenant-level access
 
-### 3. HR_MANAGER (Rank: 80)
+### 3. HR_MANAGER (Level: 80)
 - **Purpose**: Head of HR department
 - **Scope**: ALL (HR operations)
-- **Key Permissions**:
-  - Employee lifecycle management
-  - Leave and attendance approval
-  - Recruitment and hiring
-  - Performance management
-  - Training management
-  - Statutory compliance
+- **Key Permissions** (28 total):
+  - Employee: READ, CREATE, UPDATE, DELETE, VIEW_ALL
+  - Leave: REQUEST, APPROVE, REJECT, CANCEL, VIEW_ALL, MANAGE
+  - Department: MANAGE, VIEW
+  - Attendance: MARK, APPROVE, VIEW_ALL, MANAGE
+  - Payroll: VIEW, VIEW_ALL, PROCESS, APPROVE
+  - Performance: REVIEW:CREATE/VIEW/APPROVE, GOAL:CREATE/APPROVE
+  - Reports: REPORT:VIEW, ANALYTICS:VIEW
+  - Wall: VIEW, POST, COMMENT, REACT, MANAGE, PIN
+  - Recognition: VIEW, CREATE, MANAGE
+  - Milestone: VIEW
+  - Administration: ROLE:MANAGE, DASHBOARD:VIEW
+  - Recruitment: VIEW_ALL
 
-### 4. HR_EXECUTIVE (Rank: 70)
-- **Purpose**: HR operations team member
-- **Scope**: DEPARTMENT/ALL (read-only mostly)
-- **Key Permissions**:
-  - View all employees
-  - Manage recruitment
-  - Enroll in training
-  - Upload documents
-  - View reports
+### 4. HR_EXECUTIVE (Level: 65)
+- **Purpose**: HR operations team member (read-heavy)
+- **Scope**: ALL (read-only mostly)
+- **Key Permissions** (15 total):
+  - Employee: READ, VIEW_ALL
+  - Leave: REQUEST, VIEW_ALL
+  - Department: VIEW
+  - Attendance: MARK, VIEW_ALL
+  - Payroll: VIEW_SELF
+  - Wall: VIEW, POST, COMMENT, REACT
+  - Recognition: VIEW, CREATE
+  - Milestone: VIEW
+  - Dashboard: VIEW
 
-### 5. DEPARTMENT_MANAGER (Rank: 60)
+### 5. DEPARTMENT_MANAGER (Level: 60)
 - **Purpose**: Head of a department
 - **Scope**: DEPARTMENT
-- **Key Permissions**:
-  - View department employees
-  - Approve leave and attendance
-  - Conduct performance reviews
-  - Approve expenses
-  - View department reports
+- **Key Permissions** (19 total):
+  - Employee: READ, VIEW_DEPARTMENT
+  - Leave: REQUEST, APPROVE, REJECT
+  - Department: VIEW
+  - Attendance: MARK, APPROVE, REGULARIZE
+  - Payroll: VIEW_SELF
+  - Performance: REVIEW:SUBMIT, REVIEW:APPROVE
+  - Wall: VIEW, POST, COMMENT, REACT
+  - Recognition: VIEW, CREATE
+  - Milestone: VIEW
+  - Dashboard: VIEW
 
-### 6. TEAM_LEAD (Rank: 50)
+### 6. TEAM_LEAD (Level: 40)
 - **Purpose**: Team supervisor
 - **Scope**: TEAM
-- **Key Permissions**:
-  - View team members
-  - Approve team leave
-  - Create reviews for team
-  - Approve timesheets
-  - View team expenses
+- **Key Permissions** (19 total):
+  - Employee: READ, VIEW_TEAM
+  - Leave: REQUEST, APPROVE, VIEW_TEAM
+  - Department: VIEW
+  - Attendance: MARK, VIEW_TEAM, REGULARIZE
+  - Payroll: VIEW_SELF
+  - Timesheet: SUBMIT, APPROVE
+  - Wall: VIEW, POST, COMMENT, REACT
+  - Recognition: VIEW, CREATE
+  - Milestone: VIEW
+  - Dashboard: VIEW
 
-### 7. EMPLOYEE (Rank: 40)
-- **Purpose**: Regular employee
+### 7. EMPLOYEE (Level: 10) - **Default Role**
+- **Purpose**: Regular employee (self-service)
 - **Scope**: SELF
-- **Key Permissions**:
-  - View own data
-  - Request leave
-  - Mark attendance
-  - Submit timesheets
-  - View payslips
-  - Enroll in training
+- **Key Permissions** (18 total):
+  - Employee: VIEW_SELF
+  - Leave: REQUEST, CANCEL, VIEW_SELF
+  - Department: VIEW
+  - Attendance: MARK, REGULARIZE, VIEW_SELF
+  - Payroll: VIEW_SELF
+  - Performance: REVIEW:SUBMIT
+  - Project: VIEW
+  - Timesheet: SUBMIT
+  - Document: VIEW, UPLOAD
+  - Report: VIEW
+  - Dashboard: VIEW
+  - Wall: VIEW, POST, COMMENT, REACT
+  - Recognition: VIEW, CREATE
+  - Milestone: VIEW
 
-### 8. CONTRACTOR (Rank: 30)
-- **Purpose**: Contract worker
-- **Scope**: SELF (limited)
-- **Key Permissions**:
-  - Mark attendance
-  - Submit timesheets
-  - View assigned projects
-  - View own documents
+---
+
+## Feature Access Matrix by Role
+
+| Feature | SUPER_ADMIN | TENANT_ADMIN | HR_MANAGER | HR_EXECUTIVE | DEPT_MANAGER | TEAM_LEAD | EMPLOYEE |
+|---------|:-----------:|:------------:|:----------:|:------------:|:------------:|:---------:|:--------:|
+| **Employee Management** |
+| View All Employees | ✅ | ✅ | ✅ (ALL) | ✅ (ALL) | ❌ | ❌ | ❌ |
+| View Department Employees | ✅ | ✅ | ✅ | ✅ | ✅ (DEPT) | ❌ | ❌ |
+| View Team Members | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (TEAM) | ❌ |
+| View Own Profile | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (SELF) |
+| Create Employee | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Update Employee | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Delete Employee | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Leave Management** |
+| Request Leave | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View Own Leave | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (SELF) |
+| View Team Leave | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (TEAM) | ❌ |
+| View All Leave | ✅ | ✅ | ✅ (ALL) | ✅ (ALL) | ❌ | ❌ | ❌ |
+| Approve Leave | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| Reject Leave | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Cancel Leave | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ (own) |
+| **Attendance** |
+| Mark Attendance | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View Own Attendance | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (SELF) |
+| View Team Attendance | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (TEAM) | ❌ |
+| View All Attendance | ✅ | ✅ | ✅ (ALL) | ✅ (ALL) | ❌ | ❌ | ❌ |
+| Approve Attendance | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Regularize Attendance | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Payroll** |
+| View Own Payslip | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (SELF) |
+| View All Payroll | ✅ | ✅ | ✅ (ALL) | ❌ | ❌ | ❌ | ❌ |
+| Process Payroll | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Approve Payroll | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Performance** |
+| View Reviews | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Create Reviews | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Submit Reviews | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Approve Reviews | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Create Goals | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Organization Wall** |
+| View Wall | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Create Posts | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Comment | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| React/Vote | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pin Posts | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Manage/Moderate Wall | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Recognition** |
+| View Recognition | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Give Recognition | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Manage Recognition | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| View Milestones | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Departments** |
+| View Departments | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Manage Departments | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Reports & Analytics** |
+| View Reports | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| View Analytics | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Documents** |
+| View Documents | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Upload Documents | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| **Projects/Timesheets** |
+| View Projects | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Submit Timesheets | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Approve Timesheets | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **Recruitment** |
+| View All Recruitment | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Administration** |
+| System Admin | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Manage Roles | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| View Dashboard | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## Data Scope Hierarchy (Row-Level Security)
+
+| Scope | Level | Filter Logic | Example |
+|-------|-------|--------------|---------|
+| **ALL** | 100 | No filtering - global access | HR Manager viewing all employees |
+| **LOCATION** | 80 | Filter by user's assigned locations | Manager of specific office |
+| **DEPARTMENT** | 60 | Filter by user's department | Dept Manager seeing dept employees |
+| **TEAM** | 40 | Filter by direct/indirect reports | Team Lead viewing direct reports |
+| **SELF** | 20 | Only user's own records | Employee viewing own data |
+| **CUSTOM** | 10 | Specific IDs defined per user | Custom target selection |
+
+**Scope Rules:**
+- Permissions are additive - users with multiple roles get union of all permissions
+- Most permissive scope wins - if user has both TEAM and DEPARTMENT scope, DEPARTMENT is used
+- SUPER_ADMIN and TENANT_ADMIN bypass all permission checks via `SYSTEM:ADMIN`
 
 ---
 

@@ -34,6 +34,7 @@ import {
 import { surveyService } from '@/lib/services/survey.service';
 import type { Survey, SurveyRequest } from '@/lib/types/survey';
 import { SurveyType, SurveyStatus } from '@/lib/types/survey';
+import { toBadgeVariant } from '@/lib/utils/type-guards';
 
 const surveyTypeOptions = [
   { value: SurveyType.ENGAGEMENT, label: 'Engagement' },
@@ -409,7 +410,7 @@ export default function SurveysPage() {
                         <p className="text-sm opacity-80">{survey.surveyCode}</p>
                         <h3 className="text-lg font-semibold">{survey.title}</h3>
                       </div>
-                      <Badge variant={getStatusColor(survey.status) as any}>
+                      <Badge variant={toBadgeVariant(survey.status)}>
                         {survey.status}
                       </Badge>
                     </div>
@@ -640,7 +641,7 @@ export default function SurveysPage() {
                   <div>
                     <span className="text-surface-500">Status:</span>
                     <p>
-                      <Badge variant={getStatusColor(selectedSurvey.status) as any}>
+                      <Badge variant={toBadgeVariant(selectedSurvey.status)}>
                         {selectedSurvey.status}
                       </Badge>
                     </p>
