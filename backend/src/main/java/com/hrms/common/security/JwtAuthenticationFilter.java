@@ -1,9 +1,11 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.CookieConfig;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,10 +151,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Extract JWT from request.
+     * Checks in order: httpOnly cookie (secure) → Authorization header (backward compatibility)
+     */
     private String getJwtFromRequest(HttpServletRequest request) {
+        // First, try to get from secure httpOnly cookie (preferred)
+        String tokenFromCookie = getJwtFromCookie(request);
+        if (StringUtils.hasText(tokenFromCookie)) {
+            return tokenFromCookie;
+        }
+
+        // Fallback to Authorization header for backward compatibility and API clients
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract JWT from the access_token cookie.
+     */
+    private String getJwtFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (CookieConfig.ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }

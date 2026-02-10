@@ -11,7 +11,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "candidates")
+@Table(name = "candidates", indexes = {
+    @Index(name = "idx_candidate_tenant", columnList = "tenant_id"),
+    @Index(name = "idx_candidate_tenant_job", columnList = "tenant_id,job_opening_id"),
+    @Index(name = "idx_candidate_tenant_status", columnList = "tenant_id,status"),
+    @Index(name = "idx_candidate_tenant_stage", columnList = "tenant_id,current_stage"),
+    @Index(name = "idx_candidate_email", columnList = "email"),
+    @Index(name = "idx_candidate_recruiter", columnList = "assigned_recruiter_id"),
+    @Index(name = "idx_candidate_applied_date", columnList = "applied_date"),
+    @Index(name = "idx_candidate_source", columnList = "source")
+}, uniqueConstraints = {
+    @UniqueConstraint(name = "uk_candidate_tenant_code", columnNames = {"tenant_id", "candidate_code"})
+})
 @Data
 public class Candidate {
 
@@ -21,7 +32,8 @@ public class Candidate {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @Column(name = "candidate_code", nullable = false, unique = true, length = 50)
+    // Note: unique constraint is now tenant-scoped via @UniqueConstraint in @Table
+    @Column(name = "candidate_code", nullable = false, length = 50)
     private String candidateCode;
 
     @Column(name = "job_opening_id", nullable = false)

@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
-import { Employee, CreateEmployeeRequest, Department } from '@/lib/types/employee';
+import { Employee, CreateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole } from '@/lib/types/employee';
+import { toGender, toEmploymentType, toEmployeeLevel, toJobRole } from '@/lib/utils/type-guards';
 import { AppLayout } from '@/components/layout';
 
 export default function EmployeesPage() {
@@ -608,7 +609,7 @@ export default function EmployeesPage() {
                         </label>
                         <select
                           value={formData.gender || ''}
-                          onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
+                          onChange={(e) => setFormData({ ...formData, gender: toGender(e.target.value) })}
                           className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                         >
                           <option value="">Select Gender</option>
@@ -708,7 +709,7 @@ export default function EmployeesPage() {
                           <select
                             required
                             value={formData.employmentType}
-                            onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as any })}
+                            onChange={(e) => setFormData({ ...formData, employmentType: toEmploymentType(e.target.value) })}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           >
                             <option value="FULL_TIME">Full Time</option>
@@ -745,7 +746,7 @@ export default function EmployeesPage() {
                           </label>
                           <select
                             value={formData.level || ''}
-                            onChange={(e) => setFormData({ ...formData, level: e.target.value as any })}
+                            onChange={(e) => setFormData({ ...formData, level: toEmployeeLevel(e.target.value) })}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           >
                             <option value="">Select Level</option>
@@ -767,7 +768,7 @@ export default function EmployeesPage() {
                           </label>
                           <select
                             value={formData.jobRole || ''}
-                            onChange={(e) => setFormData({ ...formData, jobRole: e.target.value as any })}
+                            onChange={(e) => setFormData({ ...formData, jobRole: toJobRole(e.target.value) })}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           >
                             <option value="">Select Role</option>

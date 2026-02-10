@@ -4,6 +4,10 @@ import React, { createContext, useContext, useEffect, useState, useCallback, use
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuth } from '../hooks/useAuth';
+import { createLogger } from '../utils/logger';
+import { apiConfig } from '../config';
+
+const log = createLogger('WebSocket');
 
 // Define the notification type
 export interface Notification {
@@ -42,19 +46,19 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         }
 
         // Initialize STOMP client
+        const wsBaseUrl = apiConfig.baseUrl.replace('/api/v1', '');
         const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'), // Adjust URL as needed
+            webSocketFactory: () => new SockJS(`${wsBaseUrl}/ws`),
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             debug: (str) => {
-                // console.log('STOMP: ' + str);
+                log.debug('STOMP:', str);
             },
         });
 
         client.onConnect = (frame) => {
             setIsConnected(true);
-            console.log('Connected to WebSocket');
 
             // Subscribe to global broadcasts
             client.subscribe('/topic/broadcast', (message: IMessage) => {
@@ -68,13 +72,12 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         };
 
         client.onStompError = (frame) => {
-            console.error('Broker reported error: ' + frame.headers['message']);
-            console.error('Additional details: ' + frame.body);
+            log.error('Broker reported error:', frame.headers['message']);
+            log.error('Additional details:', frame.body);
         };
 
         client.onDisconnect = () => {
             setIsConnected(false);
-            console.log('Disconnected from WebSocket');
         };
 
         client.activate();
@@ -100,7 +103,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
             // Optional: Play sound or show browser notification
         } catch (e) {
-            console.error('Failed to parse notification', e);
+            log.error('Failed to parse notification', e);
         }
     };
 

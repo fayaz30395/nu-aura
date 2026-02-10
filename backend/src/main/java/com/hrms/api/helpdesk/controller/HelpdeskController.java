@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +29,7 @@ public class HelpdeskController {
 
     @PostMapping("/tickets")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest request) {
+    public ResponseEntity<TicketResponse> createTicket(@Valid @RequestBody TicketRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.createTicket(request));
     }
 
@@ -35,7 +37,7 @@ public class HelpdeskController {
     @RequiresPermission(SYSTEM_ADMIN)
     public ResponseEntity<TicketResponse> updateTicket(
             @PathVariable UUID id,
-            @RequestBody TicketRequest request) {
+            @Valid @RequestBody TicketRequest request) {
         return ResponseEntity.ok(helpdeskService.updateTicket(id, request));
     }
 
@@ -108,7 +110,7 @@ public class HelpdeskController {
 
     @PostMapping("/comments")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    public ResponseEntity<TicketCommentResponse> addComment(@RequestBody TicketCommentRequest request) {
+    public ResponseEntity<TicketCommentResponse> addComment(@Valid @RequestBody TicketCommentRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.addComment(request));
     }
 
@@ -116,7 +118,7 @@ public class HelpdeskController {
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
     public ResponseEntity<TicketCommentResponse> updateComment(
             @PathVariable UUID id,
-            @RequestBody TicketCommentRequest request) {
+            @Valid @RequestBody TicketCommentRequest request) {
         return ResponseEntity.ok(helpdeskService.updateComment(id, request));
     }
 
@@ -137,7 +139,7 @@ public class HelpdeskController {
 
     @PostMapping("/categories")
     @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
-    public ResponseEntity<TicketCategoryResponse> createCategory(@RequestBody TicketCategoryRequest request) {
+    public ResponseEntity<TicketCategoryResponse> createCategory(@Valid @RequestBody TicketCategoryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(helpdeskService.createCategory(request));
     }
 
@@ -145,7 +147,7 @@ public class HelpdeskController {
     @RequiresPermission(HELPDESK_CATEGORY_MANAGE)
     public ResponseEntity<TicketCategoryResponse> updateCategory(
             @PathVariable UUID id,
-            @RequestBody TicketCategoryRequest request) {
+            @Valid @RequestBody TicketCategoryRequest request) {
         return ResponseEntity.ok(helpdeskService.updateCategory(id, request));
     }
 

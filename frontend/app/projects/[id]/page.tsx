@@ -18,10 +18,12 @@ import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-alloca
 import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
 import { ProjectAllocation } from '@/lib/types/hrms-allocation';
 
-const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' }> = {
-  DRAFT: { label: 'Draft', variant: 'warning' },
-  ACTIVE: { label: 'Active', variant: 'success' },
-  CLOSED: { label: 'Closed', variant: 'secondary' },
+const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
+  PLANNED: { label: 'Planned', variant: 'secondary' },
+  IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
+  ON_HOLD: { label: 'On Hold', variant: 'warning' },
+  COMPLETED: { label: 'Completed', variant: 'success' },
+  CANCELLED: { label: 'Cancelled', variant: 'danger' },
 };
 
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
@@ -265,14 +267,14 @@ export default function ProjectDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {project?.status === 'DRAFT' && (
+            {project?.status === 'PLANNED' && (
               <Button onClick={() => setShowActivateDialog(true)}>
-                Activate Project
+                Start Project
               </Button>
             )}
-            {project?.status === 'ACTIVE' && (
+            {project?.status === 'IN_PROGRESS' && (
               <Button variant="outline" onClick={() => setShowCloseDialog(true)}>
-                Close Project
+                Complete Project
               </Button>
             )}
           </div>
@@ -290,12 +292,9 @@ export default function ProjectDetailPage() {
         <Card>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-surface-500">Owner</p>
+              <p className="text-xs text-surface-500">Project Manager</p>
               <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
-                {project?.ownerName || project?.ownerEmployeeCode || project?.ownerEmail || '—'}
-              </p>
-              <p className="text-xs text-surface-500">
-                {project?.ownerEmployeeCode || project?.ownerEmail || ''}
+                {project?.projectManagerName || '—'}
               </p>
             </div>
             <div>
@@ -305,9 +304,9 @@ export default function ProjectDetailPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-surface-500">End date</p>
+              <p className="text-xs text-surface-500">Expected end date</p>
               <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
-                {formatDate(project?.endDate)}
+                {formatDate(project?.expectedEndDate)}
               </p>
             </div>
             <div>

@@ -57,10 +57,19 @@ interface OwnerTypeaheadProps {
   disabled?: boolean;
 }
 
-const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' }> = {
-  DRAFT: { label: 'Draft', variant: 'warning' },
-  ACTIVE: { label: 'Active', variant: 'success' },
-  CLOSED: { label: 'Closed', variant: 'secondary' },
+const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
+  PLANNED: { label: 'Planned', variant: 'secondary' },
+  IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
+  ON_HOLD: { label: 'On Hold', variant: 'warning' },
+  COMPLETED: { label: 'Completed', variant: 'success' },
+  CANCELLED: { label: 'Cancelled', variant: 'danger' },
+};
+
+const PRIORITY_BADGE: Record<string, { label: string; variant: 'danger' | 'warning' | 'primary' | 'secondary' }> = {
+  LOW: { label: 'Low', variant: 'secondary' },
+  MEDIUM: { label: 'Medium', variant: 'primary' },
+  HIGH: { label: 'High', variant: 'warning' },
+  CRITICAL: { label: 'Critical', variant: 'danger' },
 };
 
 const TYPE_BADGE: Record<ProjectType, { label: string; variant: 'primary' | 'outline' }> = {
@@ -238,7 +247,8 @@ export default function ProjectsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  const [statusFilter, setStatusFilter] = useState<ProjectStatus | ''>('ACTIVE');
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | ''>('IN_PROGRESS');
+  const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<ProjectType | ''>('');
   const [ownerFilter, setOwnerFilter] = useState<EmployeeSummary | null>(null);
   const [searchInput, setSearchInput] = useState('');
@@ -251,10 +261,13 @@ export default function ProjectsPage() {
   const [ownerSelection, setOwnerSelection] = useState<EmployeeSummary | null>(null);
 
   const [formData, setFormData] = useState({
+    projectCode: '',
     name: '',
     type: 'INTERNAL' as ProjectType,
+    status: 'PLANNED' as ProjectStatus,
+    priority: 'MEDIUM',
     startDate: new Date().toISOString().split('T')[0],
-    endDate: '',
+    expectedEndDate: '',
     clientName: '',
     description: '',
   });
@@ -278,10 +291,11 @@ export default function ProjectsPage() {
 
   const activeFilters = useMemo(() => ({
     status: statusFilter || undefined,
+    priority: priorityFilter || undefined,
     type: typeFilter || undefined,
     ownerId: ownerFilter?.id || undefined,
     search: searchTerm || undefined,
-  }), [ownerFilter, searchTerm, statusFilter, typeFilter]);
+  }), [ownerFilter, searchTerm, statusFilter, typeFilter, priorityFilter]);
 
   useEffect(() => {
     const handle = setTimeout(() => {
@@ -335,10 +349,13 @@ export default function ProjectsPage() {
 
   const resetForm = () => {
     setFormData({
+      projectCode: '',
       name: '',
       type: 'INTERNAL',
+      status: 'PLANNED',
+      priority: 'MEDIUM',
       startDate: new Date().toISOString().split('T')[0],
-      endDate: '',
+      expectedEndDate: '',
       clientName: '',
       description: '',
     });
@@ -380,11 +397,13 @@ export default function ProjectsPage() {
     }
 
     const payload: ProjectCreateRequest = {
+      projectCode: formData.projectCode.trim().toUpperCase(),
       name: formData.name.trim(),
-      type: formData.type,
-      ownerId: ownerId,
+      status: formData.status,
+      priority: formData.priority as any,
+      projectManagerId: ownerId,
       startDate: formData.startDate,
-      endDate: formData.endDate ? formData.endDate : undefined,
+      expectedEndDate: formData.expectedEndDate ? formData.expectedEndDate : undefined,
       clientName: formData.type === 'CLIENT' ? formData.clientName.trim() : undefined,
       description: formData.description?.trim() || undefined,
     };
@@ -446,15 +465,25 @@ export default function ProjectsPage() {
       mobilePriority: 'secondary' as const,
     },
     {
+      key: 'priority',
+      header: 'Priority',
+      accessor: (project: HrmsProject) => {
+        const badge = PRIORITY_BADGE[project.priority] || { label: project.priority, variant: 'secondary' };
+        return (
+          <Badge variant={badge.variant} size="sm">
+            {badge.label}
+          </Badge>
+        );
+      },
+      mobilePriority: 'secondary' as const,
+    },
+    {
       key: 'owner',
-      header: 'Owner',
+      header: 'Manager',
       accessor: (project: HrmsProject) => (
         <div className="space-y-1">
           <div className="text-sm text-surface-900 dark:text-surface-100">
-            {project.ownerName || project.ownerEmployeeCode || project.ownerEmail || '—'}
-          </div>
-          <div className="text-xs text-surface-500 dark:text-surface-400">
-            {project.ownerEmployeeCode || project.ownerEmail || '—'}
+            {project.projectManagerName || '—'}
           </div>
         </div>
       ),
@@ -467,7 +496,7 @@ export default function ProjectsPage() {
         <div className="text-sm text-surface-700 dark:text-surface-300">
           {formatDate(project.startDate)}
           {' → '}
-          {formatDate(project.endDate)}
+          {project.endDate ? formatDate(project.endDate) : project.expectedEndDate ? `${formatDate(project.expectedEndDate)} (Exp)` : '—'}
         </div>
       ),
       mobilePriority: 'hidden' as const,
@@ -533,9 +562,25 @@ export default function ProjectsPage() {
                 }}
               >
                 <option value="">All statuses</option>
-                <option value="DRAFT">Draft</option>
-                <option value="ACTIVE">Active</option>
-                <option value="CLOSED">Closed</option>
+                <option value="PLANNED">Planned</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="ON_HOLD">On Hold</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="CANCELLED">Cancelled</option>
+              </Select>
+              <Select
+                label="Priority"
+                value={priorityFilter}
+                onChange={(event) => {
+                  setPriorityFilter(event.target.value);
+                  setCurrentPage(0);
+                }}
+              >
+                <option value="">All Priorities</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
               </Select>
               <Select
                 label="Type"
@@ -607,13 +652,22 @@ export default function ProjectsPage() {
               </div>
             )}
 
-            <Input
-              label="Project name"
-              value={formData.name}
-              onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
-              placeholder="e.g. Mobile app revamp"
-              required
-            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label="Project code"
+                value={formData.projectCode}
+                onChange={(event) => setFormData((prev) => ({ ...prev, projectCode: event.target.value }))}
+                placeholder="e.g. PRJ-2024-001"
+                required
+              />
+              <Input
+                label="Project name"
+                value={formData.name}
+                onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
+                placeholder="e.g. Mobile app revamp"
+                required
+              />
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Select
@@ -642,11 +696,35 @@ export default function ProjectsPage() {
                 required
               />
               <Input
-                label="End date (optional)"
+                label="Expected end date"
                 type="date"
-                value={formData.endDate}
-                onChange={(event) => setFormData((prev) => ({ ...prev, endDate: event.target.value }))}
+                value={formData.expectedEndDate}
+                onChange={(event) => setFormData((prev) => ({ ...prev, expectedEndDate: event.target.value }))}
               />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Select
+                label="Status"
+                value={formData.status}
+                onChange={(event) => setFormData((prev) => ({ ...prev, status: event.target.value as ProjectStatus }))}
+                required
+              >
+                <option value="PLANNED">Planned</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="ON_HOLD">On Hold</option>
+              </Select>
+              <Select
+                label="Priority"
+                value={formData.priority}
+                onChange={(event) => setFormData((prev) => ({ ...prev, priority: event.target.value }))}
+                required
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </Select>
             </div>
 
             {formData.type === 'CLIENT' && (

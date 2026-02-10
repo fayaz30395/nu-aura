@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class AIRecruitmentController {
      */
     @PostMapping("/parse-resume")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
-    public ResponseEntity<ResumeParseResponse> parseResume(@RequestBody ResumeParseRequest request) {
+    public ResponseEntity<ResumeParseResponse> parseResume(@Valid @RequestBody ResumeParseRequest request) {
         ResumeParseResponse response;
 
         if (request.getResumeText() != null && !request.getResumeText().isEmpty()) {
@@ -89,7 +90,7 @@ public class AIRecruitmentController {
      */
     @PostMapping("/generate-job-description")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
-    public ResponseEntity<JobDescriptionResponse> generateJobDescription(@RequestBody JobDescriptionRequest request) {
+    public ResponseEntity<JobDescriptionResponse> generateJobDescription(@Valid @RequestBody JobDescriptionRequest request) {
         JobDescriptionResponse response = aiRecruitmentService.generateJobDescription(request);
         return ResponseEntity.ok(response);
     }

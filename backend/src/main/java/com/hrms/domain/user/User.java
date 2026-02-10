@@ -55,7 +55,20 @@ public class User extends TenantAware {
     @Column
     private LocalDateTime passwordResetTokenExpiry;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    /**
+     * User roles - loaded LAZILY to avoid N+1 and unnecessary data loading.
+     *
+     * <p><strong>IMPORTANT:</strong> Do NOT access this collection directly in service code.
+     * Use {@link com.hrms.infrastructure.user.repository.UserRepository#findByIdWithRolesAndPermissions}
+     * to load roles with permissions in a single optimized query.</p>
+     *
+     * <p>Direct access will trigger lazy loading which may cause:
+     * <ul>
+     *   <li>LazyInitializationException if session is closed</li>
+     *   <li>N+1 queries if accessed in a loop</li>
+     * </ul></p>
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),

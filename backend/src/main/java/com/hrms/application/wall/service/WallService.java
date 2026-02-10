@@ -2,6 +2,7 @@ package com.hrms.application.wall.service;
 
 import com.hrms.api.wall.dto.*;
 import com.hrms.application.common.service.ContentViewService;
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.common.ContentView.ContentType;
 import com.hrms.domain.employee.Employee;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -15,6 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing wall posts, reactions, comments, and polls.
+ *
+ * <p><strong>SECURITY:</strong> All operations enforce tenant isolation using
+ * TenantContext.requireCurrentTenant() to prevent cross-tenant data access.</p>
+ */
 @Service
 @Transactional
 public class WallService {
@@ -75,18 +82,21 @@ public class WallService {
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPosts(Pageable pageable, UUID currentUserId) {
-        Page<WallPost> posts = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<WallPost> posts = wallPostRepository.findAllActiveOrderByPinnedAndCreatedAt(tenantId, pageable);
         return posts.map(post -> mapToResponse(post, currentUserId));
     }
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPostsByType(WallPost.PostType type, Pageable pageable, UUID currentUserId) {
-        Page<WallPost> posts = wallPostRepository.findByTypeAndActiveTrue(type, pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<WallPost> posts = wallPostRepository.findByTypeAndActiveTrue(tenantId, type, pageable);
         return posts.map(post -> mapToResponse(post, currentUserId));
     }
 
     public WallPostResponse getPostById(UUID postId, UUID currentUserId) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         // Track view in generic content view system
@@ -98,7 +108,8 @@ public class WallService {
     }
 
     public void deletePost(UUID postId, UUID userId) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         if (!post.getAuthor().getId().equals(userId)) {
@@ -110,7 +121,8 @@ public class WallService {
     }
 
     public WallPostResponse pinPost(UUID postId, boolean pinned) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         post.setPinned(pinned);
@@ -121,7 +133,8 @@ public class WallService {
     // ==================== REACTIONS ====================
 
     public void addReaction(UUID postId, UUID employeeId, PostReaction.ReactionType reactionType) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         Employee employee = employeeRepository.findById(employeeId)
@@ -148,6 +161,7 @@ public class WallService {
     }
 
     public void removeReaction(UUID postId, UUID employeeId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<PostReaction> existingReaction = postReactionRepository
                 .findByPostIdAndEmployeeId(postId, employeeId);
 
@@ -155,7 +169,7 @@ public class WallService {
             postReactionRepository.delete(existingReaction.get());
 
             // Update like count on the post
-            WallPost post = wallPostRepository.findByIdAndActiveTrue(postId).orElse(null);
+            WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId).orElse(null);
             if (post != null && post.getLikesCount() > 0) {
                 post.setLikesCount(post.getLikesCount() - 1);
                 wallPostRepository.save(post);
@@ -166,7 +180,8 @@ public class WallService {
     // ==================== COMMENTS ====================
 
     public CommentResponse addComment(UUID postId, CreateCommentRequest request, UUID authorId) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         Employee author = employeeRepository.findById(authorId)
@@ -217,7 +232,8 @@ public class WallService {
     // ==================== POLLS ====================
 
     public WallPostResponse vote(UUID postId, UUID optionId, UUID employeeId) {
-        WallPost post = wallPostRepository.findByIdAndActiveTrue(postId)
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         if (post.getType() != WallPost.PostType.POLL) {
@@ -259,7 +275,8 @@ public class WallService {
 
     @Transactional(readOnly = true)
     public Page<WallPostResponse> getPraiseForEmployee(UUID employeeId, Pageable pageable, UUID currentUserId) {
-        Page<WallPost> posts = wallPostRepository.findPraiseByRecipientId(employeeId, pageable);
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Page<WallPost> posts = wallPostRepository.findPraiseByRecipientId(tenantId, employeeId, pageable);
         return posts.map(post -> mapToResponse(post, currentUserId));
     }
 

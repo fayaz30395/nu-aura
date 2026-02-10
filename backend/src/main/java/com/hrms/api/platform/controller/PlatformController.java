@@ -8,7 +8,6 @@ import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.platform.*;
-import com.hrms.infrastructure.platform.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +29,6 @@ public class PlatformController {
 
     private final NuPlatformService platformService;
     private final PermissionMigrationService migrationService;
-    private final NuApplicationRepository applicationRepository;
-    private final AppRoleRepository roleRepository;
-    private final UserAppAccessRepository userAppAccessRepository;
 
     // ==================== Applications ====================
 
@@ -163,7 +159,7 @@ public class PlatformController {
     @GetMapping("/roles/{roleId}")
     @RequiresPermission(Permission.PLATFORM_VIEW)
     public ResponseEntity<AppRoleDTO> getRole(@PathVariable UUID roleId) {
-        return roleRepository.findById(roleId)
+        return platformService.getRoleById(roleId)
                 .map(AppRoleDTO::fromEntity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -205,14 +201,7 @@ public class PlatformController {
     @GetMapping("/applications/{appCode}/users")
     @RequiresPermission("USER:READ")
     public ResponseEntity<List<UserAppAccessDTO>> getApplicationUsers(@PathVariable String appCode) {
-        NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
-                .orElse(null);
-        if (app == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<UserAppAccess> accessList = userAppAccessRepository
-                .findByApplicationIdAndStatus(app.getId(), UserAppAccess.AccessStatus.ACTIVE);
+        List<UserAppAccess> accessList = platformService.getApplicationUsers(appCode);
 
         List<UserAppAccessDTO> dtos = accessList.stream()
                 .map(UserAppAccessDTO::fromEntity)

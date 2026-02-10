@@ -39,6 +39,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { getGoogleToken, saveGoogleToken, clearGoogleToken } from '@/lib/utils/googleToken';
 import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
+import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 
 interface EmailAttachment {
   id: string;
@@ -1216,7 +1217,7 @@ function MailContent() {
                           {selectedEmail.bodyHtml ? (
                             <div
                               className="prose dark:prose-invert max-w-none email-content"
-                              dangerouslySetInnerHTML={{ __html: selectedEmail.bodyHtml }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(selectedEmail.bodyHtml) }}
                             />
                           ) : selectedEmail.body ? (
                             <pre className="text-surface-700 dark:text-surface-300 whitespace-pre-wrap font-sans text-sm">
@@ -1515,7 +1516,7 @@ function MailContent() {
                       <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">-- Signature --</p>
                       <div
                         className="signature-preview text-sm text-surface-600 dark:text-surface-300"
-                        dangerouslySetInnerHTML={{ __html: emailSignatureHtml }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailSignatureHtml) }}
                       />
                     </div>
                   )}

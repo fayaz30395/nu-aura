@@ -1,10 +1,13 @@
 package com.hrms.common.config;
 
+import com.hrms.common.api.ApiVersion;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -62,8 +65,16 @@ public class OpenApiConfig {
                     ### Authentication
                     Use the `/api/v1/auth/login` endpoint to obtain JWT tokens.
                     Include the access token in the `Authorization` header as `Bearer {token}`.
-                    """)
-                .version("1.0.0")
+
+                    ### API Versioning
+                    - **Current Version:** %s
+                    - **URL Pattern:** `/api/v1/...` (major version in path)
+                    - **Response Headers:**
+                      - `X-API-Version` - Current API version
+                      - `X-API-Deprecated` - Present if endpoint is deprecated
+                      - `Sunset` - Date when deprecated endpoint will be removed
+                    """.formatted(ApiVersion.CURRENT))
+                .version(ApiVersion.CURRENT)
                 .contact(new Contact()
                         .name("NuLogic Support")
                         .email("support@nulogic.io")
@@ -97,7 +108,24 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
                                 .name("X-Tenant-ID")
-                                .description("Tenant identifier for multi-tenancy"));
+                                .description("Tenant identifier for multi-tenancy"))
+                // API versioning response headers
+                .addHeaders(ApiVersion.HEADER_API_VERSION,
+                        new Header()
+                                .description("Current API version")
+                                .schema(new StringSchema().example(ApiVersion.CURRENT)))
+                .addHeaders(ApiVersion.HEADER_API_DEPRECATED,
+                        new Header()
+                                .description("Indicates if endpoint is deprecated")
+                                .schema(new StringSchema().example("true")))
+                .addHeaders(ApiVersion.HEADER_API_SUNSET,
+                        new Header()
+                                .description("Date when deprecated endpoint will be removed (RFC 7231)")
+                                .schema(new StringSchema().example("Sat, 01 Jun 2025 00:00:00 GMT")))
+                .addHeaders(ApiVersion.HEADER_API_DEPRECATION_NOTICE,
+                        new Header()
+                                .description("Human-readable deprecation message with migration instructions")
+                                .schema(new StringSchema()));
     }
 
     private List<Tag> apiTags() {

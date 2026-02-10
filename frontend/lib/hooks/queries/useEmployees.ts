@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { employeeService } from '@/lib/services/employee.service';
-import { CreateEmployeeRequest, UpdateEmployeeRequest } from '@/lib/types/employee';
+import { CreateEmployeeRequest, UpdateEmployeeRequest, Employee } from '@/lib/types/employee';
 
 // Query keys for cache management
 export const employeeKeys = {
@@ -90,15 +90,38 @@ export function useCreateEmployee() {
   });
 }
 
-// Update employee mutation
+// Update employee mutation with optimistic update
 export function useUpdateEmployee() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateEmployeeRequest }) =>
       employeeService.updateEmployee(id, data),
-    onSuccess: (_, { id }) => {
-      // Invalidate specific employee and lists
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: employeeKeys.detail(id) });
+
+      // Snapshot the previous value
+      const previousEmployee = queryClient.getQueryData<Employee>(employeeKeys.detail(id));
+
+      // Optimistically update the cache
+      if (previousEmployee) {
+        queryClient.setQueryData(employeeKeys.detail(id), {
+          ...previousEmployee,
+          ...data,
+        });
+      }
+
+      return { previousEmployee };
+    },
+    onError: (_err, { id }, context) => {
+      // Rollback on error
+      if (context?.previousEmployee) {
+        queryClient.setQueryData(employeeKeys.detail(id), context.previousEmployee);
+      }
+    },
+    onSettled: (_, _error, { id }) => {
+      // Always refetch after mutation settles
       queryClient.invalidateQueries({ queryKey: employeeKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: employeeKeys.lists() });
     },

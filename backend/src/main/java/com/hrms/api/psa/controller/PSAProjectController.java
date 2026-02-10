@@ -1,39 +1,47 @@
 package com.hrms.api.psa.controller;
+
+import com.hrms.application.psa.service.PSAService;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.psa.PSAProject;
-import com.hrms.infrastructure.psa.repository.PSAProjectRepository;
-import lombok.*;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.hrms.common.security.Permission.*;
 
+/**
+ * REST controller for PSA Project management.
+ *
+ * <p><strong>SECURITY:</strong> All operations enforce tenant isolation through the PSAService layer.
+ * Projects are always scoped to the current tenant from TenantContext.</p>
+ */
 @RestController
 @RequestMapping("/api/v1/psa/projects")
 @RequiredArgsConstructor
 public class PSAProjectController {
-    private final PSAProjectRepository projectRepository;
+    private final PSAService psaService;
 
     @PostMapping
     @RequiresPermission(PROJECT_CREATE)
-    public ResponseEntity<PSAProject> createProject(@RequestBody PSAProject project) {
-        project.setId(UUID.randomUUID());
-        project.setTenantId(TenantContext.getCurrentTenant());
-        return ResponseEntity.ok(projectRepository.save(project));
+    public ResponseEntity<PSAProject> createProject(@Valid @RequestBody PSAProject project) {
+        return ResponseEntity.ok(psaService.createProject(project));
     }
 
     @GetMapping
     @RequiresPermission(PROJECT_VIEW)
     public ResponseEntity<List<PSAProject>> getAllProjects() {
-        return ResponseEntity.ok(projectRepository.findAll());
+        return ResponseEntity.ok(psaService.getAllProjects());
     }
 
     @GetMapping("/{id}")
     @RequiresPermission(PROJECT_VIEW)
     public ResponseEntity<PSAProject> getProject(@PathVariable UUID id) {
-        return projectRepository.findById(id)
+        return psaService.getProject(id)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
@@ -41,36 +49,31 @@ public class PSAProjectController {
     @GetMapping("/status/{status}")
     @RequiresPermission(PROJECT_VIEW)
     public ResponseEntity<List<PSAProject>> getProjectsByStatus(@PathVariable PSAProject.ProjectStatus status) {
-        return ResponseEntity.ok(projectRepository.findByTenantIdAndStatus(TenantContext.getCurrentTenant(), status));
+        return ResponseEntity.ok(psaService.getProjectsByStatus(status));
     }
 
     @PutMapping("/{id}")
     @RequiresPermission(PROJECT_CREATE)
-    public ResponseEntity<PSAProject> updateProject(@PathVariable UUID id, @RequestBody PSAProject project) {
-        return projectRepository.findById(id)
-            .map(existing -> {
-                project.setId(id);
-                project.setTenantId(existing.getTenantId());
-                return ResponseEntity.ok(projectRepository.save(project));
-            })
+    public ResponseEntity<PSAProject> updateProject(@PathVariable UUID id, @Valid @RequestBody PSAProject project) {
+        return psaService.updateProject(id, project)
+            .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
-        projectRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        if (psaService.deleteProject(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/{id}/allocate")
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<PSAProject> allocateResources(@PathVariable UUID id, @RequestBody Map<String, Object> allocation) {
-        return projectRepository.findById(id)
-            .map(project -> {
-                // Resource allocation logic would go here
-                return ResponseEntity.ok(projectRepository.save(project));
-            })
+        return psaService.allocateResources(id, allocation)
+            .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
 }

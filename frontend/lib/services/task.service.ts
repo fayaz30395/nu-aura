@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api/client';
+import { wrapServiceCall } from '@/lib/utils/service-error';
 import {
   Task,
   TaskListItem,
@@ -14,111 +15,150 @@ import {
 } from '@/lib/types/task';
 
 const BASE_URL = '/pm/tasks';
+const SERVICE_NAME = 'TaskService';
 
 export const taskService = {
-  // Create a new task
-  async createTask(request: CreateTaskRequest): Promise<Task> {
-    const response = await apiClient.post<Task>(BASE_URL, request);
-    return response.data;
-  },
+  /**
+   * Create a new task
+   */
+  createTask: (request: CreateTaskRequest): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.createTask`, async () => {
+      const response = await apiClient.post<Task>(BASE_URL, request);
+      return response.data;
+    }),
 
-  // Update an existing task
-  async updateTask(id: string, request: UpdateTaskRequest): Promise<Task> {
-    const response = await apiClient.put<Task>(`${BASE_URL}/${id}`, request);
-    return response.data;
-  },
+  /**
+   * Update an existing task
+   */
+  updateTask: (id: string, request: UpdateTaskRequest): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.updateTask`, async () => {
+      const response = await apiClient.put<Task>(`${BASE_URL}/${id}`, request);
+      return response.data;
+    }, { context: { taskId: id } }),
 
-  // Get task by ID
-  async getTask(id: string): Promise<Task> {
-    const response = await apiClient.get<Task>(`${BASE_URL}/${id}`);
-    return response.data;
-  },
+  /**
+   * Get task by ID
+   */
+  getTask: (id: string): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.getTask`, async () => {
+      const response = await apiClient.get<Task>(`${BASE_URL}/${id}`);
+      return response.data;
+    }, { context: { taskId: id } }),
 
-  // Get task by task code (e.g., PROJ-001)
-  async getTaskByCode(taskCode: string): Promise<Task> {
-    const response = await apiClient.get<Task>(`${BASE_URL}/code/${taskCode}`);
-    return response.data;
-  },
+  /**
+   * Get task by task code (e.g., PROJ-001)
+   */
+  getTaskByCode: (taskCode: string): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.getTaskByCode`, async () => {
+      const response = await apiClient.get<Task>(`${BASE_URL}/code/${taskCode}`);
+      return response.data;
+    }, { context: { taskCode } }),
 
-  // List tasks in a project with filters
-  async getProjectTasks(
-    projectId: string,
-    options: TaskFilterOptions = {}
-  ): Promise<TasksPageResponse> {
-    const params = new URLSearchParams();
+  /**
+   * List tasks in a project with filters
+   */
+  getProjectTasks: (projectId: string, options: TaskFilterOptions = {}): Promise<TasksPageResponse> =>
+    wrapServiceCall(`${SERVICE_NAME}.getProjectTasks`, async () => {
+      const params = new URLSearchParams();
 
-    if (options.status) params.append('status', options.status);
-    if (options.priority) params.append('priority', options.priority);
-    if (options.assigneeId) params.append('assigneeId', options.assigneeId);
-    if (options.search) params.append('search', options.search);
-    if (options.page !== undefined) params.append('page', options.page.toString());
-    if (options.size !== undefined) params.append('size', options.size.toString());
-    if (options.sort) params.append('sort', options.sort);
+      if (options.status) params.append('status', options.status);
+      if (options.priority) params.append('priority', options.priority);
+      if (options.assigneeId) params.append('assigneeId', options.assigneeId);
+      if (options.search) params.append('search', options.search);
+      if (options.page !== undefined) params.append('page', options.page.toString());
+      if (options.size !== undefined) params.append('size', options.size.toString());
+      if (options.sort) params.append('sort', options.sort);
 
-    const queryString = params.toString();
-    const url = `${BASE_URL}/project/${projectId}${queryString ? `?${queryString}` : ''}`;
+      const queryString = params.toString();
+      const url = `${BASE_URL}/project/${projectId}${queryString ? `?${queryString}` : ''}`;
 
-    const response = await apiClient.get<TasksPageResponse>(url);
-    return response.data;
-  },
+      const response = await apiClient.get<TasksPageResponse>(url);
+      return response.data;
+    }, { context: { projectId } }),
 
-  // List tasks assigned to a user
-  async getAssigneeTasks(
-    assigneeId: string,
-    page: number = 0,
-    size: number = 50
-  ): Promise<TasksPageResponse> {
-    const response = await apiClient.get<TasksPageResponse>(
-      `${BASE_URL}/assignee/${assigneeId}?page=${page}&size=${size}`
-    );
-    return response.data;
-  },
+  /**
+   * List tasks assigned to a user
+   */
+  getAssigneeTasks: (assigneeId: string, page = 0, size = 50): Promise<TasksPageResponse> =>
+    wrapServiceCall(`${SERVICE_NAME}.getAssigneeTasks`, async () => {
+      const response = await apiClient.get<TasksPageResponse>(
+        `${BASE_URL}/assignee/${assigneeId}?page=${page}&size=${size}`
+      );
+      return response.data;
+    }, { context: { assigneeId } }),
 
-  // Get all tasks with pagination
-  async getAllTasks(page: number = 0, size: number = 50): Promise<TasksPageResponse> {
-    const response = await apiClient.get<TasksPageResponse>(`${BASE_URL}?page=${page}&size=${size}`);
-    return response.data;
-  },
+  /**
+   * Get all tasks with pagination
+   */
+  getAllTasks: (page = 0, size = 50): Promise<TasksPageResponse> =>
+    wrapServiceCall(`${SERVICE_NAME}.getAllTasks`, async () => {
+      const response = await apiClient.get<TasksPageResponse>(`${BASE_URL}?page=${page}&size=${size}`);
+      return response.data;
+    }),
 
-  // Get subtasks of a parent task
-  async getSubtasks(parentTaskId: string): Promise<Task[]> {
-    const response = await apiClient.get<Task[]>(`${BASE_URL}/${parentTaskId}/subtasks`);
-    return response.data;
-  },
+  /**
+   * Get subtasks of a parent task
+   */
+  getSubtasks: (parentTaskId: string): Promise<Task[]> =>
+    wrapServiceCall(`${SERVICE_NAME}.getSubtasks`, async () => {
+      const response = await apiClient.get<Task[]>(`${BASE_URL}/${parentTaskId}/subtasks`);
+      return response.data;
+    }, { context: { parentTaskId } }),
 
-  // Get tasks in a milestone
-  async getMilestoneTasks(milestoneId: string): Promise<TaskListItem[]> {
-    const response = await apiClient.get<TaskListItem[]>(`${BASE_URL}/milestone/${milestoneId}`);
-    return response.data;
-  },
+  /**
+   * Get tasks in a milestone
+   */
+  getMilestoneTasks: (milestoneId: string): Promise<TaskListItem[]> =>
+    wrapServiceCall(`${SERVICE_NAME}.getMilestoneTasks`, async () => {
+      const response = await apiClient.get<TaskListItem[]>(`${BASE_URL}/milestone/${milestoneId}`);
+      return response.data;
+    }, { context: { milestoneId } }),
 
-  // Delete a task
-  async deleteTask(id: string): Promise<void> {
-    await apiClient.delete(`${BASE_URL}/${id}`);
-  },
+  /**
+   * Delete a task
+   */
+  deleteTask: (id: string): Promise<void> =>
+    wrapServiceCall(`${SERVICE_NAME}.deleteTask`, async () => {
+      await apiClient.delete(`${BASE_URL}/${id}`);
+    }, { context: { taskId: id } }),
 
-  // Update task status
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
-    const request: TaskStatusUpdateRequest = { status };
-    const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/status`, request);
-    return response.data;
-  },
+  /**
+   * Update task status
+   */
+  updateTaskStatus: (id: string, status: TaskStatus): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.updateTaskStatus`, async () => {
+      const request: TaskStatusUpdateRequest = { status };
+      const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/status`, request);
+      return response.data;
+    }, { context: { taskId: id, newStatus: status } }),
 
-  // Assign task to a user
-  async assignTask(id: string, assigneeId: string, assigneeName: string): Promise<Task> {
-    const request: TaskAssignRequest = { assigneeId, assigneeName };
-    const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/assign`, request);
-    return response.data;
-  },
+  /**
+   * Assign task to a user
+   */
+  assignTask: (id: string, assigneeId: string, assigneeName: string): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.assignTask`, async () => {
+      const request: TaskAssignRequest = { assigneeId, assigneeName };
+      const response = await apiClient.patch<Task>(`${BASE_URL}/${id}/assign`, request);
+      return response.data;
+    }, { context: { taskId: id, assigneeId } }),
 
-  // Log time on a task
-  async logTime(id: string, hours: number, description?: string): Promise<Task> {
-    const request: TaskLogTimeRequest = { hours, description };
-    const response = await apiClient.post<Task>(`${BASE_URL}/${id}/log-time`, request);
-    return response.data;
-  },
+  /**
+   * Log time on a task
+   */
+  logTime: (id: string, hours: number, description?: string): Promise<Task> =>
+    wrapServiceCall(`${SERVICE_NAME}.logTime`, async () => {
+      const request: TaskLogTimeRequest = { hours, description };
+      const response = await apiClient.post<Task>(`${BASE_URL}/${id}/log-time`, request);
+      return response.data;
+    }, { context: { taskId: id, hours } }),
 
-  // Helper: Group tasks by status (for Kanban view)
+  // ============================================================
+  // Helper methods (synchronous, no API calls - no error handling needed)
+  // ============================================================
+
+  /**
+   * Group tasks by status (for Kanban view)
+   */
   groupTasksByStatus(tasks: TaskListItem[]): Record<TaskStatus, TaskListItem[]> {
     const grouped: Record<TaskStatus, TaskListItem[]> = {
       BACKLOG: [],
@@ -139,7 +179,9 @@ export const taskService = {
     return grouped;
   },
 
-  // Helper: Get priority badge style
+  /**
+   * Get priority badge style
+   */
   getPriorityBadge(priority: TaskPriority): { bg: string; text: string } {
     const badges: Record<TaskPriority, { bg: string; text: string }> = {
       LOW: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-400' },
@@ -150,7 +192,9 @@ export const taskService = {
     return badges[priority] || badges.MEDIUM;
   },
 
-  // Helper: Get status badge style
+  /**
+   * Get status badge style
+   */
   getStatusBadge(status: TaskStatus): { bg: string; text: string } {
     const badges: Record<TaskStatus, { bg: string; text: string }> = {
       BACKLOG: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-700 dark:text-gray-300' },
@@ -164,7 +208,9 @@ export const taskService = {
     return badges[status] || badges.TODO;
   },
 
-  // Helper: Format date for display
+  /**
+   * Format date for display
+   */
   formatDate(dateString?: string): string {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -174,13 +220,17 @@ export const taskService = {
     });
   },
 
-  // Helper: Format date for input fields
+  /**
+   * Format date for input fields
+   */
   formatDateForInput(dateString?: string): string {
     if (!dateString) return '';
     return dateString.split('T')[0];
   },
 
-  // Helper: Check if task is overdue
+  /**
+   * Check if task is overdue
+   */
   isTaskOverdue(task: TaskListItem | Task): boolean {
     if (task.isOverdue) return true;
     if (!task.dueDate) return false;

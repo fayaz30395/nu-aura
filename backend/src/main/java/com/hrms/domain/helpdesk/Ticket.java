@@ -11,7 +11,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tickets")
+@Table(name = "tickets", indexes = {
+    @Index(name = "idx_ticket_tenant", columnList = "tenant_id"),
+    @Index(name = "idx_ticket_tenant_employee", columnList = "tenant_id,employee_id"),
+    @Index(name = "idx_ticket_tenant_status", columnList = "tenant_id,status"),
+    @Index(name = "idx_ticket_tenant_priority", columnList = "tenant_id,priority"),
+    @Index(name = "idx_ticket_assigned_to", columnList = "assigned_to"),
+    @Index(name = "idx_ticket_category", columnList = "category_id"),
+    @Index(name = "idx_ticket_created_at", columnList = "created_at"),
+    @Index(name = "idx_ticket_due_date", columnList = "due_date")
+}, uniqueConstraints = {
+    @UniqueConstraint(name = "uk_ticket_tenant_number", columnNames = {"tenant_id", "ticket_number"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +35,8 @@ public class Ticket {
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
 
-    @Column(name = "ticket_number", nullable = false, unique = true, length = 50)
+    // Note: unique constraint is now tenant-scoped via @UniqueConstraint in @Table
+    @Column(name = "ticket_number", nullable = false, length = 50)
     private String ticketNumber;
 
     @Column(name = "employee_id", nullable = false)

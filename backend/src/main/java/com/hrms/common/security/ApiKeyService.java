@@ -61,25 +61,49 @@ public class ApiKeyService {
 
     /**
      * Validate an API key and return the associated ApiKey entity if valid.
+     *
+     * <p><strong>SECURITY:</strong> This method uses prefix-based lookup to find
+     * candidate keys, then verifies the hash match. This avoids loading all keys
+     * across all tenants and provides efficient O(1) average case lookup.</p>
      */
     @Transactional
     public Optional<ApiKey> validateApiKey(String rawKey, String clientIp) {
         if (rawKey == null || !rawKey.startsWith(API_KEY_PREFIX)) {
+            log.debug("Invalid API key format - missing prefix");
             return Optional.empty();
         }
 
         String keyWithoutPrefix = rawKey.substring(API_KEY_PREFIX.length());
 
-        // Find all active API keys and check which one matches
-        List<ApiKey> allKeys = apiKeyRepository.findAll();
-        for (ApiKey apiKey : allKeys) {
-            if (apiKey.isValid() && passwordEncoder.matches(keyWithoutPrefix, apiKey.getKeyHash())) {
+        // Validate minimum key length (prefix is 8 chars)
+        if (keyWithoutPrefix.length() < 8) {
+            log.debug("Invalid API key format - key too short");
+            return Optional.empty();
+        }
+
+        // Extract prefix (first 8 chars) to narrow down candidates
+        String keyPrefix = keyWithoutPrefix.substring(0, 8);
+
+        // Find only active, non-expired keys with matching prefix
+        List<ApiKey> candidateKeys = apiKeyRepository.findActiveByKeyPrefix(keyPrefix);
+
+        if (candidateKeys.isEmpty()) {
+            log.debug("No active API keys found with prefix");
+            return Optional.empty();
+        }
+
+        // Verify hash match against candidate keys (typically 1 key)
+        for (ApiKey apiKey : candidateKeys) {
+            if (passwordEncoder.matches(keyWithoutPrefix, apiKey.getKeyHash())) {
                 apiKey.recordUsage(clientIp);
                 apiKeyRepository.save(apiKey);
+                log.info("API key '{}' validated successfully for tenant {}",
+                         apiKey.getName(), apiKey.getTenantId());
                 return Optional.of(apiKey);
             }
         }
 
+        log.debug("API key hash verification failed");
         return Optional.empty();
     }
 

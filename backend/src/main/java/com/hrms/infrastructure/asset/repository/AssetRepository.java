@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,4 +28,13 @@ public interface AssetRepository extends JpaRepository<Asset, UUID>, JpaSpecific
     List<Asset> findByTenantIdAndAssignedTo(UUID tenantId, UUID employeeId);
 
     boolean existsByTenantIdAndAssetCode(UUID tenantId, String assetCode);
+
+    // Paginated versions for large datasets
+    Page<Asset> findByTenantId(UUID tenantId, Pageable pageable);
+
+    Page<Asset> findByTenantIdAndStatus(UUID tenantId, Asset.AssetStatus status, Pageable pageable);
+
+    Page<Asset> findByTenantIdAndCategory(UUID tenantId, Asset.AssetCategory category, Pageable pageable);
+
+    Page<Asset> findByTenantIdAndAssignedTo(UUID tenantId, UUID employeeId, Pageable pageable);
 }

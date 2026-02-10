@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ProjectTimesheetController {
 
     @PostMapping("/entries")
     @RequiresPermission(TIMESHEET_SUBMIT)
-    public ResponseEntity<TimeEntryResponse> createTimeEntry(@RequestBody TimeEntryRequest request) {
+    public ResponseEntity<TimeEntryResponse> createTimeEntry(@Valid @RequestBody TimeEntryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectTimesheetService.createTimeEntry(request));
     }
 
@@ -41,7 +42,7 @@ public class ProjectTimesheetController {
     @RequiresPermission(TIMESHEET_SUBMIT)
     public ResponseEntity<TimeEntryResponse> updateTimeEntry(
             @PathVariable UUID id,
-            @RequestBody TimeEntryRequest request) {
+            @Valid @RequestBody TimeEntryRequest request) {
         return ResponseEntity.ok(projectTimesheetService.updateTimeEntry(id, request));
     }
 
@@ -119,7 +120,7 @@ public class ProjectTimesheetController {
 
     @PostMapping("/members")
     @RequiresPermission(PROJECT_CREATE)
-    public ResponseEntity<ProjectMemberResponse> addProjectMember(@RequestBody ProjectMemberRequest request) {
+    public ResponseEntity<ProjectMemberResponse> addProjectMember(@Valid @RequestBody ProjectMemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectTimesheetService.addProjectMember(request));
     }
 
@@ -127,7 +128,7 @@ public class ProjectTimesheetController {
     @RequiresPermission(PROJECT_CREATE)
     public ResponseEntity<ProjectMemberResponse> updateProjectMember(
             @PathVariable UUID id,
-            @RequestBody ProjectMemberRequest request) {
+            @Valid @RequestBody ProjectMemberRequest request) {
         return ResponseEntity.ok(projectTimesheetService.updateProjectMember(id, request));
     }
 

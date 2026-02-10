@@ -61,16 +61,21 @@ export interface Task {
 export interface TaskListItem {
   id: string;
   taskCode: string;
+  projectId?: string;
   title: string;
   status: TaskStatus;
   priority: TaskPriority;
   type: TaskType;
   assigneeName?: string;
+  startDate?: string;
   dueDate?: string;
   progressPercentage?: number;
   color?: string;
   isOverdue: boolean;
   isSubtask: boolean;
+  parentTaskId?: string;
+  estimatedHours?: number;
+  actualHours?: number;
 }
 
 // Create Task Request

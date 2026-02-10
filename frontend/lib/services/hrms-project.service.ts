@@ -9,6 +9,7 @@ import {
 
 interface ProjectListFilters {
   status?: ProjectStatus;
+  priority?: string;
   type?: ProjectType;
   ownerId?: string;
   search?: string;
@@ -18,6 +19,7 @@ export const hrmsProjectService = {
   async listProjects(page = 0, size = 20, filters: ProjectListFilters = {}): Promise<ProjectPage> {
     const params: Record<string, string | number> = { page, size };
     if (filters.status) params.status = filters.status;
+    if (filters.priority) params.priority = filters.priority;
     if (filters.type) params.type = filters.type;
     if (filters.ownerId) params.ownerId = filters.ownerId;
     if (filters.search) params.search = filters.search;

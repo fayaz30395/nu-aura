@@ -20,6 +20,12 @@ import java.util.stream.Collectors;
 /**
  * Filter for API key authentication.
  * Checks for X-API-Key header and validates against stored keys.
+ *
+ * <p>Supports authentication for:</p>
+ * <ul>
+ *   <li>/api/v1/external/* - External integration APIs (required)</li>
+ *   <li>/api/webhooks/* - Webhook management APIs (optional, alternative to JWT)</li>
+ * </ul>
  */
 @Component
 @RequiredArgsConstructor
@@ -27,7 +33,8 @@ import java.util.stream.Collectors;
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String API_KEY_HEADER = "X-API-Key";
-    private static final String API_PATH_PREFIX = "/api/v1/external";
+    private static final String EXTERNAL_API_PATH_PREFIX = "/api/v1/external";
+    private static final String WEBHOOK_API_PATH_PREFIX = "/api/webhooks";
 
     private final ApiKeyService apiKeyService;
 
@@ -38,15 +45,27 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
         String requestUri = request.getRequestURI();
 
-        // Only apply to external API paths
-        if (!requestUri.startsWith(API_PATH_PREFIX)) {
+        // Check if this is an API-key-eligible path
+        boolean isExternalApi = requestUri.startsWith(EXTERNAL_API_PATH_PREFIX);
+        boolean isWebhookApi = requestUri.startsWith(WEBHOOK_API_PATH_PREFIX);
+
+        // Skip if not an API-key-eligible path
+        if (!isExternalApi && !isWebhookApi) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String apiKey = request.getHeader(API_KEY_HEADER);
 
-        if (apiKey == null || apiKey.isEmpty()) {
+        // For webhook APIs, API key is optional (can use JWT instead)
+        if (isWebhookApi && (apiKey == null || apiKey.isEmpty())) {
+            // Let the request proceed - JWT filter will handle authentication
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // For external APIs, API key is required
+        if (isExternalApi && (apiKey == null || apiKey.isEmpty())) {
             log.warn("Missing API key for external API request: {}", requestUri);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
@@ -54,6 +73,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Validate the API key
         String clientIp = getClientIp(request);
         Optional<ApiKey> validKey = apiKeyService.validateApiKey(apiKey, clientIp);
 
@@ -82,8 +102,11 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         // Store tenant ID in authentication details
         authentication.setDetails(new ApiKeyAuthenticationDetails(key.getTenantId(), key.getId(), key.getScopes()));
 
+        // Set tenant context for downstream filters and services
+        TenantContext.setCurrentTenant(key.getTenantId());
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.debug("API key authentication successful for key: {}", key.getName());
+        log.debug("API key authentication successful for key: {} (tenant: {})", key.getName(), key.getTenantId());
 
         filterChain.doFilter(request, response);
     }

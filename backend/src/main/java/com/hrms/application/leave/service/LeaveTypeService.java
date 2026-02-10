@@ -65,7 +65,7 @@ public class LeaveTypeService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheConfig.LEAVE_TYPES, key = "'id:' + #id")
+    @Cacheable(value = CacheConfig.LEAVE_TYPES, key = "T(com.hrms.common.security.TenantContext).getCurrentTenant() + ':id:' + #id")
     public LeaveType getLeaveTypeById(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return leaveTypeRepository.findById(id)

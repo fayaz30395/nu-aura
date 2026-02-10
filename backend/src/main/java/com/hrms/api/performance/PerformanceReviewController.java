@@ -7,6 +7,7 @@ import com.hrms.application.performance.dto.ReviewResponse;
 import com.hrms.application.performance.service.PerformanceReviewService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +29,7 @@ public class PerformanceReviewController {
 
     @PostMapping
     @RequiresPermission(Permission.REVIEW_CREATE)
-    public ResponseEntity<ReviewResponse> createReview(@RequestBody ReviewRequest request) {
+    public ResponseEntity<ReviewResponse> createReview(@Valid @RequestBody ReviewRequest request) {
         ReviewResponse response = reviewService.createReview(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -72,7 +73,7 @@ public class PerformanceReviewController {
     @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable UUID id,
-            @RequestBody ReviewRequest request
+            @Valid @RequestBody ReviewRequest request
     ) {
         ReviewResponse response = reviewService.updateReview(id, request);
         return ResponseEntity.ok(response);
@@ -94,7 +95,7 @@ public class PerformanceReviewController {
 
     @PostMapping("/competencies")
     @RequiresPermission(Permission.REVIEW_CREATE)
-    public ResponseEntity<CompetencyResponse> addCompetency(@RequestBody CompetencyRequest request) {
+    public ResponseEntity<CompetencyResponse> addCompetency(@Valid @RequestBody CompetencyRequest request) {
         CompetencyResponse response = reviewService.addCompetency(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

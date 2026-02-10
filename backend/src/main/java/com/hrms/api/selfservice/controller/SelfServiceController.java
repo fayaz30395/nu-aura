@@ -4,6 +4,7 @@ import com.hrms.api.selfservice.dto.*;
 import com.hrms.application.selfservice.service.SelfServiceService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.domain.selfservice.DocumentRequest.DocumentType;
 import com.hrms.domain.selfservice.ProfileUpdateRequest.UpdateCategory;
 import jakarta.validation.Valid;
@@ -31,8 +32,8 @@ public class SelfServiceController {
     @PostMapping("/profile-updates")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<ProfileUpdateResponse> createProfileUpdateRequest(
-            @RequestParam UUID employeeId,
             @Valid @RequestBody ProfileUpdateRequestDto request) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.info("Creating profile update request for employee: {}", employeeId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(selfServiceService.createProfileUpdateRequest(employeeId, request));
@@ -46,9 +47,8 @@ public class SelfServiceController {
 
     @GetMapping("/profile-updates/my-requests")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Page<ProfileUpdateResponse>> getMyProfileUpdateRequests(
-            @RequestParam UUID employeeId,
-            Pageable pageable) {
+    public ResponseEntity<Page<ProfileUpdateResponse>> getMyProfileUpdateRequests(Pageable pageable) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(selfServiceService.getMyProfileUpdateRequests(employeeId, pageable));
     }
 
@@ -68,9 +68,9 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<ProfileUpdateResponse> approveProfileUpdateRequest(
             @PathVariable UUID requestId,
-            @RequestParam UUID reviewerId,
             @RequestParam(required = false) String comments) {
-        log.info("Approving profile update request: {}", requestId);
+        UUID reviewerId = SecurityContext.getCurrentEmployeeId();
+        log.info("Approving profile update request: {} by reviewer: {}", requestId, reviewerId);
         return ResponseEntity.ok(selfServiceService.approveProfileUpdateRequest(requestId, reviewerId, comments));
     }
 
@@ -78,18 +78,17 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<ProfileUpdateResponse> rejectProfileUpdateRequest(
             @PathVariable UUID requestId,
-            @RequestParam UUID reviewerId,
             @RequestParam String reason) {
-        log.info("Rejecting profile update request: {}", requestId);
+        UUID reviewerId = SecurityContext.getCurrentEmployeeId();
+        log.info("Rejecting profile update request: {} by reviewer: {}", requestId, reviewerId);
         return ResponseEntity.ok(selfServiceService.rejectProfileUpdateRequest(requestId, reviewerId, reason));
     }
 
     @PostMapping("/profile-updates/{requestId}/cancel")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Void> cancelProfileUpdateRequest(
-            @PathVariable UUID requestId,
-            @RequestParam UUID employeeId) {
-        log.info("Cancelling profile update request: {}", requestId);
+    public ResponseEntity<Void> cancelProfileUpdateRequest(@PathVariable UUID requestId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        log.info("Cancelling profile update request: {} by employee: {}", requestId, employeeId);
         selfServiceService.cancelProfileUpdateRequest(requestId, employeeId);
         return ResponseEntity.noContent().build();
     }
@@ -99,8 +98,8 @@ public class SelfServiceController {
     @PostMapping("/document-requests")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<DocumentRequestResponse> createDocumentRequest(
-            @RequestParam UUID employeeId,
             @Valid @RequestBody DocumentRequestDto request) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.info("Creating document request for employee: {}", employeeId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(selfServiceService.createDocumentRequest(employeeId, request));
@@ -114,9 +113,8 @@ public class SelfServiceController {
 
     @GetMapping("/document-requests/my-requests")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<Page<DocumentRequestResponse>> getMyDocumentRequests(
-            @RequestParam UUID employeeId,
-            Pageable pageable) {
+    public ResponseEntity<Page<DocumentRequestResponse>> getMyDocumentRequests(Pageable pageable) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(selfServiceService.getMyDocumentRequests(employeeId, pageable));
     }
 
@@ -134,10 +132,9 @@ public class SelfServiceController {
 
     @PostMapping("/document-requests/{requestId}/start-processing")
     @RequiresPermission(Permission.DOCUMENT_APPROVE)
-    public ResponseEntity<DocumentRequestResponse> startProcessingDocument(
-            @PathVariable UUID requestId,
-            @RequestParam UUID processedById) {
-        log.info("Starting document processing: {}", requestId);
+    public ResponseEntity<DocumentRequestResponse> startProcessingDocument(@PathVariable UUID requestId) {
+        UUID processedById = SecurityContext.getCurrentEmployeeId();
+        log.info("Starting document processing: {} by: {}", requestId, processedById);
         return ResponseEntity.ok(selfServiceService.startProcessingDocument(requestId, processedById));
     }
 
@@ -161,9 +158,9 @@ public class SelfServiceController {
     @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public ResponseEntity<DocumentRequestResponse> rejectDocumentRequest(
             @PathVariable UUID requestId,
-            @RequestParam UUID rejectedBy,
             @RequestParam String reason) {
-        log.info("Rejecting document request: {}", requestId);
+        UUID rejectedBy = SecurityContext.getCurrentEmployeeId();
+        log.info("Rejecting document request: {} by: {}", requestId, rejectedBy);
         return ResponseEntity.ok(selfServiceService.rejectDocumentRequest(requestId, rejectedBy, reason));
     }
 
@@ -171,7 +168,8 @@ public class SelfServiceController {
 
     @GetMapping("/dashboard")
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<SelfServiceDashboardResponse> getDashboard(@RequestParam UUID employeeId) {
+    public ResponseEntity<SelfServiceDashboardResponse> getDashboard() {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.ok(selfServiceService.getDashboard(employeeId));
     }
 

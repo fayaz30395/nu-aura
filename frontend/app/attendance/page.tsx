@@ -113,7 +113,7 @@ export default function AttendancePage() {
           location = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
         }
       } catch (e) {
-        console.log('Location not available');
+        // Location not available
       }
 
       let ip = 'Unknown';
@@ -122,7 +122,7 @@ export default function AttendancePage() {
         const ipData = await ipResponse.json();
         ip = ipData.ip;
       } catch (e) {
-        console.log('IP fetch failed');
+        // IP fetch failed
       }
 
       // Use local date-time string to ensure correct timezone handling
@@ -164,7 +164,7 @@ export default function AttendancePage() {
           location = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
         }
       } catch (e) {
-        console.log('Location not available');
+        // Location not available
       }
 
       let ip = 'Unknown';
@@ -173,7 +173,7 @@ export default function AttendancePage() {
         const ipData = await ipResponse.json();
         ip = ipData.ip;
       } catch (e) {
-        console.log('IP fetch failed');
+        // IP fetch failed
       }
 
       const now = new Date();

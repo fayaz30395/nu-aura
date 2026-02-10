@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,6 +35,9 @@ public class SecurityConfig {
 
     @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:8080}")
     private String allowedOriginsStr;
+
+    @Value("${app.security.csrf.enabled:true}")
+    private boolean csrfEnabled;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -64,14 +69,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/tenants/register").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                        // Actuator: only health endpoint is public, others require SYSTEM_ADMIN
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/actuator/**").hasAuthority("SYSTEM_ADMIN")
+                        // Swagger UI: require SYSTEM_ADMIN in production (see SwaggerSecurityConfig for dev profile)
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").hasAuthority("SYSTEM_ADMIN")
                         // External signing endpoints (token-based, no authentication)
                         .requestMatchers("/api/v1/esignature/external/**").permitAll()
                         // Public offer portal endpoints (token-based access for candidates)
@@ -81,6 +88,32 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Configure CSRF protection
+        if (csrfEnabled) {
+            // Use cookie-based CSRF token (double-submit pattern)
+            // The token is stored in a cookie and must be sent back in a header
+            CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+            csrfTokenRepository.setCookiePath("/");
+
+            CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+            // Don't defer loading the CSRF token
+            requestHandler.setCsrfRequestAttributeName(null);
+
+            http.csrf(csrf -> csrf
+                    .csrfTokenRepository(csrfTokenRepository)
+                    .csrfTokenRequestHandler(requestHandler)
+                    // Ignore CSRF for auth endpoints (they're public and don't require existing auth)
+                    .ignoringRequestMatchers("/api/v1/auth/**")
+                    // Ignore CSRF for external token-based endpoints
+                    .ignoringRequestMatchers("/api/v1/esignature/external/**")
+                    .ignoringRequestMatchers("/api/v1/public/offers/**")
+                    // Ignore CSRF for actuator health checks
+                    .ignoringRequestMatchers("/actuator/health", "/actuator/health/**")
+            );
+        } else {
+            http.csrf(AbstractHttpConfigurer::disable);
+        }
 
         return http.build();
     }

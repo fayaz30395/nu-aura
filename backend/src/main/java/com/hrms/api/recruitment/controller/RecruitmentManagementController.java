@@ -28,7 +28,7 @@ public class RecruitmentManagementController {
 
     @PostMapping("/job-openings")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
-    public ResponseEntity<JobOpeningResponse> createJobOpening(@RequestBody JobOpeningRequest request) {
+    public ResponseEntity<JobOpeningResponse> createJobOpening(@Valid @RequestBody JobOpeningRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentService.createJobOpening(request));
     }
 
@@ -36,7 +36,7 @@ public class RecruitmentManagementController {
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
     public ResponseEntity<JobOpeningResponse> updateJobOpening(
             @PathVariable UUID id,
-            @RequestBody JobOpeningRequest request) {
+            @Valid @RequestBody JobOpeningRequest request) {
         return ResponseEntity.ok(recruitmentService.updateJobOpening(id, request));
     }
 
@@ -71,7 +71,7 @@ public class RecruitmentManagementController {
 
     @PostMapping("/candidates")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
-    public ResponseEntity<CandidateResponse> createCandidate(@RequestBody CandidateRequest request) {
+    public ResponseEntity<CandidateResponse> createCandidate(@Valid @RequestBody CandidateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentService.createCandidate(request));
     }
 
@@ -79,7 +79,7 @@ public class RecruitmentManagementController {
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
     public ResponseEntity<CandidateResponse> updateCandidate(
             @PathVariable UUID id,
-            @RequestBody CandidateRequest request) {
+            @Valid @RequestBody CandidateRequest request) {
         return ResponseEntity.ok(recruitmentService.updateCandidate(id, request));
     }
 
@@ -140,7 +140,7 @@ public class RecruitmentManagementController {
 
     @PostMapping("/interviews")
     @RequiresPermission(Permission.RECRUITMENT_MANAGE)
-    public ResponseEntity<InterviewResponse> scheduleInterview(@RequestBody InterviewRequest request) {
+    public ResponseEntity<InterviewResponse> scheduleInterview(@Valid @RequestBody InterviewRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recruitmentService.scheduleInterview(request));
     }
 
@@ -148,7 +148,7 @@ public class RecruitmentManagementController {
     @RequiresPermission(Permission.RECRUITMENT_MANAGE)
     public ResponseEntity<InterviewResponse> updateInterview(
             @PathVariable UUID id,
-            @RequestBody InterviewRequest request) {
+            @Valid @RequestBody InterviewRequest request) {
         return ResponseEntity.ok(recruitmentService.updateInterview(id, request));
     }
 

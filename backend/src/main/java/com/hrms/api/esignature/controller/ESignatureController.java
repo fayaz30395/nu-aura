@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class ESignatureController {
     @RequiresPermission(ESIGNATURE_REQUEST)
     @PostMapping("/requests")
     public ResponseEntity<SignatureRequestResponse> createSignatureRequest(
-            @RequestBody SignatureRequestRequest request) {
+            @Valid @RequestBody SignatureRequestRequest request) {
         UUID createdBy = SecurityContext.getCurrentEmployeeId();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eSignatureService.createSignatureRequest(request, createdBy));
@@ -39,7 +40,7 @@ public class ESignatureController {
     @PutMapping("/requests/{id}")
     public ResponseEntity<SignatureRequestResponse> updateSignatureRequest(
             @PathVariable UUID id,
-            @RequestBody SignatureRequestRequest request) {
+            @Valid @RequestBody SignatureRequestRequest request) {
         return ResponseEntity.ok(eSignatureService.updateSignatureRequest(id, request));
     }
 
@@ -103,7 +104,7 @@ public class ESignatureController {
     @PostMapping("/requests/{requestId}/signers")
     public ResponseEntity<SignatureApprovalResponse> addSigner(
             @PathVariable UUID requestId,
-            @RequestBody SignatureApprovalRequest request) {
+            @Valid @RequestBody SignatureApprovalRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(eSignatureService.addSigner(requestId, request));
     }
@@ -112,7 +113,7 @@ public class ESignatureController {
     @PostMapping("/approvals/{approvalId}/sign")
     public ResponseEntity<SignatureApprovalResponse> signDocument(
             @PathVariable UUID approvalId,
-            @RequestBody SignDocumentRequest request) {
+            @Valid @RequestBody SignDocumentRequest request) {
         return ResponseEntity.ok(eSignatureService.signDocument(approvalId, request));
     }
 
@@ -166,7 +167,7 @@ public class ESignatureController {
     @PostMapping("/external/{token}/sign")
     public ResponseEntity<SignatureApprovalResponse> signDocumentExternal(
             @PathVariable String token,
-            @RequestBody ExternalSignRequest request) {
+            @Valid @RequestBody ExternalSignRequest request) {
         return ResponseEntity.ok(eSignatureService.signDocumentExternal(token, request));
     }
 

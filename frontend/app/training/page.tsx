@@ -55,6 +55,7 @@ import {
   ProgramStatus,
   EnrollmentStatus,
 } from '@/lib/types/training';
+import { toBadgeVariant } from '@/lib/utils/type-guards';
 
 type TabType = 'my-trainings' | 'catalog' | 'growth-roadmap' | 'manage';
 
@@ -582,7 +583,7 @@ export default function TrainingPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-semibold text-lg">{enrollment.programName || 'Training Program'}</h3>
-                          <Badge variant={getStatusColor(enrollment.status) as any}>
+                          <Badge variant={toBadgeVariant(enrollment.status)}>
                             {enrollment.status.replace('_', ' ')}
                           </Badge>
                           {enrollment.certificateIssued && (
@@ -911,7 +912,7 @@ export default function TrainingPage() {
                             <p className="text-sm opacity-80">{program.programCode}</p>
                             <h3 className="text-lg font-semibold">{program.programName}</h3>
                           </div>
-                          <Badge variant={getStatusColor(program.status) as any} className="flex items-center gap-1">
+                          <Badge variant={toBadgeVariant(program.status)} className="flex items-center gap-1">
                             {getStatusIcon(program.status)}
                             {program.status.replace('_', ' ')}
                           </Badge>
@@ -1210,7 +1211,7 @@ export default function TrainingPage() {
                   <div>
                     <span className="text-surface-500">Status:</span>
                     <p>
-                      <Badge variant={getStatusColor(selectedProgram.status) as any}>
+                      <Badge variant={toBadgeVariant(selectedProgram.status)}>
                         {selectedProgram.status.replace('_', ' ')}
                       </Badge>
                     </p>

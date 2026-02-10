@@ -90,7 +90,9 @@ public class Objective extends TenantAware {
     @Column(name = "last_check_in_date")
     private LocalDate lastCheckInDate;
 
-    @OneToMany(mappedBy = "objectiveId", cascade = CascadeType.ALL, orphanRemoval = true)
+    // KeyResults use UUID reference pattern (objectiveId field) instead of JPA relationship
+    // Loaded via KeyResultRepository.findByObjectiveIdOrderByMilestoneOrderAsc()
+    @Transient
     @Builder.Default
     private List<KeyResult> keyResults = new ArrayList<>();
 

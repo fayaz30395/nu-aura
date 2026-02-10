@@ -185,6 +185,14 @@ public class NuPlatformService {
     }
 
     /**
+     * Get a role by ID
+     */
+    @Transactional(readOnly = true)
+    public Optional<AppRole> getRoleById(UUID roleId) {
+        return roleRepository.findById(roleId);
+    }
+
+    /**
      * Update role permissions
      */
     public AppRole updateRolePermissions(UUID roleId, Set<String> permissionCodes) {
@@ -284,6 +292,22 @@ public class NuPlatformService {
         access.setStatus(UserAppAccess.AccessStatus.REVOKED);
         userAppAccessRepository.save(access);
         log.info("Revoked access to app {} for user {}", appCode, userId);
+    }
+
+    /**
+     * Get all active users with access to an application
+     *
+     * @param appCode the application code
+     * @return list of user app access records, or empty list if application not found
+     */
+    @Transactional(readOnly = true)
+    public List<UserAppAccess> getApplicationUsers(String appCode) {
+        Optional<NuApplication> appOpt = applicationRepository.findByCode(appCode.toUpperCase());
+        if (appOpt.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return userAppAccessRepository.findByApplicationIdAndStatus(
+            appOpt.get().getId(), UserAppAccess.AccessStatus.ACTIVE);
     }
 
     /**

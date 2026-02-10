@@ -3,6 +3,7 @@ package com.hrms.common.security;
 import com.hrms.domain.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,8 +26,18 @@ public class JwtTokenProvider {
     @Value("${app.jwt.refresh-expiration}")
     private long refreshTokenExpiration;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Generate a unique token ID (JTI) for token revocation support.
+     */
+    private String generateJti() {
+        return UUID.randomUUID().toString();
     }
 
     public String generateToken(Authentication authentication, UUID tenantId, UUID userId) {
@@ -35,6 +46,7 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts.builder()
+                .id(generateJti()) // JTI for token revocation
                 .subject(userPrincipal.getUsername())
                 .claim("userId", userId.toString())
                 .claim("tenantId", tenantId.toString())
@@ -63,6 +75,7 @@ public class JwtTokenProvider {
         authorities.addAll(permissions.keySet());
 
         return Jwts.builder()
+                .id(generateJti()) // JTI for token revocation
                 .subject(user.getEmail())
                 .claim("userId", user.getId().toString())
                 .claim("tenantId", tenantId.toString())
@@ -87,6 +100,7 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + refreshTokenExpiration);
 
         return Jwts.builder()
+                .id(generateJti()) // JTI for token revocation
                 .subject(email)
                 .claim("tenantId", tenantId.toString())
                 .claim("type", "refresh")
@@ -127,16 +141,85 @@ public class JwtTokenProvider {
         return userIdStr != null ? UUID.fromString(userIdStr) : null;
     }
 
+    /**
+     * Validate a JWT token.
+     * Checks signature, expiration, and blacklist status.
+     *
+     * @param token The JWT token to validate
+     * @return true if valid and not revoked
+     */
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
+            Claims claims = Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
-                    .parseSignedClaims(token);
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            // Check if token is blacklisted
+            String jti = claims.getId();
+            if (jti != null && tokenBlacklistService.isBlacklisted(jti)) {
+                return false;
+            }
+
+            // Check if all user tokens were revoked (e.g., after password change)
+            String userId = claims.get("userId", String.class);
+            Date issuedAt = claims.getIssuedAt();
+            if (userId != null && issuedAt != null &&
+                tokenBlacklistService.isTokenRevokedByTimestamp(userId, issuedAt)) {
+                return false;
+            }
+
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
+    }
+
+    /**
+     * Get the JTI (unique token identifier) from a token.
+     */
+    public String getJtiFromToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.getId();
+    }
+
+    /**
+     * Get the expiration date from a token.
+     */
+    public Date getExpirationFromToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.getExpiration();
+    }
+
+    /**
+     * Get the issued-at date from a token.
+     */
+    public Date getIssuedAtFromToken(String token) {
+        Claims claims = getClaims(token);
+        return claims.getIssuedAt();
+    }
+
+    /**
+     * Revoke a token by adding it to the blacklist.
+     */
+    public void revokeToken(String token) {
+        try {
+            String jti = getJtiFromToken(token);
+            Date expiration = getExpirationFromToken(token);
+            if (jti != null && expiration != null) {
+                tokenBlacklistService.blacklistToken(jti, expiration);
+            }
+        } catch (JwtException | IllegalArgumentException ex) {
+            // Token may be invalid/expired, but we still want to try blacklisting
+        }
+    }
+
+    /**
+     * Revoke all tokens for a user (e.g., after password change).
+     */
+    public void revokeAllUserTokens(String userId) {
+        tokenBlacklistService.revokeAllTokensBefore(userId, java.time.Instant.now());
     }
 
     /**

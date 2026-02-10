@@ -5,9 +5,15 @@ import { useRouter } from 'next/navigation';
 import { shiftsApi } from '@/lib/api/shifts';
 import { Shift, CreateShiftRequest } from '@/lib/types/shifts';
 import { Clock, Plus, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function ShiftsManagementPage() {
   const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +42,20 @@ export default function ShiftsManagementPage() {
   });
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadShifts();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadShifts = async () => {
     try {

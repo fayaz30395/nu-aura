@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { customFieldsApi } from '@/lib/api/custom-fields';
 import {
   CustomFieldDefinition,
@@ -12,6 +13,10 @@ import {
   ENTITY_TYPE_INFO,
   VISIBILITY_INFO,
 } from '@/lib/types/custom-fields';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 const ENTITY_TYPES: EntityType[] = ['EMPLOYEE', 'DEPARTMENT', 'PROJECT', 'LEAVE_REQUEST', 'EXPENSE', 'ASSET', 'JOB_OPENING', 'CANDIDATE'];
 const FIELD_TYPES: FieldType[] = ['TEXT', 'TEXTAREA', 'NUMBER', 'DATE', 'DATETIME', 'DROPDOWN', 'MULTI_SELECT', 'CHECKBOX', 'EMAIL', 'PHONE', 'URL', 'FILE', 'CURRENCY', 'PERCENTAGE'];
@@ -36,6 +41,9 @@ const initialFormData: CustomFieldDefinitionRequest = {
 };
 
 export default function CustomFieldsPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const [definitions, setDefinitions] = useState<CustomFieldDefinition[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -48,8 +56,20 @@ export default function CustomFieldsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadDefinitions();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadDefinitions = async () => {
     try {

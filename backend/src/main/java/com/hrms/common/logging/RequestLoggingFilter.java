@@ -18,13 +18,18 @@ import java.util.UUID;
 /**
  * Filter that logs all HTTP requests with structured data.
  * Adds correlation ID, tenant ID, and request metadata to MDC for structured logging.
+ *
+ * <p><strong>Request Tracing:</strong> Supports both X-Request-ID (industry standard)
+ * and X-Correlation-ID headers. If neither is provided, generates a new UUID.</p>
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
+    private static final String REQUEST_ID_HEADER = "X-Request-ID";
     private static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
+    private static final String MDC_REQUEST_ID = "requestId";
     private static final String MDC_CORRELATION_ID = "correlationId";
     private static final String MDC_TENANT_ID = "tenantId";
     private static final String MDC_USER_ID = "userId";
@@ -40,20 +45,25 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         long startTime = System.currentTimeMillis();
 
         try {
-            // Set correlation ID
-            String correlationId = request.getHeader(CORRELATION_ID_HEADER);
-            if (correlationId == null || correlationId.isEmpty()) {
-                correlationId = UUID.randomUUID().toString();
+            // Get request ID from headers (prefer X-Request-ID, fallback to X-Correlation-ID)
+            String requestId = request.getHeader(REQUEST_ID_HEADER);
+            if (requestId == null || requestId.isEmpty()) {
+                requestId = request.getHeader(CORRELATION_ID_HEADER);
+            }
+            if (requestId == null || requestId.isEmpty()) {
+                requestId = UUID.randomUUID().toString();
             }
 
-            // Add to MDC for structured logging
-            MDC.put(MDC_CORRELATION_ID, correlationId);
+            // Add to MDC for structured logging (use both keys for compatibility)
+            MDC.put(MDC_REQUEST_ID, requestId);
+            MDC.put(MDC_CORRELATION_ID, requestId);
             MDC.put(MDC_REQUEST_URI, request.getRequestURI());
             MDC.put(MDC_REQUEST_METHOD, request.getMethod());
             MDC.put(MDC_CLIENT_IP, getClientIp(request));
 
-            // Add correlation ID to response header
-            response.setHeader(CORRELATION_ID_HEADER, correlationId);
+            // Add request ID to response headers (both for compatibility)
+            response.setHeader(REQUEST_ID_HEADER, requestId);
+            response.setHeader(CORRELATION_ID_HEADER, requestId);
 
             // Log request start
             if (shouldLog(request)) {

@@ -33,6 +33,10 @@ import { Check, X, Info } from 'lucide-react';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { Button } from '@/components/ui/Button';
 import { getNotificationRoute } from '@/lib/utils/notificationRoutes';
+import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
+import { createLogger } from '@/lib/utils/logger';
+
+const logger = createLogger('Header');
 
 interface GoogleNotification {
   id: string;
@@ -172,7 +176,7 @@ const Header: React.FC<HeaderProps> = ({
         }
       }
     } catch (err) {
-      console.error('Error loading emails:', err);
+      logger.error('Error loading emails:', err);
     }
 
     try {
@@ -210,7 +214,7 @@ const Header: React.FC<HeaderProps> = ({
         }
       }
     } catch (err) {
-      console.error('Error loading drive files:', err);
+      logger.error('Error loading drive files:', err);
     }
 
     try {
@@ -256,7 +260,7 @@ const Header: React.FC<HeaderProps> = ({
         }
       }
     } catch (err) {
-      console.error('Error loading calendar events:', err);
+      logger.error('Error loading calendar events:', err);
     }
 
     // Sort by timestamp
@@ -331,7 +335,7 @@ const Header: React.FC<HeaderProps> = ({
         setEmailContent(content || data.snippet || 'No content available');
       }
     } catch (err) {
-      console.error('Error loading email content:', err);
+      logger.error('Error loading email content:', err);
       setEmailContent('Failed to load email content');
     } finally {
       setEmailLoading(false);
@@ -998,7 +1002,7 @@ const Header: React.FC<HeaderProps> = ({
               ) : emailContent.includes('<') ? (
                 <div
                   className="prose dark:prose-invert prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: emailContent }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailContent) }}
                 />
               ) : (
                 <p className="text-sm text-surface-600 dark:text-surface-300 whitespace-pre-wrap">

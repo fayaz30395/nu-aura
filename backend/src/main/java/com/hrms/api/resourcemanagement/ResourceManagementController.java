@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class ResourceManagementController {
     @PutMapping("/allocation")
     @RequiresPermission(Permission.PROJECT_CREATE)
     @Operation(summary = "Update an existing allocation")
-    public ResponseEntity<EmployeeWorkload> updateAllocation(@RequestBody UpdateAllocationRequest request) {
+    public ResponseEntity<EmployeeWorkload> updateAllocation(@Valid @RequestBody UpdateAllocationRequest request) {
         return ResponseEntity.ok(resourceManagementService.updateAllocation(request));
     }
 
@@ -111,7 +112,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.PROJECT_CREATE)
     @Operation(summary = "Create an allocation approval request")
     public ResponseEntity<AllocationApprovalResponse> createAllocationRequest(
-            @RequestBody CreateAllocationRequest request) {
+            @Valid @RequestBody CreateAllocationRequest request) {
         return ResponseEntity.ok(resourceManagementService.createAllocationRequest(request));
     }
 
@@ -169,7 +170,7 @@ public class ResourceManagementController {
     @Operation(summary = "Reject an allocation request")
     public ResponseEntity<Void> rejectAllocationRequest(
             @PathVariable UUID requestId,
-            @RequestBody RejectRequest request) {
+            @Valid @RequestBody RejectRequest request) {
         resourceManagementService.rejectAllocationRequest(requestId, request.getReason());
         return ResponseEntity.ok().build();
     }
@@ -270,7 +271,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @Operation(summary = "Export workload report")
     public ResponseEntity<byte[]> exportWorkloadReport(
-            @RequestBody ExportWorkloadRequest request) {
+            @Valid @RequestBody ExportWorkloadRequest request) {
         return ResponseEntity.ok(resourceManagementService.exportWorkloadReport(
                 request.getFormat() != null ? request.getFormat() : "csv", request));
     }

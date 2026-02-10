@@ -36,7 +36,7 @@ public class LmsController {
     @RequiresPermission(Permission.LMS_ENROLL)
     public void enroll(@PathVariable UUID courseId, @RequestParam UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID currentUserId = UUID.randomUUID(); // Placeholder: should come from SecurityContext
+        UUID currentUserId = com.hrms.common.security.SecurityContext.getCurrentUserId();
         lmsService.enrollEmployee(tenantId, courseId, employeeId, currentUserId);
     }
 

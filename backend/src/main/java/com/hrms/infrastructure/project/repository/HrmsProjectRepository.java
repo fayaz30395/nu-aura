@@ -22,11 +22,16 @@ public interface HrmsProjectRepository extends JpaRepository<Project, UUID> {
 
     Page<Project> findAllByTenantIdAndStatus(UUID tenantId, Project.ProjectStatus status, Pageable pageable);
 
+    Page<Project> findAllByTenantIdAndPriority(UUID tenantId, Project.Priority priority, Pageable pageable);
+
+    Page<Project> findAllByTenantIdAndStatusAndPriority(UUID tenantId, Project.ProjectStatus status,
+            Project.Priority priority, Pageable pageable);
+
     Page<Project> findAllByTenantIdAndProjectManagerId(UUID tenantId, UUID projectManagerId, Pageable pageable);
 
     @Query("SELECT p FROM HrmsProject p WHERE p.tenantId = :tenantId AND " +
-           "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(p.projectCode) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(p.clientName) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(p.projectCode) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(p.clientName) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Project> searchProjects(@Param("tenantId") UUID tenantId, @Param("search") String search, Pageable pageable);
 }

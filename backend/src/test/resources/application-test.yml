@@ -68,7 +68,7 @@ management:
 
 app:
   jwt:
-    secret: test-secret-key-for-testing-purposes-must-be-at-least-256-bits-long-for-jwt-hs512
+    secret: b8f3d0c9a1e2f4b7c6d8e9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8
     expiration: 3600000
     refresh-expiration: 86400000
 

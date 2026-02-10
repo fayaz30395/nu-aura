@@ -1,28 +1,28 @@
 package com.hrms.api.statutory.controller;
 
-import com.hrms.common.security.TenantContext;
+import com.hrms.application.statutory.service.StatutoryService;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.domain.statutory.*;
-import com.hrms.infrastructure.statutory.repository.*;
-import lombok.*;
-import org.springframework.http.*;
+import com.hrms.domain.statutory.EmployeeTDSDeclaration;
+import com.hrms.domain.statutory.TDSSlab;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDateTime;
-import java.util.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/statutory/tds")
 @RequiredArgsConstructor
 public class TDSController {
-    private final TDSSlabRepository tdsSlabRepository;
-    private final EmployeeTDSDeclarationRepository tdsDeclarationRepository;
+
+    private final StatutoryService statutoryService;
 
     @PostMapping("/slab")
     @RequiresPermission("STATUTORY_MANAGE")
-    public ResponseEntity<TDSSlab> createSlab(@RequestBody TDSSlab slab) {
-        slab.setId(UUID.randomUUID());
-        slab.setTenantId(TenantContext.getCurrentTenant());
-        return ResponseEntity.ok(tdsSlabRepository.save(slab));
+    public ResponseEntity<TDSSlab> createSlab(@Valid @RequestBody TDSSlab slab) {
+        return ResponseEntity.ok(statutoryService.createTDSSlab(slab));
     }
 
     @GetMapping("/slabs/{assessmentYear}/{regime}")
@@ -30,17 +30,14 @@ public class TDSController {
     public ResponseEntity<List<TDSSlab>> getSlabs(
             @PathVariable String assessmentYear,
             @PathVariable TDSSlab.TaxRegime regime) {
-        return ResponseEntity.ok(tdsSlabRepository.findByTenantIdAndAssessmentYearAndTaxRegimeAndIsActiveTrue(
-                TenantContext.getCurrentTenant(), assessmentYear, regime));
+        return ResponseEntity.ok(statutoryService.getTDSSlabs(assessmentYear, regime));
     }
 
     @PostMapping("/declaration")
     @RequiresPermission("STATUTORY_MANAGE")
-    public ResponseEntity<EmployeeTDSDeclaration> submitDeclaration(@RequestBody EmployeeTDSDeclaration declaration) {
-        declaration.setId(UUID.randomUUID());
-        declaration.setTenantId(TenantContext.getCurrentTenant());
-        declaration.setSubmittedAt(LocalDateTime.now());
-        return ResponseEntity.ok(tdsDeclarationRepository.save(declaration));
+    public ResponseEntity<EmployeeTDSDeclaration> submitDeclaration(
+            @Valid @RequestBody EmployeeTDSDeclaration declaration) {
+        return ResponseEntity.ok(statutoryService.submitTDSDeclaration(declaration));
     }
 
     @GetMapping("/declaration/{employeeId}/{financialYear}")
@@ -48,23 +45,18 @@ public class TDSController {
     public ResponseEntity<EmployeeTDSDeclaration> getDeclaration(
             @PathVariable UUID employeeId,
             @PathVariable String financialYear) {
-        return tdsDeclarationRepository.findByTenantIdAndEmployeeIdAndFinancialYear(
-                TenantContext.getCurrentTenant(), employeeId, financialYear)
+        return statutoryService.getTDSDeclaration(employeeId, financialYear)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/declaration/{id}/approve")
     @RequiresPermission("STATUTORY_MANAGE")
-    public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(@PathVariable UUID id,
+    public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(
+            @PathVariable UUID id,
             @RequestBody UUID approverId) {
-        return tdsDeclarationRepository.findById(id)
-                .map(decl -> {
-                    decl.setStatus(EmployeeTDSDeclaration.DeclarationStatus.APPROVED);
-                    decl.setApprovedAt(LocalDateTime.now());
-                    decl.setApprovedBy(approverId);
-                    return ResponseEntity.ok(tdsDeclarationRepository.save(decl));
-                })
+        return statutoryService.approveTDSDeclaration(id, approverId)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }

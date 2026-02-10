@@ -36,4 +36,32 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
     void deleteByPostIdAndEmployeeId(UUID postId, UUID employeeId);
 
     boolean existsByPostIdAndEmployeeId(UUID postId, UUID employeeId);
+
+    // ==================== BATCH QUERIES FOR N+1 ELIMINATION ====================
+
+    /**
+     * Batch fetch reaction counts by type for multiple posts in one query.
+     * Returns: [postId, reactionType, count]
+     * Use this instead of calling countReactionsByTypeForPost() in a loop.
+     */
+    @Query("SELECT r.post.id, r.reactionType, COUNT(r) FROM PostReaction r " +
+           "WHERE r.post.id IN :postIds " +
+           "GROUP BY r.post.id, r.reactionType")
+    List<Object[]> countReactionsByTypeForPosts(@Param("postIds") List<UUID> postIds);
+
+    /**
+     * Batch check if user has reacted to multiple posts.
+     * Returns list of post IDs the user has reacted to.
+     */
+    @Query("SELECT DISTINCT r.post.id FROM PostReaction r " +
+           "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
+    List<UUID> findPostIdsWithUserReaction(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
+
+    /**
+     * Get user's reactions for multiple posts in one query.
+     * Returns: [postId, reactionType]
+     */
+    @Query("SELECT r.post.id, r.reactionType FROM PostReaction r " +
+           "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
+    List<Object[]> findUserReactionsForPosts(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
 }

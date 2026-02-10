@@ -46,7 +46,7 @@ public class ReportService {
     private final CsvExportService csvExportService;
 
     public byte[] generateEmployeeDirectoryReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Employee> employees = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
 
         // Apply filters
@@ -71,7 +71,7 @@ public class ReportService {
     }
 
     public byte[] generateAttendanceReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         if (request.getStartDate() == null || request.getEndDate() == null) {
             throw new IllegalArgumentException("Start date and end date are required for attendance report");
@@ -120,7 +120,7 @@ public class ReportService {
     }
 
     public byte[] generateDepartmentHeadcountReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
         List<Department> departments = departmentRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
 
         LocalDate startDate = request.getStartDate();
@@ -134,7 +134,7 @@ public class ReportService {
     }
 
     public byte[] generateLeaveReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         // Get all leave requests, optionally filtered by date range
         List<LeaveRequest> leaveRequests;
@@ -195,12 +195,10 @@ public class ReportService {
     }
 
     public byte[] generatePayrollReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
-        // Get all payroll records for the tenant
-        List<EmployeePayrollRecord> payrollRecords = payrollRecordRepository.findAll().stream()
-            .filter(pr -> tenantId.equals(pr.getTenantId()))
-            .collect(Collectors.toList());
+        // Get all payroll records for the tenant (tenant-scoped query)
+        List<EmployeePayrollRecord> payrollRecords = payrollRecordRepository.findAllByTenantId(tenantId);
 
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
@@ -243,7 +241,7 @@ public class ReportService {
     }
 
     public byte[] generatePerformanceReport(ReportRequest request) throws IOException, DocumentException {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID tenantId = TenantContext.requireCurrentTenant();
 
         List<PerformanceReview> reviews;
         if (request.getStartDate() != null && request.getEndDate() != null) {

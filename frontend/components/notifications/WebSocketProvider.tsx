@@ -55,8 +55,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
   // Handle incoming notifications
   const handleNotification = useCallback((notification: WebSocketNotification) => {
-    console.log('[WebSocket] Received notification:', notification);
-
     if (showToasts) {
       const toastType = getToastType(notification.type);
       toast.addToast({

@@ -10,7 +10,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "performance_reviews")
+@Table(name = "performance_reviews", indexes = {
+    @Index(name = "idx_perf_review_tenant", columnList = "tenantId"),
+    @Index(name = "idx_perf_review_tenant_employee", columnList = "tenantId,employee_id"),
+    @Index(name = "idx_perf_review_tenant_reviewer", columnList = "tenantId,reviewer_id"),
+    @Index(name = "idx_perf_review_cycle", columnList = "review_cycle_id"),
+    @Index(name = "idx_perf_review_status", columnList = "status"),
+    @Index(name = "idx_perf_review_period", columnList = "review_period_start,review_period_end")
+})
 @Getter
 @Setter
 @NoArgsConstructor

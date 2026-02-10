@@ -509,7 +509,7 @@ export default function PayrollPage() {
                   </label>
                   <select
                     value={payrollRunFilter}
-                    onChange={(e) => setPayrollRunFilter(e.target.value as any)}
+                    onChange={(e) => setPayrollRunFilter(e.target.value as PayrollRunStatus | 'ALL')}
                     className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="ALL">All Status</option>
@@ -765,7 +765,7 @@ export default function PayrollPage() {
                   </label>
                   <select
                     value={structureFilter}
-                    onChange={(e) => setStructureFilter(e.target.value as any)}
+                    onChange={(e) => setStructureFilter(e.target.value as 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL')}
                     className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="ALL">All Status</option>

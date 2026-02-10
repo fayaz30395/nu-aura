@@ -2,6 +2,7 @@ package com.hrms.api.leave.controller;
 
 import com.hrms.api.leave.dto.LeaveRequestRequest;
 import com.hrms.api.leave.dto.LeaveRequestResponse;
+import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.application.leave.service.LeaveRequestService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -9,7 +10,6 @@ import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +28,7 @@ import java.util.UUID;
 public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
     private final com.hrms.common.security.DataScopeService dataScopeService;
 
     @PostMapping
@@ -171,13 +171,13 @@ public class LeaveRequestController {
 
         // Get the employee to find reporting manager (approver)
         UUID tenantId = TenantContext.getCurrentTenant();
-        Optional<Employee> employeeOpt = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId);
+        Optional<Employee> employeeOpt = employeeService.findByIdAndTenant(request.getEmployeeId(), tenantId);
         if (employeeOpt.isPresent()) {
             Employee employee = employeeOpt.get();
             if (employee.getManagerId() != null) {
                 response.setApproverId(employee.getManagerId());
                 // Get the manager's name
-                Optional<Employee> managerOpt = employeeRepository.findByIdAndTenantId(employee.getManagerId(),
+                Optional<Employee> managerOpt = employeeService.findByIdAndTenant(employee.getManagerId(),
                         tenantId);
                 managerOpt.ifPresent(manager -> response.setPendingApproverName(manager.getFullName()));
             }
@@ -185,7 +185,7 @@ public class LeaveRequestController {
 
         // If already approved/rejected, get the approver's name
         if (request.getApprovedBy() != null) {
-            Optional<Employee> approverOpt = employeeRepository.findByIdAndTenantId(request.getApprovedBy(), tenantId);
+            Optional<Employee> approverOpt = employeeService.findByIdAndTenant(request.getApprovedBy(), tenantId);
             approverOpt.ifPresent(approver -> response.setApproverName(approver.getFullName()));
         }
 
@@ -307,7 +307,7 @@ public class LeaveRequestController {
             return false;
         }
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+        return employeeService.findByIdAndTenant(employeeId, tenantId)
                 .map(emp -> emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId()))
                 .orElse(false);
     }
@@ -318,7 +318,7 @@ public class LeaveRequestController {
             return false;
         }
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+        return employeeService.findByIdAndTenant(employeeId, tenantId)
                 .map(emp -> departmentId.equals(emp.getDepartmentId()))
                 .orElse(false);
     }
@@ -334,7 +334,7 @@ public class LeaveRequestController {
         java.util.Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
         if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            java.util.Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getDepartmentId() != null
                     && customDepartmentIds.contains(empOpt.get().getDepartmentId())) {
                 return true;
@@ -345,7 +345,7 @@ public class LeaveRequestController {
         java.util.Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
         if (customLocationIds != null && !customLocationIds.isEmpty()) {
             UUID tenantId = TenantContext.getCurrentTenant();
-            java.util.Optional<Employee> empOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+            java.util.Optional<Employee> empOpt = employeeService.findByIdAndTenant(employeeId, tenantId);
             if (empOpt.isPresent() && empOpt.get().getOfficeLocationId() != null
                     && customLocationIds.contains(empOpt.get().getOfficeLocationId())) {
                 return true;

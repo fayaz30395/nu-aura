@@ -66,7 +66,7 @@ export default function GanttChartPage() {
 
       const tasks = projectCalendarService.convertToGanttTasks(
         projectsRes.content,
-        tasksRes.content as any[]
+        tasksRes.content
       );
 
       // Apply filters

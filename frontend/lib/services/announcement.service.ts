@@ -8,6 +8,8 @@ export interface Announcement {
   priority: AnnouncementPriority;
   status: AnnouncementStatus;
   targetAudience: TargetAudience;
+  targetDepartmentIds?: string[];
+  targetEmployeeIds?: string[];
   publishedAt: string;
   expiresAt?: string;
   isPinned: boolean;

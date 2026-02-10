@@ -229,7 +229,7 @@ export default function OrgChartPage() {
             <label className="text-sm font-medium text-surface-700 dark:text-surface-300">View:</label>
             <select
               value={viewMode}
-              onChange={(e) => setViewMode(e.target.value as any)}
+              onChange={(e) => setViewMode(e.target.value as 'hierarchy' | 'department')}
               className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="hierarchy">Hierarchy View</option>

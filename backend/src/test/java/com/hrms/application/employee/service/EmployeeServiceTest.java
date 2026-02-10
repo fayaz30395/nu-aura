@@ -2,6 +2,8 @@ package com.hrms.application.employee.service;
 
 import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
+import com.hrms.api.employee.dto.UpdateEmployeeRequest;
+import com.hrms.application.event.DomainEventPublisher;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +45,9 @@ class EmployeeServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -146,6 +152,26 @@ class EmployeeServiceTest {
                 verify(employeeRepository, never()).save(any(Employee.class));
             }
         }
+
+        @Test
+        @DisplayName("Should throw exception when required fields are missing")
+        void shouldThrowExceptionWhenRequiredFieldsMissing() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                // Given
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                createRequest.setPassword(null);
+                when(employeeRepository.existsByEmployeeCodeAndTenantId(anyString(), any(UUID.class))).thenReturn(false);
+                when(userRepository.findByEmailAndTenantId(anyString(), any(UUID.class))).thenReturn(Optional.empty());
+                when(passwordEncoder.encode(isNull())).thenThrow(new IllegalArgumentException("Password is required"));
+
+                // When/Then
+                assertThatThrownBy(() -> employeeService.createEmployee(createRequest))
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessageContaining("Password");
+
+                verify(employeeRepository, never()).save(any(Employee.class));
+            }
+        }
     }
 
     @Nested
@@ -221,6 +247,54 @@ class EmployeeServiceTest {
                 // Then
                 verify(employeeRepository).save(any(Employee.class));
                 assertThat(employee.getStatus()).isEqualTo(Employee.EmployeeStatus.TERMINATED);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Update Employee Tests")
+    class UpdateEmployeeTests {
+
+        @Test
+        @DisplayName("Should update employee successfully")
+        void shouldUpdateEmployeeSuccessfully() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                // Given
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                UpdateEmployeeRequest updateRequest = new UpdateEmployeeRequest();
+                updateRequest.setFirstName("Jane");
+                updateRequest.setLastName("Smith");
+
+                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+                when(userRepository.save(any(User.class))).thenReturn(user);
+
+                // When
+                EmployeeResponse response = employeeService.updateEmployee(employeeId, updateRequest);
+
+                // Then
+                assertThat(response).isNotNull();
+                assertThat(response.getFirstName()).isEqualTo("Jane");
+                assertThat(response.getLastName()).isEqualTo("Smith");
+                verify(employeeRepository).save(any(Employee.class));
+            }
+        }
+
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException when employee not found")
+        void shouldThrowExceptionWhenEmployeeNotFound() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                // Given
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                UpdateEmployeeRequest updateRequest = new UpdateEmployeeRequest();
+                updateRequest.setFirstName("Jane");
+
+                when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+
+                // When/Then
+                assertThatThrownBy(() -> employeeService.updateEmployee(employeeId, updateRequest))
+                        .isInstanceOf(ResourceNotFoundException.class)
+                        .hasMessage("Employee not found");
             }
         }
     }

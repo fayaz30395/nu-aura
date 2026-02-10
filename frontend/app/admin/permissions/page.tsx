@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -14,13 +15,19 @@ import {
   Check,
   X,
   Key,
-  User as UserIcon,
 } from 'lucide-react';
 import { rolesApi, permissionsApi } from '@/lib/api/roles';
 import { usersApi, User } from '@/lib/api/users';
-import { Role, Permission, RoleWithDetails } from '@/lib/types/roles';
+import { Permission, RoleWithDetails } from '@/lib/types/roles';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function PermissionsPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { hasAnyRole, isReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<'roles' | 'users'>('roles');
   const [roles, setRoles] = useState<RoleWithDetails[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -38,8 +45,20 @@ export default function PermissionsPage() {
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!hasHydrated || !isReady) return;
+
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+      router.push('/home');
+      return;
+    }
+
     loadData();
-  }, []);
+  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
   const loadData = async () => {
     try {
@@ -105,10 +124,11 @@ export default function PermissionsPage() {
 
   // Group permissions by resource for the modal
   const permissionsByResource = permissions.reduce((acc, permission) => {
-    if (!acc[permission.resource]) {
-      acc[permission.resource] = [];
+    const resourceKey = permission.resource ?? 'UNASSIGNED';
+    if (!acc[resourceKey]) {
+      acc[resourceKey] = [];
     }
-    acc[permission.resource].push(permission);
+    acc[resourceKey].push(permission);
     return acc;
   }, {} as Record<string, Permission[]>);
 

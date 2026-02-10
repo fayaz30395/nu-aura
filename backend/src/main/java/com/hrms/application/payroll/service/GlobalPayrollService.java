@@ -359,8 +359,8 @@ public class GlobalPayrollService {
 
                 GlobalPayrollRunDto dto = GlobalPayrollRunDto.fromEntity(run);
 
-                // Add breakdowns
-                List<Object[]> currencyData = recordRepository.getSummaryByCurrency(runId);
+                // Add breakdowns (tenant-scoped queries)
+                List<Object[]> currencyData = recordRepository.getSummaryByCurrency(tenantId, runId);
                 dto.setCurrencyBreakdowns(currencyData.stream()
                                 .map(row -> GlobalPayrollRunDto.CurrencyBreakdown.builder()
                                                 .currency((String) row[0])
@@ -371,7 +371,7 @@ public class GlobalPayrollService {
                                                 .build())
                                 .collect(Collectors.toList()));
 
-                List<Object[]> locationData = recordRepository.getSummaryByLocation(runId);
+                List<Object[]> locationData = recordRepository.getSummaryByLocation(tenantId, runId);
                 dto.setLocationBreakdowns(locationData.stream()
                                 .map(row -> GlobalPayrollRunDto.LocationBreakdown.builder()
                                                 .locationCode((String) row[0])

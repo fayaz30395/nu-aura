@@ -6,6 +6,11 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="002-create-tasks-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="pm" tableName="project_tasks"/>
+            </not>
+        </preConditions>
         <createTable tableName="project_tasks" schemaName="pm">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>

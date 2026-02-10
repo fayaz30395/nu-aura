@@ -1,6 +1,14 @@
 
 export type OnboardingStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
 export type ProcessType = 'ONBOARDING' | 'OFFBOARDING';
+export type OnboardingTaskCategory =
+  | 'INFRASTRUCTURE_ACCESS'
+  | 'HR_DOCUMENTATION'
+  | 'COMPANY_CULTURE'
+  | 'TEAM_INTEGRATION'
+  | 'ROLE_SPECIFIC_TRAINING'
+  | 'INTERNAL_SYSTEMS';
+export type OnboardingTaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export interface OnboardingProcess {
     id: string;
@@ -47,10 +55,10 @@ export interface OnboardingTemplateTask {
     templateId: string;
     taskName: string;
     description?: string;
-    category: string;
+    category: OnboardingTaskCategory | string;
     isMandatory: boolean;
     orderSequence: number;
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    priority: OnboardingTaskPriority;
     estimatedDaysFromStart?: number;
 }
 
@@ -60,13 +68,13 @@ export interface OnboardingTask {
     employeeId: string;
     taskName: string;
     description?: string;
-    category: string;
+    category: OnboardingTaskCategory | string;
     assignedTo?: string;
     assignedToName?: string;
     dueDate?: string;
     completedDate?: string;
     status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'SKIPPED' | 'BLOCKED';
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    priority: OnboardingTaskPriority;
     isMandatory: boolean;
     orderSequence: number;
     remarks?: string;

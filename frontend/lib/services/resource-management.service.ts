@@ -17,6 +17,7 @@ import {
   DepartmentWorkload,
   WorkloadHeatmapRow,
   AvailabilityStatus,
+  ResourceCalendarEvent,
 } from '../types/resource-management';
 
 interface PageResponse<T> {
@@ -259,7 +260,7 @@ export const resourceManagementService = {
               status: isWeekend ? 'HOLIDAY' : (i % 7 === 3 ? 'ON_LEAVE' : 'ALLOCATED') as AvailabilityStatus,
               allocatedCapacity: isWeekend ? 0 : 120,
               availableCapacity: isWeekend ? 100 : 0,
-              events: [],
+              events: [] as ResourceCalendarEvent[],
             };
           }),
           summary: {
@@ -293,7 +294,7 @@ export const resourceManagementService = {
               status: isWeekend ? 'HOLIDAY' : 'PARTIAL' as AvailabilityStatus,
               allocatedCapacity: isWeekend ? 0 : 85,
               availableCapacity: isWeekend ? 100 : 15,
-              events: [],
+              events: [] as ResourceCalendarEvent[],
             };
           }),
           summary: {
@@ -327,7 +328,7 @@ export const resourceManagementService = {
               status: isWeekend ? 'HOLIDAY' : 'AVAILABLE' as AvailabilityStatus,
               allocatedCapacity: isWeekend ? 0 : 40,
               availableCapacity: isWeekend ? 100 : 60,
-              events: [],
+              events: [] as ResourceCalendarEvent[],
             };
           }),
           summary: {
@@ -361,7 +362,7 @@ export const resourceManagementService = {
               status: isWeekend ? 'HOLIDAY' : 'AVAILABLE' as AvailabilityStatus,
               allocatedCapacity: 0,
               availableCapacity: 100,
-              events: [],
+              events: [] as ResourceCalendarEvent[],
             };
           }),
           summary: {
@@ -730,15 +731,30 @@ export const resourceManagementService = {
       return response.data;
     } catch (error) {
       // Mock creation
-      return {
+      // Return a properly typed mock response
+      const mockResponse: AllocationApprovalRequest = {
         id: 'mock-id-' + Date.now(),
         employeeId: data.employeeId,
+        employeeName: 'Mock Employee',
+        employeeCode: 'EMP-MOCK',
         projectId: data.projectId,
+        projectName: 'Mock Project',
+        projectCode: 'PROJ-MOCK',
         requestedAllocation: data.allocationPercentage,
+        role: data.role || 'Developer',
+        startDate: data.startDate,
+        endDate: data.endDate,
+        currentTotalAllocation: 0,
+        resultingAllocation: data.allocationPercentage,
+        requestedById: 'current-user-id',
+        requestedByName: 'Current User',
+        approverId: '',
+        approverName: '',
         status: 'PENDING',
-        requestedBy: 'current-user-id',
-        requestedAt: new Date().toISOString()
-      } as any;
+        requestReason: data.reason,
+        createdAt: new Date().toISOString(),
+      };
+      return mockResponse;
     }
   },
 

@@ -1,9 +1,9 @@
 package com.hrms.api.meeting.controller;
 
+import com.hrms.application.meeting.service.MeetingService;
 import com.hrms.common.security.RequiresPermission;
-import com.hrms.common.security.TenantContext;
 import com.hrms.domain.engagement.OneOnOneMeeting;
-import com.hrms.infrastructure.engagement.repository.OneOnOneMeetingRepository;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -15,21 +15,17 @@ import static com.hrms.common.security.Permission.*;
 @RequestMapping("/api/v1/one-on-one")
 @RequiredArgsConstructor
 public class MeetingController {
-    private final OneOnOneMeetingRepository meetingRepository;
+    private final MeetingService meetingService;
 
     @PostMapping
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
-    public ResponseEntity<OneOnOneMeeting> scheduleMeeting(@RequestBody OneOnOneMeeting meeting) {
-        meeting.setId(UUID.randomUUID());
-        meeting.setTenantId(TenantContext.getCurrentTenant());
-        meeting.setStatus(OneOnOneMeeting.MeetingStatus.SCHEDULED);
-        return ResponseEntity.ok(meetingRepository.save(meeting));
+    public ResponseEntity<OneOnOneMeeting> scheduleMeeting(@Valid @RequestBody OneOnOneMeeting meeting) {
+        return ResponseEntity.ok(meetingService.scheduleMeeting(meeting));
     }
 
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<List<OneOnOneMeeting>> getByEmployee(@PathVariable UUID employeeId) {
-        return ResponseEntity.ok(meetingRepository
-                .findByTenantIdAndEmployeeIdOrderByMeetingDateDesc(TenantContext.getCurrentTenant(), employeeId));
+        return ResponseEntity.ok(meetingService.getMeetingsByEmployee(employeeId));
     }
 }
