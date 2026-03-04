@@ -154,7 +154,17 @@ export interface FeedbackRequest {
 }
 
 export type CycleType = 'ANNUAL' | 'QUARTERLY' | 'PROBATION' | 'MID_YEAR' | 'PROJECT_END' | 'SEMI_ANNUAL' | 'MONTHLY';
-export type CycleStatus = 'PLANNING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'IN_PROGRESS';
+export type CycleStatus =
+  | 'PLANNING'
+  | 'DRAFT'
+  | 'ACTIVE'
+  | 'SELF_ASSESSMENT'
+  | 'MANAGER_REVIEW'
+  | 'CALIBRATION'
+  | 'RATINGS_PUBLISHED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'IN_PROGRESS';
 
 export interface ReviewCycle {
   id: string;
@@ -620,4 +630,95 @@ export interface SpiderData {
   peer: number;
   manager: number;
   fullMark: number;
+}
+
+// ==================== Calibration Types ====================
+
+export interface CalibrationEmployee {
+  employeeId: string;
+  reviewId: string;
+  employeeName: string;
+  selfRating?: number;
+  managerRating?: number;
+  finalRating?: number;
+  editable: boolean;
+}
+
+export interface CalibrationResponse {
+  cycleId: string;
+  cycleName: string;
+  totalEmployees: number;
+  distribution: Record<number, number>; // rating (1-5) → count
+  employees: CalibrationEmployee[];
+}
+
+export interface SelfAssessmentRequest {
+  competencyRatings?: Array<{ competencyName: string; rating: number }>;
+  overallComments?: string;
+  goalAchievementPercent?: number;
+}
+
+export interface ManagerReviewRequest {
+  competencyRatings?: Array<{ competencyName: string; rating: number }>;
+  overallRating: number;
+  incrementRecommendation?: number;
+  promotionRecommended?: boolean;
+  comments?: string;
+}
+
+// ==================== PIP (Performance Improvement Plan) Types ====================
+
+export type PIPStatus = 'ACTIVE' | 'COMPLETED' | 'EXTENDED' | 'TERMINATED';
+export type PIPCheckInFrequency = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY';
+
+export interface PIPCheckIn {
+  id: string;
+  pipId: string;
+  checkInDate: string;
+  progressNotes?: string;
+  managerComments?: string;
+  goalUpdates?: string;
+  createdAt?: string;
+}
+
+export interface PIPResponse {
+  id: string;
+  tenantId?: string;
+  employeeId: string;
+  employeeName?: string;
+  managerId: string;
+  managerName?: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
+  goals?: string;
+  checkInFrequency: PIPCheckInFrequency;
+  status: PIPStatus;
+  closeNotes?: string;
+  checkInCount?: number;
+  checkIns?: PIPCheckIn[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreatePIPRequest {
+  employeeId: string;
+  managerId: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
+  goals?: string;
+  checkInFrequency?: PIPCheckInFrequency;
+}
+
+export interface PIPCheckInRequest {
+  checkInDate: string;
+  progressNotes?: string;
+  managerComments?: string;
+  goalUpdates?: string;
+}
+
+export interface ClosePIPRequest {
+  finalStatus: 'COMPLETED' | 'EXTENDED' | 'TERMINATED';
+  notes?: string;
 }

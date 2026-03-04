@@ -38,10 +38,11 @@ spring:
         generate_statistics: ${HIBERNATE_STATS_ENABLED:false}
     open-in-view: false
 
-  liquibase:
+  flyway:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    locations: classpath:db/migration
     default-schema: public
+    baseline-on-migrate: true
 
   data:
     redis:

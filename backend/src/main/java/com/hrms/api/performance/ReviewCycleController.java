@@ -1,8 +1,11 @@
 package com.hrms.api.performance;
 
 import com.hrms.application.performance.dto.ActivateCycleRequest;
+import com.hrms.application.performance.dto.CalibrationResponse;
+import com.hrms.application.performance.dto.ManagerReviewRequest;
 import com.hrms.application.performance.dto.ReviewCycleRequest;
 import com.hrms.application.performance.dto.ReviewCycleResponse;
+import com.hrms.application.performance.dto.SelfAssessmentRequest;
 import com.hrms.application.performance.service.ReviewCycleService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
@@ -89,5 +92,63 @@ public class ReviewCycleController {
         log.info("Activating review cycle {} with scope {}", id, request.getScopeType());
         ReviewCycleResponse response = reviewCycleService.activateCycle(id, request);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Advance a cycle to its next stage (PLANNING → SELF_ASSESSMENT → MANAGER_REVIEW → CALIBRATION → RATINGS_PUBLISHED → COMPLETED).
+     */
+    @PostMapping("/{id}/advance")
+    @RequiresPermission(Permission.REVIEW_APPROVE)
+    public ResponseEntity<ReviewCycleResponse> advanceStage(@PathVariable UUID id) {
+        log.info("Advancing stage for review cycle {}", id);
+        return ResponseEntity.ok(reviewCycleService.advanceStage(id));
+    }
+
+    /**
+     * Get calibration data for a cycle (all self/manager/final ratings, distribution).
+     */
+    @GetMapping("/{id}/calibration")
+    @RequiresPermission(Permission.REVIEW_VIEW)
+    public ResponseEntity<CalibrationResponse> getCalibration(@PathVariable UUID id) {
+        return ResponseEntity.ok(reviewCycleService.getCalibration(id));
+    }
+
+    /**
+     * Employee submits their self-assessment for a specific review.
+     */
+    @PutMapping("/reviews/{reviewId}/self-assessment")
+    @RequiresPermission(Permission.REVIEW_SUBMIT)
+    public ResponseEntity<Void> submitSelfAssessment(
+            @PathVariable UUID reviewId,
+            @Valid @RequestBody SelfAssessmentRequest request
+    ) {
+        reviewCycleService.submitSelfAssessment(reviewId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Manager submits their rating for a review.
+     */
+    @PutMapping("/reviews/{reviewId}/manager-review")
+    @RequiresPermission(Permission.REVIEW_SUBMIT)
+    public ResponseEntity<Void> submitManagerReview(
+            @PathVariable UUID reviewId,
+            @Valid @RequestBody ManagerReviewRequest request
+    ) {
+        reviewCycleService.submitManagerReview(reviewId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * HR sets final calibrated rating for a review during CALIBRATION stage.
+     */
+    @PutMapping("/reviews/{reviewId}/calibration-rating")
+    @RequiresPermission(Permission.REVIEW_APPROVE)
+    public ResponseEntity<Void> updateCalibrationRating(
+            @PathVariable UUID reviewId,
+            @RequestParam Integer finalRating
+    ) {
+        reviewCycleService.updateCalibrationRating(reviewId, finalRating);
+        return ResponseEntity.ok().build();
     }
 }

@@ -58,6 +58,7 @@ interface OwnerTypeaheadProps {
 }
 
 const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
+  DRAFT: { label: 'Draft', variant: 'secondary' },
   PLANNED: { label: 'Planned', variant: 'secondary' },
   IN_PROGRESS: { label: 'In Progress', variant: 'primary' },
   ON_HOLD: { label: 'On Hold', variant: 'warning' },

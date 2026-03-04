@@ -49,9 +49,14 @@ public class ReviewCycle extends TenantAware {
     }
 
     public enum CycleStatus {
-        PLANNING,       // Review cycle is being planned
-        ACTIVE,         // Review cycle is active
-        COMPLETED,      // Review cycle is completed
-        CANCELLED       // Review cycle was cancelled
+        PLANNING,           // Review cycle is being planned
+        DRAFT,              // Alias for PLANNING
+        ACTIVE,             // Review cycle is active (legacy — maps to SELF_ASSESSMENT)
+        SELF_ASSESSMENT,    // Stage 1: Employees submitting self-assessments
+        MANAGER_REVIEW,     // Stage 2: Managers reviewing
+        CALIBRATION,        // Stage 3: HR calibration
+        RATINGS_PUBLISHED,  // Stage 4: Ratings published to employees
+        COMPLETED,          // Review cycle is completed
+        CANCELLED           // Review cycle was cancelled
     }
 }

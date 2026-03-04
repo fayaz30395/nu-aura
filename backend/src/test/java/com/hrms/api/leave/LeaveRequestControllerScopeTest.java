@@ -8,7 +8,7 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.leave.LeaveRequest;
 import com.hrms.domain.user.RoleScope;
-import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.application.employee.service.EmployeeService;
 import com.hrms.common.security.DataScopeService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ class LeaveRequestControllerScopeTest {
     private LeaveRequestService leaveRequestService;
 
     @Mock
-    private EmployeeRepository employeeRepository;
+    private EmployeeService employeeService;
 
     @Mock
     private DataScopeService dataScopeService;
@@ -114,7 +114,7 @@ class LeaveRequestControllerScopeTest {
             setupSecurityContext(currentEmployeeId, RoleScope.SELF, false);
             when(leaveRequestService.getLeaveRequestById(ownLeaveRequest.getId()))
                     .thenReturn(ownLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(currentEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(currentEmployeeId, tenantId))
                     .thenReturn(Optional.of(createEmployee(currentEmployeeId, managerId)));
 
             // Execute
@@ -148,7 +148,7 @@ class LeaveRequestControllerScopeTest {
             setupSecurityContextWithReportees(currentEmployeeId, RoleScope.TEAM, reporteeIds, false);
             when(leaveRequestService.getLeaveRequestById(otherLeaveRequest.getId()))
                     .thenReturn(otherLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(otherEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(otherEmployeeId, tenantId))
                     .thenReturn(Optional.of(createEmployee(otherEmployeeId, currentEmployeeId)));
 
             // Execute
@@ -180,7 +180,7 @@ class LeaveRequestControllerScopeTest {
             setupSecurityContext(currentEmployeeId, RoleScope.ALL, false);
             when(leaveRequestService.getLeaveRequestById(otherLeaveRequest.getId()))
                     .thenReturn(otherLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(otherEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(otherEmployeeId, tenantId))
                     .thenReturn(Optional.of(createEmployee(otherEmployeeId, managerId)));
 
             // Execute
@@ -197,7 +197,7 @@ class LeaveRequestControllerScopeTest {
             setupSecurityContext(currentEmployeeId, RoleScope.SELF, true);
             when(leaveRequestService.getLeaveRequestById(otherLeaveRequest.getId()))
                     .thenReturn(otherLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(otherEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(otherEmployeeId, tenantId))
                     .thenReturn(Optional.of(createEmployee(otherEmployeeId, managerId)));
 
             // Execute
@@ -279,7 +279,7 @@ class LeaveRequestControllerScopeTest {
 
             when(leaveRequestService.getLeaveRequestById(otherLeaveRequest.getId()))
                     .thenReturn(otherLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(otherEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(otherEmployeeId, tenantId))
                     .thenReturn(Optional.of(otherEmployee));
 
             // Execute
@@ -302,7 +302,7 @@ class LeaveRequestControllerScopeTest {
 
             when(leaveRequestService.getLeaveRequestById(otherLeaveRequest.getId()))
                     .thenReturn(otherLeaveRequest);
-            when(employeeRepository.findByIdAndTenantId(otherEmployeeId, tenantId))
+            when(employeeService.findByIdAndTenant(otherEmployeeId, tenantId))
                     .thenReturn(Optional.of(otherEmployee));
 
             // Execute & Verify

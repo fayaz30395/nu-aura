@@ -264,6 +264,45 @@ public class ProjectService {
                                 .collect(Collectors.toList());
         }
 
+        @Transactional(readOnly = true)
+        public Page<ProjectEmployeeResponse> getProjectAllocations(UUID projectId, Pageable pageable) {
+                UUID tenantId = TenantContext.getCurrentTenant();
+
+                Page<ProjectEmployee> projectEmployees = projectEmployeeRepository
+                                .findAllByProjectIdAndTenantId(projectId, tenantId, pageable);
+
+                return projectEmployees.map(pe -> {
+                        ProjectEmployeeResponse response = ProjectEmployeeResponse.fromProjectEmployee(pe);
+                        employeeRepository.findById(pe.getEmployeeId())
+                                        .ifPresent(emp -> {
+                                                response.setEmployeeName(emp.getFullName());
+                                                response.setEmployeeCode(emp.getEmployeeCode());
+                                        });
+                        return response;
+                });
+        }
+
+        @Transactional
+        public ProjectEmployeeResponse endAllocation(UUID projectId, UUID memberId) {
+                UUID tenantId = TenantContext.getCurrentTenant();
+
+                ProjectEmployee projectEmployee = projectEmployeeRepository.findById(memberId)
+                                .filter(pe -> pe.getTenantId().equals(tenantId)
+                                                && pe.getProjectId().equals(projectId))
+                                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
+
+                projectEmployee.deactivate();
+                projectEmployee = projectEmployeeRepository.save(projectEmployee);
+
+                ProjectEmployeeResponse response = ProjectEmployeeResponse.fromProjectEmployee(projectEmployee);
+                employeeRepository.findById(projectEmployee.getEmployeeId())
+                                .ifPresent(emp -> {
+                                        response.setEmployeeName(emp.getFullName());
+                                        response.setEmployeeCode(emp.getEmployeeCode());
+                                });
+                return response;
+        }
+
         @Transactional
         public void deleteProject(UUID projectId) {
                 UUID tenantId = TenantContext.getCurrentTenant();
