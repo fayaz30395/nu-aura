@@ -1,14 +1,19 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import './globals.css';
 import { Providers } from './providers';
 
-const inter = Inter({ subsets: ['latin'] });
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'NU Platform - HRMS',
-  description: 'Human Resource Management System',
+  title: 'NU Aura - HRMS Platform',
+  description: 'Modern Human Resource Management System',
+  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({
@@ -17,29 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="light" data-mantine-color-scheme="light" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-                document.documentElement.setAttribute('data-mantine-color-scheme', 'light');
-                try {
-                  localStorage.removeItem('darkMode');
-                  localStorage.removeItem('mantine-color-scheme-value');
-                  localStorage.setItem('mantine-color-scheme-value', 'light');
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
+        <ColorSchemeScript />
       </head>
-      <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+      <body className={`${outfit.variable} font-outfit dark:bg-gray-900`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

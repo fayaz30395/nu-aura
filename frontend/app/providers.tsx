@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useState, useEffect } from 'react';
 import { DarkModeProvider, MantineThemeProvider } from '@/components/layout';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { ToastProvider } from '@/components/ui/Toast';
 import { ToastProvider as NotificationsToastProvider } from '@/components/notifications/ToastProvider';
@@ -41,13 +42,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <NotificationsToastProvider>
-          <DarkModeProvider>
-            <MantineThemeProvider>
-              <WebSocketProvider>
-                {children}
-              </WebSocketProvider>
-            </MantineThemeProvider>
-          </DarkModeProvider>
+          <ThemeProvider>
+            <DarkModeProvider>
+              <MantineThemeProvider>
+                <WebSocketProvider>
+                  {children}
+                </WebSocketProvider>
+              </MantineThemeProvider>
+            </DarkModeProvider>
+          </ThemeProvider>
         </NotificationsToastProvider>
       </ToastProvider>
     </QueryClientProvider>

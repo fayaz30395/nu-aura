@@ -55,6 +55,9 @@ public class User extends TenantAware {
     @Column
     private LocalDateTime passwordResetTokenExpiry;
 
+    @Column(length = 500)
+    private String profilePictureUrl;
+
     /**
      * User roles - loaded LAZILY to avoid N+1 and unnecessary data loading.
      *

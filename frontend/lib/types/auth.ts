@@ -20,6 +20,7 @@ export interface AuthResponse {
   tenantId: string;
   email: string;
   fullName: string;
+  profilePictureUrl?: string;
 }
 
 export interface User {
@@ -32,6 +33,7 @@ export interface User {
   fullName: string;
   status: string;
   roles: Role[];
+  profilePictureUrl?: string;
 }
 
 export interface Role {

@@ -100,6 +100,7 @@ export const useAuth = create<AuthState>()(
             fullName: response.fullName,
             status: 'ACTIVE',
             roles: roles,
+            profilePictureUrl: response.profilePictureUrl,
           };
 
           // Store user data in localStorage for backward compatibility with pages that access it directly
@@ -136,6 +137,7 @@ export const useAuth = create<AuthState>()(
             fullName: response.fullName,
             status: 'ACTIVE',
             roles: roles,
+            profilePictureUrl: response.profilePictureUrl,
           };
 
           // Store user data in localStorage for backward compatibility with pages that access it directly

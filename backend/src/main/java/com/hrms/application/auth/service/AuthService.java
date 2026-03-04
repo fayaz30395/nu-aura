@@ -135,6 +135,7 @@ public class AuthService {
                 .tenantId(tenantId)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
                 .build();
     }
 
@@ -142,12 +143,14 @@ public class AuthService {
     public AuthResponse googleLogin(GoogleLoginRequest request) {
         String email;
         String hostedDomain;
+        String profilePictureUrl = null;
 
         if (request.isAccessToken()) {
             // Handle access token - call Google userinfo API
             GoogleUserInfo userInfo = getUserInfoFromAccessToken(request.getCredential());
             email = userInfo.email;
             hostedDomain = userInfo.hd;
+            profilePictureUrl = userInfo.picture;
         } else {
             // Handle ID token - verify with Google
             GoogleIdToken idToken = verifyGoogleToken(request.getCredential());
@@ -157,6 +160,7 @@ public class AuthService {
             GoogleIdToken.Payload payload = idToken.getPayload();
             email = payload.getEmail();
             hostedDomain = payload.getHostedDomain();
+            profilePictureUrl = (String) payload.get("picture");
         }
 
         // Verify domain restriction - must be @allowedDomain
@@ -193,6 +197,12 @@ public class AuthService {
         // Update tenantId to user's actual tenant
         tenantId = user.getTenantId();
         com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+
+        // Update profile picture from Google if available
+        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+            user.setProfilePictureUrl(profilePictureUrl);
+            log.info("Updated profile picture for user {} from Google SSO", email);
+        }
 
         user.recordSuccessfulLogin();
         userRepository.save(user);
@@ -231,6 +241,7 @@ public class AuthService {
                 .tenantId(tenantId)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
                 .build();
     }
 
@@ -254,6 +265,7 @@ public class AuthService {
     private static class GoogleUserInfo {
         String email;
         String hd; // hosted domain
+        String picture; // profile picture URL
     }
 
     /**
@@ -283,6 +295,7 @@ public class AuthService {
             GoogleUserInfo userInfo = new GoogleUserInfo();
             userInfo.email = json.has("email") ? json.get("email").asText() : null;
             userInfo.hd = json.has("hd") ? json.get("hd").asText() : null;
+            userInfo.picture = json.has("picture") ? json.get("picture").asText() : null;
 
             if (userInfo.email == null) {
                 throw new AuthenticationException("Google access token does not contain email");

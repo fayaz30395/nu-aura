@@ -62,7 +62,7 @@ class ApiClient {
 
           try {
             // Refresh request - cookies are sent automatically
-            const response = await this.client.post('/auth/refresh', null);
+            const response = await this.client.post('/v1/auth/refresh', null);
 
             // If refresh succeeded, retry original request
             // New tokens are set via cookies by the backend
