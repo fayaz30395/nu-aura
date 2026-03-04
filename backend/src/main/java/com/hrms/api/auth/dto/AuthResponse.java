@@ -22,4 +22,5 @@ public class AuthResponse {
     private UUID tenantId;
     private String email;
     private String fullName;
+    private String profilePictureUrl;
 }

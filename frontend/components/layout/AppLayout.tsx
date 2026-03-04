@@ -569,6 +569,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           onSettings={handleSettings}
           onLogout={handleLogout}
           userName={user?.fullName || 'User'}
+          userAvatar={user?.profilePictureUrl}
           userRole={user?.roles?.[0]?.name || 'Employee'}
           {...headerProps}
         />
