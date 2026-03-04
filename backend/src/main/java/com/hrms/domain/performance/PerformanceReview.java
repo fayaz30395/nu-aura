@@ -70,6 +70,27 @@ public class PerformanceReview extends TenantAware {
     @Column(name = "employee_comments", columnDefinition = "TEXT")
     private String employeeComments;
 
+    @Column(name = "self_rating")
+    private Integer selfRating;
+
+    @Column(name = "manager_rating")
+    private Integer managerRating;
+
+    @Column(name = "final_rating")
+    private Integer finalRating;
+
+    @Column(name = "increment_recommendation", precision = 5, scale = 2)
+    private BigDecimal incrementRecommendation;
+
+    @Column(name = "promotion_recommended")
+    private Boolean promotionRecommended;
+
+    @Column(name = "overall_comments", columnDefinition = "TEXT")
+    private String overallComments;
+
+    @Column(name = "goal_achievement_percent")
+    private Integer goalAchievementPercent;
+
     @Column(name = "submitted_at")
     private LocalDateTime submittedAt;
 

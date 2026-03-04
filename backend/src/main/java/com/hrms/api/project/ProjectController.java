@@ -105,6 +105,26 @@ public class ProjectController {
         return ResponseEntity.ok(teamMembers);
     }
 
+    @GetMapping("/{id}/allocations")
+    @RequiresPermission(Permission.PROJECT_VIEW)
+    public ResponseEntity<Page<ProjectEmployeeResponse>> getProjectAllocations(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProjectEmployeeResponse> allocations = projectService.getProjectAllocations(id, pageable);
+        return ResponseEntity.ok(allocations);
+    }
+
+    @PostMapping("/{id}/allocations/{memberId}/end")
+    @RequiresPermission(Permission.PROJECT_CREATE)
+    public ResponseEntity<ProjectEmployeeResponse> endAllocation(
+            @PathVariable UUID id,
+            @PathVariable UUID memberId) {
+        ProjectEmployeeResponse response = projectService.endAllocation(id, memberId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/employee/{employeeId}")
     @RequiresPermission(Permission.PROJECT_VIEW)
     public ResponseEntity<List<ProjectResponse>> getEmployeeProjects(@PathVariable UUID employeeId) {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add public_token column to exit_interviews for token-based public survey access -->
+    <changeSet id="170-1" author="nu-aura">
+        <addColumn tableName="exit_interviews">
+            <column name="public_token" type="VARCHAR(64)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="170-2" author="nu-aura">
+        <createIndex tableName="exit_interviews" indexName="idx_exit_interview_public_token" unique="true">
+            <column name="public_token"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Ensure full_and_final_settlements has version + audit columns (failOnError=false) -->
+    <changeSet id="170-3" author="nu-aura" failOnError="false">
+        <addColumn tableName="full_and_final_settlements">
+            <column name="version" type="BIGINT" defaultValueNumeric="0"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

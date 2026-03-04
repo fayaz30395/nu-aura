@@ -69,6 +69,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.deny())
+                        .contentSecurityPolicy(
+                                csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
+                        .xssProtection(xss -> xss.disable()))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -77,14 +82,17 @@ public class SecurityConfig {
                         // Actuator: only health endpoint is public, others require SYSTEM_ADMIN
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/actuator/**").hasAuthority("SYSTEM_ADMIN")
-                        // Swagger UI: require SYSTEM_ADMIN in production (see SwaggerSecurityConfig for dev profile)
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").hasAuthority("SYSTEM_ADMIN")
+                        // Swagger UI: require SYSTEM_ADMIN in production (see SwaggerSecurityConfig for
+                        // dev profile)
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**")
+                        .hasAuthority("SYSTEM_ADMIN")
                         // External signing endpoints (token-based, no authentication)
                         .requestMatchers("/api/v1/esignature/external/**").permitAll()
                         // Public offer portal endpoints (token-based access for candidates)
                         .requestMatchers("/api/v1/public/offers/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        // Public exit interview (token-based, no auth required)
+                        .requestMatchers("/api/v1/exit/interview/public/**").permitAll()
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -103,14 +111,15 @@ public class SecurityConfig {
             http.csrf(csrf -> csrf
                     .csrfTokenRepository(csrfTokenRepository)
                     .csrfTokenRequestHandler(requestHandler)
-                    // Ignore CSRF for auth endpoints (they're public and don't require existing auth)
+                    // Ignore CSRF for auth endpoints (they're public and don't require existing
+                    // auth)
                     .ignoringRequestMatchers("/api/v1/auth/**")
                     // Ignore CSRF for external token-based endpoints
                     .ignoringRequestMatchers("/api/v1/esignature/external/**")
                     .ignoringRequestMatchers("/api/v1/public/offers/**")
+                    .ignoringRequestMatchers("/api/v1/exit/interview/public/**")
                     // Ignore CSRF for actuator health checks
-                    .ignoringRequestMatchers("/actuator/health", "/actuator/health/**")
-            );
+                    .ignoringRequestMatchers("/actuator/health", "/actuator/health/**"));
         } else {
             http.csrf(AbstractHttpConfigurer::disable);
         }
@@ -131,5 +140,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public org.springframework.security.access.expression.method.MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+            org.springframework.security.access.PermissionEvaluator permissionEvaluator) {
+        org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler expressionHandler = new org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setPermissionEvaluator(permissionEvaluator);
+        return expressionHandler;
     }
 }

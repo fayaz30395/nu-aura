@@ -58,4 +58,6 @@ public interface ExitInterviewRepository extends JpaRepository<ExitInterview, UU
     long countCompleted(@Param("tenantId") UUID tenantId);
 
     Optional<ExitInterview> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    Optional<ExitInterview> findByPublicToken(String publicToken);
 }

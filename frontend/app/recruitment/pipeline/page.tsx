@@ -1,24 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Plus, Star, MoreHorizontal, Loader2, ArrowRight, User } from 'lucide-react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import {
-  Card,
-  Badge,
-  Group,
-  Text,
-  Stack,
-  Grid,
   Button,
+  Input,
   Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   Select,
   Textarea,
-  ActionIcon,
-  TextInput,
-} from '@mantine/core';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AppLayout } from '@/components/layout';
+} from '@/components/ui';
 import { applicantService } from '@/lib/services/applicant.service';
 import { recruitmentService } from '@/lib/services/recruitment.service';
+import { letterService } from '@/lib/services/letter.service';
+import { LetterCategory } from '@/lib/types/letter';
+import type { LetterTemplate } from '@/lib/types/letter';
 import {
   ApplicationSource,
   ApplicationStatus,
@@ -29,9 +28,11 @@ import type {
   ApplicantStatusUpdate,
   PipelineData,
 } from '@/lib/types/applicant';
-import { ArrowRight, Plus, Star } from 'lucide-react';
+import type { JobOpening } from '@/lib/types/recruitment';
 
-const ACTIVE_STATUSES: ApplicationStatus[] = [
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const PIPELINE_STAGES: ApplicationStatus[] = [
   ApplicationStatus.APPLIED,
   ApplicationStatus.SCREENING,
   ApplicationStatus.PHONE_SCREEN,
@@ -40,677 +41,1097 @@ const ACTIVE_STATUSES: ApplicationStatus[] = [
   ApplicationStatus.HR_ROUND,
   ApplicationStatus.OFFER_PENDING,
   ApplicationStatus.OFFERED,
-];
-
-const ARCHIVE_STATUSES: ApplicationStatus[] = [
   ApplicationStatus.ACCEPTED,
   ApplicationStatus.REJECTED,
-  ApplicationStatus.WITHDRAWN,
 ];
 
-const STATUS_COLORS: Record<ApplicationStatus, string> = {
-  [ApplicationStatus.APPLIED]: 'blue',
-  [ApplicationStatus.SCREENING]: 'teal',
-  [ApplicationStatus.PHONE_SCREEN]: 'cyan',
-  [ApplicationStatus.INTERVIEW]: 'grape',
-  [ApplicationStatus.TECHNICAL_ROUND]: 'indigo',
-  [ApplicationStatus.HR_ROUND]: 'violet',
-  [ApplicationStatus.OFFER_PENDING]: 'orange',
-  [ApplicationStatus.OFFERED]: 'green',
-  [ApplicationStatus.ACCEPTED]: 'green',
-  [ApplicationStatus.REJECTED]: 'red',
-  [ApplicationStatus.WITHDRAWN]: 'gray',
+const STAGE_LABELS: Record<ApplicationStatus, string> = {
+  [ApplicationStatus.APPLIED]: 'Applied',
+  [ApplicationStatus.SCREENING]: 'Screening',
+  [ApplicationStatus.PHONE_SCREEN]: 'Phone Screen',
+  [ApplicationStatus.INTERVIEW]: 'Interview',
+  [ApplicationStatus.TECHNICAL_ROUND]: 'Technical',
+  [ApplicationStatus.HR_ROUND]: 'HR Round',
+  [ApplicationStatus.OFFER_PENDING]: 'Offer Pending',
+  [ApplicationStatus.OFFERED]: 'Offered',
+  [ApplicationStatus.ACCEPTED]: 'Accepted',
+  [ApplicationStatus.REJECTED]: 'Rejected',
+  [ApplicationStatus.WITHDRAWN]: 'Withdrawn',
 };
 
-const SOURCE_COLORS: Record<ApplicationSource, string> = {
-  [ApplicationSource.WEBSITE]: 'blue',
-  [ApplicationSource.REFERRAL]: 'teal',
-  [ApplicationSource.JOB_BOARD]: 'indigo',
-  [ApplicationSource.LINKEDIN]: 'cyan',
-  [ApplicationSource.CAMPUS]: 'grape',
-  [ApplicationSource.AGENCY]: 'orange',
-  [ApplicationSource.OTHER]: 'gray',
+const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string }> = {
+  [ApplicationStatus.APPLIED]:        { col: 'border-t-blue-500',   header: 'bg-blue-50',   badge: 'bg-blue-100 text-blue-700' },
+  [ApplicationStatus.SCREENING]:      { col: 'border-t-teal-500',   header: 'bg-teal-50',   badge: 'bg-teal-100 text-teal-700' },
+  [ApplicationStatus.PHONE_SCREEN]:   { col: 'border-t-cyan-500',   header: 'bg-cyan-50',   badge: 'bg-cyan-100 text-cyan-700' },
+  [ApplicationStatus.INTERVIEW]:      { col: 'border-t-purple-500', header: 'bg-purple-50', badge: 'bg-purple-100 text-purple-700' },
+  [ApplicationStatus.TECHNICAL_ROUND]:{ col: 'border-t-indigo-500', header: 'bg-indigo-50', badge: 'bg-indigo-100 text-indigo-700' },
+  [ApplicationStatus.HR_ROUND]:       { col: 'border-t-violet-500', header: 'bg-violet-50', badge: 'bg-violet-100 text-violet-700' },
+  [ApplicationStatus.OFFER_PENDING]:  { col: 'border-t-orange-500', header: 'bg-orange-50', badge: 'bg-orange-100 text-orange-700' },
+  [ApplicationStatus.OFFERED]:        { col: 'border-t-green-500',  header: 'bg-green-50',  badge: 'bg-green-100 text-green-700' },
+  [ApplicationStatus.ACCEPTED]:       { col: 'border-t-emerald-500',header: 'bg-emerald-50',badge: 'bg-emerald-100 text-emerald-700' },
+  [ApplicationStatus.REJECTED]:       { col: 'border-t-red-500',    header: 'bg-red-50',    badge: 'bg-red-100 text-red-700' },
+  [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-gray-400',   header: 'bg-gray-50',   badge: 'bg-gray-100 text-gray-600' },
 };
 
+const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
+  [ApplicationSource.WEBSITE]:  'bg-blue-50 text-blue-600',
+  [ApplicationSource.REFERRAL]: 'bg-teal-50 text-teal-600',
+  [ApplicationSource.JOB_BOARD]:'bg-indigo-50 text-indigo-600',
+  [ApplicationSource.LINKEDIN]: 'bg-sky-50 text-sky-600',
+  [ApplicationSource.CAMPUS]:   'bg-purple-50 text-purple-600',
+  [ApplicationSource.AGENCY]:   'bg-orange-50 text-orange-600',
+  [ApplicationSource.OTHER]:    'bg-gray-50 text-gray-500',
+};
+
+// All valid transition targets from each stage
 const STATUS_TRANSITIONS: Record<ApplicationStatus, ApplicationStatus[]> = {
-  [ApplicationStatus.APPLIED]: [ApplicationStatus.SCREENING, ApplicationStatus.REJECTED, ApplicationStatus.WITHDRAWN],
-  [ApplicationStatus.SCREENING]: [
-    ApplicationStatus.PHONE_SCREEN,
-    ApplicationStatus.INTERVIEW,
-    ApplicationStatus.TECHNICAL_ROUND,
-    ApplicationStatus.HR_ROUND,
-    ApplicationStatus.OFFER_PENDING,
-    ApplicationStatus.REJECTED,
-    ApplicationStatus.WITHDRAWN,
-  ],
-  [ApplicationStatus.PHONE_SCREEN]: [
-    ApplicationStatus.INTERVIEW,
-    ApplicationStatus.TECHNICAL_ROUND,
-    ApplicationStatus.HR_ROUND,
-    ApplicationStatus.OFFER_PENDING,
-    ApplicationStatus.REJECTED,
-    ApplicationStatus.WITHDRAWN,
-  ],
-  [ApplicationStatus.INTERVIEW]: [
-    ApplicationStatus.TECHNICAL_ROUND,
-    ApplicationStatus.HR_ROUND,
-    ApplicationStatus.OFFER_PENDING,
-    ApplicationStatus.OFFERED,
-    ApplicationStatus.REJECTED,
-    ApplicationStatus.WITHDRAWN,
-  ],
-  [ApplicationStatus.TECHNICAL_ROUND]: [
-    ApplicationStatus.HR_ROUND,
-    ApplicationStatus.OFFER_PENDING,
-    ApplicationStatus.OFFERED,
-    ApplicationStatus.REJECTED,
-    ApplicationStatus.WITHDRAWN,
-  ],
-  [ApplicationStatus.HR_ROUND]: [
-    ApplicationStatus.OFFER_PENDING,
-    ApplicationStatus.OFFERED,
-    ApplicationStatus.REJECTED,
-    ApplicationStatus.WITHDRAWN,
-  ],
-  [ApplicationStatus.OFFER_PENDING]: [ApplicationStatus.OFFERED, ApplicationStatus.REJECTED, ApplicationStatus.WITHDRAWN],
-  [ApplicationStatus.OFFERED]: [ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED, ApplicationStatus.WITHDRAWN],
-  [ApplicationStatus.ACCEPTED]: [ApplicationStatus.ACCEPTED],
-  [ApplicationStatus.REJECTED]: [ApplicationStatus.REJECTED],
-  [ApplicationStatus.WITHDRAWN]: [ApplicationStatus.WITHDRAWN],
+  [ApplicationStatus.APPLIED]:         [ApplicationStatus.SCREENING, ApplicationStatus.INTERVIEW, ApplicationStatus.REJECTED],
+  [ApplicationStatus.SCREENING]:       [ApplicationStatus.PHONE_SCREEN, ApplicationStatus.INTERVIEW, ApplicationStatus.TECHNICAL_ROUND, ApplicationStatus.REJECTED],
+  [ApplicationStatus.PHONE_SCREEN]:    [ApplicationStatus.INTERVIEW, ApplicationStatus.TECHNICAL_ROUND, ApplicationStatus.HR_ROUND, ApplicationStatus.REJECTED],
+  [ApplicationStatus.INTERVIEW]:       [ApplicationStatus.TECHNICAL_ROUND, ApplicationStatus.HR_ROUND, ApplicationStatus.OFFER_PENDING, ApplicationStatus.OFFERED, ApplicationStatus.REJECTED],
+  [ApplicationStatus.TECHNICAL_ROUND]: [ApplicationStatus.HR_ROUND, ApplicationStatus.OFFER_PENDING, ApplicationStatus.OFFERED, ApplicationStatus.REJECTED],
+  [ApplicationStatus.HR_ROUND]:        [ApplicationStatus.OFFER_PENDING, ApplicationStatus.OFFERED, ApplicationStatus.REJECTED],
+  [ApplicationStatus.OFFER_PENDING]:   [ApplicationStatus.OFFERED, ApplicationStatus.REJECTED],
+  [ApplicationStatus.OFFERED]:         [ApplicationStatus.ACCEPTED, ApplicationStatus.REJECTED],
+  [ApplicationStatus.ACCEPTED]:        [],
+  [ApplicationStatus.REJECTED]:        [],
+  [ApplicationStatus.WITHDRAWN]:       [],
 };
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const formatLabel = (value: string) =>
   value
     .toLowerCase()
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
-const formatDate = (value?: string | null) => {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+const getDaysSince = (dateStr?: string | null): number | null => {
+  if (!dateStr) return null;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return null;
+  const diff = Date.now() - date.getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 };
 
-const getErrorMessage = (error: unknown, fallback: string) => {
+const getErrorMessage = (error: unknown, fallback: string): string => {
   if (error && typeof error === 'object' && 'response' in error) {
-    const response = (error as { response?: { data?: { message?: string } } }).response;
-    return response?.data?.message || fallback;
+    const r = (error as { response?: { data?: { message?: string } } }).response;
+    return r?.data?.message || fallback;
   }
   if (error instanceof Error) return error.message;
   return fallback;
 };
 
-const RatingStars = ({ value, onChange, readOnly = false }: { value: number; onChange?: (val: number) => void; readOnly?: boolean }) => (
-  <Group gap={4}>
-    {Array.from({ length: 5 }).map((_, index) => {
-      const filled = index < value;
-      return (
-        <ActionIcon
-          key={index}
-          variant="subtle"
-          color={filled ? 'yellow' : 'gray'}
-          size="sm"
-          onClick={() => !readOnly && onChange?.(index + 1)}
-          disabled={readOnly}
-        >
-          <Star className={filled ? 'fill-current' : ''} size={16} />
-        </ActionIcon>
-      );
-    })}
-  </Group>
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+interface StarRatingProps {
+  value: number;
+  readOnly?: boolean;
+  onChange?: (v: number) => void;
+}
+
+const StarRating: React.FC<StarRatingProps> = ({ value, readOnly = false, onChange }) => (
+  <div className="flex items-center gap-0.5">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <button
+        key={i}
+        type="button"
+        disabled={readOnly}
+        onClick={() => !readOnly && onChange?.(i + 1)}
+        className={`p-0.5 rounded transition-colors ${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}`}
+        aria-label={`${i + 1} star`}
+      >
+        <Star
+          size={13}
+          className={i < value ? 'fill-yellow-400 text-yellow-400' : 'text-surface-300'}
+        />
+      </button>
+    ))}
+  </div>
 );
 
+interface CardMenuProps {
+  applicant: Applicant;
+  onViewDetails: () => void;
+  onMoveToNextStage: () => void;
+  onReject: () => void;
+  onCreateOffer?: () => void;
+}
+
+const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToNextStage, onReject, onCreateOffer }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const transitions = STATUS_TRANSITIONS[applicant.status] || [];
+  const nextStage = transitions.find(s => s !== ApplicationStatus.REJECTED);
+  const isTerminal = transitions.length === 0;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}
+        className="p-1 rounded text-surface-400 hover:text-surface-600 hover:bg-surface-100 transition-colors"
+        aria-label="More options"
+      >
+        <MoreHorizontal size={14} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-6 z-20 w-44 bg-white border border-surface-200 rounded-lg shadow-lg py-1 text-sm">
+          <button
+            type="button"
+            className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+            onClick={() => { setOpen(false); onViewDetails(); }}
+          >
+            View Details
+          </button>
+          {!isTerminal && nextStage && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+              onClick={() => { setOpen(false); onMoveToNextStage(); }}
+            >
+              Move to Next Stage
+            </button>
+          )}
+          {(applicant.status === ApplicationStatus.HR_ROUND || applicant.status === ApplicationStatus.OFFER_PENDING) && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+              onClick={() => { setOpen(false); onCreateOffer?.(); }}
+            >
+              Create Offer Letter
+            </button>
+          )}
+          {applicant.status !== ApplicationStatus.REJECTED && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-danger-50 text-danger-600 transition-colors"
+              onClick={() => { setOpen(false); onReject(); }}
+            >
+              Reject
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
+const EMPTY_PIPELINE: PipelineData = Object.values(ApplicationStatus).reduce<PipelineData>(
+  (acc, s) => ({ ...acc, [s]: [] } as PipelineData),
+  {} as PipelineData
+);
+
+const EMPTY_NEW_APPLICANT: ApplicantRequest = {
+  candidateId: '',
+  jobOpeningId: '',
+  source: ApplicationSource.WEBSITE,
+  notes: '',
+  expectedSalary: undefined,
+};
+
 export default function ApplicantPipelinePage() {
-  const queryClient = useQueryClient();
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [detailOpened, setDetailOpened] = useState(false);
-  const [newOpened, setNewOpened] = useState(false);
+  // ── Job Openings ──────────────────────────────────────────────────────────
+  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
+  const [jobsError, setJobsError] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string>('');
+
+  // ── Pipeline Data ─────────────────────────────────────────────────────────
+  const [pipelineData, setPipelineData] = useState<PipelineData>(EMPTY_PIPELINE);
+  const [pipelineLoading, setPipelineLoading] = useState(false);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
+
+  // ── Add Applicant Modal ───────────────────────────────────────────────────
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newApplicant, setNewApplicant] = useState<ApplicantRequest>({ ...EMPTY_NEW_APPLICANT });
+  const [addError, setAddError] = useState<string | null>(null);
+  const [addLoading, setAddLoading] = useState(false);
+
+  // ── Detail / Move Modal ───────────────────────────────────────────────────
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [activeApplicant, setActiveApplicant] = useState<Applicant | null>(null);
-  const [selectedNextStatus, setSelectedNextStatus] = useState<ApplicationStatus | null>(null);
+  const [detailNextStatus, setDetailNextStatus] = useState<ApplicationStatus | ''>('');
   const [detailNotes, setDetailNotes] = useState('');
   const [detailRejectionReason, setDetailRejectionReason] = useState('');
-  const [detailRating, setDetailRating] = useState<number>(0);
-  const [actionError, setActionError] = useState<string | null>(null);
+  const [detailRating, setDetailRating] = useState(0);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
-  const [newApplicant, setNewApplicant] = useState<ApplicantRequest>({
-    candidateId: '',
-    jobOpeningId: '',
-    source: ApplicationSource.WEBSITE,
-    notes: '',
-    expectedSalary: undefined,
+  // ── Action loading tracker per-applicant ────────────────────────────────
+  const [movingId, setMovingId] = useState<string | null>(null);
+
+  // ── Create Offer Modal ────────────────────────────────────────────────
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [offerApplicant, setOfferApplicant] = useState<Applicant | null>(null);
+  const [offerTemplates, setOfferTemplates] = useState<LetterTemplate[]>([]);
+  const [offerTemplatesLoading, setOfferTemplatesLoading] = useState(false);
+  const [offerForm, setOfferForm] = useState({
+    templateId: '',
+    offeredCtc: '',
+    offeredDesignation: '',
+    proposedJoiningDate: '',
+    additionalNotes: '',
   });
+  const [offerLoading, setOfferLoading] = useState(false);
+  const [offerError, setOfferError] = useState<string | null>(null);
+  const [offerSuccess, setOfferSuccess] = useState<string | null>(null);
 
-  const { data: jobOpeningsPage, isLoading: jobsLoading } = useQuery({
-    queryKey: ['recruitment-job-openings'],
-    queryFn: () => recruitmentService.getAllJobOpenings(0, 200),
-  });
+  // ── Load Job Openings ────────────────────────────────────────────────────
+  const loadJobOpenings = useCallback(async () => {
+    try {
+      setJobsLoading(true);
+      setJobsError(null);
+      const response = await recruitmentService.getAllJobOpenings(0, 200);
+      const jobs = response.content ?? [];
+      setJobOpenings(jobs);
+      // Auto-select first job if none selected
+      if (jobs.length > 0) {
+        setSelectedJobId(jobs[0].id);
+      }
+    } catch (err) {
+      setJobsError(getErrorMessage(err, 'Failed to load job openings'));
+    } finally {
+      setJobsLoading(false);
+    }
+  }, []);
 
-  const jobOpenings = jobOpeningsPage?.content ?? [];
+  // ── Load Pipeline ─────────────────────────────────────────────────────────
+  const loadPipeline = useCallback(async (jobId: string) => {
+    if (!jobId) return;
+    try {
+      setPipelineLoading(true);
+      setPipelineError(null);
+      const data = await applicantService.getPipeline(jobId);
+      setPipelineData(data || EMPTY_PIPELINE);
+    } catch (err) {
+      setPipelineError(getErrorMessage(err, 'Failed to load pipeline'));
+      setPipelineData(EMPTY_PIPELINE);
+    } finally {
+      setPipelineLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!selectedJobId && jobOpenings.length > 0) {
-      setSelectedJobId(jobOpenings[0].id);
+    loadJobOpenings();
+  }, [loadJobOpenings]);
+
+  useEffect(() => {
+    if (selectedJobId) {
+      loadPipeline(selectedJobId);
     }
-  }, [jobOpenings, selectedJobId]);
+  }, [selectedJobId, loadPipeline]);
 
-  const pipelineQuery = useQuery({
-    queryKey: ['applicant-pipeline', selectedJobId],
-    queryFn: () => applicantService.getPipeline(selectedJobId as string),
-    enabled: !!selectedJobId,
-  });
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
-  const pipelineData: PipelineData = pipelineQuery.data || ({} as PipelineData);
+  const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const jobId = e.target.value;
+    setSelectedJobId(jobId);
+    setPipelineData(EMPTY_PIPELINE);
+  };
 
-  const candidatesQuery = useQuery({
-    queryKey: ['recruitment-candidates', newApplicant.jobOpeningId || 'all'],
-    queryFn: async () => {
-      if (newApplicant.jobOpeningId) {
-        return recruitmentService.getCandidatesByJobOpening(newApplicant.jobOpeningId);
-      }
-      const response = await recruitmentService.getAllCandidates(0, 200);
-      return response.content;
-    },
-    enabled: newOpened,
-  });
+  const openAddModal = () => {
+    setNewApplicant({ ...EMPTY_NEW_APPLICANT, jobOpeningId: selectedJobId });
+    setAddError(null);
+    setShowAddModal(true);
+  };
 
-  const createApplicantMutation = useMutation({
-    mutationFn: (data: ApplicantRequest) => applicantService.createApplicant(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applicant-pipeline', selectedJobId] });
-      setNewOpened(false);
-      setNewApplicant({
-        candidateId: '',
-        jobOpeningId: selectedJobId || '',
-        source: ApplicationSource.WEBSITE,
-        notes: '',
-        expectedSalary: undefined,
-      });
-      setActionError(null);
-    },
-    onError: (error) => setActionError(getErrorMessage(error, 'Failed to create applicant')),
-  });
-
-  const updateStatusMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ApplicantStatusUpdate }) => applicantService.updateStatus(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applicant-pipeline', selectedJobId] });
-      setActionError(null);
-    },
-    onError: (error) => setActionError(getErrorMessage(error, 'Failed to update applicant')),
-  });
-
-  const rateApplicantMutation = useMutation({
-    mutationFn: ({ id, rating }: { id: string; rating: number }) => applicantService.rateApplicant(id, rating),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applicant-pipeline', selectedJobId] });
-      setActionError(null);
-    },
-    onError: (error) => setActionError(getErrorMessage(error, 'Failed to rate applicant')),
-  });
-
-  const quickAdvance = async (applicant: Applicant) => {
-    const currentIndex = ACTIVE_STATUSES.indexOf(applicant.status);
-    let nextStatus: ApplicationStatus | null = null;
-    if (currentIndex >= 0 && currentIndex < ACTIVE_STATUSES.length - 1) {
-      nextStatus = ACTIVE_STATUSES[currentIndex + 1];
-    } else if (applicant.status === ApplicationStatus.OFFERED) {
-      nextStatus = ApplicationStatus.ACCEPTED;
+  const handleAddApplicant = async () => {
+    if (!newApplicant.candidateId.trim()) {
+      setAddError('Candidate ID is required');
+      return;
     }
-
-    if (!nextStatus) return;
-
-    await updateStatusMutation.mutateAsync({
-      id: applicant.id,
-      data: { status: nextStatus, notes: applicant.notes },
-    });
+    if (!newApplicant.jobOpeningId) {
+      setAddError('Job Opening is required');
+      return;
+    }
+    try {
+      setAddLoading(true);
+      setAddError(null);
+      await applicantService.createApplicant(newApplicant);
+      setShowAddModal(false);
+      setNewApplicant({ ...EMPTY_NEW_APPLICANT });
+      await loadPipeline(selectedJobId);
+    } catch (err) {
+      setAddError(getErrorMessage(err, 'Failed to add applicant'));
+    } finally {
+      setAddLoading(false);
+    }
   };
 
   const openDetailModal = (applicant: Applicant) => {
     setActiveApplicant(applicant);
-    const nextOptions = STATUS_TRANSITIONS[applicant.status] || [];
-    setSelectedNextStatus(null);
+    setDetailNextStatus('');
     setDetailNotes(applicant.notes || '');
     setDetailRejectionReason(applicant.rejectionReason || '');
     setDetailRating(applicant.rating || 0);
-    setDetailOpened(true);
-    setActionError(null);
+    setDetailError(null);
+    setShowDetailModal(true);
   };
 
   const handleUpdateApplicant = async () => {
     if (!activeApplicant) return;
+    try {
+      setDetailLoading(true);
+      setDetailError(null);
 
-    const updates: Promise<unknown>[] = [];
+      const targetStatus = (detailNextStatus || activeApplicant.status) as ApplicationStatus;
+      const statusChanged = targetStatus !== activeApplicant.status;
+      const notesChanged = detailNotes !== (activeApplicant.notes || '');
+      const rejectionChanged = detailRejectionReason !== (activeApplicant.rejectionReason || '');
 
-    const statusToApply = selectedNextStatus || activeApplicant.status;
-    const notesChanged = detailNotes !== (activeApplicant.notes || '');
-    const rejectionChanged = detailRejectionReason !== (activeApplicant.rejectionReason || '');
-    const statusChanged = statusToApply !== activeApplicant.status;
+      if (statusChanged || notesChanged || rejectionChanged) {
+        const payload: ApplicantStatusUpdate = {
+          status: targetStatus,
+          notes: detailNotes || undefined,
+          rejectionReason:
+            targetStatus === ApplicationStatus.REJECTED
+              ? detailRejectionReason || undefined
+              : undefined,
+        };
+        await applicantService.updateStatus(activeApplicant.id, payload);
+      }
 
-    if (statusChanged || notesChanged || rejectionChanged) {
-      updates.push(
-        updateStatusMutation.mutateAsync({
-          id: activeApplicant.id,
-          data: {
-            status: statusToApply,
-            notes: detailNotes,
-            rejectionReason:
-              statusToApply === ApplicationStatus.REJECTED || statusToApply === ApplicationStatus.WITHDRAWN
-                ? detailRejectionReason || undefined
-                : undefined,
-          },
-        })
-      );
+      if (detailRating && detailRating !== activeApplicant.rating) {
+        await applicantService.rateApplicant(activeApplicant.id, detailRating);
+      }
+
+      setShowDetailModal(false);
+      setActiveApplicant(null);
+      await loadPipeline(selectedJobId);
+    } catch (err) {
+      setDetailError(getErrorMessage(err, 'Failed to update applicant'));
+    } finally {
+      setDetailLoading(false);
     }
-
-    if (detailRating && detailRating !== activeApplicant.rating) {
-      updates.push(rateApplicantMutation.mutateAsync({ id: activeApplicant.id, rating: detailRating }));
-    }
-
-    if (updates.length > 0) {
-      await Promise.all(updates);
-    }
-
-    setDetailOpened(false);
-    setActiveApplicant(null);
   };
 
   const handleRejectApplicant = async () => {
     if (!activeApplicant) return;
-
-    await updateStatusMutation.mutateAsync({
-      id: activeApplicant.id,
-      data: {
+    try {
+      setDetailLoading(true);
+      setDetailError(null);
+      await applicantService.updateStatus(activeApplicant.id, {
         status: ApplicationStatus.REJECTED,
-        notes: detailNotes,
+        notes: detailNotes || undefined,
         rejectionReason: detailRejectionReason || 'Not selected',
-      },
-    });
-
-    setDetailOpened(false);
-    setActiveApplicant(null);
-  };
-
-  const handleCreateApplicant = async () => {
-    if (!newApplicant.candidateId || !newApplicant.jobOpeningId) {
-      setActionError('Candidate and Job Opening are required');
-      return;
+      });
+      setShowDetailModal(false);
+      setActiveApplicant(null);
+      await loadPipeline(selectedJobId);
+    } catch (err) {
+      setDetailError(getErrorMessage(err, 'Failed to reject applicant'));
+    } finally {
+      setDetailLoading(false);
     }
-    await createApplicantMutation.mutateAsync(newApplicant);
   };
 
-  const jobOptions = jobOpenings.map(job => ({
-    value: job.id,
-    label: `${job.jobTitle}${job.jobCode ? ` (${job.jobCode})` : ''}`,
-  }));
+  const handleMoveToNextStage = async (applicant: Applicant) => {
+    const transitions = STATUS_TRANSITIONS[applicant.status] || [];
+    const nextStage = transitions.find(s => s !== ApplicationStatus.REJECTED);
+    if (!nextStage) return;
+    try {
+      setMovingId(applicant.id);
+      await applicantService.updateStatus(applicant.id, {
+        status: nextStage,
+        notes: applicant.notes,
+      });
+      await loadPipeline(selectedJobId);
+    } catch (err) {
+      console.error('Failed to advance stage:', err);
+    } finally {
+      setMovingId(null);
+    }
+  };
 
-  const candidateOptions = (candidatesQuery.data || []).map(candidate => {
-    const name = candidate.fullName || `${candidate.firstName} ${candidate.lastName}`;
-    return {
-      value: candidate.id,
-      label: `${name} · ${candidate.email}`,
-    };
-  });
+  const handleQuickReject = async (applicant: Applicant) => {
+    try {
+      setMovingId(applicant.id);
+      await applicantService.updateStatus(applicant.id, {
+        status: ApplicationStatus.REJECTED,
+        rejectionReason: 'Not selected',
+      });
+      await loadPipeline(selectedJobId);
+    } catch (err) {
+      console.error('Failed to reject:', err);
+    } finally {
+      setMovingId(null);
+    }
+  };
 
-  const archiveCounts = ARCHIVE_STATUSES.reduce<Record<ApplicationStatus, number>>((acc, status) => {
-    acc[status] = pipelineData?.[status]?.length || 0;
-    return acc;
-  }, {} as Record<ApplicationStatus, number>);
+  const openOfferModal = async (applicant: Applicant) => {
+    setOfferApplicant(applicant);
+    setOfferForm({
+      templateId: '',
+      offeredCtc: applicant.expectedSalary?.toString() ?? '',
+      offeredDesignation: applicant.jobTitle ?? '',
+      proposedJoiningDate: '',
+      additionalNotes: '',
+    });
+    setOfferError(null);
+    setOfferSuccess(null);
+    setShowOfferModal(true);
 
-  const selectedJobTitle = jobOpenings.find(job => job.id === selectedJobId)?.jobTitle;
+    // Load offer templates
+    setOfferTemplatesLoading(true);
+    try {
+      const templates = await letterService.getTemplatesByCategory(LetterCategory.OFFER);
+      setOfferTemplates(templates);
+      if (templates.length === 1) {
+        setOfferForm(prev => ({ ...prev, templateId: templates[0].id }));
+      }
+    } catch {
+      setOfferTemplates([]);
+    } finally {
+      setOfferTemplatesLoading(false);
+    }
+  };
 
+  const handleCreateOffer = async () => {
+    if (!offerApplicant) return;
+    if (!offerForm.templateId) { setOfferError('Please select a letter template'); return; }
+    if (!offerForm.offeredCtc || isNaN(Number(offerForm.offeredCtc))) { setOfferError('Please enter a valid CTC amount'); return; }
+    if (!offerForm.offeredDesignation.trim()) { setOfferError('Please enter the offered designation'); return; }
+    if (!offerForm.proposedJoiningDate) { setOfferError('Please select a proposed joining date'); return; }
+
+    try {
+      setOfferLoading(true);
+      setOfferError(null);
+
+      // Step 1: Generate the offer letter
+      const letter = await letterService.generateOfferLetter({
+        templateId: offerForm.templateId,
+        candidateId: offerApplicant.candidateId,
+        offeredCtc: Number(offerForm.offeredCtc),
+        offeredDesignation: offerForm.offeredDesignation.trim(),
+        proposedJoiningDate: offerForm.proposedJoiningDate,
+        additionalNotes: offerForm.additionalNotes || undefined,
+        sendForESign: true,
+      }, '');  // generatedBy will be filled by server from JWT
+
+      // Step 2: Generate PDF
+      await letterService.generatePdf(letter.id);
+
+      // Step 3: Issue with e-sign (sends email to candidate)
+      await letterService.issueOfferLetterWithESign(letter.id, '');
+
+      // Step 4: Advance applicant to OFFERED stage
+      await applicantService.updateStatus(offerApplicant.id, {
+        status: ApplicationStatus.OFFERED,
+        notes: `Offer letter sent (Ref: ${letter.referenceNumber})`,
+      });
+
+      setOfferSuccess(`Offer letter sent successfully! Reference: ${letter.referenceNumber}`);
+      await loadPipeline(selectedJobId);
+
+      // Close modal after 2s
+      setTimeout(() => {
+        setShowOfferModal(false);
+        setOfferApplicant(null);
+        setOfferSuccess(null);
+      }, 2000);
+    } catch (err: unknown) {
+      setOfferError(getErrorMessage(err, 'Failed to create and send offer letter'));
+    } finally {
+      setOfferLoading(false);
+    }
+  };
+
+  // ── Derived data ──────────────────────────────────────────────────────────
+
+  const selectedJob = jobOpenings.find(j => j.id === selectedJobId);
+
+  const totalApplicants = PIPELINE_STAGES.reduce(
+    (sum, s) => sum + (pipelineData?.[s]?.length || 0),
+    0
+  );
+
+  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <AppLayout activeMenuItem="recruitment">
-      <div className="p-6 space-y-6">
-        <Group justify="space-between" align="flex-start" className="flex-wrap gap-4">
-          <Stack gap={4}>
-            <Text size="xl" fw={700}>Applicant Pipeline</Text>
-            <Text size="sm" c="dimmed">Track candidates through each hiring stage</Text>
-          </Stack>
-          <Group gap="md" className="flex-wrap">
-            <Select
-              searchable
-              clearable={false}
-              value={selectedJobId}
-              onChange={value => {
-                setSelectedJobId(value);
-                if (value) {
-                  setNewApplicant(prev => ({ ...prev, jobOpeningId: value }));
-                }
-              }}
-              data={jobOptions}
-              placeholder={jobsLoading ? 'Loading job openings...' : 'Select job opening'}
-              w={280}
-            />
-            <Button leftSection={<Plus size={16} />} onClick={() => {
-              setNewApplicant(prev => ({
-                ...prev,
-                jobOpeningId: selectedJobId || prev.jobOpeningId,
-              }));
-              setNewOpened(true);
-              setActionError(null);
-            }}>
-              New Application
-            </Button>
-          </Group>
-        </Group>
+    <AppLayout
+      activeMenuItem="recruitment"
+      breadcrumbs={[
+        { label: 'Recruitment', href: '/recruitment' },
+        { label: 'Pipeline' },
+      ]}
+    >
+      <div className="p-6 space-y-6 min-h-screen bg-surface-50">
+        {/* ── Header ────────────────────────────────────────────────────── */}
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900">ATS Pipeline</h1>
+            <p className="text-sm text-surface-500 mt-0.5">
+              Track candidates through each hiring stage
+            </p>
+          </div>
 
-        {actionError && (
-          <Card withBorder radius="md" p="sm" className="bg-red-50">
-            <Text size="sm" c="red">{actionError}</Text>
-          </Card>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Job Selector */}
+            <div className="w-72">
+              {jobsLoading ? (
+                <div className="flex items-center gap-2 text-sm text-surface-500 h-10 px-3 border border-surface-300 rounded-lg bg-white">
+                  <Loader2 size={14} className="animate-spin" />
+                  Loading job openings...
+                </div>
+              ) : (
+                <Select
+                  value={selectedJobId}
+                  onChange={handleJobChange}
+                  disabled={jobOpenings.length === 0}
+                >
+                  <option value="" disabled>
+                    {jobOpenings.length === 0 ? 'No job openings found' : 'Select a job opening'}
+                  </option>
+                  {jobOpenings.map(job => (
+                    <option key={job.id} value={job.id}>
+                      {job.jobTitle}{job.jobCode ? ` (${job.jobCode})` : ''}
+                    </option>
+                  ))}
+                </Select>
+              )}
+            </div>
+
+            {/* Add Applicant Button */}
+            <Button
+              variant="primary"
+              leftIcon={<Plus size={16} />}
+              onClick={openAddModal}
+              disabled={!selectedJobId || jobsLoading}
+            >
+              Add Applicant
+            </Button>
+          </div>
+        </div>
+
+        {/* ── Errors ────────────────────────────────────────────────────── */}
+        {jobsError && (
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+            {jobsError}
+          </div>
         )}
 
-        {!selectedJobId ? (
-          <Card withBorder radius="lg" p="xl">
-            <Text size="sm" c="dimmed">Select a job opening to view the pipeline.</Text>
-          </Card>
-        ) : pipelineQuery.isLoading ? (
-          <Card withBorder radius="lg" p="xl">
-            <Text size="sm" c="dimmed">Loading pipeline for {selectedJobTitle || 'job opening'}...</Text>
-          </Card>
-        ) : pipelineQuery.isError ? (
-          <Card withBorder radius="lg" p="xl">
-            <Text size="sm" c="red">{getErrorMessage(pipelineQuery.error, 'Failed to load pipeline')}</Text>
-          </Card>
+        {/* ── Empty / Loading / Content ─────────────────────────────────── */}
+        {!selectedJobId && !jobsLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 rounded-full bg-surface-100 flex items-center justify-center mb-4">
+              <User size={28} className="text-surface-400" />
+            </div>
+            <h3 className="text-surface-700 font-semibold mb-1">No Job Selected</h3>
+            <p className="text-surface-500 text-sm">
+              Select a job opening above to view its applicant pipeline.
+            </p>
+          </div>
+        ) : pipelineLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 size={32} className="animate-spin text-primary-500" />
+            <span className="ml-3 text-surface-500">
+              Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
+            </span>
+          </div>
+        ) : pipelineError ? (
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+            {pipelineError}
+          </div>
         ) : (
-          <div className="space-y-4">
-            <div className="overflow-x-auto pb-4">
-              <div className="flex gap-4 min-w-[1100px]">
-                {ACTIVE_STATUSES.map(status => {
-                  const applicants = (pipelineData?.[status] || []).slice().sort((a, b) => {
-                    const aTime = a.appliedDate ? new Date(a.appliedDate).getTime() : 0;
-                    const bTime = b.appliedDate ? new Date(b.appliedDate).getTime() : 0;
-                    return bTime - aTime;
+          <>
+            {/* ── Pipeline Stats Bar ──────────────────────────────────── */}
+            {selectedJob && (
+              <div className="flex flex-wrap items-center gap-3 text-sm text-surface-600">
+                <span className="font-medium text-surface-800">{selectedJob.jobTitle}</span>
+                {selectedJob.jobCode && (
+                  <span className="bg-surface-100 px-2 py-0.5 rounded text-surface-500 font-mono text-xs">
+                    {selectedJob.jobCode}
+                  </span>
+                )}
+                {selectedJob.departmentName && (
+                  <span className="text-surface-500">{selectedJob.departmentName}</span>
+                )}
+                <span className="ml-auto text-surface-500">
+                  {totalApplicants} applicant{totalApplicants !== 1 ? 's' : ''} total
+                </span>
+              </div>
+            )}
+
+            {/* ── Kanban Board ────────────────────────────────────────── */}
+            <div className="overflow-x-auto pb-4 -mx-6 px-6">
+              <div className="flex gap-3" style={{ minWidth: `${PIPELINE_STAGES.length * 256 + (PIPELINE_STAGES.length - 1) * 12}px` }}>
+                {PIPELINE_STAGES.map(stage => {
+                  const applicants = (pipelineData?.[stage] || []).slice().sort((a, b) => {
+                    const at = a.appliedDate ? new Date(a.appliedDate).getTime() : 0;
+                    const bt = b.appliedDate ? new Date(b.appliedDate).getTime() : 0;
+                    return bt - at;
                   });
+                  const colors = STAGE_COLORS[stage];
+                  const transitions = STATUS_TRANSITIONS[stage];
+                  const nextForward = transitions.find(s => s !== ApplicationStatus.REJECTED);
+
                   return (
-                    <Card
-                      key={status}
-                      withBorder
-                      radius="lg"
-                      p="md"
-                      className="min-w-[260px] max-w-[280px] flex-1 transition-all"
-                      style={{ borderTop: `4px solid var(--mantine-color-${STATUS_COLORS[status]}-6)` }}
+                    <div
+                      key={stage}
+                      className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-surface-200 bg-white border-t-4 ${colors.col} overflow-hidden`}
+                      style={{ maxHeight: 'calc(100vh - 260px)' }}
                     >
-                      <Stack gap="sm">
-                        <Group justify="space-between">
-                          <Text fw={600}>{formatLabel(status)}</Text>
-                          <Badge color={STATUS_COLORS[status]} variant="light">
-                            {applicants.length}
-                          </Badge>
-                        </Group>
+                      {/* Column Header */}
+                      <div className={`px-3 py-2.5 ${colors.header} flex items-center justify-between`}>
+                        <span className="text-sm font-semibold text-surface-800">
+                          {STAGE_LABELS[stage]}
+                        </span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                          {applicants.length}
+                        </span>
+                      </div>
 
-                        <Stack gap="sm">
-                          {applicants.length === 0 ? (
-                            <Text size="sm" c="dimmed">No applicants yet</Text>
-                          ) : (
-                            applicants.map(applicant => {
-                              const quickLabel = (() => {
-                                const index = ACTIVE_STATUSES.indexOf(applicant.status);
-                                if (index >= 0 && index < ACTIVE_STATUSES.length - 1) {
-                                  return `Move to ${formatLabel(ACTIVE_STATUSES[index + 1])}`;
-                                }
-                                if (applicant.status === ApplicationStatus.OFFERED) {
-                                  return 'Mark Accepted';
-                                }
-                                return 'Update';
-                              })();
+                      {/* Cards scroll area */}
+                      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                        {applicants.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-surface-400">
+                            No applicants
+                          </div>
+                        ) : (
+                          applicants.map(applicant => {
+                            const days = getDaysSince(applicant.appliedDate);
+                            const isMoving = movingId === applicant.id;
 
-                              return (
-                                <Card
-                                  key={applicant.id}
-                                  withBorder
-                                  radius="md"
-                                  p="sm"
-                                  className="transition-all hover:shadow-md cursor-pointer"
-                                  onClick={() => openDetailModal(applicant)}
-                                >
-                                  <Stack gap={6}>
-                                    <Group justify="space-between" align="flex-start">
-                                      <Stack gap={2}>
-                                        <Text fw={600} size="sm">
-                                          {applicant.candidateName || 'Unnamed Candidate'}
-                                        </Text>
-                                        <Text size="xs" c="dimmed">Applied {formatDate(applicant.appliedDate)}</Text>
-                                      </Stack>
-                                      <Badge
-                                        color={applicant.source ? SOURCE_COLORS[applicant.source] : 'gray'}
-                                        variant="light"
-                                      >
-                                        {applicant.source ? formatLabel(applicant.source) : 'Other'}
-                                      </Badge>
-                                    </Group>
+                            return (
+                              <div
+                                key={applicant.id}
+                                className="bg-white border border-surface-200 rounded-lg p-3 shadow-sm hover:shadow-md hover:border-surface-300 transition-all cursor-pointer group"
+                                onClick={() => openDetailModal(applicant)}
+                              >
+                                {/* Card Top Row */}
+                                <div className="flex items-start justify-between gap-1 mb-1.5">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-surface-900 truncate leading-tight">
+                                      {applicant.candidateName || `Candidate ${applicant.candidateId.slice(0, 8)}`}
+                                    </p>
+                                    {applicant.jobTitle && (
+                                      <p className="text-xs text-surface-500 truncate mt-0.5">
+                                        {applicant.jobTitle}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={e => e.stopPropagation()}
+                                  >
+                                    <CardMenu
+                                      applicant={applicant}
+                                      onViewDetails={() => openDetailModal(applicant)}
+                                      onMoveToNextStage={() => handleMoveToNextStage(applicant)}
+                                      onReject={() => handleQuickReject(applicant)}
+                                      onCreateOffer={() => openOfferModal(applicant)}
+                                    />
+                                  </div>
+                                </div>
 
-                                    <RatingStars value={applicant.rating || 0} readOnly />
+                                {/* Source + Days */}
+                                <div className="flex items-center justify-between mb-2">
+                                  {applicant.source ? (
+                                    <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[applicant.source]}`}>
+                                      {formatLabel(applicant.source)}
+                                    </span>
+                                  ) : (
+                                    <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-gray-50 text-gray-500">
+                                      Other
+                                    </span>
+                                  )}
+                                  {days !== null && (
+                                    <span className="text-xs text-surface-400">
+                                      {days === 0 ? 'Today' : `${days}d ago`}
+                                    </span>
+                                  )}
+                                </div>
 
-                                    <Button
-                                      size="xs"
-                                      variant="light"
-                                      rightSection={<ArrowRight size={14} />}
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        quickAdvance(applicant);
-                                      }}
-                                      loading={updateStatusMutation.isPending}
-                                    >
-                                      {quickLabel}
-                                    </Button>
-                                  </Stack>
-                                </Card>
-                              );
-                            })
-                          )}
-                        </Stack>
-                      </Stack>
-                    </Card>
+                                {/* Star Rating */}
+                                {(applicant.rating != null && applicant.rating > 0) && (
+                                  <div className="mb-2">
+                                    <StarRating value={applicant.rating} readOnly />
+                                  </div>
+                                )}
+
+                                {/* Quick Move Button */}
+                                {nextForward && (
+                                  <button
+                                    type="button"
+                                    disabled={isMoving}
+                                    onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
+                                    className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-surface-50 hover:bg-primary-50 text-surface-500 hover:text-primary-600 border border-surface-200 hover:border-primary-200 transition-all"
+                                  >
+                                    {isMoving ? (
+                                      <Loader2 size={11} className="animate-spin" />
+                                    ) : (
+                                      <>
+                                        <ArrowRight size={11} />
+                                        Move to {STAGE_LABELS[nextForward]}
+                                      </>
+                                    )}
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
             </div>
-
-            <Grid gutter="md">
-              {ARCHIVE_STATUSES.map(status => (
-                <Grid.Col key={status} span={{ base: 12, sm: 4 }}>
-                  <Card withBorder radius="lg" p="md" className="transition-all">
-                    <Group justify="space-between">
-                      <Text fw={600}>{formatLabel(status)}</Text>
-                      <Badge color={STATUS_COLORS[status]} variant="light">
-                        {archiveCounts[status]}
-                      </Badge>
-                    </Group>
-                    <Text size="xs" c="dimmed" mt={6}>
-                      Archived candidates
-                    </Text>
-                  </Card>
-                </Grid.Col>
-              ))}
-            </Grid>
-          </div>
+          </>
         )}
       </div>
 
-      <Modal
-        opened={detailOpened}
-        onClose={() => {
-          setDetailOpened(false);
-          setActiveApplicant(null);
-          setSelectedNextStatus(null);
-        }}
-        title="Applicant Details"
-        size="lg"
-        centered
-      >
-        {activeApplicant && (
-          <Stack gap="md">
-            <Grid gutter="sm">
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <Text size="sm" c="dimmed">Candidate</Text>
-                <Text fw={600}>{activeApplicant.candidateName || 'Unnamed Candidate'}</Text>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <Text size="sm" c="dimmed">Job Opening</Text>
-                <Text fw={600}>{activeApplicant.jobTitle || '—'}</Text>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 4 }}>
-                <Text size="sm" c="dimmed">Status</Text>
-                <Badge color={STATUS_COLORS[activeApplicant.status]} variant="light">
-                  {formatLabel(activeApplicant.status)}
-                </Badge>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 4 }}>
-                <Text size="sm" c="dimmed">Source</Text>
-                <Badge
-                  color={activeApplicant.source ? SOURCE_COLORS[activeApplicant.source] : 'gray'}
-                  variant="light"
-                >
-                  {activeApplicant.source ? formatLabel(activeApplicant.source) : 'Other'}
-                </Badge>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 4 }}>
-                <Text size="sm" c="dimmed">Applied</Text>
-                <Text fw={500}>{formatDate(activeApplicant.appliedDate)}</Text>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <Text size="sm" c="dimmed">Expected Salary</Text>
-                <Text fw={500}>
-                  {activeApplicant.expectedSalary ? activeApplicant.expectedSalary.toLocaleString() : '—'}
-                </Text>
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <Text size="sm" c="dimmed">Offered Salary</Text>
-                <Text fw={500}>
-                  {activeApplicant.offeredSalary ? activeApplicant.offeredSalary.toLocaleString() : '—'}
-                </Text>
-              </Grid.Col>
-            </Grid>
+      {/* ── Add Applicant Modal ──────────────────────────────────────────────── */}
+      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} size="lg">
+        <ModalHeader onClose={() => setShowAddModal(false)}>
+          Add New Applicant
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            {addError && (
+              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+                {addError}
+              </div>
+            )}
 
-            <Select
-              label="Move to stage"
-              data={(STATUS_TRANSITIONS[activeApplicant.status] || [])
-                .filter(status => status !== activeApplicant.status)
-                .map(status => ({ value: status, label: formatLabel(status) }))}
-              value={selectedNextStatus}
-              onChange={(value) => setSelectedNextStatus(value as ApplicationStatus | null)}
-              placeholder="Select next status"
-              searchable
+            <Input
+              label="Candidate ID *"
+              placeholder="Enter candidate ID"
+              value={newApplicant.candidateId}
+              onChange={e => setNewApplicant(prev => ({ ...prev, candidateId: e.target.value }))}
             />
 
-            <Textarea
-              label="Notes"
-              value={detailNotes}
-              onChange={(event) => setDetailNotes(event.currentTarget.value)}
-              minRows={3}
-            />
-
-            <Textarea
-              label="Rejection reason (optional)"
-              value={detailRejectionReason}
-              onChange={(event) => setDetailRejectionReason(event.currentTarget.value)}
-              minRows={2}
-            />
-
-            <Stack gap={4}>
-              <Text size="sm" fw={500}>Rating</Text>
-              <RatingStars value={detailRating} onChange={setDetailRating} />
-            </Stack>
-
-            <Group justify="space-between" mt="sm">
-              <Button
-                color="red"
-                variant="light"
-                onClick={handleRejectApplicant}
-                loading={updateStatusMutation.isPending}
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Job Opening *
+              </label>
+              <Select
+                value={newApplicant.jobOpeningId}
+                onChange={e => setNewApplicant(prev => ({ ...prev, jobOpeningId: e.target.value }))}
               >
-                Reject
-              </Button>
-              <Group>
-                <Button variant="default" onClick={() => setDetailOpened(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleUpdateApplicant} loading={updateStatusMutation.isPending || rateApplicantMutation.isPending}>
-                  Update
-                </Button>
-              </Group>
-            </Group>
-          </Stack>
-        )}
+                <option value="">Select job opening</option>
+                {jobOpenings.map(job => (
+                  <option key={job.id} value={job.id}>
+                    {job.jobTitle}{job.jobCode ? ` (${job.jobCode})` : ''}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Source
+              </label>
+              <Select
+                value={newApplicant.source}
+                onChange={e => setNewApplicant(prev => ({ ...prev, source: e.target.value as ApplicationSource }))}
+              >
+                {Object.values(ApplicationSource).map(src => (
+                  <option key={src} value={src}>{formatLabel(src)}</option>
+                ))}
+              </Select>
+            </div>
+
+            <Input
+              label="Expected Salary"
+              type="number"
+              placeholder="e.g. 80000"
+              value={newApplicant.expectedSalary?.toString() ?? ''}
+              onChange={e => {
+                const val = e.target.value;
+                setNewApplicant(prev => ({
+                  ...prev,
+                  expectedSalary: val ? Number(val) : undefined,
+                }));
+              }}
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Notes
+              </label>
+              <Textarea
+                placeholder="Optional notes about this applicant..."
+                value={newApplicant.notes ?? ''}
+                onChange={e => setNewApplicant(prev => ({ ...prev, notes: e.target.value }))}
+                rows={3}
+              />
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="outline" onClick={() => setShowAddModal(false)} disabled={addLoading}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleAddApplicant} isLoading={addLoading} loadingText="Adding...">
+            Add Applicant
+          </Button>
+        </ModalFooter>
       </Modal>
 
-      <Modal
-        opened={newOpened}
-        onClose={() => setNewOpened(false)}
-        title="New Application"
-        size="lg"
-        centered
-      >
-        <Stack gap="md">
-          <Select
-            label="Candidate"
-            placeholder="Search candidate"
-            searchable
-            data={candidateOptions}
-            value={newApplicant.candidateId || null}
-            onChange={(value) => {
-              if (!value) return;
-              const selectedCandidate = (candidatesQuery.data || []).find(candidate => candidate.id === value);
-              setNewApplicant(prev => ({
-                ...prev,
-                candidateId: value,
-                jobOpeningId: selectedCandidate?.jobOpeningId || prev.jobOpeningId,
-              }));
-            }}
-            nothingFoundMessage={candidatesQuery.isLoading ? 'Loading candidates...' : 'No candidates found'}
-          />
+      {/* ── Detail / Edit Modal ──────────────────────────────────────────────── */}
+      <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
+        <ModalHeader onClose={() => setShowDetailModal(false)}>
+          Applicant Details
+        </ModalHeader>
+        <ModalBody>
+          {activeApplicant && (
+            <div className="space-y-4">
+              {detailError && (
+                <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+                  {detailError}
+                </div>
+              )}
 
-          <Select
-            label="Job Opening"
-            placeholder="Select job opening"
-            data={jobOptions}
-            value={newApplicant.jobOpeningId || null}
-            onChange={(value) => value && setNewApplicant(prev => ({ ...prev, jobOpeningId: value }))}
-            searchable
-          />
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-4 bg-surface-50 rounded-lg p-4 text-sm">
+                <div>
+                  <p className="text-surface-500 text-xs mb-0.5">Candidate</p>
+                  <p className="font-semibold text-surface-900">
+                    {activeApplicant.candidateName || `ID: ${activeApplicant.candidateId}`}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-surface-500 text-xs mb-0.5">Job Title</p>
+                  <p className="font-medium text-surface-800">{activeApplicant.jobTitle || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-surface-500 text-xs mb-0.5">Current Stage</p>
+                  <span className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full ${STAGE_COLORS[activeApplicant.status]?.badge ?? 'bg-surface-100 text-surface-600'}`}>
+                    {STAGE_LABELS[activeApplicant.status] ?? formatLabel(activeApplicant.status)}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-surface-500 text-xs mb-0.5">Source</p>
+                  <p className="font-medium text-surface-800">
+                    {activeApplicant.source ? formatLabel(activeApplicant.source) : '—'}
+                  </p>
+                </div>
+                {activeApplicant.appliedDate && (
+                  <div>
+                    <p className="text-surface-500 text-xs mb-0.5">Applied</p>
+                    <p className="font-medium text-surface-800">
+                      {new Date(activeApplicant.appliedDate).toLocaleDateString('en-IN', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-surface-500 text-xs mb-0.5">Expected Salary</p>
+                  <p className="font-medium text-surface-800">
+                    {activeApplicant.expectedSalary
+                      ? activeApplicant.expectedSalary.toLocaleString('en-IN')
+                      : '—'}
+                  </p>
+                </div>
+              </div>
 
-          <Select
-            label="Source"
-            data={Object.values(ApplicationSource).map(source => ({
-              value: source,
-              label: formatLabel(source),
-            }))}
-            value={newApplicant.source}
-            onChange={(value) => value && setNewApplicant(prev => ({ ...prev, source: value as ApplicationSource }))}
-          />
+              {/* Move to Stage */}
+              {(STATUS_TRANSITIONS[activeApplicant.status] || []).length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                    Move to Stage
+                  </label>
+                  <Select
+                    value={detailNextStatus}
+                    onChange={e => setDetailNextStatus(e.target.value as ApplicationStatus | '')}
+                  >
+                    <option value="">Keep current stage</option>
+                    {(STATUS_TRANSITIONS[activeApplicant.status] || []).map(s => (
+                      <option key={s} value={s}>
+                        {STAGE_LABELS[s] ?? formatLabel(s)}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
 
-          <TextInput
-            label="Expected Salary"
-            type="number"
-            value={newApplicant.expectedSalary?.toString() || ''}
-            onChange={(event) => {
-              const value = event.currentTarget.value;
-              setNewApplicant(prev => ({
-                ...prev,
-                expectedSalary: value ? Number(value) : undefined,
-              }));
-            }}
-          />
+              {/* Rating */}
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-2">
+                  Rating
+                </label>
+                <StarRating
+                  value={detailRating}
+                  onChange={setDetailRating}
+                />
+              </div>
 
-          <Textarea
-            label="Notes"
-            value={newApplicant.notes || ''}
-            onChange={(event) => setNewApplicant(prev => ({ ...prev, notes: event.currentTarget.value }))}
-            minRows={3}
-          />
+              {/* Notes */}
+              <div>
+                <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                  Notes
+                </label>
+                <Textarea
+                  value={detailNotes}
+                  onChange={e => setDetailNotes(e.target.value)}
+                  placeholder="Add notes about this applicant..."
+                  rows={3}
+                />
+              </div>
 
-          <Group justify="flex-end">
-            <Button variant="default" onClick={() => setNewOpened(false)}>
+              {/* Rejection Reason */}
+              {(detailNextStatus === ApplicationStatus.REJECTED ||
+                activeApplicant.status === ApplicationStatus.REJECTED) && (
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                    Rejection Reason
+                  </label>
+                  <Textarea
+                    value={detailRejectionReason}
+                    onChange={e => setDetailRejectionReason(e.target.value)}
+                    placeholder="Optional reason for rejection..."
+                    rows={2}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter className="justify-between">
+          <Button
+            variant="soft-danger"
+            onClick={handleRejectApplicant}
+            isLoading={detailLoading}
+            disabled={activeApplicant?.status === ApplicationStatus.REJECTED}
+          >
+            Reject
+          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={() => setShowDetailModal(false)} disabled={detailLoading}>
               Cancel
             </Button>
-            <Button onClick={handleCreateApplicant} loading={createApplicantMutation.isPending}>
-              Create Application
+            <Button variant="primary" onClick={handleUpdateApplicant} isLoading={detailLoading} loadingText="Saving...">
+              Save Changes
             </Button>
-          </Group>
-        </Stack>
+          </div>
+        </ModalFooter>
+      </Modal>
+      {/* ── Create Offer Modal ──────────────────────────────────────────────── */}
+      <Modal isOpen={showOfferModal} onClose={() => setShowOfferModal(false)} size="lg">
+        <ModalHeader onClose={() => setShowOfferModal(false)}>
+          Create Offer Letter{offerApplicant ? ` for ${offerApplicant.candidateName || 'Candidate'}` : ''}
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            {offerError && (
+              <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-3">
+                {offerError}
+              </div>
+            )}
+            {offerSuccess && (
+              <div className="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
+                <svg className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                {offerSuccess}
+              </div>
+            )}
+
+            {/* Template selector */}
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Offer Letter Template *
+              </label>
+              {offerTemplatesLoading ? (
+                <div className="flex items-center gap-2 h-10 px-3 border border-surface-300 rounded-lg bg-surface-50 text-sm text-surface-500">
+                  <Loader2 size={14} className="animate-spin" /> Loading templates...
+                </div>
+              ) : (
+                <Select
+                  value={offerForm.templateId}
+                  onChange={e => setOfferForm(prev => ({ ...prev, templateId: e.target.value }))}
+                  disabled={offerLoading}
+                >
+                  <option value="">Select a template</option>
+                  {offerTemplates.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                  {offerTemplates.length === 0 && (
+                    <option value="" disabled>No offer templates found — create one in Letters settings</option>
+                  )}
+                </Select>
+              )}
+            </div>
+
+            <Input
+              label="Offered CTC (Annual, INR) *"
+              type="number"
+              placeholder="e.g. 1200000"
+              value={offerForm.offeredCtc}
+              onChange={e => setOfferForm(prev => ({ ...prev, offeredCtc: e.target.value }))}
+              disabled={offerLoading}
+            />
+
+            <Input
+              label="Offered Designation *"
+              placeholder="e.g. Senior Software Engineer"
+              value={offerForm.offeredDesignation}
+              onChange={e => setOfferForm(prev => ({ ...prev, offeredDesignation: e.target.value }))}
+              disabled={offerLoading}
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Proposed Joining Date *
+              </label>
+              <input
+                type="date"
+                value={offerForm.proposedJoiningDate}
+                onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
+                min={new Date().toISOString().split('T')[0]}
+                disabled={offerLoading}
+                className="w-full px-3 py-2 border border-surface-300 rounded-lg text-sm text-surface-900 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:bg-surface-50 disabled:text-surface-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                Additional Notes
+              </label>
+              <Textarea
+                placeholder="Any additional terms or notes to include..."
+                value={offerForm.additionalNotes}
+                onChange={e => setOfferForm(prev => ({ ...prev, additionalNotes: e.target.value }))}
+                rows={3}
+                disabled={offerLoading}
+              />
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
+              The offer letter will be generated, a PDF created, and a signing link sent to the candidate's email.
+              The applicant will be moved to <strong>Offered</strong> stage automatically.
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="outline" onClick={() => setShowOfferModal(false)} disabled={offerLoading}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleCreateOffer}
+            isLoading={offerLoading}
+            loadingText="Sending Offer..."
+            disabled={!!offerSuccess}
+          >
+            Generate & Send Offer
+          </Button>
+        </ModalFooter>
       </Modal>
     </AppLayout>
   );

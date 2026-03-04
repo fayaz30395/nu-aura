@@ -41,4 +41,10 @@ public abstract class BaseEntity {
 
     @Version
     private Long version;
+
+    @Column(name = "tenant_id")
+    private UUID tenantId;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }

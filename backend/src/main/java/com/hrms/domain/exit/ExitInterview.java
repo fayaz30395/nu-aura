@@ -102,6 +102,10 @@ public class ExitInterview extends TenantAware {
     @Builder.Default
     private Boolean isConfidential = true;
 
+    /** Token for token-based public survey link (shared with departing employee) */
+    @Column(name = "public_token", unique = true)
+    private String publicToken;
+
     public enum InterviewMode {
         IN_PERSON,
         VIDEO_CALL,

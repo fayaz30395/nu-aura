@@ -13,6 +13,8 @@ import {
   Clock,
   TrendingUp,
   SlidersHorizontal,
+  Grid3X3,
+  Sliders,
 } from 'lucide-react';
 import { goalService, reviewCycleService } from '@/lib/services/performance.service';
 import { okrService, OkrSummary } from '@/lib/services/okr.service';
@@ -90,6 +92,26 @@ const performanceModules = [
     color: 'bg-indigo-500',
     lightColor: 'bg-indigo-50',
     textColor: 'text-indigo-600',
+  },
+  {
+    id: 'calibration',
+    title: 'Calibration',
+    description: 'Finalize ratings with distribution view and bell-curve check',
+    href: '/performance/calibration',
+    icon: Sliders,
+    color: 'bg-violet-500',
+    lightColor: 'bg-violet-50',
+    textColor: 'text-violet-600',
+  },
+  {
+    id: '9box',
+    title: '9-Box Grid',
+    description: 'Talent segmentation by performance and potential',
+    href: '/performance/9box',
+    icon: Grid3X3,
+    color: 'bg-rose-500',
+    lightColor: 'bg-rose-50',
+    textColor: 'text-rose-600',
   },
 ];
 

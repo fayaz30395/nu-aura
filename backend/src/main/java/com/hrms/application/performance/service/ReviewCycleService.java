@@ -1,8 +1,12 @@
 package com.hrms.application.performance.service;
 
 import com.hrms.application.performance.dto.ActivateCycleRequest;
+import com.hrms.application.performance.dto.CalibrationRatingRequest;
+import com.hrms.application.performance.dto.CalibrationResponse;
+import com.hrms.application.performance.dto.ManagerReviewRequest;
 import com.hrms.application.performance.dto.ReviewCycleRequest;
 import com.hrms.application.performance.dto.ReviewCycleResponse;
+import com.hrms.application.performance.dto.SelfAssessmentRequest;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.performance.PerformanceReview;
@@ -18,8 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -218,6 +225,155 @@ public class ReviewCycleService {
                 .build();
         review.setTenantId(tenantId);
         return review;
+    }
+
+    /**
+     * Advance the cycle to its next stage.
+     * PLANNING/DRAFT → SELF_ASSESSMENT → MANAGER_REVIEW → CALIBRATION → RATINGS_PUBLISHED → COMPLETED
+     */
+    @Transactional
+    public ReviewCycleResponse advanceStage(UUID cycleId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+
+        ReviewCycle.CycleStatus next = switch (cycle.getStatus()) {
+            case PLANNING, DRAFT -> ReviewCycle.CycleStatus.SELF_ASSESSMENT;
+            case ACTIVE, SELF_ASSESSMENT -> ReviewCycle.CycleStatus.MANAGER_REVIEW;
+            case MANAGER_REVIEW -> ReviewCycle.CycleStatus.CALIBRATION;
+            case CALIBRATION -> ReviewCycle.CycleStatus.RATINGS_PUBLISHED;
+            case RATINGS_PUBLISHED -> ReviewCycle.CycleStatus.COMPLETED;
+            default -> throw new IllegalStateException("Cannot advance from status: " + cycle.getStatus());
+        };
+
+        log.info("Advancing cycle {} from {} to {}", cycleId, cycle.getStatus(), next);
+        cycle.setStatus(next);
+        cycle = reviewCycleRepository.save(cycle);
+        return mapToResponse(cycle);
+    }
+
+    /**
+     * Submit employee self-assessment for a review.
+     */
+    @Transactional
+    public void submitSelfAssessment(UUID reviewId, SelfAssessmentRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (request.getCompetencyRatings() != null && !request.getCompetencyRatings().isEmpty()) {
+            int avg = (int) Math.round(request.getCompetencyRatings().stream()
+                    .mapToInt(SelfAssessmentRequest.CompetencyRatingItem::getRating)
+                    .average()
+                    .orElse(0));
+            review.setSelfRating(avg);
+        }
+
+        review.setOverallComments(request.getOverallComments());
+        review.setGoalAchievementPercent(request.getGoalAchievementPercent());
+        review.setStatus(PerformanceReview.ReviewStatus.SUBMITTED);
+        review.setSubmittedAt(LocalDateTime.now());
+
+        performanceReviewRepository.save(review);
+    }
+
+    /**
+     * Submit manager review ratings for a review.
+     */
+    @Transactional
+    public void submitManagerReview(UUID reviewId, ManagerReviewRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        review.setManagerRating(request.getOverallRating());
+        review.setIncrementRecommendation(request.getIncrementRecommendation());
+        review.setPromotionRecommended(request.getPromotionRecommended());
+        review.setManagerComments(request.getComments());
+        review.setStatus(PerformanceReview.ReviewStatus.IN_REVIEW);
+
+        performanceReviewRepository.save(review);
+    }
+
+    /**
+     * HR sets the final calibrated rating for a review.
+     */
+    @Transactional
+    public void updateCalibrationRating(UUID reviewId, Integer finalRating) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (finalRating < 1 || finalRating > 5) {
+            throw new IllegalArgumentException("Final rating must be between 1 and 5");
+        }
+
+        review.setFinalRating(finalRating);
+        performanceReviewRepository.save(review);
+    }
+
+    /**
+     * Get calibration data for a cycle — all reviews with self/manager/final ratings.
+     */
+    @Transactional(readOnly = true)
+    public CalibrationResponse getCalibration(UUID cycleId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Review cycle not found"));
+
+        List<PerformanceReview> reviews = performanceReviewRepository
+                .findByTenantIdAndReviewCycleId(tenantId, cycleId)
+                .stream()
+                .filter(r -> r.getReviewType() == PerformanceReview.ReviewType.SELF
+                          || r.getReviewType() == PerformanceReview.ReviewType.MANAGER)
+                .collect(Collectors.toList());
+
+        boolean editable = cycle.getStatus() == ReviewCycle.CycleStatus.CALIBRATION;
+
+        Map<Integer, Long> distribution = new HashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            final int rating = i;
+            distribution.put(rating, reviews.stream()
+                    .filter(r -> r.getFinalRating() != null && r.getFinalRating() == rating)
+                    .count());
+        }
+
+        List<CalibrationResponse.CalibrationEmployee> employees = reviews.stream()
+                .collect(Collectors.toMap(
+                        PerformanceReview::getEmployeeId,
+                        r -> r,
+                        (existing, replacement) -> existing // keep first (prefer SELF type)
+                ))
+                .values()
+                .stream()
+                .map(r -> {
+                    String empName = employeeRepository.findById(r.getEmployeeId())
+                            .map(Employee::getFullName)
+                            .orElse("Unknown");
+                    return CalibrationResponse.CalibrationEmployee.builder()
+                            .employeeId(r.getEmployeeId())
+                            .reviewId(r.getId())
+                            .employeeName(empName)
+                            .selfRating(r.getSelfRating())
+                            .managerRating(r.getManagerRating())
+                            .finalRating(r.getFinalRating())
+                            .editable(editable)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return CalibrationResponse.builder()
+                .cycleId(cycleId)
+                .cycleName(cycle.getCycleName())
+                .totalEmployees(employees.size())
+                .distribution(distribution)
+                .employees(employees)
+                .build();
     }
 
     private ReviewCycleResponse mapToResponse(ReviewCycle cycle) {

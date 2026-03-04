@@ -10,10 +10,10 @@ import java.util.UUID;
 
 @Entity(name = "HrmsProject")
 @Table(name = "projects", indexes = {
-        @Index(name = "idx_project_tenant", columnList = "tenantId"),
-        @Index(name = "idx_project_code_tenant", columnList = "projectCode,tenantId", unique = true),
+        @Index(name = "idx_project_tenant", columnList = "tenant_id"),
+        @Index(name = "idx_project_code_tenant", columnList = "project_code,tenant_id", unique = true),
         @Index(name = "idx_project_status", columnList = "status"),
-        @Index(name = "idx_project_manager", columnList = "projectManagerId")
+        @Index(name = "idx_project_manager", columnList = "project_manager_id")
 })
 @Getter
 @Setter

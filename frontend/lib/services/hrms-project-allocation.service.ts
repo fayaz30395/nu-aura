@@ -2,6 +2,23 @@ import { apiClient } from '../api/client';
 import { AllocationPage, AllocationSummaryPage, ProjectAllocation } from '../types/hrms-allocation';
 
 export const hrmsProjectAllocationService = {
+  async assignEmployee(
+    projectId: string,
+    request: {
+      employeeId: string;
+      role: string;
+      allocationPercentage: number;
+      startDate: string;
+      endDate?: string;
+    }
+  ): Promise<ProjectAllocation> {
+    const response = await apiClient.post<ProjectAllocation>(
+      `/projects/${projectId}/assign`,
+      request
+    );
+    return response.data;
+  },
+
   async listProjectAllocations(projectId: string, page = 0, size = 20): Promise<AllocationPage> {
     const response = await apiClient.get<AllocationPage>(`/projects/${projectId}/allocations`, {
       params: { page, size },
