@@ -74,6 +74,20 @@ export default function ResourcesPage() {
       color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
     },
     {
+      title: 'Resource Pool',
+      description: 'All employees with allocation bars — filter by department or status',
+      icon: Users,
+      href: '/resources/pool',
+      color: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400',
+    },
+    {
+      title: 'Capacity Timeline',
+      description: 'Horizontal allocation bars per employee, sorted by utilization',
+      icon: TrendingUp,
+      href: '/resources/capacity',
+      color: 'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400',
+    },
+    {
       title: 'Availability Calendar',
       description: 'See team availability with leaves and holidays',
       icon: Calendar,

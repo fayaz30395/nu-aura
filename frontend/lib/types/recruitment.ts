@@ -191,3 +191,17 @@ export interface AcceptOfferRequest {
 export interface DeclineOfferRequest {
   declineReason?: string;
 }
+
+export type CandidateStage = 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'ASSESSMENT' | 'OFFER' | 'HIRED' | 'REJECTED';
+
+export interface MoveStageRequest {
+  stage: CandidateStage;
+}
+
+export interface CreateOfferRequest {
+  offeredSalary: number;
+  positionTitle?: string;
+  joiningDate: string;
+  offerExpiryDate?: string;
+  notes?: string;
+}

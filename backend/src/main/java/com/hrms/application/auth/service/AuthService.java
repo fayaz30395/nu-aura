@@ -6,6 +6,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.platform.service.HrmsPermissionInitializer;
+import com.hrms.application.user.service.ImplicitRoleService;
 import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
@@ -66,6 +67,9 @@ public class AuthService {
 
     @Autowired
     private EmailNotificationService emailNotificationService;
+
+    @Autowired
+    private ImplicitRoleService implicitRoleService;
 
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
@@ -432,6 +436,7 @@ public class AuthService {
             });
 
             log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
+            mergeImplicitPermissions(userId, appCode, permissionScopes);
             return permissionScopes;
         }
 
@@ -463,6 +468,7 @@ public class AuthService {
         }
 
         log.info("Loaded permissions for user {}: {}", userId, permissionScopes.keySet());
+        mergeImplicitPermissions(userId, appCode, permissionScopes);
         return permissionScopes;
     }
 
@@ -482,18 +488,23 @@ public class AuthService {
                 .findByUserIdAndAppCodeWithPermissions(userId, appCode);
 
         if (access.isPresent()) {
-            return access.get().getRoleCodes();
+            Set<String> roles = new HashSet<>(access.get().getRoleCodes());
+            mergeImplicitRoles(userId, roles);
+            return roles;
         }
 
         // Fallback: Load from legacy User->Role structure
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            return user.getRoles().stream()
+            Set<String> roles = user.getRoles().stream()
                     .map(role -> role.getCode())
                     .collect(Collectors.toSet());
+            mergeImplicitRoles(userId, roles);
+            return roles;
         }
-
-        return Collections.emptySet();
+        Set<String> implicitOnlyRoles = new HashSet<>();
+        mergeImplicitRoles(userId, implicitOnlyRoles);
+        return implicitOnlyRoles;
     }
 
     /**
@@ -504,6 +515,32 @@ public class AuthService {
         return accessList.stream()
                 .map(access -> access.getApplication().getCode())
                 .collect(Collectors.toSet());
+    }
+
+    private void mergeImplicitRoles(UUID userId, Set<String> roles) {
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return;
+        }
+        employeeRepository.findByUserIdAndTenantId(userId, tenantId)
+                .ifPresent(emp -> roles.addAll(implicitRoleService.getImplicitRoles(emp.getId(), tenantId)));
+    }
+
+    private void mergeImplicitPermissions(
+            UUID userId,
+            String appCode,
+            Map<String, com.hrms.domain.user.RoleScope> permissionScopes) {
+        UUID tenantId = com.hrms.common.security.TenantContext.getCurrentTenant();
+        if (tenantId == null) {
+            return;
+        }
+        employeeRepository.findByUserIdAndTenantId(userId, tenantId).ifPresent(emp -> {
+            Set<String> implicitPermissions = implicitRoleService.getImplicitPermissions(emp.getId(), tenantId);
+            for (String permission : implicitPermissions) {
+                String code = permission.startsWith(appCode + ":") ? permission : appCode + ":" + permission;
+                permissionScopes.putIfAbsent(code, com.hrms.domain.user.RoleScope.ALL);
+            }
+        });
     }
 
     // ==================== Password Reset ====================

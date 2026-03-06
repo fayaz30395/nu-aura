@@ -398,7 +398,8 @@ public class SecurityContext {
      * Legacy role checks - kept for backward compatibility
      */
     public static boolean isSuperAdmin() {
-        return hasRole(RoleHierarchy.SUPER_ADMIN) || isSystemAdmin();
+        // Enforce permission-based super-admin semantics to avoid role-only privilege bypass.
+        return isSystemAdmin();
     }
 
     public static boolean isTenantAdmin() {

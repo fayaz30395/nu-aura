@@ -1,9 +1,12 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.Holiday;
 import com.hrms.infrastructure.attendance.repository.HolidayRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,20 +23,22 @@ public class HolidayService {
 
     private final HolidayRepository holidayRepository;
 
+    @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
     public Holiday createHoliday(Holiday holiday) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        
+
         if (holidayRepository.existsByTenantIdAndHolidayDate(tenantId, holiday.getHolidayDate())) {
             throw new IllegalArgumentException("Holiday already exists for this date");
         }
-        
+
         holiday.setTenantId(tenantId);
         return holidayRepository.save(holiday);
     }
 
+    @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
     public Holiday updateHoliday(UUID id, Holiday holidayData) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        
+
         Holiday holiday = holidayRepository.findById(id)
             .filter(h -> h.getTenantId().equals(tenantId))
             .orElseThrow(() -> new IllegalArgumentException("Holiday not found"));
@@ -65,6 +70,7 @@ public class HolidayService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.HOLIDAYS, keyGenerator = "tenantAwareKeyGenerator")
     public List<Holiday> getHolidaysByYear(Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return holidayRepository.findAllByTenantIdAndYear(tenantId, year);
@@ -76,6 +82,7 @@ public class HolidayService {
         return holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId, startDate, endDate);
     }
 
+    @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
     public void deleteHoliday(UUID id) {
         Holiday holiday = getHolidayById(id);
         holidayRepository.delete(holiday);

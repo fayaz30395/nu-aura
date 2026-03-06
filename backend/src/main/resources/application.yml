@@ -141,8 +141,9 @@ server:
   port: ${PORT:8080}
   address: 0.0.0.0
   error:
-    include-message: always
-    include-binding-errors: always
+    # Suppressed in prod profile; exposed in dev for easier debugging
+    include-message: ${SERVER_ERROR_INCLUDE_MESSAGE:never}
+    include-binding-errors: ${SERVER_ERROR_INCLUDE_BINDING:never}
     include-stacktrace: never
     include-exception: false
 
@@ -290,6 +291,11 @@ app:
     csrf:
       enabled: false
 
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
 logging:
   level:
     com.hrms: DEBUG
@@ -302,8 +308,8 @@ spring:
 
   datasource:
     hikari:
-      maximum-pool-size: 5
-      minimum-idle: 1
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN:5}
       connection-timeout: 30000
       idle-timeout: 300000
       max-lifetime: 600000
@@ -311,21 +317,33 @@ spring:
   jpa:
     show-sql: false
 
-  cache:
-    type: simple
-
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-
-management:
-  health:
+  # Redis is required in production for AccountLockoutService (distributed lockout)
+  # and application-level caching. Ensure SPRING_REDIS_HOST/PORT/PASSWORD are set.
+  data:
     redis:
-      enabled: false
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+      ssl:
+        enabled: ${SPRING_REDIS_SSL_ENABLED:false}
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 4
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      cache-null-values: false
 
 logging:
   level:
     root: INFO
     com.hrms: INFO
     org.springframework.security: INFO
+    # Silence SQL and parameter-binding logs in production to prevent PII leakage
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.hibernate.orm.jdbc.bind: WARN

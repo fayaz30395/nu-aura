@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   Grid3X3,
   Sliders,
+  AlertCircle,
 } from 'lucide-react';
 import { goalService, reviewCycleService } from '@/lib/services/performance.service';
 import { okrService, OkrSummary } from '@/lib/services/okr.service';
@@ -92,6 +93,16 @@ const performanceModules = [
     color: 'bg-indigo-500',
     lightColor: 'bg-indigo-50',
     textColor: 'text-indigo-600',
+  },
+  {
+    id: 'pip',
+    title: 'PIPs',
+    description: 'Create and track Performance Improvement Plans with check-ins',
+    href: '/performance/pip',
+    icon: AlertCircle,
+    color: 'bg-red-500',
+    lightColor: 'bg-red-50',
+    textColor: 'text-red-600',
   },
   {
     id: 'calibration',

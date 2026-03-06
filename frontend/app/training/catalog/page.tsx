@@ -1,0 +1,386 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
+import {
+  BookOpen,
+  Search,
+  Clock,
+  Users,
+  Star,
+  Award,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  RefreshCw,
+  Filter,
+  GraduationCap,
+} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  Badge,
+  Button,
+  Input,
+} from '@/components/ui';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { lmsService, CourseSummaryDto } from '@/lib/services/lms.service';
+
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+const DIFFICULTY_LABELS: Record<string, string> = {
+  BEGINNER:     'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  ADVANCED:     'Advanced',
+  EXPERT:       'Expert',
+};
+
+const DIFFICULTY_COLORS: Record<string, string> = {
+  BEGINNER:     'success',
+  INTERMEDIATE: 'warning',
+  ADVANCED:     'danger',
+  EXPERT:       'secondary',
+};
+
+function DifficultyBadge({ level }: { level: string }) {
+  return (
+    <Badge variant={(DIFFICULTY_COLORS[level] ?? 'secondary') as any} className="text-xs">
+      {DIFFICULTY_LABELS[level] ?? level}
+    </Badge>
+  );
+}
+
+// ─── component ──────────────────────────────────────────────────────────────
+
+export default function CourseCatalogPage() {
+  const router = useRouter();
+  const { isAuthenticated, hasHydrated } = useAuth();
+
+  const [courses, setCourses] = useState<CourseSummaryDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [enrollingId, setEnrollingId] = useState<string | null>(null);
+  const [enrolledIds, setEnrolledIds] = useState<Set<string>>(new Set());
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterMandatory, setFilterMandatory] = useState(false);
+
+  // Pagination
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 12;
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    if (type === 'success') {
+      setSuccessMsg(message);
+      setError(null);
+    } else {
+      setError(message);
+      setSuccessMsg(null);
+    }
+    setTimeout(() => {
+      setSuccessMsg(null);
+      setError(null);
+    }, 5000);
+  };
+
+  const loadCatalog = useCallback(async (pageNum: number = 0) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await lmsService.getCatalog(pageNum, PAGE_SIZE);
+      const incoming = response.courses ?? [];
+
+      if (pageNum === 0) {
+        setCourses(incoming);
+      } else {
+        setCourses((prev) => [...prev, ...incoming]);
+      }
+      setHasMore(incoming.length >= PAGE_SIZE);
+      setPage(pageNum);
+    } catch (err) {
+      console.error('Failed to load catalog:', err);
+      setError('Failed to load the course catalog. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    loadCatalog(0);
+  }, [isAuthenticated, hasHydrated, router, loadCatalog]);
+
+  const handleEnroll = async (course: CourseSummaryDto) => {
+    if (enrolledIds.has(course.id)) return;
+
+    setEnrollingId(course.id);
+    try {
+      await lmsService.enrollSelf(course.id);
+      setEnrolledIds((prev) => new Set([...prev, course.id]));
+      showNotification(`Successfully enrolled in "${course.title}"`, 'success');
+    } catch (err: any) {
+      console.error('Failed to enroll:', err);
+      const msg = err?.response?.status === 409
+        ? `You are already enrolled in "${course.title}"`
+        : `Failed to enroll in "${course.title}". Please try again.`;
+      showNotification(msg, 'error');
+    } finally {
+      setEnrollingId(null);
+    }
+  };
+
+  // Client-side filter
+  const visibleCourses = courses.filter((c) => {
+    const matchesSearch =
+      !searchQuery ||
+      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.shortDescription ?? '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesMandatory = !filterMandatory || c.isMandatory;
+    return matchesSearch && matchesMandatory;
+  });
+
+  // ── render ─────────────────────────────────────────────────────────────────
+
+  return (
+    <AppLayout>
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Course Catalog</h1>
+            <p className="text-gray-500 mt-1 text-sm">
+              Browse and enroll in available courses
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push('/training/my-learning')}
+              className="flex items-center gap-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              My Learning
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => loadCatalog(0)}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
+        </div>
+
+        {/* Notifications */}
+        {error && (
+          <div className="flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
+        {successMsg && (
+          <div className="flex items-center gap-2 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
+            <CheckCircle className="h-5 w-5 shrink-0" />
+            <span className="text-sm">{successMsg}</span>
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="relative flex-1 min-w-[220px] max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search courses…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Button
+            variant={filterMandatory ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilterMandatory((v) => !v)}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Mandatory only
+          </Button>
+          {visibleCourses.length > 0 && (
+            <span className="text-sm text-gray-500">
+              {visibleCourses.length} course{visibleCourses.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+
+        {/* Course grid */}
+        {loading && courses.length === 0 ? (
+          <div className="flex items-center justify-center py-20 text-gray-400">
+            <Loader2 className="h-8 w-8 animate-spin mr-3" />
+            <span>Loading catalog…</span>
+          </div>
+        ) : visibleCourses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-gray-400 space-y-3">
+            <GraduationCap className="h-12 w-12 text-gray-300" />
+            <p className="text-lg font-medium text-gray-500">No courses found</p>
+            {searchQuery && (
+              <p className="text-sm">
+                Try clearing the search or{' '}
+                <button
+                  onClick={() => { setSearchQuery(''); setFilterMandatory(false); }}
+                  className="text-blue-600 hover:underline"
+                >
+                  reset filters
+                </button>
+                .
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visibleCourses.map((course) => {
+              const isEnrolled = enrolledIds.has(course.id);
+              const isEnrolling = enrollingId === course.id;
+
+              return (
+                <Card
+                  key={course.id}
+                  className="border border-gray-200 hover:shadow-md transition-shadow flex flex-col"
+                >
+                  {/* Thumbnail placeholder */}
+                  <div className="h-36 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+                    {course.thumbnailUrl ? (
+                      <img
+                        src={course.thumbnailUrl}
+                        alt={course.title}
+                        className="w-full h-full object-cover rounded-t-lg"
+                      />
+                    ) : (
+                      <GraduationCap className="h-12 w-12 text-indigo-300" />
+                    )}
+                    {course.isMandatory && (
+                      <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                        Mandatory
+                      </span>
+                    )}
+                  </div>
+
+                  <CardContent className="p-4 flex-1 flex flex-col">
+                    {/* Title & difficulty */}
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
+                        {course.title}
+                      </h3>
+                      <DifficultyBadge level={course.difficultyLevel} />
+                    </div>
+
+                    {/* Description */}
+                    {course.shortDescription && (
+                      <p className="text-xs text-gray-500 line-clamp-2 mb-3">
+                        {course.shortDescription}
+                      </p>
+                    )}
+
+                    {/* Skills */}
+                    {course.skillsCovered && course.skillsCovered.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {course.skillsCovered.slice(0, 3).map((skill) => (
+                          <span
+                            key={skill}
+                            className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded"
+                          >
+                            {skill.trim()}
+                          </span>
+                        ))}
+                        {course.skillsCovered.length > 3 && (
+                          <span className="text-xs text-gray-400">
+                            +{course.skillsCovered.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Meta row */}
+                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-4 mt-auto">
+                      {course.durationHours && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {course.durationHours}h
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        {course.totalEnrollments ?? 0} enrolled
+                      </span>
+                      {course.avgRating && (
+                        <span className="flex items-center gap-1">
+                          <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+                          {course.avgRating.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Enroll button */}
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      onClick={() => handleEnroll(course)}
+                      disabled={isEnrolled || isEnrolling}
+                      variant={isEnrolled ? 'outline' : 'default'}
+                    >
+                      {isEnrolling ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Enrolling…
+                        </span>
+                      ) : isEnrolled ? (
+                        <span className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          Enrolled
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Award className="h-4 w-4" />
+                          Enroll
+                        </span>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Load more */}
+        {!loading && hasMore && visibleCourses.length > 0 && !searchQuery && (
+          <div className="flex justify-center pt-2">
+            <Button
+              variant="outline"
+              onClick={() => loadCatalog(page + 1)}
+              className="min-w-[160px]"
+            >
+              Load more courses
+            </Button>
+          </div>
+        )}
+
+        {loading && courses.length > 0 && (
+          <div className="flex justify-center py-4 text-gray-400">
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <span className="text-sm">Loading more…</span>
+          </div>
+        )}
+      </div>
+    </AppLayout>
+  );
+}

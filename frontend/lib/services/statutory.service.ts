@@ -4,7 +4,8 @@ import {
     ESIConfig,
     ProfessionalTaxSlab,
     EmployeePFRecord,
-    EmployeeESIRecord
+    EmployeeESIRecord,
+    MonthlyStatutoryContribution
 } from '@/lib/types/statutory';
 
 const PF_URL = '/statutory/pf';
@@ -65,6 +66,22 @@ export const statutoryService = {
 
     getPTSlabsByState: async (stateCode: string): Promise<ProfessionalTaxSlab[]> => {
         const response = await apiClient.get<ProfessionalTaxSlab[]>(`${PT_URL}/slabs/${stateCode}`);
+        return response.data;
+    },
+
+    // --- Monthly Contributions Report ---
+
+    getMonthlyContributions: async (month: number, year: number): Promise<MonthlyStatutoryContribution[]> => {
+        const response = await apiClient.get<MonthlyStatutoryContribution[]>(
+            `/statutory/contributions/month/${month}/year/${year}`
+        );
+        return response.data;
+    },
+
+    getEmployeeContributions: async (employeeId: string): Promise<MonthlyStatutoryContribution[]> => {
+        const response = await apiClient.get<MonthlyStatutoryContribution[]>(
+            `/statutory/contributions/employee/${employeeId}`
+        );
         return response.data;
     },
 };

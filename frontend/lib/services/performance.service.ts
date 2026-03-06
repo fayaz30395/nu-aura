@@ -347,6 +347,91 @@ export const reviewCycleService = {
 // Export performanceReviewService as alias for reviewService
 export const performanceReviewService = reviewService;
 
+// ─── PIP Types ────────────────────────────────────────────────────────────────
+
+export type PIPStatus = 'ACTIVE' | 'COMPLETED' | 'EXTENDED' | 'TERMINATED';
+
+export interface PIPCheckIn {
+  id: string;
+  checkInDate: string;
+  progressNotes?: string;
+  managerComments?: string;
+  goalUpdates?: string;
+  createdAt: string;
+}
+
+export interface PIP {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  managerId: string;
+  managerName: string;
+  status: PIPStatus;
+  startDate: string;
+  endDate: string;
+  goals?: string;
+  checkInFrequency?: string;
+  reason: string;
+  closeNotes?: string;
+  checkInCount: number;
+  checkIns: PIPCheckIn[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePIPRequest {
+  employeeId: string;
+  managerId: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  goals?: string;
+  checkInFrequency?: string;
+}
+
+export interface PIPCheckInRequest {
+  checkInDate: string;
+  progressNotes?: string;
+  managerComments?: string;
+  goalUpdates?: string;
+}
+
+export interface ClosePIPRequest {
+  closeNotes: string;
+  status: 'COMPLETED' | 'TERMINATED';
+}
+
+// ─── PIP Service ─────────────────────────────────────────────────────────────
+
+export const pipService = {
+  getAll: async (employeeId?: string, managerId?: string): Promise<PIP[]> => {
+    const params: Record<string, string> = {};
+    if (employeeId) params.employeeId = employeeId;
+    if (managerId) params.managerId = managerId;
+    const response = await apiClient.get<PIP[]>('/performance/pip', { params });
+    return response.data;
+  },
+
+  getById: async (id: string): Promise<PIP> => {
+    const response = await apiClient.get<PIP>(`/performance/pip/${id}`);
+    return response.data;
+  },
+
+  create: async (data: CreatePIPRequest): Promise<PIP> => {
+    const response = await apiClient.post<PIP>('/performance/pip', data);
+    return response.data;
+  },
+
+  recordCheckIn: async (id: string, data: PIPCheckInRequest): Promise<PIPCheckIn> => {
+    const response = await apiClient.post<PIPCheckIn>(`/performance/pip/${id}/check-in`, data);
+    return response.data;
+  },
+
+  close: async (id: string, data: ClosePIPRequest): Promise<void> => {
+    await apiClient.put(`/performance/pip/${id}/close`, data);
+  },
+};
+
 export const performanceRevolutionService = {
   getOKRGraph: async (): Promise<OKRGraphResponse> => {
     const response = await apiClient.get<OKRGraphResponse>('/performance/revolution/okr-graph');

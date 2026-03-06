@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -209,15 +211,21 @@ public class ProjectService {
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByProjectIdAndTenantIdAndIsActive(projectId, tenantId, true);
 
+                // Batch-fetch all employees in a single query instead of one query per member
+                List<UUID> empIds = projectEmployees.stream()
+                                .map(ProjectEmployee::getEmployeeId).distinct().collect(Collectors.toList());
+                Map<UUID, Employee> empMap = employeeRepository.findAllById(empIds).stream()
+                                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+
                 return projectEmployees.stream()
                                 .map(pe -> {
                                         ProjectEmployeeResponse response = ProjectEmployeeResponse
                                                         .fromProjectEmployee(pe);
-                                        employeeRepository.findById(pe.getEmployeeId())
-                                                        .ifPresent(emp -> {
-                                                                response.setEmployeeName(emp.getFullName());
-                                                                response.setEmployeeCode(emp.getEmployeeCode());
-                                                        });
+                                        Employee emp = empMap.get(pe.getEmployeeId());
+                                        if (emp != null) {
+                                                response.setEmployeeName(emp.getFullName());
+                                                response.setEmployeeCode(emp.getEmployeeCode());
+                                        }
                                         return response;
                                 })
                                 .collect(Collectors.toList());
@@ -230,12 +238,17 @@ public class ProjectService {
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true);
 
+                // Batch-fetch all projects in one query
+                List<UUID> projectIds = projectEmployees.stream()
+                                .map(ProjectEmployee::getProjectId).distinct().collect(Collectors.toList());
+                Map<UUID, Project> projectMap = projectRepository.findAllById(projectIds).stream()
+                                .filter(p -> p.getTenantId().equals(tenantId))
+                                .collect(Collectors.toMap(Project::getId, Function.identity()));
+
                 return projectEmployees.stream()
-                                .map(pe -> projectRepository.findById(pe.getProjectId())
-                                                .filter(p -> p.getTenantId().equals(tenantId))
-                                                .map(ProjectResponse::fromProject)
-                                                .orElse(null))
+                                .map(pe -> projectMap.get(pe.getProjectId()))
                                 .filter(p -> p != null)
+                                .map(ProjectResponse::fromProject)
                                 .collect(Collectors.toList());
         }
 
@@ -250,15 +263,21 @@ public class ProjectService {
                 List<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByEmployeeIdAndTenantId(employeeId, tenantId);
 
+                // Batch-fetch all projects in one query
+                List<UUID> projectIds = projectEmployees.stream()
+                                .map(ProjectEmployee::getProjectId).distinct().collect(Collectors.toList());
+                Map<UUID, String> projectNameMap = projectRepository.findAllById(projectIds).stream()
+                                .filter(p -> p.getTenantId().equals(tenantId))
+                                .collect(Collectors.toMap(Project::getId, Project::getName));
+
                 return projectEmployees.stream()
                                 .map(pe -> {
                                         ProjectEmployeeResponse response = ProjectEmployeeResponse
                                                         .fromProjectEmployee(pe);
-                                        // Enrich with project name
-                                        projectRepository.findById(pe.getProjectId())
-                                                        .filter(p -> p.getTenantId().equals(tenantId))
-                                                        .ifPresent(project -> response
-                                                                        .setProjectName(project.getName()));
+                                        String projName = projectNameMap.get(pe.getProjectId());
+                                        if (projName != null) {
+                                                response.setProjectName(projName);
+                                        }
                                         return response;
                                 })
                                 .collect(Collectors.toList());
@@ -271,13 +290,19 @@ public class ProjectService {
                 Page<ProjectEmployee> projectEmployees = projectEmployeeRepository
                                 .findAllByProjectIdAndTenantId(projectId, tenantId, pageable);
 
+                // Batch-fetch employees for the current page in one query
+                List<UUID> empIds = projectEmployees.getContent().stream()
+                                .map(ProjectEmployee::getEmployeeId).distinct().collect(Collectors.toList());
+                Map<UUID, Employee> empMap = employeeRepository.findAllById(empIds).stream()
+                                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+
                 return projectEmployees.map(pe -> {
                         ProjectEmployeeResponse response = ProjectEmployeeResponse.fromProjectEmployee(pe);
-                        employeeRepository.findById(pe.getEmployeeId())
-                                        .ifPresent(emp -> {
-                                                response.setEmployeeName(emp.getFullName());
-                                                response.setEmployeeCode(emp.getEmployeeCode());
-                                        });
+                        Employee emp = empMap.get(pe.getEmployeeId());
+                        if (emp != null) {
+                                response.setEmployeeName(emp.getFullName());
+                                response.setEmployeeCode(emp.getEmployeeCode());
+                        }
                         return response;
                 });
         }

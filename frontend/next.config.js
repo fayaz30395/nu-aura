@@ -45,23 +45,66 @@ const nextConfig = {
 
   // Headers for caching and security
   async headers() {
+    // API base (used in connect-src)
+    const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1')
+      .replace(/\/api\/v1.*$/, '');
+
+    const securityHeaders = [
+      // Prevent clickjacking
+      { key: 'X-Frame-Options', value: 'DENY' },
+      // Prevent MIME-type sniffing
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      // Control referrer information
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      // HSTS (only active over HTTPS; browsers ignore over HTTP)
+      { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+      // Disable sensitive browser features the app does not use
+      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()' },
+      // Content-Security-Policy
+      // Notes:
+      //   • 'unsafe-inline' on script-src is required by Next.js RSC hydration scripts.
+      //     Once a nonce-based middleware (next.config cspHeader) is adopted, remove it.
+      //   • 'unsafe-eval' is required by Next.js dev mode only; excluded in production.
+      //   • frame-src allows Google Docs viewer used for PDF preview in course player.
+      //   • worker-src blob: is required by PDF.js workers if added later.
+      {
+        key: 'Content-Security-Policy',
+        value: [
+          "default-src 'self'",
+          process.env.NODE_ENV === 'development'
+            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+            : "script-src 'self' 'unsafe-inline'",
+          "style-src 'self' 'unsafe-inline'",
+          `connect-src 'self' ${apiOrigin} wss:`,
+          "img-src 'self' data: blob: https:",
+          "font-src 'self'",
+          "frame-src 'self' https://docs.google.com",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "frame-ancestors 'none'",
+          "upgrade-insecure-requests",
+        ].join('; '),
+      },
+    ];
+
     return [
+      // Security headers on all HTML routes
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+      // Static asset caching (cache headers override security headers for assets only where needed)
       {
         source: '/:all*(svg|jpg|png|webp|avif)',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
       {
         source: '/_next/static/:path*',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
     ];
