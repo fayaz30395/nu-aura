@@ -299,8 +299,8 @@ class ResourceManagementServiceTest {
         }
 
         @Test
-        @DisplayName("Should throw for unsupported Excel format")
-        void shouldThrowForUnsupportedExcelFormat() {
+        @DisplayName("Should fallback to CSV for Excel format")
+        void shouldFallbackToCsvForExcelFormat() {
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
@@ -309,16 +309,15 @@ class ResourceManagementServiceTest {
                         .thenReturn(Page.empty());
                 when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                assertThatThrownBy(() ->
-                        resourceManagementService.exportWorkloadReport("xlsx", null))
-                        .isInstanceOf(UnsupportedOperationException.class)
-                        .hasMessageContaining("Excel export is not yet implemented");
+                byte[] result = resourceManagementService.exportWorkloadReport("xlsx", null);
+                assertThat(result).isNotNull();
+                assertThat(new String(result)).contains("Employee");
             }
         }
 
         @Test
-        @DisplayName("Should throw for unsupported PDF format")
-        void shouldThrowForUnsupportedPdfFormat() {
+        @DisplayName("Should fallback to CSV for PDF format")
+        void shouldFallbackToCsvForPdfFormat() {
             try (MockedStatic<SecurityContext> securityContext = mockStatic(SecurityContext.class)) {
                 securityContext.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
 
@@ -327,10 +326,9 @@ class ResourceManagementServiceTest {
                         .thenReturn(Page.empty());
                 when(departmentRepository.findByTenantId(tenantId)).thenReturn(Collections.emptyList());
 
-                assertThatThrownBy(() ->
-                        resourceManagementService.exportWorkloadReport("pdf", null))
-                        .isInstanceOf(UnsupportedOperationException.class)
-                        .hasMessageContaining("PDF export is not yet implemented");
+                byte[] result = resourceManagementService.exportWorkloadReport("pdf", null);
+                assertThat(result).isNotNull();
+                assertThat(new String(result)).contains("Employee");
             }
         }
 
