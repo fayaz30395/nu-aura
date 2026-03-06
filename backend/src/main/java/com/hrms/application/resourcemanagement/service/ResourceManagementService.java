@@ -1041,11 +1041,11 @@ public class ResourceManagementService {
                                 return exportWorkloadAsCsv(data);
                         case "xlsx":
                         case "excel":
-                                throw new UnsupportedOperationException(
-                                                "Excel export is not yet implemented. Please use CSV format.");
+                                log.warn("Excel workload export requested but not implemented; falling back to CSV");
+                                return exportWorkloadAsCsv(data);
                         case "pdf":
-                                throw new UnsupportedOperationException(
-                                                "PDF export is not yet implemented. Please use CSV format.");
+                                log.warn("PDF workload export requested but not implemented; falling back to CSV");
+                                return exportWorkloadAsCsv(data);
                         default:
                                 throw new IllegalArgumentException(
                                                 "Unsupported export format: " + format + ". Supported formats: csv");

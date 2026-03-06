@@ -26,6 +26,9 @@ spring:
   liquibase:
     enabled: false
 
+  flyway:
+    enabled: false
+
   # Disable Redis for tests - use in-memory cache instead
   data:
     redis:
@@ -46,12 +49,6 @@ spring:
     host: localhost
     port: 25
 
-  # Disable autoconfiguration for services not needed in tests
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-
 # Disable health checks for external services in tests
 management:
   health:
@@ -67,6 +64,9 @@ management:
         enabled: false
 
 app:
+  security:
+    encryption:
+      key: test-encryption-key-32-bytes-xx!
   jwt:
     secret: b8f3d0c9a1e2f4b7c6d8e9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8
     expiration: 3600000

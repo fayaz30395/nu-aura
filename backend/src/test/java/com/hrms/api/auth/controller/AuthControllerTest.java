@@ -3,6 +3,7 @@ package com.hrms.api.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.auth.service.AuthService;
+import com.hrms.common.config.CookieConfig;
 import com.hrms.common.security.ApiKeyAuthenticationFilter;
 import com.hrms.common.security.ApiKeyService;
 import com.hrms.common.security.JwtTokenProvider;
@@ -65,6 +66,9 @@ class AuthControllerTest {
     private AuthService authService;
 
     @MockBean
+    private CookieConfig cookieConfig;
+
+    @MockBean
     private ApiKeyService apiKeyService;
 
     @MockBean
@@ -98,6 +102,8 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
+        when(cookieConfig.isSecureCookie()).thenReturn(false);
+
         authResponse = AuthResponse.builder()
                 .accessToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test-access-token")
                 .refreshToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test-refresh-token")
@@ -208,7 +214,7 @@ class AuthControllerTest {
                             .header("Authorization", "Bearer valid-token"))
                     .andExpect(status().isOk());
 
-            verify(authService).logout("Bearer valid-token");
+            verify(authService).logout("valid-token");
         }
     }
 

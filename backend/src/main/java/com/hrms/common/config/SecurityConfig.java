@@ -1,6 +1,7 @@
 package com.hrms.common.config;
 
 import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.RateLimitingFilter;
 import com.hrms.common.security.TenantFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,9 @@ public class SecurityConfig {
 
     @Autowired
     private TenantFilter tenantFilter;
+
+    @Autowired
+    private RateLimitingFilter rateLimitingFilter;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -95,7 +99,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(rateLimitingFilter, TenantFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter, TenantFilter.class);
 
         // Configure CSRF protection
         if (csrfEnabled) {

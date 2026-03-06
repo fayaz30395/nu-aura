@@ -10,6 +10,8 @@ import {
   JobStatus,
   AcceptOfferRequest,
   DeclineOfferRequest,
+  MoveStageRequest,
+  CreateOfferRequest,
 } from '../types/recruitment';
 
 class RecruitmentService {
@@ -77,6 +79,21 @@ class RecruitmentService {
 
   async deleteCandidate(id: string): Promise<void> {
     await apiClient.delete(`/recruitment/candidates/${id}`);
+  }
+
+  async getCandidatesByJob(jobId: string): Promise<Candidate[]> {
+    const response = await apiClient.get<Candidate[]>(`/recruitment/jobs/${jobId}/candidates`);
+    return response.data;
+  }
+
+  async moveCandidateStage(candidateId: string, data: MoveStageRequest): Promise<Candidate> {
+    const response = await apiClient.put<Candidate>(`/recruitment/candidates/${candidateId}/stage`, data);
+    return response.data;
+  }
+
+  async createOffer(candidateId: string, data: CreateOfferRequest): Promise<Candidate> {
+    const response = await apiClient.post<Candidate>(`/recruitment/candidates/${candidateId}/offer`, data);
+    return response.data;
   }
 
   // ==================== Offer Response Methods ====================

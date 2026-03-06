@@ -26,7 +26,6 @@ public class SecurityService {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
-        String email = authentication.getName();
         // Since roles might be in granted authorities, caching permissions by authority
         // (Role name or Role Id)
         Collection<String> authorities = authentication.getAuthorities().stream()
@@ -37,18 +36,27 @@ public class SecurityService {
         return userPermissions.contains(permissionCode);
     }
 
-    @Cacheable(value = "rolePermissions", key = "#roles.toString()")
+    @Cacheable(value = "rolePermissions", key = "#root.target.rolesCacheKey(#roles)")
     public Set<String> getCachedPermissions(Collection<String> roles) {
         Set<String> permissions = new HashSet<>();
-        List<Role> activeRoles = roleRepository.findByNameIn(roles);
+        java.util.UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null || roles == null || roles.isEmpty()) {
+            return permissions;
+        }
+        List<Role> activeRoles = roleRepository.findByCodeInAndTenantId(roles, tenantId);
         for (Role role : activeRoles) {
-            if (role.getRolePermissions() != null) {
-                for (RolePermission rp : role.getRolePermissions()) {
+            if (role.getPermissions() != null) {
+                for (RolePermission rp : role.getPermissions()) {
                     permissions.add(rp.getPermission().getCode());
                 }
             }
         }
         return permissions;
+    }
+
+    public String rolesCacheKey(Collection<String> roles) {
+        java.util.TreeSet<String> sorted = new java.util.TreeSet<>(roles);
+        return TenantContext.getCurrentTenant() + "::" + String.join(",", sorted);
     }
 
     // Check if user is the current employee

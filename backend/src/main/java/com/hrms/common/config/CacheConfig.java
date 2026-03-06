@@ -47,6 +47,7 @@ public class CacheConfig implements CachingConfigurer {
     public static final String ROLES = "roles";
     public static final String WEBHOOKS = "webhooks";
     public static final String ACTIVE_WEBHOOKS = "activeWebhooks";
+    public static final String LEAVE_BALANCES = "leaveBalances";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -75,6 +76,9 @@ public class CacheConfig implements CachingConfigurer {
 
         // Short-lived caches (frequent reads but may change) - 15 minutes
         cacheConfigurations.put(EMPLOYEE_BASIC, defaultConfig.entryTtl(Duration.ofMinutes(15)));
+
+        // Leave balances: read on every attendance/leave check; invalidated on any balance mutation - 5 minutes
+        cacheConfigurations.put(LEAVE_BALANCES, defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
         // Webhook caches - medium TTL since webhooks don't change frequently
         cacheConfigurations.put(WEBHOOKS, defaultConfig.entryTtl(Duration.ofHours(1)));

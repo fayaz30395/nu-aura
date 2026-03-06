@@ -2,13 +2,16 @@ package com.hrms.application.exit.service;
 
 import com.hrms.application.exit.dto.FnFAdjustmentRequest;
 import com.hrms.application.exit.dto.FnFCalculationResponse;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.exit.ExitProcess;
 import com.hrms.domain.exit.FullAndFinalSettlement;
+import com.hrms.domain.payroll.SalaryStructure;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.exit.repository.ExitProcessRepository;
 import com.hrms.infrastructure.exit.repository.FullAndFinalSettlementRepository;
+import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +37,9 @@ public class FnFCalculationService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private SalaryStructureRepository salaryStructureRepository;
 
     /**
      * Get or auto-calculate FnF for an exit process.
@@ -99,7 +105,7 @@ public class FnFCalculationService {
 
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.APPROVED);
         settlement.setApprovalDate(LocalDate.now());
-        settlement.setApprovedBy(TenantContext.getCurrentUser());
+        settlement.setApprovedBy(SecurityContext.getCurrentUserId());
         fnfRepository.save(settlement);
         return mapToResponse(settlement);
     }
@@ -123,8 +129,13 @@ public class FnFCalculationService {
                 .build();
         settlement.setTenantId(tenantId);
 
+        BigDecimal baseSalary = salaryStructureRepository
+                .findActiveByEmployeeIdAndDate(tenantId, employee.getId(), LocalDate.now())
+                .map(SalaryStructure::getBasicSalary)
+                .orElse(BigDecimal.ZERO);
+
         // Years of service
-        LocalDate joiningDate = employee.getDateOfJoining();
+        LocalDate joiningDate = employee.getJoiningDate();
         LocalDate lastWorkingDate = exitProcess.getLastWorkingDate() != null
                 ? exitProcess.getLastWorkingDate() : LocalDate.now();
 
@@ -132,15 +143,15 @@ public class FnFCalculationService {
             long days = ChronoUnit.DAYS.between(joiningDate, lastWorkingDate);
             BigDecimal years = BigDecimal.valueOf(days).divide(BigDecimal.valueOf(365), 2, RoundingMode.HALF_UP);
             settlement.setYearsOfService(years);
-            settlement.setLastDrawnSalary(employee.getBaseSalary());
+            settlement.setLastDrawnSalary(baseSalary);
             settlement.calculateGratuity();
         }
 
         // Pending salary: pro-rated for current month
-        if (employee.getBaseSalary() != null) {
+        if (baseSalary.compareTo(BigDecimal.ZERO) > 0) {
             int daysWorkedThisMonth = lastWorkingDate.getDayOfMonth();
             int daysInMonth = lastWorkingDate.lengthOfMonth();
-            BigDecimal proRated = employee.getBaseSalary()
+            BigDecimal proRated = baseSalary
                     .multiply(BigDecimal.valueOf(daysWorkedThisMonth))
                     .divide(BigDecimal.valueOf(daysInMonth), 2, RoundingMode.HALF_UP);
             settlement.setPendingSalary(proRated);

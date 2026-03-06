@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -87,6 +88,29 @@ public class Payslip extends TenantAware {
 
     @Column
     private UUID pdfFileId;
+
+    // ─── Statutory deduction columns (added in V5 migration) ──────────────
+
+    @Column(name = "employee_pf", precision = 10, scale = 2)
+    private BigDecimal employeePf;
+
+    @Column(name = "employer_pf", precision = 10, scale = 2)
+    private BigDecimal employerPf;
+
+    @Column(name = "employee_esi", precision = 10, scale = 2)
+    private BigDecimal employeeEsi;
+
+    @Column(name = "employer_esi", precision = 10, scale = 2)
+    private BigDecimal employerEsi;
+
+    @Transient
+    private BigDecimal statutoryProfessionalTax;
+
+    @Column(name = "tds_monthly", precision = 10, scale = 2)
+    private BigDecimal tdsMonthly;
+
+    @Column(name = "statutory_calculated_at")
+    private LocalDateTime statutoryCalculatedAt;
 
     public void calculateTotals() {
         this.grossSalary = basicSalary;

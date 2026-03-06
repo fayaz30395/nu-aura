@@ -190,8 +190,12 @@ class LmsService {
     return response.data;
   }
 
+  /**
+   * Retrieve all enrollments for the currently authenticated employee.
+   * Calls GET /api/v1/lms/my-courses (CourseEnrollmentController).
+   */
   async getMyEnrollments(): Promise<CourseEnrollment[]> {
-    const response = await apiClient.get<CourseEnrollment[]>('/lms/my-enrollments');
+    const response = await apiClient.get<CourseEnrollment[]>('/lms/my-courses');
     return response.data;
   }
 
@@ -200,6 +204,22 @@ class LmsService {
     return response.data;
   }
 
+  /**
+   * Update the progress percentage of an enrollment directly.
+   * Calls PUT /api/v1/lms/enrollments/{enrollmentId}/progress
+   * with body { progressPercent: number }.
+   */
+  async updateEnrollmentProgress(enrollmentId: string, progressPercent: number): Promise<CourseEnrollment> {
+    const response = await apiClient.put<CourseEnrollment>(
+      `/lms/enrollments/${enrollmentId}/progress`,
+      { progressPercent }
+    );
+    return response.data;
+  }
+
+  /**
+   * Update content-level progress (existing fine-grained tracking).
+   */
   async updateProgress(enrollmentId: string, contentId: string, status: string, timeSpentSeconds?: number): Promise<ContentProgress> {
     const response = await apiClient.post<ContentProgress>(
       `/lms/progress/${enrollmentId}/content/${contentId}`,

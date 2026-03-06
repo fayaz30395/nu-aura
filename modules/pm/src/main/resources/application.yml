@@ -32,10 +32,14 @@ spring:
     open-in-view: false
 
   liquibase:
+    enabled: false  # Migrated to Flyway — see db/migration/
+
+  flyway:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    locations: classpath:db/migration
     default-schema: pm
-    liquibase-schema: pm
+    schemas: pm
+    baseline-on-migrate: true
 
   jackson:
     serialization:

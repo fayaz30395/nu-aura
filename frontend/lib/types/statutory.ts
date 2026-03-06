@@ -78,3 +78,29 @@ export interface EmployeeESIRecord {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface MonthlyStatutoryContribution {
+    id: string;
+    tenantId: string;
+    employeeId: string;
+    payslipId: string;
+    month: number;
+    year: number;
+    grossSalary: number;
+    // PF
+    pfWage: number;
+    pfEmployeeContribution: number;
+    pfEmployerContribution: number;
+    epsContribution: number;
+    vpfContribution: number;
+    // ESI
+    esiWage: number;
+    esiEmployeeContribution: number;
+    esiEmployerContribution: number;
+    // PT
+    professionalTax: number;
+    // TDS
+    tdsDeducted: number;
+    createdAt: string;
+    updatedAt: string;
+}

@@ -1,10 +1,13 @@
 package com.hrms.application.attendance.service;
 
+import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.OfficeLocation;
 import com.hrms.infrastructure.attendance.repository.OfficeLocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class OfficeLocationService {
     private final OfficeLocationRepository officeLocationRepository;
 
     @Transactional
+    @CacheEvict(value = CacheConfig.OFFICE_LOCATIONS, allEntries = true)
     public OfficeLocation createLocation(OfficeLocation location) {
         UUID tenantId = TenantContext.getCurrentTenant();
         location.setTenantId(tenantId);
@@ -37,6 +41,7 @@ public class OfficeLocationService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.OFFICE_LOCATIONS, allEntries = true)
     public OfficeLocation updateLocation(UUID id, OfficeLocation updates) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OfficeLocation location = officeLocationRepository.findByIdAndTenantId(id, tenantId)
@@ -68,6 +73,7 @@ public class OfficeLocationService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.OFFICE_LOCATIONS, keyGenerator = "tenantAwareKeyGenerator")
     public List<OfficeLocation> getActiveLocations() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return officeLocationRepository.findAllByTenantIdAndIsActiveTrue(tenantId);
@@ -80,6 +86,7 @@ public class OfficeLocationService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConfig.OFFICE_LOCATIONS, allEntries = true)
     public void deleteLocation(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OfficeLocation location = officeLocationRepository.findByIdAndTenantId(id, tenantId)
