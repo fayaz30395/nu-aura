@@ -2,6 +2,7 @@ package com.hrms.application.auth.service;
 
 import com.hrms.api.auth.dto.*;
 import com.hrms.application.notification.service.EmailNotificationService;
+import com.hrms.application.user.service.ImplicitRoleService;
 import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.exception.ValidationException;
@@ -54,6 +55,9 @@ class AuthServiceTest {
         @Mock
         private EmailNotificationService emailNotificationService;
 
+        @Mock
+        private ImplicitRoleService implicitRoleService;
+
         @InjectMocks
         private AuthService authService;
 
@@ -86,6 +90,8 @@ class AuthServiceTest {
 
                 ReflectionTestUtils.setField(authService, "jwtExpiration", 3600000L);
                 ReflectionTestUtils.setField(authService, "allowedDomain", "nulogic.io");
+                when(implicitRoleService.getImplicitRoles(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
+                when(implicitRoleService.getImplicitPermissions(any(UUID.class), any(UUID.class))).thenReturn(Set.of());
         }
 
         @Nested

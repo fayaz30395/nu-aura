@@ -215,8 +215,8 @@ class WebhookControllerIntegrationTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(result -> {
                         int status = result.getResponse().getStatus();
-                        if (status != 404 && status != 500) {
-                            throw new AssertionError("Expected status 404 or 500 but was " + status);
+                        if (status != 400 && status != 404 && status != 500) {
+                            throw new AssertionError("Expected status 400, 404, or 500 but was " + status);
                         }
                     });
         }

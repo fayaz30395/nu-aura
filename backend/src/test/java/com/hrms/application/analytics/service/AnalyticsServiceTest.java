@@ -3,7 +3,11 @@ package com.hrms.application.analytics.service;
 import com.hrms.application.analytics.dto.*;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
+import com.hrms.infrastructure.payroll.repository.PayslipRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +32,15 @@ class AnalyticsServiceTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private AttendanceRecordRepository attendanceRecordRepository;
+
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
+
+    @Mock
+    private PayslipRepository payslipRepository;
 
     @InjectMocks
     private AnalyticsService analyticsService;
@@ -49,6 +63,17 @@ class AnalyticsServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        when(leaveRequestRepository.countByTenantIdAndDateAndStatus(any(UUID.class), any(LocalDate.class),
+                eq(LeaveRequest.LeaveRequestStatus.APPROVED))).thenReturn(0L);
+        when(leaveRequestRepository.countByTenantIdAndStatus(any(UUID.class), any(LeaveRequest.LeaveRequestStatus.class)))
+                .thenReturn(0L);
+        when(leaveRequestRepository.findLeaveTypeDistribution(any(UUID.class))).thenReturn(new ArrayList<>());
+        when(attendanceRecordRepository.countByTenantIdAndDate(any(UUID.class), any(LocalDate.class))).thenReturn(0L);
+        when(attendanceRecordRepository.countByTenantIdAndDateAndOnTime(any(UUID.class), any(LocalDate.class)))
+                .thenReturn(0L);
+        when(payslipRepository.countByTenantIdAndYearAndMonth(any(UUID.class), anyInt(), anyInt())).thenReturn(0L);
+        when(payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(any(UUID.class), anyInt(), anyInt()))
+                .thenReturn(java.math.BigDecimal.ZERO);
     }
 
     @Nested
@@ -178,6 +203,8 @@ class AnalyticsServiceTest {
         void shouldGetLeaveMetricsSuccessfully() {
             LocalDate startDate = LocalDate.now().withDayOfMonth(1);
             LocalDate endDate = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+            when(leaveRequestRepository.findLeaveTypeDistribution(tenantId))
+                    .thenReturn(Collections.singletonList(new Object[]{"Casual Leave", 2L}));
 
             LeaveMetrics result = analyticsService.getLeaveMetrics(tenantId, startDate, endDate);
 
@@ -185,7 +212,7 @@ class AnalyticsServiceTest {
             assertThat(result.getPendingRequests()).isNotNull();
             assertThat(result.getApprovedThisMonth()).isNotNull();
             assertThat(result.getRejectedThisMonth()).isNotNull();
-            assertThat(result.getLeaveTypeDistribution()).isNotEmpty();
+            assertThat(result.getLeaveTypeDistribution()).containsKey("Casual Leave");
         }
     }
 

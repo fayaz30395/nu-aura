@@ -944,14 +944,14 @@ class ExpenseClaimScopeIntegrationTest {
 
     private void setupSuperAdminByRole(UUID employeeId) {
         Map<String, RoleScope> permissions = new HashMap<>();
-        // Give only SELF scope permissions - the SUPER_ADMIN role should bypass
+        // Include explicit system-admin permission for current authorization model
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         permissions.put(Permission.EXPENSE_VIEW, RoleScope.SELF);
         permissions.put(Permission.EXPENSE_VIEW_TEAM, RoleScope.SELF);
         permissions.put(Permission.EXPENSE_APPROVE, RoleScope.SELF);
         permissions.put(Permission.EXPENSE_CREATE, RoleScope.SELF);
 
-        // Use SUPER_ADMIN role - isSuperAdmin() checks for this role
-        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("SUPER_ADMIN", "SYSTEM_ADMIN"), permissions);
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 

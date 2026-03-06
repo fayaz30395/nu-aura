@@ -76,7 +76,7 @@ export default function ResourcePoolPage() {
   useEffect(() => { load(); }, []);
 
   // Extract employees list
-  const employees: EmployeeWorkload[] = data?.employees || [];
+  const employees: EmployeeWorkload[] = data?.employeeWorkloads || [];
 
   // Unique departments
   const departments = useMemo(() => {
@@ -114,9 +114,9 @@ export default function ResourcePoolPage() {
       e.employeeCode || '',
       e.departmentName || '',
       e.designation || '',
-      e.currentAllocation ?? 0,
+      e.totalAllocation ?? 0,
       e.allocationStatus,
-      (e.projectAllocations || []).map((p: { projectName: string }) => p.projectName).join(' | '),
+      (e.allocations || []).map((p: { projectName: string }) => p.projectName).join(' | '),
     ]);
     const csv = [header, ...rows].map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -282,7 +282,7 @@ export default function ResourcePoolPage() {
                 </thead>
                 <tbody className="divide-y divide-surface-100">
                   {filtered.map(emp => {
-                    const alloc = emp.currentAllocation ?? 0;
+                    const alloc = emp.totalAllocation ?? 0;
                     const { badge } = allocationColor(alloc);
                     return (
                       <tr key={emp.employeeId} className="hover:bg-surface-50 transition-colors">
@@ -311,9 +311,9 @@ export default function ResourcePoolPage() {
                           <AllocationBar value={alloc} />
                         </td>
                         <td className="px-4 py-3 hidden lg:table-cell">
-                          {(emp.projectAllocations || []).length > 0 ? (
+                          {(emp.allocations || []).length > 0 ? (
                             <div className="flex flex-wrap gap-1">
-                              {(emp.projectAllocations || []).slice(0, 3).map((p: { projectId: string; projectName: string; allocationPercentage?: number }) => (
+                              {(emp.allocations || []).slice(0, 3).map((p: { projectId: string; projectName: string; allocationPercentage?: number }) => (
                                 <span key={p.projectId} className="text-xs px-2 py-0.5 bg-surface-100 text-surface-600 rounded-full" title={p.projectName}>
                                   {p.projectName.length > 18 ? p.projectName.slice(0, 16) + '…' : p.projectName}
                                   {p.allocationPercentage != null && (
@@ -321,9 +321,9 @@ export default function ResourcePoolPage() {
                                   )}
                                 </span>
                               ))}
-                              {(emp.projectAllocations || []).length > 3 && (
+                              {(emp.allocations || []).length > 3 && (
                                 <span className="text-xs text-surface-400">
-                                  +{(emp.projectAllocations || []).length - 3} more
+                                  +{(emp.allocations || []).length - 3} more
                                 </span>
                               )}
                             </div>

@@ -161,7 +161,7 @@ export default function CapacityTimelinePage() {
 
   useEffect(() => { load(); }, []);
 
-  const employees: EmployeeWorkload[] = data?.employees || [];
+  const employees: EmployeeWorkload[] = data?.employeeWorkloads || [];
 
   const departments = useMemo(() => {
     const s = new Set(employees.map(e => e.departmentName).filter(Boolean));
