@@ -1,5 +1,8 @@
-# Kubernetes Deployment for HRMS Platform Backend
-# This manifest defines the deployment configuration for the Spring Boot backend
+# ⚠ LEGACY FILE — DO NOT APPLY
+# This file is superseded by backend-deployment.yaml (correct label scheme, correct secret refs).
+# Applying this file will overwrite the correct backend Deployment in the 'hrms' namespace.
+# Use: kubectl apply -f backend-deployment.yaml
+# See: deployment/kubernetes/README.md for the authoritative apply order.
 
 apiVersion: apps/v1
 kind: Deployment

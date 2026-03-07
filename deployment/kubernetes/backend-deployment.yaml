@@ -60,77 +60,64 @@ spec:
           protocol: TCP
 
         env:
-        # Spring Boot Configuration
+        # ── Spring Profile ─────────────────────────────────────────────────────────
         - name: SPRING_PROFILES_ACTIVE
           valueFrom:
             configMapKeyRef:
               name: hrms-config
               key: SPRING_PROFILES_ACTIVE
 
-        - name: SERVER_PORT
+        - name: PORT
           valueFrom:
             configMapKeyRef:
               name: hrms-config
               key: SERVER_PORT
 
-        # Database Configuration
+        # ── Database ───────────────────────────────────────────────────────────────
         - name: SPRING_DATASOURCE_URL
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: DATABASE_URL
+              key: SPRING_DATASOURCE_URL
 
         - name: SPRING_DATASOURCE_USERNAME
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: DB_USERNAME
+              key: SPRING_DATASOURCE_USERNAME
 
         - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: DB_PASSWORD
+              key: SPRING_DATASOURCE_PASSWORD
 
-        - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: hrms-config
-              key: DB_DRIVER
-
-        # JPA Configuration
-        - name: SPRING_JPA_SHOW_SQL
-          valueFrom:
-            configMapKeyRef:
-              name: hrms-config
-              key: JPA_SHOW_SQL
-
-        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
-          valueFrom:
-            configMapKeyRef:
-              name: hrms-config
-              key: JPA_HIBERNATE_DDL_AUTO
-
-        # Redis Configuration
+        # ── Redis ──────────────────────────────────────────────────────────────────
         - name: SPRING_REDIS_HOST
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: REDIS_HOST
+              key: SPRING_REDIS_HOST
 
         - name: SPRING_REDIS_PORT
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: REDIS_PORT
+              key: SPRING_REDIS_PORT
 
         - name: SPRING_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
-              key: REDIS_PASSWORD
+              key: SPRING_REDIS_PASSWORD
 
-        # JWT Configuration
+        - name: SPRING_REDIS_SSL_ENABLED
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: SPRING_REDIS_SSL_ENABLED
+
+        # ── JWT ────────────────────────────────────────────────────────────────────
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
@@ -143,7 +130,20 @@ spec:
               name: hrms-secrets
               key: JWT_EXPIRATION
 
-        # MinIO Configuration
+        - name: JWT_REFRESH_EXPIRATION
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: JWT_REFRESH_EXPIRATION
+
+        # ── Encryption ─────────────────────────────────────────────────────────────
+        - name: APP_SECURITY_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: APP_SECURITY_ENCRYPTION_KEY
+
+        # ── MinIO ──────────────────────────────────────────────────────────────────
         - name: MINIO_ENDPOINT
           valueFrom:
             secretKeyRef:
@@ -168,32 +168,38 @@ spec:
               name: hrms-secrets
               key: MINIO_BUCKET
 
-        # Email Configuration
-        - name: SPRING_MAIL_HOST
+        # ── Email ──────────────────────────────────────────────────────────────────
+        - name: MAIL_HOST
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
               key: MAIL_HOST
 
-        - name: SPRING_MAIL_PORT
+        - name: MAIL_PORT
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
               key: MAIL_PORT
 
-        - name: SPRING_MAIL_USERNAME
+        - name: MAIL_USERNAME
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
               key: MAIL_USERNAME
 
-        - name: SPRING_MAIL_PASSWORD
+        - name: MAIL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: hrms-secrets
               key: MAIL_PASSWORD
 
-        # Google OAuth
+        - name: MAIL_FROM
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: MAIL_FROM
+
+        # ── Google OAuth ───────────────────────────────────────────────────────────
         - name: GOOGLE_CLIENT_ID
           valueFrom:
             secretKeyRef:
@@ -206,7 +212,122 @@ spec:
               name: hrms-secrets
               key: GOOGLE_CLIENT_SECRET
 
-        # Java Options
+        # ── Cookie / Security ──────────────────────────────────────────────────────
+        - name: COOKIE_SECURE
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: COOKIE_SECURE
+
+        - name: COOKIE_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: COOKIE_DOMAIN
+
+        - name: CSRF_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: CSRF_ENABLED
+
+        # ── Frontend / CORS ────────────────────────────────────────────────────────
+        - name: FRONTEND_URL
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: FRONTEND_URL
+
+        - name: AUTH_ALLOWED_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: AUTH_ALLOWED_DOMAIN
+
+        # ── Server error verbosity ─────────────────────────────────────────────────
+        - name: SERVER_ERROR_INCLUDE_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: SERVER_ERROR_INCLUDE_MESSAGE
+
+        - name: SERVER_ERROR_INCLUDE_BINDING
+          valueFrom:
+            configMapKeyRef:
+              name: hrms-config
+              key: SERVER_ERROR_INCLUDE_BINDING
+
+        # ── Twilio SMS (optional) ──────────────────────────────────────────────────
+        - name: TWILIO_MOCK_MODE
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: TWILIO_MOCK_MODE
+
+        - name: TWILIO_ACCOUNT_SID
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: TWILIO_ACCOUNT_SID
+
+        - name: TWILIO_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: TWILIO_AUTH_TOKEN
+
+        - name: TWILIO_FROM_NUMBER
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: TWILIO_FROM_NUMBER
+
+        # ── Calendar (optional) ────────────────────────────────────────────────────
+        - name: CALENDAR_MOCK_MODE
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: CALENDAR_MOCK_MODE
+
+        - name: GOOGLE_CALENDAR_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: GOOGLE_CALENDAR_CLIENT_ID
+
+        - name: GOOGLE_CALENDAR_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: GOOGLE_CALENDAR_CLIENT_SECRET
+
+        # ── OpenAI (optional) ──────────────────────────────────────────────────────
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: OPENAI_API_KEY
+
+        # ── Slack (optional) ───────────────────────────────────────────────────────
+        - name: SLACK_ENABLED
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: SLACK_ENABLED
+
+        - name: SLACK_WEBHOOK_URL
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: SLACK_WEBHOOK_URL
+
+        - name: SLACK_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hrms-secrets
+              key: SLACK_BOT_TOKEN
+
+        # ── JVM ────────────────────────────────────────────────────────────────────
         - name: JAVA_OPTS
           value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
 
