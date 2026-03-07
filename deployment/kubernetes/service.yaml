@@ -1,5 +1,9 @@
-# Kubernetes Services for HRMS Platform
-# This manifest defines service configurations for backend and frontend
+# ⚠ LEGACY FILE — DO NOT APPLY
+# This file uses the old label scheme (app: hrms-backend, tier: backend) which does not match
+# the current pod labels (app: hrms, component: backend/frontend).
+# Services defined here will not route traffic to any pods.
+# The authoritative service manifests are: backend-service.yaml and frontend-service.yaml
+# See: deployment/kubernetes/README.md for the authoritative apply order.
 
 ---
 # Backend Service

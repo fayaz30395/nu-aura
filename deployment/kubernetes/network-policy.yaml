@@ -16,7 +16,7 @@ spec:
   - Egress
 
   ingress:
-  # Allow traffic from frontend
+  # Allow traffic from frontend pods (same namespace)
   - from:
     - podSelector:
         matchLabels:
@@ -26,12 +26,13 @@ spec:
     - protocol: TCP
       port: 8080
 
-  # Allow traffic from ingress controller
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-    ports:
+  # Allow traffic from GCE Load Balancer health checks and forwarding rules.
+  # GKE's native GCE ingress bypasses an in-cluster controller: the GCE LB
+  # connects directly to Node IPs, so the source appears as GCP health-check
+  # ranges (130.211.0.0/22, 35.191.0.0/16) and VPC-internal IPs.
+  # We allow from 0.0.0.0/0 on port 8080 here; further restriction should be
+  # done via Cloud Armor security policy (ingress.yaml armor-config annotation).
+  - ports:
     - protocol: TCP
       port: 8080
 
@@ -109,12 +110,8 @@ spec:
   - Egress
 
   ingress:
-  # Allow traffic from ingress controller
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-    ports:
+  # Allow traffic from GCE Load Balancer (same reasoning as backend above)
+  - ports:
     - protocol: TCP
       port: 3000
 
