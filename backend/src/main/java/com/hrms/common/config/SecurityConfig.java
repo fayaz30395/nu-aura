@@ -82,6 +82,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        // MFA endpoints - login is public (pre-auth step), others require authentication
+                        .requestMatchers("/api/v1/auth/mfa-login").permitAll()
+                        .requestMatchers("/api/v1/auth/mfa/**").authenticated()
                         .requestMatchers("/api/v1/tenants/register").permitAll()
                         // Actuator: only health endpoint is public, others require SYSTEM_ADMIN
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()

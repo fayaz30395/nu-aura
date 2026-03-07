@@ -58,6 +58,20 @@ public class User extends TenantAware {
     @Column(length = 500)
     private String profilePictureUrl;
 
+    // MFA Fields
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean mfaEnabled = false;
+
+    @Column(name = "mfa_secret", length = 100)
+    private String mfaSecret;
+
+    @Column(name = "mfa_backup_codes", columnDefinition = "TEXT")
+    private String mfaBackupCodes;
+
+    @Column
+    private LocalDateTime mfaSetupAt;
+
     /**
      * User roles - loaded LAZILY to avoid N+1 and unnecessary data loading.
      *

@@ -5,6 +5,7 @@ import com.hrms.api.lms.dto.CourseRequest;
 import com.hrms.api.lms.dto.SkillGapReport;
 import com.hrms.application.lms.service.LmsService;
 import com.hrms.application.lms.service.SkillGapAnalysisService;
+import com.hrms.application.lms.service.QuizManagementService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.RequiresPermission;
 import com.hrms.common.security.RequiresFeature;
@@ -14,6 +15,8 @@ import com.hrms.domain.featureflag.FeatureFlag;
 import com.hrms.domain.lms.Certificate;
 import com.hrms.domain.lms.ContentProgress;
 import com.hrms.domain.lms.Course;
+import com.hrms.domain.lms.Quiz;
+import com.hrms.domain.lms.QuizQuestion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +38,7 @@ public class LmsController {
 
     private final LmsService lmsService;
     private final SkillGapAnalysisService skillGapAnalysisService;
+    private final QuizManagementService quizManagementService;
 
     // ─── Catalog ─────────────────────────────────────────────────────────────
 
@@ -123,6 +127,83 @@ public class LmsController {
     }
 
     // NOTE: POST /courses/{courseId}/enroll is handled by CourseEnrollmentController.
+
+    // ─── Quiz Management (HR/Admin) ───────────────────────────────────────────
+
+    @PostMapping("/courses/{courseId}/quizzes")
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public Quiz createQuiz(@PathVariable UUID courseId, @Valid @RequestBody Quiz quiz) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.createQuiz(courseId, quiz, tenantId);
+    }
+
+    @GetMapping("/courses/{courseId}/quizzes")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public List<Quiz> getQuizzesByCompany(@PathVariable UUID courseId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.getQuizzesByCourse(courseId, tenantId);
+    }
+
+    @GetMapping("/quizzes/{quizId}")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public Quiz getQuiz(@PathVariable UUID quizId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.getQuizWithQuestions(quizId, tenantId);
+    }
+
+    @PutMapping("/quizzes/{quizId}")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public Quiz updateQuiz(@PathVariable UUID quizId, @Valid @RequestBody Quiz quiz) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.updateQuiz(quizId, quiz, tenantId);
+    }
+
+    @DeleteMapping("/quizzes/{quizId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public void deleteQuiz(@PathVariable UUID quizId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        quizManagementService.deleteQuiz(quizId, tenantId);
+    }
+
+    @PostMapping("/quizzes/{quizId}/questions")
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public QuizQuestion addQuestionToQuiz(@PathVariable UUID quizId, @Valid @RequestBody QuizQuestion question) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.addQuestionToQuiz(quizId, question, tenantId);
+    }
+
+    @GetMapping("/quizzes/{quizId}/questions")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public List<QuizQuestion> getQuizQuestions(@PathVariable UUID quizId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.getQuizQuestions(quizId, tenantId);
+    }
+
+    @PutMapping("/questions/{questionId}")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public QuizQuestion updateQuestion(@PathVariable UUID questionId, @Valid @RequestBody QuizQuestion question) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return quizManagementService.updateQuestion(questionId, question, tenantId);
+    }
+
+    @DeleteMapping("/questions/{questionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public void deleteQuestion(@PathVariable UUID questionId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        quizManagementService.deleteQuestion(questionId, tenantId);
+    }
+
+    @PostMapping("/quizzes/{quizId}/reorder-questions")
+    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    public ResponseEntity<Void> reorderQuestions(@PathVariable UUID quizId, @RequestBody List<UUID> questionIds) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        quizManagementService.reorderQuestions(quizId, questionIds, tenantId);
+        return ResponseEntity.ok().build();
+    }
 
     // ─── Content Progress ─────────────────────────────────────────────────────
 

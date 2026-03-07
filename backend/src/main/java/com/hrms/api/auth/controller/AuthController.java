@@ -3,13 +3,19 @@ package com.hrms.api.auth.controller;
 import com.hrms.api.auth.dto.*;
 import java.util.Map;
 import com.hrms.application.auth.service.AuthService;
+import com.hrms.application.auth.service.MfaService;
 import com.hrms.common.config.CookieConfig;
+import com.hrms.common.exception.AuthenticationException;
 import com.hrms.common.security.JwtTokenProvider;
 import com.hrms.common.security.SecurityContext;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +23,15 @@ import org.springframework.web.bind.annotation.*;
 // Public endpoints - no RBAC required
 @RestController
 @RequestMapping("/api/v1/auth")
+@Slf4j
+@Tag(name = "Authentication", description = "Authentication endpoints")
 public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private MfaService mfaService;
 
     @Autowired
     private CookieConfig cookieConfig;
@@ -29,6 +40,7 @@ public class AuthController {
     private JwtTokenProvider tokenProvider;
 
     @PostMapping("/login")
+    @Operation(summary = "Login with email and password", description = "Authenticate user with email and password. If MFA is enabled, response will indicate MFA is required.")
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
@@ -42,6 +54,7 @@ public class AuthController {
     }
 
     @PostMapping("/google")
+    @Operation(summary = "Login with Google", description = "Authenticate user with Google OAuth token")
     public ResponseEntity<AuthResponse> googleLogin(
             @Valid @RequestBody GoogleLoginRequest request,
             HttpServletResponse response) {
@@ -53,7 +66,46 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
 
+    @PostMapping("/mfa-login")
+    @Operation(summary = "Complete MFA second-factor authentication", description = "Verify MFA code after initial password authentication. Returns full authentication tokens if verification succeeds.")
+    public ResponseEntity<AuthResponse> mfaLogin(
+            @Valid @RequestBody MfaLoginRequest request,
+            HttpServletResponse response) {
+        log.info("MFA login initiated for user: {}", request.getUserId());
+
+        try {
+            // Verify the MFA code
+            if (!mfaService.verifyMfaCode(request.getUserId(), request.getCode())) {
+                log.warn("Invalid MFA code for user: {}", request.getUserId());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(AuthResponse.builder()
+                        .error("Invalid MFA code")
+                        .build());
+            }
+
+            // Get full authentication tokens for the user
+            AuthResponse authResponse = authService.loginAfterMfa(request.getUserId());
+
+            // Check if backup code was used and consume it
+            if (request.getCode().length() > 6) { // Backup codes are longer than TOTP codes
+                mfaService.consumeBackupCode(request.getUserId(), request.getCode());
+            }
+
+            // Set secure httpOnly cookies
+            setAuthCookies(response, authResponse.getAccessToken(), authResponse.getRefreshToken());
+
+            return ResponseEntity.ok(authResponse);
+        } catch (Exception e) {
+            log.error("MFA login failed for user: {}", request.getUserId(), e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(AuthResponse.builder()
+                    .error("MFA verification failed")
+                    .build());
+        }
+    }
+
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token", description = "Use refresh token to get new access token")
     public ResponseEntity<AuthResponse> refresh(
             @RequestHeader(value = "X-Refresh-Token", required = false) String refreshTokenHeader,
             @CookieValue(value = CookieConfig.REFRESH_TOKEN_COOKIE, required = false) String refreshTokenCookie,
@@ -78,6 +130,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Logout user", description = "Revoke tokens and clear authentication state")
     public ResponseEntity<Void> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
             @CookieValue(value = CookieConfig.ACCESS_TOKEN_COOKIE, required = false) String accessTokenCookie,
@@ -110,6 +163,7 @@ public class AuthController {
     }
 
     @PostMapping("/change-password")
+    @Operation(summary = "Change password", description = "Change password for authenticated user")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         // Get current authenticated user ID from SecurityContext
         authService.changePassword(SecurityContext.getCurrentUserId(), request);
@@ -117,12 +171,14 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
+    @Operation(summary = "Request password reset", description = "Request a password reset link via email")
     public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         authService.requestPasswordReset(request.getEmail());
         return ResponseEntity.ok(Map.of("message", "If an account exists with this email, a password reset link has been sent."));
     }
 
     @PostMapping("/reset-password")
+    @Operation(summary = "Reset password", description = "Reset password using reset token from email")
     public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request);
         return ResponseEntity.ok(Map.of("message", "Password has been reset successfully."));
