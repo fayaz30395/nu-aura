@@ -28,7 +28,8 @@ const PUBLIC_ROUTES = [
   // Token-based public portals — accessed by candidates/employees without an account session
   '/preboarding/portal/',   // candidate preboarding portal (token in URL)
   '/exit-interview/',        // public exit interview form (token in URL)
-  '/offer-portal',           // candidate offer sign page
+  '/offer-portal',
+  '/careers',           // candidate offer sign page
   '/sign/',                  // e-signature portal (token in URL)
 ];
 
