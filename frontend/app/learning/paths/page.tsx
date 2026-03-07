@@ -1,0 +1,310 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {
+  ArrowLeft,
+  BookOpen,
+  Clock,
+  BarChart2,
+  Users,
+  Play,
+  CheckCircle2,
+  Zap,
+  Filter,
+  Search,
+} from 'lucide-react';
+import { AppLayout } from '@/components/layout';
+import { apiClient } from '@/lib/api/client';
+
+interface LearningPath {
+  id: string;
+  title: string;
+  description?: string;
+  difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  durationHours?: number;
+  courseCount: number;
+  totalEnrollments: number;
+  thumbnailUrl?: string;
+  isEnrolled?: boolean;
+  progressPercentage?: number;
+  status?: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+}
+
+export default function LearningPathsPage() {
+  const router = useRouter();
+
+  const [paths, setPaths] = useState<LearningPath[]>([]);
+  const [filteredPaths, setFilteredPaths] = useState<LearningPath[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
+  const [enrolling, setEnrolling] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadPaths();
+  }, []);
+
+  async function loadPaths() {
+    try {
+      setLoading(true);
+      // Simulate API call - replace with actual endpoint when available
+      const response = await apiClient.get<{ content: LearningPath[] }>('/lms/learning-paths');
+      setPaths(response.data.content || []);
+    } catch (err) {
+      console.error('Failed to load learning paths:', err);
+      // For now, show empty state
+      setPaths([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Apply filters
+  useEffect(() => {
+    let filtered = paths;
+
+    // Filter by difficulty
+    if (selectedDifficulty !== 'ALL') {
+      filtered = filtered.filter(p => p.difficulty === selectedDifficulty);
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(p =>
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+      );
+    }
+
+    setFilteredPaths(filtered);
+  }, [paths, searchQuery, selectedDifficulty]);
+
+  const handleEnrollPath = async (pathId: string) => {
+    try {
+      setEnrolling(pathId);
+      // Simulate API call to enroll in path
+      await apiClient.post(`/lms/learning-paths/${pathId}/enroll`);
+      // Refresh paths
+      await loadPaths();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to enroll in learning path');
+    } finally {
+      setEnrolling(null);
+    }
+  };
+
+  const getDifficultyColor = (level: string) => {
+    switch (level) {
+      case 'BEGINNER': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+      case 'INTERMEDIATE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+      case 'ADVANCED': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+    }
+  };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'NOT_STARTED': return 'bg-gray-100 text-gray-700';
+      case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-700';
+      case 'COMPLETED': return 'bg-green-100 text-green-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  return (
+    <AppLayout activeMenuItem="learning">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
+            <ArrowLeft className="h-4 w-4" /> Back to Learning
+          </Link>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Learning Paths</h1>
+          <p className="text-gray-600 dark:text-gray-400">Structured learning journeys to develop specific skills and competencies</p>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search learning paths..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+              />
+            </div>
+
+            {/* Difficulty Filter */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <select
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+              >
+                <option value="ALL">All Difficulty Levels</option>
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
+              <p className="text-gray-500 dark:text-gray-400">Loading learning paths...</p>
+            </div>
+          </div>
+        ) : filteredPaths.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPaths.map((path) => (
+              <div key={path.id} className="bg-white dark:bg-surface-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                {/* Thumbnail */}
+                {path.thumbnailUrl ? (
+                  <img
+                    src={path.thumbnailUrl}
+                    alt={path.title}
+                    className="w-full h-40 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-40 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                    <Zap className="h-12 w-12 text-white opacity-50" />
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="p-6">
+                  {/* Title and Status */}
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex-1">{path.title}</h3>
+                    {path.status && (
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
+                        {path.status.replace('_', ' ')}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  {path.description && (
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{path.description}</p>
+                  )}
+
+                  {/* Meta Info */}
+                  <div className="flex flex-wrap gap-3 mb-4 text-xs text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
+                      {path.courseCount} {path.courseCount === 1 ? 'course' : 'courses'}
+                    </div>
+                    {path.durationHours && (
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {path.durationHours}h
+                      </div>
+                    )}
+                    {path.totalEnrollments > 0 && (
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />
+                        {path.totalEnrollments} enrolled
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Difficulty Badge */}
+                  <div className="mb-4">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
+                      {path.difficulty}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar (if enrolled) */}
+                  {path.isEnrolled && typeof path.progressPercentage === 'number' && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Progress</span>
+                        <span className="text-xs font-bold text-gray-900 dark:text-white">{path.progressPercentage}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-600 transition-all duration-300"
+                          style={{ width: `${path.progressPercentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Button */}
+                  {path.isEnrolled ? (
+                    <button
+                      onClick={() => router.push(`/learning/paths/${path.id}`)}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm flex items-center justify-center gap-2"
+                    >
+                      {path.status === 'COMPLETED' ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4" /> Review Path
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4" /> Continue
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleEnrollPath(path.id)}
+                      disabled={enrolling === path.id}
+                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                      {enrolling === path.id ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                          Enrolling...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4" /> Enroll Now
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-12 text-center">
+            <Zap className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {searchQuery || selectedDifficulty !== 'ALL' 
+                ? 'Try adjusting your search or filter criteria'
+                : 'Learning paths will be available soon'}
+            </p>
+            {(searchQuery || selectedDifficulty !== 'ALL') && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedDifficulty('ALL');
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </AppLayout>
+  );
+}
