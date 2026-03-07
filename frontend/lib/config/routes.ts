@@ -37,6 +37,8 @@ export const PUBLIC_ROUTES: string[] = [
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/verify-email',
+  '/careers',
+  '/careers/',
   '/',
 ];
 
@@ -68,7 +70,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/admin/leave-types',
-    anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.LEAVE_MANAGE],
+    anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.LEAVE_MANAGE, Permissions.LEAVE_TYPE_MANAGE],
   },
   {
     path: '/admin/leave-requests',
@@ -190,6 +192,26 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.GOAL_CREATE, Permissions.GOAL_APPROVE],
   },
   {
+    path: '/performance/pip',
+    anyPermission: [Permissions.PIP_VIEW, Permissions.PIP_CREATE, Permissions.PIP_MANAGE],
+  },
+  {
+    path: '/performance/calibration',
+    anyPermission: [Permissions.CALIBRATION_VIEW, Permissions.CALIBRATION_MANAGE],
+  },
+  {
+    path: '/performance/9box',
+    anyPermission: [Permissions.CALIBRATION_VIEW, Permissions.REVIEW_APPROVE],
+  },
+  {
+    path: '/performance/cycles/[id]/calibration',
+    anyPermission: [Permissions.CALIBRATION_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/performance/cycles/[id]/nine-box',
+    anyPermission: [Permissions.CALIBRATION_VIEW, Permissions.REVIEW_APPROVE],
+  },
+  {
     path: '/performance',
     permission: Permissions.REVIEW_VIEW,
   },
@@ -212,6 +234,18 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/training',
     permission: Permissions.TRAINING_VIEW,
+  },
+  {
+    path: '/learning/paths',
+    anyPermission: [Permissions.LMS_COURSE_VIEW],
+  },
+  {
+    path: '/learning/certificates',
+    requiresAuth: true,
+  },
+  {
+    path: '/learning',
+    anyPermission: [Permissions.LMS_COURSE_VIEW, Permissions.TRAINING_VIEW],
   },
   {
     path: '/lms/manage',
@@ -278,6 +312,163 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.WALL_VIEW, Permissions.WALL_POST],
   },
 
+  // Offboarding
+  {
+    path: '/offboarding/exit/fnf',
+    anyPermission: [
+      Permissions.EXIT_MANAGE,
+      Permissions.SYSTEM_ADMIN,
+    ],
+  },
+  {
+    path: '/offboarding',
+    anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
+  },
+
+  // Assets
+  {
+    path: '/assets',
+    anyPermission: [Permissions.ASSET_VIEW, Permissions.ASSET_CREATE, Permissions.ASSET_MANAGE],
+  },
+
+  // Benefits
+  {
+    path: '/benefits',
+    anyPermission: [Permissions.BENEFIT_VIEW, Permissions.BENEFIT_VIEW_SELF, Permissions.BENEFIT_MANAGE],
+  },
+
+  // Surveys
+  {
+    path: '/surveys/manage',
+    anyPermission: [Permissions.SURVEY_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/surveys',
+    anyPermission: [Permissions.SURVEY_VIEW, Permissions.SURVEY_SUBMIT],
+  },
+
+  // Announcements
+  {
+    path: '/announcements/manage',
+    anyPermission: [Permissions.ANNOUNCEMENT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/announcements',
+    anyPermission: [Permissions.ANNOUNCEMENT_VIEW, Permissions.ANNOUNCEMENT_CREATE],
+  },
+
+  // Travel
+  {
+    path: '/travel/approvals',
+    anyPermission: [Permissions.TRAVEL_APPROVE, Permissions.TRAVEL_MANAGE],
+  },
+  {
+    path: '/travel',
+    anyPermission: [Permissions.TRAVEL_VIEW, Permissions.TRAVEL_CREATE],
+  },
+
+  // Loans
+  {
+    path: '/loans/manage',
+    anyPermission: [Permissions.LOAN_APPROVE, Permissions.LOAN_MANAGE],
+  },
+  {
+    path: '/loans',
+    anyPermission: [Permissions.LOAN_VIEW, Permissions.LOAN_CREATE],
+  },
+
+  // Compensation
+  {
+    path: '/compensation/manage',
+    anyPermission: [Permissions.COMPENSATION_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/compensation',
+    anyPermission: [Permissions.COMPENSATION_VIEW, Permissions.COMPENSATION_VIEW_ALL],
+  },
+
+  // Statutory Compliance & Tax
+  {
+    path: '/tax/declarations',
+    requiresAuth: true,
+  },
+  {
+    path: '/tax',
+    anyPermission: [Permissions.STATUTORY_VIEW, Permissions.STATUTORY_MANAGE],
+  },
+  {
+    path: '/statutory',
+    anyPermission: [Permissions.STATUTORY_VIEW, Permissions.STATUTORY_MANAGE],
+  },
+
+  // Wellness
+  {
+    path: '/wellness',
+    anyPermission: [Permissions.WELLNESS_VIEW, Permissions.WELLNESS_CREATE, Permissions.WELLNESS_MANAGE],
+  },
+
+  // Resources & PSA
+  {
+    path: '/resources/capacity',
+    anyPermission: [Permissions.PROJECT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/resources/workload',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/resources',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+
+  // PSA (Professional Services Automation)
+  {
+    path: '/psa/invoices',
+    anyPermission: [Permissions.PROJECT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/psa/timesheets',
+    anyPermission: [Permissions.TIMESHEET_SUBMIT, Permissions.TIMESHEET_APPROVE],
+  },
+  {
+    path: '/psa',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.TIMESHEET_APPROVE],
+  },
+
+  // Allocations
+  {
+    path: '/allocations',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+
+  // Departments
+  {
+    path: '/departments',
+    anyPermission: [Permissions.DEPARTMENT_VIEW, Permissions.DEPARTMENT_MANAGE],
+  },
+
+  // Organization Chart
+  {
+    path: '/organization-chart',
+    anyPermission: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_DEPARTMENT],
+  },
+  {
+    path: '/org-chart',
+    anyPermission: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_DEPARTMENT],
+  },
+
+  // Onboarding
+  {
+    path: '/onboarding',
+    anyPermission: [Permissions.EMPLOYEE_CREATE, Permissions.EMPLOYEE_UPDATE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Feedback 360
+  {
+    path: '/feedback360',
+    anyPermission: [Permissions.FEEDBACK_360_VIEW, Permissions.FEEDBACK_360_SUBMIT],
+  },
+
   // Dashboard - different views based on role
   {
     path: '/dashboard/executive',
@@ -305,6 +496,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Profile - accessible to all authenticated users
   {
     path: '/profile',
+    requiresAuth: true,
+  },
+
+  // Self-service pages - always accessible to authenticated users
+  {
+    path: '/me',
     requiresAuth: true,
   },
 
