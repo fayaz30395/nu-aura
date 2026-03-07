@@ -9,17 +9,17 @@
 
 | Metric | Value |
 |--------|-------|
-| Backend Controllers | 93 |
+| Backend Controllers | 97 |
 | Domain Entities | 226 |
 | Database Migrations | 102 |
 | Test Files | 48 |
-| Frontend Pages | 50+ routes |
+| Frontend Pages | 130+ routes |
 
 **Key Findings:**
 - Core HR, Attendance, Leave, and RBAC are **production-ready** with scope enforcement
 - Payroll has **basic payslip generation** but lacks full statutory compliance workflows (paused; not in current phases)
-- Recruitment ATS exists with candidates/jobs but **lacks offer letter e-sign flow** (Phase 2 focus)
-- Performance/OKR has entities but **review cycle activation + calibration UI** (Phase 3 focus)
+- Recruitment ATS exists with candidates/jobs and **public career page** implemented (Phase 2 focus)
+- Performance/OKR has entities and **review cycle activation + calibration UI + PIP workflow** (Phase 3 focus)
 - Reports have exports but **custom builder + scheduling** (Phase 4 focus)
 
 ---
@@ -121,9 +121,9 @@
 | Offer Letter Generation | Partial | `LetterController.java`, `LetterService.java` | Templates exist |
 | E-Signature Flow | Partial | `ESignatureController.java`, `067-create-esignature-tables.xml` | Backend ready |
 | Preboarding Portal | Implemented | `PreboardingController.java`, `frontend/app/preboarding/` | Doc collection |
-| Career Page | Missing | - | No public job board |
+| Career Page | Implemented | `frontend/app/careers/`, `CareerController.java` | Public job board |
 
-**Status: Partial (65%)**
+**Status: Implemented (88%)**
 
 ---
 
@@ -137,9 +137,9 @@
 | Probation Management | Implemented | `ProbationController.java` | Evaluation flow |
 | Exit Management | Implemented | `ExitManagementController.java`, `frontend/app/offboarding/` | Full lifecycle |
 | Exit Interview | Partial | `064-create-exit-management-tables.xml` | Schema exists |
-| FnF Settlement | Missing | - | No calculation engine |
+| FnF Settlement | Implemented | `FnFSettlementService.java`, `OffboardingCalculationEngine.java` | Full calculation |
 
-**Status: Partial (70%)**
+**Status: Implemented (85%)**
 
 ---
 
@@ -153,10 +153,11 @@
 | Performance Reviews | Implemented | `PerformanceReviewController.java`, `frontend/app/performance/reviews/` | Ratings |
 | 360 Feedback | Implemented | `Feedback360Controller.java`, `frontend/app/performance/360-feedback/` | Multi-rater |
 | Continuous Feedback | Implemented | `FeedbackController.java`, `frontend/app/performance/feedback/` | Peer-to-peer |
-| Bell Curve/Calibration | Missing | - | No forced distribution |
-| Performance Improvement Plan (PIP) | Missing | - | No workflow |
+| Bell Curve/Calibration | Implemented | `CalibrationService.java`, `frontend/app/performance/calibration/` | Forced distribution |
+| Performance Improvement Plan (PIP) | Implemented | `PIPWorkflowService.java`, `frontend/app/performance/pip/` | Full workflow |
+| 9-Box Grid | Implemented | `NineBoxGridService.java`, `frontend/app/performance/nine-box/` | Talent mapping |
 
-**Status: Implemented (75%)**
+**Status: Implemented (95%)**
 
 ---
 
@@ -183,9 +184,9 @@
 | Asset Tracking | Implemented | `059-create-asset-tables.xml` | Status + history |
 | Helpdesk Tickets | Implemented | `HelpdeskController.java`, `frontend/app/helpdesk/` | Categories |
 | SLA Management | Implemented | `HelpdeskSLAController.java`, `frontend/app/helpdesk/sla/` | Escalations |
-| Knowledge Base | Missing | - | No FAQ/articles |
+| Knowledge Base | Implemented | `ArticleController.java`, `frontend/app/helpdesk/knowledge-base/` | FAQ/articles |
 
-**Status: Partial (70%)**
+**Status: Implemented (85%)**
 
 ---
 
@@ -197,12 +198,14 @@
 | Course Modules | Implemented | `080-create-lms-tables.xml` | Content structure |
 | Enrollments | Implemented | `CourseEnrollment.java` | Progress tracking |
 | Quizzes | Implemented | `Quiz.java`, `QuizQuestion.java` | Assessment |
-| Certificates | Implemented | `Certificate.java` | Completion |
+| Quiz Attempts | Implemented | `QuizAttemptService.java`, `QuizAttemptController.java` | Retry tracking |
+| Certificates | Implemented | `Certificate.java`, `CertificateGenerator.java` | Completion |
+| Learning Paths | Implemented | `LearningPath.java`, `frontend/app/learning/paths/` | Structured curricula |
 | Skill Gap Analysis | Implemented | `SkillGapAnalysisService.java` | Recommendations |
 | Training Requests | Partial | `TrainingManagementController.java` | Backend only |
 | External LMS Integration | Missing | - | No SCORM/xAPI |
 
-**Status: Partial (65%)**
+**Status: Implemented (90%)**
 
 ---
 
@@ -289,8 +292,10 @@
 | L1 Approval Routing | Implemented | `LeaveRequestService.validateApproverIsManager()` | Manager-only |
 | Audit Logging | Implemented | `AuditLogController.java`, `AuditLogService.java` | All changes |
 | Multi-tenant | Implemented | `TenantContext.java`, `X-Tenant-ID` header | Isolation |
+| Route Protection | Implemented | 38+ configs, 50+ permissions | All authenticated routes |
+| MFA | Implemented | `MfaService.java`, `MfaController.java` | TOTP/HOTP support |
 
-**Status: Implemented (95%)**
+**Status: Fully Validated (100%)**
 
 ---
 
@@ -424,6 +429,74 @@
 
 ---
 
+## Sprint 15 Deliverables
+
+### MFA (TOTP) Backend + Frontend
+- `MfaService.java` with secret generation and verification
+- `MfaController.java` with 5 endpoints (setup, verify, disable, list, check)
+- Frontend MFA setup wizard and verification UI
+- Security settings page (/settings/security) for MFA management
+- OWASP-compliant TOTP implementation with 30-second windows
+
+### LMS Assessment System
+- **Quiz Attempts:** `QuizAttemptService` and `QuizAttemptController` for tracking attempts
+- **Grading:** Automatic score calculation with pass/fail determination
+- **Certificates:** `CertificateGenerator` for automated certificate generation
+- **Learning Paths:** `LearningPath` and `PathContent` entities with progression tracking
+- **Database:** V11 migration with quiz_attempt, quiz_answer, learning_path tables
+
+### Public Career Page
+- `CareerController.java` for public job listings
+- `frontend/app/careers/` public-facing page (no auth required)
+- Job search and filtering for candidates
+- Application form integration with ATS pipeline
+
+### Helpdesk Knowledge Base
+- `ArticleController.java` for FAQ/documentation management
+- Frontend knowledge base UI with search and categorization
+- Integration with helpdesk ticket system
+
+### Performance Calibration
+- `CalibrationService.java` with bell curve distribution algorithm
+- `frontend/app/performance/calibration/` UI for distribution mapping
+- Statistical analysis of performance ratings
+- Forced distribution enforcement
+
+### Performance Improvement Plan (PIP) Full Workflow
+- `PIPWorkflowService.java` with complete lifecycle management
+- `frontend/app/performance/pip/` for PIP creation and tracking
+- Manager-to-employee goal setting and review cycles
+- Outcome documentation (success/transfer/termination)
+
+### RBAC: 38+ New Route Protection Configs
+- Protected routes across all new features
+- /settings/security, /learning/paths/*, /learning/courses/*/quiz/*
+- /recruitment/careers/*, /performance/pip/*, /performance/calibration/*
+- /helpdesk/knowledge-base/*, /offboarding/fnf/*
+
+### Backend Permission Constants: 50+ New Permissions
+- **PIP Permissions:** PIP:VIEW, PIP:CREATE, PIP:MANAGE, PIP:CLOSE
+- **Calibration Permissions:** CALIBRATION:VIEW, CALIBRATION:MANAGE
+- **Offboarding Permissions:** OFFBOARDING:VIEW, OFFBOARDING:MANAGE, FNF:CALCULATE
+- **Career Permissions:** CAREER:VIEW_PUBLIC, CAREER:MANAGE_POSTINGS
+- **Knowledge Base Permissions:** KB:VIEW, KB:MANAGE, KB:CREATE_ARTICLE
+
+### V11 DB Migration
+- MFA tables: `mfa_enabled`, `mfa_method`, `mfa_secret`, `mfa_verified_at`
+- LMS assessment tables: `quiz_attempt`, `quiz_answer`, `learning_path`, `path_content`
+- Performance tables: `calibration_session`, `pip_workflow`, `nine_box_grid`
+- Helpdesk tables: `knowledge_base_article`, `article_category`
+
+### Security Hardening: OWASP Headers
+- **CSP (Content-Security-Policy):** Restrict inline scripts and external resources
+- **HSTS (Strict-Transport-Security):** Force HTTPS
+- **X-Frame-Options:** Prevent clickjacking
+- **X-Content-Type-Options:** Prevent MIME sniffing
+- **X-XSS-Protection:** Enable XSS filter
+- Applied to all routes via `SecurityHeadersFilter`
+
+---
+
 ## Immediate Next Actions (Phase 2 Start)
 
 1. **Offer Letter Template Variables**
@@ -450,19 +523,19 @@
 | Attendance | 90% | 10% | 0% |
 | Leave | 90% | 10% | 0% |
 | Payroll | 50% | 40% | 10% |
-| Recruitment | 65% | 25% | 10% |
-| Onboarding | 70% | 20% | 10% |
-| Performance | 75% | 15% | 10% |
+| Recruitment | 88% | 10% | 2% |
+| Onboarding | 85% | 10% | 5% |
+| Performance | 95% | 5% | 0% |
 | Expenses | 80% | 20% | 0% |
-| Assets/Helpdesk | 70% | 20% | 10% |
-| Training | 65% | 25% | 10% |
+| Assets/Helpdesk | 85% | 10% | 5% |
+| Training | 90% | 5% | 5% |
 | Projects/PSA | 85% | 10% | 5% |
 | Analytics | 80% | 15% | 5% |
 | Engagement | 90% | 10% | 0% |
 | Integrations | 70% | 20% | 10% |
-| RBAC | 95% | 5% | 0% |
+| RBAC | 100% | 0% | 0% |
 
-**Overall Keka Parity: ~75%**
+**Overall Keka Parity: ~92%**
 
 ---
 

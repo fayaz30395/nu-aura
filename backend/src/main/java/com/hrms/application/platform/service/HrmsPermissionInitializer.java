@@ -197,6 +197,36 @@ public class HrmsPermissionInitializer {
                 permissions.add(PermissionDefinition.of("USER", "MANAGE", "Manage Users",
                                 "Create and manage user accounts", "Admin"));
 
+                // ==================== PERFORMANCE IMPROVEMENT PLAN ====================
+                permissions.add(PermissionDefinition.of("PIP", "VIEW", "View PIPs",
+                                "View Performance Improvement Plans", "Performance"));
+                permissions.add(PermissionDefinition.of("PIP", "CREATE", "Create PIPs",
+                                "Create Performance Improvement Plans", "Performance"));
+                permissions.add(PermissionDefinition.of("PIP", "MANAGE", "Manage PIPs",
+                                "Manage all Performance Improvement Plans", "Performance"));
+                permissions.add(PermissionDefinition.of("PIP", "CLOSE", "Close PIPs",
+                                "Close and finalize Performance Improvement Plans", "Performance"));
+
+                // ==================== PERFORMANCE CALIBRATION ====================
+                permissions.add(PermissionDefinition.of("CALIBRATION", "VIEW", "View Calibration",
+                                "View performance calibration and bell curve data", "Performance"));
+                permissions.add(PermissionDefinition.of("CALIBRATION", "MANAGE", "Manage Calibration",
+                                "Run and finalize performance calibration sessions", "Performance"));
+
+                // ==================== OFFBOARDING ====================
+                permissions.add(PermissionDefinition.of("OFFBOARDING", "VIEW", "View Offboarding",
+                                "View offboarding requests and status", "Offboarding"));
+                permissions.add(PermissionDefinition.of("OFFBOARDING", "MANAGE", "Manage Offboarding",
+                                "Manage employee offboarding workflows", "Offboarding"));
+                permissions.add(PermissionDefinition.of("OFFBOARDING", "FNF_CALCULATE", "Calculate FnF",
+                                "Calculate Full and Final Settlement amounts", "Offboarding"));
+
+                // ==================== CAREER PAGE ====================
+                permissions.add(PermissionDefinition.of("CAREER", "VIEW", "View Careers",
+                                "View public job openings", "Recruitment"));
+                permissions.add(PermissionDefinition.of("CAREER", "MANAGE", "Manage Career Page",
+                                "Manage public job board and career page", "Recruitment"));
+
                 // ==================== SYSTEM MODULE ====================
                 permissions.add(PermissionDefinition.of("SYSTEM", "ADMIN", "System Admin",
                                 "Full system administration access - bypasses all checks", "Admin"));

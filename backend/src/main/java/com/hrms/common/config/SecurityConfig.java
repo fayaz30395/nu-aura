@@ -99,6 +99,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/public/offers/**").permitAll()
                         // Public exit interview (token-based, no auth required)
                         .requestMatchers("/api/v1/exit/interview/public/**").permitAll()
+                        // Public career page (job listings, no auth required)
+                        .requestMatchers("/api/public/careers/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
