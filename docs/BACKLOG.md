@@ -1,6 +1,6 @@
 # NU-AURA HRMS Platform - Prioritized Backlog
 
-**Last Updated:** 2026-01-10
+**Last Updated:** 2026-03-07
 
 This backlog consolidates open work across `requirements.md`, `IMPLEMENTATION_STATUS.md`,
 `PROJECT_STATUS.md`, and `TECH_DEBT.md`. It is the single source of truth for what is still pending.
@@ -35,5 +35,15 @@ This backlog consolidates open work across `requirements.md`, `IMPLEMENTATION_ST
 - ATS job board integrations (LinkedIn/Naukri).
 - Incident runbook and operational playbooks.
 
+## Completed Items (Sprint 14)
+- [x] Multi-factor authentication (MFA): TOTP-based MFA with backup codes, setup wizard, verification flows
+- [x] LMS assessments/quizzes/certificates: Quiz attempt tracking, assessment scoring, certificate generation
+- [x] Learning paths: Structured learning pathways with prerequisite management
+- [x] Frontend security hardening: OWASP-compliant headers, MFA route protection, LMS route protection
+- [x] SecurityHeadersFilter: Implemented with CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- [x] MFA endpoints: 5 endpoints (setup, verify, disable, list, check) with proper authentication
+- [x] V11 database migration: MFA fields, quiz tables, learning paths, profile update requests
+
 ## Tech Debt
 - Mockito inline mock-maker agent configuration to remove dynamic agent warnings during tests.
+- Post-Sprint 14: Tighten Mockito strictness from `LENIENT` to targeted stubs.

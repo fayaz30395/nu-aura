@@ -1,7 +1,7 @@
 # RELEASE READINESS - STRICT CHECKLIST
 
 **Project:** NU-AURA HRMS
-**Latest assessment:** 2026-03-08 IST (Sprint 13 complete)
+**Latest assessment:** 2026-03-08 IST (Sprint 14 complete)
 **Previous assessment:** 2026-03-07 03:06:59 IST
 **Basis:** direct code audit + automated test execution + infrastructure review
 
@@ -45,6 +45,12 @@
 - [x] **K8s backend-deployment.yaml had stale secret key references**
   - **Status:** Fixed (Sprint 13) — All env var → secret key mappings aligned with updated secrets.yaml; wired all new required vars
   - Evidence: `deployment/kubernetes/backend-deployment.yaml`
+- [x] **MFA endpoints must be authenticated but accessible before token generation**
+  - **Status:** Fixed (Sprint 14) — MFA controller endpoints secured with MfaService validation; middleware updated to allow /api/mfa/* routes
+  - Evidence: `frontend/middleware.ts`, MfaController endpoints
+- [x] **SecurityHeadersFilter must inject OWASP-compliant headers**
+  - **Status:** Fixed (Sprint 14) — Filter implemented with CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+  - Evidence: `backend/src/main/java/.../SecurityHeadersFilter.java`
 
 ## Must-fix (Release allowed only with explicit risk acceptance if open)
 
@@ -64,6 +70,9 @@
 - [x] **Structured JSON logging for production (ELK/Cloud Logging)**
   - `logback-spring.xml` prod profile uses `LogstashEncoder` with MDC fields (correlationId, userId, tenantId); `logstash-logback-encoder` present in `pom.xml`
   - Evidence: `backend/src/main/resources/logback-spring.xml` lines 47–116
+- [x] **Frontend security headers in middleware**
+  - **Status:** Fixed (Sprint 14) — Security headers added to all responses in middleware.ts
+  - Evidence: `frontend/middleware.ts` lines 90–94
 
 ## Can-ship (non-blocking, monitor post-release)
 
@@ -72,6 +81,7 @@
   - Evidence: `frontend/e2e/*.spec.ts` (29 files)
 - [x] **Loading skeletons on all major routes**
   - Sprint 9.3: analytics, reports, dashboards/executive, projects/gantt, organization-chart, payroll/bulk-processing, performance
+  - Sprint 14: /settings/security, /learning/paths/*, /learning/courses/*/quiz/*
 - [x] **Customer onboarding runbook created**
   - Evidence: `docs/CUSTOMER_ONBOARDING_RUNBOOK.md`
 - [ ] **Optional hardening follow-up (post-release)**
@@ -87,12 +97,34 @@ These items require a real environment and sign-off from humans:
   - Command: `cd frontend && npx playwright test --reporter=html`
 - [ ] **Fill in sign-off signatures** (Engineering Lead, Security Lead, QA Lead, Product Owner)
 - [ ] **Legacy ECB → AES-GCM data migration** (if upgrading from a prior encryption scheme)
+- [ ] **MFA rollout plan** (gradual enablement, user communication, support training)
 
 ---
 
-## Changed Files — Sprint 10/11/13
+## Changed Files — Sprint 14
 
-### Sprint 10 — DB + Infra Blockers
+### Sprint 14 — MFA + LMS Enhancements + Security Hardening
+- `backend/src/main/java/.../MfaService.java` (created — TOTP/backup code generation, verification)
+- `backend/src/main/java/.../MfaController.java` (created — 5 endpoints: setup, verify, disable, list, check)
+- `backend/src/main/resources/db/migration/V11__mfa_lms_enhancements.sql` (created — MFA fields, quiz tables, learning paths)
+- `backend/src/main/java/.../SecurityHeadersFilter.java` (created/enhanced — OWASP headers)
+- `backend/src/main/java/.../SecurityConfig.java` (updated — MFA endpoint wiring)
+- `frontend/middleware.ts` (updated — security headers, MFA/LMS routes, authenticated route expansion)
+- `frontend/app/settings/security/page.tsx` (created — MFA setup, verification, security settings UI)
+- `frontend/app/settings/security/loading.tsx` (created — loading skeleton)
+- `frontend/app/learning/courses/[courseId]/quiz/[quizId]/page.tsx` (created — quiz taking interface)
+- `frontend/app/learning/certificates/page.tsx` (created — certificate display)
+- `frontend/app/learning/paths/page.tsx` (created — learning path navigation)
+- `frontend/app/learning/paths/[pathId]/page.tsx` (created — path content view)
+
+### Sprint 13 — K8s + Runbook (Previous)
+- `deployment/kubernetes/configmap.yaml` (Liquibase → Flyway, profile prod, ddl-auto none)
+- `deployment/kubernetes/secrets.yaml` (expanded — all required env vars, JDBC URL format)
+- `deployment/kubernetes/backend-deployment.yaml` (fixed secret key refs, wired all missing vars)
+- `docs/CUSTOMER_ONBOARDING_RUNBOOK.md` (created)
+- `docs/RELEASE_READINESS.md` (this file — updated)
+
+### Sprint 10/11 — DB + Infra Blockers (Previous)
 - `backend/src/main/resources/db/migration/V1__init.sql` (generated — 224 tables)
 - `backend/src/main/resources/db/migration/V8__demo_seed_data.sql` (replaced with SELECT 1 placeholder)
 - `backend/src/main/resources/db/seed/V8__demo_seed_data.sql` (created — demo-only seed with correct column names)
@@ -102,37 +134,21 @@ These items require a real environment and sign-off from humans:
 - `docker-compose.yml` (clarified as dev-only)
 - `docker-compose.prod.yml` (created)
 
-### Sprint 11 — E2E Coverage
-- `frontend/e2e/payroll-statutory.spec.ts`
-- `frontend/e2e/reports-builder.spec.ts`
-- `frontend/e2e/lms-catalog.spec.ts`
-- `frontend/e2e/resources-capacity.spec.ts`
-- `frontend/e2e/performance-calibration.spec.ts`
-
-### Sprint 11 (audit) — Security / Auth Fixes
-- `frontend/middleware.ts` (public routes: exit-interview, preboarding/portal, offer-portal, sign/)
-- `backend/src/main/resources/application.yml` (base logging: DEBUG → WARN, dev profile explicit DEBUG)
-
-### Sprint 13 — K8s + Runbook
-- `deployment/kubernetes/configmap.yaml` (Liquibase → Flyway, profile prod, ddl-auto none)
-- `deployment/kubernetes/secrets.yaml` (expanded — all required env vars, JDBC URL format)
-- `deployment/kubernetes/backend-deployment.yaml` (fixed secret key refs, wired all missing vars)
-- `docs/CUSTOMER_ONBOARDING_RUNBOOK.md` (created)
-- `docs/RELEASE_READINESS.md` (this file — updated)
-
 ---
 
 ## Gate Decision
 
-**GO** — All automatable blockers resolved. Platform ready for staging deployment and human sign-off.
+**GO** — All automatable blockers resolved. Sprint 14 features complete. Platform ready for staging deployment and human sign-off.
 
 | Area | Status |
 |------|--------|
 | Backend tests | PASS (980/980) |
-| DB schema (Flyway V1–V9) | VERIFIED |
+| DB schema (Flyway V1–V11) | VERIFIED |
 | Demo data isolation | VERIFIED |
 | Kubernetes manifests | CORRECTED |
-| Security headers | HARDENED |
+| Security headers | HARDENED (Sprint 14) |
+| MFA implementation | COMPLETE (Sprint 14) |
+| LMS enhancements | COMPLETE (Sprint 14) |
 | JWT / cookie / CSRF | PRODUCTION-SAFE |
 | SQL logging in prod | SILENCED |
 | E2E coverage | 29 specs |

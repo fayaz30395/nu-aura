@@ -1,2 +1,2 @@
-export { AuthGuard } from './AuthGuard';
-export { PermissionGate, AdminGate, HRGate, ManagerGate } from './PermissionGate';
+export { MfaSetup } from './MfaSetup';
+export { MfaVerification } from './MfaVerification';
