@@ -189,6 +189,47 @@ public class ShiftManagementService {
         log.info("Cancelled assignment: {}", assignmentId);
     }
 
+    // ========== Swap helpers (used by ShiftSwapService) ==========
+
+    @Transactional(readOnly = true)
+    public ShiftAssignment getAssignmentById(UUID assignmentId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return shiftAssignmentRepository.findByIdAndTenantId(assignmentId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Shift assignment not found: " + assignmentId));
+    }
+
+    /**
+     * Swap the shift IDs between two assignments (for SWAP type requests).
+     */
+    public void swapAssignments(UUID assignmentIdA, UUID assignmentIdB) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        ShiftAssignment a = shiftAssignmentRepository.findByIdAndTenantId(assignmentIdA, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found: " + assignmentIdA));
+        ShiftAssignment b = shiftAssignmentRepository.findByIdAndTenantId(assignmentIdB, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found: " + assignmentIdB));
+
+        UUID shiftA = a.getShiftId();
+        a.setShiftId(b.getShiftId());
+        b.setShiftId(shiftA);
+
+        shiftAssignmentRepository.save(a);
+        shiftAssignmentRepository.save(b);
+        log.info("Swapped shift assignments: {} <-> {}", assignmentIdA, assignmentIdB);
+    }
+
+    /**
+     * Transfer an assignment to a different employee (for GIVE_AWAY / PICK_UP type requests).
+     */
+    public void transferAssignment(UUID assignmentId, UUID newEmployeeId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        ShiftAssignment assignment = shiftAssignmentRepository.findByIdAndTenantId(assignmentId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found: " + assignmentId));
+
+        assignment.setEmployeeId(newEmployeeId);
+        shiftAssignmentRepository.save(assignment);
+        log.info("Transferred assignment {} to employee {}", assignmentId, newEmployeeId);
+    }
+
     // ========== Mappers ==========
 
     private ShiftResponse mapToShiftResponse(Shift shift) {
