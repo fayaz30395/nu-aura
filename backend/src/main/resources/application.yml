@@ -266,10 +266,12 @@ springdoc:
 logging:
   level:
     root: INFO
-    com.hrms: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.hrms: INFO
+    org.springframework.security: INFO
+    # Suppress SQL/param logs by default; dev profile re-enables them
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.hibernate.orm.jdbc.bind: WARN
 
 ---
 spring:
@@ -299,6 +301,9 @@ server:
 logging:
   level:
     com.hrms: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 ---
 spring:
