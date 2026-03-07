@@ -606,3 +606,58 @@ public class AuthService {
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
 }
+
+    /**
+     * Complete login after MFA verification.
+     * Called after user successfully enters MFA code during login flow.
+     *
+     * @param userId the user ID
+     * @return AuthResponse with full authentication tokens
+     * @throws ResourceNotFoundException if user not found
+     */
+    @Transactional
+    public AuthResponse loginAfterMfa(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+        UUID tenantId = user.getTenantId();
+        com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+
+        user.recordSuccessfulLogin();
+        userRepository.save(user);
+
+        // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
+        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                HrmsPermissionInitializer.APP_CODE);
+        Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+        Set<String> accessibleApps = loadAccessibleApps(user.getId());
+
+        // Find employee context
+        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+        // Generate token with app-aware permissions
+        String accessToken = tokenProvider.generateTokenWithAppPermissions(
+                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                employeeId, locationId, departmentId, teamId);
+        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), tenantId);
+
+        log.info("User {} logged in successfully after MFA verification", userId);
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtExpiration)
+                .userId(user.getId())
+                .employeeId(employeeId)
+                .tenantId(tenantId)
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .build();
+    }
+}

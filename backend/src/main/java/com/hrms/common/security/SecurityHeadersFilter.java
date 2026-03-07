@@ -14,15 +14,15 @@ import java.io.IOException;
 /**
  * Filter to add security headers to all HTTP responses.
  *
- * <p>Security headers implemented:</p>
+ * <p>Security headers implemented (OWASP compliant):</p>
  * <ul>
  *   <li><strong>X-Content-Type-Options</strong>: Prevents MIME type sniffing</li>
  *   <li><strong>X-Frame-Options</strong>: Prevents clickjacking attacks</li>
- *   <li><strong>X-XSS-Protection</strong>: Enables browser XSS filtering</li>
+ *   <li><strong>X-XSS-Protection</strong>: Disabled in favor of Content-Security-Policy (modern approach)</li>
  *   <li><strong>Strict-Transport-Security</strong>: Enforces HTTPS (HSTS)</li>
  *   <li><strong>Content-Security-Policy</strong>: Restricts content sources</li>
- *   <li><strong>Referrer-Policy</strong>: Controls referrer information</li>
- *   <li><strong>Permissions-Policy</strong>: Controls browser features</li>
+ *   <li><strong>Referrer-Policy</strong>: Controls referrer information sharing</li>
+ *   <li><strong>Permissions-Policy</strong>: Controls browser features and permissions</li>
  *   <li><strong>Cache-Control</strong>: Prevents caching of sensitive data</li>
  * </ul>
  */
@@ -48,16 +48,18 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         if (headersEnabled) {
-            // Prevent MIME type sniffing
+            // Prevent MIME type sniffing - tells browser to trust Content-Type header
             response.setHeader("X-Content-Type-Options", "nosniff");
 
-            // Prevent clickjacking
+            // Prevent clickjacking attacks
             response.setHeader("X-Frame-Options", frameOptions);
 
-            // Enable XSS filter in browsers
-            response.setHeader("X-XSS-Protection", "1; mode=block");
+            // Disable X-XSS-Protection in favor of CSP (modern approach)
+            // Set to 0 to disable browser's built-in XSS protection which can be bypassed
+            response.setHeader("X-XSS-Protection", "0");
 
             // Strict Transport Security (only for HTTPS requests)
+            // Forces browser to use HTTPS for all future connections
             if (hstsEnabled && isSecureRequest(request)) {
                 response.setHeader("Strict-Transport-Security",
                         "max-age=" + hstsMaxAge + "; includeSubDomains; preload");
@@ -76,12 +78,12 @@ public class SecurityHeadersFilter extends OncePerRequestFilter {
                     "base-uri 'self'; " +
                     "form-action 'self'");
 
-            // Control referrer information
+            // Control referrer information - prevents sending referrer to cross-origin sites
             response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 
-            // Disable unnecessary browser features
+            // Disable unnecessary browser features - controls which browser APIs can be used
             response.setHeader("Permissions-Policy",
-                    "geolocation=(self), " +
+                    "geolocation=(), " +
                     "microphone=(), " +
                     "camera=(), " +
                     "payment=(), " +
