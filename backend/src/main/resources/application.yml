@@ -94,6 +94,22 @@ twilio:
   status-callback-enabled: false
   status-callback-url: ${TWILIO_STATUS_CALLBACK_URL:}
 
+# Job Board Integration Configuration
+# Set credentials via K8s secrets to enable live posting to each board
+integration:
+  naukri:
+    api-url: ${NAUKRI_API_URL:https://www.naukri.com/api/v2}
+    client-id: ${NAUKRI_CLIENT_ID:}
+    client-secret: ${NAUKRI_CLIENT_SECRET:}
+  indeed:
+    api-url: ${INDEED_API_URL:https://apis.indeed.com/graphql}
+    access-token: ${INDEED_ACCESS_TOKEN:}
+    employer-id: ${INDEED_EMPLOYER_ID:}
+  linkedin:
+    api-url: ${LINKEDIN_API_URL:https://api.linkedin.com/v2}
+    access-token: ${LINKEDIN_ACCESS_TOKEN:}
+    organization-id: ${LINKEDIN_ORGANIZATION_ID:}
+
 # Calendar Integration Configuration
 # Set mock-mode to false and provide OAuth credentials for real sync
 calendar:
