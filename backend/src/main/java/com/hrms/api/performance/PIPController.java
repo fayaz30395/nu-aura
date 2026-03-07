@@ -27,19 +27,19 @@ public class PIPController {
     private PIPService pipService;
 
     @PostMapping
-    @RequiresPermission(Permission.REVIEW_CREATE)
+    @RequiresPermission(Permission.PIP_CREATE)
     public ResponseEntity<PIPResponse> create(@Valid @RequestBody CreatePIPRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pipService.create(request));
     }
 
     @GetMapping("/{id}")
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.PIP_VIEW)
     public ResponseEntity<PIPResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(pipService.getById(id));
     }
 
     @GetMapping
-    @RequiresPermission(Permission.REVIEW_VIEW)
+    @RequiresPermission(Permission.PIP_VIEW)
     public ResponseEntity<List<PIPResponse>> getAll(
             @RequestParam(required = false) UUID employeeId,
             @RequestParam(required = false) UUID managerId) {
@@ -57,7 +57,7 @@ public class PIPController {
     }
 
     @PutMapping("/{id}/close")
-    @RequiresPermission(Permission.REVIEW_APPROVE)
+    @RequiresPermission(Permission.PIP_MANAGE)
     public ResponseEntity<Void> close(
             @PathVariable UUID id,
             @Valid @RequestBody ClosePIPRequest request) {
