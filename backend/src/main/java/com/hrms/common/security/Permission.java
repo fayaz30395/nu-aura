@@ -403,6 +403,25 @@ public final class Permission {
     public static final String WALL_MANAGE = "WALL:MANAGE";
     public static final String WALL_PIN = "WALL:PIN";
 
+    // Performance Improvement Plans (PIP)
+    public static final String PIP_VIEW = "PIP:VIEW";
+    public static final String PIP_CREATE = "PIP:CREATE";
+    public static final String PIP_MANAGE = "PIP:MANAGE";
+    public static final String PIP_CLOSE = "PIP:CLOSE";
+
+    // Performance Calibration & Bell Curve
+    public static final String CALIBRATION_VIEW = "CALIBRATION:VIEW";
+    public static final String CALIBRATION_MANAGE = "CALIBRATION:MANAGE";
+
+    // Offboarding & Full and Final Settlement
+    public static final String OFFBOARDING_VIEW = "OFFBOARDING:VIEW";
+    public static final String OFFBOARDING_MANAGE = "OFFBOARDING:MANAGE";
+    public static final String OFFBOARDING_FNF_CALCULATE = "OFFBOARDING:FNF_CALCULATE";
+
+    // Public Career Page
+    public static final String CAREER_VIEW = "CAREER:VIEW";
+    public static final String CAREER_MANAGE = "CAREER:MANAGE"; // HR to manage job postings
+
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");
     }
