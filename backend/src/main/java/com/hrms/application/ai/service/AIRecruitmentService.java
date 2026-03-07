@@ -66,16 +66,75 @@ public class AIRecruitmentService {
     }
 
     /**
-     * Parse resume from URL (PDF/DOC)
+     * Parse resume from URL — fetches content and extracts plain text for analysis.
+     * Supports plain text and HTML documents. Binary formats (PDF, DOCX) require
+     * the caller to extract text first and use parseResume(text) directly.
      */
     public ResumeParseResponse parseResumeFromUrl(String resumeUrl) {
         log.info("Parsing resume from URL: {}", resumeUrl);
-        // For now, return a placeholder - would need PDF parsing library
-        // In production, use Apache Tika or similar to extract text first
-        return ResumeParseResponse.builder()
-                .success(false)
-                .message("URL parsing requires document extraction. Please provide resume text.")
-                .build();
+        try {
+            java.net.URI uri = java.net.URI.create(resumeUrl);
+            String scheme = uri.getScheme();
+            if (!"https".equalsIgnoreCase(scheme) && !"http".equalsIgnoreCase(scheme)) {
+                return ResumeParseResponse.builder()
+                        .success(false)
+                        .message("Only HTTP/HTTPS URLs are supported.")
+                        .build();
+            }
+
+            java.net.HttpURLConnection conn =
+                    (java.net.HttpURLConnection) uri.toURL().openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(10_000);
+            conn.setReadTimeout(30_000);
+            conn.setRequestProperty("User-Agent", "NuLogic-HRMS/1.0");
+
+            String contentType = conn.getContentType() != null ? conn.getContentType().toLowerCase() : "";
+            if (contentType.contains("application/pdf")
+                    || contentType.contains("application/msword")
+                    || contentType.contains("application/vnd.openxmlformats")) {
+                return ResumeParseResponse.builder()
+                        .success(false)
+                        .message("Binary document format detected. Please extract text and use the text-based parsing endpoint.")
+                        .build();
+            }
+
+            String resumeText;
+            try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(conn.getInputStream(),
+                            java.nio.charset.StandardCharsets.UTF_8))) {
+                resumeText = reader.lines()
+                        .collect(java.util.stream.Collectors.joining("\n"));
+            }
+
+            if (resumeText == null || resumeText.isBlank()) {
+                return ResumeParseResponse.builder()
+                        .success(false)
+                        .message("No text content could be extracted from the URL.")
+                        .build();
+            }
+
+            // Strip HTML tags if the content is HTML
+            if (contentType.contains("text/html")) {
+                resumeText = resumeText.replaceAll("<[^>]+>", " ")
+                        .replaceAll("\\s{2,}", " ")
+                        .trim();
+            }
+
+            // Cap to 10,000 chars to stay within AI context limits
+            if (resumeText.length() > 10_000) {
+                resumeText = resumeText.substring(0, 10_000);
+            }
+
+            return parseResume(resumeText);
+
+        } catch (Exception e) {
+            log.error("Failed to fetch or parse resume from URL {}: {}", resumeUrl, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to fetch resume from URL: " + e.getMessage())
+                    .build();
+        }
     }
 
     private String buildResumeParsePrompt(String resumeText) {

@@ -5,7 +5,7 @@
  * Replace your current app/layout.tsx with this file.
  */
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import './globals.css';
@@ -29,8 +29,12 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'NU Aura - HRMS Platform',
   description: 'Modern Human Resource Management System with Executive Analytics',
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#0B0F19', // Aura background color
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#0B0F19',
 };
 
 export default function RootLayout({

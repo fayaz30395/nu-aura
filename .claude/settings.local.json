@@ -136,7 +136,10 @@
       "Bash(git -C /Users/fayaz.m/IdeaProjects/nulogic/nu-aura log --oneline --max-count=10)",
       "Bash(git -C /Users/macbook/IdeaProjects/nulogic/nu-aura status --short backend/src/main/resources/db/changelog/changes/16*.xml)",
       "Bash(git -C /Users/macbook/IdeaProjects/nulogic/nu-aura status --short backend/src/main/resources/db/changelog/changes/1[2-9]*.xml)",
-      "Bash(git -C /Users/macbook/IdeaProjects/nulogic/nu-aura status --short backend/src/main/resources/db/changelog/changes/)"
+      "Bash(git -C /Users/macbook/IdeaProjects/nulogic/nu-aura status --short backend/src/main/resources/db/changelog/changes/)",
+      "Bash(/Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/resources/db/migration/V8__demo_seed_data.sql:*)",
+      "Bash(/Users/macbook/IdeaProjects/nulogic/nu-aura/backend/src/main/resources/application-demo.yml:*)",
+      "Bash(/Users/macbook/IdeaProjects/nulogic/nu-aura/docker-compose.prod.yml:*)"
     ]
   }
 }

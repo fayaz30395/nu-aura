@@ -30,6 +30,7 @@ public class MultiChannelNotificationService {
     private final NotificationChannelConfigRepository channelConfigRepository;
     private final ObjectMapper objectMapper;
     private final SmsNotificationService smsNotificationService;
+    private final EmailNotificationService emailNotificationService;
 
     // ==================== TEMPLATE MANAGEMENT ====================
 
@@ -307,9 +308,20 @@ public class MultiChannelNotificationService {
         }
     }
 
-    // Channel-specific send methods (placeholders for actual implementation)
+    // Channel-specific send methods
     private void sendEmailNotification(MultiChannelNotification notification) {
+        if (notification.getRecipientEmail() == null || notification.getRecipientEmail().isBlank()) {
+            log.warn("Cannot send email: recipient email missing for notification {}", notification.getId());
+            notification.setStatus(NotificationStatus.FAILED);
+            notification.setErrorMessage("Recipient email address is missing");
+            return;
+        }
         log.info("Sending email to {}: {}", notification.getRecipientEmail(), notification.getSubject());
+        emailNotificationService.sendSimpleEmail(
+                notification.getRecipientEmail(),
+                notification.getSubject() != null ? notification.getSubject() : "(No Subject)",
+                notification.getBody() != null ? notification.getBody() : ""
+        );
         notification.setStatus(NotificationStatus.SENT);
         notification.setSentAt(LocalDateTime.now());
     }
