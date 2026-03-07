@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { MfaVerification } from '@/components/auth/MfaVerification';
 import {
   Building2,
   LogIn,
@@ -92,6 +93,10 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showDemoCredentials, setShowDemoCredentials] = useState(false);
 
+  // MFA state
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaUserId, setMfaUserId] = useState<string | null>(null);
+
   // Rate limiting state
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
@@ -126,7 +131,7 @@ function LoginPage() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (hasHydrated && isAuthenticated && user) {
+    if (hasHydrated && isAuthenticated && user && !mfaRequired) {
       const returnUrl = searchParams.get('returnUrl');
       if (returnUrl) {
         router.push(returnUrl);
@@ -136,7 +141,7 @@ function LoginPage() {
         redirectBasedOnRole(primaryRole);
       }
     }
-  }, [hasHydrated, isAuthenticated, user, router, searchParams]);
+  }, [hasHydrated, isAuthenticated, user, router, searchParams, mfaRequired]);
 
   // Lockout timer countdown
   useEffect(() => {
@@ -214,10 +219,19 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login({
+      const response = await login({
         email: data.email,
         password: data.password,
       });
+
+      // Check if MFA is required
+      if ((response as any).mfaRequired && (response as any).userId) {
+        setMfaRequired(true);
+        setMfaUserId((response as any).userId);
+        // Reset form but keep showing it
+        setIsLoading(false);
+        return;
+      }
 
       // Reset rate limiting on successful login
       resetLoginAttempts();
@@ -258,6 +272,19 @@ function LoginPage() {
     setValue('email', email, { shouldValidate: true });
     setValue('password', 'password', { shouldValidate: true });
     setShowDemoCredentials(false);
+  };
+
+  const handleMfaSuccess = (token: string) => {
+    // Token is already set by the API call, just redirect
+    resetLoginAttempts();
+    const returnUrl = searchParams.get('returnUrl');
+    router.push(returnUrl || '/home');
+  };
+
+  const handleMfaCancel = () => {
+    setMfaRequired(false);
+    setMfaUserId(null);
+    setError(null);
   };
 
   // Google Sign-In with SSO - uses implicit flow with access token
@@ -373,6 +400,21 @@ function LoginPage() {
       'Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled. If the issue persists, please use email/password login.'
     );
   };
+
+  // Show MFA verification screen if required
+  if (mfaRequired && mfaUserId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+        <div className={`max-w-md w-full transition-all duration-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <MfaVerification
+            userId={mfaUserId}
+            onSuccess={handleMfaSuccess}
+            onCancel={handleMfaCancel}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
