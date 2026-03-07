@@ -150,6 +150,14 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     permission: Permissions.ATTENDANCE_REGULARIZE,
   },
   {
+    path: '/attendance/comp-off',
+    anyPermission: [Permissions.ATTENDANCE_REGULARIZE, Permissions.ATTENDANCE_APPROVE],
+  },
+  {
+    path: '/attendance/shift-swap',
+    anyPermission: [Permissions.ATTENDANCE_REGULARIZE, Permissions.ATTENDANCE_APPROVE],
+  },
+  {
     path: '/attendance',
     anyPermission: [
       Permissions.ATTENDANCE_VIEW_SELF,
