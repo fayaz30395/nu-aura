@@ -136,6 +136,18 @@ public final class RoleHierarchy {
             Permission.WORKFLOW_MANAGE,
             Permission.LEAVE_TYPE_MANAGE,
             Permission.DEPARTMENT_MANAGE,
+            // PIP, Calibration, Offboarding, Career - Tenant Admin has full access
+            Permission.PIP_VIEW,
+            Permission.PIP_CREATE,
+            Permission.PIP_MANAGE,
+            Permission.PIP_CLOSE,
+            Permission.CALIBRATION_VIEW,
+            Permission.CALIBRATION_MANAGE,
+            Permission.OFFBOARDING_VIEW,
+            Permission.OFFBOARDING_MANAGE,
+            Permission.OFFBOARDING_FNF_CALCULATE,
+            Permission.CAREER_VIEW,
+            Permission.CAREER_MANAGE,
             FieldPermission.EMPLOYEE_SALARY_VIEW,
             FieldPermission.EMPLOYEE_SALARY_EDIT,
             FieldPermission.EMPLOYEE_BANK_VIEW,
@@ -194,6 +206,21 @@ public final class RoleHierarchy {
             Permission.WALL_MANAGE,
             Permission.WALL_PIN,
             Permission.DASHBOARD_VIEW,
+            // PIP Management
+            Permission.PIP_VIEW,
+            Permission.PIP_CREATE,
+            Permission.PIP_MANAGE,
+            Permission.PIP_CLOSE,
+            // Calibration & Bell Curve
+            Permission.CALIBRATION_VIEW,
+            Permission.CALIBRATION_MANAGE,
+            // Offboarding & FnF
+            Permission.OFFBOARDING_VIEW,
+            Permission.OFFBOARDING_MANAGE,
+            Permission.OFFBOARDING_FNF_CALCULATE,
+            // Career Page Management
+            Permission.CAREER_VIEW,
+            Permission.CAREER_MANAGE,
             FieldPermission.EMPLOYEE_SALARY_VIEW,
             FieldPermission.EMPLOYEE_BANK_VIEW,
             FieldPermission.EMPLOYEE_TAX_ID_VIEW
@@ -220,7 +247,11 @@ public final class RoleHierarchy {
             Permission.EXIT_VIEW,
             Permission.LETTER_GENERATE,
             Permission.BENEFIT_VIEW,
-            Permission.SHIFT_VIEW
+            Permission.SHIFT_VIEW,
+            // PIP - HR Executives can view PIPs
+            Permission.PIP_VIEW,
+            Permission.CALIBRATION_VIEW,
+            Permission.OFFBOARDING_VIEW
             // Note: NO salary/financial access
         ));
     }
@@ -246,7 +277,14 @@ public final class RoleHierarchy {
             Permission.BUDGET_VIEW,
             Permission.HEADCOUNT_VIEW,
             Permission.OVERTIME_APPROVE,
-            Permission.PROBATION_VIEW_TEAM
+            Permission.PROBATION_VIEW_TEAM,
+            // PIP - Department managers can view and create PIPs for their reports
+            Permission.PIP_VIEW,
+            Permission.PIP_CREATE,
+            // Calibration - Department managers participate in calibration sessions
+            Permission.CALIBRATION_VIEW,
+            // Offboarding - Department managers can view offboarding for their dept
+            Permission.OFFBOARDING_VIEW
         ));
     }
 

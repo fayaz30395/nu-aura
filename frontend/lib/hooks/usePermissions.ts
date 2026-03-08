@@ -496,26 +496,45 @@ export function usePermissions(): UsePermissionsReturn {
     return user.roles.map((r) => r.code);
   }, [user?.roles]);
 
+  // Check if user has SYSTEM_ADMIN (bypasses all permission checks, like backend SecurityContext)
+  const isSystemAdmin = useMemo(
+    () =>
+      permissions.includes(Permissions.SYSTEM_ADMIN) ||
+      permissions.includes('HRMS:SYSTEM:ADMIN'),
+    [permissions]
+  );
+
   // Permission check functions
   const hasPermission = useCallback(
     (permission: string): boolean => {
-      return permissions.includes(permission);
+      // SYSTEM_ADMIN bypasses all permission checks (mirrors backend SecurityContext.hasPermission)
+      if (isSystemAdmin) return true;
+      if (permissions.includes(permission)) return true;
+      // Check permission hierarchy: MODULE:MANAGE implies all actions in that module
+      const parts = permission.split(':');
+      if (parts.length >= 2) {
+        const module = parts[0];
+        if (permissions.includes(`${module}:MANAGE`)) return true;
+      }
+      return false;
     },
-    [permissions]
+    [permissions, isSystemAdmin]
   );
 
   const hasAnyPermission = useCallback(
     (...perms: string[]): boolean => {
-      return perms.some((p) => permissions.includes(p));
+      if (isSystemAdmin) return true;
+      return perms.some((p) => hasPermission(p));
     },
-    [permissions]
+    [hasPermission, isSystemAdmin]
   );
 
   const hasAllPermissions = useCallback(
     (...perms: string[]): boolean => {
-      return perms.every((p) => permissions.includes(p));
+      if (isSystemAdmin) return true;
+      return perms.every((p) => hasPermission(p));
     },
-    [permissions]
+    [hasPermission, isSystemAdmin]
   );
 
   // Role check functions
