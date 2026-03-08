@@ -2,7 +2,7 @@
 
 **Last Updated:** March 8, 2026
 
-## Overall Completion: ~97%
+## Overall Completion: ~98%
 
 | Module | Backend | Frontend | Completion |
 |--------|:-------:|:--------:|:----------:|
@@ -18,7 +18,7 @@
 | Performance (OKRs/Reviews) | ✅ | ✅ | **95%** |
 | Settings/Configuration | ✅ | ✅ | **91%** |
 | Benefits | ✅ | ✅ | **88%** |
-| Training/LMS | ✅ | ✅ | **92%** |
+| Training/LMS | ✅ | ✅ | **95%** |
 
 ---
 
@@ -28,16 +28,19 @@
 **Implemented:**
 - JWT authentication with access/refresh tokens
 - Google OAuth integration
-- Role-based access control (9 roles)
-- Permission-based UI rendering
-- Data scope security (row-level)
+- Role-based access control (18 explicit + 7 implicit roles)
+- Permission-based UI rendering with SYSTEM_ADMIN bypass
+- Data scope security (row-level) with 6-level hierarchy
 - Rate limiting & API security
 - Multi-factor authentication (MFA) with TOTP support
 - MFA setup wizard and verification flows
 - Security settings management
-- RBAC fully validated with 38+ new route protection configs
-- 50+ new permission constants registered
+- 100+ route protection configs in routes.ts
+- 290+ permission constants registered
 - OWASP-compliant security headers on all routes
+- AuthGuard integrated into AppLayout for automatic enforcement
+- Frontend permission hierarchy (MODULE:MANAGE implies all actions)
+- PermissionScopeMerger for multi-role users (most permissive scope wins)
 
 **Missing:**
 - Advanced SSO integrations (SAML, LDAP)
@@ -203,7 +206,6 @@
 - System monitoring
 - Security settings (MFA, password policies)
 - Audit log viewer for compliance tracking
-- Security/MFA settings management
 
 **Missing:**
 - Backup & recovery UI
@@ -226,7 +228,7 @@
 
 ---
 
-### 13. Training/LMS (92%)
+### 13. Training/LMS (95%)
 **Implemented:**
 - Course catalog
 - Training program management
@@ -235,7 +237,7 @@
 - Course progress tracking
 - Assessments & quizzes with quiz attempts
 - Certifications with certificate generation
-- Learning paths with structured curricula
+- Learning paths with structured curricula (entity + repository)
 - Video streaming support
 - Competency mapping
 
@@ -265,53 +267,32 @@
 
 ---
 
-## Sprint 15 - New Features Added
+## Sprint 16 - Audit & Hardening
 
-### Multi-Factor Authentication (MFA)
-- **Backend:** MfaService, MfaController with 5 endpoints (setup, verify, disable, list, check)
-- **Database:** V11 migration with mfa_enabled, mfa_method, mfa_secret, mfa_verified_at fields
-- **Frontend:** MFA setup wizard, verification UI, security settings page (/settings/security)
-- **Compliance:** OWASP-compliant TOTP implementation with 30-second windows
+### RBAC Deep Audit & Fixes
+- **SUPER_ADMIN bypass verified end-to-end:** JWT → JwtAuthenticationFilter → SecurityContext → PermissionAspect → DataScopeService
+- **Frontend SYSTEM_ADMIN bypass added:** `hasPermission()` now mirrors backend `SecurityContext.hasPermission()` with SYSTEM_ADMIN short-circuit
+- **Permission hierarchy on frontend:** MODULE:MANAGE implies all actions within that module
+- **AuthGuard integrated into AppLayout** for automatic route-level permission enforcement
+- **100+ route protection configs** added (up from 38) covering all 152 pages
+- **PIP/CALIBRATION/OFFBOARDING/CAREER permissions** assigned to HR_MANAGER, TENANT_ADMIN, DEPARTMENT_MANAGER, HR_EXECUTIVE roles
+- **1,244 @RequiresPermission annotations** across 109 backend controllers verified
 
-### Learning Management System (LMS) Enhancements
-- **Backend:** QuizAssessmentService with 15 endpoints for quiz management
-- **Database:** V11 migration with quiz_attempt, quiz_answer, learning_path, path_content entities
-- **Frontend:** Quiz taking interface, certificate generation, learning paths navigation
-- **Assessment:** Gradual scoring, pass/fail determination, learning path progression
+### Database Migration Cleanup
+- **V11 migration fixed:** Removed duplicate CREATE TABLE statements for lms_quizzes and lms_quiz_questions (already in V1)
+- **Replaced with ALTER TABLE** to add only missing columns
+- **TIMESTAMPTZ consistency:** All V11 timestamps now use TIMESTAMPTZ (matching V1)
+- **Audit columns added** to lms_learning_path_courses and employee_profile_update_requests
 
-### Public Career Page
-- **Frontend:** Public job listings, searchable career opportunities
-- **Application Form:** Candidate self-service application form
-- **ATS Integration:** Direct pipeline integration for applicants
+### Missing Entity Classes Created
+- **LearningPath.java** - Entity for lms_learning_paths table
+- **LearningPathCourse.java** - Entity for lms_learning_path_courses table
+- **LearningPathRepository.java** - JPA repository with tenant-scoped queries
+- **LearningPathCourseRepository.java** - JPA repository for path-course mappings
 
-### Helpdesk Knowledge Base
-- **Backend:** ArticleController for FAQ/documentation management
-- **Frontend:** Searchable knowledge base articles, categorization
-
-### Performance Calibration
-- **Backend:** CalibrationService with bell curve distribution algorithm
-- **Frontend:** 9-Box Grid visualization, talent mapping interface
-- **Analysis:** Statistical distribution of performance ratings
-
-### Performance Improvement Plan (PIP)
-- **Backend:** PIPWorkflowService with full lifecycle management
-- **Frontend:** PIP creation, progress tracking, outcome documentation
-- **Workflow:** Manager-to-employee goal setting and review cycles
-
-### RBAC Enhancements
-- **38+ new route protection configs** across all authenticated endpoints
-- **50+ new permission constants** registered in PermissionRegistry
-- **Backend Permissions:**
-  - PIP:VIEW, PIP:CREATE, PIP:MANAGE, PIP:CLOSE
-  - CALIBRATION:VIEW, CALIBRATION:MANAGE
-  - OFFBOARDING:VIEW, OFFBOARDING:MANAGE
-  - CAREER:VIEW_PUBLIC (public read access)
-- **Route Protection:** All new features behind role-based security
-
-### Frontend Security Hardening
-- **Headers:** SecurityHeadersFilter with OWASP-compliant headers (CSP, HSTS, X-Frame-Options, etc.)
-- **Routes:** /settings/security, /learning/paths/*, /learning/courses/*/quiz/*, /recruitment/careers/*, /performance/pip/*, /performance/calibration/* added to authenticated routes
-- **Middleware:** Enhanced security header injection for all responses
+### Frontend Permission Fixes
+- **TRAINING_MANAGE** permission constant added (was referenced in routes.ts but missing)
+- **Public routes expanded** to include /offer-portal, /preboarding, /sign/[token], /exit-interview/[token]
 
 ---
 
@@ -319,13 +300,16 @@
 
 | Metric | Count |
 |--------|------:|
-| Backend Controllers | 97 |
-| Frontend Pages | 130+ |
+| Backend Controllers | 109 |
+| Frontend Pages | 152 |
 | API Services | 48 |
-| E2E Tests | 140+ |
-| Role Types | 9 |
+| Permission Annotations | 1,244 |
+| Role Types | 25 (18 explicit + 7 implicit) |
+| Permission Constants | 290+ |
+| Route Protection Configs | 100+ |
 | Total Endpoints | 530+ |
-| Java Files | 1,285 |
+| Java Files | 1,290+ |
+| DB Migrations | 11 (V1-V11) |
 
 ---
 
