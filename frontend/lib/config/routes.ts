@@ -34,11 +34,17 @@ export interface RouteConfig {
 export const PUBLIC_ROUTES: string[] = [
   '/auth/login',
   '/auth/register',
+  '/auth/signup',
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/verify-email',
   '/careers',
   '/careers/',
+  '/offer-portal',
+  '/preboarding',
+  '/preboarding/portal/[token]',
+  '/sign/[token]',
+  '/exit-interview/[token]',
   '/',
 ];
 
@@ -508,6 +514,322 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Settings - user settings, accessible to all authenticated users
   {
     path: '/settings',
+    requiresAuth: true,
+  },
+
+  // ==================== Additional Route Protections ====================
+
+  // Employee sub-pages
+  {
+    path: '/employees/[id]',
+    anyPermission: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_DEPARTMENT, Permissions.EMPLOYEE_VIEW_TEAM],
+  },
+  {
+    path: '/employees/directory',
+    anyPermission: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_DEPARTMENT],
+  },
+  {
+    path: '/employees/import',
+    anyPermission: [Permissions.MIGRATION_IMPORT, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/employees/change-requests',
+    hrOnly: true,
+  },
+
+  // Dashboards (plural routes matching actual pages)
+  {
+    path: '/dashboards/executive',
+    anyPermission: [Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/dashboards/manager',
+    managerOnly: true,
+  },
+  {
+    path: '/dashboards/employee',
+    requiresAuth: true,
+  },
+
+  // Payroll sub-pages
+  {
+    path: '/payroll/bulk-processing',
+    anyPermission: [Permissions.PAYROLL_PROCESS, Permissions.PAYROLL_APPROVE],
+  },
+  {
+    path: '/payroll/payslips',
+    anyPermission: [Permissions.PAYROLL_VIEW_SELF, Permissions.PAYROLL_VIEW_ALL],
+  },
+  {
+    path: '/payroll/statutory',
+    anyPermission: [Permissions.STATUTORY_VIEW, Permissions.STATUTORY_MANAGE],
+  },
+
+  // Performance sub-pages
+  {
+    path: '/performance/cycles',
+    anyPermission: [Permissions.REVIEW_VIEW, Permissions.REVIEW_APPROVE],
+  },
+  {
+    path: '/performance/feedback',
+    anyPermission: [Permissions.REVIEW_VIEW, Permissions.FEEDBACK_360_VIEW],
+  },
+  {
+    path: '/performance/revolution',
+    anyPermission: [Permissions.REVIEW_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/performance/okr',
+    anyPermission: [Permissions.OKR_VIEW, Permissions.OKR_CREATE],
+  },
+  {
+    path: '/performance/360-feedback',
+    anyPermission: [Permissions.FEEDBACK_360_VIEW, Permissions.FEEDBACK_360_SUBMIT],
+  },
+
+  // OKR standalone
+  {
+    path: '/okr',
+    anyPermission: [Permissions.OKR_VIEW, Permissions.OKR_CREATE],
+  },
+
+  // Projects
+  {
+    path: '/projects/resource-conflicts',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/projects/calendar',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/projects/gantt',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/projects/[id]',
+    permission: Permissions.PROJECT_VIEW,
+  },
+  {
+    path: '/projects',
+    permission: Permissions.PROJECT_VIEW,
+  },
+
+  // Timesheets & Time Tracking
+  {
+    path: '/timesheets',
+    anyPermission: [Permissions.TIMESHEET_SUBMIT, Permissions.TIMESHEET_APPROVE],
+  },
+  {
+    path: '/time-tracking',
+    anyPermission: [Permissions.TIMESHEET_SUBMIT, Permissions.TIMESHEET_APPROVE],
+  },
+
+  // Reports sub-pages
+  {
+    path: '/reports/headcount',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.HEADCOUNT_VIEW],
+  },
+  {
+    path: '/reports/attrition',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW],
+  },
+  {
+    path: '/reports/builder',
+    anyPermission: [Permissions.REPORT_CREATE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/reports/scheduled',
+    anyPermission: [Permissions.REPORT_CREATE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/reports/utilization',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.PROJECT_VIEW],
+  },
+  {
+    path: '/reports/leave',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.LEAVE_VIEW_ALL],
+  },
+  {
+    path: '/reports/payroll',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.PAYROLL_VIEW_ALL],
+  },
+  {
+    path: '/reports/performance',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.REVIEW_VIEW],
+  },
+  {
+    path: '/analytics/org-health',
+    anyPermission: [Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Recruitment sub-pages
+  {
+    path: '/recruitment/[jobId]/kanban',
+    anyPermission: [Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_MANAGE],
+  },
+  {
+    path: '/recruitment/candidates',
+    anyPermission: [Permissions.CANDIDATE_VIEW, Permissions.CANDIDATE_EVALUATE],
+  },
+  {
+    path: '/recruitment/interviews',
+    anyPermission: [Permissions.CANDIDATE_VIEW, Permissions.CANDIDATE_EVALUATE],
+  },
+  {
+    path: '/recruitment/jobs',
+    anyPermission: [Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_CREATE],
+  },
+  {
+    path: '/recruitment/pipeline',
+    anyPermission: [Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_MANAGE],
+  },
+  {
+    path: '/recruitment/job-boards',
+    anyPermission: [Permissions.RECRUITMENT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Onboarding sub-pages
+  {
+    path: '/onboarding/templates',
+    anyPermission: [Permissions.ONBOARDING_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/onboarding/new',
+    anyPermission: [Permissions.ONBOARDING_CREATE, Permissions.ONBOARDING_MANAGE],
+  },
+  {
+    path: '/onboarding/[id]',
+    anyPermission: [Permissions.ONBOARDING_VIEW, Permissions.ONBOARDING_MANAGE],
+  },
+
+  // Leave sub-pages
+  {
+    path: '/leave/apply',
+    permission: Permissions.LEAVE_REQUEST,
+  },
+  {
+    path: '/leave/my-leaves',
+    permission: Permissions.LEAVE_VIEW_SELF,
+  },
+  {
+    path: '/leave/calendar',
+    anyPermission: [Permissions.LEAVE_VIEW_SELF, Permissions.LEAVE_VIEW_TEAM, Permissions.LEAVE_VIEW_ALL],
+  },
+
+  // Letters
+  {
+    path: '/letters',
+    anyPermission: [Permissions.SELF_SERVICE_VIEW_LETTERS, Permissions.LETTER_GENERATE],
+  },
+
+  // Calendar
+  {
+    path: '/calendar',
+    requiresAuth: true,
+  },
+
+  // Loans sub-pages
+  {
+    path: '/loans/new',
+    permission: Permissions.LOAN_CREATE,
+  },
+  {
+    path: '/loans/[id]',
+    anyPermission: [Permissions.LOAN_VIEW, Permissions.LOAN_MANAGE],
+  },
+
+  // Travel sub-pages
+  {
+    path: '/travel/new',
+    permission: Permissions.TRAVEL_CREATE,
+  },
+  {
+    path: '/travel/[id]',
+    anyPermission: [Permissions.TRAVEL_VIEW, Permissions.TRAVEL_MANAGE],
+  },
+
+  // Helpdesk sub-pages
+  {
+    path: '/helpdesk/knowledge-base',
+    requiresAuth: true,
+  },
+  {
+    path: '/helpdesk/sla',
+    anyPermission: [Permissions.HELPDESK_SLA_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Resources sub-pages
+  {
+    path: '/resources/pool',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/resources/availability',
+    anyPermission: [Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE],
+  },
+  {
+    path: '/resources/approvals',
+    anyPermission: [Permissions.PROJECT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Learning sub-pages
+  {
+    path: '/learning/courses/[id]/quiz/[quizId]',
+    requiresAuth: true,
+  },
+  {
+    path: '/learning/courses/[id]',
+    anyPermission: [Permissions.LMS_COURSE_VIEW, Permissions.TRAINING_VIEW],
+  },
+
+  // Attendance sub-pages
+  {
+    path: '/attendance/my-attendance',
+    permission: Permissions.ATTENDANCE_VIEW_SELF,
+  },
+  {
+    path: '/attendance/team',
+    anyPermission: [Permissions.ATTENDANCE_VIEW_TEAM, Permissions.ATTENDANCE_VIEW_ALL],
+  },
+
+  // Self-service sub-pages (all require auth)
+  {
+    path: '/me/attendance',
+    requiresAuth: true,
+  },
+  {
+    path: '/me/dashboard',
+    requiresAuth: true,
+  },
+  {
+    path: '/me/documents',
+    requiresAuth: true,
+  },
+  {
+    path: '/me/leaves',
+    requiresAuth: true,
+  },
+  {
+    path: '/me/payslips',
+    requiresAuth: true,
+  },
+  {
+    path: '/me/profile',
+    requiresAuth: true,
+  },
+
+  // Enterprise Tools
+  {
+    path: '/nu-calendar',
+    requiresAuth: true,
+  },
+  {
+    path: '/nu-drive',
+    requiresAuth: true,
+  },
+  {
+    path: '/nu-mail',
     requiresAuth: true,
   },
 ];

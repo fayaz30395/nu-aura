@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import {
   LayoutDashboard,
   Users,
@@ -581,18 +582,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         )}
 
-        {/* Content Area */}
+        {/* Content Area - Wrapped in AuthGuard for route-level permission enforcement */}
         <main className="flex-1 overflow-auto bg-surface-50 dark:bg-surface-950">
-          <div
-            className={cn(
-              'p-4 sm:p-6 lg:p-8 transition-all duration-300',
-              // Add bottom padding for mobile bottom nav
-              'pb-24 md:pb-4 lg:pb-8',
-              mounted ? 'opacity-100' : 'opacity-0'
-            )}
-          >
-            {children}
-          </div>
+          <AuthGuard>
+            <div
+              className={cn(
+                'p-4 sm:p-6 lg:p-8 transition-all duration-300',
+                // Add bottom padding for mobile bottom nav
+                'pb-24 md:pb-4 lg:pb-8',
+                mounted ? 'opacity-100' : 'opacity-0'
+              )}
+            >
+              {children}
+            </div>
+          </AuthGuard>
         </main>
 
         {/* Mobile Bottom Navigation */}
