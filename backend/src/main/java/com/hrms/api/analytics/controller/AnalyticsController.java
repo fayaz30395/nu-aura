@@ -25,6 +25,17 @@ public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
     /**
+     * Lightweight summary for the main dashboard KPI widget.
+     * Returns 6 top-level numbers: totalEmployees, presentToday, onLeaveToday,
+     * pendingApprovals, payrollProcessedThisMonth, openPositions.
+     */
+    @GetMapping("/summary")
+    public ResponseEntity<com.hrms.application.analytics.dto.AnalyticsSummary> getAnalyticsSummary() {
+        com.hrms.application.analytics.dto.AnalyticsSummary summary = analyticsService.getAnalyticsSummary();
+        return ResponseEntity.ok(summary);
+    }
+
+    /**
      * Get role-based dashboard analytics.
      * - Admin/HR: Full organization view
      * - Manager: Team/reportees view

@@ -121,10 +121,10 @@ class AttendanceE2ETest {
     private void setupSecurityContext(UUID currentEmployeeId) {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "EMPLOYEE"));
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
-        permissions.put("HRMS:ATTENDANCE:MARK", RoleScope.GLOBAL);
-        permissions.put("HRMS:ATTENDANCE:VIEW_SELF", RoleScope.GLOBAL);
-        permissions.put("HRMS:ATTENDANCE:REGULARIZE", RoleScope.GLOBAL);
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put("HRMS:ATTENDANCE:MARK", RoleScope.ALL);
+        permissions.put("HRMS:ATTENDANCE:VIEW_SELF", RoleScope.ALL);
+        permissions.put("HRMS:ATTENDANCE:REGULARIZE", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

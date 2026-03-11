@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Check,
   Clock,
-  Device,
+  Laptop,
   LogOut,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
@@ -231,7 +231,7 @@ export default function SecuritySettingsPage() {
                     Enable Two-Factor Authentication
                   </Button>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
-                    You'll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
+                    You&apos;ll need an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy to enable this feature.
                   </p>
                 </div>
               )}
@@ -254,7 +254,7 @@ export default function SecuritySettingsPage() {
                       <input
                         type="text"
                         inputMode="numeric"
-                        maxLength="6"
+                        maxLength={6}
                         placeholder="000000"
                         value={mfaDisableCode}
                         onChange={(e) => {
@@ -335,7 +335,7 @@ export default function SecuritySettingsPage() {
             <div className="space-y-3">
               <div className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
-                  <Device className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <Laptop className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-slate-900 dark:text-slate-50">This Device</p>

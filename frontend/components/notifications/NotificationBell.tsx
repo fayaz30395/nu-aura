@@ -6,6 +6,7 @@ import { Bell, Check, CheckCheck, Trash2, X, ExternalLink } from 'lucide-react';
 import { notificationsApi } from '@/lib/api/notifications';
 import { Notification, NotificationType } from '@/lib/types/notifications';
 import { formatDistanceToNow } from 'date-fns';
+import { useWebSocket } from '@/lib/contexts/WebSocketContext';
 
 // Map notification types to their navigation routes
 const getNotificationRoute = (notification: Notification): string | null => {
@@ -58,11 +59,44 @@ export const NotificationBell: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const { notifications: wsNotifications } = useWebSocket();
+
   useEffect(() => {
     loadUnreadCount();
-    const interval = setInterval(loadUnreadCount, 30000);
-    return () => clearInterval(interval);
   }, []);
+
+  // Sync new WebSocket notifications into local state
+  useEffect(() => {
+    if (wsNotifications.length > 0) {
+      const latest = wsNotifications[0];
+      // Avoid duplication if already in list (though unlikely with timestamps)
+      setNotifications(prev => {
+        const exists = prev.some(n => 
+          n.title === latest.title && 
+          Math.abs(new Date(n.createdAt).getTime() - (latest.timestamp || 0)) < 1000
+        );
+        if (exists) return prev;
+
+        // Map WS notification to API Notification type
+        const mapped: Notification = {
+          id: `ws-${Date.now()}`,
+          title: latest.title,
+          message: latest.message,
+          isRead: false,
+          type: (latest.type as NotificationType) || 'GENERAL',
+          createdAt: new Date(latest.timestamp || Date.now()).toISOString(),
+          updatedAt: new Date(latest.timestamp || Date.now()).toISOString(),
+          relatedEntityId: latest.metadata?.relatedEntityId || latest.payload?.id,
+          actionUrl: latest.actionUrl,
+          userId: latest.metadata?.userId || '',
+          priority: latest.priority || 'NORMAL'
+        };
+        
+        setUnreadCount(c => c + 1);
+        return [mapped, ...prev];
+      });
+    }
+  }, [wsNotifications]);
 
   useEffect(() => {
     if (isOpen) {

@@ -45,6 +45,7 @@ import {
   Zap,
   Activity,
   Home,
+  ClipboardCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
@@ -52,6 +53,8 @@ import { Header } from './Header';
 import type { HeaderProps } from './Header';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions, Roles } from '@/lib/hooks/usePermissions';
+import { useApprovalInboxCount } from '@/lib/hooks/queries/useApprovals';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -80,6 +83,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 }) => {
   const router = useRouter();
   const { logout, user, hasHydrated } = useAuth();
+  const { permissions, roles, hasPermission, isReady } = usePermissions();
+  const isSuperAdmin = useMemo(
+    () => roles.includes(Roles.SUPER_ADMIN),
+    [roles]
+  );
+
+  // Approval inbox count for sidebar badge (polls every 30s)
+  const { data: inboxCounts } = useApprovalInboxCount();
+  const pendingApprovalCount = inboxCounts?.pending ?? 0;
+
   // Initialize from localStorage to persist across page refreshes
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -155,6 +168,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   // Navigation sections for HRMS - organized into logical groups
+  // Each item carries a requiredPermission so the sidebar is filtered
+  // based on the current user's permissions (SuperAdmin sees everything).
   const menuSections: SidebarSection[] = [
     {
       id: 'main',
@@ -165,12 +180,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Home',
           icon: <Home className="h-5 w-5" />,
           href: '/home',
+          // Home is visible to all authenticated users — no requiredPermission
         },
         {
           id: 'dashboard',
           label: 'Dashboard',
           icon: <LayoutDashboard className="h-5 w-5" />,
           href: '/dashboard',
+          requiredPermission: Permissions.DASHBOARD_VIEW,
         },
       ],
     },
@@ -183,6 +200,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Executive',
           icon: <TrendingUp className="h-5 w-5" />,
           href: '/dashboards/executive',
+          requiredPermission: Permissions.DASHBOARD_EXECUTIVE,
         },
       ],
     },
@@ -195,36 +213,42 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'My Dashboard',
           icon: <LayoutDashboard className="h-5 w-5" />,
           href: '/me/dashboard',
+          requiredPermission: Permissions.DASHBOARD_EMPLOYEE,
         },
         {
           id: 'profile',
           label: 'My Profile',
           icon: <User className="h-5 w-5" />,
           href: '/me/profile',
+          requiredPermission: Permissions.SELF_SERVICE_PROFILE_UPDATE,
         },
         {
           id: 'payslips',
           label: 'My Payslips',
           icon: <CreditCard className="h-5 w-5" />,
           href: '/me/payslips',
+          requiredPermission: Permissions.SELF_SERVICE_VIEW_PAYSLIP,
         },
         {
           id: 'my-attendance',
           label: 'My Attendance',
           icon: <CalendarCheck className="h-5 w-5" />,
           href: '/me/attendance',
+          requiredPermission: Permissions.ATTENDANCE_VIEW_SELF,
         },
         {
           id: 'leaves',
           label: 'My Leaves',
           icon: <Palmtree className="h-5 w-5" />,
           href: '/me/leaves',
+          requiredPermission: Permissions.LEAVE_VIEW_SELF,
         },
         {
           id: 'my-documents',
           label: 'My Documents',
           icon: <FileText className="h-5 w-5" />,
           href: '/me/documents',
+          requiredPermission: Permissions.DOCUMENT_VIEW,
         },
       ],
     },
@@ -237,18 +261,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Announcements',
           icon: <Megaphone className="h-5 w-5" />,
           href: '/announcements',
+          requiredPermission: Permissions.ANNOUNCEMENT_VIEW,
         },
         {
           id: 'team-directory',
           label: 'Team Directory',
           icon: <UsersRound className="h-5 w-5" />,
           href: '/employees/directory',
+          requiredPermission: Permissions.EMPLOYEE_READ,
         },
         {
           id: 'org-chart',
           label: 'Org Chart',
           icon: <GitBranch className="h-5 w-5" />,
           href: '/org-chart',
+          requiredPermission: Permissions.ORG_STRUCTURE_VIEW,
         },
       ],
     },
@@ -261,35 +288,48 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Employees',
           icon: <Users className="h-5 w-5" />,
           href: '/employees',
+          requiredPermission: Permissions.EMPLOYEE_VIEW_ALL,
         },
         {
           id: 'departments',
           label: 'Departments',
           icon: <Building2 className="h-5 w-5" />,
           href: '/departments',
+          requiredPermission: Permissions.DEPARTMENT_VIEW,
         },
         {
           id: 'attendance',
           label: 'Attendance',
           icon: <Clock className="h-5 w-5" />,
           href: '/attendance',
+          requiredPermission: Permissions.ATTENDANCE_VIEW_ALL,
         },
         {
           id: 'leave',
           label: 'Leave Management',
           icon: <FileText className="h-5 w-5" />,
           href: '/leave',
+          requiredPermission: Permissions.LEAVE_VIEW_ALL,
+        },
+        {
+          id: 'approvals',
+          label: 'Approvals',
+          icon: <ClipboardCheck className="h-5 w-5" />,
+          href: '/approvals/inbox',
+          badge: pendingApprovalCount > 0 ? pendingApprovalCount : undefined,
+          requiredPermission: Permissions.WORKFLOW_VIEW,
         },
         {
           id: 'recruitment',
           label: 'Recruitment',
           icon: <UserPlus className="h-5 w-5" />,
           href: '/recruitment',
+          requiredPermission: Permissions.RECRUITMENT_VIEW,
           children: [
-            { id: 'jobs', label: 'Job Openings', href: '/recruitment/jobs' },
-            { id: 'candidates', label: 'Candidates', href: '/recruitment/candidates' },
-            { id: 'interviews', label: 'Interviews', href: '/recruitment/interviews' },
-            { id: 'onboarding', label: 'Onboarding', href: '/onboarding' },
+            { id: 'jobs', label: 'Job Openings', href: '/recruitment/jobs', requiredPermission: Permissions.RECRUITMENT_VIEW },
+            { id: 'candidates', label: 'Candidates', href: '/recruitment/candidates', requiredPermission: Permissions.CANDIDATE_VIEW },
+            { id: 'interviews', label: 'Interviews', href: '/recruitment/interviews', requiredPermission: Permissions.RECRUITMENT_VIEW },
+            { id: 'onboarding', label: 'Onboarding', href: '/onboarding', requiredPermission: Permissions.ONBOARDING_VIEW },
           ],
         },
         {
@@ -297,18 +337,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Offboarding',
           icon: <UserMinus className="h-5 w-5" />,
           href: '/offboarding',
+          requiredPermission: Permissions.EXIT_VIEW,
         },
         {
           id: 'assets',
           label: 'Assets',
           icon: <Package className="h-5 w-5" />,
           href: '/assets',
+          requiredPermission: Permissions.ASSET_VIEW,
         },
         {
           id: 'letters',
           label: 'Letters',
           icon: <Mail className="h-5 w-5" />,
           href: '/letters',
+          requiredPermission: Permissions.LETTER_TEMPLATE_VIEW,
         },
       ],
     },
@@ -321,36 +364,42 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Performance',
           icon: <BarChart3 className="h-5 w-5" />,
           href: '/performance',
+          requiredPermission: Permissions.REVIEW_VIEW,
         },
         {
           id: 'performance-revolution',
           label: 'Revolution',
           icon: <Zap className="h-5 w-5 text-yellow-500" />,
           href: '/performance/revolution',
+          requiredPermission: Permissions.REVIEW_VIEW,
         },
         {
           id: 'okr',
           label: 'OKR',
           icon: <Target className="h-5 w-5" />,
           href: '/performance/okr',
+          requiredPermission: Permissions.OKR_VIEW,
         },
         {
           id: 'feedback360',
           label: '360 Feedback',
           icon: <MessageCircle className="h-5 w-5" />,
           href: '/performance/360-feedback',
+          requiredPermission: Permissions.FEEDBACK_360_VIEW,
         },
         {
           id: 'training',
           label: 'Training',
           icon: <GraduationCap className="h-5 w-5" />,
           href: '/training',
+          requiredPermission: Permissions.TRAINING_VIEW,
         },
         {
           id: 'learning',
           label: 'Learning',
           icon: <BookOpen className="h-5 w-5" />,
           href: '/learning',
+          requiredPermission: Permissions.LMS_COURSE_VIEW,
         },
       ],
     },
@@ -363,30 +412,35 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Payroll',
           icon: <DollarSign className="h-5 w-5" />,
           href: '/payroll',
+          requiredPermission: Permissions.PAYROLL_VIEW,
         },
         {
           id: 'compensation',
           label: 'Compensation',
           icon: <TrendingUp className="h-5 w-5" />,
           href: '/compensation',
+          requiredPermission: Permissions.COMPENSATION_VIEW,
         },
         {
           id: 'benefits',
           label: 'Benefits',
           icon: <Gift className="h-5 w-5" />,
           href: '/benefits',
+          requiredPermission: Permissions.BENEFIT_VIEW,
         },
         {
           id: 'expenses',
           label: 'Expenses',
           icon: <Receipt className="h-5 w-5" />,
           href: '/expenses',
+          requiredPermission: Permissions.EXPENSE_VIEW,
         },
         {
           id: 'travel',
           label: 'Travel',
           icon: <Plane className="h-5 w-5" />,
           href: '/travel',
+          requiredPermission: Permissions.TRAVEL_VIEW,
         },
       ],
     },
@@ -399,18 +453,21 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Recognition',
           icon: <Award className="h-5 w-5" />,
           href: '/recognition',
+          requiredPermission: Permissions.RECOGNITION_VIEW,
         },
         {
           id: 'surveys',
           label: 'Surveys',
           icon: <ClipboardList className="h-5 w-5" />,
           href: '/surveys',
+          requiredPermission: Permissions.SURVEY_VIEW,
         },
         {
           id: 'wellness',
           label: 'Wellness',
           icon: <Heart className="h-5 w-5" />,
           href: '/wellness',
+          requiredPermission: Permissions.WELLNESS_VIEW,
         },
       ],
     },
@@ -423,12 +480,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Reports',
           icon: <Download className="h-5 w-5" />,
           href: '/reports',
+          requiredPermission: Permissions.REPORT_VIEW,
         },
         {
           id: 'org-health',
           label: 'Org Health',
           icon: <Activity className="h-5 w-5 text-primary-500" />,
           href: '/analytics/org-health',
+          requiredPermission: Permissions.ANALYTICS_VIEW,
         },
       ],
     },
@@ -441,81 +500,141 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           label: 'Role Management',
           icon: <Shield className="h-5 w-5" />,
           href: '/admin/roles',
+          requiredPermission: Permissions.ROLE_MANAGE,
         },
         {
           id: 'permissions',
           label: 'Permissions',
           icon: <Shield className="h-5 w-5" />,
           href: '/admin/permissions',
+          requiredPermission: Permissions.PERMISSION_MANAGE,
         },
         {
           id: 'holidays',
           label: 'Holidays',
           icon: <Calendar className="h-5 w-5" />,
           href: '/admin/holidays',
+          requiredPermission: Permissions.SETTINGS_VIEW,
         },
         {
           id: 'leave-types',
           label: 'Leave Types',
           icon: <Palmtree className="h-5 w-5" />,
           href: '/admin/leave-types',
+          requiredPermission: Permissions.LEAVE_TYPE_VIEW,
         },
         {
           id: 'leave-requests',
           label: 'Leave Requests',
           icon: <FileText className="h-5 w-5" />,
           href: '/admin/leave-requests',
+          requiredPermission: Permissions.LEAVE_VIEW_ALL,
         },
         {
           id: 'shifts',
           label: 'Shifts',
           icon: <Timer className="h-5 w-5" />,
           href: '/admin/shifts',
+          requiredPermission: Permissions.SETTINGS_VIEW,
         },
         {
           id: 'office-locations',
           label: 'Office Locations',
           icon: <MapPin className="h-5 w-5" />,
           href: '/admin/office-locations',
+          requiredPermission: Permissions.OFFICE_LOCATION_VIEW,
         },
         {
           id: 'org-hierarchy',
           label: 'Org Hierarchy',
           icon: <Network className="h-5 w-5" />,
           href: '/admin/org-hierarchy',
+          requiredPermission: Permissions.ORG_STRUCTURE_MANAGE,
         },
         {
           id: 'custom-fields',
           label: 'Custom Fields',
           icon: <Sliders className="h-5 w-5" />,
           href: '/admin/custom-fields',
+          requiredPermission: Permissions.CUSTOM_FIELD_VIEW,
         },
         {
           id: 'helpdesk',
           label: 'Helpdesk',
           icon: <Headphones className="h-5 w-5" />,
           href: '/helpdesk/sla',
+          requiredPermission: Permissions.HELPDESK_SLA_MANAGE,
         },
         {
           id: 'admin-settings',
           label: 'Admin Settings',
           icon: <Settings className="h-5 w-5" />,
           href: '/admin/settings',
+          requiredPermission: Permissions.SETTINGS_VIEW,
         },
         {
           id: 'settings',
           label: 'Settings',
           icon: <Settings className="h-5 w-5" />,
           href: '/settings',
+          requiredPermission: Permissions.SETTINGS_VIEW,
         },
       ],
     },
   ];
 
+  // ── Permission-based sidebar filtering ──────────────────────────────
+  // SuperAdmin users see every item; other users only see items whose
+  // requiredPermission they possess. Items without a requiredPermission
+  // are always visible (e.g. Home).
+  const filterSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
+    if (!isReady) {
+      // During hydration, show the raw menu to avoid flicker
+      return items;
+    }
+
+    const filterItem = (item: SidebarItem): SidebarItem | null => {
+      if (!isSuperAdmin) {
+        if (item.requiredPermission && !hasPermission(item.requiredPermission)) {
+          return null;
+        }
+      }
+
+      if (item.children && item.children.length > 0) {
+        const visibleChildren = item.children
+          .map((child) => filterItem(child))
+          .filter((child): child is SidebarItem => child !== null);
+
+        if (visibleChildren.length === 0 && !item.href) {
+          return null;
+        }
+
+        return { ...item, children: visibleChildren };
+      }
+
+      return item;
+    };
+
+    return items
+      .map((item) => filterItem(item))
+      .filter((item): item is SidebarItem => item !== null);
+  };
+
+  // Filter each section's items, then drop empty sections
+  const filteredSections: SidebarSection[] = useMemo(() => {
+    return menuSections
+      .map((section) => ({
+        ...section,
+        items: filterSidebarItems(section.items),
+      }))
+      .filter((section) => section.items.length > 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(permissions), JSON.stringify(roles), isReady]);
+
   // Flatten sections to items for backward compatibility (memoized)
   const menuItems: SidebarItem[] = useMemo(() =>
-    menuSections.flatMap(section => section.items),
-    [menuSections]
+    filteredSections.flatMap(section => section.items),
+    [filteredSections]
   );
 
   return (
@@ -524,7 +643,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       <aside className="hidden md:block">
         <Sidebar
           items={menuItems}
-          sections={menuSections}
+          sections={filteredSections}
           activeId={activeMenuItem}
           collapsed={isCollapsed}
           onCollapsedChange={handleSidebarCollapsedChange}
@@ -546,7 +665,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           >
             <Sidebar
               items={menuItems}
-              sections={menuSections}
+              sections={filteredSections}
               activeId={activeMenuItem}
               collapsed={false}
               onItemClick={(item) => {

@@ -6,6 +6,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { travelService } from '@/lib/services/travel.service';
 import { TravelRequest, TravelStatus, TravelType } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Plane,
   Plus,
@@ -279,16 +280,12 @@ export default function TravelPage() {
             </button>
           </div>
         ) : travelRequests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
-            <Plane className="h-12 w-12 text-surface-300 dark:text-surface-600 mb-4" />
-            <p className="text-surface-500 dark:text-surface-400 mb-4">No travel requests found</p>
-            <button
-              onClick={() => router.push('/travel/new')}
-              className="text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
-            >
-              Create your first travel request
-            </button>
-          </div>
+          <EmptyState
+            icon={<Plane className="h-12 w-12" />}
+            title="No Travel Requests"
+            description="Submit a travel request"
+            action={{ label: 'New Request', onClick: () => router.push('/travel/new') }}
+          />
         ) : (
           <div className="space-y-4">
             {travelRequests.map((request) => {

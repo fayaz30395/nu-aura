@@ -10,6 +10,8 @@ import com.hrms.common.security.DataScopeService;
 import com.hrms.common.security.Permission;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hrms.api.workflow.dto.WorkflowExecutionRequest;
+import com.hrms.application.workflow.service.WorkflowService;
+import com.hrms.domain.workflow.WorkflowDefinition;
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.domain.event.recruitment.CandidateHiredEvent;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +46,9 @@ public class RecruitmentManagementService {
     private final InterviewRepository interviewRepository;
     private final EmployeeRepository employeeRepository;
     private final DataScopeService dataScopeService;
+    private final WorkflowService workflowService;
+    private final AuditLogService auditLogService;
+    private final DomainEventPublisher eventPublisher;
 
     // ==================== Job Opening Operations ====================
 
@@ -137,8 +150,7 @@ public class RecruitmentManagementService {
 
         return jobOpeningRepository.findAll(
                 Specification.where(tenantSpec).and(statusSpec).and(scopeSpec),
-                pageable
-        ).map(this::mapToJobOpeningResponse);
+                pageable).map(this::mapToJobOpeningResponse);
     }
 
     public void deleteJobOpening(UUID jobOpeningId) {
@@ -250,8 +262,7 @@ public class RecruitmentManagementService {
 
         return candidateRepository.findAll(
                 Specification.where(tenantSpec).and(jobSpec).and(scopeSpec),
-                pageable
-        ).map(this::mapToCandidateResponse);
+                pageable).map(this::mapToCandidateResponse);
     }
 
     public void deleteCandidate(UUID candidateId) {
@@ -275,9 +286,11 @@ public class RecruitmentManagementService {
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
 
         if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
-            throw new IllegalStateException("Candidate does not have an active offer to accept. Current status: " + candidate.getStatus());
+            throw new IllegalStateException(
+                    "Candidate does not have an active offer to accept. Current status: " + candidate.getStatus());
         }
 
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
         candidate.setOfferAcceptedDate(java.time.LocalDate.now());
 
@@ -286,10 +299,23 @@ public class RecruitmentManagementService {
             candidate.setProposedJoiningDate(confirmedJoiningDate);
         }
 
-        // Keep stage at OFFER - candidate moves to JOINED only after actual onboarding/joining
-        // The JOINED stage is set by a separate process when the employee record is created
+        // Keep stage at OFFER - candidate moves to JOINED only after actual
+        // onboarding/joining
+        // The JOINED stage is set by a separate process when the employee record is
+        // created
 
         Candidate savedCandidate = candidateRepository.save(candidate);
+
+        // Audit log: offer acceptance
+        auditLogService.logAction(
+                "CANDIDATE",
+                candidateId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                Candidate.CandidateStatus.OFFER_ACCEPTED.toString(),
+                "Candidate accepted offer - Joining date: " + (confirmedJoiningDate != null ? confirmedJoiningDate : "Not specified")
+        );
+
         log.info("Offer accepted by candidate {}", candidateId);
 
         return mapToCandidateResponse(savedCandidate);
@@ -307,17 +333,170 @@ public class RecruitmentManagementService {
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
 
         if (candidate.getStatus() != Candidate.CandidateStatus.OFFER_EXTENDED) {
-            throw new IllegalStateException("Candidate does not have an active offer to decline. Current status: " + candidate.getStatus());
+            throw new IllegalStateException(
+                    "Candidate does not have an active offer to decline. Current status: " + candidate.getStatus());
         }
 
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
         candidate.setOfferDeclinedDate(java.time.LocalDate.now());
         candidate.setOfferDeclineReason(declineReason);
 
         Candidate savedCandidate = candidateRepository.save(candidate);
+
+        // Audit log: offer decline
+        auditLogService.logAction(
+                "CANDIDATE",
+                candidateId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                Candidate.CandidateStatus.OFFER_DECLINED.toString(),
+                "Candidate declined offer - Reason: " + (declineReason != null ? declineReason : "Not specified")
+        );
+
         log.info("Offer declined by candidate {} - Reason: {}", candidateId, declineReason);
 
         return mapToCandidateResponse(savedCandidate);
+    }
+
+    /**
+     * Move a candidate to a different recruitment stage.
+     */
+    public CandidateResponse moveCandidateStage(UUID candidateId, Candidate.RecruitmentStage stage, String notes) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Moving candidate {} to stage {} for tenant {}", candidateId, stage, tenantId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
+
+        candidate.setCurrentStage(stage);
+        if (notes != null) {
+            candidate.setNotes(notes);
+        }
+
+        // Map recruitment stage to candidate status for consistency
+        updateStatusFromStage(candidate, stage);
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+
+        // Audit log: stage change (only log if stage actually changed)
+        if (oldStage != stage) {
+            auditLogService.logAction(
+                    "CANDIDATE",
+                    candidateId,
+                    AuditAction.STATUS_CHANGE,
+                    oldStage != null ? oldStage.toString() : "UNKNOWN",
+                    stage.toString(),
+                    "Candidate moved to stage: " + stage + (notes != null ? " - Notes: " + notes : "")
+            );
+        }
+
+        // Publish CandidateHiredEvent when candidate moves to JOINED stage
+        if (stage == Candidate.RecruitmentStage.JOINED && oldStage != Candidate.RecruitmentStage.JOINED) {
+            try {
+                JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                        .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+                eventPublisher.publish(CandidateHiredEvent.of(this, savedCandidate, jobOpening));
+                log.info("CandidateHiredEvent published for candidate: {}", candidateId);
+            } catch (Exception e) {
+                log.error("Failed to publish CandidateHiredEvent for candidate {}: {}", candidateId, e.getMessage(), e);
+                // Don't fail the stage transition if event publishing fails
+            }
+        }
+
+        return mapToCandidateResponse(savedCandidate);
+    }
+
+    /**
+     * Create/Extend an offer to a candidate and trigger approval workflow.
+     * The candidate status is set to OFFER_EXTENDED immediately; the workflow
+     * tracks the approval decision. On approval the status remains OFFER_EXTENDED
+     * (awaiting candidate acceptance). On rejection the caller should revert status.
+     */
+    public CandidateResponse createOffer(UUID candidateId, CreateOfferRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Creating offer for candidate {} for tenant {}", candidateId, tenantId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
+        Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
+
+        candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+        candidate.setOfferedCtc(request.getOfferedSalary());
+        candidate.setOfferedDesignation(request.getPositionTitle());
+        candidate.setProposedJoiningDate(request.getJoiningDate());
+        candidate.setOfferExtendedDate(LocalDate.now());
+        if (request.getNotes() != null) {
+            candidate.setNotes(request.getNotes());
+        }
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+
+        // Audit log: offer created
+        auditLogService.logAction(
+                "CANDIDATE",
+                candidateId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                Candidate.CandidateStatus.OFFER_EXTENDED.toString(),
+                "Offer extended with salary: " + (request.getOfferedSalary() != null ? request.getOfferedSalary() : "N/A") +
+                ", Position: " + (request.getPositionTitle() != null ? request.getPositionTitle() : "N/A") +
+                ", Joining Date: " + (request.getJoiningDate() != null ? request.getJoiningDate() : "N/A")
+        );
+
+        // Trigger approval workflow for the offer
+        try {
+            WorkflowExecutionRequest workflowRequest = new WorkflowExecutionRequest();
+            workflowRequest.setEntityType(WorkflowDefinition.EntityType.RECRUITMENT_OFFER);
+            workflowRequest.setEntityId(savedCandidate.getId());
+            workflowRequest.setTitle("Offer Approval: " + savedCandidate.getFullName()
+                    + " - " + (request.getPositionTitle() != null ? request.getPositionTitle() : ""));
+            workflowRequest.setAmount(request.getOfferedSalary() != null
+                    ? request.getOfferedSalary() : BigDecimal.ZERO);
+            // Department comes from the associated job opening if available
+            if (candidate.getJobOpeningId() != null) {
+                jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                        .ifPresent(job -> workflowRequest.setDepartmentId(job.getDepartmentId()));
+            }
+
+            workflowService.startWorkflow(workflowRequest);
+            log.info("Workflow started for recruitment offer: candidate={}", savedCandidate.getId());
+        } catch (Exception e) {
+            // Log but don't fail the offer creation if no workflow is configured
+            log.warn("Could not start approval workflow for offer (candidate={}): {}",
+                    savedCandidate.getId(), e.getMessage());
+        }
+
+        return mapToCandidateResponse(savedCandidate);
+    }
+
+    private void updateStatusFromStage(Candidate candidate, Candidate.RecruitmentStage stage) {
+        switch (stage) {
+            case APPLICATION_RECEIVED:
+                candidate.setStatus(Candidate.CandidateStatus.NEW);
+                break;
+            case SCREENING:
+                candidate.setStatus(Candidate.CandidateStatus.SCREENING);
+                break;
+            case TECHNICAL_ROUND:
+            case HR_ROUND:
+            case MANAGER_ROUND:
+            case FINAL_ROUND:
+                candidate.setStatus(Candidate.CandidateStatus.INTERVIEW);
+                break;
+            case OFFER:
+                candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
+                break;
+            case JOINED:
+                candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
+                break;
+        }
     }
 
     // ==================== Interview Operations ====================
@@ -402,8 +581,7 @@ public class RecruitmentManagementService {
 
         return interviewRepository.findAll(
                 Specification.where(tenantSpec).and(candidateSpec).and(scopeSpec),
-                pageable
-        ).map(this::mapToInterviewResponse);
+                pageable).map(this::mapToInterviewResponse);
     }
 
     public void deleteInterview(UUID interviewId) {
@@ -543,15 +721,21 @@ public class RecruitmentManagementService {
 
     /**
      * Determines which view permission the user has (in priority order).
-     * Returns the actual permission that has a scope assigned, not just any permission that passes
-     * hasPermission() check. This ensures getPermissionScope() can find the scope for validation.
+     * Returns the actual permission that has a scope assigned, not just any
+     * permission that passes
+     * hasPermission() check. This ensures getPermissionScope() can find the scope
+     * for validation.
      *
-     * Note: Checks for explicit RECRUITMENT_VIEW_* and CANDIDATE_VIEW permissions first, then falls back to RECRUITMENT:MANAGE.
-     * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled by @RequiresPermission
-     * for access control, and this method ensures scope enforcement works for users with only MANAGE.
+     * Note: Checks for explicit RECRUITMENT_VIEW_* and CANDIDATE_VIEW permissions
+     * first, then falls back to RECRUITMENT:MANAGE.
+     * Permission hierarchy (MODULE:MANAGE implying MODULE:VIEW_*) is handled
+     * by @RequiresPermission
+     * for access control, and this method ensures scope enforcement works for users
+     * with only MANAGE.
      */
     private String determineViewPermission() {
-        // Check recruitment view permissions in priority order (highest to lowest privilege)
+        // Check recruitment view permissions in priority order (highest to lowest
+        // privilege)
         if (SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL) != null) {
             return Permission.RECRUITMENT_VIEW_ALL;
         }
@@ -567,19 +751,23 @@ public class RecruitmentManagementService {
             return Permission.CANDIDATE_VIEW;
         }
 
-        // Fallback to RECRUITMENT:MANAGE - users with MANAGE permission can view with that permission's scope
+        // Fallback to RECRUITMENT:MANAGE - users with MANAGE permission can view with
+        // that permission's scope
         RoleScope manageScope = SecurityContext.getPermissionScope(Permission.RECRUITMENT_MANAGE);
         if (manageScope != null) {
             return Permission.RECRUITMENT_MANAGE;
         }
 
-        // Final fallback: user passed @RequiresPermission check but has no scoped permission
-        // This can happen with system admin. Return VIEW as safest default for scope lookup.
+        // Final fallback: user passed @RequiresPermission check but has no scoped
+        // permission
+        // This can happen with system admin. Return VIEW as safest default for scope
+        // lookup.
         return Permission.RECRUITMENT_VIEW;
     }
 
     /**
-     * Validates that the current user can access a specific job opening based on their scope.
+     * Validates that the current user can access a specific job opening based on
+     * their scope.
      * Throws AccessDeniedException if access is not allowed.
      */
     private void validateJobOpeningAccess(JobOpening jobOpening, String permission) {
@@ -589,7 +777,8 @@ public class RecruitmentManagementService {
     }
 
     /**
-     * Validates that the current user can access a specific candidate based on their scope.
+     * Validates that the current user can access a specific candidate based on
+     * their scope.
      * Throws AccessDeniedException if access is not allowed.
      */
     private void validateCandidateAccess(Candidate candidate, String permission) {
@@ -599,7 +788,8 @@ public class RecruitmentManagementService {
     }
 
     /**
-     * Validates that the current user can access a specific interview based on their scope.
+     * Validates that the current user can access a specific interview based on
+     * their scope.
      * Throws AccessDeniedException if access is not allowed.
      */
     private void validateInterviewAccess(Interview interview, String permission) {
@@ -609,8 +799,10 @@ public class RecruitmentManagementService {
     }
 
     /**
-     * Validates that the current user can access data for a specific employee based on their scope.
-     * This is used to check access to hiring managers, recruiters, and interviewers.
+     * Validates that the current user can access data for a specific employee based
+     * on their scope.
+     * This is used to check access to hiring managers, recruiters, and
+     * interviewers.
      * Throws AccessDeniedException if access is not allowed.
      */
     private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {

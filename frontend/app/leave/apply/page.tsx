@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveType, LeaveBalance, HalfDayPeriod } from '@/lib/types/leave';
@@ -11,6 +13,8 @@ export default function ApplyLeavePage() {
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [balances, setBalances] = useState<LeaveBalance[]>([]);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     leaveTypeId: '',
     startDate: '',
@@ -27,6 +31,8 @@ export default function ApplyLeavePage() {
 
   const loadData = async () => {
     try {
+      setDataLoading(true);
+      setError(null);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const year = new Date().getFullYear();
       const [types, bal] = await Promise.all([
@@ -35,8 +41,11 @@ export default function ApplyLeavePage() {
       ]);
       setLeaveTypes(types);
       setBalances(bal);
-    } catch (error) {
-      console.error('Error loading data:', error);
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError('Failed to load leave types and balances. Please try again.');
+    } finally {
+      setDataLoading(false);
     }
   };
 
@@ -87,7 +96,12 @@ export default function ApplyLeavePage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="max-w-4xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="max-w-4xl mx-auto"
+      >
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -98,6 +112,21 @@ export default function ApplyLeavePage() {
         </div>
 
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Apply for Leave</h1>
+
+        {error && (
+          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+            </div>
+            <button
+              onClick={loadData}
+              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -239,7 +268,7 @@ export default function ApplyLeavePage() {
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

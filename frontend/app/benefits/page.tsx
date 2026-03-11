@@ -632,7 +632,7 @@ export default function BenefitsPage() {
                     No Enrollments Yet
                   </h3>
                   <p className="text-surface-600 dark:text-surface-400">
-                    You haven't enrolled in any benefit plans yet.
+                    You haven&apos;t enrolled in any benefit plans yet.
                   </p>
                   <Button className="mt-4" onClick={() => setActiveTab('plans')}>
                     Browse Plans
@@ -705,7 +705,7 @@ export default function BenefitsPage() {
                     No Claims Yet
                   </h3>
                   <p className="text-surface-600 dark:text-surface-400">
-                    You haven't submitted any benefit claims yet.
+                    You haven&apos;t submitted any benefit claims yet.
                   </p>
                   <Button className="mt-4" onClick={handleOpenClaimModal}>
                     <Plus className="h-4 w-4 mr-1" />

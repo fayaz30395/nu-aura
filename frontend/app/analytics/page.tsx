@@ -345,7 +345,7 @@ export default function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserCheck className="h-5 w-5 text-green-600" />
-                Today's Attendance
+                Today&apos;s Attendance
               </CardTitle>
               <CardDescription>Current attendance breakdown</CardDescription>
             </CardHeader>

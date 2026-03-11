@@ -1,3 +1,6 @@
+import { Center, Stack, ThemeIcon, Text, Button, ButtonProps } from '@mantine/core';
+import { motion } from 'framer-motion';
+
 interface EmptyStateProps {
   icon?: React.ReactNode;
   title: string;
@@ -5,29 +8,63 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
+    variant?: ButtonProps['variant'];
+    loading?: boolean;
   };
+  iconColor?: string;
+  iconSize?: number | string;
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+  iconColor = 'gray',
+  iconSize = 64,
+}: EmptyStateProps) {
   return (
-    <div className="text-center py-12 px-4">
-      {icon && (
-        <div className="flex justify-center mb-4 text-gray-400 dark:text-gray-600">
-          {icon}
-        </div>
-      )}
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
-      {description && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">{description}</p>
-      )}
-      {action && (
-        <button
-          onClick={action.onClick}
-          className="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 font-medium transition-colors"
-        >
-          {action.label}
-        </button>
-      )}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+    >
+      <Center py="xl">
+        <Stack align="center" gap="xs" className="max-w-sm">
+          {icon && (
+            <ThemeIcon
+              size={iconSize}
+              radius="xl"
+              variant="light"
+              color={iconColor}
+            >
+              {icon}
+            </ThemeIcon>
+          )}
+          <Text fw={600} className="text-surface-900 dark:text-surface-50 text-center">
+            {title}
+          </Text>
+          {description && (
+            <Text
+              c="dimmed"
+              size="sm"
+              className="text-center text-surface-600 dark:text-surface-400"
+            >
+              {description}
+            </Text>
+          )}
+          {action && (
+            <Button
+              onClick={action.onClick}
+              variant={action.variant || 'filled'}
+              disabled={action.loading}
+              className="mt-2"
+            >
+              {action.label}
+            </Button>
+          )}
+        </Stack>
+      </Center>
+    </motion.div>
   );
 }

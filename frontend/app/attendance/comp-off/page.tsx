@@ -37,12 +37,12 @@ export default function CompOffPage() {
 
   const { data: myRequests, isLoading: loadingMy } = useQuery<CompOffRequest[]>({
     queryKey: ['comp-off', 'my', employeeId],
-    queryFn: () => apiClient.get(`/comp-off/my-pending/${employeeId}`).then(r => r.data),
+    queryFn: () => apiClient.get<CompOffRequest[]>(`/comp-off/my-pending/${employeeId}`).then(r => r.data),
   });
 
   const { data: pendingRequests, isLoading: loadingPending } = useQuery<{ content: CompOffRequest[] }>({
     queryKey: ['comp-off', 'pending'],
-    queryFn: () => apiClient.get('/comp-off/pending').then(r => r.data),
+    queryFn: () => apiClient.get<{ content: CompOffRequest[] }>('/comp-off/pending').then(r => r.data),
     enabled: activeTab === 'pending',
   });
 
@@ -135,7 +135,7 @@ export default function CompOffPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {requests.map((req) => {
+                  {requests.map((req: CompOffRequest) => {
                     const cfg = statusConfig[req.status] ?? statusConfig.PENDING;
                     const Icon = cfg.icon;
                     return (

@@ -259,7 +259,7 @@ export default function FeedbackResponseForm({
                 <div>
                   <h3 className="text-base font-semibold text-gray-900">Overall Performance</h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    How would you rate this person's overall performance?
+                    How would you rate this person&apos;s overall performance?
                   </p>
                 </div>
               </div>
@@ -375,7 +375,7 @@ export default function FeedbackResponseForm({
                 Additional Comments
               </label>
               <p className="text-xs text-gray-500 mb-2">
-                Any other observations or feedback you'd like to share?
+                Any other observations or feedback you&apos;d like to share?
               </p>
               <textarea
                 value={formData.additionalComments}

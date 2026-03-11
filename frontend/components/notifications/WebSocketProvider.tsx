@@ -1,11 +1,17 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { webSocketService, WebSocketNotification, NotificationHandler } from '@/lib/websocket';
+import {
+  webSocketService,
+  WebSocketNotification,
+  NotificationHandler,
+  WebSocketStatus,
+} from '@/lib/websocket';
 import { useToast } from './ToastProvider';
 
 interface WebSocketContextType {
   isConnected: boolean;
+  status: WebSocketStatus;
   connect: (userId: string, tenantId: string, token?: string) => Promise<void>;
   disconnect: () => void;
   addHandler: (handler: NotificationHandler) => () => void;
@@ -39,6 +45,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   showToasts = true,
 }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [status, setStatus] = useState<WebSocketStatus>(WebSocketStatus.DISCONNECTED);
+  const [showReconnectNotification, setShowReconnectNotification] = useState(false);
   const toast = useToast();
 
   // Map notification types to toast types
@@ -109,17 +117,43 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     return () => removeHandler();
   }, [handleNotification]);
 
-  // Update connection status
+  // Listen to WebSocket status changes
   useEffect(() => {
-    const checkConnection = setInterval(() => {
-      setIsConnected(webSocketService.isConnected());
-    }, 5000);
+    const unsubscribe = webSocketService.addStatusChangeListener((newStatus) => {
+      setStatus(newStatus);
+      setIsConnected(newStatus === WebSocketStatus.CONNECTED);
 
-    return () => clearInterval(checkConnection);
-  }, []);
+      // Show/hide reconnect failure notification
+      if (newStatus === WebSocketStatus.FAILED) {
+        setShowReconnectNotification(true);
+        if (showToasts) {
+          toast.addToast({
+            type: 'error',
+            title: 'Connection Failed',
+            message:
+              'Unable to establish real-time notification connection. ' +
+              'Please refresh the page to restore notifications.',
+            duration: 0, // Persistent until dismissed
+          });
+        }
+      } else if (newStatus === WebSocketStatus.CONNECTED && showReconnectNotification) {
+        setShowReconnectNotification(false);
+        if (showToasts) {
+          toast.addToast({
+            type: 'success',
+            title: 'Connection Restored',
+            message: 'Real-time notifications are now active.',
+            duration: 3000,
+          });
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [showToasts, toast]);
 
   return (
-    <WebSocketContext.Provider value={{ isConnected, connect, disconnect, addHandler }}>
+    <WebSocketContext.Provider value={{ isConnected, status, connect, disconnect, addHandler }}>
       {children}
     </WebSocketContext.Provider>
   );

@@ -385,7 +385,7 @@ export default function MyDashboardPage() {
             <Card>
               <CardContent>
                 <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
-                  Today's Attendance
+                  Today&apos;s Attendance
                 </h3>
                 <div className="text-center py-4">
                   <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 ${

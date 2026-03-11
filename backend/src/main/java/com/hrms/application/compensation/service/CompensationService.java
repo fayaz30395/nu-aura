@@ -12,6 +12,8 @@ import com.hrms.domain.compensation.SalaryRevision;
 import com.hrms.domain.compensation.SalaryRevision.RevisionStatus;
 import com.hrms.domain.compensation.SalaryRevision.RevisionType;
 import com.hrms.domain.employee.Employee;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.infrastructure.compensation.repository.CompensationReviewCycleRepository;
 import com.hrms.infrastructure.compensation.repository.SalaryRevisionRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
@@ -37,6 +39,7 @@ public class CompensationService {
     private final CompensationReviewCycleRepository cycleRepository;
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
+    private final AuditLogService auditLogService;
 
     private static final List<RevisionStatus> PENDING_STATUSES = Arrays.asList(
             RevisionStatus.DRAFT, RevisionStatus.PENDING_REVIEW,
@@ -269,8 +272,21 @@ public class CompensationService {
             throw new BusinessException("Can only approve reviewed or pending approval revisions");
         }
 
+        RevisionStatus oldStatus = revision.getStatus();
         revision.approve(userId, comments);
         revision = revisionRepository.save(revision);
+
+        // Audit log: salary revision approved
+        auditLogService.logAction(
+                "SALARY_REVISION",
+                revisionId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                RevisionStatus.APPROVED.toString(),
+                "Salary revision approved for employee " + revision.getEmployeeId() +
+                " - New Salary: " + revision.getNewSalary() +
+                (revision.getNewDesignation() != null ? ", New Designation: " + revision.getNewDesignation() : "")
+        );
 
         // Update cycle budget utilization if linked to a cycle
         if (revision.getReviewCycleId() != null) {
@@ -295,8 +311,20 @@ public class CompensationService {
             throw new BusinessException("Cannot reject applied or cancelled revisions");
         }
 
+        RevisionStatus oldStatus = revision.getStatus();
         revision.reject(userId, reason);
         revision = revisionRepository.save(revision);
+
+        // Audit log: salary revision rejected
+        auditLogService.logAction(
+                "SALARY_REVISION",
+                revisionId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                RevisionStatus.REJECTED.toString(),
+                "Salary revision rejected for employee " + revision.getEmployeeId() +
+                " - Reason: " + (reason != null ? reason : "Not specified")
+        );
 
         log.info("Rejected salary revision {} - Reason: {}", revisionId, reason);
 
@@ -329,12 +357,34 @@ public class CompensationService {
 
             employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .ifPresent(employee -> {
+                    String oldDesignation = employee.getDesignation();
+                    Employee.EmployeeLevel oldLevel = employee.getLevel();
+
                     if (newDesignation != null) {
                         employee.setDesignation(newDesignation);
+                        // Audit log: designation change
+                        auditLogService.logAction(
+                                "EMPLOYEE",
+                                employeeId,
+                                AuditAction.UPDATE,
+                                oldDesignation != null ? oldDesignation : "N/A",
+                                newDesignation,
+                                "Employee designation changed via salary revision " + revId
+                        );
                     }
                     if (newLevel != null) {
                         try {
-                            employee.setLevel(Employee.EmployeeLevel.valueOf(newLevel));
+                            Employee.EmployeeLevel parsedLevel = Employee.EmployeeLevel.valueOf(newLevel);
+                            employee.setLevel(parsedLevel);
+                            // Audit log: level change
+                            auditLogService.logAction(
+                                    "EMPLOYEE",
+                                    employeeId,
+                                    AuditAction.UPDATE,
+                                    oldLevel != null ? oldLevel.toString() : "N/A",
+                                    newLevel,
+                                    "Employee level changed via salary revision " + revId
+                            );
                         } catch (IllegalArgumentException e) {
                             log.warn("Could not parse employee level: {}", newLevel);
                         }
@@ -344,6 +394,19 @@ public class CompensationService {
                         employeeId, revId);
                 });
         }
+
+        // Audit log: salary revision applied
+        auditLogService.logAction(
+                "SALARY_REVISION",
+                revisionId,
+                AuditAction.STATUS_CHANGE,
+                RevisionStatus.APPROVED.toString(),
+                RevisionStatus.APPLIED.toString(),
+                "Salary revision applied for employee " + revision.getEmployeeId() +
+                " - Previous Salary: " + revision.getPreviousSalary() +
+                ", New Salary: " + revision.getNewSalary() +
+                ", Increment: " + revision.getIncrementPercentage() + "%"
+        );
 
         // Mark for payroll processing - payroll system should pick this up
         revision.setPayrollProcessed(false); // Will be set true by payroll batch job

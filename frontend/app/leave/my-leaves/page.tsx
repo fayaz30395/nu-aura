@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { AlertCircle, RefreshCw, CalendarOff } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveRequest, LeaveType, LeaveRequestStatus } from '@/lib/types/leave';
@@ -11,6 +13,7 @@ export default function MyLeavesPage() {
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -22,8 +25,9 @@ export default function MyLeavesPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      
+
       const [requestsData, typesData] = await Promise.all([
         filterStatus
           ? leaveService.getLeaveRequestsByStatus(filterStatus as LeaveRequestStatus, currentPage, 10)
@@ -34,8 +38,9 @@ export default function MyLeavesPage() {
       setRequests(requestsData.content);
       setTotalPages(requestsData.totalPages);
       setLeaveTypes(typesData);
-    } catch (error) {
-      console.error('Error loading leaves:', error);
+    } catch (err) {
+      console.error('Error loading leaves:', err);
+      setError('Failed to load leave requests. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -72,7 +77,12 @@ export default function MyLeavesPage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="max-w-7xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="max-w-7xl mx-auto"
+      >
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -110,13 +120,41 @@ export default function MyLeavesPage() {
           </div>
         </div>
 
+        {/* Error State */}
+        {error && (
+          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+            </div>
+            <button
+              onClick={loadData}
+              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Leave Requests Table */}
         <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
           {loading ? (
             <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
           ) : requests.length === 0 ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              No leave requests found
+            <div className="text-center py-12 px-4">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-surface-800 flex items-center justify-center">
+                  <CalendarOff className="w-8 h-8 text-gray-400 dark:text-gray-600" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No leave requests found</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Get started by applying for your first leave</p>
+              <button
+                onClick={() => router.push('/leave/apply')}
+                className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium"
+              >
+                Apply for Leave
+              </button>
             </div>
           ) : (
             <>
@@ -209,7 +247,7 @@ export default function MyLeavesPage() {
             </>
           )}
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

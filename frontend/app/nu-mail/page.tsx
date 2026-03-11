@@ -935,7 +935,7 @@ function MailContent() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Nu-Mail</h1>
-              <p className="text-sm text-surface-500">Your organization's Gmail inbox</p>
+              <p className="text-sm text-surface-500">Your organization&apos;s Gmail inbox</p>
             </div>
           </div>
           {!accessToken ? (
@@ -1008,7 +1008,7 @@ function MailContent() {
                   Connect to Gmail
                 </h2>
                 <p className="text-surface-500 mb-6 max-w-md mx-auto">
-                  Access your organization's Gmail directly within NuLogic.
+                  Access your organization&apos;s Gmail directly within NuLogic.
                   Read, send, and manage your emails all in one place.
                 </p>
                 <Button
@@ -1020,7 +1020,7 @@ function MailContent() {
                   Connect Gmail
                 </Button>
                 <p className="text-xs text-surface-400 mt-4">
-                  You'll be asked to grant access to read and send emails.
+                  You&apos;ll be asked to grant access to read and send emails.
                 </p>
               </div>
             </CardContent>

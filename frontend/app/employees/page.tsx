@@ -7,6 +7,9 @@ import { departmentService } from '@/lib/services/department.service';
 import { Employee, CreateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole } from '@/lib/types/employee';
 import { toGender, toEmploymentType, toEmployeeLevel, toJobRole } from '@/lib/utils/type-guards';
 import { AppLayout } from '@/components/layout';
+import { motion } from 'framer-motion';
+import { Users } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function EmployeesPage() {
   const router = useRouter();
@@ -215,12 +218,17 @@ export default function EmployeesPage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+      <motion.div
+        className="p-3 sm:p-6 space-y-4 sm:space-y-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Employee Management</h1>
-            <p className="text-sm sm:text-base text-surface-600 dark:text-surface-400 mt-1">Manage your organization's employees</p>
+            <p className="text-sm sm:text-base text-surface-600 dark:text-surface-400 mt-1">Manage your organization&apos;s employees</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
@@ -282,54 +290,50 @@ export default function EmployeesPage() {
 
         {/* Employee Table */}
         <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 overflow-hidden">
-          <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
-            <thead className="bg-surface-50 dark:bg-surface-800/50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Employee
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Code
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Designation
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Department
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Level
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Manager
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-100 dark:divide-surface-800">
-              {loading ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
-                    Loading employees...
-                  </td>
-                </tr>
-              ) : employees.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
-                    <svg className="mx-auto h-12 w-12 text-surface-400 dark:text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <p className="mt-2">No employees found. Click "Add Employee" to get started.</p>
-                  </td>
-                </tr>
-              ) : (
-                employees.map((employee) => (
+          {loading ? (
+            <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
+              Loading employees...
+            </div>
+          ) : employees.length === 0 ? (
+            <EmptyState
+              icon={<Users className="h-12 w-12" />}
+              title={searchQuery.trim() ? 'No employees match your search' : 'No Employees Found'}
+              description={searchQuery.trim() ? 'Try adjusting your search terms' : 'Add your first employee to get started'}
+              action={{ label: 'Add Employee', onClick: () => setShowAddModal(true) }}
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
+                <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Employee
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Code
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Designation
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Department
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Level
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Manager
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-100 dark:divide-surface-800">
+                  {employees.map((employee) => (
                   <tr key={employee.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -388,11 +392,11 @@ export default function EmployeesPage() {
                       </button>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Add Employee Modal */}
@@ -1027,7 +1031,7 @@ export default function EmployeesPage() {
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

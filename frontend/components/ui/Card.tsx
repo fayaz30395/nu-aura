@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const Card = React.forwardRef<
@@ -27,17 +28,22 @@ const Card = React.forwardRef<
   };
 
   return (
-    <div
-      ref={ref}
-      className={cn(
-        'rounded-xl transition-all duration-200',
-        variantStyles[variant],
-        paddingStyles[padding],
-        isHoverable && 'cursor-pointer hover:shadow-card-hover hover:border-surface-300 dark:hover:border-surface-600',
-        className
-      )}
-      {...props}
-    />
+    <motion.div
+      whileHover={isHoverable ? { y: -2 } : undefined}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
+      <div
+        ref={ref}
+        className={cn(
+          'rounded-xl transition-all duration-200',
+          variantStyles[variant],
+          paddingStyles[padding],
+          isHoverable && 'cursor-pointer hover:shadow-card-hover hover:border-surface-300 dark:hover:border-surface-600',
+          className
+        )}
+        {...props}
+      />
+    </motion.div>
   );
 });
 

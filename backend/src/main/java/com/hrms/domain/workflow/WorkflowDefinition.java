@@ -105,6 +105,7 @@ public class WorkflowDefinition extends TenantAware {
         OVERTIME,
         SHIFT_CHANGE,
         WORK_FROM_HOME,
+        RECRUITMENT_OFFER,
         CUSTOM
     }
 

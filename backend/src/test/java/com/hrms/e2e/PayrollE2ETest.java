@@ -112,10 +112,10 @@ class PayrollE2ETest {
     private void setupSecurityContext() {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "PAYROLL_ADMIN"));
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
-        permissions.put("HRMS:PAYROLL:VIEW_SELF", RoleScope.GLOBAL);
-        permissions.put("HRMS:PAYROLL:PROCESS", RoleScope.GLOBAL);
-        permissions.put("HRMS:PAYROLL:APPROVE", RoleScope.GLOBAL);
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put("HRMS:PAYROLL:VIEW_SELF", RoleScope.ALL);
+        permissions.put("HRMS:PAYROLL:PROCESS", RoleScope.ALL);
+        permissions.put("HRMS:PAYROLL:APPROVE", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, testEmployeeId != null ? testEmployeeId : TEST_USER_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

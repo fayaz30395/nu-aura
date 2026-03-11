@@ -1,3 +1,16 @@
+/**
+ * Lightweight summary returned by GET /api/v1/analytics/summary
+ * for the main dashboard KPI widget.
+ */
+export interface AnalyticsSummary {
+  totalEmployees: number;
+  presentToday: number;
+  onLeaveToday: number;
+  pendingApprovals: number;
+  payrollProcessedThisMonth: boolean;
+  openPositions: number;
+}
+
 export type ViewType = 'ADMIN' | 'MANAGER' | 'EMPLOYEE';
 
 export interface DashboardAnalytics {

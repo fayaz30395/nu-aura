@@ -1,18 +1,53 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { notifications } from '@mantine/notifications';
+import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { recruitmentService } from '@/lib/services/recruitment.service';
-import { employeeService } from '@/lib/services/employee.service';
-import { Candidate, CreateCandidateRequest, CandidateStatus, CandidateSource, RecruitmentStage, JobOpening } from '@/lib/types/recruitment';
-import { Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X, Eye, ChevronRight, DollarSign, Send, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, JobOpening, CreateCandidateRequest } from '@/lib/types/recruitment';
+import {
+  Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X,
+  Eye, ChevronRight, DollarSign, Send, CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare
+} from 'lucide-react';
 import { letterService } from '@/lib/services/letter.service';
+import { recruitmentService } from '@/lib/services/recruitment.service';
 import { GenerateOfferLetterRequest, LetterTemplate, LetterCategory } from '@/lib/types/letter';
+import { CreateOfferRequest } from '@/lib/types/recruitment';
+import {
+  useCandidates,
+  useJobOpenings,
+  useCreateCandidate,
+  useUpdateCandidate,
+  useDeleteCandidate,
+  useCreateOffer,
+  useParseResume,
+  useCalculateMatchScore,
+  useGenerateScreeningSummary,
+  useSynthesizeFeedback,
+} from '@/lib/hooks/queries/useRecruitment';
+import {
+  createCandidateSchema,
+  createOfferSchema,
+  resumeParseRequestSchema,
+  CreateCandidateFormData,
+  CreateOfferFormData,
+  ResumeParseFormData,
+} from '@/lib/validations/recruitment';
+import { employeeService } from '@/lib/services/employee.service';
+import {
+  CandidateMatchResponse,
+  CandidateScreeningSummaryResponse,
+  FeedbackSynthesisResponse,
+  ResumeParseResponse,
+} from '@/lib/types/ai-recruitment';
 
-// Loading fallback
+// ==================== Loading Fallback ====================
+
 function CandidatesPageLoading() {
   return (
     <AppLayout>
@@ -24,7 +59,6 @@ function CandidatesPageLoading() {
   );
 }
 
-// Wrap with Suspense for useSearchParams
 export default function CandidatesPageWrapper() {
   return (
     <Suspense fallback={<CandidatesPageLoading />}>
@@ -33,145 +67,182 @@ export default function CandidatesPageWrapper() {
   );
 }
 
+// ==================== Main Component ====================
+
 function CandidatesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const jobIdFilter = searchParams.get('jobId');
 
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
-  const [recruiters, setRecruiters] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // ==================== State ====================
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [candidateToDelete, setCandidateToDelete] = useState<Candidate | null>(null);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
-  const [selectedJobFilter, setSelectedJobFilter] = useState<string>(jobIdFilter || '');
-
-  // Offer letter states
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [showParseResumeModal, setShowParseResumeModal] = useState(false);
+  const [showScreeningSummaryModal, setShowScreeningSummaryModal] = useState(false);
+  const [showFeedbackSynthesisModal, setShowFeedbackSynthesisModal] = useState(false);
+
+  const [candidateToDelete, setCandidateToDelete] = useState<Candidate | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [candidateForOffer, setCandidateForOffer] = useState<Candidate | null>(null);
+  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
+
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [selectedJobFilter, setSelectedJobFilter] = useState<string>(jobIdFilter || '');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [recruiters, setRecruiters] = useState<any[]>([]);
   const [templates, setTemplates] = useState<LetterTemplate[]>([]);
-  const [offerLoading, setOfferLoading] = useState(false);
-  const [declineReason, setDeclineReason] = useState('');
   const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
-  const [offerFormData, setOfferFormData] = useState<GenerateOfferLetterRequest>({
-    templateId: '',
-    candidateId: '',
-    offeredCtc: 0,
-    offeredDesignation: '',
-    proposedJoiningDate: '',
-    submitForApproval: true,
-  });
+  const [declineReason, setDeclineReason] = useState('');
 
-  const [formData, setFormData] = useState<CreateCandidateRequest>({
-    candidateCode: '',
-    jobOpeningId: jobIdFilter || '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    currentLocation: '',
-    currentCompany: '',
-    currentDesignation: '',
-    totalExperience: undefined,
-    currentCtc: undefined,
-    expectedCtc: undefined,
-    noticePeriodDays: undefined,
-    resumeUrl: '',
-    source: 'JOB_PORTAL',
-    status: 'NEW',
-    currentStage: 'APPLICATION_RECEIVED',
-    appliedDate: new Date().toISOString().split('T')[0],
-    notes: '',
-    assignedRecruiterId: '',
-  });
+  // AI state
+  const [matchScores, setMatchScores] = useState<Map<string, CandidateMatchResponse>>(new Map());
+  const [screeningSummary, setScreeningSummary] = useState<CandidateScreeningSummaryResponse | null>(null);
+  const [feedbackSynthesis, setFeedbackSynthesis] = useState<FeedbackSynthesisResponse | null>(null);
+  const [parsedResume, setParsedResume] = useState<ResumeParseResponse | null>(null);
+  const [aiLoadingState, setAiLoadingState] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadCandidates();
-    loadJobOpenings();
-    loadRecruiters();
-    loadOfferTemplates();
-  }, [statusFilter, selectedJobFilter]);
+  // ==================== Queries & Mutations ====================
 
-  const loadOfferTemplates = async () => {
-    try {
-      const activeTemplates = await letterService.getActiveTemplates();
-      setTemplates(activeTemplates.filter(t => t.category === LetterCategory.OFFER));
-    } catch (err) {
-      console.error('Error loading templates:', err);
-    }
-  };
+  const { data: candidatesData, isLoading: candidatesLoading, refetch: refetchCandidates } = useCandidates(0, 100);
+  const { data: jobOpeningsData } = useJobOpenings(0, 100);
+  const createCandidateMutation = useCreateCandidate();
+  const updateCandidateMutation = useUpdateCandidate();
+  const deleteCandidateMutation = useDeleteCandidate();
+  const createOfferMutation = useCreateOffer();
+  const parseResumeMutation = useParseResume();
+  const calculateMatchScoreMutation = useCalculateMatchScore();
+  const generateScreeningSummaryMutation = useGenerateScreeningSummary();
+  const synthesizeFeedbackMutation = useSynthesizeFeedback();
 
-  const loadCandidates = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      let candidatesList: Candidate[] = [];
+  // Load initial data
+  const candidates = candidatesData?.content || [];
+  const jobOpenings = jobOpeningsData?.content || [];
 
-      if (selectedJobFilter) {
-        candidatesList = await recruitmentService.getCandidatesByJobOpening(selectedJobFilter);
-      } else {
-        const response = await recruitmentService.getAllCandidates(0, 100);
-        candidatesList = response.content;
-      }
-
-      if (statusFilter) {
-        candidatesList = candidatesList.filter(c => c.status === statusFilter);
-      }
-      setCandidates(candidatesList);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load candidates');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadJobOpenings = async () => {
-    try {
-      const response = await recruitmentService.getAllJobOpenings(0, 100);
-      setJobOpenings(response.content);
-    } catch (err) {
-      console.error('Error loading job openings:', err);
-    }
-  };
-
-  const loadRecruiters = async () => {
+  // Load recruiters and templates
+  const loadRecruitersAndTemplates = async () => {
     try {
       const response = await employeeService.getAllEmployees(0, 100);
       setRecruiters(response.content);
+      const activeTemplates = await letterService.getActiveTemplates();
+      setTemplates(activeTemplates.filter(t => t.category === LetterCategory.OFFER));
     } catch (err) {
-      console.error('Error loading recruiters:', err);
+      console.error('Error loading recruiters/templates:', err);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // React Hook Form setup
+  const candidateForm = useForm<CreateCandidateFormData>({
+    resolver: zodResolver(createCandidateSchema),
+    defaultValues: {
+      candidateCode: '',
+      jobOpeningId: jobIdFilter || '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      currentLocation: '',
+      currentCompany: '',
+      currentDesignation: '',
+      totalExperience: undefined,
+      currentCtc: undefined,
+      expectedCtc: undefined,
+      noticePeriodDays: undefined,
+      resumeUrl: '',
+      source: 'JOB_PORTAL',
+      status: 'NEW',
+      currentStage: 'APPLICATION_RECEIVED',
+      appliedDate: new Date().toISOString().split('T')[0],
+      notes: '',
+      assignedRecruiterId: '',
+    },
+  });
+
+  const offerForm = useForm<CreateOfferFormData>({
+    resolver: zodResolver(createOfferSchema),
+    defaultValues: {
+      offeredSalary: 0,
+      positionTitle: '',
+      joiningDate: '',
+      offerExpiryDate: '',
+      notes: '',
+    },
+  });
+
+  const resumeParseForm = useForm<ResumeParseFormData>({
+    resolver: zodResolver(resumeParseRequestSchema),
+    defaultValues: {
+      resumeText: '',
+      resumeUrl: '',
+    },
+  });
+
+  // ==================== Handlers ====================
+
+  const handleCandidateSubmit = async (formData: CreateCandidateFormData) => {
     try {
-      setError(null);
+      // Cast form data to match API requirements
+      const data: CreateCandidateRequest = {
+        candidateCode: formData.candidateCode,
+        jobOpeningId: formData.jobOpeningId,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        currentLocation: formData.currentLocation,
+        currentCompany: formData.currentCompany,
+        currentDesignation: formData.currentDesignation,
+        totalExperience: formData.totalExperience,
+        currentCtc: formData.currentCtc,
+        expectedCtc: formData.expectedCtc,
+        noticePeriodDays: formData.noticePeriodDays,
+        resumeUrl: formData.resumeUrl,
+        source: formData.source as any,
+        status: formData.status as any,
+        currentStage: formData.currentStage as any,
+        appliedDate: formData.appliedDate,
+        notes: formData.notes,
+        assignedRecruiterId: formData.assignedRecruiterId,
+      };
+
       if (editingCandidate) {
-        await recruitmentService.updateCandidate(editingCandidate.id, formData);
+        await updateCandidateMutation.mutateAsync({
+          id: editingCandidate.id,
+          data,
+        });
+        notifications.show({
+          title: 'Success',
+          message: 'Candidate updated successfully',
+          color: 'green',
+        });
       } else {
-        await recruitmentService.createCandidate(formData);
+        await createCandidateMutation.mutateAsync(data);
+        notifications.show({
+          title: 'Success',
+          message: 'Candidate created successfully',
+          color: 'green',
+        });
       }
       setShowAddModal(false);
-      resetForm();
-      loadCandidates();
+      candidateForm.reset();
+      setEditingCandidate(null);
+      refetchCandidates();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save candidate');
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to save candidate',
+        color: 'red',
+      });
     }
   };
 
-  const handleEdit = (candidate: Candidate) => {
+  const handleEditCandidate = (candidate: Candidate) => {
     setEditingCandidate(candidate);
-    setFormData({
+    candidateForm.reset({
       candidateCode: candidate.candidateCode,
       jobOpeningId: candidate.jobOpeningId,
       firstName: candidate.firstName,
@@ -196,156 +267,295 @@ function CandidatesPage() {
     setShowAddModal(true);
   };
 
-  const handleDelete = async () => {
+  const handleDeleteCandidate = async () => {
     if (!candidateToDelete) return;
     try {
-      await recruitmentService.deleteCandidate(candidateToDelete.id);
+      await deleteCandidateMutation.mutateAsync(candidateToDelete.id);
+      notifications.show({
+        title: 'Success',
+        message: 'Candidate deleted successfully',
+        color: 'green',
+      });
       setShowDeleteModal(false);
       setCandidateToDelete(null);
-      loadCandidates();
+      refetchCandidates();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete candidate');
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to delete candidate',
+        color: 'red',
+      });
     }
   };
 
-  const resetForm = () => {
-    setEditingCandidate(null);
-    setFormData({
-      candidateCode: '',
-      jobOpeningId: selectedJobFilter || '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      currentLocation: '',
-      currentCompany: '',
-      currentDesignation: '',
-      totalExperience: undefined,
-      currentCtc: undefined,
-      expectedCtc: undefined,
-      noticePeriodDays: undefined,
-      resumeUrl: '',
-      source: 'JOB_PORTAL',
-      status: 'NEW',
-      currentStage: 'APPLICATION_RECEIVED',
-      appliedDate: new Date().toISOString().split('T')[0],
-      notes: '',
-      assignedRecruiterId: '',
-    });
-  };
-
-  // Offer letter handlers
-  const handleOpenOfferModal = (candidate: Candidate) => {
-    setCandidateForOffer(candidate);
-    setOfferFormData({
-      templateId: templates.length > 0 ? templates[0].id : '',
-      candidateId: candidate.id,
-      offeredCtc: candidate.expectedCtc || 0,
-      offeredDesignation: candidate.currentDesignation || '',
-      proposedJoiningDate: '',
-      submitForApproval: true,
-    });
-    setShowOfferModal(true);
-  };
-
-  const handleGenerateOffer = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOfferSubmit = async (formData: CreateOfferFormData) => {
     if (!candidateForOffer) return;
-    setOfferLoading(true);
     try {
-      await letterService.generateOfferLetter(offerFormData, 'current-user-id');
+      // Cast form data to match API requirements
+      const data: CreateOfferRequest = {
+        offeredSalary: formData.offeredSalary || 0,
+        positionTitle: formData.positionTitle,
+        joiningDate: formData.joiningDate || '',
+        offerExpiryDate: formData.offerExpiryDate,
+        notes: formData.notes,
+      };
+
+      await createOfferMutation.mutateAsync({
+        candidateId: candidateForOffer.id,
+        data,
+      });
+      notifications.show({
+        title: 'Success',
+        message: 'Offer created successfully',
+        color: 'green',
+      });
       setShowOfferModal(false);
       setCandidateForOffer(null);
-      loadCandidates();
+      offerForm.reset();
+      refetchCandidates();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to generate offer letter');
-    } finally {
-      setOfferLoading(false);
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to create offer',
+        color: 'red',
+      });
     }
-  };
-
-  const handleOpenAcceptModal = (candidate: Candidate) => {
-    setCandidateForOffer(candidate);
-    setConfirmedJoiningDate(candidate.proposedJoiningDate || '');
-    setShowAcceptModal(true);
   };
 
   const handleAcceptOffer = async () => {
     if (!candidateForOffer) return;
-    setOfferLoading(true);
     try {
       await recruitmentService.acceptOffer(candidateForOffer.id, {
         confirmedJoiningDate: confirmedJoiningDate || undefined,
       });
+      notifications.show({
+        title: 'Success',
+        message: 'Offer accepted',
+        color: 'green',
+      });
       setShowAcceptModal(false);
       setCandidateForOffer(null);
       setConfirmedJoiningDate('');
-      loadCandidates();
+      refetchCandidates();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to accept offer');
-    } finally {
-      setOfferLoading(false);
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to accept offer',
+        color: 'red',
+      });
     }
-  };
-
-  const handleOpenDeclineModal = (candidate: Candidate) => {
-    setCandidateForOffer(candidate);
-    setDeclineReason('');
-    setShowDeclineModal(true);
   };
 
   const handleDeclineOffer = async () => {
     if (!candidateForOffer) return;
-    setOfferLoading(true);
     try {
       await recruitmentService.declineOffer(candidateForOffer.id, {
         declineReason: declineReason || undefined,
       });
+      notifications.show({
+        title: 'Success',
+        message: 'Offer declined',
+        color: 'green',
+      });
       setShowDeclineModal(false);
       setCandidateForOffer(null);
       setDeclineReason('');
-      loadCandidates();
+      refetchCandidates();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to decline offer');
-    } finally {
-      setOfferLoading(false);
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to decline offer',
+        color: 'red',
+      });
     }
   };
 
-  const getStatusColor = (status: CandidateStatus) => {
-    switch (status) {
-      case 'NEW': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'SCREENING': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
-      case 'INTERVIEW': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'OFFER_EXTENDED': return 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300';
-      case 'OFFER_ACCEPTED': return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300';
-      case 'OFFER_DECLINED': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
-      case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      case 'WITHDRAWN': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+  // ==================== AI Handlers ====================
+
+  const handleParseResume = async (data: ResumeParseFormData) => {
+    setAiLoadingState('parse');
+    try {
+      const result = await parseResumeMutation.mutateAsync(data);
+      setParsedResume(result);
+      notifications.show({
+        title: 'Success',
+        message: 'Resume parsed successfully',
+        color: 'green',
+      });
+    } catch (err: any) {
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to parse resume',
+        color: 'red',
+      });
+    } finally {
+      setAiLoadingState(null);
     }
+  };
+
+  const applyParsedResume = (parsed: ResumeParseResponse) => {
+    const [firstName, ...lastNameParts] = (parsed.fullName || '').split(' ');
+    const lastName = lastNameParts.join(' ');
+    candidateForm.setValue('firstName', firstName || '');
+    candidateForm.setValue('lastName', lastName || '');
+    candidateForm.setValue('email', parsed.email || '');
+    candidateForm.setValue('phone', parsed.phone || '');
+    candidateForm.setValue('currentCompany', parsed.currentCompany || '');
+    candidateForm.setValue('currentDesignation', parsed.currentDesignation || '');
+    candidateForm.setValue('currentLocation', parsed.currentLocation || '');
+    if (parsed.totalExperienceYears) {
+      candidateForm.setValue('totalExperience', parsed.totalExperienceYears);
+    }
+    setShowParseResumeModal(false);
+    setParsedResume(null);
+    resumeParseForm.reset();
+  };
+
+  const handleCalculateMatchScore = async (candidate: Candidate) => {
+    if (!candidate.jobOpeningId) {
+      notifications.show({
+        title: 'Info',
+        message: 'Candidate must have a job opening assigned',
+        color: 'blue',
+      });
+      return;
+    }
+    setAiLoadingState(`match-${candidate.id}`);
+    try {
+      const result = await calculateMatchScoreMutation.mutateAsync({
+        candidateId: candidate.id,
+        jobOpeningId: candidate.jobOpeningId,
+      });
+      const newScores = new Map(matchScores);
+      newScores.set(candidate.id, result);
+      setMatchScores(newScores);
+      notifications.show({
+        title: 'Success',
+        message: 'Match score calculated',
+        color: 'green',
+      });
+    } catch (err: any) {
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to calculate match score',
+        color: 'red',
+      });
+    } finally {
+      setAiLoadingState(null);
+    }
+  };
+
+  const handleGenerateScreeningSummary = async (candidate: Candidate) => {
+    if (!candidate.jobOpeningId) {
+      notifications.show({
+        title: 'Info',
+        message: 'Candidate must have a job opening assigned',
+        color: 'blue',
+      });
+      return;
+    }
+    setAiLoadingState(`screening-${candidate.id}`);
+    try {
+      const result = await generateScreeningSummaryMutation.mutateAsync({
+        candidateId: candidate.id,
+        jobOpeningId: candidate.jobOpeningId,
+      });
+      setScreeningSummary(result);
+      setShowScreeningSummaryModal(true);
+      notifications.show({
+        title: 'Success',
+        message: 'Screening summary generated',
+        color: 'green',
+      });
+    } catch (err: any) {
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to generate screening summary',
+        color: 'red',
+      });
+    } finally {
+      setAiLoadingState(null);
+    }
+  };
+
+  const handleSynthesizeFeedback = async (candidate: Candidate) => {
+    if (!candidate.jobOpeningId) {
+      notifications.show({
+        title: 'Info',
+        message: 'Candidate must have a job opening assigned',
+        color: 'blue',
+      });
+      return;
+    }
+    setAiLoadingState(`feedback-${candidate.id}`);
+    try {
+      const result = await synthesizeFeedbackMutation.mutateAsync({
+        candidateId: candidate.id,
+        jobOpeningId: candidate.jobOpeningId,
+      });
+      setFeedbackSynthesis(result);
+      setShowFeedbackSynthesisModal(true);
+      notifications.show({
+        title: 'Success',
+        message: 'Feedback synthesized',
+        color: 'green',
+      });
+    } catch (err: any) {
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to synthesize feedback',
+        color: 'red',
+      });
+    } finally {
+      setAiLoadingState(null);
+    }
+  };
+
+  // ==================== Helpers ====================
+
+  const getStatusColor = (status: CandidateStatus) => {
+    const colorMap: Record<CandidateStatus, string> = {
+      NEW: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+      SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+      INTERVIEW: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+      SELECTED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+      OFFER_EXTENDED: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
+      OFFER_ACCEPTED: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
+      OFFER_DECLINED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
+      REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+      WITHDRAWN: 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300',
+    };
+    return colorMap[status] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
   };
 
   const getStageColor = (stage?: RecruitmentStage) => {
-    switch (stage) {
-      case 'APPLICATION_RECEIVED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'SCREENING': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
-      case 'TECHNICAL_ROUND': return 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300';
-      case 'HR_ROUND': return 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300';
-      case 'MANAGER_ROUND': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
-      case 'FINAL_ROUND': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'OFFER': return 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300';
-      case 'JOINED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-    }
+    const colorMap: Record<RecruitmentStage, string> = {
+      APPLICATION_RECEIVED: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+      SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+      TECHNICAL_ROUND: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
+      HR_ROUND: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
+      MANAGER_ROUND: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
+      FINAL_ROUND: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
+      OFFER: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
+      JOINED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+    };
+    return colorMap[stage || 'APPLICATION_RECEIVED'] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
   };
 
-  const filteredCandidates = candidates.filter(candidate =>
-    candidate.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    candidate.candidateCode.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getMatchScoreColor = (score: number) => {
+    if (score >= 70) return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+    if (score >= 50) return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+    return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+  };
+
+  const filteredCandidates = candidates.filter(candidate => {
+    const matchesSearch = candidate.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      candidate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      candidate.candidateCode.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = !statusFilter || candidate.status === statusFilter;
+    const matchesJob = !selectedJobFilter || candidate.jobOpeningId === selectedJobFilter;
+    return matchesSearch && matchesStatus && matchesJob;
+  });
 
   const stats = {
     total: candidates.length,
@@ -354,19 +564,46 @@ function CandidatesPage() {
     selected: candidates.filter(c => c.status === 'SELECTED' || c.status === 'OFFER_ACCEPTED').length,
   };
 
+  // Load initial data on mount
+  React.useEffect(() => {
+    loadRecruitersAndTemplates();
+  }, []);
+
   return (
     <AppLayout activeMenuItem="recruitment">
-      <div className="p-6 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="p-6 space-y-6"
+      >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Candidates</h1>
             <p className="text-surface-600 dark:text-surface-400 mt-1">Track and manage candidate applications</p>
           </div>
-          <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Candidate
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                setEditingCandidate(null);
+                candidateForm.reset();
+                setShowAddModal(true);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Candidate
+            </Button>
+            <Button
+              onClick={() => setShowParseResumeModal(true)}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Sparkles className="h-4 w-4" />
+              Parse Resume
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -425,13 +662,6 @@ function CandidatesPage() {
           </Card>
         </div>
 
-        {/* Error */}
-        {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          </div>
-        )}
-
         {/* Search and Filters */}
         <Card className="bg-white dark:bg-surface-900">
           <CardContent className="p-4">
@@ -479,13 +709,13 @@ function CandidatesPage() {
         {/* Candidates Table */}
         <Card className="bg-white dark:bg-surface-900">
           <CardContent className="p-0">
-            {loading ? (
+            {candidatesLoading ? (
               <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading candidates...</div>
             ) : filteredCandidates.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
                 <p className="text-surface-500 dark:text-surface-400">No candidates found</p>
-                <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="mt-4">
+                <Button onClick={() => { setEditingCandidate(null); candidateForm.reset(); setShowAddModal(true); }} className="mt-4">
                   Add First Candidate
                 </Button>
               </div>
@@ -504,104 +734,148 @@ function CandidatesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {filteredCandidates.map((candidate) => (
-                      <tr key={candidate.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
-                              <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                                {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+                    {filteredCandidates.map((candidate) => {
+                      const matchScore = matchScores.get(candidate.id);
+                      return (
+                        <tr key={candidate.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                                <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                                  {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+                                </span>
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{candidate.fullName}</div>
+                                <div className="text-sm text-surface-500 dark:text-surface-400">{candidate.email}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-surface-900 dark:text-surface-50">{candidate.jobTitle || '-'}</div>
+                            <div className="text-xs text-surface-500 dark:text-surface-400">{candidate.candidateCode}</div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
+                          </td>
+                          <td className="px-6 py-4">
+                            {candidate.currentStage && (
+                              <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
+                                {candidate.currentStage.replace(/_/g, ' ')}
                               </span>
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{candidate.fullName}</div>
-                              <div className="text-sm text-surface-500 dark:text-surface-400">{candidate.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-surface-900 dark:text-surface-50">{candidate.jobTitle || '-'}</div>
-                          <div className="text-xs text-surface-500 dark:text-surface-400">{candidate.candidateCode}</div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
-                          {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
-                        </td>
-                        <td className="px-6 py-4">
-                          {candidate.currentStage && (
-                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
-                              {candidate.currentStage.replace(/_/g, ' ')}
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
+                              {candidate.status.replace(/_/g, ' ')}
                             </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-                            {candidate.status.replace(/_/g, ' ')}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
-                          {candidate.source?.replace(/_/g, ' ') || '-'}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              onClick={() => { setSelectedCandidate(candidate); setShowViewModal(true); }}
-                              className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
-                              title="View"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-                              className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
-                              title="Schedule Interview"
-                            >
-                              <Calendar className="h-4 w-4" />
-                            </button>
-                            {candidate.status === 'SELECTED' && (
+                          </td>
+                          <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            {candidate.source?.replace(/_/g, ' ') || '-'}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-1">
                               <button
-                                onClick={() => handleOpenOfferModal(candidate)}
-                                className="p-2 text-surface-500 hover:text-teal-600 dark:text-surface-400 dark:hover:text-teal-400 transition-colors"
-                                title="Generate Offer Letter"
+                                onClick={() => { setSelectedCandidate(candidate); setShowViewModal(true); }}
+                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                title="View"
                               >
-                                <Send className="h-4 w-4" />
+                                <Eye className="h-4 w-4" />
                               </button>
-                            )}
-                            {candidate.status === 'OFFER_EXTENDED' && (
-                              <>
+                              <button
+                                onClick={() => handleCalculateMatchScore(candidate)}
+                                disabled={aiLoadingState === `match-${candidate.id}`}
+                                className="p-2 text-surface-500 hover:text-purple-600 dark:text-surface-400 dark:hover:text-purple-400 transition-colors disabled:opacity-50"
+                                title="Calculate Match Score"
+                              >
+                                {aiLoadingState === `match-${candidate.id}` ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Brain className="h-4 w-4" />
+                                )}
+                              </button>
+                              {matchScore && (
+                                <div className={`px-2 py-1 text-xs font-medium rounded-full ${getMatchScoreColor(matchScore.overallScore)}`}>
+                                  {Math.round(matchScore.overallScore)}%
+                                </div>
+                              )}
+                              <button
+                                onClick={() => handleGenerateScreeningSummary(candidate)}
+                                disabled={aiLoadingState === `screening-${candidate.id}`}
+                                className="p-2 text-surface-500 hover:text-cyan-600 dark:text-surface-400 dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
+                                title="Screening Summary"
+                              >
+                                {aiLoadingState === `screening-${candidate.id}` ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <FileText className="h-4 w-4" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => handleSynthesizeFeedback(candidate)}
+                                disabled={aiLoadingState === `feedback-${candidate.id}`}
+                                className="p-2 text-surface-500 hover:text-lime-600 dark:text-surface-400 dark:hover:text-lime-400 transition-colors disabled:opacity-50"
+                                title="Synthesize Feedback"
+                              >
+                                {aiLoadingState === `feedback-${candidate.id}` ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <MessageSquare className="h-4 w-4" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
+                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                title="Schedule Interview"
+                              >
+                                <Calendar className="h-4 w-4" />
+                              </button>
+                              {candidate.status === 'SELECTED' && (
                                 <button
-                                  onClick={() => handleOpenAcceptModal(candidate)}
-                                  className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
-                                  title="Accept Offer"
+                                  onClick={() => { setCandidateForOffer(candidate); setShowOfferModal(true); }}
+                                  className="p-2 text-surface-500 hover:text-teal-600 dark:text-surface-400 dark:hover:text-teal-400 transition-colors"
+                                  title="Generate Offer Letter"
                                 >
-                                  <CheckCircle className="h-4 w-4" />
+                                  <Send className="h-4 w-4" />
                                 </button>
-                                <button
-                                  onClick={() => handleOpenDeclineModal(candidate)}
-                                  className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
-                                  title="Decline Offer"
-                                >
-                                  <XCircle className="h-4 w-4" />
-                                </button>
-                              </>
-                            )}
-                            <button
-                              onClick={() => handleEdit(candidate)}
-                              className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
-                              title="Edit"
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => { setCandidateToDelete(candidate); setShowDeleteModal(true); }}
-                              className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                              )}
+                              {candidate.status === 'OFFER_EXTENDED' && (
+                                <>
+                                  <button
+                                    onClick={() => { setCandidateForOffer(candidate); setConfirmedJoiningDate(candidate.proposedJoiningDate || ''); setShowAcceptModal(true); }}
+                                    className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
+                                    title="Accept Offer"
+                                  >
+                                    <CheckCircle className="h-4 w-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => { setCandidateForOffer(candidate); setDeclineReason(''); setShowDeclineModal(true); }}
+                                    className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                                    title="Decline Offer"
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </button>
+                                </>
+                              )}
+                              <button
+                                onClick={() => handleEditCandidate(candidate)}
+                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                title="Edit"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => { setCandidateToDelete(candidate); setShowDeleteModal(true); }}
+                                className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -609,7 +883,131 @@ function CandidatesPage() {
           </CardContent>
         </Card>
 
-        {/* Add/Edit Modal */}
+        {/* ==================== MODALS ==================== */}
+
+        {/* Parse Resume Modal */}
+        {showParseResumeModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                    <Sparkles className="h-6 w-6 text-primary-500" />
+                    Parse Resume
+                  </h2>
+                  <button onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                {!parsedResume ? (
+                  <form onSubmit={resumeParseForm.handleSubmit(handleParseResume)} className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume Text</label>
+                      <textarea
+                        {...resumeParseForm.register('resumeText')}
+                        rows={6}
+                        placeholder="Paste resume content here..."
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                      {resumeParseForm.formState.errors.resumeText && (
+                        <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeText.message}</p>
+                      )}
+                    </div>
+
+                    <div className="text-center text-surface-500 dark:text-surface-400">OR</div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume URL</label>
+                      <input
+                        {...resumeParseForm.register('resumeUrl')}
+                        type="url"
+                        placeholder="https://example.com/resume.pdf"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      />
+                      {resumeParseForm.formState.errors.resumeUrl && (
+                        <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeUrl.message}</p>
+                      )}
+                    </div>
+
+                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                      <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); resumeParseForm.reset(); setParsedResume(null); }} className="flex-1">
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={aiLoadingState === 'parse'} className="flex-1">
+                        {aiLoadingState === 'parse' ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Parsing...</> : 'Parse Resume'}
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl space-y-3">
+                      {parsedResume.fullName && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Full Name</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.fullName}</p>
+                        </div>
+                      )}
+                      {parsedResume.email && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Email</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.email}</p>
+                        </div>
+                      )}
+                      {parsedResume.phone && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Phone</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.phone}</p>
+                        </div>
+                      )}
+                      {parsedResume.currentCompany && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Current Company</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.currentCompany}</p>
+                        </div>
+                      )}
+                      {parsedResume.currentDesignation && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Current Designation</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.currentDesignation}</p>
+                        </div>
+                      )}
+                      {parsedResume.totalExperienceYears && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">Total Experience</p>
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.totalExperienceYears} years</p>
+                        </div>
+                      )}
+                      {parsedResume.skills && parsedResume.skills.length > 0 && (
+                        <div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Skills</p>
+                          <div className="flex flex-wrap gap-2">
+                            {parsedResume.skills.map((skill, idx) => (
+                              <span key={idx} className="px-2.5 py-1 text-xs rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                      <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="flex-1">
+                        Cancel
+                      </Button>
+                      <Button onClick={() => applyParsedResume(parsedResume)} className="flex-1">
+                        Apply to Form
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add/Edit Candidate Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
@@ -618,30 +1016,29 @@ function CandidatesPage() {
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
                     {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetForm(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={candidateForm.handleSubmit(handleCandidateSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate Code *</label>
                       <input
                         type="text"
-                        required
-                        value={formData.candidateCode}
-                        onChange={(e) => setFormData({ ...formData, candidateCode: e.target.value })}
+                        {...candidateForm.register('candidateCode')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="CAN-001"
                       />
+                      {candidateForm.formState.errors.candidateCode && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.candidateCode.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
                       <select
-                        required
-                        value={formData.jobOpeningId}
-                        onChange={(e) => setFormData({ ...formData, jobOpeningId: e.target.value })}
+                        {...candidateForm.register('jobOpeningId')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Job Opening</option>
@@ -649,6 +1046,9 @@ function CandidatesPage() {
                           <option key={job.id} value={job.id}>{job.jobTitle}</option>
                         ))}
                       </select>
+                      {candidateForm.formState.errors.jobOpeningId && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.jobOpeningId.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -657,21 +1057,23 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">First Name *</label>
                       <input
                         type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        {...candidateForm.register('firstName')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {candidateForm.formState.errors.firstName && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Last Name *</label>
                       <input
                         type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        {...candidateForm.register('lastName')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {candidateForm.formState.errors.lastName && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -680,20 +1082,23 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Email *</label>
                       <input
                         type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        {...candidateForm.register('email')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {candidateForm.formState.errors.email && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.email.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Phone</label>
                       <input
                         type="tel"
-                        value={formData.phone || ''}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        {...candidateForm.register('phone')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {candidateForm.formState.errors.phone && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -702,8 +1107,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Company</label>
                       <input
                         type="text"
-                        value={formData.currentCompany || ''}
-                        onChange={(e) => setFormData({ ...formData, currentCompany: e.target.value })}
+                        {...candidateForm.register('currentCompany')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -711,8 +1115,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Designation</label>
                       <input
                         type="text"
-                        value={formData.currentDesignation || ''}
-                        onChange={(e) => setFormData({ ...formData, currentDesignation: e.target.value })}
+                        {...candidateForm.register('currentDesignation')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -720,8 +1123,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
                       <input
                         type="text"
-                        value={formData.currentLocation || ''}
-                        onChange={(e) => setFormData({ ...formData, currentLocation: e.target.value })}
+                        {...candidateForm.register('currentLocation')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -733,8 +1135,7 @@ function CandidatesPage() {
                       <input
                         type="number"
                         step="0.5"
-                        value={formData.totalExperience || ''}
-                        onChange={(e) => setFormData({ ...formData, totalExperience: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        {...candidateForm.register('totalExperience', { valueAsNumber: true })}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -742,8 +1143,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current CTC</label>
                       <input
                         type="number"
-                        value={formData.currentCtc || ''}
-                        onChange={(e) => setFormData({ ...formData, currentCtc: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        {...candidateForm.register('currentCtc', { valueAsNumber: true })}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -751,8 +1151,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Expected CTC</label>
                       <input
                         type="number"
-                        value={formData.expectedCtc || ''}
-                        onChange={(e) => setFormData({ ...formData, expectedCtc: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        {...candidateForm.register('expectedCtc', { valueAsNumber: true })}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -760,8 +1159,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notice (days)</label>
                       <input
                         type="number"
-                        value={formData.noticePeriodDays || ''}
-                        onChange={(e) => setFormData({ ...formData, noticePeriodDays: e.target.value ? parseInt(e.target.value) : undefined })}
+                        {...candidateForm.register('noticePeriodDays', { valueAsNumber: true })}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
@@ -771,8 +1169,7 @@ function CandidatesPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Source</label>
                       <select
-                        value={formData.source}
-                        onChange={(e) => setFormData({ ...formData, source: e.target.value as CandidateSource })}
+                        {...candidateForm.register('source')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="JOB_PORTAL">Job Portal</option>
@@ -788,8 +1185,7 @@ function CandidatesPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Status</label>
                       <select
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as CandidateStatus })}
+                        {...candidateForm.register('status')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="NEW">New</option>
@@ -806,8 +1202,7 @@ function CandidatesPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Stage</label>
                       <select
-                        value={formData.currentStage}
-                        onChange={(e) => setFormData({ ...formData, currentStage: e.target.value as RecruitmentStage })}
+                        {...candidateForm.register('currentStage')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="APPLICATION_RECEIVED">Application Received</option>
@@ -826,8 +1221,7 @@ function CandidatesPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Assigned Recruiter</label>
                       <select
-                        value={formData.assignedRecruiterId || ''}
-                        onChange={(e) => setFormData({ ...formData, assignedRecruiterId: e.target.value })}
+                        {...candidateForm.register('assignedRecruiterId')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Recruiter</option>
@@ -840,11 +1234,13 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume URL</label>
                       <input
                         type="url"
-                        value={formData.resumeUrl || ''}
-                        onChange={(e) => setFormData({ ...formData, resumeUrl: e.target.value })}
+                        {...candidateForm.register('resumeUrl')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="https://..."
                       />
+                      {candidateForm.formState.errors.resumeUrl && (
+                        <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.resumeUrl.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -852,18 +1248,17 @@ function CandidatesPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
                     <textarea
                       rows={3}
-                      value={formData.notes || ''}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      {...candidateForm.register('notes')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Additional notes..."
                     />
                   </div>
 
                   <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetForm(); }} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="flex-1">
                       Cancel
                     </Button>
-                    <Button type="submit" className="flex-1">
+                    <Button type="submit" disabled={createCandidateMutation.isPending || updateCandidateMutation.isPending} className="flex-1">
                       {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
                     </Button>
                   </div>
@@ -873,7 +1268,7 @@ function CandidatesPage() {
           </div>
         )}
 
-        {/* View Modal */}
+        {/* View Candidate Modal */}
         {showViewModal && selectedCandidate && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
@@ -886,7 +1281,6 @@ function CandidatesPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Header */}
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
                       <span className="text-2xl font-bold text-primary-700 dark:text-primary-300">
@@ -909,7 +1303,6 @@ function CandidatesPage() {
                     </div>
                   </div>
 
-                  {/* Contact Info */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
                       <Mail className="h-5 w-5 text-surface-400" />
@@ -947,7 +1340,6 @@ function CandidatesPage() {
                     )}
                   </div>
 
-                  {/* Professional Info */}
                   <div className="grid grid-cols-4 gap-4">
                     <div className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl text-center">
                       <p className="text-xs text-surface-500 dark:text-surface-400">Experience</p>
@@ -975,7 +1367,6 @@ function CandidatesPage() {
                     </div>
                   </div>
 
-                  {/* Notes */}
                   {selectedCandidate.notes && (
                     <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
                       <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Notes</p>
@@ -983,12 +1374,11 @@ function CandidatesPage() {
                     </div>
                   )}
 
-                  {/* Actions */}
                   <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
                     <Button variant="outline" onClick={() => setShowViewModal(false)} className="flex-1">
                       Close
                     </Button>
-                    <Button onClick={() => { setShowViewModal(false); handleEdit(selectedCandidate); }} className="flex-1">
+                    <Button onClick={() => { setShowViewModal(false); handleEditCandidate(selectedCandidate); }} className="flex-1">
                       Edit Candidate
                     </Button>
                     <Button onClick={() => router.push(`/recruitment/interviews?candidateId=${selectedCandidate.id}`)} className="flex-1">
@@ -1001,7 +1391,7 @@ function CandidatesPage() {
           </div>
         )}
 
-        {/* Delete Modal */}
+        {/* Delete Candidate Modal */}
         {showDeleteModal && candidateToDelete && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
@@ -1018,7 +1408,7 @@ function CandidatesPage() {
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setCandidateToDelete(null); }} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete} className="flex-1">
+                <Button variant="destructive" onClick={handleDeleteCandidate} disabled={deleteCandidateMutation.isPending} className="flex-1">
                   Delete
                 </Button>
               </div>
@@ -1026,7 +1416,196 @@ function CandidatesPage() {
           </div>
         )}
 
-        {/* Generate Offer Letter Modal */}
+        {/* Screening Summary Modal */}
+        {showScreeningSummaryModal && screeningSummary && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                    <Brain className="h-6 w-6 text-purple-500" />
+                    Screening Summary
+                  </h2>
+                  <button onClick={() => { setShowScreeningSummaryModal(false); setScreeningSummary(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Candidate</p>
+                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{screeningSummary.candidateName}</p>
+                  </div>
+
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Fit Level</p>
+                    <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                      screeningSummary.fitLevel === 'HIGH' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                      screeningSummary.fitLevel === 'MEDIUM' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
+                      'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                    }`}>
+                      {screeningSummary.fitLevel}
+                    </span>
+                  </div>
+
+                  {screeningSummary.strengths && screeningSummary.strengths.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Strengths</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {screeningSummary.strengths.map((strength, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{strength}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {screeningSummary.gaps && screeningSummary.gaps.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Gaps</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {screeningSummary.gaps.map((gap, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{gap}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {screeningSummary.riskFlags && screeningSummary.riskFlags.length > 0 && (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                      <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">Risk Flags</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {screeningSummary.riskFlags.map((flag, idx) => (
+                          <li key={idx} className="text-sm text-red-700 dark:text-red-400">{flag}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {screeningSummary.followUpQuestions && screeningSummary.followUpQuestions.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Follow-up Questions</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {screeningSummary.followUpQuestions.map((q, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{q}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Summary</p>
+                    <p className="text-sm text-surface-900 dark:text-surface-50">{screeningSummary.summary}</p>
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <Button variant="outline" onClick={() => { setShowScreeningSummaryModal(false); setScreeningSummary(null); }} className="flex-1">
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Feedback Synthesis Modal */}
+        {showFeedbackSynthesisModal && feedbackSynthesis && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                    <MessageSquare className="h-6 w-6 text-lime-500" />
+                    Feedback Synthesis
+                  </h2>
+                  <button onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Candidate</p>
+                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{feedbackSynthesis.candidateName}</p>
+                  </div>
+
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Candidate Narrative</p>
+                    <p className="text-sm text-surface-900 dark:text-surface-50">{feedbackSynthesis.candidateNarrative}</p>
+                  </div>
+
+                  {feedbackSynthesis.themes && feedbackSynthesis.themes.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Key Themes</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {feedbackSynthesis.themes.map((theme, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{theme}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {feedbackSynthesis.agreements && feedbackSynthesis.agreements.length > 0 && (
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                      <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-2">Agreements</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {feedbackSynthesis.agreements.map((agreement, idx) => (
+                          <li key={idx} className="text-sm text-green-700 dark:text-green-400">{agreement}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {feedbackSynthesis.disagreements && feedbackSynthesis.disagreements.length > 0 && (
+                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                      <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">Disagreements</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {feedbackSynthesis.disagreements.map((disagreement, idx) => (
+                          <li key={idx} className="text-sm text-yellow-700 dark:text-yellow-400">{disagreement}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {feedbackSynthesis.missingData && feedbackSynthesis.missingData.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Missing Data</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {feedbackSynthesis.missingData.map((missing, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{missing}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {feedbackSynthesis.openQuestions && feedbackSynthesis.openQuestions.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Open Questions</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {feedbackSynthesis.openQuestions.map((question, idx) => (
+                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{question}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Recommended Next Step</p>
+                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{feedbackSynthesis.recommendedNextStep}</p>
+                  </div>
+
+                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <Button variant="outline" onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="flex-1">
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Generate Offer Modal */}
         {showOfferModal && candidateForOffer && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
@@ -1046,53 +1625,54 @@ function CandidatesPage() {
                   </p>
                 </div>
 
-                <form onSubmit={handleGenerateOffer} className="space-y-4">
+                <form onSubmit={offerForm.handleSubmit(handleOfferSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Template *</label>
-                    <select
-                      required
-                      value={offerFormData.templateId}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, templateId: e.target.value })}
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered Salary *</label>
+                    <input
+                      type="number"
+                      {...offerForm.register('offeredSalary', { valueAsNumber: true })}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                    >
-                      <option value="">Select Template</option>
-                      {templates.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered Designation *</label>
-                      <input
-                        type="text"
-                        required
-                        value={offerFormData.offeredDesignation}
-                        onChange={(e) => setOfferFormData({ ...offerFormData, offeredDesignation: e.target.value })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered CTC *</label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        value={offerFormData.offeredCtc || ''}
-                        onChange={(e) => setOfferFormData({ ...offerFormData, offeredCtc: parseFloat(e.target.value) || 0 })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                      />
-                    </div>
+                    />
+                    {offerForm.formState.errors.offeredSalary && (
+                      <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Proposed Joining Date *</label>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Position Title</label>
+                    <input
+                      type="text"
+                      {...offerForm.register('positionTitle')}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Joining Date *</label>
                     <input
                       type="date"
-                      required
-                      value={offerFormData.proposedJoiningDate}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, proposedJoiningDate: e.target.value })}
+                      {...offerForm.register('joiningDate')}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    />
+                    {offerForm.formState.errors.joiningDate && (
+                      <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offer Expiry Date</label>
+                    <input
+                      type="date"
+                      {...offerForm.register('offerExpiryDate')}
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                    <textarea
+                      rows={3}
+                      {...offerForm.register('notes')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
@@ -1101,8 +1681,8 @@ function CandidatesPage() {
                     <Button type="button" variant="outline" onClick={() => setShowOfferModal(false)} className="flex-1">
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={offerLoading} className="flex-1">
-                      {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating...</> : 'Generate Offer'}
+                    <Button type="submit" disabled={createOfferMutation.isPending} className="flex-1">
+                      {createOfferMutation.isPending ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Creating...</> : 'Create Offer'}
                     </Button>
                   </div>
                 </form>
@@ -1137,8 +1717,8 @@ function CandidatesPage() {
                 <Button variant="outline" onClick={() => { setShowAcceptModal(false); setCandidateForOffer(null); }} className="flex-1">
                   Cancel
                 </Button>
-                <Button onClick={handleAcceptOffer} disabled={offerLoading} className="flex-1 bg-green-600 hover:bg-green-700">
-                  {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Processing...</> : 'Accept Offer'}
+                <Button onClick={handleAcceptOffer} className="flex-1 bg-green-600 hover:bg-green-700">
+                  Accept Offer
                 </Button>
               </div>
             </div>
@@ -1172,14 +1752,14 @@ function CandidatesPage() {
                 <Button variant="outline" onClick={() => { setShowDeclineModal(false); setCandidateForOffer(null); }} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDeclineOffer} disabled={offerLoading} className="flex-1">
-                  {offerLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Processing...</> : 'Decline Offer'}
+                <Button variant="destructive" onClick={handleDeclineOffer} className="flex-1">
+                  Decline Offer
                 </Button>
               </div>
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

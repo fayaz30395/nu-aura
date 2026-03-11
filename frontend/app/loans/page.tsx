@@ -6,6 +6,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { loanService } from '@/lib/services/loan.service';
 import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Wallet,
   Plus,
@@ -250,16 +251,12 @@ export default function LoansPage() {
           </div>
 
           {loans.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Wallet className="h-12 w-12 text-surface-300 dark:text-surface-600 mb-4" />
-              <p className="text-surface-500 dark:text-surface-400">No loan applications found</p>
-              <button
-                onClick={() => router.push('/loans/new')}
-                className="mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
-              >
-                Apply for your first loan
-              </button>
-            </div>
+            <EmptyState
+              icon={<Wallet className="h-12 w-12" />}
+              title="No Loan Requests"
+              description="Apply for a loan to get started"
+              action={{ label: 'Apply for Loan', onClick: () => router.push('/loans/new') }}
+            />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">

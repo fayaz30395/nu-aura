@@ -205,7 +205,7 @@ export default function PerformanceRevolutionPage() {
                                     </div>
                                     <div>
                                         <h5 className="text-xs font-bold group-hover:text-primary-600 transition-colors">Amazing Sprint Finish!</h5>
-                                        <p className="text-[10px] text-surface-500 line-clamp-2">"Thanks to the team for pushing through the last few bugs before release."</p>
+                                        <p className="text-[10px] text-surface-500 line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className="text-[8px] text-surface-400 uppercase font-bold">2 hours ago</span>
                                             <div className="flex items-center gap-0.5 text-[8px] text-yellow-600 font-bold">
@@ -234,7 +234,7 @@ export default function PerformanceRevolutionPage() {
                                 <div className="p-4 bg-white dark:bg-surface-800 rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                                     <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Growth Opportunity</h4>
                                     <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
-                                    <p className="text-xs text-surface-500">Based on your "System Design" skill Gap</p>
+                                    <p className="text-xs text-surface-500">Based on your &quot;System Design&quot; skill Gap</p>
                                     <div className="mt-4 flex items-center justify-between">
                                         <span className="text-[10px] font-bold text-surface-400">Estimated Effort: 4h</span>
                                         <ChevronRight className="h-4 w-4 text-indigo-400" />

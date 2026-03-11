@@ -45,9 +45,12 @@ public class CacheConfig implements CachingConfigurer {
     public static final String EMPLOYEE_BASIC = "employeeBasic";
     public static final String PERMISSIONS = "permissions";
     public static final String ROLES = "roles";
+    public static final String ROLE_PERMISSIONS = "rolePermissions";
     public static final String WEBHOOKS = "webhooks";
     public static final String ACTIVE_WEBHOOKS = "activeWebhooks";
     public static final String LEAVE_BALANCES = "leaveBalances";
+    public static final String EMPLOYEES = "employees";
+    public static final String EMPLOYEE_WITH_DETAILS = "employeeWithDetails";
 
     @Bean
     @ConditionalOnBean(RedisConnectionFactory.class)
@@ -67,6 +70,7 @@ public class CacheConfig implements CachingConfigurer {
         cacheConfigurations.put(HOLIDAYS, defaultConfig.entryTtl(Duration.ofHours(24)));
         cacheConfigurations.put(PERMISSIONS, defaultConfig.entryTtl(Duration.ofHours(24)));
         cacheConfigurations.put(ROLES, defaultConfig.entryTtl(Duration.ofHours(24)));
+        cacheConfigurations.put(ROLE_PERMISSIONS, defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
         // Medium-lived caches (occasional changes) - 4 hours
         cacheConfigurations.put(DEPARTMENTS, defaultConfig.entryTtl(Duration.ofHours(4)));
@@ -76,6 +80,8 @@ public class CacheConfig implements CachingConfigurer {
 
         // Short-lived caches (frequent reads but may change) - 15 minutes
         cacheConfigurations.put(EMPLOYEE_BASIC, defaultConfig.entryTtl(Duration.ofMinutes(15)));
+        cacheConfigurations.put(EMPLOYEES, defaultConfig.entryTtl(Duration.ofMinutes(15)));
+        cacheConfigurations.put(EMPLOYEE_WITH_DETAILS, defaultConfig.entryTtl(Duration.ofMinutes(10)));
 
         // Leave balances: read on every attendance/leave check; invalidated on any balance mutation - 5 minutes
         cacheConfigurations.put(LEAVE_BALANCES, defaultConfig.entryTtl(Duration.ofMinutes(5)));

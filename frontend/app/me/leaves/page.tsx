@@ -457,7 +457,7 @@ export default function MyLeavesPage() {
                   No Leave Requests
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400">
-                  You haven't applied for any leaves yet
+                  You haven&apos;t applied for any leaves yet
                 </p>
               </div>
             ) : filteredLeaveRequests.length === 0 ? (

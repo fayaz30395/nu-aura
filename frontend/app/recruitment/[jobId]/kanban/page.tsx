@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -17,14 +17,24 @@ import {
   ActionIcon,
   Tooltip,
   Badge,
+  Switch,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconArrowLeft, IconArrowRight, IconX, IconSend } from '@tabler/icons-react';
+import {
+  IconAlertCircle,
+  IconArrowLeft,
+  IconArrowRight,
+  IconX,
+  IconSend,
+  IconSparkles,
+} from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
 import { StageBadge } from '@/components/recruitment/StageBadge';
 import { OfferModal } from './OfferModal';
 import { recruitmentService } from '@/lib/services/recruitment.service';
+import { useRankedCandidates } from '@/lib/hooks/queries/useRecruitment';
 import type { Candidate, CandidateStage } from '@/lib/types/recruitment';
+import type { CandidateMatchResponse } from '@/lib/types/ai-recruitment';
 
 // Pipeline order — HIRED and REJECTED are terminal stages.
 const PIPELINE_STAGES: CandidateStage[] = [
@@ -44,6 +54,18 @@ function nextStage(stage: CandidateStage): CandidateStage | null {
   return PIPELINE_STAGES[idx + 1];
 }
 
+// ── Score badge helper ─────────────────────────────────────────────────
+function ScoreBadge({ score }: { score: number }) {
+  const color = score >= 70 ? 'green' : score >= 50 ? 'yellow' : 'red';
+  return (
+    <Tooltip label={`AI Match Score: ${score}%`}>
+      <Badge size="xs" color={color} variant="light" leftSection={<IconSparkles size={10} />}>
+        {score}%
+      </Badge>
+    </Tooltip>
+  );
+}
+
 interface KanbanColumnProps {
   stage: CandidateStage;
   candidates: Candidate[];
@@ -52,6 +74,7 @@ interface KanbanColumnProps {
   onOpenOffer: (candidate: Candidate) => void;
   isPending: boolean;
   pendingCandidateId: string | null;
+  scoreMap: Map<string, number>;
 }
 
 function KanbanColumn({
@@ -62,6 +85,7 @@ function KanbanColumn({
   onOpenOffer,
   isPending,
   pendingCandidateId,
+  scoreMap,
 }: KanbanColumnProps) {
   const canAdvance = !TERMINAL_STAGES.includes(stage);
   const isOfferStage = stage === 'OFFER';
@@ -103,9 +127,14 @@ function KanbanColumn({
               style={{ background: 'white' }}
             >
               <Stack gap={6}>
-                <Text fw={600} size="sm" lineClamp={1}>
-                  {candidate.fullName}
-                </Text>
+                <Group justify="space-between" align="center" gap={4}>
+                  <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1 }}>
+                    {candidate.fullName}
+                  </Text>
+                  {scoreMap.has(candidate.id) && (
+                    <ScoreBadge score={scoreMap.get(candidate.id)!} />
+                  )}
+                </Group>
                 {candidate.currentDesignation && (
                   <Text size="xs" c="dimmed" lineClamp={1}>
                     {candidate.currentDesignation}
@@ -166,6 +195,7 @@ export default function KanbanPage() {
 
   const [offerCandidate, setOfferCandidate] = useState<Candidate | null>(null);
   const [pendingCandidateId, setPendingCandidateId] = useState<string | null>(null);
+  const [sortByScore, setSortByScore] = useState(false);
 
   // ── Fetch candidates for this job ──────────────────────────────────────
   const {
@@ -177,6 +207,20 @@ export default function KanbanPage() {
     queryFn: () => recruitmentService.getCandidatesByJob(jobId),
     enabled: !!jobId,
   });
+
+  // ── Fetch AI ranked scores (non-blocking) ──────────────────────────────
+  const { data: rankedCandidates } = useRankedCandidates(jobId, !!jobId);
+
+  // Build a map of candidateId → overallScore for quick lookup
+  const scoreMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (rankedCandidates) {
+      rankedCandidates.forEach((rc: CandidateMatchResponse) => {
+        map.set(rc.candidateId, rc.overallScore);
+      });
+    }
+    return map;
+  }, [rankedCandidates]);
 
   // ── Move stage mutation ────────────────────────────────────────────────
   const stageMutation = useMutation({
@@ -219,13 +263,20 @@ export default function KanbanPage() {
 
   // ── Group candidates by stage ──────────────────────────────────────────
   function candidatesForStage(stage: CandidateStage): Candidate[] {
-    return candidates.filter((c) => {
-      // Map existing CandidateStatus / RecruitmentStage to CandidateStage where possible.
-      // The API returns currentStage (RecruitmentStage) or status (CandidateStatus).
-      // We treat our CandidateStage as the canonical Kanban stage stored in currentStage.
+    const filtered = candidates.filter((c) => {
       const s = (c.currentStage as unknown as CandidateStage) ?? 'APPLIED';
       return s === stage;
     });
+
+    if (sortByScore && scoreMap.size > 0) {
+      return [...filtered].sort((a, b) => {
+        const sa = scoreMap.get(a.id) ?? -1;
+        const sb = scoreMap.get(b.id) ?? -1;
+        return sb - sa; // Descending
+      });
+    }
+
+    return filtered;
   }
 
   // Collect REJECTED candidates separately
@@ -275,7 +326,17 @@ export default function KanbanPage() {
               </Text>
             </div>
           </Group>
-          <Group gap="xs">
+          <Group gap="sm">
+            {scoreMap.size > 0 && (
+              <Tooltip label="Sort candidates within each column by AI match score">
+                <Switch
+                  label="Rank by AI Score"
+                  size="xs"
+                  checked={sortByScore}
+                  onChange={(e) => setSortByScore(e.currentTarget.checked)}
+                />
+              </Tooltip>
+            )}
             <Badge variant="outline" color="red" size="sm">
               Rejected: {rejectedCandidates.length}
             </Badge>
@@ -303,6 +364,7 @@ export default function KanbanPage() {
                 onOpenOffer={(c) => setOfferCandidate(c)}
                 isPending={stageMutation.isPending}
                 pendingCandidateId={pendingCandidateId}
+                scoreMap={scoreMap}
               />
             ))}
           </Group>

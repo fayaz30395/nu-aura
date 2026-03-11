@@ -656,7 +656,7 @@ function HistoryCard({ request }: { request: AllocationApprovalRequest }) {
           </div>
           {request.approvalComment && (
             <p className="mt-2 text-sm italic text-surface-600 dark:text-surface-400">
-              "{request.approvalComment}"
+              &quot;{request.approvalComment}&quot;
             </p>
           )}
           {request.rejectionReason && (

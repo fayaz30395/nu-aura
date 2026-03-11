@@ -67,11 +67,11 @@ class QueryCountTest {
         roles.add("HR_MANAGER");
 
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.EMPLOYEE_READ, RoleScope.GLOBAL);
-        permissions.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.GLOBAL);
-        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.GLOBAL);
-        permissions.put(Permission.WALL_VIEW, RoleScope.GLOBAL);
-        permissions.put(Permission.DASHBOARD_VIEW, RoleScope.GLOBAL);
+        permissions.put(Permission.EMPLOYEE_READ, RoleScope.ALL);
+        permissions.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL);
+        permissions.put(Permission.LEAVE_VIEW_ALL, RoleScope.ALL);
+        permissions.put(Permission.WALL_VIEW, RoleScope.ALL);
+        permissions.put(Permission.DASHBOARD_VIEW, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         TenantContext.setCurrentTenant(TEST_TENANT_ID);

@@ -82,17 +82,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        // MFA endpoints - login is public (pre-auth step), others require authentication
+                        // MFA endpoints - login is public (pre-auth step), others require
+                        // authentication
                         .requestMatchers("/api/v1/auth/mfa-login").permitAll()
                         .requestMatchers("/api/v1/auth/mfa/**").authenticated()
                         .requestMatchers("/api/v1/tenants/register").permitAll()
-                        // Actuator: only health endpoint is public, others require SYSTEM_ADMIN
+                        // Actuator: only health endpoint is public, others require SUPER_ADMIN
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
-                        .requestMatchers("/actuator/**").hasAuthority("SYSTEM_ADMIN")
-                        // Swagger UI: require SYSTEM_ADMIN in production (see SwaggerSecurityConfig for
+                        .requestMatchers("/actuator/**").hasRole("SUPER_ADMIN")
+                        // Swagger UI: require SUPER_ADMIN in production (see SwaggerSecurityConfig for
                         // dev profile)
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**")
-                        .hasAuthority("SYSTEM_ADMIN")
+                        .hasRole("SUPER_ADMIN")
                         // External signing endpoints (token-based, no authentication)
                         .requestMatchers("/api/v1/esignature/external/**").permitAll()
                         // Public offer portal endpoints (token-based access for candidates)

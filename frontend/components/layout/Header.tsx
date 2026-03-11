@@ -23,13 +23,23 @@ import {
   MapPin,
   Users as UsersIcon,
   CheckCircle,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { GlobalSearch } from './GlobalSearch';
 import { cn } from '@/lib/utils';
 import AppSwitcher from '../platform/AppSwitcher';
+import { useDarkMode } from './DarkModeProvider';
 import { formatDistanceToNow } from 'date-fns';
 import { useWebSocket } from '@/lib/contexts/WebSocketContext';
-import { Check, X, Info } from 'lucide-react';
+import {
+  useNotificationInbox,
+  useUnreadNotificationCount,
+  useMarkNotificationAsRead,
+  useMarkAllNotificationsAsRead,
+} from '@/lib/hooks/queries/useNotifications';
+import type { Notification as PersistedNotification } from '@/lib/types/notifications';
+import { Check, X, Info, FileText, DollarSign, ClipboardCheck, Megaphone, Gift, Award, Shield } from 'lucide-react';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import { Button } from '@/components/ui/Button';
 import { getNotificationRoute } from '@/lib/utils/notificationRoutes';
@@ -103,7 +113,15 @@ const Header: React.FC<HeaderProps> = ({
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const { unreadCount, notifications, markAsRead, markAllAsRead } = useWebSocket();
+  const { unreadCount: wsUnreadCount, notifications: wsNotifications, markAsRead: wsMarkAsRead, markAllAsRead: wsMarkAllAsRead } = useWebSocket();
+  const { isDark, toggleDarkMode } = useDarkMode();
+
+  // REST API — persisted notifications (hybrid with WebSocket)
+  const { data: persistedNotifications = [], isLoading: notificationsLoading } = useNotificationInbox(10);
+  const { data: persistedUnreadCount = 0 } = useUnreadNotificationCount();
+  const markReadMutation = useMarkNotificationAsRead();
+  const markAllReadMutation = useMarkAllNotificationsAsRead();
+
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -309,6 +327,38 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  /** Returns an icon component based on the notification type string. */
+  const getSystemNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'LEAVE_APPROVED':
+      case 'LEAVE_REJECTED':
+      case 'LEAVE_PENDING':
+        return <FileText className="h-4 w-4 text-blue-500" />;
+      case 'EXPENSE_APPROVED':
+      case 'EXPENSE_REJECTED':
+        return <DollarSign className="h-4 w-4 text-green-500" />;
+      case 'ATTENDANCE_MARKED':
+      case 'ATTENDANCE_ALERT':
+        return <Clock className="h-4 w-4 text-orange-500" />;
+      case 'PAYROLL_GENERATED':
+        return <DollarSign className="h-4 w-4 text-emerald-600" />;
+      case 'ANNOUNCEMENT':
+        return <Megaphone className="h-4 w-4 text-purple-500" />;
+      case 'BIRTHDAY':
+      case 'ANNIVERSARY':
+        return <Gift className="h-4 w-4 text-pink-500" />;
+      case 'PERFORMANCE_REVIEW_DUE':
+        return <Award className="h-4 w-4 text-amber-500" />;
+      case 'ROLE_UPDATED':
+        return <Shield className="h-4 w-4 text-indigo-500" />;
+      case 'SYSTEM_ALERT':
+        return <Info className="h-4 w-4 text-red-500" />;
+      default:
+        // approval-related or general
+        return <ClipboardCheck className="h-4 w-4 text-primary-500" />;
+    }
+  };
+
   const loadEmailContent = async (messageId: string) => {
     const token = getGoogleToken();
     if (!token) return;
@@ -379,7 +429,10 @@ const Header: React.FC<HeaderProps> = ({
     return `https://drive.google.com/file/d/${file.id}/preview`;
   };
 
-  const totalUnreadCount = unreadCount + googleNotifications.length;
+  // Use the larger of WebSocket in-memory count vs REST API persisted count
+  // to avoid undercounting while the REST poll catches up
+  const systemUnreadCount = Math.max(wsUnreadCount, persistedUnreadCount);
+  const totalUnreadCount = systemUnreadCount + googleNotifications.length;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -469,7 +522,18 @@ const Header: React.FC<HeaderProps> = ({
             <HelpCircle className="h-5 w-5" />
           </button>
 
-
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100 transition-all"
+            aria-label="Toggle dark mode"
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
 
           {/* Notifications */}
           <div className="relative">
@@ -520,9 +584,9 @@ const Header: React.FC<HeaderProps> = ({
                     )}
                   >
                     System
-                    {unreadCount > 0 && (
+                    {systemUnreadCount > 0 && (
                       <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 rounded-full">
-                        {unreadCount}
+                        {systemUnreadCount}
                       </span>
                     )}
                   </button>
@@ -624,46 +688,50 @@ const Header: React.FC<HeaderProps> = ({
                       )}
                     </>
                   ) : (
-                    // System Notifications
+                    // System Notifications — hybrid: REST API (persisted) + WebSocket (real-time)
                     <>
                       <div className="flex items-center justify-between p-3 border-b border-surface-100 dark:border-surface-800">
                         <span className="text-xs text-surface-500">System Alerts</span>
-                        {unreadCount > 0 && (
+                        {systemUnreadCount > 0 && (
                           <button
-                            onClick={markAllAsRead}
+                            onClick={() => {
+                              markAllReadMutation.mutate();
+                              wsMarkAllAsRead();
+                            }}
                             className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400"
                           >
                             Mark all read
                           </button>
                         )}
                       </div>
-                      {notifications.length === 0 ? (
+                      {notificationsLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                        </div>
+                      ) : persistedNotifications.length === 0 && wsNotifications.length === 0 ? (
                         <div className="p-8 text-center text-surface-500 dark:text-surface-300">
                           <Bell className="h-10 w-10 mx-auto mb-3 opacity-20" />
                           <p>No system notifications</p>
                         </div>
                       ) : (
                         <div className="divide-y divide-surface-100 dark:divide-surface-800">
-                          {notifications.map((notification, index) => (
+                          {/* Show WebSocket real-time notifications first (newest, not yet persisted) */}
+                          {wsNotifications.filter(n => !n.read).map((notification, index) => (
                             <div
-                              key={index}
+                              key={`ws-${index}`}
                               onClick={() => {
-                                markAsRead(index);
+                                wsMarkAsRead(index);
                                 setIsNotificationsOpen(false);
                                 const route = getNotificationRoute(notification);
                                 router.push(route);
                               }}
-                              className={cn(
-                                "flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                                !notification.read && "bg-primary-50/50 dark:bg-primary-900/10"
-                              )}
+                              className="flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-primary-50/50 dark:bg-primary-900/10"
                             >
-                              <div className={cn(
-                                "flex-shrink-0 w-2 h-2 mt-2 rounded-full",
-                                !notification.read ? "bg-primary-500" : "bg-transparent"
-                              )} />
+                              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                                {getSystemNotificationIcon(notification.type)}
+                              </div>
                               <div className="flex-1 min-w-0">
-                                <p className={cn("text-sm font-medium text-surface-900 dark:text-surface-50 truncate", !notification.read && "font-semibold")}>
+                                <p className="text-sm font-semibold text-surface-900 dark:text-surface-50 truncate">
                                   {notification.title}
                                 </p>
                                 <p className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">
@@ -671,6 +739,48 @@ const Header: React.FC<HeaderProps> = ({
                                 </p>
                                 <p className="text-xs text-surface-500 mt-1">
                                   {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                          {/* Show persisted notifications from REST API */}
+                          {persistedNotifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              onClick={() => {
+                                if (!notification.isRead) {
+                                  markReadMutation.mutate(notification.id);
+                                }
+                                setIsNotificationsOpen(false);
+                                if (notification.actionUrl) {
+                                  router.push(notification.actionUrl);
+                                }
+                              }}
+                              className={cn(
+                                "flex gap-3 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
+                                !notification.isRead && "bg-primary-50/50 dark:bg-primary-900/10"
+                              )}
+                            >
+                              <div className={cn(
+                                "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
+                                !notification.isRead
+                                  ? "bg-primary-100 dark:bg-primary-900/30"
+                                  : "bg-surface-100 dark:bg-surface-800"
+                              )}>
+                                {getSystemNotificationIcon(notification.type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={cn(
+                                  "text-sm font-medium text-surface-900 dark:text-surface-50 truncate",
+                                  !notification.isRead && "font-semibold"
+                                )}>
+                                  {notification.title}
+                                </p>
+                                <p className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-surface-500 mt-1">
+                                  {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                                 </p>
                               </div>
                             </div>

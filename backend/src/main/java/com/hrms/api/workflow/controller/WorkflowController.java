@@ -156,6 +156,26 @@ public class WorkflowController {
         return ResponseEntity.ok(workflowService.getPendingApprovalsForUser(userId));
     }
 
+    // ==================== Approval Inbox Endpoints ====================
+
+    @GetMapping("/inbox")
+    @RequiresPermission(Permission.WORKFLOW_VIEW)
+    public ResponseEntity<Page<WorkflowExecutionResponse>> getApprovalInbox(
+            @RequestParam(defaultValue = "PENDING") String status,
+            @RequestParam(required = false) String module,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime fromDate,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime toDate,
+            @RequestParam(required = false) String search,
+            Pageable pageable) {
+        return ResponseEntity.ok(workflowService.getApprovalInbox(status, module, fromDate, toDate, search, pageable));
+    }
+
+    @GetMapping("/inbox/count")
+    @RequiresPermission(Permission.WORKFLOW_VIEW)
+    public ResponseEntity<Map<String, Long>> getInboxCounts() {
+        return ResponseEntity.ok(workflowService.getInboxCounts());
+    }
+
     // ==================== Delegation Endpoints ====================
 
     @PostMapping("/delegations")

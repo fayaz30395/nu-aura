@@ -122,7 +122,7 @@ export default function NewTemplatePage() {
                         <div>
                             <p className="font-black text-primary-900 dark:text-primary-100 uppercase tracking-widest text-[10px] mb-1">Standardization Tip</p>
                             <p className="text-sm font-bold text-primary-700 dark:text-primary-300">
-                                Creating specialized templates for different roles (e.g., "Software Engineer" vs "Account Executive") ensures that every new hire gets the exact resources they need from day one.
+                                Creating specialized templates for different roles (e.g., &quot;Software Engineer&quot; vs &quot;Account Executive&quot;) ensures that every new hire gets the exact resources they need from day one.
                             </p>
                         </div>
                     </CardContent>

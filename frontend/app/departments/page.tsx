@@ -175,7 +175,7 @@ export default function DepartmentsPage() {
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Departments</h1>
             <p className="text-surface-500 dark:text-surface-400 mt-1">
-              Manage your organization's departments and structure
+              Manage your organization&apos;s departments and structure
             </p>
           </div>
           <Button

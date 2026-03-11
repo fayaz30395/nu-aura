@@ -43,6 +43,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
 import { getLocalDateString, getDateOffsetString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
+import { motion } from 'framer-motion';
 
 export default function AttendancePage() {
   const router = useRouter();
@@ -301,7 +302,12 @@ export default function AttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <div className="p-4 md:p-5 lg:p-6 max-w-[1600px] mx-auto space-y-4">
+      <motion.div
+        className="p-4 md:p-5 lg:p-6 max-w-[1600px] mx-auto space-y-4"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Compact Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -357,7 +363,7 @@ export default function AttendancePage() {
                   <div className="space-y-1">
                     <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-semibold uppercase tracking-wider">
                       <div className="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse" />
-                      Today's Shift
+                      Today&apos;s Shift
                     </div>
                     <div className="text-2xl lg:text-3xl font-bold text-white">
                       {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
@@ -630,7 +636,7 @@ export default function AttendancePage() {
             </Card>
           </div>
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

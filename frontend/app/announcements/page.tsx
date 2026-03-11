@@ -47,6 +47,7 @@ import { Department } from '@/lib/types/employee';
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { createLogger } from '@/lib/utils/logger';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 
@@ -363,17 +364,11 @@ export default function AnnouncementsPage() {
               <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
             </div>
           ) : filteredAnnouncements.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-xl">
-              <Megaphone className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No announcements found
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                {searchTerm || categoryFilter || priorityFilter
-                  ? 'Try adjusting your filters'
-                  : 'Check back later for updates'}
-              </p>
-            </div>
+            <EmptyState
+              icon={<Megaphone className="h-12 w-12" />}
+              title="No Announcements"
+              description="No announcements to display"
+            />
           ) : (
             <div className="space-y-4">
               {filteredAnnouncements.map((announcement, index) => {

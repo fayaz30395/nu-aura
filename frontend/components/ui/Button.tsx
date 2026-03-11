@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
@@ -97,12 +98,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : 'button';
+    const baseElement = asChild ? Slot : 'button';
+    const MotionComp = motion(baseElement as any);
     return (
-      <Comp
+      <MotionComp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         disabled={isLoading || disabled}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         {...props}
       >
         {isLoading ? (
@@ -117,7 +121,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
           </>
         )}
-      </Comp>
+      </MotionComp>
     );
   }
 );

@@ -14,9 +14,12 @@ export interface Notification {
     type: string;
     title: string;
     message: string;
-    payload: any;
-    timestamp: number;
+    payload?: any;
+    metadata?: Record<string, any>;
+    timestamp?: number;
     read: boolean;
+    actionUrl?: string;
+    priority?: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 }
 
 interface WebSocketContextType {
@@ -26,6 +29,8 @@ interface WebSocketContextType {
     markAsRead: (index: number) => void;
     markAllAsRead: () => void;
     clearNotifications: () => void;
+    onApprovalTaskAssigned?: (callback: (notification: Notification) => void) => void;
+    offApprovalTaskAssigned?: (callback: (notification: Notification) => void) => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
@@ -35,6 +40,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     const [isConnected, setIsConnected] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const stompClientRef = useRef<Client | null>(null);
+    const approvalCallbacksRef = useRef<Set<(notification: Notification) => void>>(new Set());
 
     useEffect(() => {
         // Only connect if authenticated
@@ -69,6 +75,21 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
             client.subscribe(`/topic/user/${user.employeeId}`, (message: IMessage) => {
                 handleIncomingMessage(message);
             });
+
+            // Subscribe to approval-specific notifications
+            client.subscribe(`/topic/user/${user.employeeId}/approvals`, (message: IMessage) => {
+                const notification = handleIncomingMessage(message);
+                // Trigger approval-specific callbacks
+                if (notification && notification.type === 'TASK_ASSIGNED') {
+                    approvalCallbacksRef.current.forEach(callback => {
+                        try {
+                            callback(notification);
+                        } catch (error) {
+                            log.error('Error executing approval callback:', error);
+                        }
+                    });
+                }
+            });
         };
 
         client.onStompError = (frame) => {
@@ -90,20 +111,24 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         };
     }, [isAuthenticated, user?.employeeId]);
 
-    const handleIncomingMessage = (message: IMessage) => {
+    const handleIncomingMessage = (message: IMessage): Notification | null => {
         try {
             const body = JSON.parse(message.body);
             const newNotification: Notification = {
                 ...body,
                 read: false,
-                timestamp: body.timestamp || Date.now(),
+                timestamp: body.timestamp ? new Date(body.timestamp).getTime() : Date.now(),
             };
 
             setNotifications((prev) => [newNotification, ...prev]);
 
+            log.debug('Received notification:', newNotification.type, newNotification.title);
+
             // Optional: Play sound or show browser notification
+            return newNotification;
         } catch (e) {
             log.error('Failed to parse notification', e);
+            return null;
         }
     };
 
@@ -125,6 +150,14 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         setNotifications([]);
     };
 
+    const onApprovalTaskAssigned = useCallback((callback: (notification: Notification) => void) => {
+        approvalCallbacksRef.current.add(callback);
+    }, []);
+
+    const offApprovalTaskAssigned = useCallback((callback: (notification: Notification) => void) => {
+        approvalCallbacksRef.current.delete(callback);
+    }, []);
+
     const unreadCount = notifications.filter((n) => !n.read).length;
 
     return (
@@ -136,6 +169,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
                 markAsRead,
                 markAllAsRead,
                 clearNotifications,
+                onApprovalTaskAssigned,
+                offApprovalTaskAssigned,
             }}
         >
             {children}

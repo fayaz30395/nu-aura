@@ -32,6 +32,15 @@ public class PermissionAspect {
     @Around("@annotation(com.hrms.common.security.RequiresPermission)")
     public Object checkPermission(ProceedingJoinPoint joinPoint) throws Throwable {
 
+        // SuperAdmin bypass: skip all permission evaluation for SUPER_ADMIN users.
+        // SecurityContext.isSuperAdmin() delegates to isSystemAdmin() which checks
+        // for the SYSTEM:ADMIN permission — the canonical super-admin indicator.
+        if (SecurityContext.isSuperAdmin()) {
+            log.debug("SuperAdmin bypass — skipping @RequiresPermission check for method: {}",
+                    ((MethodSignature) joinPoint.getSignature()).getMethod().getName());
+            return joinPoint.proceed();
+        }
+
         // Get the method being called
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();

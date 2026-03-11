@@ -40,6 +40,7 @@ import {
   ModalFooter,
   Badge,
   Textarea,
+  EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { trainingService } from '@/lib/services/training.service';
@@ -561,20 +562,16 @@ export default function TrainingPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
               </div>
             ) : myEnrollments.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <BookOpen className="h-12 w-12 text-surface-400" />
-                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
-                    No enrolled trainings yet
-                  </p>
-                  <p className="text-surface-600 dark:text-surface-400">
-                    Browse the course catalog to find programs
-                  </p>
-                  <Button onClick={() => setActiveTab('catalog')} className="mt-4">
-                    Browse Catalog
-                  </Button>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={<BookOpen className="h-8 w-8" />}
+                title="No Enrolled Trainings Yet"
+                description="Browse the course catalog to find programs and enroll in trainings"
+                action={{
+                  label: 'Browse Catalog',
+                  onClick: () => setActiveTab('catalog'),
+                }}
+                iconColor="indigo"
+              />
             ) : (
               myEnrollments.map((enrollment) => (
                 <Card key={enrollment.id}>
@@ -886,21 +883,16 @@ export default function TrainingPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
               </div>
             ) : filteredPrograms.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <GraduationCap className="h-12 w-12 text-surface-400" />
-                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
-                    No training programs found
-                  </p>
-                  <p className="text-surface-600 dark:text-surface-400">
-                    Create your first training program to get started
-                  </p>
-                  <Button onClick={handleCreateProgram} className="mt-4">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Program
-                  </Button>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={<GraduationCap className="h-8 w-8" />}
+                title="No Training Programs Found"
+                description="Create your first training program to get started and offer learning opportunities"
+                action={{
+                  label: 'Create Program',
+                  onClick: handleCreateProgram,
+                }}
+                iconColor="violet"
+              />
             ) : (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {filteredPrograms.map((program) => (

@@ -36,4 +36,42 @@ public interface ApprovalStepRepository extends JpaRepository<ApprovalStep, UUID
     long countByWorkflowDefinition(@Param("workflowId") UUID workflowId);
 
     void deleteByWorkflowDefinitionId(UUID workflowDefinitionId);
+
+    // ==================== EXPLICIT FETCH QUERIES (REQUIRED FOR LAZY ASSOCIATIONS) ====================
+
+    /**
+     * Find approval step by ID with WorkflowDefinition eagerly fetched.
+     * ApprovalStep.workflowDefinition is @ManyToOne(fetch = FetchType.LAZY), causing N+1 queries
+     * when steps are loaded with their workflow definitions.
+     */
+    @Query("SELECT DISTINCT s FROM ApprovalStep s " +
+           "LEFT JOIN FETCH s.workflowDefinition " +
+           "WHERE s.id = :stepId AND s.tenantId = :tenantId")
+    Optional<ApprovalStep> findByIdWithWorkflow(@Param("stepId") UUID stepId, @Param("tenantId") UUID tenantId);
+
+    /**
+     * Find approval steps by workflow with WorkflowDefinition eagerly fetched.
+     * Prevents N+1 queries when loading all steps for a workflow definition.
+     */
+    @Query("SELECT DISTINCT s FROM ApprovalStep s " +
+           "LEFT JOIN FETCH s.workflowDefinition " +
+           "WHERE s.workflowDefinition.id = :workflowId " +
+           "ORDER BY s.stepOrder ASC")
+    List<ApprovalStep> findByWorkflowDefinitionIdWithWorkflowOrderByStepOrderAsc(@Param("workflowId") UUID workflowId);
+
+    /**
+     * Find approval step by workflow and step order with WorkflowDefinition eagerly fetched.
+     */
+    @Query("SELECT DISTINCT s FROM ApprovalStep s " +
+           "LEFT JOIN FETCH s.workflowDefinition w " +
+           "WHERE w.id = :workflowId AND s.stepOrder = :stepOrder")
+    Optional<ApprovalStep> findByWorkflowAndStepOrderWithWorkflow(@Param("workflowId") UUID workflowId, @Param("stepOrder") int stepOrder);
+
+    /**
+     * Find approval steps by workflow and approver type with WorkflowDefinition eagerly fetched.
+     */
+    @Query("SELECT DISTINCT s FROM ApprovalStep s " +
+           "LEFT JOIN FETCH s.workflowDefinition " +
+           "WHERE s.workflowDefinition.id = :workflowId AND s.approverType = :approverType")
+    List<ApprovalStep> findByWorkflowAndApproverTypeWithWorkflow(@Param("workflowId") UUID workflowId, @Param("approverType") ApprovalStep.ApproverType approverType);
 }

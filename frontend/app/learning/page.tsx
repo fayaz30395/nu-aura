@@ -242,7 +242,7 @@ export default function LearningPage() {
                   ))
                 ) : (
                   <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-8 text-center text-surface-500 dark:text-surface-400">
-                    You haven't enrolled in any courses yet. Browse the catalog to get started!
+                    You haven&apos;t enrolled in any courses yet. Browse the catalog to get started!
                   </div>
                 )}
               </div>

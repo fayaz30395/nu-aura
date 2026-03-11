@@ -74,6 +74,8 @@ public final class Permission {
     public static final String RECRUITMENT_VIEW_ALL = "RECRUITMENT:VIEW_ALL";
     public static final String RECRUITMENT_VIEW_TEAM = "RECRUITMENT:VIEW_TEAM";
     public static final String RECRUITMENT_CREATE = "RECRUITMENT:CREATE";
+    public static final String RECRUITMENT_UPDATE = "RECRUITMENT:UPDATE";
+    public static final String RECRUITMENT_DELETE = "RECRUITMENT:DELETE";
     public static final String RECRUITMENT_MANAGE = "RECRUITMENT:MANAGE";
     public static final String CANDIDATE_VIEW = "CANDIDATE:VIEW";
     public static final String CANDIDATE_EVALUATE = "CANDIDATE:EVALUATE";

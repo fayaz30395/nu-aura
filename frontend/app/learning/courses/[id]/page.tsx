@@ -61,7 +61,7 @@ export default function CourseDetailPage() {
       const [courseData, enrollments, quizzesData] = await Promise.all([
         lmsService.getCourse(id),
         lmsService.getMyEnrollments().catch(() => [] as CourseEnrollment[]),
-        apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`).catch(() => ({ data: [] })),
+        apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`).catch(() => ({ data: [] as Quiz[] })),
       ]);
       setCourse(courseData);
       const enroll = enrollments.find(e => e.courseId === id) ?? null;
@@ -83,10 +83,11 @@ export default function CourseDetailPage() {
     setEnrolling(true);
     try {
       const enroll = await lmsService.enrollSelf(id);
-      setEnrollment(enroll as any);
+      setEnrollment(enroll as CourseEnrollment);
       router.push(`/learning/courses/${id}/play`);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to enroll');
+    } catch (err: unknown) {
+      const error = err as any;
+      setError(error?.response?.data?.message || 'Failed to enroll');
     } finally {
       setEnrolling(false);
     }
@@ -97,7 +98,7 @@ export default function CourseDetailPage() {
 
     try {
       setDownloadingCert(true);
-      const response = await apiClient.get(`/lms/certificates/${enrollment.certificateId}/download`, {
+      const response = await apiClient.get<Blob>(`/lms/certificates/${enrollment.certificateId}/download`, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(response.data);

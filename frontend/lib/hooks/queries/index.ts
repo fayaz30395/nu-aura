@@ -9,3 +9,6 @@ export * from './useLeaves';
 
 // Attendance hooks
 export * from './useAttendance';
+
+// Approval / workflow hooks
+export * from './useApprovals';

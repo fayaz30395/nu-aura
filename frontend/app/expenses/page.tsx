@@ -6,7 +6,7 @@ import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle,
 import { useAuth } from '@/lib/hooks/useAuth';
 import { expenseService } from '@/lib/services/expense.service';
 import { ExpenseClaim, ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
-import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui';
+import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, EmptyState } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 
@@ -771,18 +771,12 @@ export default function ExpenseClaims() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
             </div>
           ) : filteredClaims.length === 0 ? (
-            <div className="text-center py-12 text-surface-600 dark:text-surface-400">
-              <FileText className="w-12 h-12 mx-auto mb-4 text-surface-400 dark:text-surface-500" />
-              <p>No expense claims found</p>
-              {filters.search || filters.category !== 'ALL' || filters.amountMin || filters.amountMax ? (
-                <button
-                  onClick={clearFilters}
-                  className="mt-2 text-primary-600 hover:text-primary-700 text-sm"
-                >
-                  Clear filters to see all claims
-                </button>
-              ) : null}
-            </div>
+            <EmptyState
+              icon={<Receipt className="h-12 w-12" />}
+              title="No Expense Claims"
+              description="Submit your first expense claim"
+              action={{ label: 'New Claim', onClick: () => setShowForm(true) }}
+            />
           ) : (
             <div className="space-y-4">
               {filteredClaims.map((claim) => (

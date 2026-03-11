@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveRequest, LeaveType } from '@/lib/types/leave';
@@ -11,6 +13,7 @@ export default function LeaveApprovalsPage() {
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
@@ -20,14 +23,16 @@ export default function LeaveApprovalsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [pendingRequests, types] = await Promise.all([
         leaveService.getLeaveRequestsByStatus('PENDING', 0, 50),
         leaveService.getActiveLeaveTypes(),
       ]);
       setRequests(pendingRequests.content);
       setLeaveTypes(types);
-    } catch (error) {
-      console.error('Error loading approvals:', error);
+    } catch (err) {
+      console.error('Error loading approvals:', err);
+      setError('Failed to load pending approvals. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -72,7 +77,12 @@ export default function LeaveApprovalsPage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="max-w-7xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="max-w-7xl mx-auto"
+      >
         <div className="mb-6">
           <button
             onClick={() => router.back()}
@@ -83,6 +93,22 @@ export default function LeaveApprovalsPage() {
         </div>
 
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Leave Approvals</h1>
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+            </div>
+            <button
+              onClick={loadData}
+              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -97,8 +123,14 @@ export default function LeaveApprovalsPage() {
           {loading ? (
             <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
           ) : requests.length === 0 ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              No pending leave requests
+            <div className="text-center py-12 px-4">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/30 flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-green-500 dark:text-green-400" />
+                </div>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">All caught up!</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">No pending leave requests to review</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -166,7 +198,7 @@ export default function LeaveApprovalsPage() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

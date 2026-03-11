@@ -26,6 +26,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { timesheetService } from '@/lib/services/timesheet.service';
@@ -482,21 +483,12 @@ export default function TimesheetsPage() {
                 </Card>
               ))
             ) : (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <FileSpreadsheet className="h-12 w-12 mx-auto text-surface-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
-                    No Timesheets Yet
-                  </h3>
-                  <p className="text-surface-600 dark:text-surface-400 mb-4">
-                    Create your first timesheet to start tracking your time.
-                  </p>
-                  <Button onClick={() => setShowCreateModal(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Timesheet
-                  </Button>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={<FileSpreadsheet className="h-12 w-12" />}
+                title="No Timesheets"
+                description="Fill in your timesheet for the current period"
+                action={{ label: 'Create Timesheet', onClick: () => setShowCreateModal(true) }}
+              />
             )}
           </div>
         </div>

@@ -110,7 +110,7 @@ function DistributionChart({
   );
 }
 
-function BellCurveWarning({
+function getBellCurveWarning({
   counts,
   total,
 }: {
@@ -232,7 +232,8 @@ export default function CalibrationPage() {
 
     // Sort
     result.sort((a, b) => {
-      let aVal: any, bVal: any;
+      let aVal: string | number = '';
+      let bVal: string | number = '';
 
       if (sortField === 'name') {
         aVal = a.employeeName;
@@ -263,7 +264,7 @@ export default function CalibrationPage() {
   }, [filteredAndSorted, finalOverrides]);
 
   const totalRated = Object.values(ratingCounts).reduce((s, v) => s + v, 0);
-  const curveWarning = BellCurveWarning(ratingCounts, totalRated);
+  const curveWarning = getBellCurveWarning({ counts: ratingCounts, total: totalRated });
 
   const uniqueDepartments = useMemo(
     () => Array.from(new Set(rows.map(r => r.department).filter(Boolean))),
