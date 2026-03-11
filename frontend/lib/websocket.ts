@@ -11,28 +11,102 @@ export interface WebSocketNotification {
 
 export type NotificationHandler = (notification: WebSocketNotification) => void;
 
+export enum WebSocketStatus {
+  DISCONNECTED = 'DISCONNECTED',
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  RECONNECTING = 'RECONNECTING',
+  FAILED = 'FAILED',
+}
+
+interface ReconnectConfig {
+  initialDelay: number; // milliseconds
+  maxDelay: number; // milliseconds
+  maxAttempts: number;
+  backoffMultiplier: number;
+}
+
+interface ConnectionCredentials {
+  userId: string;
+  tenantId: string;
+  token?: string;
+}
+
 class WebSocketService {
   private client: Client | null = null;
   private subscriptions: Map<string, StompSubscription> = new Map();
   private handlers: Set<NotificationHandler> = new Set();
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private reconnectDelay = 3000;
-  private isConnecting = false;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private statusChangeHandlers: Set<(status: WebSocketStatus) => void> = new Set();
+  private status: WebSocketStatus = WebSocketStatus.DISCONNECTED;
+  private credentials: ConnectionCredentials | null = null;
+  private visibilityChangeListener: (() => void) | null = null;
+
+  // Reconnection configuration
+  private readonly reconnectConfig: ReconnectConfig = {
+    initialDelay: 1000, // Start at 1 second
+    maxDelay: 30000, // Max 30 seconds
+    maxAttempts: 10,
+    backoffMultiplier: 2,
+  };
+
   private userId: string | null = null;
   private tenantId: string | null = null;
+
+  /**
+   * Calculate exponential backoff delay with jitter.
+   */
+  private calculateBackoffDelay(): number {
+    const exponentialDelay = this.reconnectConfig.initialDelay *
+      Math.pow(this.reconnectConfig.backoffMultiplier, this.reconnectAttempts);
+    const cappedDelay = Math.min(exponentialDelay, this.reconnectConfig.maxDelay);
+    // Add jitter: ±10% to prevent thundering herd
+    const jitter = cappedDelay * 0.1 * (Math.random() * 2 - 1);
+    return Math.max(100, cappedDelay + jitter);
+  }
+
+  /**
+   * Update connection status and notify listeners.
+   */
+  private setStatus(status: WebSocketStatus): void {
+    if (this.status !== status) {
+      this.status = status;
+      this.statusChangeHandlers.forEach(handler => {
+        try {
+          handler(status);
+        } catch (error) {
+          console.error('[WebSocket] Status change handler error:', error);
+        }
+      });
+    }
+  }
+
+  /**
+   * Add a status change listener.
+   */
+  addStatusChangeListener(handler: (status: WebSocketStatus) => void): () => void {
+    this.statusChangeHandlers.add(handler);
+    return () => this.statusChangeHandlers.delete(handler);
+  }
 
   /**
    * Connect to the WebSocket server.
    */
   connect(userId: string, tenantId: string, token?: string): Promise<void> {
-    if (this.client?.connected || this.isConnecting) {
+    if (this.client?.connected) {
+      return Promise.resolve();
+    }
+
+    // If already connecting, return pending promise
+    if (this.status === WebSocketStatus.CONNECTING) {
       return Promise.resolve();
     }
 
     this.userId = userId;
     this.tenantId = tenantId;
-    this.isConnecting = true;
+    this.credentials = { userId, tenantId, token };
+    this.setStatus(WebSocketStatus.CONNECTING);
 
     return new Promise((resolve, reject) => {
       // Remove /api/v1 from the URL if present to get the base WebSocket URL
@@ -48,38 +122,128 @@ class WebSocketService {
             console.log('[WebSocket]', str);
           }
         },
-        reconnectDelay: this.reconnectDelay,
+        // Disable StompJS built-in reconnect - we handle it manually
+        reconnectDelay: 0,
         heartbeatIncoming: 10000,
         heartbeatOutgoing: 10000,
         onConnect: () => {
           if (process.env.NODE_ENV === 'development') {
             console.log('[WebSocket] Connected');
           }
-          this.isConnecting = false;
           this.reconnectAttempts = 0;
+          this.setStatus(WebSocketStatus.CONNECTED);
           this.subscribeToNotifications();
+          this.attachVisibilityChangeListener();
           resolve();
         },
         onStompError: (frame) => {
           console.error('[WebSocket] STOMP error:', frame.headers['message']);
-          this.isConnecting = false;
           reject(new Error(frame.headers['message']));
         },
         onWebSocketClose: () => {
           if (process.env.NODE_ENV === 'development') {
             console.log('[WebSocket] Connection closed');
           }
-          this.isConnecting = false;
-          this.handleReconnect();
+          this.handleDisconnect();
         },
         onWebSocketError: (error) => {
           console.error('[WebSocket] WebSocket error:', error);
-          this.isConnecting = false;
         },
       });
 
       this.client.activate();
     });
+  }
+
+  /**
+   * Handle disconnection and initiate reconnect logic.
+   */
+  private handleDisconnect(): void {
+    if (this.status === WebSocketStatus.CONNECTED) {
+      this.setStatus(WebSocketStatus.DISCONNECTED);
+      this.logWarning(`Connection lost. Will attempt to reconnect.`);
+    }
+
+    // Clear any pending reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Attempt reconnection if we haven't exceeded max attempts
+    if (this.reconnectAttempts < this.reconnectConfig.maxAttempts && this.credentials) {
+      this.scheduleReconnect();
+    } else if (this.reconnectAttempts >= this.reconnectConfig.maxAttempts) {
+      this.setStatus(WebSocketStatus.FAILED);
+      this.logError(
+        `Max reconnection attempts (${this.reconnectConfig.maxAttempts}) exceeded. ` +
+        'Real-time notifications are unavailable. Please refresh the page.'
+      );
+    }
+  }
+
+  /**
+   * Schedule a reconnection attempt with exponential backoff.
+   */
+  private scheduleReconnect(): void {
+    if (!this.credentials) return;
+
+    this.reconnectAttempts++;
+    const delay = this.calculateBackoffDelay();
+
+    this.setStatus(WebSocketStatus.RECONNECTING);
+    this.logInfo(
+      `Reconnecting (attempt ${this.reconnectAttempts}/${this.reconnectConfig.maxAttempts}) ` +
+      `in ${Math.round(delay)}ms`
+    );
+
+    // Clear any existing reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+    }
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      if (this.credentials) {
+        this.connect(this.credentials.userId, this.credentials.tenantId, this.credentials.token)
+          .catch(error => {
+            this.logError('Reconnection attempt failed:', error);
+            // handleDisconnect will be called via onWebSocketClose
+          });
+      }
+    }, delay);
+  }
+
+  /**
+   * Attach visibility change listener to reconnect when tab becomes visible.
+   */
+  private attachVisibilityChangeListener(): void {
+    if (this.visibilityChangeListener) return; // Already attached
+
+    this.visibilityChangeListener = () => {
+      if (!document.hidden && (this.status === WebSocketStatus.DISCONNECTED ||
+          this.status === WebSocketStatus.FAILED)) {
+        this.logInfo('Tab became visible. Attempting to reconnect.');
+        this.reconnectAttempts = 0;
+        this.setStatus(WebSocketStatus.DISCONNECTED);
+        if (this.credentials) {
+          this.connect(this.credentials.userId, this.credentials.tenantId, this.credentials.token)
+            .catch(error => this.logError('Failed to reconnect on visibility change:', error));
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', this.visibilityChangeListener);
+  }
+
+  /**
+   * Remove visibility change listener.
+   */
+  private removeVisibilityChangeListener(): void {
+    if (this.visibilityChangeListener) {
+      document.removeEventListener('visibilitychange', this.visibilityChangeListener);
+      this.visibilityChangeListener = null;
+    }
   }
 
   /**
@@ -143,26 +307,24 @@ class WebSocketService {
   }
 
   /**
-   * Handle reconnection logic.
+   * Logging utilities with level-based filtering.
    */
-  private handleReconnect(): void {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('[WebSocket] Max reconnect attempts reached');
-      return;
-    }
-
-    this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-
+  private logDebug(message: string, data?: unknown): void {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+      console.log(`[WebSocket Debug] ${message}`, data || '');
     }
+  }
 
-    setTimeout(() => {
-      if (this.userId && this.tenantId) {
-        this.connect(this.userId, this.tenantId).catch(console.error);
-      }
-    }, delay);
+  private logInfo(message: string, data?: unknown): void {
+    console.info(`[WebSocket] ${message}`, data || '');
+  }
+
+  private logWarning(message: string, data?: unknown): void {
+    console.warn(`[WebSocket] ${message}`, data || '');
+  }
+
+  private logError(message: string, error?: unknown): void {
+    console.error(`[WebSocket Error] ${message}`, error || '');
   }
 
   /**
@@ -196,19 +358,41 @@ class WebSocketService {
   }
 
   /**
+   * Get current connection status.
+   */
+  getStatus(): WebSocketStatus {
+    return this.status;
+  }
+
+  /**
    * Disconnect from the WebSocket server.
    */
   disconnect(): void {
+    // Clear reconnect timer
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Remove visibility change listener
+    this.removeVisibilityChangeListener();
+
+    // Clean up STOMP client
     if (this.client) {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
       this.subscriptions.clear();
       this.client.deactivate();
       this.client = null;
     }
+
     this.handlers.clear();
     this.userId = null;
     this.tenantId = null;
+    this.credentials = null;
     this.reconnectAttempts = 0;
+    this.setStatus(WebSocketStatus.DISCONNECTED);
+
+    this.logDebug('Disconnected from WebSocket');
   }
 
   /**

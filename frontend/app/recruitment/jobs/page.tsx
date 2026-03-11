@@ -2,73 +2,76 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { notifications } from '@mantine/notifications';
+import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { recruitmentService } from '@/lib/services/recruitment.service';
 import { departmentService } from '@/lib/services/department.service';
 import { employeeService } from '@/lib/services/employee.service';
-import { JobOpening, CreateJobOpeningRequest, JobStatus, EmploymentType, Priority } from '@/lib/types/recruitment';
-import { Department } from '@/lib/types/employee';
-import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Filter, Eye, Edit2, Trash2, X } from 'lucide-react';
+import { createJobOpeningSchema, CreateJobOpeningFormData } from '@/lib/validations/recruitment';
+import { useJobOpenings, useCreateJobOpening, useUpdateJobOpening, useDeleteJobOpening, useGenerateJobDescription } from '@/lib/hooks/queries/useRecruitment';
+import { JobOpening, JobStatus, EmploymentType, Priority, CreateJobOpeningRequest } from '@/lib/types/recruitment';
+import { Department, Employee } from '@/lib/types/employee';
+import { JobDescriptionResponse } from '@/lib/types/ai-recruitment';
+import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Eye, Edit2, Trash2, X, Sparkles } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
-  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [managers, setManagers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [managers, setManagers] = useState<Employee[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobOpening | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingJob, setEditingJob] = useState<JobOpening | null>(null);
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiGeneratedJD, setAiGeneratedJD] = useState<JobDescriptionResponse | null>(null);
 
-  const [formData, setFormData] = useState<CreateJobOpeningRequest>({
-    jobCode: '',
-    jobTitle: '',
-    departmentId: '',
-    location: '',
-    employmentType: 'FULL_TIME',
-    experienceRequired: '',
-    minSalary: undefined,
-    maxSalary: undefined,
-    numberOfOpenings: 1,
-    jobDescription: '',
-    requirements: '',
-    skillsRequired: '',
-    hiringManagerId: '',
-    status: 'DRAFT',
-    postedDate: new Date().toISOString().split('T')[0],
-    closingDate: '',
-    priority: 'MEDIUM',
-    isActive: true,
+  // React Query hooks
+  const jobOpeningsQuery = useJobOpenings(0, 100);
+  const createMutation = useCreateJobOpening();
+  const updateMutation = useUpdateJobOpening();
+  const deleteMutation = useDeleteJobOpening();
+  const generateJDMutation = useGenerateJobDescription();
+
+  // React Hook Form setup
+  const form = useForm<CreateJobOpeningFormData>({
+    resolver: zodResolver(createJobOpeningSchema),
+    mode: 'onChange',
+    defaultValues: {
+      jobCode: '',
+      jobTitle: '',
+      departmentId: '',
+      location: '',
+      employmentType: 'FULL_TIME',
+      experienceRequired: '',
+      minSalary: undefined,
+      maxSalary: undefined,
+      numberOfOpenings: 1,
+      jobDescription: '',
+      requirements: '',
+      skillsRequired: '',
+      hiringManagerId: '',
+      status: 'DRAFT',
+      postedDate: new Date().toISOString().split('T')[0],
+      closingDate: '',
+      priority: 'MEDIUM',
+      isActive: true,
+    },
   });
 
+  const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = form;
+
+  // Load departments and managers on mount
   useEffect(() => {
-    loadJobOpenings();
     loadDepartments();
     loadManagers();
-  }, [statusFilter]);
-
-  const loadJobOpenings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await recruitmentService.getAllJobOpenings(0, 100);
-      let filtered = response.content;
-      if (statusFilter) {
-        filtered = filtered.filter(j => j.status === statusFilter);
-      }
-      setJobOpenings(filtered);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load job openings');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
   const loadDepartments = async () => {
     try {
@@ -88,26 +91,39 @@ export default function JobOpeningsPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: CreateJobOpeningFormData) => {
     try {
-      setError(null);
+      const payload = data as CreateJobOpeningRequest;
       if (editingJob) {
-        await recruitmentService.updateJobOpening(editingJob.id, formData);
+        await updateMutation.mutateAsync({ id: editingJob.id, data: payload });
+        notifications.show({
+          title: 'Success',
+          message: 'Job opening updated successfully',
+          color: 'green',
+        });
       } else {
-        await recruitmentService.createJobOpening(formData);
+        await createMutation.mutateAsync(payload);
+        notifications.show({
+          title: 'Success',
+          message: 'Job opening created successfully',
+          color: 'green',
+        });
       }
       setShowAddModal(false);
-      resetForm();
-      loadJobOpenings();
+      reset();
+      setEditingJob(null);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save job opening');
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to save job opening',
+        color: 'red',
+      });
     }
   };
 
   const handleEdit = (job: JobOpening) => {
     setEditingJob(job);
-    setFormData({
+    reset({
       jobCode: job.jobCode,
       jobTitle: job.jobTitle,
       departmentId: job.departmentId || '',
@@ -133,37 +149,82 @@ export default function JobOpeningsPage() {
   const handleDelete = async () => {
     if (!jobToDelete) return;
     try {
-      await recruitmentService.deleteJobOpening(jobToDelete.id);
+      await deleteMutation.mutateAsync(jobToDelete.id);
       setShowDeleteModal(false);
       setJobToDelete(null);
-      loadJobOpenings();
+      notifications.show({
+        title: 'Success',
+        message: 'Job opening deleted successfully',
+        color: 'green',
+      });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete job opening');
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to delete job opening',
+        color: 'red',
+      });
     }
   };
 
-  const resetForm = () => {
-    setEditingJob(null);
-    setFormData({
-      jobCode: '',
-      jobTitle: '',
-      departmentId: '',
-      location: '',
-      employmentType: 'FULL_TIME',
-      experienceRequired: '',
-      minSalary: undefined,
-      maxSalary: undefined,
-      numberOfOpenings: 1,
-      jobDescription: '',
-      requirements: '',
-      skillsRequired: '',
-      hiringManagerId: '',
-      status: 'DRAFT',
-      postedDate: new Date().toISOString().split('T')[0],
-      closingDate: '',
-      priority: 'MEDIUM',
-      isActive: true,
-    });
+  const handleGenerateJobDescription = async () => {
+    const jobTitle = watch('jobTitle');
+    const department = watch('departmentId');
+    const experienceRequired = watch('experienceRequired');
+    const skillsRequired = watch('skillsRequired');
+
+    if (!jobTitle) {
+      notifications.show({
+        title: 'Error',
+        message: 'Please enter a job title first',
+        color: 'red',
+      });
+      return;
+    }
+
+    try {
+      setShowAiModal(true);
+      const result = await generateJDMutation.mutateAsync({
+        jobTitle,
+        department: departments.find(d => d.id === department)?.name,
+        experienceRange: experienceRequired,
+        keySkills: skillsRequired?.split(',').map(s => s.trim()).filter(s => s),
+      });
+      setAiGeneratedJD(result);
+    } catch (err: any) {
+      notifications.show({
+        title: 'Error',
+        message: err.response?.data?.message || 'Failed to generate job description',
+        color: 'red',
+      });
+      setShowAiModal(false);
+    }
+  };
+
+  const applyGeneratedDescription = () => {
+    if (aiGeneratedJD?.fullDescription) {
+      setValue('jobDescription', aiGeneratedJD.fullDescription);
+      if (aiGeneratedJD.requirements) {
+        setValue('requirements', aiGeneratedJD.requirements.join('\n'));
+      }
+    }
+    setShowAiModal(false);
+    setAiGeneratedJD(null);
+  };
+
+  // Filter and transform data for display
+  const jobOpenings = jobOpeningsQuery.data?.content || [];
+  const filteredJobs = jobOpenings
+    .filter(job => !statusFilter || job.status === statusFilter)
+    .filter(job =>
+      job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.jobCode.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+  const stats = {
+    total: jobOpenings.length,
+    open: jobOpenings.filter(j => j.status === 'OPEN').length,
+    draft: jobOpenings.filter(j => j.status === 'DRAFT').length,
+    closed: jobOpenings.filter(j => j.status === 'CLOSED').length,
   };
 
   const getStatusColor = (status: JobStatus) => {
@@ -187,36 +248,39 @@ export default function JobOpeningsPage() {
     }
   };
 
-  const filteredJobs = jobOpenings.filter(job =>
-    job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.jobCode.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const stats = {
-    total: jobOpenings.length,
-    open: jobOpenings.filter(j => j.status === 'OPEN').length,
-    draft: jobOpenings.filter(j => j.status === 'DRAFT').length,
-    closed: jobOpenings.filter(j => j.status === 'CLOSED').length,
-  };
-
   return (
     <AppLayout activeMenuItem="recruitment">
-      <div className="p-6 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        className="p-6 space-y-6"
+      >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Job Openings</h1>
             <p className="text-surface-600 dark:text-surface-400 mt-1">Manage job openings and recruitment positions</p>
           </div>
-          <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="flex items-center gap-2">
+          <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Create Job Opening
           </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, staggerChildren: 0.05, delayChildren: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <Card className="bg-white dark:bg-surface-900">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -229,7 +293,13 @@ export default function JobOpeningsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <Card className="bg-white dark:bg-surface-900">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -242,7 +312,13 @@ export default function JobOpeningsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <Card className="bg-white dark:bg-surface-900">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
@@ -255,7 +331,13 @@ export default function JobOpeningsPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <Card className="bg-white dark:bg-surface-900">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -268,12 +350,15 @@ export default function JobOpeningsPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+            </motion.div>
+        </motion.div>
 
         {/* Error */}
-        {error && (
+        {jobOpeningsQuery.error && (
           <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {jobOpeningsQuery.error instanceof Error ? jobOpeningsQuery.error.message : 'Failed to load job openings'}
+            </p>
           </div>
         )}
 
@@ -308,22 +393,35 @@ export default function JobOpeningsPage() {
         </Card>
 
         {/* Job Openings Grid */}
-        {loading ? (
+        {jobOpeningsQuery.isLoading ? (
           <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading job openings...</div>
         ) : filteredJobs.length === 0 ? (
-          <Card className="bg-white dark:bg-surface-900">
-            <CardContent className="p-12 text-center">
-              <Briefcase className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-              <p className="text-surface-500 dark:text-surface-400">No job openings found</p>
-              <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="mt-4">
-                Create First Job Opening
-              </Button>
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon={<Briefcase className="h-8 w-8" />}
+            title="No job openings found"
+            description={searchQuery || statusFilter ? "Try adjusting your search filters or create a new job opening" : "Get started by creating your first job opening"}
+            action={{
+              label: 'Create Job Opening',
+              onClick: () => { reset(); setEditingJob(null); setShowAddModal(true); },
+            }}
+            iconColor="gray"
+            iconSize={64}
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredJobs.map((job) => (
-              <Card key={job.id} className="bg-white dark:bg-surface-900 hover:shadow-lg transition-shadow">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, staggerChildren: 0.05, delayChildren: 0.15 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            {filteredJobs.map((job, index) => (
+              <motion.div
+                key={job.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+              <Card className="bg-white dark:bg-surface-900 hover:shadow-lg transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -405,8 +503,9 @@ export default function JobOpeningsPage() {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Add/Edit Modal */}
@@ -418,34 +517,32 @@ export default function JobOpeningsPage() {
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
                     {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetForm(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Code *</label>
                       <input
                         type="text"
-                        required
-                        value={formData.jobCode}
-                        onChange={(e) => setFormData({ ...formData, jobCode: e.target.value })}
+                        {...register('jobCode')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="JOB-001"
                       />
+                      {errors.jobCode && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobCode.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Title *</label>
                       <input
                         type="text"
-                        required
-                        value={formData.jobTitle}
-                        onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                        {...register('jobTitle')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="Senior Software Engineer"
                       />
+                      {errors.jobTitle && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobTitle.message}</p>}
                     </div>
                   </div>
 
@@ -453,8 +550,7 @@ export default function JobOpeningsPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Department</label>
                       <select
-                        value={formData.departmentId || ''}
-                        onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                        {...register('departmentId')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Department</option>
@@ -462,12 +558,12 @@ export default function JobOpeningsPage() {
                           <option key={dept.id} value={dept.id}>{dept.name}</option>
                         ))}
                       </select>
+                      {errors.departmentId && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Hiring Manager</label>
                       <select
-                        value={formData.hiringManagerId || ''}
-                        onChange={(e) => setFormData({ ...formData, hiringManagerId: e.target.value })}
+                        {...register('hiringManagerId')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Manager</option>
@@ -475,6 +571,7 @@ export default function JobOpeningsPage() {
                           <option key={mgr.id} value={mgr.id}>{mgr.fullName}</option>
                         ))}
                       </select>
+                      {errors.hiringManagerId && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.hiringManagerId.message}</p>}
                     </div>
                   </div>
 
@@ -483,17 +580,16 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
                       <input
                         type="text"
-                        value={formData.location || ''}
-                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        {...register('location')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="Remote / City"
                       />
+                      {errors.location && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Employment Type</label>
                       <select
-                        value={formData.employmentType}
-                        onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as EmploymentType })}
+                        {...register('employmentType')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="FULL_TIME">Full Time</option>
@@ -502,16 +598,17 @@ export default function JobOpeningsPage() {
                         <option value="TEMPORARY">Temporary</option>
                         <option value="INTERNSHIP">Internship</option>
                       </select>
+                      {errors.employmentType && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">No. of Openings</label>
                       <input
                         type="number"
                         min="1"
-                        value={formData.numberOfOpenings || 1}
-                        onChange={(e) => setFormData({ ...formData, numberOfOpenings: parseInt(e.target.value) })}
+                        {...register('numberOfOpenings')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errors.numberOfOpenings && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
                   </div>
 
@@ -520,31 +617,31 @@ export default function JobOpeningsPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Min Salary</label>
                       <input
                         type="number"
-                        value={formData.minSalary || ''}
-                        onChange={(e) => setFormData({ ...formData, minSalary: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        {...register('minSalary')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="50000"
                       />
+                      {errors.minSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.minSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max Salary</label>
                       <input
                         type="number"
-                        value={formData.maxSalary || ''}
-                        onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value ? parseFloat(e.target.value) : undefined })}
+                        {...register('maxSalary')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="80000"
                       />
+                      {errors.maxSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Experience Required</label>
                       <input
                         type="text"
-                        value={formData.experienceRequired || ''}
-                        onChange={(e) => setFormData({ ...formData, experienceRequired: e.target.value })}
+                        {...register('experienceRequired')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="3-5 years"
                       />
+                      {errors.experienceRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.experienceRequired.message}</p>}
                     </div>
                   </div>
 
@@ -552,8 +649,7 @@ export default function JobOpeningsPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Status</label>
                       <select
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as JobStatus })}
+                        {...register('status')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="DRAFT">Draft</option>
@@ -562,12 +658,12 @@ export default function JobOpeningsPage() {
                         <option value="CLOSED">Closed</option>
                         <option value="CANCELLED">Cancelled</option>
                       </select>
+                      {errors.status && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.status.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Priority</label>
                       <select
-                        value={formData.priority}
-                        onChange={(e) => setFormData({ ...formData, priority: e.target.value as Priority })}
+                        {...register('priority')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="LOW">Low</option>
@@ -575,56 +671,77 @@ export default function JobOpeningsPage() {
                         <option value="HIGH">High</option>
                         <option value="URGENT">Urgent</option>
                       </select>
+                      {errors.priority && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Closing Date</label>
                       <input
                         type="date"
-                        value={formData.closingDate || ''}
-                        onChange={(e) => setFormData({ ...formData, closingDate: e.target.value })}
+                        {...register('closingDate')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errors.closingDate && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.closingDate.message}</p>}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Description</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">Job Description</label>
+                      <button
+                        type="button"
+                        onClick={handleGenerateJobDescription}
+                        disabled={generateJDMutation.isPending}
+                        className="flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 disabled:opacity-50"
+                      >
+                        <Sparkles className="h-3.5 w-3.5" />
+                        Generate with AI
+                      </button>
+                    </div>
                     <textarea
                       rows={4}
-                      value={formData.jobDescription || ''}
-                      onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
+                      {...register('jobDescription')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
+                    {errors.jobDescription && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Requirements</label>
                     <textarea
                       rows={3}
-                      value={formData.requirements || ''}
-                      onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                      {...register('requirements')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="List the requirements..."
                     />
+                    {errors.requirements && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.requirements.message}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Skills Required</label>
                     <textarea
                       rows={2}
-                      value={formData.skillsRequired || ''}
-                      onChange={(e) => setFormData({ ...formData, skillsRequired: e.target.value })}
+                      {...register('skillsRequired')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
+                    {errors.skillsRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
                   <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetForm(); }} className="flex-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }}
+                      className="flex-1"
+                    >
                       Cancel
                     </Button>
-                    <Button type="submit" className="flex-1">
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                      className="flex-1"
+                    >
                       {editingJob ? 'Update Job' : 'Create Job'}
                     </Button>
                   </div>
@@ -648,17 +765,123 @@ export default function JobOpeningsPage() {
                 Are you sure you want to delete <strong className="text-surface-700 dark:text-surface-300">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => { setShowDeleteModal(false); setJobToDelete(null); }} className="flex-1">
+                <Button
+                  variant="outline"
+                  onClick={() => { setShowDeleteModal(false); setJobToDelete(null); }}
+                  className="flex-1"
+                  disabled={deleteMutation.isPending}
+                >
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete} className="flex-1">
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  className="flex-1"
+                  disabled={deleteMutation.isPending}
+                >
                   Delete
                 </Button>
               </div>
             </div>
           </div>
         )}
-      </div>
+
+        {/* AI Generated Job Description Modal */}
+        {showAiModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                    <Sparkles className="h-6 w-6 text-primary-600 dark:text-primary-400" />
+                    Generated Job Description
+                  </h2>
+                  <button
+                    onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
+                    className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                {generateJDMutation.isPending ? (
+                  <div className="py-12 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                    <p className="text-surface-500 dark:text-surface-400">Generating job description with AI...</p>
+                  </div>
+                ) : aiGeneratedJD ? (
+                  <div className="space-y-6">
+                    {aiGeneratedJD.summary && (
+                      <div>
+                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Summary</h3>
+                        <p className="text-sm text-surface-600 dark:text-surface-400">{aiGeneratedJD.summary}</p>
+                      </div>
+                    )}
+
+                    {aiGeneratedJD.responsibilities && aiGeneratedJD.responsibilities.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Responsibilities</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                          {aiGeneratedJD.responsibilities.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {aiGeneratedJD.requirements && aiGeneratedJD.requirements.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Requirements</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                          {aiGeneratedJD.requirements.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {aiGeneratedJD.preferredQualifications && aiGeneratedJD.preferredQualifications.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Preferred Qualifications</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                          {aiGeneratedJD.preferredQualifications.map((q, i) => (
+                            <li key={i}>{q}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {aiGeneratedJD.benefits && aiGeneratedJD.benefits.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Benefits</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                          {aiGeneratedJD.benefits.map((b, i) => (
+                            <li key={i}>{b}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
+                        className="flex-1"
+                      >
+                        Discard
+                      </Button>
+                      <Button type="button" onClick={applyGeneratedDescription} className="flex-1">
+                        Apply to Form
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )}
+      </motion.div>
     </AppLayout>
   );
 }

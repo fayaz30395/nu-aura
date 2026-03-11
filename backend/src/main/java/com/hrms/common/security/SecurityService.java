@@ -1,5 +1,6 @@
 package com.hrms.common.security;
 
+import com.hrms.common.config.CacheConfig;
 import com.hrms.domain.user.Role;
 import com.hrms.domain.user.RolePermission;
 import com.hrms.infrastructure.user.repository.RoleRepository;
@@ -23,20 +24,40 @@ public class SecurityService {
     private final RoleRepository roleRepository;
 
     public boolean hasPermission(Authentication authentication, String permissionCode) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated() || permissionCode == null) {
             return false;
         }
-        // Since roles might be in granted authorities, caching permissions by authority
-        // (Role name or Role Id)
+
+        // 1. Check direct authorities (which may contain permissions directly from JWT)
+        boolean hasDirectAuth = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals(permissionCode));
+        if (hasDirectAuth)
+            return true;
+
+        // 2. Check roles-based permissions from DB/Cache
         Collection<String> authorities = authentication.getAuthorities().stream()
                 .map(auth -> auth.getAuthority().replace("ROLE_", ""))
                 .collect(Collectors.toSet());
 
         Set<String> userPermissions = getCachedPermissions(authorities);
-        return userPermissions.contains(permissionCode);
+
+        // Direct match
+        if (userPermissions.contains(permissionCode)) {
+            return true;
+        }
+
+        // App-prefixed match
+        String appCode = SecurityContext.getCurrentAppCode();
+        if (appCode != null && !permissionCode.startsWith(appCode + ":")) {
+            if (userPermissions.contains(appCode + ":" + permissionCode)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    @Cacheable(value = "rolePermissions", key = "#root.target.rolesCacheKey(#roles)")
+    @Cacheable(value = CacheConfig.ROLE_PERMISSIONS, key = "#root.target.rolesCacheKey(#roles)")
     public Set<String> getCachedPermissions(Collection<String> roles) {
         Set<String> permissions = new HashSet<>();
         java.util.UUID tenantId = TenantContext.getCurrentTenant();

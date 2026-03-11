@@ -119,7 +119,7 @@ export default function Feedback360Page() {
                   ))
                 ) : (
                   <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-8 text-center text-surface-500 dark:text-surface-400">
-                    No pending reviews. You're all caught up!
+                    No pending reviews. You&apos;re all caught up!
                   </div>
                 )}
               </div>

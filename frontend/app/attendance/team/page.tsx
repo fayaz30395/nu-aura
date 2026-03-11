@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, Calendar, CheckCircle, XCircle, AlertCircle, Clock, Printer } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Calendar, CheckCircle, XCircle, AlertCircle, Clock, Printer, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -23,6 +24,7 @@ export default function TeamAttendancePage() {
   const router = useRouter();
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [viewMode, setViewMode] = useState<'daily' | 'summary'>('daily');
 
@@ -32,6 +34,7 @@ export default function TeamAttendancePage() {
 
   const loadTeamAttendance = async () => {
     try {
+      setError(null);
       setLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -40,6 +43,7 @@ export default function TeamAttendancePage() {
       setRecords(response.content);
     } catch (error) {
       console.error('Error loading team attendance:', error);
+      setError('Failed to load team attendance.');
     } finally {
       setLoading(false);
     }
@@ -77,13 +81,18 @@ export default function TeamAttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <div className="space-y-6">
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Team Attendance</h1>
             <p className="text-surface-500 dark:text-surface-400 mt-1">
-              Monitor your team's attendance records
+              Monitor your team&apos;s attendance records
             </p>
           </div>
           <Button
@@ -95,6 +104,19 @@ export default function TeamAttendancePage() {
             Print Report
           </Button>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+            </div>
+            <button onClick={loadTeamAttendance} className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Controls */}
         <Card className="bg-white dark:bg-surface-900">
@@ -329,7 +351,7 @@ export default function TeamAttendancePage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

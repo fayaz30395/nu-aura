@@ -4,10 +4,14 @@ import com.hrms.application.analytics.dto.*;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.attendance.AttendanceRecord;
 import com.hrms.domain.leave.LeaveRequest;
+import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.domain.workflow.StepExecution;
 import com.hrms.infrastructure.attendance.repository.AttendanceRecordRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.leave.repository.LeaveRequestRepository;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
+import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import com.hrms.infrastructure.workflow.repository.StepExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,6 +36,44 @@ public class AnalyticsService {
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final LeaveRequestRepository leaveRequestRepository;
     private final PayslipRepository payslipRepository;
+    private final JobOpeningRepository jobOpeningRepository;
+    private final StepExecutionRepository stepExecutionRepository;
+
+    /**
+     * Lightweight summary for the main dashboard KPI widget.
+     * Returns only the 6 top-level numbers needed for overview cards.
+     */
+    @Cacheable(value = "analyticsSummary", key = "#root.target.getCurrentTenantKey()")
+    public AnalyticsSummary getAnalyticsSummary() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        LocalDate today = LocalDate.now();
+
+        long totalEmployees = employeeRepository.countByTenantIdAndStatus(
+                tenantId, com.hrms.domain.employee.Employee.EmployeeStatus.ACTIVE);
+
+        long presentToday = attendanceRecordRepository.countByTenantIdAndDate(tenantId, today);
+
+        long onLeaveToday = leaveRequestRepository.countByTenantIdAndDateAndStatus(
+                tenantId, today, LeaveRequest.LeaveRequestStatus.APPROVED);
+
+        long pendingApprovals = stepExecutionRepository.countByTenantIdAndStatus(
+                tenantId, StepExecution.StepStatus.PENDING);
+
+        boolean payrollProcessedThisMonth = payslipRepository
+                .countByTenantIdAndYearAndMonth(tenantId, today.getYear(), today.getMonthValue()) > 0;
+
+        long openPositions = jobOpeningRepository
+                .findByTenantIdAndStatus(tenantId, JobOpening.JobStatus.OPEN).size();
+
+        return AnalyticsSummary.builder()
+                .totalEmployees(totalEmployees)
+                .presentToday(presentToday)
+                .onLeaveToday(onLeaveToday)
+                .pendingApprovals(pendingApprovals)
+                .payrollProcessedThisMonth(payrollProcessedThisMonth)
+                .openPositions(openPositions)
+                .build();
+    }
 
     @Cacheable(value = "dashboardMetrics", key = "#root.target.getCurrentTenantKey()")
     public DashboardMetrics getDashboardMetrics() {

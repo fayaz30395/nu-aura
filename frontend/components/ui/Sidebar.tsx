@@ -18,6 +18,11 @@ export interface SidebarItem {
   children?: SidebarItem[];
   disabled?: boolean;
   section?: string;
+  /**
+   * Optional permission code required to see this item.
+   * Filtering is handled by the parent layout using auth state.
+   */
+  requiredPermission?: string;
 }
 
 export interface SidebarSection {

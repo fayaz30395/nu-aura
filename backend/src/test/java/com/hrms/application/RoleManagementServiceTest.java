@@ -90,14 +90,14 @@ class RoleManagementServiceTest {
         RolePermission rp1 = RolePermission.builder()
                 .role(role)
                 .permission(permission1)
-                .scope(RoleScope.GLOBAL)
+                .scope(RoleScope.ALL)
                 .build();
         rp1.setTenantId(tenantId);
 
         RolePermission rp2 = RolePermission.builder()
                 .role(role)
                 .permission(permission2)
-                .scope(RoleScope.GLOBAL)
+                .scope(RoleScope.ALL)
                 .build();
         rp2.setTenantId(tenantId);
 

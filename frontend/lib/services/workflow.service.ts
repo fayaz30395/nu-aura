@@ -119,6 +119,42 @@ export const workflowService = {
     return response.data;
   },
 
+  /**
+   * Paginated approval inbox with server-side filters.
+   */
+  getApprovalInbox: async (params: {
+    status?: string;
+    module?: string;
+    fromDate?: string;
+    toDate?: string;
+    search?: string;
+    page?: number;
+    size?: number;
+  }): Promise<Page<WorkflowExecutionResponse>> => {
+    const response = await apiClient.get<Page<WorkflowExecutionResponse>>('/workflow/inbox', {
+      params: {
+        status: params.status ?? 'PENDING',
+        module: params.module,
+        fromDate: params.fromDate,
+        toDate: params.toDate,
+        search: params.search,
+        page: params.page ?? 0,
+        size: params.size ?? 20,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Returns inbox summary counts: pending, approvedToday, rejectedToday.
+   */
+  getInboxCounts: async (): Promise<{ pending: number; approvedToday: number; rejectedToday: number }> => {
+    const response = await apiClient.get<{ pending: number; approvedToday: number; rejectedToday: number }>(
+      '/workflow/inbox/count'
+    );
+    return response.data;
+  },
+
   getMyRequests: async (): Promise<WorkflowExecutionResponse[]> => {
     const response = await apiClient.get<WorkflowExecutionResponse[]>('/workflow/my-requests');
     return response.data;

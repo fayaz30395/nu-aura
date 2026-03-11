@@ -116,6 +116,13 @@ class RecruitmentService {
 
   // ==================== Interview Methods ====================
 
+  async getAllInterviews(page: number = 0, size: number = 100): Promise<Page<Interview>> {
+    const response = await apiClient.get<Page<Interview>>('/recruitment/interviews', {
+      params: { page, size },
+    });
+    return response.data;
+  }
+
   async scheduleInterview(data: CreateInterviewRequest): Promise<Interview> {
     const response = await apiClient.post<Interview>('/recruitment/interviews', data);
     return response.data;

@@ -37,7 +37,7 @@ public class TestSecurityConfig {
         roles.add("ADMIN");
 
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL); // This bypasses all permission checks
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL); // This bypasses all permission checks
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

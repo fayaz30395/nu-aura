@@ -57,6 +57,7 @@ export interface PerformanceReview {
   id: string;
   employeeId: string;
   employeeName?: string;
+  department?: string;
   reviewerId: string;
   reviewerName?: string;
   reviewCycleId?: string;

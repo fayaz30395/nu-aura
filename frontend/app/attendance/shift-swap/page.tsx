@@ -55,19 +55,19 @@ export default function ShiftSwapPage() {
 
   const { data: myRequestsData, isLoading: loadingMy } = useQuery<{ content: ShiftSwapRequest[] }>({
     queryKey: ['shift-swap', 'my', employeeId],
-    queryFn: () => apiClient.get(`/shift-swaps/my-requests/${employeeId}`).then(r => r.data),
+    queryFn: () => apiClient.get<{ content: ShiftSwapRequest[] }>(`/shift-swaps/my-requests/${employeeId}`).then(r => r.data),
     enabled: activeTab === 'my',
   });
 
   const { data: incomingRequests, isLoading: loadingIncoming } = useQuery<ShiftSwapRequest[]>({
     queryKey: ['shift-swap', 'incoming', employeeId],
-    queryFn: () => apiClient.get(`/shift-swaps/incoming/${employeeId}`).then(r => r.data),
+    queryFn: () => apiClient.get<ShiftSwapRequest[]>(`/shift-swaps/incoming/${employeeId}`).then(r => r.data),
     enabled: activeTab === 'incoming',
   });
 
   const { data: pendingApproval, isLoading: loadingApproval } = useQuery<ShiftSwapRequest[]>({
     queryKey: ['shift-swap', 'pending-approval'],
-    queryFn: () => apiClient.get('/shift-swaps/pending-approval').then(r => r.data),
+    queryFn: () => apiClient.get<ShiftSwapRequest[]>('/shift-swaps/pending-approval').then(r => r.data),
     enabled: activeTab === 'approval',
   });
 
@@ -154,7 +154,7 @@ export default function ShiftSwapPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {getDisplayData().map(req => (
+                  {getDisplayData().map((req: ShiftSwapRequest) => (
                     <tr key={req.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-1.5 text-gray-700">

@@ -97,10 +97,10 @@ export default function CertificateGalleryPage() {
   const handleDownload = async (certId: string, certNumber: string) => {
     try {
       // In a real implementation, this would trigger a PDF download
-      const response = await apiClient.get(`/lms/certificates/${certId}/download`, {
+      const response = await apiClient.get<Blob>(`/lms/certificates/${certId}/download`, {
         responseType: 'blob',
       });
-      const url = window.URL.createObjectURL(response.data);
+      const url = window.URL.createObjectURL(response.data as Blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `certificate-${certNumber}.pdf`;

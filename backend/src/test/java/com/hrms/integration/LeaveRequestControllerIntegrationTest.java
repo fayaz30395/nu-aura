@@ -53,10 +53,10 @@ class LeaveRequestControllerIntegrationTest {
         roles.add("EMPLOYEE");
 
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:REQUEST", RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:VIEW_SELF", RoleScope.OWN);
-        permissions.put("HRMS:LEAVE:CANCEL", RoleScope.OWN);
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:REQUEST", RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:VIEW_SELF", RoleScope.SELF);
+        permissions.put("HRMS:LEAVE:CANCEL", RoleScope.SELF);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

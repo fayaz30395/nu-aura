@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   Calendar,
   TrendingUp,
@@ -12,6 +13,7 @@ import {
   LayoutGrid,
   List,
   Coffee,
+  RefreshCw,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -25,6 +27,7 @@ type ViewMode = 'calendar' | 'list';
 export default function MyAttendancePage() {
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [viewMode, setViewMode] = useState<ViewMode>('calendar');
@@ -36,6 +39,7 @@ export default function MyAttendancePage() {
 
   const loadAttendance = async () => {
     try {
+      setError(null);
       setLoading(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       // Use utility functions for consistent timezone handling
@@ -49,6 +53,7 @@ export default function MyAttendancePage() {
       setRecords(response);
     } catch (error) {
       console.error('Error loading attendance:', error);
+      setError('Failed to load attendance records.');
     } finally {
       setLoading(false);
     }
@@ -220,7 +225,12 @@ export default function MyAttendancePage() {
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <div className="space-y-6">
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -250,6 +260,19 @@ export default function MyAttendancePage() {
             </Button>
           </div>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+            </div>
+            <button onClick={loadAttendance} className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -688,7 +711,7 @@ export default function MyAttendancePage() {
             </Card>
           </>
         )}
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

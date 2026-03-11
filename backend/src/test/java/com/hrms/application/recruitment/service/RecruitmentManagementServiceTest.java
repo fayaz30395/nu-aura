@@ -52,6 +52,9 @@ class RecruitmentManagementServiceTest {
     @Mock
     private DataScopeService dataScopeService;
 
+    @Mock
+    private com.hrms.application.workflow.service.WorkflowService workflowService;
+
     @InjectMocks
     private RecruitmentManagementService recruitmentManagementService;
 

@@ -514,8 +514,8 @@ export function usePermissions(): UsePermissionsReturn {
       // Check permission hierarchy: MODULE:MANAGE implies all actions in that module
       const parts = permission.split(':');
       if (parts.length >= 2) {
-        const module = parts[0];
-        if (permissions.includes(`${module}:MANAGE`)) return true;
+        const permModule = parts[0];
+        if (permissions.includes(`${permModule}:MANAGE`)) return true;
       }
       return false;
     },

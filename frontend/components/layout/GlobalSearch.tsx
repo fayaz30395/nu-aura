@@ -415,7 +415,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
             {allSelectableItems.length === 0 && !isSearching ? (
               <div className="px-4 py-8 text-center">
                 <HelpCircle className="h-10 w-10 text-surface-300 dark:text-surface-600 mx-auto mb-3" />
-                <p className="text-sm text-surface-500">No results found for "{query}"</p>
+                <p className="text-sm text-surface-500">No results found for &quot;{query}&quot;</p>
                 <p className="text-xs text-surface-400 mt-1">Try a different search term</p>
               </div>
             ) : (

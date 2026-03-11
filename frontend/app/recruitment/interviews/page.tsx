@@ -1,14 +1,20 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { recruitmentService } from '@/lib/services/recruitment.service';
-import { employeeService } from '@/lib/services/employee.service';
 import { Interview, CreateInterviewRequest, InterviewStatus, InterviewRound, InterviewType, InterviewResult, Candidate, JobOpening } from '@/lib/types/recruitment';
-import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react';
+import { Employee } from '@/lib/types/employee';
+import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validations/recruitment';
+import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings } from '@/lib/hooks/queries/useRecruitment';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/ai-recruitment';
+import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save } from 'lucide-react';
 
 // Loading fallback
 function InterviewsPageLoading() {
@@ -36,69 +42,75 @@ function InterviewsPage() {
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
 
+  // Query hooks
+  const { data: candidatesData } = useCandidates(0, 100);
+  const { data: jobOpeningsData } = useJobOpenings(0, 100);
+  const { data: employeesData } = useEmployees(0, 100);
+
+  const scheduleInterviewMutation = useScheduleInterview();
+  const updateInterviewMutation = useUpdateInterview();
+  const deleteInterviewMutation = useDeleteInterview();
+  const generateQuestionsMutation = useGenerateInterviewQuestions();
+
+  // Local state
   const [interviews, setInterviews] = useState<Interview[]>([]);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
-  const [interviewers, setInterviewers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [interviewToDelete, setInterviewToDelete] = useState<Interview | null>(null);
   const [selectedInterview, setSelectedInterview] = useState<Interview | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingInterview, setEditingInterview] = useState<Interview | null>(null);
+  const [generatedQuestions, setGeneratedQuestions] = useState<InterviewQuestionsResponse | null>(null);
 
-  const [formData, setFormData] = useState<CreateInterviewRequest>({
-    candidateId: candidateIdFilter || '',
-    jobOpeningId: '',
-    interviewRound: 'SCREENING',
-    interviewType: 'VIDEO',
-    scheduledAt: '',
-    durationMinutes: 60,
-    interviewerId: '',
-    location: '',
-    meetingLink: '',
-    status: 'SCHEDULED',
-    feedback: '',
-    rating: undefined,
-    result: 'PENDING',
-    notes: '',
+  // React Hook Form for create/edit modal
+  const {
+    register: registerCreate,
+    watch: watchCreate,
+    setValue: setValueCreate,
+    handleSubmit: handleSubmitCreate,
+    reset: resetCreate,
+    formState: { errors: errorsCreate },
+  } = useForm<CreateInterviewFormData>({
+    resolver: zodResolver(createInterviewSchema),
+    mode: 'onBlur',
   });
 
-  useEffect(() => {
-    loadData();
-  }, [candidateIdFilter, statusFilter]);
+  // React Hook Form for feedback modal
+  const {
+    register: registerFeedback,
+    watch: watchFeedback,
+    setValue: setValueFeedback,
+    handleSubmit: handleSubmitFeedback,
+    reset: resetFeedback,
+    formState: { errors: errorsFeedback },
+  } = useForm<CreateInterviewFormData>({
+    resolver: zodResolver(createInterviewSchema),
+    mode: 'onBlur',
+  });
 
-  const loadData = async () => {
+  const candidates = candidatesData?.content || [];
+  const jobOpenings = jobOpeningsData?.content || [];
+  const interviewers = employeesData?.content || [];
+
+  const loadInterviews = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // Load candidates, job openings, and interviewers
-      const [candidatesRes, jobsRes, employeesRes] = await Promise.all([
-        recruitmentService.getAllCandidates(0, 100),
-        recruitmentService.getAllJobOpenings(0, 100),
-        employeeService.getAllEmployees(0, 100),
-      ]);
-
-      setCandidates(candidatesRes.content);
-      setJobOpenings(jobsRes.content);
-      setInterviewers(employeesRes.content);
-
-      // Load interviews - if candidateIdFilter is set, get interviews for that candidate
       if (candidateIdFilter) {
-        const interviewsList = await recruitmentService.getInterviewsByCandidate(candidateIdFilter);
+        // Load interviews for specific candidate
+        const interviewsList = await fetch(
+          `/api/recruitment/candidates/${candidateIdFilter}/interviews`
+        ).then(res => res.json());
         setInterviews(interviewsList);
       } else {
-        // For now, we'll aggregate interviews from all candidates
-        // In a real app, you'd have a getAllInterviews endpoint
+        // Aggregate interviews from all candidates
         const allInterviews: Interview[] = [];
-        for (const candidate of candidatesRes.content.slice(0, 20)) {
+        for (const candidate of candidates.slice(0, 20)) {
           try {
-            const candidateInterviews = await recruitmentService.getInterviewsByCandidate(candidate.id);
+            const candidateInterviews = await fetch(
+              `/api/recruitment/candidates/${candidate.id}/interviews`
+            ).then(res => res.json());
             allInterviews.push(...candidateInterviews);
           } catch (e) {
             // Ignore errors for individual candidates
@@ -106,178 +118,337 @@ function InterviewsPage() {
         }
         setInterviews(allInterviews);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load data');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load interviews',
+        color: 'red',
+      });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Load interviews on mount and when filters/candidates change
+  useEffect(() => {
+    loadInterviews();
+  }, [candidateIdFilter, statusFilter, candidates.length]);
+
+  const onSubmitCreate = async (data: CreateInterviewFormData) => {
     try {
-      setError(null);
+      const submitData: CreateInterviewRequest = {
+        candidateId: data.candidateId,
+        jobOpeningId: data.jobOpeningId,
+        interviewRound: data.interviewRound,
+        interviewType: data.interviewType,
+        scheduledAt: data.scheduledAt,
+        durationMinutes: data.durationMinutes,
+        interviewerId: data.interviewerId,
+        location: data.location,
+        meetingLink: data.meetingLink,
+        status: data.status,
+        feedback: data.feedback,
+        rating: data.rating,
+        result: data.result,
+        notes: data.notes,
+      };
+
       if (editingInterview) {
-        await recruitmentService.updateInterview(editingInterview.id, formData);
+        await updateInterviewMutation.mutateAsync({
+          id: editingInterview.id,
+          data: submitData,
+        });
+        notifications.show({
+          title: 'Success',
+          message: 'Interview updated successfully',
+          color: 'green',
+        });
       } else {
-        await recruitmentService.scheduleInterview(formData);
+        await scheduleInterviewMutation.mutateAsync(submitData);
+        notifications.show({
+          title: 'Success',
+          message: 'Interview scheduled successfully',
+          color: 'green',
+        });
       }
       setShowAddModal(false);
-      resetForm();
-      loadData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save interview');
+      resetCreate();
+      setEditingInterview(null);
+      loadInterviews();
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to save interview',
+        color: 'red',
+      });
     }
   };
 
-  const handleFeedbackSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmitFeedback = async (data: CreateInterviewFormData) => {
     if (!selectedInterview) return;
     try {
-      setError(null);
-      await recruitmentService.updateInterview(selectedInterview.id, {
-        ...formData,
+      const submitData: CreateInterviewRequest = {
+        candidateId: data.candidateId,
+        jobOpeningId: data.jobOpeningId,
         status: 'COMPLETED',
+        feedback: data.feedback,
+        rating: data.rating,
+        result: data.result,
+        notes: data.notes,
+        interviewRound: data.interviewRound,
+        interviewType: data.interviewType,
+        scheduledAt: data.scheduledAt,
+        durationMinutes: data.durationMinutes,
+        interviewerId: data.interviewerId,
+        location: data.location,
+        meetingLink: data.meetingLink,
+      };
+      await updateInterviewMutation.mutateAsync({
+        id: selectedInterview.id,
+        data: submitData,
+      });
+      notifications.show({
+        title: 'Success',
+        message: 'Feedback submitted successfully',
+        color: 'green',
       });
       setShowFeedbackModal(false);
       setSelectedInterview(null);
-      resetForm();
-      loadData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to submit feedback');
+      resetFeedback();
+      loadInterviews();
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to submit feedback',
+        color: 'red',
+      });
     }
   };
 
   const handleEdit = (interview: Interview) => {
     setEditingInterview(interview);
-    setFormData({
+    const formValues: CreateInterviewFormData = {
       candidateId: interview.candidateId,
       jobOpeningId: interview.jobOpeningId,
       interviewRound: interview.interviewRound || 'SCREENING',
       interviewType: interview.interviewType || 'VIDEO',
       scheduledAt: interview.scheduledAt || '',
       durationMinutes: interview.durationMinutes || 60,
-      interviewerId: interview.interviewerId || '',
-      location: interview.location || '',
-      meetingLink: interview.meetingLink || '',
+      interviewerId: interview.interviewerId,
+      location: interview.location,
+      meetingLink: interview.meetingLink,
       status: interview.status,
-      feedback: interview.feedback || '',
+      feedback: interview.feedback,
       rating: interview.rating,
       result: interview.result || 'PENDING',
-      notes: interview.notes || '',
-    });
+      notes: interview.notes,
+    };
+    resetCreate(formValues);
     setShowAddModal(true);
   };
 
   const handleProvideFeedback = (interview: Interview) => {
     setSelectedInterview(interview);
-    setFormData({
-      ...formData,
+    const feedbackValues: CreateInterviewFormData = {
       candidateId: interview.candidateId,
       jobOpeningId: interview.jobOpeningId,
       interviewRound: interview.interviewRound || 'SCREENING',
       interviewType: interview.interviewType || 'VIDEO',
       scheduledAt: interview.scheduledAt || '',
       durationMinutes: interview.durationMinutes || 60,
-      interviewerId: interview.interviewerId || '',
-      location: interview.location || '',
-      meetingLink: interview.meetingLink || '',
+      interviewerId: interview.interviewerId,
+      location: interview.location,
+      meetingLink: interview.meetingLink,
       status: 'COMPLETED',
-      feedback: interview.feedback || '',
+      feedback: interview.feedback,
       rating: interview.rating,
       result: interview.result || 'PENDING',
-      notes: interview.notes || '',
-    });
+      notes: interview.notes,
+    };
+    resetFeedback(feedbackValues);
     setShowFeedbackModal(true);
   };
 
   const handleDelete = async () => {
     if (!interviewToDelete) return;
     try {
-      await recruitmentService.deleteInterview(interviewToDelete.id);
+      await deleteInterviewMutation.mutateAsync(interviewToDelete.id);
+      notifications.show({
+        title: 'Success',
+        message: 'Interview deleted successfully',
+        color: 'green',
+      });
       setShowDeleteModal(false);
       setInterviewToDelete(null);
-      loadData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete interview');
+      loadInterviews();
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to delete interview',
+        color: 'red',
+      });
     }
   };
 
-  const resetForm = () => {
-    setEditingInterview(null);
-    setFormData({
-      candidateId: candidateIdFilter || '',
-      jobOpeningId: '',
-      interviewRound: 'SCREENING',
-      interviewType: 'VIDEO',
-      scheduledAt: '',
-      durationMinutes: 60,
-      interviewerId: '',
-      location: '',
-      meetingLink: '',
-      status: 'SCHEDULED',
-      feedback: '',
-      rating: undefined,
-      result: 'PENDING',
-      notes: '',
+  const handleGenerateQuestions = async () => {
+    const jobOpeningId = watchCreate('jobOpeningId');
+    const candidateId = watchCreate('candidateId');
+
+    if (!jobOpeningId || !candidateId) {
+      notifications.show({
+        title: 'Error',
+        message: 'Please select both a job opening and candidate',
+        color: 'red',
+      });
+      return;
+    }
+
+    try {
+      const response = await generateQuestionsMutation.mutateAsync({
+        jobOpeningId,
+        candidateId,
+      });
+      setGeneratedQuestions(response);
+      setShowQuestionsModal(true);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to generate interview questions',
+        color: 'red',
+      });
+    }
+  };
+
+  const handleCopyQuestions = () => {
+    if (!generatedQuestions) return;
+
+    const formatted = formatQuestionsForCopy(generatedQuestions);
+    navigator.clipboard.writeText(formatted);
+    notifications.show({
+      title: 'Success',
+      message: 'Questions copied to clipboard',
+      color: 'green',
     });
   };
 
-  const getStatusColor = (status: InterviewStatus) => {
-    switch (status) {
-      case 'SCHEDULED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'RESCHEDULED': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'COMPLETED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      case 'NO_SHOW': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-    }
+  const handleSaveQuestionsToNotes = () => {
+    if (!generatedQuestions) return;
+
+    const formatted = formatQuestionsForCopy(generatedQuestions);
+    const currentNotes = watchCreate('notes') || '';
+    const newNotes = currentNotes
+      ? `${currentNotes}\n\n--- AI Generated Questions ---\n${formatted}`
+      : `--- AI Generated Questions ---\n${formatted}`;
+
+    setValueCreate('notes', newNotes);
+    setShowQuestionsModal(false);
+    notifications.show({
+      title: 'Success',
+      message: 'Questions added to interview notes',
+      color: 'green',
+    });
   };
 
-  const getResultColor = (result?: InterviewResult) => {
-    switch (result) {
-      case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'PENDING': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+  const formatQuestionsForCopy = (questions: InterviewQuestionsResponse): string => {
+    let result = '';
+
+    if (questions.technicalQuestions && questions.technicalQuestions.length > 0) {
+      result += '## Technical Questions\n';
+      questions.technicalQuestions.forEach((q: TechnicalQuestion) => {
+        result += `\n- ${q.question}\n`;
+        result += `  Difficulty: ${q.difficulty}\n`;
+        if (q.purpose) result += `  Purpose: ${q.purpose}\n`;
+      });
     }
+
+    if (questions.behavioralQuestions && questions.behavioralQuestions.length > 0) {
+      result += '\n\n## Behavioral Questions\n';
+      questions.behavioralQuestions.forEach((q: BehavioralQuestion) => {
+        result += `\n- ${q.question}\n`;
+        result += `  Competency: ${q.competency}\n`;
+      });
+    }
+
+    if (questions.situationalQuestions && questions.situationalQuestions.length > 0) {
+      result += '\n\n## Situational Questions\n';
+      questions.situationalQuestions.forEach((q: SituationalQuestion) => {
+        result += `\n- ${q.question}\n`;
+        result += `  Scenario: ${q.scenario}\n`;
+      });
+    }
+
+    if (questions.culturalFitQuestions && questions.culturalFitQuestions.length > 0) {
+      result += '\n\n## Cultural Fit Questions\n';
+      questions.culturalFitQuestions.forEach((q: CulturalFitQuestion) => {
+        result += `\n- ${q.question}\n`;
+        result += `  Value: ${q.value}\n`;
+      });
+    }
+
+    if (questions.roleSpecificQuestions && questions.roleSpecificQuestions.length > 0) {
+      result += '\n\n## Role-Specific Questions\n';
+      questions.roleSpecificQuestions.forEach((q: RoleSpecificQuestion) => {
+        result += `\n- ${q.question}\n`;
+        result += `  Focus: ${q.focus}\n`;
+      });
+    }
+
+    return result;
   };
 
-  const getTypeIcon = (type?: InterviewType) => {
-    switch (type) {
-      case 'VIDEO': return <Video className="h-4 w-4" />;
-      case 'PHONE': return <Phone className="h-4 w-4" />;
-      case 'IN_PERSON': return <MapPin className="h-4 w-4" />;
-      default: return <Calendar className="h-4 w-4" />;
-    }
-  };
+const getStatusColor = (status: InterviewStatus): string => {
+  switch (status) {
+    case 'SCHEDULED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+    case 'RESCHEDULED': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+    case 'COMPLETED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+    case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+    case 'NO_SHOW': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+  }
+};
 
-  const filteredInterviews = interviews.filter(interview => {
-    const matchesStatus = !statusFilter || interview.status === statusFilter;
-    const matchesSearch = !searchQuery ||
-      interview.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      interview.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+const getResultColor = (result?: InterviewResult): string => {
+  switch (result) {
+    case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+    case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
+    case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+    case 'PENDING': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+  }
+};
+
+const getTypeIcon = (type?: InterviewType): React.ReactNode => {
+  switch (type) {
+    case 'VIDEO': return <Video className="h-4 w-4" />;
+    case 'PHONE': return <Phone className="h-4 w-4" />;
+    case 'IN_PERSON': return <MapPin className="h-4 w-4" />;
+    default: return <Calendar className="h-4 w-4" />;
+  }
+};
+
+const filteredInterviews = interviews.filter(interview => {
+  const matchesStatus = !statusFilter || interview.status === statusFilter;
+  const matchesSearch = !searchQuery ||
+    interview.candidateName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    interview.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase());
+  return matchesStatus && matchesSearch;
+});
+
+const stats = {
+  total: interviews.length,
+  scheduled: interviews.filter(i => i.status === 'SCHEDULED').length,
+  completed: interviews.filter(i => i.status === 'COMPLETED').length,
+  pending: interviews.filter(i => i.result === 'PENDING').length,
+};
+
+const formatDateTime = (dateString?: string): string => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
-
-  const stats = {
-    total: interviews.length,
-    scheduled: interviews.filter(i => i.status === 'SCHEDULED').length,
-    completed: interviews.filter(i => i.status === 'COMPLETED').length,
-    pending: interviews.filter(i => i.result === 'PENDING').length,
-  };
-
-  const formatDateTime = (dateString?: string) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+};
 
   return (
     <AppLayout activeMenuItem="recruitment">
@@ -288,7 +459,7 @@ function InterviewsPage() {
             <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interviews</h1>
             <p className="text-surface-600 dark:text-surface-400 mt-1">Schedule and manage candidate interviews</p>
           </div>
-          <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="flex items-center gap-2">
+          <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Schedule Interview
           </Button>
@@ -350,13 +521,6 @@ function InterviewsPage() {
           </Card>
         </div>
 
-        {/* Error */}
-        {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          </div>
-        )}
-
         {/* Search and Filters */}
         <Card className="bg-white dark:bg-surface-900">
           <CardContent className="p-4">
@@ -390,13 +554,11 @@ function InterviewsPage() {
         {/* Interviews List */}
         <Card className="bg-white dark:bg-surface-900">
           <CardContent className="p-0">
-            {loading ? (
-              <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading interviews...</div>
-            ) : filteredInterviews.length === 0 ? (
+            {filteredInterviews.length === 0 ? (
               <div className="text-center py-12">
                 <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
                 <p className="text-surface-500 dark:text-surface-400">No interviews found</p>
-                <Button onClick={() => { resetForm(); setShowAddModal(true); }} className="mt-4">
+                <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="mt-4">
                   Schedule First Interview
                 </Button>
               </div>
@@ -511,25 +673,23 @@ function InterviewsPage() {
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetForm(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate *</label>
                       <select
-                        required
-                        value={formData.candidateId}
+                        {...registerCreate('candidateId')}
                         onChange={(e) => {
                           const candidate = candidates.find(c => c.id === e.target.value);
-                          setFormData({
-                            ...formData,
-                            candidateId: e.target.value,
-                            jobOpeningId: candidate?.jobOpeningId || formData.jobOpeningId
-                          });
+                          setValueCreate('candidateId', e.target.value);
+                          if (candidate?.jobOpeningId) {
+                            setValueCreate('jobOpeningId', candidate.jobOpeningId);
+                          }
                         }}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
@@ -538,13 +698,12 @@ function InterviewsPage() {
                           <option key={candidate.id} value={candidate.id}>{candidate.fullName}</option>
                         ))}
                       </select>
+                      {errorsCreate.candidateId && <p className="text-red-500 text-xs mt-1">{errorsCreate.candidateId.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
                       <select
-                        required
-                        value={formData.jobOpeningId}
-                        onChange={(e) => setFormData({ ...formData, jobOpeningId: e.target.value })}
+                        {...registerCreate('jobOpeningId')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Job Opening</option>
@@ -552,6 +711,7 @@ function InterviewsPage() {
                           <option key={job.id} value={job.id}>{job.jobTitle}</option>
                         ))}
                       </select>
+                      {errorsCreate.jobOpeningId && <p className="text-red-500 text-xs mt-1">{errorsCreate.jobOpeningId.message}</p>}
                     </div>
                   </div>
 
@@ -559,8 +719,7 @@ function InterviewsPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Round</label>
                       <select
-                        value={formData.interviewRound}
-                        onChange={(e) => setFormData({ ...formData, interviewRound: e.target.value as InterviewRound })}
+                        {...registerCreate('interviewRound')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="SCREENING">Screening</option>
@@ -574,8 +733,7 @@ function InterviewsPage() {
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Type</label>
                       <select
-                        value={formData.interviewType}
-                        onChange={(e) => setFormData({ ...formData, interviewType: e.target.value as InterviewType })}
+                        {...registerCreate('interviewType')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="VIDEO">Video Call</option>
@@ -590,11 +748,10 @@ function InterviewsPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Scheduled Date & Time *</label>
                       <input
                         type="datetime-local"
-                        required
-                        value={formData.scheduledAt || ''}
-                        onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
+                        {...registerCreate('scheduledAt')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errorsCreate.scheduledAt && <p className="text-red-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Duration (minutes)</label>
@@ -602,22 +759,21 @@ function InterviewsPage() {
                         type="number"
                         min="15"
                         step="15"
-                        value={formData.durationMinutes || 60}
-                        onChange={(e) => setFormData({ ...formData, durationMinutes: parseInt(e.target.value) })}
+                        {...registerCreate('durationMinutes')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errorsCreate.durationMinutes && <p className="text-red-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interviewer</label>
                     <select
-                      value={formData.interviewerId || ''}
-                      onChange={(e) => setFormData({ ...formData, interviewerId: e.target.value })}
+                      {...registerCreate('interviewerId')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     >
                       <option value="">Select Interviewer</option>
-                      {interviewers.map((interviewer) => (
+                      {interviewers.map((interviewer: Employee) => (
                         <option key={interviewer.id} value={interviewer.id}>{interviewer.fullName}</option>
                       ))}
                     </select>
@@ -628,40 +784,49 @@ function InterviewsPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Meeting Link</label>
                       <input
                         type="url"
-                        value={formData.meetingLink || ''}
-                        onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        {...registerCreate('meetingLink')}
                         placeholder="https://meet.google.com/..."
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errorsCreate.meetingLink && <p className="text-red-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
                       <input
                         type="text"
-                        value={formData.location || ''}
-                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        {...registerCreate('location')}
                         placeholder="Conference Room A"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">Notes</label>
+                      <button
+                        type="button"
+                        onClick={handleGenerateQuestions}
+                        disabled={generateQuestionsMutation.isPending}
+                        className="flex items-center gap-1 text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 disabled:opacity-50"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Generate AI Questions
+                      </button>
+                    </div>
                     <textarea
                       rows={3}
-                      value={formData.notes || ''}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      {...registerCreate('notes')}
                       placeholder="Additional notes..."
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
                   <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetForm(); }} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="flex-1">
                       Cancel
                     </Button>
-                    <Button type="submit" className="flex-1">
+                    <Button type="submit" disabled={scheduleInterviewMutation.isPending || updateInterviewMutation.isPending} className="flex-1">
                       {editingInterview ? 'Update Interview' : 'Schedule Interview'}
                     </Button>
                   </div>
@@ -678,7 +843,7 @@ function InterviewsPage() {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interview Feedback</h2>
-                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -689,7 +854,7 @@ function InterviewsPage() {
                   <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
                 </div>
 
-                <form onSubmit={handleFeedbackSubmit} className="space-y-6">
+                <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Rating (1-5)</label>
                     <div className="flex gap-2">
@@ -697,14 +862,14 @@ function InterviewsPage() {
                         <button
                           key={rating}
                           type="button"
-                          onClick={() => setFormData({ ...formData, rating })}
+                          onClick={() => setValueFeedback('rating', rating)}
                           className={`p-2 rounded-xl transition-colors ${
-                            formData.rating === rating
+                            watchFeedback('rating') === rating
                               ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
                               : 'bg-surface-100 dark:bg-surface-800 text-surface-400 hover:text-yellow-500'
                           }`}
                         >
-                          <Star className={`h-6 w-6 ${formData.rating && formData.rating >= rating ? 'fill-current' : ''}`} />
+                          <Star className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`} />
                         </button>
                       ))}
                     </div>
@@ -713,8 +878,7 @@ function InterviewsPage() {
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Result</label>
                     <select
-                      value={formData.result}
-                      onChange={(e) => setFormData({ ...formData, result: e.target.value as InterviewResult })}
+                      {...registerFeedback('result')}
                       className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     >
                       <option value="PENDING">Pending</option>
@@ -728,19 +892,18 @@ function InterviewsPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Feedback *</label>
                     <textarea
                       rows={4}
-                      required
-                      value={formData.feedback || ''}
-                      onChange={(e) => setFormData({ ...formData, feedback: e.target.value })}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      {...registerFeedback('feedback')}
                       placeholder="Provide detailed feedback about the candidate's performance..."
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
+                    {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
 
                   <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); }} className="flex-1">
+                    <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="flex-1">
                       Cancel
                     </Button>
-                    <Button type="submit" className="flex-1">
+                    <Button type="submit" disabled={updateInterviewMutation.isPending} className="flex-1">
                       Submit Feedback
                     </Button>
                   </div>
@@ -767,9 +930,128 @@ function InterviewsPage() {
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete} className="flex-1">
+                <Button variant="destructive" onClick={handleDelete} disabled={deleteInterviewMutation.isPending} className="flex-1">
                   Delete
                 </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI Interview Questions Modal */}
+        {showQuestionsModal && generatedQuestions && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary-500" />
+                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">AI Interview Questions</h2>
+                  </div>
+                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto">
+                  {/* Technical Questions */}
+                  {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Technical Questions</h3>
+                      <div className="space-y-3">
+                        {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
+                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                              <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
+                                q.difficulty === 'easy' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
+                                q.difficulty === 'medium' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
+                                'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                              }`}>
+                                {q.difficulty}
+                              </span>
+                            </div>
+                            {q.purpose && <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Purpose: {q.purpose}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Behavioral Questions */}
+                  {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Behavioral Questions</h3>
+                      <div className="space-y-3">
+                        {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
+                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Competency: {q.competency}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Situational Questions */}
+                  {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Situational Questions</h3>
+                      <div className="space-y-3">
+                        {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
+                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Scenario: {q.scenario}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cultural Fit Questions */}
+                  {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Cultural Fit Questions</h3>
+                      <div className="space-y-3">
+                        {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
+                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Value: {q.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Role-Specific Questions */}
+                  {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Role-Specific Questions</h3>
+                      <div className="space-y-3">
+                        {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
+                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Focus: {q.focus}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700 mt-6">
+                  <Button type="button" variant="outline" onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="flex-1">
+                    Close
+                  </Button>
+                  <Button type="button" onClick={handleCopyQuestions} className="flex-1 flex items-center justify-center gap-2">
+                    <Copy className="h-4 w-4" />
+                    Copy All
+                  </Button>
+                  <Button type="button" onClick={handleSaveQuestionsToNotes} className="flex-1 flex items-center justify-center gap-2">
+                    <Save className="h-4 w-4" />
+                    Save to Notes
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

@@ -314,4 +314,41 @@ public class JwtTokenProvider {
         String id = getClaims(token).get("teamId", String.class);
         return id != null ? UUID.fromString(id) : null;
     }
+
+    /**
+     * Generate an impersonation token for SuperAdmin cross-tenant access
+     * SuperAdmin can use this token to act as if they are a member of the target tenant
+     */
+    public String generateImpersonationToken(UUID userId, String email, UUID targetTenantId, Set<String> roles) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpiration);
+
+        // Combine roles with ROLE_ prefix for Spring Security
+        List<String> authorities = new ArrayList<>();
+        roles.forEach(role -> authorities.add("ROLE_" + role));
+
+        return Jwts.builder()
+                .id(generateJti()) // JTI for token revocation
+                .subject(email)
+                .claim("userId", userId.toString())
+                .claim("tenantId", targetTenantId.toString())
+                .claim("roles", new ArrayList<>(roles))
+                .claim("isImpersonation", true) // Flag to indicate this is an impersonation token
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    /**
+     * Check if a token is an impersonation token
+     */
+    public boolean isImpersonationToken(String token) {
+        try {
+            Boolean isImpersonation = getClaims(token).get("isImpersonation", Boolean.class);
+            return isImpersonation != null && isImpersonation;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Box,
   Button,
@@ -21,7 +24,6 @@ import {
   Table,
   LoadingOverlay,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,12 +39,25 @@ interface StatutoryDeductions {
   totalEmployerContributions: number;
 }
 
-interface PreviewFormValues {
-  employeeId: string;
-  basicSalary: number | string;
-  grossSalary: number | string;
-  state: string;
-}
+// ─── Validation Schema ────────────────────────────────────────────────────────
+
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const PreviewFormSchema = z.object({
+  employeeId: z
+    .string()
+    .min(1, 'Employee ID is required')
+    .regex(uuidRegex, 'Must be a valid UUID (e.g. 550e8400-e29b-41d4-a716-446655440000)'),
+  basicSalary: z.coerce
+    .number()
+    .positive('Basic salary must be greater than 0'),
+  grossSalary: z.coerce
+    .number()
+    .positive('Gross salary must be greater than 0'),
+  state: z.string().min(1, 'State is required'),
+});
+
+type PreviewFormValues = z.infer<typeof PreviewFormSchema>;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -70,24 +85,12 @@ export default function StatutoryPage() {
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<PreviewFormValues>({
-    initialValues: {
+    resolver: zodResolver(PreviewFormSchema),
+    defaultValues: {
       employeeId: '',
-      basicSalary: '',
-      grossSalary: '',
+      basicSalary: 0,
+      grossSalary: 0,
       state: 'Karnataka',
-    },
-    validate: {
-      employeeId: (v) =>
-        v.trim().length === 0
-          ? 'Employee ID is required'
-          : !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v.trim())
-          ? 'Must be a valid UUID (e.g. 550e8400-e29b-41d4-a716-446655440000)'
-          : null,
-      basicSalary: (v) =>
-        !v || Number(v) <= 0 ? 'Basic salary must be greater than 0' : null,
-      grossSalary: (v) =>
-        !v || Number(v) <= 0 ? 'Gross salary must be greater than 0' : null,
-      state: (v) => (!v ? 'State is required' : null),
     },
   });
 
@@ -108,10 +111,11 @@ export default function StatutoryPage() {
         `/payroll/statutory/preview?${params.toString()}`
       );
       setResult(response.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const axiosError = err as any;
       setError(
-        err?.response?.data?.message ||
-          err?.message ||
+        axiosError?.response?.data?.message ||
+          axiosError?.message ||
           'Failed to calculate statutory deductions. Check your inputs and try again.'
       );
     } finally {
@@ -147,43 +151,79 @@ export default function StatutoryPage() {
                   Input Parameters
                 </Title>
 
-                <form onSubmit={form.onSubmit(handleCalculate)}>
+                <form onSubmit={form.handleSubmit(handleCalculate)}>
                   <Stack gap="md">
-                    <TextInput
-                      label="Employee ID"
-                      description="Enter the employee UUID"
-                      placeholder="550e8400-e29b-41d4-a716-446655440000"
-                      {...form.getInputProps('employeeId')}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Employee ID
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="550e8400-e29b-41d4-a716-446655440000"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...form.register('employeeId')}
+                      />
+                      {form.formState.errors.employeeId && (
+                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.employeeId.message}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-1">Enter the employee UUID</p>
+                    </div>
 
-                    <NumberInput
-                      label="Basic Salary (INR / month)"
-                      description="Monthly basic component only"
-                      placeholder="25000"
-                      min={0}
-                      decimalScale={2}
-                      thousandSeparator=","
-                      prefix="₹"
-                      {...form.getInputProps('basicSalary')}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Basic Salary (INR / month)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="25000"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...form.register('basicSalary')}
+                      />
+                      {form.formState.errors.basicSalary && (
+                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.basicSalary.message}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-1">Monthly basic component only</p>
+                    </div>
 
-                    <NumberInput
-                      label="Gross Salary (INR / month)"
-                      description="Basic + all allowances"
-                      placeholder="40000"
-                      min={0}
-                      decimalScale={2}
-                      thousandSeparator=","
-                      prefix="₹"
-                      {...form.getInputProps('grossSalary')}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Gross Salary (INR / month)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="40000"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...form.register('grossSalary')}
+                      />
+                      {form.formState.errors.grossSalary && (
+                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.grossSalary.message}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-1">Basic + all allowances</p>
+                    </div>
 
-                    <Select
-                      label="State"
-                      description="Used for Professional Tax slab"
-                      data={STATE_OPTIONS}
-                      {...form.getInputProps('state')}
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        State
+                      </label>
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        {...form.register('state')}
+                      >
+                        {STATE_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                      {form.formState.errors.state && (
+                        <p className="text-red-600 text-xs mt-1">{form.formState.errors.state.message}</p>
+                      )}
+                      <p className="text-gray-500 text-xs mt-1">Used for Professional Tax slab</p>
+                    </div>
 
                     <Button
                       type="submit"

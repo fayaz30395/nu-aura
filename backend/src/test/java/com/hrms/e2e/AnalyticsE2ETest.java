@@ -63,8 +63,8 @@ class AnalyticsE2ETest {
     private void setupSecurityContext() {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR"));
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
-        permissions.put("HRMS:REPORT:VIEW", RoleScope.GLOBAL);
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put("HRMS:REPORT:VIEW", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

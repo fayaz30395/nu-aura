@@ -3,6 +3,7 @@ package com.hrms.infrastructure.employee.repository;
 import com.hrms.domain.employee.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -22,20 +23,25 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Optional<Employee> findByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
+    @EntityGraph(attributePaths = {"user"})
     Optional<Employee> findByIdAndTenantId(UUID id, UUID tenantId);
 
     boolean existsByIdAndTenantId(UUID id, UUID tenantId);
 
     boolean existsByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
+    @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     List<Employee> findByTenantId(UUID tenantId);
 
+    @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantIdAndDepartmentId(UUID tenantId, UUID departmentId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND " +
            "(LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
            "LOWER(e.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -46,6 +52,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     Iterable<Employee> findAllByManagerId(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId);
 
     // Get direct reports for a manager
+    @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.managerId = :managerId AND e.status = 'ACTIVE'")
     List<Employee> findDirectReportsByManagerId(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId);
 
@@ -79,13 +86,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     Long countByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
 
     // Find employees by status
+    @EntityGraph(attributePaths = {"user"})
     List<Employee> findByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
 
     // Find employees by department IDs
+    @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.departmentId IN :departmentIds AND e.status = 'ACTIVE'")
     List<Employee> findByTenantIdAndDepartmentIdIn(@Param("tenantId") UUID tenantId, @Param("departmentIds") Set<UUID> departmentIds);
 
     // Find employees by location IDs
+    @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.officeLocationId IN :locationIds AND e.status = 'ACTIVE'")
     List<Employee> findByTenantIdAndOfficeLocationIdIn(@Param("tenantId") UUID tenantId, @Param("locationIds") Set<UUID> locationIds);
 
@@ -188,4 +198,25 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
             ") " +
             "ORDER BY EXTRACT(MONTH FROM e.joining_date), EXTRACT(DAY FROM e.joining_date)", nativeQuery = true)
     List<Object[]> findUpcomingAnniversariesWithDepartment(@Param("tenantId") UUID tenantId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    // ==================== EXPLICIT FETCH QUERIES (REQUIRED FOR LAZY ASSOCIATIONS) ====================
+
+    /**
+     * Find employee by ID with User eagerly fetched.
+     * Employee.user is a @OneToOne(LAZY) association, so direct access will cause LazyInitializationException.
+     * Use this when loading employee profiles or detail pages.
+     */
+    @Query("SELECT DISTINCT e FROM Employee e " +
+           "LEFT JOIN FETCH e.user " +
+           "WHERE e.id = :employeeId AND e.tenantId = :tenantId")
+    Optional<Employee> findByIdWithUser(@Param("employeeId") UUID employeeId, @Param("tenantId") UUID tenantId);
+
+    /**
+     * Find employee by User ID with User eagerly fetched.
+     * Commonly used in authentication flows to load employee details for a logged-in user.
+     */
+    @Query("SELECT DISTINCT e FROM Employee e " +
+           "LEFT JOIN FETCH e.user u " +
+           "WHERE u.id = :userId AND e.tenantId = :tenantId")
+    Optional<Employee> findByUserIdWithUser(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
 }

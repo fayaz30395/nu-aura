@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { itemVariants, microInteractions } from '@/lib/animations/variants';
 import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
 
 export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -109,19 +111,24 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     const isClickable = !!href || !!onAction;
 
     return (
-      <div
-        ref={ref}
-        onClick={onAction}
-        className={cn(
-          'group relative overflow-hidden rounded-2xl border p-6 transition-all duration-300',
-          config.bg,
-          config.border,
-          animated && 'animate-fade-in-up',
-          isClickable && 'cursor-pointer hover:shadow-lg hover:-translate-y-1',
-          className
-        )}
-        {...props}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        whileHover={isClickable ? { y: -4 } : undefined}
       >
+        <div
+          ref={ref}
+          onClick={onAction}
+          className={cn(
+            'group relative overflow-hidden rounded-2xl border p-6 transition-all duration-300',
+            config.bg,
+            config.border,
+            isClickable && 'cursor-pointer hover:shadow-lg',
+            className
+          )}
+          {...props}
+        >
         {/* Decorative accent line */}
         <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-2xl', config.accent)} />
 
@@ -194,7 +201,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             </button>
           </div>
         )}
-      </div>
+        </div>
+      </motion.div>
     );
   }
 );

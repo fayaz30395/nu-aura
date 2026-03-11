@@ -166,11 +166,11 @@ class LeaveRequestE2ETest {
     private void setupSecurityContext(UUID currentEmployeeId) {
         Set<String> roles = new HashSet<>(Arrays.asList("ADMIN", "HR", "EMPLOYEE"));
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:REQUEST", RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:VIEW_SELF", RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:CANCEL", RoleScope.GLOBAL);
-        permissions.put("HRMS:LEAVE:APPROVE", RoleScope.GLOBAL);
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:REQUEST", RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:VIEW_SELF", RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:CANCEL", RoleScope.ALL);
+        permissions.put("HRMS:LEAVE:APPROVE", RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, currentEmployeeId, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, ReactNode } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { modalVariants, overlayVariants } from '@/lib/animations/variants';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,8 +58,6 @@ const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen, onClose, closeOnEscape]);
 
-  if (!isOpen) return null;
-
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-lg',
@@ -67,31 +67,42 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      aria-modal="true"
-      role="dialog"
-    >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
-        onClick={closeOnBackdrop ? onClose : undefined}
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          aria-modal="true"
+          role="dialog"
+        >
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={closeOnBackdrop ? onClose : undefined}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={overlayVariants}
+          />
 
-      {/* Modal */}
-      <div
-        className={cn(
-          'relative w-full bg-white dark:bg-surface-800 rounded-xl shadow-xl',
-          'max-h-[90vh] overflow-hidden flex flex-col',
-          'animate-scale-in',
-          sizeClasses[size],
-          className
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children}
-      </div>
-    </div>
+          {/* Modal */}
+          <motion.div
+            className={cn(
+              'relative w-full bg-white dark:bg-surface-800 rounded-xl shadow-xl',
+              'max-h-[90vh] overflow-hidden flex flex-col',
+              sizeClasses[size],
+              className
+            )}
+            onClick={(e) => e.stopPropagation()}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={modalVariants}
+          >
+            {children}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
 

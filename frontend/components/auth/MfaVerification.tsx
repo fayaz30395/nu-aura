@@ -191,7 +191,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
         {/* Help Text */}
         <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
           <p className="text-xs text-blue-900 dark:text-blue-100 leading-relaxed">
-            Enter the code from your authenticator app. If you can't access your app, use one of your backup codes instead.
+            Enter the code from your authenticator app. If you can&apos;t access your app, use one of your backup codes instead.
           </p>
         </div>
       </CardContent>

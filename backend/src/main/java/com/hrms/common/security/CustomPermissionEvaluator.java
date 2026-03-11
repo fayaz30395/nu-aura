@@ -17,18 +17,36 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        if (authentication == null || !authentication.isAuthenticated() || permission == null) {
+        if (!isAuthenticated(authentication) || permission == null) {
             return false;
         }
+
+        if (isSuperAdmin(authentication)) {
+            return true;
+        }
+
         return securityService.hasPermission(authentication, permission.toString());
     }
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
             Object permission) {
-        if (authentication == null || !authentication.isAuthenticated() || permission == null) {
+        if (!isAuthenticated(authentication) || permission == null) {
             return false;
         }
+
+        if (isSuperAdmin(authentication)) {
+            return true;
+        }
+
         return securityService.hasPermission(authentication, permission.toString());
+    }
+
+    private boolean isAuthenticated(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated();
+    }
+
+    private boolean isSuperAdmin(Authentication authentication) {
+        return SecurityContext.isSuperAdmin();
     }
 }

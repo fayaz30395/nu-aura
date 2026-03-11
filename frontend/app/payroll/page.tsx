@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
+import { motion } from 'framer-motion';
+import { Banknote, FileText, Layers } from 'lucide-react';
+import { EmptyState } from '@/components/ui';
 import { payrollService } from '@/lib/services/payroll.service';
 import {
   PayrollRun,
@@ -443,7 +446,12 @@ export default function PayrollPage() {
 
   return (
     <AppLayout activeMenuItem="payroll">
-      <div className="p-6">
+      <motion.div
+        className="p-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -532,15 +540,16 @@ export default function PayrollPage() {
             {loading ? (
               <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading payroll runs...</div>
             ) : filteredPayrollRuns.length === 0 ? (
-              <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-12 text-center">
-                <div className="text-surface-600 dark:text-surface-400 mb-4">No payroll runs found</div>
-                <button
-                  onClick={handleCreatePayrollRun}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-                >
-                  Create Your First Payroll Run
-                </button>
-              </div>
+              <EmptyState
+                icon={<Banknote className="h-8 w-8" />}
+                title="No Payroll Runs Yet"
+                description="Create your first payroll run to manage employee salaries and payments"
+                action={{
+                  label: 'Create Payroll Run',
+                  onClick: handleCreatePayrollRun,
+                }}
+                iconColor="blue"
+              />
             ) : (
               <div className="overflow-x-auto bg-white dark:bg-surface-900 rounded-lg shadow-md">
                 <table className="w-full">
@@ -670,15 +679,16 @@ export default function PayrollPage() {
             {loading ? (
               <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading payslips...</div>
             ) : filteredPayslips.length === 0 ? (
-              <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-12 text-center">
-                <div className="text-surface-600 dark:text-surface-400 mb-4">No payslips found</div>
-                <button
-                  onClick={handleCreatePayslip}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-                >
-                  Create Your First Payslip
-                </button>
-              </div>
+              <EmptyState
+                icon={<FileText className="h-8 w-8" />}
+                title="No Payslips Found"
+                description="Generate payslips for your employees to view their salary details and deductions"
+                action={{
+                  label: 'Create Payslip',
+                  onClick: handleCreatePayslip,
+                }}
+                iconColor="cyan"
+              />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPayslips.map((payslip) => (
@@ -786,15 +796,16 @@ export default function PayrollPage() {
             {loading ? (
               <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading salary structures...</div>
             ) : filteredStructures.length === 0 ? (
-              <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-12 text-center">
-                <div className="text-surface-600 dark:text-surface-400 mb-4">No salary structures found</div>
-                <button
-                  onClick={handleCreateStructure}
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-                >
-                  Create Your First Structure
-                </button>
-              </div>
+              <EmptyState
+                icon={<Layers className="h-8 w-8" />}
+                title="No Salary Structures Yet"
+                description="Define salary structures with allowances and deductions for your employees"
+                action={{
+                  label: 'Create Structure',
+                  onClick: handleCreateStructure,
+                }}
+                iconColor="grape"
+              />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredStructures.map((structure) => (
@@ -1375,7 +1386,7 @@ export default function PayrollPage() {
           <div className="bg-white dark:bg-surface-900 rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Payroll Run</h2>
             <p className="text-surface-600 dark:text-surface-400 mb-6">
-              Are you sure you want to delete "{selectedPayrollRun.runName}"? This action cannot
+              Are you sure you want to delete &quot;{selectedPayrollRun.runName}&quot;? This action cannot
               be undone.
             </p>
             <div className="flex gap-4">
@@ -1459,7 +1470,7 @@ export default function PayrollPage() {
           </div>
         </div>
       )}
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

@@ -71,8 +71,8 @@ public class HrmsRoleInitializer {
         }
 
         private void createDefaultRoles(NuApplication app, UUID tenantId) {
-                // System Admin - Full access
-                createRoleIfNotExists(app, tenantId, "SYSTEM_ADMIN", "System Administrator",
+                // Super Admin - Full access
+                createRoleIfNotExists(app, tenantId, "SUPER_ADMIN", "Super Administrator",
                                 "Full system administration access", 100, true, false,
                                 Set.of(HrmsPermissionInitializer.SYSTEM_ADMIN));
 

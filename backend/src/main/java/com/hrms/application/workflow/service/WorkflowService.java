@@ -8,6 +8,11 @@ import com.hrms.domain.workflow.*;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.infrastructure.workflow.repository.*;
+import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.domain.event.workflow.ApprovalDecisionEvent;
+import com.hrms.domain.event.workflow.ApprovalTaskAssignedEvent;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +40,8 @@ public class WorkflowService {
     private final WorkflowRuleRepository workflowRuleRepository;
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final DomainEventPublisher domainEventPublisher;
+    private final AuditLogService auditLogService;
 
     /**
      * Get user name from employee repository, falling back to UUID prefix if not found.
@@ -351,6 +358,21 @@ public class WorkflowService {
         execution.addStepExecution(stepExecution);
         execution.setCurrentStepId(firstStep.getId());
         workflowExecutionRepository.save(execution);
+
+        // Publish event to notify the assigned approver
+        domainEventPublisher.publish(
+                ApprovalTaskAssignedEvent.of(
+                        this,
+                        execution.getTenantId(),
+                        stepExecution.getId(),
+                        assigneeId,
+                        execution.getEntityType().name(),
+                        execution.getRequesterName(),
+                        execution.getRequesterId()
+                )
+        );
+
+        log.debug("Published ApprovalTaskAssignedEvent for step {} assigned to {}", stepExecution.getId(), assigneeId);
     }
 
     private UUID determineApprover(WorkflowExecution execution, ApprovalStep step) {
@@ -454,6 +476,13 @@ public class WorkflowService {
         WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(executionId, tenantId)
                 .orElseThrow(() -> new BusinessException("Workflow execution not found"));
 
+        // Idempotency: if the workflow is already in a terminal state, return 409 (CONFLICT)
+        // BusinessException is mapped to HTTP 409 by GlobalExceptionHandler
+        if (execution.isCompleted()) {
+            throw new BusinessException(
+                    "This approval has already been processed. Current status: " + execution.getStatus());
+        }
+
         if (!execution.canBeApproved()) {
             throw new BusinessException("Workflow cannot be approved in current state: " + execution.getStatus());
         }
@@ -463,26 +492,63 @@ public class WorkflowService {
             throw new BusinessException("No pending step found");
         }
 
+        // Idempotency: if this specific step is already acted upon
+        if (currentStep.getStatus() != StepExecution.StepStatus.PENDING) {
+            throw new BusinessException(
+                    "This step has already been acted upon. Current status: " + currentStep.getStatus());
+        }
+
         if (!currentStep.canBeActedUponBy(currentUser)) {
             throw new BusinessException("You are not authorized to act on this step");
         }
 
         String userName = getUserName(currentUser, tenantId);
+        WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
 
         switch (request.getAction()) {
             case APPROVE:
                 currentStep.approve(currentUser, userName, request.getComments());
                 advanceToNextStep(execution, currentStep);
+                // Audit log: step approved
+                auditLogService.logAction(
+                        "WORKFLOW_EXECUTION",
+                        executionId,
+                        AuditAction.STATUS_CHANGE,
+                        StepExecution.StepStatus.PENDING.toString(),
+                        StepExecution.StepStatus.APPROVED.toString(),
+                        "Step '" + currentStep.getStepName() + "' approved for " + execution.getTitle() +
+                        (request.getComments() != null ? " - Comments: " + request.getComments() : "")
+                );
                 break;
 
             case REJECT:
                 currentStep.reject(currentUser, userName, request.getComments());
                 execution.reject(request.getComments());
+                // Audit log: workflow rejected
+                auditLogService.logAction(
+                        "WORKFLOW_EXECUTION",
+                        executionId,
+                        AuditAction.STATUS_CHANGE,
+                        oldStatus.toString(),
+                        WorkflowExecution.ExecutionStatus.REJECTED.toString(),
+                        "Workflow rejected at step '" + currentStep.getStepName() + "' for " + execution.getTitle() +
+                        (request.getComments() != null ? " - Reason: " + request.getComments() : "")
+                );
                 break;
 
             case RETURN_FOR_MODIFICATION:
                 currentStep.returnForModification(currentUser, userName, request.getComments());
                 execution.setStatus(WorkflowExecution.ExecutionStatus.RETURNED);
+                // Audit log: workflow returned
+                auditLogService.logAction(
+                        "WORKFLOW_EXECUTION",
+                        executionId,
+                        AuditAction.STATUS_CHANGE,
+                        oldStatus.toString(),
+                        WorkflowExecution.ExecutionStatus.RETURNED.toString(),
+                        "Workflow returned for modification at step '" + currentStep.getStepName() + "' for " + execution.getTitle() +
+                        (request.getComments() != null ? " - Reason: " + request.getComments() : "")
+                );
                 break;
 
             case DELEGATE:
@@ -493,10 +559,29 @@ public class WorkflowService {
                     throw new BusinessException("Delegation is not allowed for this step");
                 }
                 currentStep.delegate(currentUser, userName, request.getDelegateToUserId());
+                // Audit log: approval delegated
+                String delegateName = getUserName(request.getDelegateToUserId(), tenantId);
+                auditLogService.logAction(
+                        "WORKFLOW_EXECUTION",
+                        executionId,
+                        AuditAction.UPDATE,
+                        "Assigned to: " + userName,
+                        "Delegated to: " + delegateName,
+                        "Approval at step '" + currentStep.getStepName() + "' delegated for " + execution.getTitle()
+                );
                 break;
 
             case HOLD:
                 execution.setStatus(WorkflowExecution.ExecutionStatus.ON_HOLD);
+                // Audit log: workflow on hold
+                auditLogService.logAction(
+                        "WORKFLOW_EXECUTION",
+                        executionId,
+                        AuditAction.STATUS_CHANGE,
+                        oldStatus.toString(),
+                        WorkflowExecution.ExecutionStatus.ON_HOLD.toString(),
+                        "Workflow placed on hold for " + execution.getTitle()
+                );
                 break;
 
             default:
@@ -505,6 +590,14 @@ public class WorkflowService {
 
         WorkflowExecution saved = workflowExecutionRepository.save(execution);
         log.info("Processed action {} on execution {} by user {}", request.getAction(), executionId, currentUser);
+
+        // Publish domain event for APPROVE and REJECT actions
+        if (request.getAction() == StepExecution.ApprovalAction.APPROVE ||
+                request.getAction() == StepExecution.ApprovalAction.REJECT) {
+            String eventAction = request.getAction() == StepExecution.ApprovalAction.APPROVE ? "APPROVED" : "REJECTED";
+            domainEventPublisher.publish(
+                    ApprovalDecisionEvent.of(this, tenantId, saved, currentStep, eventAction, currentUser, request.getComments()));
+        }
 
         return WorkflowExecutionResponse.from(saved);
     }
@@ -515,7 +608,18 @@ public class WorkflowService {
 
         if (nextStep == null || workflow.isLastStep(completedStep.getStepOrder())) {
             // All steps completed
+            WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
             execution.approve();
+
+            // Audit log: workflow completed/approved
+            auditLogService.logAction(
+                    "WORKFLOW_EXECUTION",
+                    execution.getId(),
+                    AuditAction.STATUS_CHANGE,
+                    oldStatus.toString(),
+                    WorkflowExecution.ExecutionStatus.APPROVED.toString(),
+                    "All approval steps completed - Workflow approved for " + execution.getTitle()
+            );
         } else {
             // Create next step execution
             UUID assigneeId = determineApprover(execution, nextStep);
@@ -539,6 +643,31 @@ public class WorkflowService {
             execution.setCurrentStepOrder(nextStep.getStepOrder());
             execution.setCurrentStepId(nextStep.getId());
             execution.setStatus(WorkflowExecution.ExecutionStatus.IN_PROGRESS);
+
+            // Audit log: workflow moved to next step
+            auditLogService.logAction(
+                    "WORKFLOW_EXECUTION",
+                    execution.getId(),
+                    AuditAction.UPDATE,
+                    "Step: " + completedStep.getStepName(),
+                    "Step: " + nextStep.getStepName(),
+                    "Workflow moved to next approval step for " + execution.getTitle()
+            );
+
+            // Publish event to notify the next step's assigned approver
+            domainEventPublisher.publish(
+                    ApprovalTaskAssignedEvent.of(
+                            this,
+                            execution.getTenantId(),
+                            nextStepExecution.getId(),
+                            assigneeId,
+                            execution.getEntityType().name(),
+                            execution.getRequesterName(),
+                            execution.getRequesterId()
+                    )
+            );
+
+            log.debug("Published ApprovalTaskAssignedEvent for next step {} assigned to {}", nextStepExecution.getId(), assigneeId);
         }
     }
 
@@ -578,6 +707,80 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    // ==================== Approval Inbox ====================
+
+    /**
+     * Paginated approval inbox with server-side filters.
+     */
+    public Page<WorkflowExecutionResponse> getApprovalInbox(
+            String status,
+            String module,
+            LocalDateTime fromDate,
+            LocalDateTime toDate,
+            String search,
+            Pageable pageable) {
+
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUser = SecurityContext.getCurrentUserId();
+
+        // Resolve status filter
+        StepExecution.StepStatus stepStatus = null;
+        if (status == null || "PENDING".equalsIgnoreCase(status)) {
+            stepStatus = StepExecution.StepStatus.PENDING;
+        }
+        // If status == "ALL", stepStatus remains null → no status filter
+
+        // Resolve entity type filter
+        WorkflowDefinition.EntityType entityType = null;
+        if (module != null && !module.isEmpty() && !"ALL".equalsIgnoreCase(module)) {
+            try {
+                entityType = WorkflowDefinition.EntityType.valueOf(module.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid module filter value: {}", module);
+            }
+        }
+
+        // Normalize search
+        String searchTerm = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
+
+        Page<StepExecution> steps = stepExecutionRepository.findInboxForUser(
+                tenantId, currentUser, stepStatus, entityType, fromDate, toDate, searchTerm, pageable);
+
+        return steps.map(step -> WorkflowExecutionResponse.from(step.getWorkflowExecution()));
+    }
+
+    /**
+     * Returns inbox summary counts for the current user:
+     * pending, approvedToday, rejectedToday.
+     */
+    public Map<String, Long> getInboxCounts() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUser = SecurityContext.getCurrentUserId();
+
+        long pending = stepExecutionRepository.countPendingForUser(tenantId, currentUser);
+
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay);
+
+        long approvedToday = 0;
+        long rejectedToday = 0;
+        for (Object[] row : todayActions) {
+            StepExecution.ApprovalAction action = (StepExecution.ApprovalAction) row[0];
+            long count = (Long) row[1];
+            if (action == StepExecution.ApprovalAction.APPROVE) {
+                approvedToday = count;
+            } else if (action == StepExecution.ApprovalAction.REJECT) {
+                rejectedToday = count;
+            }
+        }
+
+        Map<String, Long> counts = new HashMap<>();
+        counts.put("pending", pending);
+        counts.put("approvedToday", approvedToday);
+        counts.put("rejectedToday", rejectedToday);
+        return counts;
+    }
+
     public void cancelWorkflow(UUID executionId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -593,8 +796,20 @@ public class WorkflowService {
             throw new BusinessException("Cannot cancel completed workflow");
         }
 
+        WorkflowExecution.ExecutionStatus oldStatus = execution.getStatus();
         execution.cancel(reason);
         workflowExecutionRepository.save(execution);
+
+        // Audit log: workflow cancelled
+        auditLogService.logAction(
+                "WORKFLOW_EXECUTION",
+                executionId,
+                AuditAction.STATUS_CHANGE,
+                oldStatus.toString(),
+                WorkflowExecution.ExecutionStatus.CANCELLED.toString(),
+                "Workflow cancelled for " + execution.getTitle() +
+                (reason != null ? " - Reason: " + reason : "")
+        );
 
         log.info("Cancelled workflow execution: {} by user {}", executionId, currentUser);
     }

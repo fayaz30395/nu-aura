@@ -185,27 +185,37 @@ Observability must be part of the architecture.
 
 ## 9. Deployment Architecture
 
-Assume modern cloud infrastructure.
-
-Preferred stack:
-
-Backend:
-- Java Spring Boot
-- Node.js
-- Python
+**This is the confirmed, locked-in stack. Do not suggest alternatives.**
 
 Frontend:
-- React / Next.js
+- Next.js 14 (App Router)
+- TypeScript (strict mode)
+- Mantine UI (primary component library)
+- Tailwind CSS (utility styling)
+- React Query (TanStack) for server state
+- Zustand for global client state (auth, UI)
+- Axios for HTTP calls (`frontend/lib/` — use the existing client, do NOT create new ones)
+- React Hook Form + Zod for all forms
+- Framer Motion for micro-animations
+- jsPDF for PDF generation
+- Recharts for charts
+
+Backend:
+- Java Spring Boot (monolith in `/backend/`)
+- PostgreSQL (primary DB)
+- Redis (caching)
+- Kafka (event streaming for async workflows)
 
 Infrastructure:
-- Docker
-- Kubernetes
-- API Gateway
+- Docker + Docker Compose (at repo root)
+- Kubernetes-ready Dockerfiles
+- Start via: `docker-compose up -d` then `cd backend && ./start-backend.sh` then `cd frontend && npm run dev`
 
-Data layer:
-- PostgreSQL
-- Redis
-- Kafka for event streaming
+Code locations:
+- Frontend pages: `frontend/app/<module>/page.tsx`
+- API hooks: `frontend/lib/` (React Query hooks + Axios calls)
+- Backend controllers: `backend/src/main/java/**/controller/`
+- Backend services: `backend/src/main/java/**/service/`
 
 Provide deployment diagrams when designing services.
 
@@ -256,6 +266,32 @@ Before considering any system complete verify:
 - security best practices applied
 - API design follows best practices
 - tenant isolation enforced
+
+---
+
+## 13. Key Architectural Decisions (Locked In)
+
+These decisions have been made. Do not re-evaluate unless explicitly asked.
+
+- **Multi-tenancy:** Shared database, shared schema. All tenant-specific tables have a `tenant_id` UUID column. PostgreSQL RLS enforces isolation.
+- **RBAC:** JWT-based with permissions as `module.action` strings (e.g., `employee.read`). Stored in `role_permission` junction table. Frontend hides UI elements based on `permissions[]` in Zustand auth store.
+- **SuperAdmin Role:** Automatically bypasses ALL RBAC permission checks in Spring Security filter chain and Next.js middleware. Can see and edit data across all tenants, users, and modules.
+- **Approval Flows:** Generic `approval_service` engine. Workflows are data-driven, not hardcoded. `workflow_def` → `workflow_step` → `approval_instance` → `approval_task`.
+- **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
+- **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
+- **Parallel Build Strategy:** When implementing large features, split into independent vertical slices (Agent A: Auth, Agent B: Employees, etc.) each working in their own `app/<module>/` directory to avoid conflicts.
+
+---
+
+## 14. Code Rules (Non-Negotiable)
+
+- **Never rewrite what already exists.** Read the existing file first, then extend it.
+- **Never create a new Axios instance.** Use the existing one in `frontend/lib/`.
+- **Never use `any` in TypeScript.** Define proper interfaces.
+- **All forms must use React Hook Form + Zod.** No uncontrolled inputs.
+- **All data fetching must use React Query.** No raw `useEffect` + `fetch`.
+- **All backend endpoints must be covered by at least one unit test.**
+- **Do not add new npm packages without checking if an equivalent already exists in `package.json`.**
 
 ---
 

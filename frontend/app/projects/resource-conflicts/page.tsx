@@ -36,12 +36,12 @@ export default function ResourceConflictsPage() {
 
   const { data: openConflicts, isLoading } = useQuery<ConflictLog[]>({
     queryKey: ['resource-conflicts', 'open'],
-    queryFn: () => apiClient.get('/resource-management/conflicts/open').then(r => r.data),
+    queryFn: () => apiClient.get<ConflictLog[]>('/resource-management/conflicts/open').then(r => r.data),
   });
 
   const scanMutation = useMutation({
-    mutationFn: () => apiClient.post('/resource-management/conflicts/scan').then(r => r.data),
-    onSuccess: (data) => {
+    mutationFn: () => apiClient.post<ConflictResult[]>('/resource-management/conflicts/scan').then(r => r.data),
+    onSuccess: (data: ConflictResult[]) => {
       setScanResults(data);
       queryClient.invalidateQueries({ queryKey: ['resource-conflicts'] });
     },
@@ -122,7 +122,7 @@ export default function ResourceConflictsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {openConflicts?.map((c) => (
+                  {openConflicts?.map((c: ConflictLog) => (
                     <tr key={c.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-1.5">

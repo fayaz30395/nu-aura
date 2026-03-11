@@ -27,6 +27,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      */
     Page<User> findByTenantId(UUID tenantId, Pageable pageable);
 
+    /**
+     * Count users for a specific tenant
+     */
+    long countByTenantId(UUID tenantId);
+
     // Alias for findByTenantId to maintain compatibility with other services
     default Iterable<User> findAllByTenantId(UUID tenantId) {
         return findByTenantId(tenantId);

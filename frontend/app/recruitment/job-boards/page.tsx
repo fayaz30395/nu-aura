@@ -58,14 +58,23 @@ export default function JobBoardsPage() {
 
   const { data: postingsData, isLoading } = useQuery<{ content: JobBoardPosting[] }>({
     queryKey: ['job-board-postings', filterStatus],
-    queryFn: () => filterStatus === 'ALL'
-      ? apiClient.get('/recruitment/job-boards').then(r => r.data)
-      : apiClient.get(`/recruitment/job-boards/status/${filterStatus}`).then(r => r.data),
+    queryFn: async (): Promise<{ content: JobBoardPosting[] }> => {
+      if (filterStatus === 'ALL') {
+        const response = await apiClient.get<{ content: JobBoardPosting[] }>('/recruitment/job-boards');
+        return response.data;
+      } else {
+        const response = await apiClient.get<{ content: JobBoardPosting[] }>(`/recruitment/job-boards/status/${filterStatus}`);
+        return response.data;
+      }
+    },
   });
 
   const { data: openJobs } = useQuery<{ content: JobOpening[] }>({
     queryKey: ['jobs', 'open'],
-    queryFn: () => apiClient.get('/recruitment/jobs?status=OPEN').then(r => r.data),
+    queryFn: async (): Promise<{ content: JobOpening[] }> => {
+      const response = await apiClient.get<{ content: JobOpening[] }>('/recruitment/jobs?status=OPEN');
+      return response.data;
+    },
   });
 
   const postMutation = useMutation({
@@ -115,7 +124,7 @@ export default function JobBoardsPage() {
             { label: 'Total Applications', value: postings.reduce((s, p) => s + p.applicationsCount, 0), color: 'text-blue-600' },
             { label: 'Total Views', value: postings.reduce((s, p) => s + p.viewsCount, 0), color: 'text-purple-600' },
             { label: 'Failed Postings', value: postings.filter(p => p.status === 'FAILED').length, color: 'text-red-600' },
-          ].map(stat => (
+          ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
               <CardContent className="pt-4">
                 <p className="text-sm text-gray-500">{stat.label}</p>
@@ -154,7 +163,7 @@ export default function JobBoardsPage() {
           </Card>
         ) : (
           <div className="grid gap-4">
-            {postings.map(posting => {
+            {postings.map((posting: JobBoardPosting) => {
               const bc = boardConfig[posting.boardName] ?? boardConfig.NAUKRI;
               const sc = statusIcon[posting.status] ?? statusIcon.PENDING;
               const StatusIcon = sc.icon;
@@ -234,7 +243,7 @@ export default function JobBoardsPage() {
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                 >
                   <option value="">— Select a job —</option>
-                  {openJobs?.content?.map(job => (
+                  {openJobs?.content?.map((job: JobOpening) => (
                     <option key={job.id} value={job.id}>
                       {job.jobTitle} ({job.jobCode}) — {job.location}
                     </option>
@@ -244,7 +253,7 @@ export default function JobBoardsPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Select Boards *</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {ALL_BOARDS.map(board => {
+                  {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
                     const bc = boardConfig[board];
                     const isSelected = selectedBoards.includes(board);
                     return (

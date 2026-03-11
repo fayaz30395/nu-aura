@@ -250,7 +250,7 @@ export default function CalendarPage() {
           <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white">
             <div className="flex items-center gap-3 mb-4">
               <CalendarDays className="h-6 w-6" />
-              <h2 className="text-lg font-semibold">Today's Events</h2>
+              <h2 className="text-lg font-semibold">Today&apos;s Events</h2>
               <span className="ml-auto px-2.5 py-0.5 bg-white/20 rounded-full text-sm">
                 {todayEvents.length} events
               </span>

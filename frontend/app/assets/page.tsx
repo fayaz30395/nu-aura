@@ -36,6 +36,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  EmptyState,
 } from '@/components/ui';
 import { assetService } from '@/lib/services/asset.service';
 import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/asset';
@@ -629,25 +630,11 @@ export default function AssetManagementPage() {
           </Card>
         ) : (
           !loading && (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Package className="h-12 w-12 mx-auto text-surface-400 mb-4" />
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
-                  No Assets Found
-                </h3>
-                <p className="text-surface-600 dark:text-surface-400 mb-4">
-                  {searchQuery || statusFilter || categoryFilter
-                    ? 'No assets match your search criteria.'
-                    : 'Get started by adding your first asset.'}
-                </p>
-                {!searchQuery && !statusFilter && !categoryFilter && (
-                  <Button onClick={handleOpenAddModal}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Asset
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
+            <EmptyState
+              icon={<Package className="h-12 w-12" />}
+              title="No Assets Found"
+              description="No assets assigned or available"
+            />
           )
         )}
 

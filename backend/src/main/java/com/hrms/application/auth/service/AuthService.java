@@ -19,6 +19,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.platform.repository.UserAppAccessRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import com.hrms.application.notification.service.EmailNotificationService;
+import com.hrms.common.metrics.MetricsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +72,9 @@ public class AuthService {
     @Autowired
     private ImplicitRoleService implicitRoleService;
 
+    @Autowired
+    private MetricsService metricsService;
+
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
 
@@ -99,154 +103,183 @@ public class AuthService {
         // Set tenant context for authentication
         com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userRepository.findByEmailAndTenantId(request.getEmail(), tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
+            User user = userRepository.findByEmailAndTenantId(request.getEmail(), tenantId)
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
 
-        user.recordSuccessfulLogin();
-        userRepository.save(user);
+            user.recordSuccessfulLogin();
+            userRepository.save(user);
 
-        // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                HrmsPermissionInitializer.APP_CODE);
-        Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
-        Set<String> accessibleApps = loadAccessibleApps(user.getId());
+            // Record successful login metric
+            metricsService.recordLoginSuccess("password");
 
-        // Find employee context
-        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
-        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+            // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                    HrmsPermissionInitializer.APP_CODE);
+            Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-        // Generate token with app-aware permissions
-        String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                employeeId, locationId, departmentId, teamId);
-        String refreshToken = tokenProvider.generateRefreshToken(request.getEmail(), tenantId);
+            // Find employee context
+            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
 
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(jwtExpiration)
-                .userId(user.getId())
-                .employeeId(employeeId)
-                .tenantId(tenantId)
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .profilePictureUrl(user.getProfilePictureUrl())
-                .build();
+            // Generate token with app-aware permissions
+            String accessToken = tokenProvider.generateTokenWithAppPermissions(
+                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                    employeeId, locationId, departmentId, teamId);
+            String refreshToken = tokenProvider.generateRefreshToken(request.getEmail(), tenantId);
+
+            return AuthResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtExpiration)
+                    .userId(user.getId())
+                    .employeeId(employeeId)
+                    .tenantId(tenantId)
+                    .email(user.getEmail())
+                    .fullName(user.getFullName())
+                    .profilePictureUrl(user.getProfilePictureUrl())
+                    .build();
+        } catch (AuthenticationException | ResourceNotFoundException e) {
+            // Record failed login metric
+            metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
+            throw e;
+        } catch (Exception e) {
+            // Record unexpected error during login
+            metricsService.recordLoginFailure("password", "unknown_error");
+            throw e;
+        }
     }
 
     @Transactional
     public AuthResponse googleLogin(GoogleLoginRequest request) {
-        String email;
-        String hostedDomain;
-        String profilePictureUrl = null;
+        try {
+            String email;
+            String hostedDomain;
+            String profilePictureUrl = null;
 
-        if (request.isAccessToken()) {
-            // Handle access token - call Google userinfo API
-            GoogleUserInfo userInfo = getUserInfoFromAccessToken(request.getCredential());
-            email = userInfo.email;
-            hostedDomain = userInfo.hd;
-            profilePictureUrl = userInfo.picture;
-        } else {
-            // Handle ID token - verify with Google
-            GoogleIdToken idToken = verifyGoogleToken(request.getCredential());
-            if (idToken == null) {
-                throw new AuthenticationException("Invalid Google ID token");
-            }
-            GoogleIdToken.Payload payload = idToken.getPayload();
-            email = payload.getEmail();
-            hostedDomain = payload.getHostedDomain();
-            profilePictureUrl = (String) payload.get("picture");
-        }
-
-        // Verify domain restriction - must be @allowedDomain
-        if (hostedDomain == null || !hostedDomain.equals(allowedDomain)) {
-            throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
-        }
-
-        if (!email.endsWith("@" + allowedDomain)) {
-            throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
-        }
-
-        // For @nulogic.io accounts, use NuLogic tenant; otherwise use provided or demo
-        // tenant
-        UUID tenantId = request.getTenantId();
-        if (tenantId == null) {
-            if (email.endsWith("@nulogic.io")) {
-                // NuLogic tenant
-                tenantId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
+            if (request.isAccessToken()) {
+                // Handle access token - call Google userinfo API
+                GoogleUserInfo userInfo = getUserInfoFromAccessToken(request.getCredential());
+                email = userInfo.email;
+                hostedDomain = userInfo.hd;
+                profilePictureUrl = userInfo.picture;
             } else {
-                // Default demo tenant
-                tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+                // Handle ID token - verify with Google
+                GoogleIdToken idToken = verifyGoogleToken(request.getCredential());
+                if (idToken == null) {
+                    metricsService.recordLoginFailure("google", "invalid_token");
+                    throw new AuthenticationException("Invalid Google ID token");
+                }
+                GoogleIdToken.Payload payload = idToken.getPayload();
+                email = payload.getEmail();
+                hostedDomain = payload.getHostedDomain();
+                profilePictureUrl = (String) payload.get("picture");
             }
+
+            // Verify domain restriction - must be @allowedDomain
+            if (hostedDomain == null || !hostedDomain.equals(allowedDomain)) {
+                metricsService.recordLoginFailure("google", "domain_mismatch");
+                throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
+            }
+
+            if (!email.endsWith("@" + allowedDomain)) {
+                metricsService.recordLoginFailure("google", "domain_mismatch");
+                throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
+            }
+
+            // For @nulogic.io accounts, use NuLogic tenant; otherwise use provided or demo
+            // tenant
+            UUID tenantId = request.getTenantId();
+            if (tenantId == null) {
+                if (email.endsWith("@nulogic.io")) {
+                    // NuLogic tenant
+                    tenantId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
+                } else {
+                    // Default demo tenant
+                    tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+                }
+            }
+
+            // Set tenant context
+            com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+
+            // Find user by email - first try specified tenant, then search across tenants
+            User user = userRepository.findByEmailAndTenantId(email, tenantId)
+                    .or(() -> userRepository.findByEmail(email).stream().findFirst())
+                    .orElseThrow(() -> {
+                        metricsService.recordLoginFailure("google", "user_not_found");
+                        return new AuthenticationException(
+                                "User not found. Please contact your administrator to set up your account.");
+                    });
+
+            // Update tenantId to user's actual tenant
+            tenantId = user.getTenantId();
+            com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
+
+            // Update profile picture from Google if available
+            if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+                user.setProfilePictureUrl(profilePictureUrl);
+                log.info("Updated profile picture for user {} from Google SSO", email);
+            }
+
+            user.recordSuccessfulLogin();
+            userRepository.save(user);
+
+            // Record successful Google login metric
+            metricsService.recordLoginSuccess("google");
+
+            UserPrincipal userPrincipal = UserPrincipal.create(user);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userPrincipal, null, userPrincipal.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
+            Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
+                    HrmsPermissionInitializer.APP_CODE);
+            Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
+            Set<String> accessibleApps = loadAccessibleApps(user.getId());
+
+            // Find employee context
+            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            UUID employeeId = empOpt.map(Employee::getId).orElse(null);
+            UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+            UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+            UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+            // Generate token with app-aware permissions
+            String accessToken = tokenProvider.generateTokenWithAppPermissions(
+                    user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
+                    employeeId, locationId, departmentId, teamId);
+            String refreshToken = tokenProvider.generateRefreshToken(email, tenantId);
+
+            return AuthResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtExpiration)
+                    .userId(user.getId())
+                    .employeeId(employeeId)
+                    .tenantId(tenantId)
+                    .email(user.getEmail())
+                    .fullName(user.getFullName())
+                    .profilePictureUrl(user.getProfilePictureUrl())
+                    .build();
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            metricsService.recordLoginFailure("google", "unknown_error");
+            throw e;
         }
-
-        // Set tenant context
-        com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
-
-        // Find user by email - first try specified tenant, then search across tenants
-        User user = userRepository.findByEmailAndTenantId(email, tenantId)
-                .or(() -> userRepository.findByEmail(email).stream().findFirst())
-                .orElseThrow(() -> new AuthenticationException(
-                        "User not found. Please contact your administrator to set up your account."));
-
-        // Update tenantId to user's actual tenant
-        tenantId = user.getTenantId();
-        com.hrms.common.security.TenantContext.setCurrentTenant(tenantId);
-
-        // Update profile picture from Google if available
-        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
-            user.setProfilePictureUrl(profilePictureUrl);
-            log.info("Updated profile picture for user {} from Google SSO", email);
-        }
-
-        user.recordSuccessfulLogin();
-        userRepository.save(user);
-
-        UserPrincipal userPrincipal = UserPrincipal.create(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userPrincipal, null, userPrincipal.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Load app-specific permissions from UserAppAccess (NU Platform RBAC)
-        Map<String, com.hrms.domain.user.RoleScope> appPermissions = loadAppPermissions(user.getId(),
-                HrmsPermissionInitializer.APP_CODE);
-        Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
-        Set<String> accessibleApps = loadAccessibleApps(user.getId());
-
-        // Find employee context
-        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
-        UUID employeeId = empOpt.map(Employee::getId).orElse(null);
-        UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
-        UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
-        UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
-
-        // Generate token with app-aware permissions
-        String accessToken = tokenProvider.generateTokenWithAppPermissions(
-                user, tenantId, HrmsPermissionInitializer.APP_CODE, appPermissions, appRoles, accessibleApps,
-                employeeId, locationId, departmentId, teamId);
-        String refreshToken = tokenProvider.generateRefreshToken(email, tenantId);
-
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(jwtExpiration)
-                .userId(user.getId())
-                .employeeId(employeeId)
-                .tenantId(tenantId)
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .profilePictureUrl(user.getProfilePictureUrl())
-                .build();
     }
 
     private GoogleIdToken verifyGoogleToken(String idTokenString) {
@@ -605,7 +638,6 @@ public class AuthService {
         String userName = user.getFullName() != null ? user.getFullName() : user.getEmail();
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
-}
 
     /**
      * Complete login after MFA verification.

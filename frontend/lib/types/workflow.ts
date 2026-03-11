@@ -20,6 +20,7 @@ export type WorkflowEntityType =
   | 'OVERTIME'
   | 'SHIFT_CHANGE'
   | 'WORK_FROM_HOME'
+  | 'RECRUITMENT_OFFER'
   | 'CUSTOM';
 
 export type WorkflowType =

@@ -628,7 +628,7 @@ export default function ScheduledReportsPage() {
             <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Scheduled Report</h2>
               <p className="text-surface-600 dark:text-surface-400 mb-6">
-                Are you sure you want to delete "{selectedReport.scheduleName}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{selectedReport.scheduleName}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-4">
                 <button

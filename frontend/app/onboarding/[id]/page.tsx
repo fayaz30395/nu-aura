@@ -397,7 +397,7 @@ export default function OnboardingDetailPage() {
                                             <p className="text-[10px] font-black uppercase tracking-widest text-surface-400 mb-1 flex items-center gap-1">
                                                 <MessageSquare className="h-3 w-3" /> Note
                                             </p>
-                                            <p className="text-xs font-medium italic">"{process.notes}"</p>
+                                            <p className="text-xs font-medium italic">&quot;{process.notes}&quot;</p>
                                         </div>
                                     )}
                                 </div>

@@ -324,7 +324,7 @@ export default function MyAttendancePage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">Today's Status</h3>
+                <h3 className="text-lg font-semibold text-slate-900">Today&apos;s Status</h3>
                 {todayAttendance && (
                   <div className="mt-2 space-y-1">
                     <p className="text-sm text-slate-600">

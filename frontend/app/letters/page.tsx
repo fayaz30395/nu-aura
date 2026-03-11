@@ -320,8 +320,7 @@ export default function LettersPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      // For demo, using a placeholder generatedBy ID
-      await letterService.generateLetter(formData, 'current-user-id');
+      await letterService.generateLetter(formData, user?.id || '');
       setShowGenerateModal(false);
       resetForm();
       fetchLetters();
@@ -337,7 +336,7 @@ export default function LettersPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await letterService.generateOfferLetter(offerFormData, 'current-user-id');
+      await letterService.generateOfferLetter(offerFormData, user?.id || '');
       setShowOfferLetterModal(false);
       resetOfferForm();
       fetchLetters();
@@ -1064,7 +1063,7 @@ export default function LettersPage() {
                     </p>
                     {selectedLetter.approvalComments && (
                       <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
-                        "{selectedLetter.approvalComments}"
+                        &quot;{selectedLetter.approvalComments}&quot;
                       </p>
                     )}
                   </div>

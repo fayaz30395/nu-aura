@@ -187,10 +187,10 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
               <input
                 type="text"
                 inputMode="numeric"
-                maxLength="6"
+                maxLength={6}
                 placeholder="000000"
                 value={verificationCode}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value = e.target.value.replace(/\D/g, '').slice(0, 6);
                   setVerificationCode(value);
                 }}
@@ -306,7 +306,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                 onClick={() => setStep('verify')}
                 className="flex-1"
               >
-                I've Scanned the Code
+                I&apos;ve Scanned the Code
               </Button>
             </>
           )}
@@ -316,7 +316,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
               onClick={handleComplete}
               className="w-full"
             >
-              I've Saved My Backup Codes
+              I&apos;ve Saved My Backup Codes
             </Button>
           )}
         </ModalFooter>

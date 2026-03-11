@@ -6,21 +6,24 @@ import com.hrms.domain.ai.CandidateMatchScore;
 import com.hrms.domain.recruitment.Candidate;
 import com.hrms.domain.recruitment.JobOpening;
 import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
+import com.hrms.domain.recruitment.Interview;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
+import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.Pattern;
 
 /**
  * AI-powered recruitment service for:
@@ -37,8 +40,12 @@ public class AIRecruitmentService {
 
     private final CandidateRepository candidateRepository;
     private final JobOpeningRepository jobOpeningRepository;
+    private final InterviewRepository interviewRepository;
     private final CandidateMatchScoreRepository matchScoreRepository;
     private final RestTemplate restTemplate;
+    private final ResumeTextExtractor resumeTextExtractor;
+
+    private final ObjectMapper objectMapper;
 
     @Value("${ai.openai.api-key:}")
     private String openAiApiKey;
@@ -67,8 +74,8 @@ public class AIRecruitmentService {
 
     /**
      * Parse resume from URL — fetches content and extracts plain text for analysis.
-     * Supports plain text and HTML documents. Binary formats (PDF, DOCX) require
-     * the caller to extract text first and use parseResume(text) directly.
+     * Supports plain text, HTML, PDF, DOCX, DOC, RTF, and other document formats.
+     * Binary formats are automatically handled using Apache Tika.
      */
     public ResumeParseResponse parseResumeFromUrl(String resumeUrl) {
         log.info("Parsing resume from URL: {}", resumeUrl);
@@ -90,49 +97,141 @@ public class AIRecruitmentService {
             conn.setRequestProperty("User-Agent", "NuLogic-HRMS/1.0");
 
             String contentType = conn.getContentType() != null ? conn.getContentType().toLowerCase() : "";
-            if (contentType.contains("application/pdf")
-                    || contentType.contains("application/msword")
-                    || contentType.contains("application/vnd.openxmlformats")) {
-                return ResumeParseResponse.builder()
-                        .success(false)
-                        .message("Binary document format detected. Please extract text and use the text-based parsing endpoint.")
-                        .build();
-            }
 
             String resumeText;
-            try (java.io.BufferedReader reader = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(conn.getInputStream(),
-                            java.nio.charset.StandardCharsets.UTF_8))) {
-                resumeText = reader.lines()
-                        .collect(java.util.stream.Collectors.joining("\n"));
-            }
 
-            if (resumeText == null || resumeText.isBlank()) {
-                return ResumeParseResponse.builder()
-                        .success(false)
-                        .message("No text content could be extracted from the URL.")
-                        .build();
-            }
+            // Handle binary formats using Apache Tika
+            if (resumeTextExtractor.isSupportedBinaryFormat(contentType)) {
+                log.info("Binary document format detected ({}). Using Tika for extraction.", contentType);
 
-            // Strip HTML tags if the content is HTML
-            if (contentType.contains("text/html")) {
-                resumeText = resumeText.replaceAll("<[^>]+>", " ")
-                        .replaceAll("\\s{2,}", " ")
-                        .trim();
-            }
+                try (java.io.InputStream inputStream = conn.getInputStream()) {
+                    byte[] fileBytes = inputStream.readAllBytes();
+                    resumeText = resumeTextExtractor.extractText(fileBytes, "resume-from-url");
 
-            // Cap to 10,000 chars to stay within AI context limits
-            if (resumeText.length() > 10_000) {
-                resumeText = resumeText.substring(0, 10_000);
+                    if (resumeText.isBlank()) {
+                        return ResumeParseResponse.builder()
+                                .success(false)
+                                .message("No text content could be extracted from the URL.")
+                                .build();
+                    }
+                }
+            } else {
+                // Handle text and HTML formats
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(conn.getInputStream(),
+                                java.nio.charset.StandardCharsets.UTF_8))) {
+                    resumeText = reader.lines()
+                            .collect(java.util.stream.Collectors.joining("\n"));
+                }
+
+                if (resumeText == null || resumeText.isBlank()) {
+                    return ResumeParseResponse.builder()
+                            .success(false)
+                            .message("No text content could be extracted from the URL.")
+                            .build();
+                }
+
+                // Strip HTML tags if the content is HTML
+                if (contentType.contains("text/html")) {
+                    resumeText = resumeText.replaceAll("<[^>]+>", " ")
+                            .replaceAll("\\s{2,}", " ")
+                            .trim();
+                }
+
+                // Cap to 10,000 chars to stay within AI context limits
+                if (resumeText.length() > 10_000) {
+                    resumeText = resumeText.substring(0, 10_000);
+                }
             }
 
             return parseResume(resumeText);
 
+        } catch (TikaException e) {
+            log.error("Tika parsing failed for URL {}: {}", resumeUrl, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to extract text from document: " + e.getMessage())
+                    .build();
         } catch (Exception e) {
             log.error("Failed to fetch or parse resume from URL {}: {}", resumeUrl, e.getMessage());
             return ResumeParseResponse.builder()
                     .success(false)
                     .message("Failed to fetch resume from URL: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * Parse resume from binary file bytes (PDF, DOCX, etc.).
+     * Extracts text using Apache Tika and processes it for resume parsing.
+     *
+     * @param fileBytes the raw file bytes
+     * @param fileName  the original filename
+     * @return parsed resume response
+     */
+    public ResumeParseResponse parseResumeFromFile(byte[] fileBytes, String fileName) {
+        log.info("Parsing resume from file: {} ({} bytes)", fileName, fileBytes.length);
+
+        try {
+            // Extract text from binary file
+            String extractedText = resumeTextExtractor.extractText(fileBytes, fileName);
+
+            if (extractedText.isBlank()) {
+                return ResumeParseResponse.builder()
+                        .success(false)
+                        .message("No text content could be extracted from the file.")
+                        .build();
+            }
+
+            return parseResume(extractedText);
+
+        } catch (TikaException e) {
+            log.error("Tika parsing failed for file {}: {}", fileName, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to extract text from document: " + e.getMessage())
+                    .build();
+        } catch (IOException e) {
+            log.error("IO error reading file {}: {}", fileName, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to read file: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            log.error("Unexpected error parsing file {}: {}", fileName, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to parse resume: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * Parse resume from base64-encoded file bytes.
+     * Decodes the base64 content and processes it using parseResumeFromFile.
+     *
+     * @param base64Content the base64-encoded file content
+     * @param fileName      the original filename
+     * @return parsed resume response
+     */
+    public ResumeParseResponse parseResumeFromBase64(String base64Content, String fileName) {
+        log.info("Parsing resume from base64-encoded file: {}", fileName);
+
+        try {
+            byte[] decodedBytes = java.util.Base64.getDecoder().decode(base64Content);
+            return parseResumeFromFile(decodedBytes, fileName);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid base64 content for file {}: {}", fileName, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Invalid base64 encoding: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            log.error("Error parsing base64 file {}: {}", fileName, e.getMessage());
+            return ResumeParseResponse.builder()
+                    .success(false)
+                    .message("Failed to parse resume: " + e.getMessage())
                     .build();
         }
     }
@@ -183,36 +282,61 @@ public class AIRecruitmentService {
 
     private ResumeParseResponse parseResumeResponse(String aiResponse) {
         try {
-            // Extract JSON from response
+            // Extract JSON from response (handles markdown fences and preamble)
             String json = extractJson(aiResponse);
 
-            // Parse the JSON response manually for now
-            // In production, use Jackson ObjectMapper
+            // Parse JSON using Jackson ObjectMapper
+            AIResumeParseDTO dto = objectMapper.readValue(json, AIResumeParseDTO.class);
+
+            // Map DTO to response object
             ResumeParseResponse.ResumeParseResponseBuilder builder = ResumeParseResponse.builder();
             builder.success(true);
             builder.rawJson(json);
+            builder.fullName(dto.getFullName());
+            builder.email(dto.getEmail());
+            builder.phone(dto.getPhone());
+            builder.currentLocation(dto.getCurrentLocation());
+            builder.currentCompany(dto.getCurrentCompany());
+            builder.currentDesignation(dto.getCurrentDesignation());
 
-            // Extract basic fields using regex (simple parsing)
-            builder.fullName(extractJsonField(json, "fullName"));
-            builder.email(extractJsonField(json, "email"));
-            builder.phone(extractJsonField(json, "phone"));
-            builder.currentLocation(extractJsonField(json, "currentLocation"));
-            builder.currentCompany(extractJsonField(json, "currentCompany"));
-            builder.currentDesignation(extractJsonField(json, "currentDesignation"));
-
-            String expYears = extractJsonField(json, "totalExperienceYears");
-            if (expYears != null && !expYears.isEmpty()) {
-                try {
-                    builder.totalExperienceYears(new BigDecimal(expYears.replaceAll("[^0-9.]", "")));
-                } catch (NumberFormatException e) {
-                    builder.totalExperienceYears(BigDecimal.ZERO);
-                }
+            // Convert totalExperienceYears to BigDecimal
+            if (dto.getTotalExperienceYears() != null) {
+                builder.totalExperienceYears(new BigDecimal(dto.getTotalExperienceYears().toString()));
             }
 
-            builder.skills(extractJsonArray(json, "skills"));
-            builder.certifications(extractJsonArray(json, "certifications"));
-            builder.languages(extractJsonArray(json, "languages"));
-            builder.summary(extractJsonField(json, "summary"));
+            builder.skills(dto.getSkills());
+            builder.certifications(dto.getCertifications());
+            builder.languages(dto.getLanguages());
+            builder.summary(dto.getSummary());
+
+            // Map education entries
+            if (dto.getEducation() != null) {
+                List<ResumeParseResponse.Education> educationList = new ArrayList<>();
+                for (AIResumeParseDTO.EducationEntry entry : dto.getEducation()) {
+                    educationList.add(ResumeParseResponse.Education.builder()
+                            .degree(entry.getDegree())
+                            .institution(entry.getInstitution())
+                            .year(entry.getYear() != null ? entry.getYear().intValue() : null)
+                            .score(entry.getScore())
+                            .build());
+                }
+                builder.education(educationList);
+            }
+
+            // Map experience entries
+            if (dto.getExperience() != null) {
+                List<ResumeParseResponse.Experience> experienceList = new ArrayList<>();
+                for (AIResumeParseDTO.ExperienceEntry entry : dto.getExperience()) {
+                    experienceList.add(ResumeParseResponse.Experience.builder()
+                            .company(entry.getCompany())
+                            .designation(entry.getDesignation())
+                            .startDate(entry.getStartDate())
+                            .endDate(entry.getEndDate())
+                            .description(entry.getDescription())
+                            .build());
+                }
+                builder.experience(experienceList);
+            }
 
             return builder.build();
         } catch (Exception e) {
@@ -224,7 +348,7 @@ public class AIRecruitmentService {
         }
     }
 
-    // ==================== CANDIDATE MATCHING ====================
+    // ==================== CANDIDATE MATCHING & SCREENING ====================
 
     /**
      * Calculate match score between a candidate and a job opening using AI
@@ -248,6 +372,26 @@ public class AIRecruitmentService {
         saveMatchScore(candidate, job, response);
 
         return response;
+    }
+
+    /**
+     * Generate a structured screening summary for a candidate against a job opening.
+     * This is intended as human guidance only and must not be used for automated decisions.
+     */
+    public CandidateScreeningSummaryResponse generateScreeningSummary(UUID candidateId, UUID jobOpeningId, String context) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Generating screening summary for candidate {} and job {}", candidateId, jobOpeningId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        JobOpening job = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+
+        String prompt = buildScreeningSummaryPrompt(candidate, job, context);
+        String aiResponse = callOpenAI(prompt);
+
+        return parseScreeningSummaryResponse(aiResponse, candidate, job);
     }
 
     /**
@@ -332,25 +476,94 @@ public class AIRecruitmentService {
                 candidate.getNoticePeriodDays() != null ? candidate.getNoticePeriodDays() : "Not specified");
     }
 
+    private String buildScreeningSummaryPrompt(Candidate candidate, JobOpening job, String context) {
+        String extraContext = (context != null && !context.isBlank())
+                ? """
+
+                        ADDITIONAL CONTEXT FROM RECRUITER:
+                        %s
+                        """.formatted(context)
+                : "";
+
+        return """
+                You are an expert recruiter. Create a structured screening summary for this candidate
+                against the given job opening. This summary is for human recruiters only and MUST NOT be used
+                for automated hiring decisions.
+
+                Focus on evidence from the data provided. Do NOT infer or comment on any protected
+                attributes (age, gender, ethnicity, religion, health, marital status, etc.).
+
+                JOB OPENING:
+                - Title: %s
+                - Description: %s
+                - Requirements: %s
+                - Required Skills: %s
+                - Experience Required: %s
+                - Location: %s
+
+                CANDIDATE:
+                - Name: %s
+                - Current Role: %s at %s
+                - Total Experience: %s years
+                - Location: %s
+                - Current CTC: %s
+                - Expected CTC: %s
+                - Notice Period: %s days
+
+                %s
+
+                Provide analysis in this JSON format:
+                {
+                  "fitLevel": "HIGH" | "MEDIUM" | "LOW",
+                  "strengths": ["strength1", "strength2"],
+                  "gaps": ["gap1", "gap2"],
+                  "followUpQuestions": ["question1", "question2"],
+                  "riskFlags": ["risk1", "risk2"],
+                  "recommendation": "ADVANCE" | "HOLD" | "REJECT",
+                  "summary": "Brief, evidence-based screening summary"
+                }
+
+                Return ONLY valid JSON.
+                """.formatted(
+                job.getJobTitle(),
+                job.getJobDescription() != null ? job.getJobDescription() : "Not specified",
+                job.getRequirements() != null ? job.getRequirements() : "Not specified",
+                job.getSkillsRequired() != null ? job.getSkillsRequired() : "Not specified",
+                job.getExperienceRequired() != null ? job.getExperienceRequired() : "Not specified",
+                job.getLocation() != null ? job.getLocation() : "Not specified",
+                candidate.getFullName(),
+                candidate.getCurrentDesignation() != null ? candidate.getCurrentDesignation() : "Not specified",
+                candidate.getCurrentCompany() != null ? candidate.getCurrentCompany() : "Not specified",
+                candidate.getTotalExperience() != null ? candidate.getTotalExperience() : "Not specified",
+                candidate.getCurrentLocation() != null ? candidate.getCurrentLocation() : "Not specified",
+                candidate.getCurrentCtc() != null ? candidate.getCurrentCtc() : "Not specified",
+                candidate.getExpectedCtc() != null ? candidate.getExpectedCtc() : "Not specified",
+                candidate.getNoticePeriodDays() != null ? candidate.getNoticePeriodDays() : "Not specified",
+                extraContext);
+    }
+
     private CandidateMatchResponse parseMatchResponse(String aiResponse, Candidate candidate, JobOpening job) {
         try {
             String json = extractJson(aiResponse);
+
+            // Parse JSON using Jackson ObjectMapper
+            AIMatchResponseDTO dto = objectMapper.readValue(json, AIMatchResponseDTO.class);
 
             return CandidateMatchResponse.builder()
                     .candidateId(candidate.getId())
                     .candidateName(candidate.getFullName())
                     .jobOpeningId(job.getId())
                     .jobTitle(job.getJobTitle())
-                    .overallScore(parseDouble(extractJsonField(json, "overallScore"), 0))
-                    .skillsScore(parseDouble(extractJsonField(json, "skillsScore"), 0))
-                    .experienceScore(parseDouble(extractJsonField(json, "experienceScore"), 0))
-                    .educationScore(parseDouble(extractJsonField(json, "educationScore"), 0))
-                    .culturalFitScore(parseDouble(extractJsonField(json, "culturalFitScore"), 0))
-                    .strengths(extractJsonArray(json, "strengths"))
-                    .gaps(extractJsonArray(json, "gaps"))
-                    .recommendation(extractJsonField(json, "recommendation"))
-                    .summary(extractJsonField(json, "summary"))
-                    .interviewFocus(extractJsonArray(json, "interviewFocus"))
+                    .overallScore(parseDouble(dto.getOverallScore(), 0))
+                    .skillsScore(parseDouble(dto.getSkillsScore(), 0))
+                    .experienceScore(parseDouble(dto.getExperienceScore(), 0))
+                    .educationScore(parseDouble(dto.getEducationScore(), 0))
+                    .culturalFitScore(parseDouble(dto.getCulturalFitScore(), 0))
+                    .strengths(dto.getStrengths())
+                    .gaps(dto.getGaps())
+                    .recommendation(dto.getRecommendation())
+                    .summary(dto.getSummary())
+                    .interviewFocus(dto.getInterviewFocus())
                     .aiModelVersion(AI_MODEL_VERSION)
                     .build();
         } catch (Exception e) {
@@ -363,6 +576,43 @@ public class AIRecruitmentService {
                     .overallScore(0)
                     .recommendation("CONSIDER")
                     .summary("Unable to analyze - " + e.getMessage())
+                    .build();
+        }
+    }
+
+    private CandidateScreeningSummaryResponse parseScreeningSummaryResponse(String aiResponse,
+                                                                            Candidate candidate,
+                                                                            JobOpening job) {
+        try {
+            String json = extractJson(aiResponse);
+
+            // Parse JSON using Jackson ObjectMapper
+            AIScreeningSummaryDTO dto = objectMapper.readValue(json, AIScreeningSummaryDTO.class);
+
+            return CandidateScreeningSummaryResponse.builder()
+                    .candidateId(candidate.getId())
+                    .candidateName(candidate.getFullName())
+                    .jobOpeningId(job.getId())
+                    .jobTitle(job.getJobTitle())
+                    .fitLevel(dto.getFitLevel())
+                    .strengths(dto.getStrengths())
+                    .gaps(dto.getGaps())
+                    .followUpQuestions(dto.getFollowUpQuestions())
+                    .riskFlags(dto.getRiskFlags())
+                    .recommendation(dto.getRecommendation())
+                    .summary(dto.getSummary())
+                    .aiModelVersion(AI_MODEL_VERSION)
+                    .build();
+        } catch (Exception e) {
+            log.error("Error parsing screening summary response: {}", e.getMessage());
+            return CandidateScreeningSummaryResponse.builder()
+                    .candidateId(candidate.getId())
+                    .candidateName(candidate.getFullName())
+                    .jobOpeningId(job.getId())
+                    .jobTitle(job.getJobTitle())
+                    .fitLevel("LOW")
+                    .summary("Unable to generate screening summary - " + e.getMessage())
+                    .aiModelVersion(AI_MODEL_VERSION)
                     .build();
         }
     }
@@ -459,15 +709,18 @@ public class AIRecruitmentService {
         try {
             String json = extractJson(aiResponse);
 
+            // Parse JSON using Jackson ObjectMapper
+            AIJobDescriptionDTO dto = objectMapper.readValue(json, AIJobDescriptionDTO.class);
+
             return JobDescriptionResponse.builder()
                     .success(true)
-                    .title(extractJsonField(json, "title"))
-                    .summary(extractJsonField(json, "summary"))
-                    .responsibilities(extractJsonArray(json, "responsibilities"))
-                    .requirements(extractJsonArray(json, "requirements"))
-                    .preferredQualifications(extractJsonArray(json, "preferredQualifications"))
-                    .benefits(extractJsonArray(json, "benefits"))
-                    .fullDescription(extractJsonField(json, "fullDescription"))
+                    .title(dto.getTitle())
+                    .summary(dto.getSummary())
+                    .responsibilities(dto.getResponsibilities())
+                    .requirements(dto.getRequirements())
+                    .preferredQualifications(dto.getPreferredQualifications())
+                    .benefits(dto.getBenefits())
+                    .fullDescription(dto.getFullDescription())
                     .build();
         } catch (Exception e) {
             log.error("Error parsing job description response: {}", e.getMessage());
@@ -565,15 +818,222 @@ public class AIRecruitmentService {
         try {
             String json = extractJson(aiResponse);
 
-            return InterviewQuestionsResponse.builder()
-                    .success(true)
-                    .rawJson(json)
-                    .build();
+            // Parse JSON using Jackson ObjectMapper
+            AIInterviewQuestionsDTO dto = objectMapper.readValue(json, AIInterviewQuestionsDTO.class);
+
+            InterviewQuestionsResponse.InterviewQuestionsResponseBuilder builder = InterviewQuestionsResponse.builder();
+            builder.success(true);
+            builder.rawJson(json);
+
+            // Map technical questions
+            if (dto.getTechnicalQuestions() != null) {
+                List<InterviewQuestionsResponse.TechnicalQuestion> technicalQuestions = new ArrayList<>();
+                for (AIInterviewQuestionsDTO.TechnicalQuestion q : dto.getTechnicalQuestions()) {
+                    technicalQuestions.add(InterviewQuestionsResponse.TechnicalQuestion.builder()
+                            .question(q.getQuestion())
+                            .purpose(q.getPurpose())
+                            .difficulty(q.getDifficulty())
+                            .build());
+                }
+                builder.technicalQuestions(technicalQuestions);
+            }
+
+            // Map behavioral questions
+            if (dto.getBehavioralQuestions() != null) {
+                List<InterviewQuestionsResponse.BehavioralQuestion> behavioralQuestions = new ArrayList<>();
+                for (AIInterviewQuestionsDTO.BehavioralQuestion q : dto.getBehavioralQuestions()) {
+                    behavioralQuestions.add(InterviewQuestionsResponse.BehavioralQuestion.builder()
+                            .question(q.getQuestion())
+                            .competency(q.getCompetency())
+                            .build());
+                }
+                builder.behavioralQuestions(behavioralQuestions);
+            }
+
+            // Map situational questions
+            if (dto.getSituationalQuestions() != null) {
+                List<InterviewQuestionsResponse.SituationalQuestion> situationalQuestions = new ArrayList<>();
+                for (AIInterviewQuestionsDTO.SituationalQuestion q : dto.getSituationalQuestions()) {
+                    situationalQuestions.add(InterviewQuestionsResponse.SituationalQuestion.builder()
+                            .question(q.getQuestion())
+                            .scenario(q.getScenario())
+                            .build());
+                }
+                builder.situationalQuestions(situationalQuestions);
+            }
+
+            // Map cultural fit questions
+            if (dto.getCulturalFitQuestions() != null) {
+                List<InterviewQuestionsResponse.CulturalFitQuestion> culturalFitQuestions = new ArrayList<>();
+                for (AIInterviewQuestionsDTO.CulturalFitQuestion q : dto.getCulturalFitQuestions()) {
+                    culturalFitQuestions.add(InterviewQuestionsResponse.CulturalFitQuestion.builder()
+                            .question(q.getQuestion())
+                            .value(q.getValue())
+                            .build());
+                }
+                builder.culturalFitQuestions(culturalFitQuestions);
+            }
+
+            // Map role-specific questions
+            if (dto.getRoleSpecificQuestions() != null) {
+                List<InterviewQuestionsResponse.RoleSpecificQuestion> roleSpecificQuestions = new ArrayList<>();
+                for (AIInterviewQuestionsDTO.RoleSpecificQuestion q : dto.getRoleSpecificQuestions()) {
+                    roleSpecificQuestions.add(InterviewQuestionsResponse.RoleSpecificQuestion.builder()
+                            .question(q.getQuestion())
+                            .focus(q.getFocus())
+                            .build());
+                }
+                builder.roleSpecificQuestions(roleSpecificQuestions);
+            }
+
+            return builder.build();
         } catch (Exception e) {
             log.error("Error parsing interview questions response: {}", e.getMessage());
             return InterviewQuestionsResponse.builder()
                     .success(false)
                     .message("Error generating questions: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    // ==================== FEEDBACK SYNTHESIS ====================
+
+    /**
+     * Synthesize interview feedback from multiple rounds for a candidate.
+     * Fetches all COMPLETED interviews, clusters feedback by round and theme,
+     * and produces a cohesive narrative with agreements, disagreements, and next steps.
+     * This is guidance for hiring teams only and must not be used for automated decisions.
+     */
+    public FeedbackSynthesisResponse synthesizeInterviewFeedback(UUID candidateId, UUID jobOpeningId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        log.info("Synthesizing interview feedback for candidate {} and job {}", candidateId, jobOpeningId);
+
+        Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        JobOpening job = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+
+        List<Interview> interviews = interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId);
+
+        // Filter to COMPLETED interviews with feedback for this job
+        List<Interview> completedInterviews = interviews.stream()
+                .filter(i -> i.getJobOpeningId().equals(jobOpeningId))
+                .filter(i -> i.getStatus() == Interview.InterviewStatus.COMPLETED)
+                .filter(i -> i.getFeedback() != null && !i.getFeedback().isBlank())
+                .toList();
+
+        if (completedInterviews.isEmpty()) {
+            return FeedbackSynthesisResponse.builder()
+                    .candidateId(candidateId)
+                    .candidateName(candidate.getFullName())
+                    .jobOpeningId(jobOpeningId)
+                    .jobTitle(job.getJobTitle())
+                    .candidateNarrative("No completed interview feedback available for synthesis.")
+                    .themes(List.of())
+                    .agreements(List.of())
+                    .disagreements(List.of())
+                    .missingData(List.of("No completed interviews with feedback found"))
+                    .openQuestions(List.of())
+                    .recommendedNextStep("Schedule initial interviews")
+                    .aiModelVersion(AI_MODEL_VERSION)
+                    .build();
+        }
+
+        String prompt = buildFeedbackSynthesisPrompt(candidate, job, completedInterviews);
+        String aiResponse = callOpenAI(prompt);
+
+        return parseFeedbackSynthesisResponse(aiResponse, candidate, job);
+    }
+
+    private String buildFeedbackSynthesisPrompt(Candidate candidate, JobOpening job, List<Interview> interviews) {
+        StringBuilder feedbackSection = new StringBuilder();
+        for (Interview interview : interviews) {
+            feedbackSection.append("""
+
+                    --- Interview Round: %s (%s) ---
+                    Rating: %s/5
+                    Result: %s
+                    Feedback: %s
+                    Notes: %s
+                    """.formatted(
+                    interview.getInterviewRound() != null ? interview.getInterviewRound().name() : "UNKNOWN",
+                    interview.getInterviewType() != null ? interview.getInterviewType().name() : "UNKNOWN",
+                    interview.getRating() != null ? interview.getRating() : "N/A",
+                    interview.getResult() != null ? interview.getResult().name() : "PENDING",
+                    interview.getFeedback() != null ? interview.getFeedback() : "No feedback provided",
+                    interview.getNotes() != null ? interview.getNotes() : "No notes"));
+        }
+
+        return """
+                You are an expert HR interviewer synthesizing feedback from multiple interview rounds.
+                This synthesis is for the hiring team only and MUST NOT be used for automated hiring decisions.
+
+                Focus on evidence from the data provided. Do NOT infer or comment on any protected
+                attributes (age, gender, ethnicity, religion, health, marital status, etc.).
+
+                JOB: %s
+                CANDIDATE: %s
+
+                INTERVIEW FEEDBACK (%d rounds):
+                %s
+
+                Provide synthesis in this JSON format:
+                {
+                  "candidateNarrative": "A cohesive 3-5 sentence narrative of what the team has learned about this candidate so far",
+                  "themes": ["theme1", "theme2", "theme3"],
+                  "agreements": ["point where interviewers agree 1", "point 2"],
+                  "disagreements": ["conflicting signal 1", "conflicting signal 2"],
+                  "missingData": ["competency or area not yet assessed 1", "area 2"],
+                  "openQuestions": ["remaining question 1", "remaining question 2"],
+                  "recommendedNextStep": "Specific recommended next action for the hiring team"
+                }
+
+                Return ONLY valid JSON.
+                """.formatted(
+                job.getJobTitle(),
+                candidate.getFullName(),
+                interviews.size(),
+                feedbackSection);
+    }
+
+    private FeedbackSynthesisResponse parseFeedbackSynthesisResponse(
+            String aiResponse, Candidate candidate, JobOpening job) {
+        try {
+            String json = extractJson(aiResponse);
+
+            // Parse JSON using Jackson ObjectMapper
+            AIFeedbackSynthesisDTO dto = objectMapper.readValue(json, AIFeedbackSynthesisDTO.class);
+
+            return FeedbackSynthesisResponse.builder()
+                    .candidateId(candidate.getId())
+                    .candidateName(candidate.getFullName())
+                    .jobOpeningId(job.getId())
+                    .jobTitle(job.getJobTitle())
+                    .candidateNarrative(dto.getCandidateNarrative())
+                    .themes(dto.getThemes())
+                    .agreements(dto.getAgreements())
+                    .disagreements(dto.getDisagreements())
+                    .missingData(dto.getMissingData())
+                    .openQuestions(dto.getOpenQuestions())
+                    .recommendedNextStep(dto.getRecommendedNextStep())
+                    .aiModelVersion(AI_MODEL_VERSION)
+                    .build();
+        } catch (Exception e) {
+            log.error("Error parsing feedback synthesis response: {}", e.getMessage());
+            return FeedbackSynthesisResponse.builder()
+                    .candidateId(candidate.getId())
+                    .candidateName(candidate.getFullName())
+                    .jobOpeningId(job.getId())
+                    .jobTitle(job.getJobTitle())
+                    .candidateNarrative("Unable to synthesize feedback - " + e.getMessage())
+                    .themes(List.of())
+                    .agreements(List.of())
+                    .disagreements(List.of())
+                    .missingData(List.of())
+                    .openQuestions(List.of())
+                    .recommendedNextStep("Review feedback manually")
+                    .aiModelVersion(AI_MODEL_VERSION)
                     .build();
         }
     }
@@ -658,6 +1118,18 @@ public class AIRecruitmentService {
                       "interviewFocus": ["Leadership potential", "Cloud architecture knowledge"]
                     }
                     """;
+        } else if (prompt.contains("synthesizing feedback") || prompt.contains("Synthesize")) {
+            return """
+                    {
+                      "candidateNarrative": "The candidate demonstrated strong technical abilities across multiple rounds, particularly in system design and problem solving. Communication skills were consistently noted as a strength. There is some disagreement on leadership readiness, with the technical panel seeing potential while the managerial round flagged limited people management experience.",
+                      "themes": ["Strong technical foundation", "Good communication", "Leadership readiness uncertain", "Culture alignment positive"],
+                      "agreements": ["Technically proficient for the role", "Strong communication and presentation skills", "Positive attitude and willingness to learn"],
+                      "disagreements": ["Leadership readiness: Technical panel rated high, managerial round rated moderate", "Depth of system design knowledge varies by interviewer assessment"],
+                      "missingData": ["No assessment of cross-functional collaboration", "Team dynamics and conflict resolution not tested"],
+                      "openQuestions": ["How does the candidate handle ambiguity in project requirements?", "What is their experience leading teams of more than 3 people?"],
+                      "recommendedNextStep": "Schedule a final panel round focusing on leadership scenarios and cross-functional collaboration before making an offer decision."
+                    }
+                    """;
         } else if (prompt.contains("job description")) {
             return """
                     {
@@ -695,47 +1167,29 @@ public class AIRecruitmentService {
     }
 
     private String extractJson(String response) {
-        // Try to find JSON block
-        int start = response.indexOf("{");
-        int end = response.lastIndexOf("}");
-        if (start >= 0 && end > start) {
-            return response.substring(start, end + 1);
-        }
-        return response;
-    }
-
-    private String extractJsonField(String json, String fieldName) {
-        Pattern pattern = Pattern.compile("\"" + fieldName + "\"\\s*:\\s*\"([^\"]*?)\"");
-        Matcher matcher = pattern.matcher(json);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        // Try for numeric values
-        pattern = Pattern.compile("\"" + fieldName + "\"\\s*:\\s*([0-9.]+)");
-        matcher = pattern.matcher(json);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return null;
-    }
-
-    private List<String> extractJsonArray(String json, String fieldName) {
-        Pattern pattern = Pattern.compile("\"" + fieldName + "\"\\s*:\\s*\\[([^\\]]*?)\\]");
-        Matcher matcher = pattern.matcher(json);
-        if (matcher.find()) {
-            String arrayContent = matcher.group(1);
-            // Extract quoted strings
-            Pattern itemPattern = Pattern.compile("\"([^\"]+)\"");
-            Matcher itemMatcher = itemPattern.matcher(arrayContent);
-            List<String> items = new ArrayList<>();
-            while (itemMatcher.find()) {
-                items.add(itemMatcher.group(1));
+        // Handle markdown code blocks first (```json...``` or ```...```)
+        String json = response;
+        if (json.contains("```json")) {
+            int start = json.indexOf("```json") + 7;
+            int end = json.indexOf("```", start);
+            if (end > start) {
+                json = json.substring(start, end);
             }
-            return items;
+        } else if (json.contains("```")) {
+            int start = json.indexOf("```") + 3;
+            int end = json.indexOf("```", start);
+            if (end > start) {
+                json = json.substring(start, end);
+            }
         }
-        return new ArrayList<>();
+
+        // Try to find JSON block
+        int start = json.indexOf("{");
+        int end = json.lastIndexOf("}");
+        if (start >= 0 && end > start) {
+            return json.substring(start, end + 1);
+        }
+        return json;
     }
 
     private double parseDouble(String value, double defaultValue) {
@@ -748,4 +1202,12 @@ public class AIRecruitmentService {
             return defaultValue;
         }
     }
+
+    private double parseDouble(Number value, double defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.doubleValue();
+    }
 }
+

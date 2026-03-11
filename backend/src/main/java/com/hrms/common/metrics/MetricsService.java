@@ -280,4 +280,72 @@ public class MetricsService {
                 .register(meterRegistry)
                 .increment();
     }
+
+    /**
+     * Record workflow execution
+     */
+    public void recordWorkflowExecution(UUID tenantId, String workflowType, String status, Duration duration) {
+        Counter.builder("workflow_executions")
+                .tag("tenant_id", tenantId.toString())
+                .tag("type", workflowType)
+                .tag("status", status)
+                .register(meterRegistry)
+                .increment();
+
+        Timer.builder("workflow_execution_duration")
+                .tag("tenant_id", tenantId.toString())
+                .tag("type", workflowType)
+                .register(meterRegistry)
+                .record(duration);
+    }
+
+    /**
+     * Record approval task events
+     */
+    public void recordApprovalTask(UUID tenantId, String taskType, String action) {
+        Counter.builder("approval_tasks")
+                .tag("tenant_id", tenantId.toString())
+                .tag("type", taskType)
+                .tag("action", action)
+                .register(meterRegistry)
+                .increment();
+    }
+
+    /**
+     * Record data export
+     */
+    public void recordDataExport(UUID tenantId, String exportType, int recordCount, Duration duration) {
+        Counter.builder("data_exports")
+                .tag("tenant_id", tenantId.toString())
+                .tag("type", exportType)
+                .register(meterRegistry)
+                .increment();
+
+        meterRegistry.counter("export_records",
+                "tenant_id", tenantId.toString(),
+                "type", exportType
+        ).increment(recordCount);
+
+        Timer.builder("export_duration")
+                .tag("tenant_id", tenantId.toString())
+                .tag("type", exportType)
+                .register(meterRegistry)
+                .record(duration);
+    }
+
+    /**
+     * Record scheduled job execution
+     */
+    public void recordScheduledJob(String jobName, boolean success, Duration duration) {
+        Counter.builder("scheduled_jobs")
+                .tag("name", jobName)
+                .tag("success", String.valueOf(success))
+                .register(meterRegistry)
+                .increment();
+
+        Timer.builder("scheduled_job_duration")
+                .tag("name", jobName)
+                .register(meterRegistry)
+                .record(duration);
+    }
 }

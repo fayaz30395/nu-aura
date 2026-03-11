@@ -95,6 +95,41 @@ const SKIP_PATTERNS = [
 ];
 
 /**
+ * Decode JWT token and extract simple role information.
+ * This runs only in middleware (edge/runtime) and never on the client.
+ */
+function decodeJwtRoles(token: string): { role?: string; roles: string[] } {
+  try {
+    const [, base64Url] = token.split('.');
+    if (!base64Url) return { roles: [] };
+
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload =
+      typeof atob === 'function'
+        ? atob(base64)
+        : Buffer.from(base64, 'base64').toString('binary');
+
+    const payload = JSON.parse(
+      decodeURIComponent(
+        Array.from(jsonPayload)
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      )
+    );
+
+    const singleRole: string | undefined = payload.role;
+    const roles: string[] = Array.isArray(payload.roles) ? payload.roles : [];
+
+    return {
+      role: singleRole,
+      roles,
+    };
+  } catch {
+    return { roles: [] };
+  }
+}
+
+/**
  * Check if the path matches any pattern in the list
  */
 function matchesPattern(path: string, patterns: string[]): boolean {
@@ -188,7 +223,8 @@ export function middleware(request: NextRequest) {
   }
 
   // Check for authentication token
-  const accessToken = request.cookies.get(ACCESS_TOKEN_COOKIE);
+  const accessTokenCookie = request.cookies.get(ACCESS_TOKEN_COOKIE);
+  const accessToken = accessTokenCookie?.value;
 
   if (!accessToken) {
     // Check if this is an authenticated route that requires login
@@ -199,6 +235,13 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
     // For other routes, let them proceed (fine-grained checks happen client-side)
+    const response = NextResponse.next();
+    return addSecurityHeaders(response);
+  }
+
+  // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
+  const { role, roles } = decodeJwtRoles(accessToken);
+  if (role === 'SUPER_ADMIN' || roles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }

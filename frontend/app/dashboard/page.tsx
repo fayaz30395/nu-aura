@@ -35,6 +35,7 @@ import {
   Users as UsersIcon,
   Trash2,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -526,7 +527,12 @@ export default function DashboardPage() {
 
   return (
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-      <div className="space-y-6">
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Header with greeting and time */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
@@ -570,7 +576,7 @@ export default function DashboardPage() {
                   <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">Today's Attendance</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">Today&apos;s Attendance</h3>
                   {timeEntries.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
@@ -626,7 +632,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-surface-500 text-sm mt-1">You haven't checked in yet</p>
+                    <p className="text-surface-500 text-sm mt-1">You haven&apos;t checked in yet</p>
                   )}
                 </div>
               </div>
@@ -1056,7 +1062,7 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (

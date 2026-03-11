@@ -4,6 +4,9 @@ import com.hrms.api.employee.dto.CreateEmployeeRequest;
 import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.api.employee.dto.UpdateEmployeeRequest;
 import com.hrms.application.event.DomainEventPublisher;
+import com.hrms.application.audit.service.AuditLogService;
+import com.hrms.common.config.CacheConfig;
+import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
@@ -13,6 +16,8 @@ import com.hrms.domain.user.User;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,7 +42,11 @@ public class EmployeeService {
     @Autowired
     private DomainEventPublisher eventPublisher;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     @Transactional
+    @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true)
     public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -109,6 +118,7 @@ public class EmployeeService {
     }
 
     @Transactional
+    @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true)
     public EmployeeResponse updateEmployee(UUID employeeId, UpdateEmployeeRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -205,12 +215,32 @@ public class EmployeeService {
             changedFields.add("departmentId");
         }
         if (request.getDesignation() != null && !Objects.equals(request.getDesignation(), employee.getDesignation())) {
+            String oldDesignation = employee.getDesignation();
             employee.setDesignation(request.getDesignation());
             changedFields.add("designation");
+            // Audit log: designation change
+            auditLogService.logAction(
+                    "EMPLOYEE",
+                    employeeId,
+                    AuditAction.UPDATE,
+                    oldDesignation != null ? oldDesignation : "N/A",
+                    request.getDesignation(),
+                    "Employee designation changed"
+            );
         }
         if (request.getLevel() != null && request.getLevel() != employee.getLevel()) {
+            Employee.EmployeeLevel oldLevel = employee.getLevel();
             employee.setLevel(request.getLevel());
             changedFields.add("level");
+            // Audit log: level change
+            auditLogService.logAction(
+                    "EMPLOYEE",
+                    employeeId,
+                    AuditAction.UPDATE,
+                    oldLevel != null ? oldLevel.toString() : "N/A",
+                    request.getLevel().toString(),
+                    "Employee level changed"
+            );
         }
         if (request.getJobRole() != null && request.getJobRole() != employee.getJobRole()) {
             employee.setJobRole(request.getJobRole());
@@ -280,6 +310,7 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.EMPLOYEE_WITH_DETAILS, key = "#employeeId", unless = "#result == null")
     public EmployeeResponse getEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

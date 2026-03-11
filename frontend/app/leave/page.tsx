@@ -6,6 +6,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveBalance, LeaveRequest, LeaveType } from '@/lib/types/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { motion } from 'framer-motion';
+import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Calendar,
   Plus,
@@ -160,7 +162,12 @@ export default function LeavePage() {
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="space-y-6">
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -260,16 +267,11 @@ export default function LeavePage() {
           </div>
 
           {recentRequests.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mb-4" />
-              <p className="text-surface-500 dark:text-surface-400">No leave requests found</p>
-              <button
-                onClick={() => router.push('/leave/apply')}
-                className="mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
-              >
-                Apply for your first leave
-              </button>
-            </div>
+            <EmptyState
+              icon={<CalendarDays className="h-12 w-12" />}
+              title="No Leave Requests"
+              description="No leave requests to display"
+            />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -420,7 +422,7 @@ export default function LeavePage() {
             </p>
           </button>
         </div>
-      </div>
+      </motion.div>
     </AppLayout>
   );
 }

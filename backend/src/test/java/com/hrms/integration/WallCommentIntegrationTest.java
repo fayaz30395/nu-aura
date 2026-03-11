@@ -60,10 +60,10 @@ class WallCommentIntegrationTest {
         roles.add("EMPLOYEE");
 
         Map<String, RoleScope> permissions = new HashMap<>();
-        permissions.put(Permission.WALL_POST, RoleScope.GLOBAL);
-        permissions.put(Permission.WALL_VIEW, RoleScope.GLOBAL);
-        permissions.put(Permission.WALL_COMMENT, RoleScope.GLOBAL);
-        permissions.put(Permission.WALL_REACT, RoleScope.GLOBAL);
+        permissions.put(Permission.WALL_POST, RoleScope.ALL);
+        permissions.put(Permission.WALL_VIEW, RoleScope.ALL);
+        permissions.put(Permission.WALL_COMMENT, RoleScope.ALL);
+        permissions.put(Permission.WALL_REACT, RoleScope.ALL);
 
         SecurityContext.setCurrentUser(TEST_USER_ID, TEST_EMPLOYEE_ID, roles, permissions);
         SecurityContext.setCurrentTenantId(TEST_TENANT_ID);

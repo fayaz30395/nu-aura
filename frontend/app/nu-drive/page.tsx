@@ -807,7 +807,7 @@ function DriveContent() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">NU-Drive</h1>
-              <p className="text-sm text-surface-500">Your organization's Google Drive</p>
+              <p className="text-sm text-surface-500">Your organization&apos;s Google Drive</p>
             </div>
           </div>
           {!accessToken ? (
@@ -887,7 +887,7 @@ function DriveContent() {
                   Connect to Google Drive
                 </h2>
                 <p className="text-surface-500 mb-6 max-w-md mx-auto">
-                  Access your organization's Google Drive files directly within NuLogic.
+                  Access your organization&apos;s Google Drive files directly within NuLogic.
                   View, search, upload, share, and manage your documents all in one place.
                 </p>
                 <Button
@@ -899,7 +899,7 @@ function DriveContent() {
                   Connect Google Drive
                 </Button>
                 <p className="text-xs text-surface-400 mt-4">
-                  You'll be asked to grant access to your Google Drive files.
+                  You&apos;ll be asked to grant access to your Google Drive files.
                 </p>
               </div>
             </CardContent>
@@ -1313,7 +1313,7 @@ function DriveContent() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Share "{selectedFile.name}"</h3>
+              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Share &quot;{selectedFile.name}&quot;</h3>
               <button
                 onClick={() => setShowShareModal(false)}
                 className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"

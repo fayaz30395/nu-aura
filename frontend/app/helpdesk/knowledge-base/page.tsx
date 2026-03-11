@@ -278,7 +278,7 @@ const ArticleSkeletonCard: React.FC = () => (
 );
 
 export default function KnowledgeBasePage() {
-  const { user, permissions } = useAuth();
+  const { user } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
@@ -353,7 +353,10 @@ export default function KnowledgeBasePage() {
     setShowTicketModal(true);
   };
 
-  const isAdmin = permissions && permissions.includes('admin') || permissions && permissions.includes('hr:manage_knowledge_base');
+  const isAdmin = user?.roles?.some(role =>
+    role.code === 'ADMIN' ||
+    role.permissions?.some(perm => perm.code === 'hr:manage_knowledge_base')
+  ) ?? false;
 
   return (
     <AppLayout>
@@ -576,7 +579,7 @@ export default function KnowledgeBasePage() {
               Submit a Support Ticket
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Couldn't find the answer? We're here to help
+              Couldn&apos;t find the answer? We&apos;re here to help
             </p>
           </div>
         </ModalHeader>

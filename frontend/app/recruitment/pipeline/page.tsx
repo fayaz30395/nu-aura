@@ -1113,7 +1113,7 @@ export default function ApplicantPipelinePage() {
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
-              The offer letter will be generated, a PDF created, and a signing link sent to the candidate's email.
+              The offer letter will be generated, a PDF created, and a signing link sent to the candidate&apos;s email.
               The applicant will be moved to <strong>Offered</strong> stage automatically.
             </div>
           </div>

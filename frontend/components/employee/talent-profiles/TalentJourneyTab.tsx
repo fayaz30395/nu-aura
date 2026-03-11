@@ -155,7 +155,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                         <div className="space-y-4">
                             {profile.recentFeedback.map((feedback, idx) => (
                                 <div key={idx} className="p-4 rounded-2xl bg-surface-50 dark:bg-surface-800/50 border border-transparent hover:border-purple-200 dark:hover:border-purple-900/30 transition-all">
-                                    <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">"{feedback.comment}"</p>
+                                    <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-[10px] flex items-center justify-center font-bold text-purple-700">

@@ -39,7 +39,7 @@ export const mfaApi = {
    * Complete MFA login during authentication.
    */
   mfaLogin: async (userId: string, code: string): Promise<{ accessToken: string; refreshToken: string; tokenType: string; expiresIn: number }> => {
-    const response = await apiClient.post('/v1/auth/mfa-login', { userId, code });
+    const response = await apiClient.post<{ accessToken: string; refreshToken: string; tokenType: string; expiresIn: number }>('/v1/auth/mfa-login', { userId, code });
     return response.data;
   },
 };

@@ -456,7 +456,7 @@ function OfferPortalPage() {
                   Decline Offer
                 </h2>
                 <p className="text-surface-600 dark:text-surface-400">
-                  We're sorry to hear that. Please let us know why.
+                  We&apos;re sorry to hear that. Please let us know why.
                 </p>
               </div>
 
