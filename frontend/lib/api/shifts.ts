@@ -22,37 +22,37 @@ export const shiftsApi = {
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params?.sortDirection) queryParams.append('sortDirection', params.sortDirection);
 
-    const response = await apiClient.get<PagedResponse<Shift>>(`/api/v1/shifts?${queryParams.toString()}`);
+    const response = await apiClient.get<PagedResponse<Shift>>(`/shifts?${queryParams.toString()}`);
     return response.data;
   },
 
   getActiveShifts: async (): Promise<Shift[]> => {
-    const response = await apiClient.get<Shift[]>('/api/v1/shifts/active');
+    const response = await apiClient.get<Shift[]>('/shifts/active');
     return response.data;
   },
 
   getShiftById: async (shiftId: string): Promise<Shift> => {
-    const response = await apiClient.get<Shift>(`/api/v1/shifts/${shiftId}`);
+    const response = await apiClient.get<Shift>(`/shifts/${shiftId}`);
     return response.data;
   },
 
   createShift: async (request: CreateShiftRequest): Promise<Shift> => {
-    const response = await apiClient.post<Shift>('/api/v1/shifts', request);
+    const response = await apiClient.post<Shift>('/shifts', request);
     return response.data;
   },
 
   updateShift: async (shiftId: string, request: UpdateShiftRequest): Promise<Shift> => {
-    const response = await apiClient.put<Shift>(`/api/v1/shifts/${shiftId}`, request);
+    const response = await apiClient.put<Shift>(`/shifts/${shiftId}`, request);
     return response.data;
   },
 
   deleteShift: async (shiftId: string): Promise<void> => {
-    await apiClient.delete(`/api/v1/shifts/${shiftId}`);
+    await apiClient.delete(`/shifts/${shiftId}`);
   },
 
   // Shift Assignment operations
   assignShift: async (request: CreateShiftAssignmentRequest): Promise<ShiftAssignment> => {
-    const response = await apiClient.post<ShiftAssignment>('/api/v1/shifts/assignments', request);
+    const response = await apiClient.post<ShiftAssignment>('/shifts/assignments', request);
     return response.data;
   },
 
@@ -65,17 +65,17 @@ export const shiftsApi = {
     if (params?.size !== undefined) queryParams.append('size', params.size.toString());
 
     const response = await apiClient.get<PagedResponse<ShiftAssignment>>(
-      `/api/v1/shifts/assignments/employee/${employeeId}?${queryParams.toString()}`
+      `/shifts/assignments/employee/${employeeId}?${queryParams.toString()}`
     );
     return response.data;
   },
 
   getAssignmentsForDate: async (date: string): Promise<ShiftAssignment[]> => {
-    const response = await apiClient.get<ShiftAssignment[]>(`/api/v1/shifts/assignments/date/${date}`);
+    const response = await apiClient.get<ShiftAssignment[]>(`/shifts/assignments/date/${date}`);
     return response.data;
   },
 
   cancelAssignment: async (assignmentId: string): Promise<void> => {
-    await apiClient.delete(`/api/v1/shifts/assignments/${assignmentId}`);
+    await apiClient.delete(`/shifts/assignments/${assignmentId}`);
   },
 };

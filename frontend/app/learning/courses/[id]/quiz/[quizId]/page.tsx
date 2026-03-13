@@ -60,6 +60,21 @@ interface QuizAnswer {
 
 type QuizState = 'intro' | 'taking' | 'submitted';
 
+interface QuizResultDetail {
+  questionId: string;
+  isCorrect: boolean;
+  userAnswer?: string;
+  correctAnswer?: string;
+  explanation?: string;
+}
+
+interface QuizResult {
+  score: number;
+  correctAnswers: number;
+  timeTaken?: string;
+  details: QuizResultDetail[];
+}
+
 export default function QuizPage() {
   const { id: courseId, quizId } = useParams<{ id: string; quizId: string }>();
   const router = useRouter();
@@ -75,7 +90,7 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<QuizResult | null>(null);
 
   // Timer
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -558,7 +573,7 @@ export default function QuizPage() {
                 <div className="mb-8">
                   <h3 className="font-semibold text-gray-900 mb-4">Detailed Feedback</h3>
                   <div className="space-y-4">
-                    {result.details.map((detail: any, idx: number) => (
+                    {result.details.map((detail: QuizResultDetail, idx: number) => (
                       <div key={idx} className={`border rounded-lg p-4 ${detail.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
                         <div className="flex items-start gap-3">
                           {detail.isCorrect ? (
