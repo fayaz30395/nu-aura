@@ -48,6 +48,9 @@ export default function MyAttendancePage() {
       router.push('/auth/login');
     } else if (user?.employeeId) {
       loadAttendance();
+    } else if (user) {
+      // User without employee profile (e.g., SuperAdmin) — stop loading
+      setIsLoading(false);
     }
   }, [hasHydrated, isAuthenticated, user, router, currentDate]);
 
@@ -294,6 +297,26 @@ export default function MyAttendancePage() {
       <AppLayout activeMenuItem="my-attendance">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!user?.employeeId) {
+    return (
+      <AppLayout activeMenuItem="my-attendance">
+        <div className="text-center py-12">
+          <Clock className="h-16 w-16 mx-auto text-slate-300 mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
+          <p className="text-slate-500 max-w-md mx-auto">
+            Attendance tracking requires an employee profile. Use the admin panels to manage team attendance.
+          </p>
+          <button
+            onClick={() => router.push('/attendance/team')}
+            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            View Team Attendance
+          </button>
         </div>
       </AppLayout>
     );

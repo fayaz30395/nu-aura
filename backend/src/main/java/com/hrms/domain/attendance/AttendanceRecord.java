@@ -3,6 +3,7 @@ package com.hrms.domain.attendance;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class AttendanceRecord extends TenantAware {
 
     @Column(name = "employee_id", nullable = false)

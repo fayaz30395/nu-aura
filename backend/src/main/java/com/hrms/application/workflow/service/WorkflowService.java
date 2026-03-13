@@ -760,7 +760,8 @@ public class WorkflowService {
         long pending = stepExecutionRepository.countPendingForUser(tenantId, currentUser);
 
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay);
+        List<Object[]> todayActions = stepExecutionRepository.countTodayActionsByUser(tenantId, currentUser, startOfDay,
+                java.util.List.of(StepExecution.ApprovalAction.APPROVE, StepExecution.ApprovalAction.REJECT));
 
         long approvedToday = 0;
         long rejectedToday = 0;

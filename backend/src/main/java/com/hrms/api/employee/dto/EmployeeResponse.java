@@ -38,9 +38,15 @@ public class EmployeeResponse {
     private LocalDate confirmationDate;
     private LocalDate exitDate;
     private UUID departmentId;
+    private String departmentName;
+    private UUID officeLocationId;
+    private String locationName;
     private String designation;
+    private Employee.EmployeeLevel level;
+    private Employee.JobRole jobRole;
     private UUID managerId;
     private String managerName;
+    private UUID teamId;
     private Employee.EmploymentType employmentType;
     private Employee.EmployeeStatus status;
     private String bankAccountNumber;
@@ -74,8 +80,12 @@ public class EmployeeResponse {
                 .confirmationDate(employee.getConfirmationDate())
                 .exitDate(employee.getExitDate())
                 .departmentId(employee.getDepartmentId())
+                .officeLocationId(employee.getOfficeLocationId())
                 .designation(employee.getDesignation())
+                .level(employee.getLevel())
+                .jobRole(employee.getJobRole())
                 .managerId(employee.getManagerId())
+                .teamId(employee.getTeamId())
                 .employmentType(employee.getEmploymentType())
                 .status(employee.getStatus())
                 .bankAccountNumber(employee.getBankAccountNumber())

@@ -3,6 +3,7 @@ package com.hrms.domain.performance;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class KeyResult extends TenantAware {
 
     @Column(name = "objective_id", nullable = false)

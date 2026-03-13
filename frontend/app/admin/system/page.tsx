@@ -37,8 +37,9 @@ import {
   useSystemOverview,
   useTenantList,
   useImpersonationToken,
+  useGrowthMetrics,
 } from '@/lib/hooks/queries/useSystemAdmin';
-import { TenantListItem } from '@/lib/types/admin-system';
+import { TenantListItem, MonthlyGrowth } from '@/lib/types/admin-system';
 import clsx from 'clsx';
 
 const SUPER_ADMIN_ONLY_ROLES = [Roles.SUPER_ADMIN];
@@ -58,6 +59,7 @@ export default function SystemDashboard() {
   // Queries
   const overviewQuery = useSystemOverview();
   const tenantListQuery = useTenantList(page, 20);
+  const growthMetricsQuery = useGrowthMetrics(6);
   const impersonationMutation = useImpersonationToken();
 
   // Authorization check
@@ -90,18 +92,11 @@ export default function SystemDashboard() {
     }
   };
 
-  // Generate mock growth data for chart
-  const growthData = useMemo(() => {
-    if (!overviewQuery.data) return [];
-    return [
-      { month: 'Jan', tenants: 10, activeUsers: 120, employees: 250 },
-      { month: 'Feb', tenants: 12, activeUsers: 145, employees: 290 },
-      { month: 'Mar', tenants: 15, activeUsers: 180, employees: 350 },
-      { month: 'Apr', tenants: 18, activeUsers: 215, employees: 420 },
-      { month: 'May', tenants: 20, activeUsers: 260, employees: 520 },
-      { month: 'Jun', tenants: Math.max(20, Math.floor(Math.random() * 30)), activeUsers: Math.floor(Math.random() * 300) + 200, employees: Math.floor(Math.random() * 600) + 400 },
-    ];
-  }, [overviewQuery.data]);
+  // Growth data from real API
+  const growthData = useMemo((): MonthlyGrowth[] => {
+    if (!growthMetricsQuery.data?.months) return [];
+    return growthMetricsQuery.data.months;
+  }, [growthMetricsQuery.data]);
 
   if (!isReady || !hasHydrated) {
     return (
@@ -141,8 +136,9 @@ export default function SystemDashboard() {
           onClick={() => {
             overviewQuery.refetch();
             tenantListQuery.refetch();
+            growthMetricsQuery.refetch();
           }}
-          loading={overviewQuery.isRefetching || tenantListQuery.isRefetching}
+          loading={overviewQuery.isRefetching || tenantListQuery.isRefetching || growthMetricsQuery.isRefetching}
         >
           <RefreshCw className="h-5 w-5" />
         </ActionIcon>

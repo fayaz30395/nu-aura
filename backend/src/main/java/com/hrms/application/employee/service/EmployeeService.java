@@ -10,9 +10,11 @@ import com.hrms.domain.audit.AuditLog.AuditAction;
 import com.hrms.common.exception.DuplicateResourceException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
+import com.hrms.domain.employee.Department;
 import com.hrms.domain.employee.Employee;
 import com.hrms.domain.event.employee.*;
 import com.hrms.domain.user.User;
+import com.hrms.infrastructure.employee.repository.DepartmentRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -110,6 +115,16 @@ public class EmployeeService {
             employee.setManagerId(employee.getId());
             employee = employeeRepository.save(employee);
         }
+
+        // Audit log: employee creation
+        auditLogService.logAction(
+                "EMPLOYEE",
+                employee.getId(),
+                AuditAction.CREATE,
+                null,
+                employee.getEmployeeCode() + " - " + employee.getFirstName() + " " + (employee.getLastName() != null ? employee.getLastName() : ""),
+                "Employee created: " + employee.getEmployeeCode() + " (" + employee.getFirstName() + ") - Department: " + employee.getDepartmentId()
+        );
 
         // Publish domain event for employee creation
         eventPublisher.publish(EmployeeCreatedEvent.of(this, employee));
@@ -211,8 +226,18 @@ public class EmployeeService {
             changedFields.add("confirmationDate");
         }
         if (request.getDepartmentId() != null && !Objects.equals(request.getDepartmentId(), employee.getDepartmentId())) {
+            UUID oldDeptId = employee.getDepartmentId();
             employee.setDepartmentId(request.getDepartmentId());
             changedFields.add("departmentId");
+            // Audit log: department change
+            auditLogService.logAction(
+                    "EMPLOYEE",
+                    employeeId,
+                    AuditAction.UPDATE,
+                    oldDeptId != null ? oldDeptId.toString() : "N/A",
+                    request.getDepartmentId().toString(),
+                    "Employee department changed"
+            );
         }
         if (request.getDesignation() != null && !Objects.equals(request.getDesignation(), employee.getDesignation())) {
             String oldDesignation = employee.getDesignation();
@@ -255,8 +280,18 @@ public class EmployeeService {
             changedFields.add("employmentType");
         }
         if (request.getStatus() != null && request.getStatus() != employee.getStatus()) {
+            Employee.EmployeeStatus oldStatus = employee.getStatus();
             employee.setStatus(request.getStatus());
             changedFields.add("status");
+            // Audit log: status change
+            auditLogService.logAction(
+                    "EMPLOYEE",
+                    employeeId,
+                    AuditAction.STATUS_CHANGE,
+                    oldStatus != null ? oldStatus.toString() : "N/A",
+                    request.getStatus().toString(),
+                    "Employee status changed from " + oldStatus + " to " + request.getStatus()
+            );
         }
         if (request.getBankAccountNumber() != null && !Objects.equals(request.getBankAccountNumber(), employee.getBankAccountNumber())) {
             employee.setBankAccountNumber(request.getBankAccountNumber());
@@ -320,6 +355,12 @@ public class EmployeeService {
 
         EmployeeResponse response = EmployeeResponse.fromEmployee(employee);
 
+        // Add department name if exists
+        if (employee.getDepartmentId() != null) {
+            departmentRepository.findById(employee.getDepartmentId())
+                    .ifPresent(dept -> response.setDepartmentName(dept.getName()));
+        }
+
         // Add manager name if exists
         if (employee.getManagerId() != null) {
             employeeRepository.findById(employee.getManagerId())
@@ -332,15 +373,23 @@ public class EmployeeService {
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> getAllEmployees(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.findAllByTenantId(tenantId, pageable)
-                .map(EmployeeResponse::fromEmployee);
+        Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
+
+        Page<Employee> employeePage = employeeRepository.findAllByTenantId(tenantId, pageable);
+        Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
+
+        return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
     }
 
     @Transactional(readOnly = true)
     public Page<EmployeeResponse> searchEmployees(String search, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return employeeRepository.searchEmployees(tenantId, search, pageable)
-                .map(EmployeeResponse::fromEmployee);
+        Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
+
+        Page<Employee> employeePage = employeeRepository.searchEmployees(tenantId, search, pageable);
+        Map<UUID, String> empNames = buildEmployeeNameMap(employeePage.getContent());
+
+        return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
     }
 
     @Transactional(readOnly = true)
@@ -435,5 +484,49 @@ public class EmployeeService {
     @Transactional(readOnly = true)
     public java.util.Optional<Employee> findByIdAndTenant(UUID employeeId, UUID tenantId) {
         return employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+    }
+
+    /**
+     * Retrieves an employee by their associated user ID with tenant isolation.
+     *
+     * @param userId the user ID linked to the employee
+     * @return Optional containing the employee if found
+     */
+    @Transactional(readOnly = true)
+    public java.util.Optional<Employee> getEmployeeByUserId(UUID userId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return employeeRepository.findByUserIdAndTenantId(userId, tenantId);
+    }
+
+    // ==================== DTO Enrichment Helpers ====================
+
+    /**
+     * Enrich an EmployeeResponse with department name, manager name, and location name
+     * by looking up related entities. This prevents N+1 queries by batching lookups.
+     */
+    private EmployeeResponse enrichResponse(EmployeeResponse response, Map<UUID, String> deptNames, Map<UUID, String> empNames) {
+        if (response.getDepartmentId() != null && deptNames.containsKey(response.getDepartmentId())) {
+            response.setDepartmentName(deptNames.get(response.getDepartmentId()));
+        }
+        if (response.getManagerId() != null && empNames.containsKey(response.getManagerId())) {
+            response.setManagerName(empNames.get(response.getManagerId()));
+        }
+        return response;
+    }
+
+    /**
+     * Build a department ID → name lookup map for the current tenant.
+     */
+    private Map<UUID, String> buildDepartmentNameMap(UUID tenantId) {
+        return departmentRepository.findByTenantId(tenantId).stream()
+                .collect(Collectors.toMap(Department::getId, Department::getName, (a, b) -> a));
+    }
+
+    /**
+     * Build an employee ID → full name lookup map from a collection of employees.
+     */
+    private Map<UUID, String> buildEmployeeNameMap(Collection<Employee> employees) {
+        return employees.stream()
+                .collect(Collectors.toMap(Employee::getId, Employee::getFullName, (a, b) -> a));
     }
 }

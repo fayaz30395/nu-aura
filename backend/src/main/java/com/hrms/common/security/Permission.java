@@ -129,6 +129,16 @@ public final class Permission {
     public static final String DOCUMENT_UPLOAD = "DOCUMENT:UPLOAD";
     public static final String DOCUMENT_APPROVE = "DOCUMENT:APPROVE";
     public static final String DOCUMENT_DELETE = "DOCUMENT:DELETE";
+    public static final String DOCUMENT_MANAGE_CATEGORY = "DOCUMENT:MANAGE_CATEGORY";
+    public static final String DOCUMENT_VIEW_ALL = "DOCUMENT:VIEW_ALL";
+    public static final String DOCUMENT_VERSION_MANAGE = "DOCUMENT:VERSION_MANAGE";
+    public static final String DOCUMENT_ACCESS_MANAGE = "DOCUMENT:ACCESS_MANAGE";
+
+    // Payment Gateway
+    public static final String PAYMENT_VIEW = "PAYMENT:VIEW";
+    public static final String PAYMENT_INITIATE = "PAYMENT:INITIATE";
+    public static final String PAYMENT_REFUND = "PAYMENT:REFUND";
+    public static final String PAYMENT_CONFIG_MANAGE = "PAYMENT:CONFIG_MANAGE";
 
     // Expense Management
     public static final String EXPENSE_VIEW = "EXPENSE:VIEW";
@@ -318,6 +328,15 @@ public final class Permission {
     public static final String ASSET_ASSIGN = "ASSET:ASSIGN";
     public static final String ASSET_MANAGE = "ASSET:MANAGE";
 
+    // Contract Management
+    public static final String CONTRACT_VIEW = "CONTRACT:VIEW";
+    public static final String CONTRACT_CREATE = "CONTRACT:CREATE";
+    public static final String CONTRACT_UPDATE = "CONTRACT:UPDATE";
+    public static final String CONTRACT_DELETE = "CONTRACT:DELETE";
+    public static final String CONTRACT_APPROVE = "CONTRACT:APPROVE";
+    public static final String CONTRACT_SIGN = "CONTRACT:SIGN";
+    public static final String CONTRACT_TEMPLATE_MANAGE = "CONTRACT:TEMPLATE_MANAGE";
+
     // Onboarding Management
     public static final String ONBOARDING_VIEW = "ONBOARDING:VIEW";
     public static final String ONBOARDING_CREATE = "ONBOARDING:CREATE";
@@ -423,6 +442,25 @@ public final class Permission {
     // Public Career Page
     public static final String CAREER_VIEW = "CAREER:VIEW";
     public static final String CAREER_MANAGE = "CAREER:MANAGE"; // HR to manage job postings
+
+    // Knowledge Management (NU-Fluence)
+    public static final String KNOWLEDGE_WIKI_CREATE = "KNOWLEDGE:WIKI_CREATE";
+    public static final String KNOWLEDGE_WIKI_READ = "KNOWLEDGE:WIKI_READ";
+    public static final String KNOWLEDGE_WIKI_UPDATE = "KNOWLEDGE:WIKI_UPDATE";
+    public static final String KNOWLEDGE_WIKI_DELETE = "KNOWLEDGE:WIKI_DELETE";
+    public static final String KNOWLEDGE_WIKI_PUBLISH = "KNOWLEDGE:WIKI_PUBLISH";
+    public static final String KNOWLEDGE_WIKI_APPROVE = "KNOWLEDGE:WIKI_APPROVE";
+    public static final String KNOWLEDGE_BLOG_CREATE = "KNOWLEDGE:BLOG_CREATE";
+    public static final String KNOWLEDGE_BLOG_READ = "KNOWLEDGE:BLOG_READ";
+    public static final String KNOWLEDGE_BLOG_UPDATE = "KNOWLEDGE:BLOG_UPDATE";
+    public static final String KNOWLEDGE_BLOG_DELETE = "KNOWLEDGE:BLOG_DELETE";
+    public static final String KNOWLEDGE_BLOG_PUBLISH = "KNOWLEDGE:BLOG_PUBLISH";
+    public static final String KNOWLEDGE_TEMPLATE_CREATE = "KNOWLEDGE:TEMPLATE_CREATE";
+    public static final String KNOWLEDGE_TEMPLATE_READ = "KNOWLEDGE:TEMPLATE_READ";
+    public static final String KNOWLEDGE_TEMPLATE_UPDATE = "KNOWLEDGE:TEMPLATE_UPDATE";
+    public static final String KNOWLEDGE_TEMPLATE_DELETE = "KNOWLEDGE:TEMPLATE_DELETE";
+    public static final String KNOWLEDGE_SEARCH = "KNOWLEDGE:SEARCH";
+    public static final String KNOWLEDGE_SETTINGS_MANAGE = "KNOWLEDGE:SETTINGS_MANAGE";
 
     private Permission() {
         throw new AssertionError("Cannot instantiate constants class");

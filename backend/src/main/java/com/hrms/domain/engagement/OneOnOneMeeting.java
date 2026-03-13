@@ -3,6 +3,7 @@ package com.hrms.domain.engagement;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class OneOnOneMeeting extends TenantAware {
 
     @Column(name = "manager_id", nullable = false)

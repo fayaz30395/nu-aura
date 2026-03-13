@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class UserAppAccess extends TenantAware {
 
     /**

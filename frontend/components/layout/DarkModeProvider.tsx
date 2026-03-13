@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 interface DarkModeContextType {
   isDark: boolean;
@@ -48,13 +48,8 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!isDark);
-  };
-
-  // Set dark mode directly
-  const setDarkMode = (isDarkMode: boolean) => {
+  // Set dark mode directly (useCallback to prevent recreating on every render)
+  const setDarkMode = useCallback((isDarkMode: boolean) => {
     setIsDarkState(isDarkMode);
     applyTheme(isDarkMode);
 
@@ -62,15 +57,25 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, isDarkMode ? 'dark' : 'light');
     }
-  };
+  }, []);
 
-  // Don't render context until mounted to avoid hydration mismatch
-  if (!mounted) {
-    return <>{children}</>;
-  }
+  // Toggle dark mode (useCallback with isDark dependency)
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode(!isDark);
+  }, [isDark, setDarkMode]);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      isDark,
+      toggleDarkMode,
+      setDarkMode,
+    }),
+    [isDark, toggleDarkMode, setDarkMode]
+  );
 
   return (
-    <DarkModeContext.Provider value={{ isDark, toggleDarkMode, setDarkMode }}>
+    <DarkModeContext.Provider value={contextValue}>
       {children}
     </DarkModeContext.Provider>
   );

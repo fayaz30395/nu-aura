@@ -1,5 +1,6 @@
 package com.hrms.application.lms.service;
 
+import java.time.temporal.ChronoUnit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrms.api.lms.dto.*;
 import com.hrms.domain.lms.*;
@@ -127,7 +128,7 @@ public class QuizAssessmentService {
         attempt.setStatus(QuizAttempt.AttemptStatus.COMPLETED);
 
         if (attempt.getStartedAt() != null) {
-            int secondsTaken = (int) ((attempt.getCompletedAt().getTime() - attempt.getStartedAt().getTime()) / 1000);
+            int secondsTaken = (int) ChronoUnit.SECONDS.between(attempt.getStartedAt(), attempt.getCompletedAt());
             attempt.setTimeTakenSeconds(secondsTaken);
         }
 

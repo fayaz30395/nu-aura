@@ -1,0 +1,32 @@
+package com.hrms.domain.knowledge;
+
+import com.hrms.common.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "blog_likes", indexes = {
+        @Index(name = "idx_blog_likes_tenant", columnList = "tenantId"),
+        @Index(name = "idx_blog_likes_post", columnList = "postId"),
+        @Index(name = "idx_blog_likes_user", columnList = "userId")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class BlogLike extends BaseEntity {
+
+    @Column(nullable = false)
+    private UUID tenantId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private BlogPost post;
+
+    @Column(nullable = false)
+    private UUID userId;
+}

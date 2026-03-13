@@ -160,7 +160,7 @@ public interface StepExecutionRepository extends JpaRepository<StepExecution, UU
            "WHERE s.tenantId = :tenantId " +
            "AND s.actionByUserId = :userId " +
            "AND s.executedAt >= :startOfDay " +
-           "AND s.action IN (com.hrms.domain.workflow.StepExecution.ApprovalAction.APPROVE, com.hrms.domain.workflow.StepExecution.ApprovalAction.REJECT) " +
+           "AND s.action IN :actions " +
            "GROUP BY s.action")
-    List<Object[]> countTodayActionsByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, @Param("startOfDay") LocalDateTime startOfDay);
+    List<Object[]> countTodayActionsByUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId, @Param("startOfDay") LocalDateTime startOfDay, @Param("actions") java.util.Collection<StepExecution.ApprovalAction> actions);
 }

@@ -5,6 +5,7 @@ import com.hrms.infrastructure.ai.repository.CandidateMatchScoreRepository;
 import com.hrms.infrastructure.recruitment.repository.CandidateRepository;
 import com.hrms.infrastructure.recruitment.repository.InterviewRepository;
 import com.hrms.infrastructure.recruitment.repository.JobOpeningRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tika.exception.TikaException;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +64,7 @@ class AIRecruitmentServiceFileParsingTest {
                 .thenReturn(extractedText);
 
         // Mock the AI response (simplified for test)
-        when(objectMapper.readValue(anyString(), any()))
+        when(objectMapper.readValue(anyString(), any(TypeReference.class)))
                 .thenReturn(createMockAIResumeParseDTO());
 
         // Act

@@ -273,13 +273,26 @@ export default function TimesheetsPage() {
     return null;
   }
 
-  if (loading && timesheets.length === 0) {
+  if (loading && timesheets.length === 0 && user?.employeeId) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
           <span className="ml-2 text-surface-600 dark:text-surface-400">Loading timesheets...</span>
         </div>
+      </AppLayout>
+    );
+  }
+
+  // SuperAdmin (no employeeId) - show message
+  if (!user?.employeeId) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
+        <EmptyState
+          icon={<FileSpreadsheet className="h-12 w-12" />}
+          title="Timesheets"
+          description="As an administrator, you don't have personal timesheets. Select an employee to view their timesheets."
+        />
       </AppLayout>
     );
   }

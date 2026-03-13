@@ -34,6 +34,13 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+    ],
   },
 
   // Compiler optimizations
@@ -73,13 +80,13 @@ const nextConfig = {
         value: [
           "default-src 'self'",
           process.env.NODE_ENV === 'development'
-            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-            : "script-src 'self' 'unsafe-inline'",
-          "style-src 'self' 'unsafe-inline'",
-          `connect-src 'self' ${apiOrigin} wss:`,
+            ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com"
+            : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com",
+          "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+          `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com`,
           "img-src 'self' data: blob: https:",
-          "font-src 'self'",
-          "frame-src 'self' https://docs.google.com",
+          "font-src 'self' https://fonts.gstatic.com",
+          "frame-src 'self' https://docs.google.com https://accounts.google.com",
           "object-src 'none'",
           "base-uri 'self'",
           "form-action 'self'",

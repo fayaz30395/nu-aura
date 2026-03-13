@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
 import { Roles } from '@/lib/hooks/usePermissions';
 import { AdminUserSummary } from '@/lib/types/admin';
+import { AppLayout } from '@/components/layout';
 
 const PAGE_SIZE = 10;
 
@@ -56,6 +57,7 @@ export default function AdminDashboardPage() {
   const canNext = usersPage ? page < usersPage.totalPages - 1 : false;
 
   return (
+    <AppLayout activeMenuItem="admin">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -265,6 +267,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </motion.div>
+    </AppLayout>
   );
 }
 
@@ -288,10 +291,37 @@ function StatCard(props: { title: string; value: number | string; description?: 
 function SystemHealthCard(props: { isLoading: boolean; health: any }) {
   const { isLoading, health } = props;
 
-  const statusColor = health?.status === 'UP' ? 'bg-green-100 dark:bg-green-900/30' : 'bg-red-100 dark:bg-red-900/30';
-  const statusBadgeColor = health?.status === 'UP' ? 'bg-green-500' : 'bg-red-500';
-  const statusText = health?.status === 'UP' ? 'System UP' : 'System DOWN';
-  const statusTextColor = health?.status === 'UP' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300';
+  const getStatusColors = (status?: string) => {
+    switch (status?.toUpperCase()) {
+      case 'UP':
+        return {
+          color: 'bg-green-100 dark:bg-green-900/30',
+          badge: 'bg-green-500',
+          text: 'System UP',
+          textColor: 'text-green-700 dark:text-green-300',
+        };
+      case 'DEGRADED':
+        return {
+          color: 'bg-amber-100 dark:bg-amber-900/30',
+          badge: 'bg-amber-500',
+          text: 'System Degraded',
+          textColor: 'text-amber-700 dark:text-amber-300',
+        };
+      default:
+        return {
+          color: 'bg-red-100 dark:bg-red-900/30',
+          badge: 'bg-red-500',
+          text: 'System Down',
+          textColor: 'text-red-700 dark:text-red-300',
+        };
+    }
+  };
+
+  const statusColors = getStatusColors(health?.status);
+  const statusColor = statusColors.color;
+  const statusBadgeColor = statusColors.badge;
+  const statusText = statusColors.text;
+  const statusTextColor = statusColors.textColor;
 
   return (
     <motion.div
@@ -340,10 +370,32 @@ function SystemHealthCard(props: { isLoading: boolean; health: any }) {
           className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
         >
           {Object.entries(health.components).map(([componentName, component]: [string, any], index) => {
-            const isUp = component.status?.toUpperCase() === 'UP';
-            const componentColor = isUp ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20';
-            const dotColor = isUp ? 'bg-green-500' : 'bg-red-500';
-            const textColor = isUp ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300';
+            const status = component.status?.toUpperCase();
+            const isUp = status === 'UP';
+            const isUnavailable = status === 'UNAVAILABLE';
+            const isDegraded = status === 'DEGRADED';
+
+            let componentColor = 'bg-red-50 dark:bg-red-900/20';
+            let dotColor = 'bg-red-500';
+            let textColor = 'text-red-700 dark:text-red-300';
+            let statusLabel = 'Down';
+
+            if (isUp) {
+              componentColor = 'bg-green-50 dark:bg-green-900/20';
+              dotColor = 'bg-green-500';
+              textColor = 'text-green-700 dark:text-green-300';
+              statusLabel = 'Operational';
+            } else if (isUnavailable) {
+              componentColor = 'bg-amber-50 dark:bg-amber-900/20';
+              dotColor = 'bg-amber-500';
+              textColor = 'text-amber-700 dark:text-amber-300';
+              statusLabel = 'Unavailable';
+            } else if (isDegraded) {
+              componentColor = 'bg-orange-50 dark:bg-orange-900/20';
+              dotColor = 'bg-orange-500';
+              textColor = 'text-orange-700 dark:text-orange-300';
+              statusLabel = 'Degraded';
+            }
 
             return (
               <motion.div
@@ -360,7 +412,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: any }) {
                       {componentName.replace(/([A-Z])/g, ' $1').trim()}
                     </div>
                     <div className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                      {isUp ? 'Operational' : 'Unavailable'}
+                      {statusLabel}
                     </div>
                   </div>
                 </div>

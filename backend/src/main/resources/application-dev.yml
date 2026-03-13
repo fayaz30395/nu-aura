@@ -5,9 +5,9 @@
 spring:
   datasource:
     # Use environment variables for database credentials
-    url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms_dev}
-    username: ${DEV_DATABASE_USERNAME:hrms_user}
-    password: ${DEV_DATABASE_PASSWORD:hrms_pass}
+    url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
+    username: ${DEV_DATABASE_USERNAME:hrms}
+    password: ${DEV_DATABASE_PASSWORD:hrms_dev_password}
 
   data:
     redis:
@@ -21,11 +21,11 @@ spring:
     password: ${MAIL_PASSWORD:}
 
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
-        generate_statistics: true
+        generate_statistics: false
         session:
           events:
             log:
@@ -51,8 +51,10 @@ app:
 
 logging:
   level:
-    com.hrms: DEBUG
-    org.springframework.security: DEBUG
-    org.hibernate.stat: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: INFO
+    com.hrms: INFO
+    org.springframework.security: INFO
+    org.hibernate.stat: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR
+    org.springframework.kafka: WARN
+    org.apache.kafka: WARN

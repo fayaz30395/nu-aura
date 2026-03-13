@@ -145,12 +145,14 @@ public class LmsController {
         return quizManagementService.getQuizzesByCourse(courseId, tenantId);
     }
 
-    @GetMapping("/quizzes/{quizId}")
-    @RequiresPermission(Permission.LMS_COURSE_MANAGE)
-    public Quiz getQuiz(@PathVariable UUID quizId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
-        return quizManagementService.getQuizWithQuestions(quizId, tenantId);
-    }
+    // Removed - duplicate of QuizController#getQuizDetails
+    // Use QuizController for quiz retrieval endpoints
+    // @GetMapping("/quizzes/{quizId}")
+    // @RequiresPermission(Permission.LMS_COURSE_MANAGE)
+    // public Quiz getQuiz(@PathVariable UUID quizId) {
+    //     UUID tenantId = TenantContext.getCurrentTenant();
+    //     return quizManagementService.getQuizWithQuestions(quizId, tenantId);
+    // }
 
     @PutMapping("/quizzes/{quizId}")
     @RequiresPermission(Permission.LMS_COURSE_MANAGE)

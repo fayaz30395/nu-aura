@@ -161,8 +161,12 @@ export default function AnnouncementsPage() {
     if (user?.employeeId) {
       loadAnnouncements();
       loadPinnedAnnouncements();
+    } else if (user) {
+      // User without employee profile (e.g., SuperAdmin) — load pinned only, stop loading
+      loadPinnedAnnouncements();
+      setLoading(false);
     }
-  }, [page, categoryFilter, priorityFilter, user?.employeeId, loadAnnouncements, loadPinnedAnnouncements]);
+  }, [page, categoryFilter, priorityFilter, user?.employeeId, user, loadAnnouncements, loadPinnedAnnouncements]);
 
   const handleAnnouncementClick = async (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);

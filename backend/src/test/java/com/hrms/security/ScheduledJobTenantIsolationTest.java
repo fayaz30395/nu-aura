@@ -20,9 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>Scheduled jobs affected:</p>
  * <ul>
- *   <li>JobBoardIntegrationService.syncApplicationCounts() - @Scheduled(cron = "0 0 */6 * * *")</li>
- *   <li>JobBoardIntegrationService.expireOldPostings() - @Scheduled(cron = "0 0 2 * * *")</li>
- *   <li>WebhookDeliveryService.processRetries() - @Scheduled(fixedRate = 60000)</li>
+ *   <li>JobBoardIntegrationService.syncApplicationCounts() - @Scheduled every 6 hours</li>
+ *   <li>JobBoardIntegrationService.expireOldPostings() - @Scheduled daily at 2am</li>
+ *   <li>WebhookDeliveryService.processRetries() - @Scheduled every 60 seconds</li>
  *   <li>AutoRegularizationScheduler (if exists)</li>
  *   <li>ScheduledReportExecutionJob (if exists)</li>
  *   <li>ScheduledNotificationService (if exists)</li>

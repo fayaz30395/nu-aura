@@ -5,6 +5,7 @@ import {
   TenantMetrics,
   ImpersonationToken,
   PaginatedTenantList,
+  GrowthMetrics,
 } from '../types/admin-system';
 
 /**
@@ -46,6 +47,16 @@ export const systemAdminApi = {
   getTenantMetrics: async (tenantId: string): Promise<TenantMetrics> => {
     const response = await apiClient.get<TenantMetrics>(
       `/admin/system/tenants/${tenantId}/metrics`
+    );
+    return response.data;
+  },
+
+  /**
+   * Get platform growth metrics over the last N months
+   */
+  getGrowthMetrics: async (months: number = 6): Promise<GrowthMetrics> => {
+    const response = await apiClient.get<GrowthMetrics>(
+      `/admin/system/growth-metrics?months=${months}`
     );
     return response.data;
   },

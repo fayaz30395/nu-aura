@@ -16,6 +16,7 @@ import {
   GitBranch,
   Umbrella,
   Server,
+  Upload,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -118,6 +119,19 @@ export default function AdminLayout({
       icon: <Briefcase className="h-5 w-5" />,
       href: '/admin/payroll',
       requiredPermission: Permissions.PAYROLL_VIEW_ALL,
+    },
+    {
+      id: 'keka-import',
+      label: 'Data Import',
+      icon: <Upload className="h-5 w-5" />,
+      children: [
+        {
+          id: 'import-keka',
+          label: 'Import from KEKA',
+          href: '/admin/import-keka',
+          requiredPermission: Permissions.EMPLOYEE_CREATE,
+        },
+      ],
     },
     {
       id: 'reports',

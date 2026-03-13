@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
 import { goalService } from '@/lib/services/performance.service';
 import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function GoalsPage() {
+  const { user, hasHydrated } = useAuth();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -28,13 +30,15 @@ export default function GoalsPage() {
   });
 
   useEffect(() => {
-    loadGoals();
-  }, []);
+    if (hasHydrated && user?.employeeId) {
+      loadGoals();
+    }
+  }, [hasHydrated, user?.employeeId]);
 
   const loadGoals = async () => {
+    if (!user?.employeeId) return;
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
       const response = await goalService.getByEmployee(user.employeeId);
       setGoals(response);
     } catch (error) {
@@ -49,8 +53,7 @@ export default function GoalsPage() {
     e.preventDefault();
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const goalData = { ...formData, employeeId: user.employeeId };
+      const goalData = { ...formData, employeeId: user?.employeeId || '' };
 
       if (selectedGoal) {
         await goalService.update(selectedGoal.id, goalData);

@@ -1,0 +1,107 @@
+%% ============================================================================
+%% NU-AURA HRMS - Payroll Processing Workflow
+%% SAGA PATTERN (RECOMMENDED FUTURE STATE)
+%%
+%% Render at: https://mermaid.live
+%% ============================================================================
+
+graph TB
+    START(("🚀 START<br/>Payroll Run<br/>Initiated"))
+
+    %% Saga Steps
+    SAGA_INIT["<b>Saga: INITIATED</b><br/>Create PayrollSaga entity<br/>State: INITIATED<br/><br/>• Payroll run ID<br/>• Employee list (1000 employees)<br/>• Month/Year<br/>• Tenant ID"]
+
+    CALC["<b>Step 1: CALCULATING</b><br/>Salary Calculation Engine<br/><br/>For each employee:<br/>• Base salary<br/>• Allowances (HRA, DA, etc.)<br/>• Deductions (PF, ESI, TDS)<br/>• Attendance deductions<br/>• Leave deductions<br/>• Overtime pay<br/>• Bonuses/incentives<br/><br/>⏱️ Duration: 5-10 min"]
+
+    CALC_DONE["<b>State: CALCULATED</b><br/>Saga checkpoint saved<br/><br/>✅ 1000 payslips calculated<br/>✅ All components computed<br/>✅ Net pay determined"]
+
+    PAYSLIP["<b>Step 2: GENERATING_PAYSLIPS</b><br/>PDF Generation<br/><br/>For each employee:<br/>• Generate PDF payslip<br/>• Upload to S3<br/>• Update payslip_url<br/>• Mark as generated<br/><br/>⏱️ Duration: 10-15 min<br/>(Parallel processing)"]
+
+    PAYSLIP_DONE["<b>State: PAYSLIPS_GENERATED</b><br/>Saga checkpoint saved<br/><br/>✅ 1000 PDFs generated<br/>✅ S3 URLs stored<br/>✅ Ready for notification"]
+
+    NOTIFY["<b>Step 3: SENDING_NOTIFICATIONS</b><br/>Email Notification<br/><br/>For each employee:<br/>• Send payslip email<br/>• In-app notification<br/>• Slack notification (if enabled)<br/>• Mark as notified<br/><br/>⏱️ Duration: 5 min<br/>(Async via Kafka)"]
+
+    NOTIFY_DONE["<b>State: NOTIFICATIONS_SENT</b><br/>Saga checkpoint saved<br/><br/>✅ 1000 emails sent<br/>✅ Notification delivery confirmed"]
+
+    BANK["<b>Step 4: UPDATING_BANK_QUEUE</b><br/>Bank Transfer Queue<br/><br/>For each employee:<br/>• Add to bank_transfers table<br/>• Bank account number<br/>• IFSC code<br/>• Amount<br/>• Status: PENDING<br/><br/>⏱️ Duration: 2 min"]
+
+    BANK_DONE["<b>State: BANK_QUEUE_UPDATED</b><br/>Saga checkpoint saved<br/><br/>✅ Bank queue populated<br/>✅ Ready for disbursement"]
+
+    COMPLETED["<b>State: COMPLETED</b><br/>Saga completed successfully<br/><br/>✅ Payroll run finalized<br/>✅ All steps executed<br/>✅ Audit trail complete"]
+
+    END(("✅ END<br/>Payroll<br/>Completed"))
+
+    %% Compensation Steps
+    COMP_CALC_FAILED["<b>COMPENSATION</b><br/>Rollback Step 1<br/><br/>• Delete calculated payslips<br/>• Mark employees as RECALC_NEEDED<br/>• Update saga state: COMPENSATING"]
+
+    COMP_PAYSLIP_FAILED["<b>COMPENSATION</b><br/>Rollback Step 2<br/><br/>• Delete generated PDFs from S3<br/>• Clear payslip_url fields<br/>• Update saga state: COMPENSATING"]
+
+    COMP_NOTIFY_FAILED["<b>COMPENSATION</b><br/>Rollback Step 3<br/><br/>• Send reversal notifications<br/>• \"Payslip generation failed\"<br/>• Update saga state: COMPENSATING"]
+
+    COMP_BANK_FAILED["<b>COMPENSATION</b><br/>Rollback Step 4<br/><br/>• Delete bank queue entries<br/>• Mark transfers as CANCELLED<br/>• Update saga state: COMPENSATING"]
+
+    COMPENSATED["<b>State: COMPENSATED</b><br/>Saga rolled back<br/><br/>⚠️ Payroll run failed<br/>⚠️ All changes reverted<br/>⚠️ Manual intervention required"]
+
+    FAILED(("❌ FAILED<br/>Payroll<br/>Aborted"))
+
+    %% Flow - Happy Path
+    START --> SAGA_INIT
+    SAGA_INIT --> CALC
+
+    CALC -->|Success| CALC_DONE
+    CALC_DONE --> PAYSLIP
+
+    PAYSLIP -->|Success| PAYSLIP_DONE
+    PAYSLIP_DONE --> NOTIFY
+
+    NOTIFY -->|Success| NOTIFY_DONE
+    NOTIFY_DONE --> BANK
+
+    BANK -->|Success| BANK_DONE
+    BANK_DONE --> COMPLETED
+
+    COMPLETED --> END
+
+    %% Flow - Failure & Compensation
+    CALC -->|Failure<br/>(DB error, validation fail)| COMP_CALC_FAILED
+    COMP_CALC_FAILED --> COMPENSATED
+
+    PAYSLIP -->|Failure<br/>(S3 error, PDF gen fail)| COMP_PAYSLIP_FAILED
+    COMP_PAYSLIP_FAILED --> COMP_CALC_FAILED
+    COMP_CALC_FAILED --> COMPENSATED
+
+    NOTIFY -->|Failure<br/>(Email service down)| COMP_NOTIFY_FAILED
+    COMP_NOTIFY_FAILED --> COMP_PAYSLIP_FAILED
+    COMP_PAYSLIP_FAILED --> COMP_CALC_FAILED
+    COMP_CALC_FAILED --> COMPENSATED
+
+    BANK -->|Failure<br/>(Bank API error)| COMP_BANK_FAILED
+    COMP_BANK_FAILED --> COMP_NOTIFY_FAILED
+    COMP_NOTIFY_FAILED --> COMP_PAYSLIP_FAILED
+    COMP_PAYSLIP_FAILED --> COMP_CALC_FAILED
+    COMP_CALC_FAILED --> COMPENSATED
+
+    COMPENSATED --> FAILED
+
+    %% Styling
+    classDef initStyle fill:#465fff,stroke:#2a31d8,stroke-width:2px,color:#fff
+    classDef stepStyle fill:#12b76a,stroke:#0a9960,stroke-width:2px,color:#fff
+    classDef checkpointStyle fill:#7886ff,stroke:#5b6fff,stroke-width:2px,color:#fff
+    classDef compStyle fill:#f79009,stroke:#dc6803,stroke-width:2px,color:#fff
+    classDef completedStyle fill:#12b76a,stroke:#0a9960,stroke-width:3px,color:#fff
+    classDef failedStyle fill:#f04438,stroke:#d92d20,stroke-width:3px,color:#fff
+
+    class START,SAGA_INIT initStyle
+    class CALC,PAYSLIP,NOTIFY,BANK stepStyle
+    class CALC_DONE,PAYSLIP_DONE,NOTIFY_DONE,BANK_DONE checkpointStyle
+    class COMP_CALC_FAILED,COMP_PAYSLIP_FAILED,COMP_NOTIFY_FAILED,COMP_BANK_FAILED,COMPENSATED compStyle
+    class COMPLETED,END completedStyle
+    class FAILED failedStyle
+
+    %% Notes
+    note1[/"<b>SAGA BENEFITS</b><br/>✓ Fault tolerant (99% success rate)<br/>✓ Resumable from any checkpoint<br/>✓ Automatic rollback on failure<br/>✓ Complete audit trail<br/>✓ Idempotent operations"/]
+
+    note2[/"<b>CURRENT ISSUE</b><br/>⚠️ Single transaction payroll<br/>⚠️ 10% rollback rate<br/>⚠️ No partial completion<br/>⚠️ Manual cleanup required"/]
+
+    style note1 fill:#f9fafb,stroke:#12b76a,stroke-width:2px,color:#101828
+    style note2 fill:#fff1f0,stroke:#f04438,stroke-width:2px,color:#101828

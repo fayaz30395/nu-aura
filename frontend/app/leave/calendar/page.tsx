@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveRequest, LeaveType } from '@/lib/types/leave';
 
@@ -23,6 +24,7 @@ interface CalendarDay {
 
 export default function LeaveCalendarPage() {
   const router = useRouter();
+  const { user, hasHydrated } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
@@ -32,21 +34,28 @@ export default function LeaveCalendarPage() {
   const [viewMode, setViewMode] = useState<'team' | 'my'>('my');
 
   useEffect(() => {
-    loadData();
-  }, [currentDate, viewMode]);
+    if (hasHydrated) {
+      loadData();
+    }
+  }, [currentDate, viewMode, hasHydrated]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
 
       const startDate = new Date(year, month, 1).toISOString().split('T')[0];
       const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
+      // If user has no employeeId and viewing "my" leaves, switch to team view
+      if (!user?.employeeId && viewMode === 'my') {
+        setViewMode('team');
+        return; // Will re-trigger useEffect with new viewMode
+      }
+
       const [leavesData, typesData] = await Promise.all([
-        viewMode === 'my'
+        viewMode === 'my' && user.employeeId
           ? leaveService.getLeaveRequestsByEmployee(user.employeeId, 0, 100)
           : leaveService.getLeaveRequestsByStatus('APPROVED', 0, 100),
         leaveService.getActiveLeaveTypes(),

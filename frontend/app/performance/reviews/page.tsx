@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
 import { performanceReviewService } from '@/lib/services/performance.service';
 import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function PerformanceReviewsPage() {
+  const { user, hasHydrated } = useAuth();
   const [reviews, setReviews] = useState<PerformanceReview[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -32,13 +34,15 @@ export default function PerformanceReviewsPage() {
   });
 
   useEffect(() => {
-    loadReviews();
-  }, []);
+    if (hasHydrated && user?.employeeId) {
+      loadReviews();
+    }
+  }, [hasHydrated, user?.employeeId]);
 
   const loadReviews = async () => {
+    if (!user?.employeeId) return;
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
       const response = await performanceReviewService.getByEmployee(user.employeeId);
       setReviews(response);
     } catch (error) {
@@ -53,11 +57,10 @@ export default function PerformanceReviewsPage() {
     e.preventDefault();
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const reviewData = { 
-        ...formData, 
-        employeeId: user.employeeId,
-        reviewerId: formData.reviewerId || user.employeeId
+      const reviewData = {
+        ...formData,
+        employeeId: user?.employeeId || '',
+        reviewerId: formData.reviewerId || user?.employeeId || ''
       };
 
       if (selectedReview) {

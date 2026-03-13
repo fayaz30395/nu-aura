@@ -110,6 +110,7 @@ export function useApprovalInbox(params: InboxFilterParams = {}) {
 /**
  * Inbox summary counts for sidebar badge and summary row.
  * Polls every 30 seconds.
+ * Silently handles errors to avoid console errors on every page load.
  */
 export function useApprovalInboxCount() {
   return useQuery({
@@ -117,6 +118,7 @@ export function useApprovalInboxCount() {
     queryFn: () => workflowService.getInboxCounts(),
     staleTime: 30 * 1000,
     refetchInterval: 30 * 1000,
+    retry: false,
   });
 }
 

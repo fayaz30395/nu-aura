@@ -59,10 +59,14 @@ export default function MyDashboardPage() {
   }, [hasHydrated, user, router]);
 
   useEffect(() => {
+    if (!hasHydrated || !user) return;
     if (user?.employeeId) {
       loadDashboard();
+    } else {
+      // SuperAdmin or user without employee profile — skip loading self-service data
+      setIsLoading(false);
     }
-  }, [user?.employeeId]);
+  }, [hasHydrated, user?.employeeId]);
 
   // Real-time timer effect
   useEffect(() => {
@@ -233,7 +237,29 @@ export default function MyDashboardPage() {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="text-center py-12">
-          <p className="text-surface-500">Failed to load dashboard data</p>
+          <User className="h-16 w-16 mx-auto text-surface-300 dark:text-surface-600 mb-4" />
+          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">
+            No Employee Profile Linked
+          </h2>
+          <p className="text-surface-500 dark:text-surface-400 max-w-md mx-auto">
+            {user?.roles?.some(r => typeof r === 'string' ? r === 'SUPER_ADMIN' : r?.code === 'SUPER_ADMIN')
+              ? 'You are signed in as a Super Admin. Self-service features require an employee profile. Use the admin panels to manage employees.'
+              : 'Your account is not linked to an employee profile. Please contact your HR administrator.'}
+          </p>
+          <div className="flex justify-center gap-3 mt-6">
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Go to Admin Dashboard
+            </button>
+            <button
+              onClick={() => router.push('/employees')}
+              className="px-4 py-2 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+            >
+              Manage Employees
+            </button>
+          </div>
         </div>
       </AppLayout>
     );

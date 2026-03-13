@@ -79,7 +79,7 @@ public class AuthController {
                 log.warn("Invalid MFA code for user: {}", request.getUserId());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(AuthResponse.builder()
-                        .error("Invalid MFA code")
+                        .accessToken(null)
                         .build());
             }
 
@@ -99,7 +99,7 @@ public class AuthController {
             log.error("MFA login failed for user: {}", request.getUserId(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(AuthResponse.builder()
-                    .error("MFA verification failed")
+                    .accessToken(null)
                     .build());
         }
     }

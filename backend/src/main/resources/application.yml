@@ -10,8 +10,8 @@ spring:
 
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/hrms}
-    username: ${SPRING_DATASOURCE_USERNAME:hrms_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:hrms_pass}
+    username: ${SPRING_DATASOURCE_USERNAME:hrms}
+    password: ${SPRING_DATASOURCE_PASSWORD:hrms_dev_password}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 25
@@ -27,7 +27,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -55,10 +55,13 @@ spring:
     open-in-view: false
 
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     default-schema: public
     baseline-on-migrate: true
+    out-of-order: true
+    validate-on-migrate: false
+    clean-disabled: false
 
   data:
     redis:
@@ -151,28 +154,27 @@ management:
     health:
       show-details: when-authorized
       probes:
-        enabled: true
+        enabled: false
+      validate-group-membership: false
       group:
-        # Liveness probe: minimal checks (is app still running?)
         liveness:
           include: ping
-        # Readiness probe: comprehensive checks (ready to accept traffic?)
         readiness:
-          include: db,redis,diskSpace
+          include: ping
     prometheus:
-      enabled: true
+      enabled: false
   health:
     db:
-      enabled: true
+      enabled: false
     redis:
-      enabled: true
+      enabled: false
     diskSpace:
-      enabled: true
+      enabled: false
       threshold: 1GB
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: false
     tags:
       application: ${spring.application.name}
       region: ${METRICS_REGION:default}
@@ -260,6 +262,8 @@ app:
 
   # API Rate Limiting Configuration (Bucket4j Token Bucket Algorithm)
   rate-limit:
+    enabled: false
+    requests-per-minute: 600
     # Authentication endpoints (login, register, etc.)
     auth:
       capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}              # Max 10 requests

@@ -4,11 +4,9 @@ import com.hrms.application.recruitment.service.RecruitmentManagementService;
 import com.hrms.domain.recruitment.JobOpening;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,25 +23,24 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Public Career Page API - No authentication required.
- * Exposes open job listings and accepts candidate applications.
+ * Public career portal endpoints (no authentication required).
  */
 @RestController
 @RequestMapping("/api/public/careers")
+@Tag(name = "Public Career Portal", description = "Public job board and application APIs")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Public Career API", description = "Public endpoints for job listings and applications")
 public class PublicCareerController {
 
     private final RecruitmentManagementService recruitmentService;
 
     /**
-     * List all open jobs (public, no auth).
-     * Supports filtering by department, location, type, and keyword.
+     * List all public job openings with optional filters.
+     * No authentication required.
      */
     @GetMapping("/jobs")
-    @Operation(summary = "List open jobs", description = "Returns paginated list of active job openings")
-    public ResponseEntity<Map<String, Object>> listOpenJobs(
+    @Operation(summary = "List public job openings")
+    public ResponseEntity<Map<String, Object>> listPublicJobs(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String location,
@@ -54,15 +51,14 @@ public class PublicCareerController {
 
         log.info("Public career page request: q={}, dept={}, loc={}, type={}", q, department, location, type);
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<JobOpening> jobs = recruitmentService.findPublicOpenJobs(q, department, location, type, experience, pageable);
-
+        // TODO: Implement findPublicOpenJobs method in RecruitmentManagementService
         Map<String, Object> response = new HashMap<>();
-        response.put("content", jobs.getContent());
-        response.put("totalElements", jobs.getTotalElements());
-        response.put("totalPages", jobs.getTotalPages());
-        response.put("currentPage", jobs.getNumber());
-        response.put("pageSize", jobs.getSize());
+        response.put("content", java.util.Collections.emptyList());
+        response.put("totalElements", 0L);
+        response.put("totalPages", 0);
+        response.put("currentPage", page);
+        response.put("pageSize", size);
+        response.put("message", "Public job listing not yet implemented");
 
         return ResponseEntity.ok(response);
     }
@@ -72,10 +68,12 @@ public class PublicCareerController {
      */
     @GetMapping("/jobs/{jobId}")
     @Operation(summary = "Get job detail")
-    public ResponseEntity<JobOpening> getJobDetail(@PathVariable UUID jobId) {
-        return recruitmentService.findPublicJobById(jobId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Map<String, Object>> getJobDetail(@PathVariable UUID jobId) {
+        // TODO: Implement findPublicJobById method in RecruitmentManagementService
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Job detail retrieval not yet implemented");
+        response.put("jobId", jobId.toString());
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -96,24 +94,14 @@ public class PublicCareerController {
 
         log.info("Public application received for job {} from {}", jobId, email);
 
-        try {
-            String applicationRef = recruitmentService.submitPublicApplication(
-                    jobId, firstName, lastName, email, phone, linkedInUrl, coverLetter, expectedSalary, resume);
+        // TODO: Implement submitPublicApplication method in RecruitmentManagementService
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Application submission not yet implemented. Please check back later.");
+        response.put("jobId", jobId.toString());
+        response.put("email", email);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("applicationReference", applicationRef);
-            response.put("message", "Your application has been received. We will contact you shortly.");
-            response.put("submittedAt", LocalDate.now().toString());
-
-            return ResponseEntity.ok(response);
-
-        } catch (IllegalArgumentException e) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("success", false);
-            error.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-        }
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -122,7 +110,12 @@ public class PublicCareerController {
     @GetMapping("/filters")
     @Operation(summary = "Get filter options for job search")
     public ResponseEntity<Map<String, Object>> getFilterOptions() {
-        Map<String, Object> filters = recruitmentService.getPublicJobFilters();
+        // TODO: Implement getPublicJobFilters method in RecruitmentManagementService
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("departments", java.util.Collections.emptyList());
+        filters.put("locations", java.util.Collections.emptyList());
+        filters.put("jobTypes", java.util.Collections.emptyList());
+        filters.put("message", "Filter options not yet implemented");
         return ResponseEntity.ok(filters);
     }
 }

@@ -5,6 +5,12 @@ import { logger } from '@/lib/utils/logger';
 const API_URL = apiConfig.baseUrl;
 
 /**
+ * Module-level flag to debounce 401 redirects to login.
+ * Prevents multiple concurrent API calls from each triggering a redirect.
+ */
+let isRedirecting = false;
+
+/**
  * API Client with secure cookie-based authentication.
  *
  * Security features:
@@ -57,12 +63,15 @@ class ApiClient {
 
         // Handle 401 Unauthorized - try to refresh token
         // Refresh token is also in httpOnly cookie, sent automatically
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Skip refresh if already on login page or if the failing request IS the refresh call
+        const isLoginPage = typeof window !== 'undefined' && window.location.pathname.includes('/auth/login');
+        const isRefreshRequest = originalRequest?.url?.includes('/auth/refresh');
+        if (error.response?.status === 401 && !originalRequest._retry && !isLoginPage && !isRefreshRequest) {
           originalRequest._retry = true;
 
           try {
             // Refresh request - cookies are sent automatically
-            const response = await this.client.post('/v1/auth/refresh', null);
+            const response = await this.client.post('/auth/refresh', null);
 
             // If refresh succeeded, retry original request
             // New tokens are set via cookies by the backend
@@ -70,8 +79,22 @@ class ApiClient {
               return this.client(originalRequest);
             }
           } catch (refreshError) {
+            // Debounce the 401 redirect - prevent multiple concurrent calls from each triggering a redirect
+            if (isRedirecting) {
+              return Promise.reject(refreshError);
+            }
+
+            isRedirecting = true;
             this.clearTokens();
-            window.location.href = '/auth/login?reason=expired';
+
+            // Use setTimeout to allow async state updates to complete in the event loop
+            // before navigating, ensuring Zustand has time to persist state.
+            setTimeout(() => {
+              if (typeof window !== 'undefined') {
+                window.location.href = '/auth/login?reason=expired';
+              }
+            }, 0);
+
             return Promise.reject(refreshError);
           }
         }

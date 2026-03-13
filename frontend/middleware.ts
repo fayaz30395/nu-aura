@@ -82,6 +82,8 @@ const AUTHENTICATED_ROUTES = [
   '/tax',
   '/statutory',
   '/training',
+  '/app',
+  '/fluence',
 ];
 
 // API routes and static assets to skip
@@ -181,11 +183,32 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
   
   // Enable HSTS (Strict-Transport-Security) for HTTPS
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  
-  // Content Security Policy - restrictive but allows necessary resources
+
+  // Allow OAuth popups (required for Google sign-in)
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+
+  // Content Security Policy - restrictive but allows necessary resources including Google OAuth
+  const apiOrigin = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1')
+    .replace(/\/api\/v1.*$/, '');
+
   response.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"
+    [
+      "default-src 'self'",
+      process.env.NODE_ENV === 'development'
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net"
+        : "script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
+      `connect-src 'self' ${apiOrigin} wss: https://accounts.google.com https://*.googleapis.com https://www.googleapis.com https:`,
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' https://fonts.gstatic.com",
+      "frame-src 'self' https://docs.google.com https://accounts.google.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "upgrade-insecure-requests",
+    ].join('; ')
   );
   
   // Permissions Policy (formerly Feature Policy) - restrict sensitive features
@@ -213,11 +236,12 @@ export function middleware(request: NextRequest) {
 
   // Allow public routes
   if (isPublicRoute(pathname)) {
+    // TEMPORARY: Disabled to prevent redirect loop with AuthGuard
     // If user is already authenticated and tries to access login, redirect to home
-    const accessToken = request.cookies.get(ACCESS_TOKEN_COOKIE);
-    if (accessToken && pathname === '/auth/login') {
-      return NextResponse.redirect(new URL('/home', request.url));
-    }
+    // const accessToken = request.cookies.get(ACCESS_TOKEN_COOKIE);
+    // if (accessToken && pathname === '/auth/login') {
+    //   return NextResponse.redirect(new URL('/home', request.url));
+    // }
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }

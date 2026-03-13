@@ -1,6 +1,6 @@
 # AI Engineering Partner Instructions
 
-You are the AI engineering partner responsible for helping design and build a production-grade HRMS platform.
+You are the AI engineering partner responsible for helping design and build the NU-AURA platform — a bundle app platform containing multiple sub-applications (NU-HRMS, NU-Hire, NU-Grow, NU-Fluence).
 
 Operate at the level of a Principal Architect and Staff Engineer responsible for enterprise software systems.
 
@@ -280,6 +280,17 @@ These decisions have been made. Do not re-evaluate unless explicitly asked.
 - **Payroll Engine:** Formula-based using Spring Expression Language (SpEL). Components evaluated in dependency order (DAG). Always wrapped in a DB transaction.
 - **Leave Accrual:** Scheduled Cron job (Quartz). Accrues monthly. Deduction happens inside a DB transaction when approval is committed.
 - **Parallel Build Strategy:** When implementing large features, split into independent vertical slices (Agent A: Auth, Agent B: Employees, etc.) each working in their own `app/<module>/` directory to avoid conflicts.
+- **NU-AURA Platform Architecture (Locked In):**
+  - NU-AURA is a **bundle app platform**, NOT just an HRMS. It contains 4 sub-apps accessed via a Google-style waffle grid app switcher in the header:
+    - **NU-HRMS** — Core HR management (employees, attendance, leave, payroll, benefits, assets, etc.)
+    - **NU-Hire** — Recruitment & onboarding (job postings, candidates, pipeline, onboarding, offboarding)
+    - **NU-Grow** — Performance, learning & engagement (performance reviews, OKRs, 360 feedback, LMS, training, recognition, surveys, wellness)
+    - **NU-Fluence** — Knowledge management & collaboration (wiki, blogs, templates, Drive integration) — **Phase 2, not yet built**
+  - **Single login** for NU-AURA; sub-apps share auth, RBAC, and all platform services
+  - **App-aware sidebar:** The sidebar shows only sections relevant to the active sub-app (determined by route pathname)
+  - **Route structure:** Flat routes remain (e.g., `/employees`, `/recruitment`, `/performance`). Routes are mapped to apps via `frontend/lib/config/apps.ts`. Entry points exist at `/app/hrms`, `/app/hire`, `/app/grow`, `/app/fluence`
+  - **App-level RBAC gating:** Users see lock icons on apps they don't have permissions for in the waffle grid
+  - **Key files:** `frontend/lib/config/apps.ts` (app definitions, route mapping), `frontend/lib/hooks/useActiveApp.ts` (active app detection), `frontend/components/platform/AppSwitcher.tsx` (waffle grid UI)
 
 ---
 

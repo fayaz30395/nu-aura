@@ -30,6 +30,7 @@ export const Permissions = {
   LEAVE_APPROVE: 'LEAVE:APPROVE',
   LEAVE_REJECT: 'LEAVE:REJECT',
   LEAVE_CANCEL: 'LEAVE:CANCEL',
+  LEAVE_APPLY: 'LEAVE:APPLY',
   LEAVE_VIEW_ALL: 'LEAVE:VIEW_ALL',
   LEAVE_VIEW_TEAM: 'LEAVE:VIEW_TEAM',
   LEAVE_VIEW_SELF: 'LEAVE:VIEW_SELF',
@@ -242,6 +243,12 @@ export const Permissions = {
   TDS_DECLARE: 'TDS:DECLARE',
   TDS_APPROVE: 'TDS:APPROVE',
 
+  // Tax Management
+  TAX_VIEW: 'TAX:VIEW',
+  TAX_CREATE: 'TAX:CREATE',
+  TAX_UPDATE: 'TAX:UPDATE',
+  TAX_MANAGE: 'TAX:MANAGE',
+
   // Compensation Management
   COMPENSATION_VIEW: 'COMPENSATION:VIEW',
   COMPENSATION_MANAGE: 'COMPENSATION:MANAGE',
@@ -267,6 +274,15 @@ export const Permissions = {
   ASSET_CREATE: 'ASSET:CREATE',
   ASSET_ASSIGN: 'ASSET:ASSIGN',
   ASSET_MANAGE: 'ASSET:MANAGE',
+
+  // Contract Management
+  CONTRACT_VIEW: 'CONTRACT:VIEW',
+  CONTRACT_CREATE: 'CONTRACT:CREATE',
+  CONTRACT_UPDATE: 'CONTRACT:UPDATE',
+  CONTRACT_DELETE: 'CONTRACT:DELETE',
+  CONTRACT_APPROVE: 'CONTRACT:APPROVE',
+  CONTRACT_SIGN: 'CONTRACT:SIGN',
+  CONTRACT_TEMPLATE_MANAGE: 'CONTRACT:TEMPLATE_MANAGE',
 
   // Travel Management
   TRAVEL_VIEW: 'TRAVEL:VIEW',
@@ -377,13 +393,50 @@ export const Permissions = {
   PLATFORM_VIEW: 'PLATFORM:VIEW',
   PLATFORM_MANAGE: 'PLATFORM:MANAGE',
 
-  // Time Tracking
+  // Time Tracking & Timesheets
   TIME_TRACKING_VIEW: 'TIME_TRACKING:VIEW',
   TIME_TRACKING_CREATE: 'TIME_TRACKING:CREATE',
   TIME_TRACKING_UPDATE: 'TIME_TRACKING:UPDATE',
   TIME_TRACKING_APPROVE: 'TIME_TRACKING:APPROVE',
   TIME_TRACKING_VIEW_ALL: 'TIME_TRACKING:VIEW_ALL',
   TIME_TRACKING_MANAGE: 'TIME_TRACKING:MANAGE',
+  TIMESHEET_VIEW: 'TIMESHEET:VIEW',
+  TIMESHEET_CREATE: 'TIMESHEET:CREATE',
+  TIMESHEET_UPDATE: 'TIMESHEET:UPDATE',
+  TIMESHEET_DELETE: 'TIMESHEET:DELETE',
+  TIMESHEET_VIEW_ALL: 'TIMESHEET:VIEW_ALL',
+
+  // PSA (Professional Services Automation)
+  PSA_VIEW: 'PSA:VIEW',
+  PSA_CREATE: 'PSA:CREATE',
+  PSA_UPDATE: 'PSA:UPDATE',
+  PSA_DELETE: 'PSA:DELETE',
+  PSA_MANAGE: 'PSA:MANAGE',
+
+  // Resource Management
+  RESOURCE_VIEW: 'RESOURCE:VIEW',
+  RESOURCE_CREATE: 'RESOURCE:CREATE',
+  RESOURCE_UPDATE: 'RESOURCE:UPDATE',
+  RESOURCE_DELETE: 'RESOURCE:DELETE',
+  RESOURCE_MANAGE: 'RESOURCE:MANAGE',
+
+  // Email/NU-Mail
+  EMAIL_VIEW: 'EMAIL:VIEW',
+  EMAIL_SEND: 'EMAIL:SEND',
+  EMAIL_MANAGE: 'EMAIL:MANAGE',
+
+  // Integrations
+  INTEGRATION_VIEW: 'INTEGRATION:VIEW',
+  INTEGRATION_CREATE: 'INTEGRATION:CREATE',
+  INTEGRATION_UPDATE: 'INTEGRATION:UPDATE',
+  INTEGRATION_DELETE: 'INTEGRATION:DELETE',
+  INTEGRATION_MANAGE: 'INTEGRATION:MANAGE',
+
+  // Helpdesk Knowledge Base
+  HELPDESK_KB_VIEW: 'HELPDESK_KB:VIEW',
+  HELPDESK_KB_CREATE: 'HELPDESK_KB:CREATE',
+  HELPDESK_KB_UPDATE: 'HELPDESK_KB:UPDATE',
+  HELPDESK_KB_DELETE: 'HELPDESK_KB:DELETE',
 
   // Calendar Integration
   CALENDAR_VIEW: 'CALENDAR:VIEW',
@@ -478,13 +531,21 @@ export function usePermissions(): UsePermissionsReturn {
   const { user, hasHydrated } = useAuth();
 
   // Extract all permission codes from user's roles
+  // Normalizes app-prefixed permissions (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")
+  // so both NU Platform and legacy RBAC paths produce MODULE:ACTION format.
   const permissions = useMemo(() => {
     if (!user?.roles) return [];
     const permSet = new Set<string>();
     for (const role of user.roles) {
       if (role.permissions) {
         for (const perm of role.permissions) {
-          permSet.add(perm.code);
+          const code = perm.code;
+          permSet.add(code);
+          // Also add normalized version: strip app prefix if 3-part code (APP:MODULE:ACTION)
+          const parts = code.split(':');
+          if (parts.length === 3) {
+            permSet.add(parts[1] + ':' + parts[2]);
+          }
         }
       }
     }

@@ -3,6 +3,7 @@ package com.hrms.domain.user;
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "permissions", indexes = {
@@ -13,7 +14,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Permission extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 100)

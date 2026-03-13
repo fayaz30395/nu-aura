@@ -297,8 +297,10 @@ public class BudgetPlanningService {
 
         position = positionRepository.save(position);
 
-        // Update budget allocated amount
-        updateBudgetAllocations(position.getBudget().getId());
+        // Update budget allocated amount (null-safe: budget is @ManyToOne(LAZY))
+        if (position.getBudget() != null) {
+            updateBudgetAllocations(position.getBudget().getId());
+        }
 
         return HeadcountPositionResponse.fromEntity(position);
     }
@@ -318,8 +320,10 @@ public class BudgetPlanningService {
 
         position = positionRepository.save(position);
 
-        // Update budget headcount
-        updateBudgetHeadcount(position.getBudget().getId());
+        // Update budget headcount (null-safe)
+        if (position.getBudget() != null) {
+            updateBudgetHeadcount(position.getBudget().getId());
+        }
 
         log.info("Updated position {} status to {}", positionId, status);
         return HeadcountPositionResponse.fromEntity(position);
@@ -347,11 +351,13 @@ public class BudgetPlanningService {
         HeadcountPosition position = positionRepository.findByIdAndTenantId(positionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Position not found: " + positionId));
 
-        UUID budgetId = position.getBudget().getId();
+        UUID budgetId = position.getBudget() != null ? position.getBudget().getId() : null;
         positionRepository.delete(position);
 
         // Update budget allocations
-        updateBudgetAllocations(budgetId);
+        if (budgetId != null) {
+            updateBudgetAllocations(budgetId);
+        }
 
         log.info("Deleted position: {}", positionId);
     }
@@ -416,18 +422,21 @@ public class BudgetPlanningService {
         BudgetScenario scenario = scenarioRepository.findByIdAndTenantId(scenarioId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scenario not found: " + scenarioId));
 
-        // Deselect other scenarios for the same budget
-        List<BudgetScenario> budgetScenarios = scenarioRepository.findByBudget(scenario.getBaseBudget().getId());
-        for (BudgetScenario s : budgetScenarios) {
-            s.setIsSelected(false);
-            scenarioRepository.save(s);
+        // Deselect other scenarios for the same budget (null-safe)
+        if (scenario.getBaseBudget() != null) {
+            List<BudgetScenario> budgetScenarios = scenarioRepository.findByBudget(scenario.getBaseBudget().getId());
+            for (BudgetScenario s : budgetScenarios) {
+                s.setIsSelected(false);
+                scenarioRepository.save(s);
+            }
         }
 
         // Select this scenario
         scenario.setIsSelected(true);
         scenario = scenarioRepository.save(scenario);
 
-        log.info("Selected scenario: {} for budget: {}", scenario.getName(), scenario.getBaseBudget().getBudgetName());
+        log.info("Selected scenario: {} for budget: {}", scenario.getName(),
+                scenario.getBaseBudget() != null ? scenario.getBaseBudget().getBudgetName() : "N/A");
         return BudgetScenarioResponse.fromEntity(scenario);
     }
 

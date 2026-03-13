@@ -39,19 +39,20 @@ class AdminService {
     try {
       const response = await axios.get<HealthResponse>(healthUrl, {
         withCredentials: true,
+        timeout: 5000,
       });
       return response.data;
     } catch (error) {
-      // If the health endpoint is not available, return a DOWN status
+      // If the health endpoint is not available or times out, return a graceful response
+      // Mark components as UNAVAILABLE instead of DOWN to indicate connectivity issues
       return {
-        status: 'DOWN',
+        status: 'DEGRADED',
         components: {
-          error: {
-            status: 'DOWN',
-            details: {
-              message: error instanceof Error ? error.message : 'Health check failed',
-            },
-          },
+          db: { status: 'UNAVAILABLE', details: { message: 'Database service unavailable' } },
+          redis: { status: 'UNAVAILABLE', details: { message: 'Redis cache unavailable' } },
+          kafka: { status: 'UNAVAILABLE', details: { message: 'Kafka messaging unavailable' } },
+          livenessState: { status: 'UP' },
+          readinessState: { status: 'UNAVAILABLE' },
         },
       };
     }

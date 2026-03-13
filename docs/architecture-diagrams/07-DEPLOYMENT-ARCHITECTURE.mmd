@@ -1,0 +1,168 @@
+%% ============================================================================
+%% NU-AURA HRMS - Deployment Architecture
+%% KUBERNETES PRODUCTION DEPLOYMENT
+%%
+%% Render at: https://mermaid.live
+%% ============================================================================
+
+graph TB
+    %% External Traffic
+    USERS[("<b>End Users</b><br/>Web/Mobile<br/>Worldwide")]
+
+    %% Load Balancer & CDN
+    subgraph EDGE["<b>EDGE LAYER</b>"]
+        CDN[("<b>CloudFlare CDN</b><br/>• Static assets caching<br/>• DDoS protection<br/>• SSL termination<br/>• Global distribution")]
+
+        LB[("<b>Load Balancer</b><br/>AWS ALB / Nginx<br/>• SSL/TLS termination<br/>• Health checks<br/>• Session affinity<br/>• Auto-scaling trigger")]
+    end
+
+    %% Kubernetes Cluster
+    subgraph K8S["<b>KUBERNETES CLUSTER (GKE/EKS/AKS)</b>"]
+        %% Ingress
+        INGRESS[("<b>Ingress Controller</b><br/>Nginx Ingress<br/>• Path-based routing<br/>• Rate limiting<br/>• Request buffering")]
+
+        %% Frontend Pods
+        subgraph FRONTEND_PODS["<b>Frontend Pods</b>"]
+            NEXT1[("<b>Next.js Pod 1</b><br/>• Node.js 18<br/>• SSR/SSG rendering<br/>• API proxy")]
+            NEXT2[("<b>Next.js Pod 2</b>")]
+            NEXT3[("<b>Next.js Pod 3</b>")]
+        end
+
+        %% Backend Pods
+        subgraph BACKEND_PODS["<b>Backend Pods</b>"]
+            SPRING1[("<b>Spring Boot Pod 1</b><br/>• Java 17<br/>• Hikari Pool (60 conn)<br/>• Redis cache")]
+            SPRING2[("<b>Spring Boot Pod 2</b>")]
+            SPRING3[("<b>Spring Boot Pod 3</b>")]
+            SPRING4[("<b>Spring Boot Pod 4</b>")]
+        end
+
+        %% Worker Pods
+        subgraph WORKER_PODS["<b>Async Worker Pods</b>"]
+            WORKER1[("<b>Worker Pod 1</b><br/>• Email sending<br/>• PDF generation<br/>• Report export")]
+            WORKER2[("<b>Worker Pod 2</b>")]
+        end
+
+        %% Scheduler Pod
+        SCHEDULER_POD[("<b>Scheduler Pod</b><br/>• Leave accrual cron<br/>• Job board sync<br/>• Webhook retries")]
+
+        %% Service Definitions
+        FRONTEND_SVC[("<b>Frontend Service</b><br/>ClusterIP<br/>Port: 3000")]
+        BACKEND_SVC[("<b>Backend Service</b><br/>ClusterIP<br/>Port: 8080")]
+    end
+
+    %% Data Layer
+    subgraph DATA_LAYER["<b>DATA LAYER (MANAGED SERVICES)</b>"]
+        %% Primary Database
+        DB_PRIMARY[("<b>PostgreSQL Primary</b><br/>AWS RDS / Cloud SQL<br/>• Multi-AZ deployment<br/>• Auto backups (daily)<br/>• Point-in-time recovery<br/>• Connection pooling (PgBouncer)<br/>• Instance: db.r5.xlarge<br/>• Storage: 500GB SSD")]
+
+        DB_REPLICA[("<b>Read Replica</b><br/>• Read-only queries<br/>• Analytics<br/>• Report generation")]
+
+        %% Redis Cluster
+        REDIS_CLUSTER[("<b>Redis Cluster</b><br/>ElastiCache / Memorystore<br/>• 3-node cluster<br/>• Auto-failover<br/>• Cluster mode enabled<br/>• 16GB memory per node")]
+
+        %% Object Storage
+        S3[("<b>Object Storage</b><br/>S3 / Cloud Storage<br/>• Resumes bucket<br/>• Documents bucket<br/>• Payslips bucket (encrypted)<br/>• Lifecycle policies<br/>• Versioning enabled")]
+
+        %% Message Queue
+        KAFKA_CLUSTER[("<b>Kafka Cluster</b><br/>MSK / Confluent Cloud<br/>• 3 brokers<br/>• Replication factor: 2<br/>• Topics: leave-events, payroll-events")]
+    end
+
+    %% Monitoring Stack
+    subgraph MONITORING["<b>MONITORING & OBSERVABILITY</b>"]
+        PROMETHEUS[("<b>Prometheus</b><br/>• Metrics collection<br/>• Alerting rules<br/>• 15-day retention")]
+
+        GRAFANA[("<b>Grafana</b><br/>• Dashboards<br/>• Alerts<br/>• OnCall integration")]
+
+        ELK[("<b>ELK Stack</b><br/>• Log aggregation<br/>• Full-text search<br/>• Audit trail")]
+
+        SENTRY[("<b>Sentry</b><br/>• Error tracking<br/>• Performance monitoring<br/>• User feedback")]
+    end
+
+    %% External Services
+    subgraph EXTERNAL["<b>EXTERNAL SERVICES</b>"]
+        SENDGRID[("<b>SendGrid</b><br/>Email delivery")]
+        SLACK_EXT[("<b>Slack API</b><br/>Notifications")]
+        RAZORPAY[("<b>Razorpay</b><br/>Payments")]
+        LINKEDIN[("<b>LinkedIn API</b><br/>Job posting")]
+    end
+
+    %% Connections
+    USERS -->|HTTPS| CDN
+    CDN -->|HTTPS| LB
+    LB -->|HTTP/2| INGRESS
+
+    INGRESS -->|/| FRONTEND_SVC
+    INGRESS -->|/api/*| BACKEND_SVC
+
+    FRONTEND_SVC --> NEXT1
+    FRONTEND_SVC --> NEXT2
+    FRONTEND_SVC --> NEXT3
+
+    BACKEND_SVC --> SPRING1
+    BACKEND_SVC --> SPRING2
+    BACKEND_SVC --> SPRING3
+    BACKEND_SVC --> SPRING4
+
+    NEXT1 -.->|Proxies API calls| BACKEND_SVC
+    NEXT2 -.->|Proxies API calls| BACKEND_SVC
+    NEXT3 -.->|Proxies API calls| BACKEND_SVC
+
+    SPRING1 -->|JDBC<br/>Writes| DB_PRIMARY
+    SPRING2 -->|JDBC<br/>Writes| DB_PRIMARY
+    SPRING3 -->|JDBC<br/>Reads| DB_REPLICA
+    SPRING4 -->|JDBC<br/>Reads| DB_REPLICA
+
+    SPRING1 -->|Redis Client| REDIS_CLUSTER
+    SPRING2 -->|Redis Client| REDIS_CLUSTER
+    SPRING3 -->|Redis Client| REDIS_CLUSTER
+    SPRING4 -->|Redis Client| REDIS_CLUSTER
+
+    SPRING1 -->|S3 SDK| S3
+    SPRING2 -->|S3 SDK| S3
+
+    SPRING1 -->|Produces| KAFKA_CLUSTER
+    SPRING2 -->|Produces| KAFKA_CLUSTER
+    WORKER1 -->|Consumes| KAFKA_CLUSTER
+    WORKER2 -->|Consumes| KAFKA_CLUSTER
+
+    SCHEDULER_POD -->|Cron jobs| DB_PRIMARY
+
+    DB_PRIMARY -.->|Replication| DB_REPLICA
+
+    SPRING1 -->|/actuator/prometheus| PROMETHEUS
+    SPRING2 -->|/actuator/prometheus| PROMETHEUS
+    DB_PRIMARY -->|Metrics| PROMETHEUS
+    REDIS_CLUSTER -->|Metrics| PROMETHEUS
+
+    PROMETHEUS --> GRAFANA
+    SPRING1 -->|JSON logs| ELK
+    SPRING1 -->|Errors| SENTRY
+
+    SPRING1 -.->|SMTP| SENDGRID
+    SPRING1 -.->|REST| SLACK_EXT
+    SPRING1 -.->|REST| RAZORPAY
+    SPRING1 -.->|REST| LINKEDIN
+
+    %% Styling
+    classDef frontendStyle fill:#465fff,stroke:#2a31d8,stroke-width:2px,color:#fff
+    classDef backendStyle fill:#12b76a,stroke:#0a9960,stroke-width:2px,color:#fff
+    classDef dataStyle fill:#f79009,stroke:#dc6803,stroke-width:2px,color:#fff
+    classDef monitorStyle fill:#7886ff,stroke:#5b6fff,stroke-width:2px,color:#fff
+    classDef externalStyle fill:#667085,stroke:#475467,stroke-width:2px,color:#fff
+
+    class CDN,LB,INGRESS,FRONTEND_SVC,NEXT1,NEXT2,NEXT3 frontendStyle
+    class BACKEND_SVC,SPRING1,SPRING2,SPRING3,SPRING4,WORKER1,WORKER2,SCHEDULER_POD backendStyle
+    class DB_PRIMARY,DB_REPLICA,REDIS_CLUSTER,S3,KAFKA_CLUSTER dataStyle
+    class PROMETHEUS,GRAFANA,ELK,SENTRY monitorStyle
+    class SENDGRID,SLACK_EXT,RAZORPAY,LINKEDIN externalStyle
+
+    %% Auto-scaling annotations
+    note1[/"<b>AUTO-SCALING</b><br/>Frontend: 3-10 pods (CPU > 70%)<br/>Backend: 4-20 pods (CPU > 80%)<br/>Workers: 2-5 pods (Queue depth)"/]
+
+    note2[/"<b>RESOURCE LIMITS</b><br/>Frontend pod: 1 CPU, 2GB RAM<br/>Backend pod: 2 CPU, 4GB RAM<br/>Worker pod: 1 CPU, 2GB RAM"/]
+
+    note3[/"<b>HIGH AVAILABILITY</b><br/>✓ Multi-AZ deployment<br/>✓ Auto-failover for DB & Redis<br/>✓ Pod anti-affinity rules<br/>✓ Zero-downtime rolling updates"/]
+
+    style note1 fill:#f9fafb,stroke:#12b76a,stroke-width:1px,color:#101828
+    style note2 fill:#f9fafb,stroke:#465fff,stroke-width:1px,color:#101828
+    style note3 fill:#f9fafb,stroke:#f79009,stroke-width:1px,color:#101828

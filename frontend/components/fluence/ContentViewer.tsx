@@ -1,0 +1,94 @@
+'use client';
+
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import Highlight from '@tiptap/extension-highlight';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Color from '@tiptap/extension-color';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { createLowlight, common } from 'lowlight';
+
+const lowlight = createLowlight(common);
+
+interface ContentViewerProps {
+  content: Record<string, unknown> | null | undefined;
+  className?: string;
+}
+
+export default function ContentViewer({
+  content,
+  className = '',
+}: ContentViewerProps) {
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        codeBlock: false,
+      }),
+      Placeholder,
+      Image,
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+        defaultProtocol: 'https',
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        languageClassPrefix: 'language-',
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableCell,
+      TableHeader,
+      Highlight.configure({
+        multicolor: true,
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Color,
+      TextStyle,
+    ],
+    content: content as any,
+    editable: false,
+  });
+
+  if (!editor) {
+    return (
+      <div className={`rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${className}`}>
+        <div className="text-gray-400">Loading content...</div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className={`rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${className}`}>
+        <div className="text-gray-400">No content to display</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`tiptap-content prose prose-invert dark:prose-invert rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800 ${className}`}>
+      <EditorContent editor={editor} />
+    </div>
+  );
+}

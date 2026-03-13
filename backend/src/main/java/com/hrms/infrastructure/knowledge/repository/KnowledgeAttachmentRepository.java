@@ -1,0 +1,26 @@
+package com.hrms.infrastructure.knowledge.repository;
+
+import com.hrms.domain.knowledge.KnowledgeAttachment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+@Repository
+public interface KnowledgeAttachmentRepository extends JpaRepository<KnowledgeAttachment, UUID> {
+
+    Page<KnowledgeAttachment> findByTenantIdAndContentTypeAndContentId(
+            UUID tenantId, KnowledgeAttachment.ContentType contentType, UUID contentId, Pageable pageable);
+
+    List<KnowledgeAttachment> findByTenantIdAndContentTypeAndContentId(
+            UUID tenantId, KnowledgeAttachment.ContentType contentType, UUID contentId);
+
+    Page<KnowledgeAttachment> findByTenantId(UUID tenantId, Pageable pageable);
+
+    long countByTenantIdAndContentTypeAndContentId(UUID tenantId, KnowledgeAttachment.ContentType contentType, UUID contentId);
+}

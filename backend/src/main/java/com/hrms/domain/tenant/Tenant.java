@@ -3,6 +3,7 @@ package com.hrms.domain.tenant;
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tenants", indexes = {
@@ -13,7 +14,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Tenant extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 50)

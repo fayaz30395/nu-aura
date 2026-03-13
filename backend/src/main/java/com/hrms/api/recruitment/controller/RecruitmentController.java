@@ -142,6 +142,12 @@ public class RecruitmentController {
 
     // ==================== INTERVIEWS ====================
 
+    @GetMapping("/interviews")
+    @RequiresPermission(Permission.RECRUITMENT_VIEW)
+    public ResponseEntity<Page<InterviewResponse>> getAllInterviews(Pageable pageable) {
+        return ResponseEntity.ok(recruitmentManagementService.getAllInterviews(pageable));
+    }
+
     @PostMapping("/interviews")
     @RequiresPermission(Permission.RECRUITMENT_CREATE)
     public ResponseEntity<InterviewResponse> scheduleInterview(@Valid @RequestBody InterviewRequest request) {

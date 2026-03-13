@@ -460,16 +460,6 @@ const Header: React.FC<HeaderProps> = ({
     .join('')
     .toUpperCase();
 
-  const currentAppCode = pathname?.startsWith('/projects')
-    ? 'PROJECTS'
-    : pathname?.startsWith('/nu-drive')
-      ? 'NUDRIVE'
-      : pathname?.startsWith('/nu-mail')
-        ? 'NUMAIL'
-        : pathname?.startsWith('/nu-calendar')
-          ? 'NUCALENDAR'
-          : 'HRMS';
-
   return (
     <header
       className={cn(
@@ -494,7 +484,7 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* App Switcher */}
           <div className="hidden md:block">
-            <AppSwitcher currentAppCode={currentAppCode} />
+            <AppSwitcher />
           </div>
 
           {/* Global Search - Desktop */}

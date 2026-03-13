@@ -4,6 +4,7 @@ import com.hrms.common.entity.TenantAware;
 import com.hrms.domain.employee.Employee;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class ProjectEmployee extends TenantAware {
 
     @Column(nullable = false)
