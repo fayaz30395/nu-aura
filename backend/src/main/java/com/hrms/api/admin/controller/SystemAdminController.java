@@ -76,6 +76,21 @@ public class SystemAdminController {
     }
 
     /**
+     * Get platform growth metrics over the last N months
+     * Returns cumulative tenant, employee, and user counts by month
+     */
+    @GetMapping("/growth-metrics")
+    @Operation(summary = "Get platform growth metrics", description = "Returns monthly cumulative counts of tenants, employees, and active users over the specified number of months")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<GrowthMetricsDTO> getGrowthMetrics(
+            @Parameter(description = "Number of months of history (default 6, max 24)")
+            @RequestParam(defaultValue = "6") int months) {
+        log.info("SuperAdmin requesting growth metrics for last {} months", months);
+        GrowthMetricsDTO metrics = systemAdminService.getGrowthMetrics(Math.min(months, 24));
+        return ResponseEntity.ok(metrics);
+    }
+
+    /**
      * Generate an impersonation token for a specific tenant
      * SuperAdmin can use this token to access a tenant's data
      * Useful for troubleshooting and support

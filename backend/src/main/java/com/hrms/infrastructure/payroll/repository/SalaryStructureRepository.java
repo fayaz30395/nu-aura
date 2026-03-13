@@ -31,6 +31,17 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
         @Param("date") LocalDate date
     );
 
+    /**
+     * Find the latest active salary structure for an employee.
+     * Used for statutory enrollment eligibility checks.
+     */
+    @Query("SELECT s FROM SalaryStructure s WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
+           "AND s.isActive = true ORDER BY s.effectiveDate DESC, s.createdAt DESC")
+    Optional<SalaryStructure> findLatestActiveByTenantIdAndEmployeeId(
+        @Param("tenantId") UUID tenantId,
+        @Param("employeeId") UUID employeeId
+    );
+
     Page<SalaryStructure> findAllByTenantIdAndIsActive(UUID tenantId, Boolean isActive, Pageable pageable);
 
     boolean existsByTenantIdAndEmployeeIdAndEffectiveDate(UUID tenantId, UUID employeeId, LocalDate effectiveDate);

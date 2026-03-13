@@ -17,7 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,7 +145,7 @@ public class SystemAdminService {
         auditLogService.logAction(
                 "TENANT",
                 tenantId,
-                com.hrms.domain.audit.AuditLog.AuditAction.ACCESS,
+                com.hrms.domain.audit.AuditLog.AuditAction.LOGIN,
                 Map.of("action", "impersonation_token_generated"),
                 Map.of("admin_user_id", currentUser.getId()),
                 "SuperAdmin generated impersonation token for tenant: " + tenant.getName()
@@ -155,6 +158,62 @@ public class SystemAdminService {
                 .tenantId(tenantId.toString())
                 .tenantName(tenant.getName())
                 .build();
+    }
+
+    /**
+     * Get growth metrics over the last N months.
+     * Computes cumulative tenant, employee, and user counts by month
+     * using actual created_at/joining_date data.
+     */
+    @Transactional(readOnly = true)
+    public GrowthMetricsDTO getGrowthMetrics(int months) {
+        log.info("SuperAdmin requesting growth metrics for last {} months", months);
+
+        LocalDate now = LocalDate.now();
+        List<GrowthMetricsDTO.MonthlyGrowth> growthList = new ArrayList<>();
+
+        // Get all tenants, employees, and users once
+        List<Tenant> allTenants = tenantRepository.findAll();
+        List<com.hrms.domain.employee.Employee> allEmployees = employeeRepository.findAll();
+        List<User> allUsers = userRepository.findAll();
+
+        for (int i = months - 1; i >= 0; i--) {
+            LocalDate monthEnd = now.minusMonths(i).withDayOfMonth(
+                    now.minusMonths(i).lengthOfMonth());
+            LocalDateTime monthEndDateTime = monthEnd.atTime(23, 59, 59);
+
+            // Cumulative tenants created on or before this month
+            long tenantCount = allTenants.stream()
+                    .filter(t -> t.getCreatedAt() != null && !t.getCreatedAt().isAfter(monthEndDateTime))
+                    .count();
+
+            // Cumulative employees who joined on or before this month
+            long employeeCount = allEmployees.stream()
+                    .filter(e -> e.getJoiningDate() != null && !e.getJoiningDate().isAfter(monthEnd))
+                    .count();
+            // Fallback: if joiningDate is null, use createdAt
+            employeeCount += allEmployees.stream()
+                    .filter(e -> e.getJoiningDate() == null && e.getCreatedAt() != null
+                            && !e.getCreatedAt().isAfter(monthEndDateTime))
+                    .count();
+
+            // Cumulative active users created on or before this month
+            long activeUserCount = allUsers.stream()
+                    .filter(u -> u.getCreatedAt() != null && !u.getCreatedAt().isAfter(monthEndDateTime)
+                            && u.getStatus() == User.UserStatus.ACTIVE)
+                    .count();
+
+            Month month = monthEnd.getMonth();
+            growthList.add(GrowthMetricsDTO.MonthlyGrowth.builder()
+                    .month(month.getDisplayName(TextStyle.SHORT, Locale.ENGLISH))
+                    .year(monthEnd.getYear())
+                    .tenants(tenantCount)
+                    .activeUsers(activeUserCount)
+                    .employees(employeeCount)
+                    .build());
+        }
+
+        return GrowthMetricsDTO.builder().months(growthList).build();
     }
 
     // ===================== Helper Methods =====================

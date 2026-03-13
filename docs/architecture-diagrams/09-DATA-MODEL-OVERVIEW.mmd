@@ -1,0 +1,437 @@
+%% ============================================================================
+%% NU-AURA HRMS - Data Model Overview
+%% CORE ENTITIES & RELATIONSHIPS
+%%
+%% Render at: https://mermaid.live
+%% ============================================================================
+
+erDiagram
+    %% Core Entities
+    TENANT ||--o{ EMPLOYEE : "contains"
+    TENANT ||--o{ USER : "contains"
+    TENANT ||--o{ DEPARTMENT : "organizes"
+    TENANT ||--o{ OFFICE_LOCATION : "has"
+    TENANT ||--o{ LEAVE_TYPE : "defines"
+    TENANT ||--o{ ROLE : "defines"
+
+    USER ||--|| EMPLOYEE : "linked to"
+    USER ||--o{ ROLE_ASSIGNMENT : "has roles"
+    ROLE ||--o{ ROLE_ASSIGNMENT : "assigned to users"
+    ROLE ||--o{ ROLE_PERMISSION : "has permissions"
+
+    EMPLOYEE ||--o{ LEAVE_REQUEST : "submits"
+    EMPLOYEE ||--o{ LEAVE_BALANCE : "maintains"
+    EMPLOYEE ||--o{ ATTENDANCE_RECORD : "tracks"
+    EMPLOYEE ||--o{ PAYSLIP : "receives"
+    EMPLOYEE ||--o{ PERFORMANCE_REVIEW : "undergoes"
+    EMPLOYEE ||--o{ GOAL : "sets"
+    EMPLOYEE }o--|| DEPARTMENT : "belongs to"
+    EMPLOYEE }o--|| EMPLOYEE : "reports to (manager)"
+    EMPLOYEE ||--o{ ASSET : "assigned"
+    EMPLOYEE ||--o{ LOAN : "takes"
+    EMPLOYEE ||--o{ TIME_ENTRY : "logs"
+
+    LEAVE_REQUEST }o--|| LEAVE_TYPE : "of type"
+    LEAVE_REQUEST ||--|| WORKFLOW_EXECUTION : "initiates"
+
+    PERFORMANCE_REVIEW ||--|| REVIEW_CYCLE : "part of"
+    PERFORMANCE_REVIEW ||--o{ GOAL : "evaluates"
+
+    PAYSLIP }o--|| PAYROLL_RUN : "generated in"
+    PAYROLL_RUN }o--|| TENANT : "belongs to"
+
+    CANDIDATE ||--o{ INTERVIEW : "participates in"
+    CANDIDATE }o--|| JOB_OPENING : "applies to"
+    JOB_OPENING }o--|| DEPARTMENT : "for"
+
+    WORKFLOW_DEFINITION ||--o{ APPROVAL_STEP : "defines"
+    WORKFLOW_EXECUTION ||--o{ STEP_EXECUTION : "tracks"
+    WORKFLOW_EXECUTION }o--|| WORKFLOW_DEFINITION : "instance of"
+
+    NOTIFICATION }o--|| EMPLOYEE : "sent to"
+    ANNOUNCEMENT }o--|| TENANT : "published by"
+
+    ONBOARDING_PROCESS }o--|| EMPLOYEE : "for"
+    ONBOARDING_PROCESS ||--o{ ONBOARDING_TASK : "contains"
+
+    EXPENSE_CLAIM }o--|| EMPLOYEE : "submitted by"
+    TRAVEL_REQUEST }o--|| EMPLOYEE : "requested by"
+
+    TRAINING_PROGRAM ||--o{ TRAINING_ENROLLMENT : "enrolls"
+    TRAINING_ENROLLMENT }o--|| EMPLOYEE : "enrolls"
+
+    SURVEY }o--|| TENANT : "created by"
+    SURVEY ||--o{ SURVEY_RESPONSE : "receives"
+    SURVEY_RESPONSE }o--|| EMPLOYEE : "submitted by"
+
+    %% Entity Definitions
+    TENANT {
+        uuid id PK
+        string name
+        string subdomain
+        string status
+        jsonb settings
+        timestamp created_at
+    }
+
+    USER {
+        uuid id PK
+        uuid tenant_id FK
+        string email UK
+        string password_hash
+        boolean mfa_enabled
+        timestamp last_login
+    }
+
+    EMPLOYEE {
+        uuid id PK
+        uuid tenant_id FK
+        uuid user_id FK
+        uuid department_id FK
+        uuid manager_id FK "self-reference"
+        string employee_code UK
+        string first_name
+        string last_name
+        string email UK
+        date date_of_joining
+        date date_of_birth
+        string status "ACTIVE, INACTIVE, EXIT"
+        jsonb custom_fields
+    }
+
+    DEPARTMENT {
+        uuid id PK
+        uuid tenant_id FK
+        uuid parent_id FK "self-reference"
+        string name
+        uuid head_id FK "Employee"
+        string code UK
+    }
+
+    ROLE {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        string description
+        string role_type "SYSTEM, CUSTOM"
+    }
+
+    ROLE_PERMISSION {
+        uuid id PK
+        uuid role_id FK
+        string permission
+        string scope "ALL, LOCATION, DEPARTMENT, TEAM, SELF, CUSTOM"
+    }
+
+    LEAVE_TYPE {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        decimal max_days_per_year
+        boolean is_paid
+        jsonb accrual_policy
+    }
+
+    LEAVE_REQUEST {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        uuid leave_type_id FK
+        date start_date
+        date end_date
+        decimal days
+        string status "PENDING, APPROVED, REJECTED, CANCELLED"
+        text reason
+    }
+
+    LEAVE_BALANCE {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        uuid leave_type_id FK
+        decimal available
+        decimal used
+        decimal accrued
+        int year
+    }
+
+    ATTENDANCE_RECORD {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        date date
+        time check_in
+        time check_out
+        decimal hours_worked
+        string status "PRESENT, ABSENT, HALF_DAY, WFH"
+    }
+
+    PAYROLL_RUN {
+        uuid id PK
+        uuid tenant_id FK
+        int month
+        int year
+        string status "DRAFT, PROCESSING, COMPLETED, FAILED"
+        decimal total_amount
+        timestamp processed_at
+    }
+
+    PAYSLIP {
+        uuid id PK
+        uuid tenant_id FK
+        uuid payroll_run_id FK
+        uuid employee_id FK
+        decimal gross_salary
+        decimal deductions
+        decimal net_salary
+        jsonb components
+        string payslip_url
+    }
+
+    PERFORMANCE_REVIEW {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        uuid reviewer_id FK
+        uuid review_cycle_id FK
+        string status "DRAFT, SUBMITTED, COMPLETED"
+        decimal rating
+        text comments
+    }
+
+    REVIEW_CYCLE {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        date start_date
+        date end_date
+        string status "ACTIVE, CLOSED"
+    }
+
+    GOAL {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        string title
+        text description
+        date target_date
+        decimal progress
+        string status "DRAFT, ACTIVE, ACHIEVED, CANCELLED"
+    }
+
+    WORKFLOW_DEFINITION {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        string entity_type "LEAVE, EXPENSE, TRAVEL"
+        jsonb conditions
+    }
+
+    APPROVAL_STEP {
+        uuid id PK
+        uuid workflow_definition_id FK
+        int step_order
+        string approver_type "MANAGER, ROLE, SPECIFIC_USER"
+        uuid approver_id FK
+        boolean is_parallel
+    }
+
+    WORKFLOW_EXECUTION {
+        uuid id PK
+        uuid tenant_id FK
+        uuid workflow_definition_id FK
+        uuid entity_id
+        string entity_type
+        string status "PENDING, APPROVED, REJECTED, CANCELLED"
+    }
+
+    STEP_EXECUTION {
+        uuid id PK
+        uuid workflow_execution_id FK
+        uuid approval_step_id FK
+        uuid approver_id FK
+        string status "PENDING, APPROVED, REJECTED, SKIPPED"
+        timestamp action_date
+        text comments
+    }
+
+    JOB_OPENING {
+        uuid id PK
+        uuid tenant_id FK
+        uuid department_id FK
+        string title
+        text description
+        string status "OPEN, CLOSED, ON_HOLD"
+        int positions
+        date posted_date
+    }
+
+    CANDIDATE {
+        uuid id PK
+        uuid tenant_id FK
+        uuid job_opening_id FK
+        string first_name
+        string last_name
+        string email
+        string phone
+        string resume_url
+        string status "APPLIED, SCREENING, INTERVIEW, OFFER, HIRED, REJECTED"
+    }
+
+    INTERVIEW {
+        uuid id PK
+        uuid tenant_id FK
+        uuid candidate_id FK
+        uuid interviewer_id FK
+        timestamp scheduled_at
+        string interview_type "PHONE, VIDEO, IN_PERSON"
+        string status "SCHEDULED, COMPLETED, CANCELLED"
+        decimal rating
+        text feedback
+    }
+
+    NOTIFICATION {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        string title
+        text message
+        string type "INFO, WARNING, SUCCESS, ERROR"
+        string channel "EMAIL, SLACK, IN_APP, SMS"
+        boolean is_read
+        timestamp created_at
+    }
+
+    ANNOUNCEMENT {
+        uuid id PK
+        uuid tenant_id FK
+        uuid created_by FK
+        string title
+        text content
+        timestamp published_at
+        boolean is_pinned
+    }
+
+    ONBOARDING_PROCESS {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        uuid template_id FK
+        date start_date
+        string status "PENDING, IN_PROGRESS, COMPLETED"
+    }
+
+    ONBOARDING_TASK {
+        uuid id PK
+        uuid onboarding_process_id FK
+        string title
+        text description
+        uuid assignee_id FK
+        date due_date
+        string status "PENDING, IN_PROGRESS, COMPLETED"
+    }
+
+    EXPENSE_CLAIM {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        date expense_date
+        string category
+        decimal amount
+        string currency
+        string status "DRAFT, SUBMITTED, APPROVED, PAID, REJECTED"
+        string receipt_url
+    }
+
+    TRAVEL_REQUEST {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        date departure_date
+        date return_date
+        string destination
+        string purpose
+        decimal estimated_cost
+        string status "PENDING, APPROVED, REJECTED"
+    }
+
+    LOAN {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        decimal amount
+        decimal interest_rate
+        int tenure_months
+        decimal emi_amount
+        date disbursement_date
+        string status "PENDING, APPROVED, DISBURSED, REPAYING, CLOSED"
+    }
+
+    ASSET {
+        uuid id PK
+        uuid tenant_id FK
+        uuid assigned_to FK "Employee"
+        string asset_code UK
+        string name
+        string category
+        date allocated_date
+        string status "ALLOCATED, RECOVERED, DAMAGED"
+    }
+
+    TIME_ENTRY {
+        uuid id PK
+        uuid tenant_id FK
+        uuid employee_id FK
+        uuid project_id FK
+        date entry_date
+        decimal hours
+        string task_description
+        boolean is_billable
+    }
+
+    OFFICE_LOCATION {
+        uuid id PK
+        uuid tenant_id FK
+        string name
+        string city
+        string country
+        jsonb working_hours
+    }
+
+    TRAINING_PROGRAM {
+        uuid id PK
+        uuid tenant_id FK
+        string title
+        text description
+        date start_date
+        date end_date
+        int max_participants
+    }
+
+    TRAINING_ENROLLMENT {
+        uuid id PK
+        uuid training_program_id FK
+        uuid employee_id FK
+        string status "ENROLLED, COMPLETED, CANCELLED"
+        decimal attendance_percentage
+    }
+
+    SURVEY {
+        uuid id PK
+        uuid tenant_id FK
+        string title
+        text description
+        date start_date
+        date end_date
+        boolean is_anonymous
+    }
+
+    SURVEY_RESPONSE {
+        uuid id PK
+        uuid survey_id FK
+        uuid employee_id FK
+        jsonb answers
+        timestamp submitted_at
+    }
+
+    %% Styling would be applied in the rendering tool

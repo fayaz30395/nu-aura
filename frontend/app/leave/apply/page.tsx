@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveType, LeaveBalance, HalfDayPeriod } from '@/lib/types/leave';
 
 export default function ApplyLeavePage() {
   const router = useRouter();
+  const { user, hasHydrated } = useAuth();
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [balances, setBalances] = useState<LeaveBalance[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,14 +28,20 @@ export default function ApplyLeavePage() {
   });
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (hasHydrated) {
+      loadData();
+    }
+  }, [hasHydrated]);
 
   const loadData = async () => {
     try {
       setDataLoading(true);
       setError(null);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user?.employeeId) {
+        setError('No employee profile linked to your account. Leave application requires an employee profile.');
+        setDataLoading(false);
+        return;
+      }
       const year = new Date().getFullYear();
       const [types, bal] = await Promise.all([
         leaveService.getActiveLeaveTypes(),
@@ -67,7 +75,10 @@ export default function ApplyLeavePage() {
     e.preventDefault();
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user?.employeeId) {
+        alert('No employee profile linked to your account');
+        return;
+      }
       const totalDays = calculateDays();
 
       await leaveService.createLeaveRequest({

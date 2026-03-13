@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NU-AURA HRMS - Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f9fafb;
+            color: #101828;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #465fff 0%, #2a31d8 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .toolbar {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e4e7ec;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar button {
+            background: #465fff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .toolbar button:hover {
+            background: #3641f5;
+        }
+
+        .toolbar button.secondary {
+            background: #e4e7ec;
+            color: #101828;
+        }
+
+        .toolbar button.secondary:hover {
+            background: #d0d5dd;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .diagram-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .diagram-card h2 {
+            color: #465fff;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .diagram-card .meta {
+            color: #667085;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .diagram-card .meta span {
+            background: #f9fafb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .mermaid {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .diagram-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .diagram-actions button {
+            background: #12b76a;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .diagram-actions button:hover {
+            background: #0a9960;
+        }
+
+        .toc {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #465fff;
+        }
+
+        .toc h3 {
+            margin-bottom: 1rem;
+            color: #101828;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc a {
+            color: #465fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-business {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-technical {
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+
+        .badge-security {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media print {
+            .header, .toolbar, .toc, .diagram-actions {
+                display: none;
+            }
+
+            .diagram-card {
+                page-break-inside: avoid;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏢 NU-AURA HRMS - Architecture Diagrams</h1>
+        <p>Comprehensive system architecture for engineering teams</p>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="exportAllAsPNG()">📥 Export All as PNG</button>
+        <button onclick="window.print()" class="secondary">🖨️ Print All</button>
+        <button onclick="toggleDarkMode()" class="secondary">🌙 Dark Mode</button>
+        <button onclick="window.location.href='README.md'" class="secondary">📖 Documentation</button>
+    </div>
+
+    <div class="container">
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h3>📑 Table of Contents</h3>
+            <ul>
+                <li><a href="#diagram-01">01. System Context <span class="badge badge-business">Business</span></a></li>
+                <li><a href="#diagram-02">02. Container Architecture <span class="badge badge-technical">Technical</span></a></li>
+                <li><a href="#diagram-03">03. Business Modules <span class="badge badge-business">Business</span></a></li>
+                <li><a href="#diagram-04">04. Multi-Tenant Flow <span class="badge badge-security">Security</span></a></li>
+                <li><a href="#diagram-05">05. Auth & Authorization <span class="badge badge-security">Security</span></a></li>
+                <li><a href="#diagram-06">06. Payroll Workflow <span class="badge badge-technical">Technical</span></a></li>
+                <li><a href="#diagram-07">07. Deployment Architecture <span class="badge badge-technical">Technical</span></a></li>
+                <li><a href="#diagram-08">08. Integration Architecture <span class="badge badge-business">Business</span></a></li>
+                <li><a href="#diagram-09">09. Data Model Overview <span class="badge badge-technical">Technical</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Diagrams will be injected here by JavaScript -->
+        <div id="diagrams-container"></div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: true
+            },
+            er: {
+                useMaxWidth: true
+            }
+        });
+
+        // Diagram configurations
+        const diagrams = [
+            {
+                id: 'diagram-01',
+                title: '01. System Context Diagram',
+                audience: 'Executives, C-Suite, Board of Directors',
+                type: 'C4 Level 1 - System Context',
+                file: '01-SYSTEM-CONTEXT.mmd'
+            },
+            {
+                id: 'diagram-02',
+                title: '02. Container Architecture',
+                audience: 'CTO, VP Engineering, Technical Leadership',
+                type: 'C4 Level 2 - Containers',
+                file: '02-CONTAINER-ARCHITECTURE.mmd'
+            },
+            {
+                id: 'diagram-03',
+                title: '03. Business Modules',
+                audience: 'Product Teams, Sales, Business Analysts',
+                type: 'Component Diagram',
+                file: '03-BUSINESS-MODULES.mmd'
+            },
+            {
+                id: 'diagram-04',
+                title: '04. Multi-Tenant Data Flow',
+                audience: 'Security Teams, Compliance Officers, Auditors',
+                type: 'Sequence Diagram',
+                file: '04-MULTI-TENANT-FLOW.mmd'
+            },
+            {
+                id: 'diagram-05',
+                title: '05. Authentication & Authorization Flow',
+                audience: 'Security Teams, IT Teams, Integration Partners',
+                type: 'Sequence Diagram',
+                file: '05-AUTH-AUTHORIZATION-FLOW.mmd'
+            },
+            {
+                id: 'diagram-06',
+                title: '06. Payroll Workflow (Saga Pattern)',
+                audience: 'Finance Teams, Payroll Managers, CFO',
+                type: 'State Diagram',
+                file: '06-PAYROLL-WORKFLOW.mmd'
+            },
+            {
+                id: 'diagram-07',
+                title: '07. Deployment Architecture',
+                audience: 'DevOps, SRE, Infrastructure Teams, CTO',
+                type: 'Deployment Diagram',
+                file: '07-DEPLOYMENT-ARCHITECTURE.mmd'
+            },
+            {
+                id: 'diagram-08',
+                title: '08. Integration Architecture',
+                audience: 'Integration Teams, Sales, Partners',
+                type: 'Component Diagram',
+                file: '08-INTEGRATION-ARCHITECTURE.mmd'
+            },
+            {
+                id: 'diagram-09',
+                title: '09. Data Model Overview',
+                audience: 'Data Teams, Database Administrators, Architects',
+                type: 'Entity Relationship Diagram',
+                file: '09-DATA-MODEL-OVERVIEW.mmd'
+            }
+        ];
+
+        // Load and render diagrams
+        async function loadDiagrams() {
+            const container = document.getElementById('diagrams-container');
+
+            for (const diagram of diagrams) {
+                try {
+                    const response = await fetch(diagram.file);
+                    const mermaidCode = await response.text();
+
+                    // Remove comment headers (lines starting with %%)
+                    const cleanedCode = mermaidCode
+                        .split('\n')
+                        .filter(line => !line.trim().startsWith('%%'))
+                        .join('\n')
+                        .trim();
+
+                    const card = document.createElement('div');
+                    card.className = 'diagram-card';
+                    card.id = diagram.id;
+
+                    card.innerHTML = `
+                        <h2>${diagram.title}</h2>
+                        <div class="meta">
+                            <span><strong>Audience:</strong> ${diagram.audience}</span>
+                            <span><strong>Type:</strong> ${diagram.type}</span>
+                        </div>
+                        <div class="mermaid" id="mermaid-${diagram.id}">
+                            ${cleanedCode}
+                        </div>
+                        <div class="diagram-actions">
+                            <button onclick="exportDiagram('${diagram.id}', '${diagram.title}')">📥 Export PNG</button>
+                            <button onclick="exportDiagramSVG('${diagram.id}', '${diagram.title}')">📥 Export SVG</button>
+                            <button onclick="copyMermaidCode('${diagram.id}')">📋 Copy Code</button>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                } catch (error) {
+                    console.error(`Failed to load ${diagram.file}:`, error);
+                }
+            }
+
+            // Render all Mermaid diagrams
+            await mermaid.run();
+        }
+
+        // Export single diagram as PNG
+        async function exportDiagram(diagramId, title) {
+            const svgElement = document.querySelector(`#${diagramId} .mermaid svg`);
+            if (!svgElement) {
+                alert('Diagram not found');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+
+            const img = new Image();
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            img.onload = function() {
+                canvas.width = img.width * 2;
+                canvas.height = img.height * 2;
+                ctx.scale(2, 2);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = `${title.replace(/[^a-z0-9]/gi, '-')}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(url);
+                });
+            };
+
+            img.src = url;
+        }
+
+        // Export single diagram as SVG
+        function exportDiagramSVG(diagramId, title) {
+            const svgElement = document.querySelector(`#${diagramId} .mermaid svg`);
+            if (!svgElement) {
+                alert('Diagram not found');
+                return;
+            }
+
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            const link = document.createElement('a');
+            link.download = `${title.replace(/[^a-z0-9]/gi, '-')}.svg`;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Copy Mermaid code
+        async function copyMermaidCode(diagramId) {
+            const mermaidDiv = document.querySelector(`#${diagramId} .mermaid`);
+            if (!mermaidDiv) {
+                alert('Diagram not found');
+                return;
+            }
+
+            const code = mermaidDiv.textContent.trim();
+            await navigator.clipboard.writeText(code);
+            alert('Mermaid code copied to clipboard!');
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.style.background = document.body.style.background === 'rgb(16, 24, 40)' ? '#f9fafb' : '#101828';
+            document.body.style.color = document.body.style.color === 'rgb(249, 250, 251)' ? '#101828' : '#f9fafb';
+        }
+
+        // Load diagrams on page load
+        loadDiagrams();
+    </script>
+</body>
+</html>

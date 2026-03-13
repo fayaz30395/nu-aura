@@ -37,7 +37,7 @@ public class ResumeTextExtractor {
         log.debug("Extracting text from file: {} ({} bytes)", fileName, fileBytes.length);
 
         try {
-            String extractedText = tika.parseToString(fileBytes);
+            String extractedText = tika.parseToString(new java.io.ByteArrayInputStream(fileBytes));
 
             if (extractedText == null || extractedText.isBlank()) {
                 log.warn("No text extracted from file: {}", fileName);

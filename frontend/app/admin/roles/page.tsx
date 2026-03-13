@@ -16,6 +16,7 @@ import {
 import { ScopeSelector } from '@/components/admin/ScopeSelector';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { AppLayout } from '@/components/layout';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -235,7 +236,7 @@ export default function RolesPage() {
   }
 
   return (
-    <>
+    <AppLayout activeMenuItem="admin-roles">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Role Management</h1>
@@ -728,6 +729,6 @@ export default function RolesPage() {
         </div>
       )}
       </div>
-    </>
+    </AppLayout>
   );
 }

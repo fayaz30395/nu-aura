@@ -83,11 +83,13 @@ public class RecruitmentManagementController {
         return ResponseEntity.ok(recruitmentService.updateCandidate(id, request));
     }
 
-    @GetMapping("/candidates/{id}")
-    @RequiresPermission(Permission.CANDIDATE_VIEW)
-    public ResponseEntity<CandidateResponse> getCandidateById(@PathVariable UUID id) {
-        return ResponseEntity.ok(recruitmentService.getCandidateById(id));
-    }
+    // Removed - duplicate of RecruitmentController#getCandidate
+    // Use RecruitmentController for candidate retrieval endpoints
+    // @GetMapping("/candidates/{id}")
+    // @RequiresPermission(Permission.CANDIDATE_VIEW)
+    // public ResponseEntity<CandidateResponse> getCandidateById(@PathVariable UUID id) {
+    //     return ResponseEntity.ok(recruitmentService.getCandidateById(id));
+    // }
 
     @GetMapping("/candidates")
     @RequiresPermission(Permission.CANDIDATE_VIEW)

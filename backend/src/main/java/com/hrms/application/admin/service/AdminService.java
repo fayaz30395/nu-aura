@@ -111,7 +111,7 @@ public class AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         // Get roles by code - we assume these are system-wide role codes
-        List<Role> roles = roleRepository.findByCodeIn(request.getRoleCodes());
+        List<Role> roles = roleRepository.findByCodeInAndTenantId(request.getRoleCodes(), user.getTenantId());
 
         // Validate all role codes exist
         if (roles.size() != request.getRoleCodes().size()) {

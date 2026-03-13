@@ -3,6 +3,7 @@ package com.hrms.domain.platform;
 import com.hrms.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Application-specific permission definition.
@@ -21,7 +22,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class AppPermission extends BaseEntity {
 
     /**

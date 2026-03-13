@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
+import { AppLayout } from '@/components/layout';
 import { statutoryService } from '@/lib/services/statutory.service';
 import { ProvidentFundConfig, ESIConfig, ProfessionalTaxSlab, MonthlyStatutoryContribution } from '@/lib/types/statutory';
 import { notifications } from '@mantine/notifications';
@@ -131,6 +132,7 @@ export default function StatutoryPage() {
     };
 
     return (
+        <AppLayout>
         <Container size="xl" py="lg">
             <Title order={2} mb="sm">Statutory Compliance</Title>
             <Text c="dimmed" mb="lg">Manage Provident Fund, ESI, and Professional Tax configurations.</Text>
@@ -407,5 +409,6 @@ export default function StatutoryPage() {
                 </Tabs.Panel>
             </Tabs>
         </Container>
+        </AppLayout>
     );
 }

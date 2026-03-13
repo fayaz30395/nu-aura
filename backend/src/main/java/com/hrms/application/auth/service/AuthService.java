@@ -40,6 +40,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,6 +131,15 @@ public class AuthService {
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
             UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+            // Auto-link employee if user has SUPER_ADMIN role and no employee record
+            if (employeeId == null && isSuperAdmin(appRoles)) {
+                empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
+                employeeId = empOpt.map(Employee::getId).orElse(null);
+                locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+                departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+                teamId = empOpt.map(Employee::getTeamId).orElse(null);
+            }
 
             // Generate token with app-aware permissions
             String accessToken = tokenProvider.generateTokenWithAppPermissions(
@@ -255,6 +265,15 @@ public class AuthService {
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
             UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+            // Auto-link employee if user has SUPER_ADMIN role and no employee record
+            if (employeeId == null && isSuperAdmin(appRoles)) {
+                empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
+                employeeId = empOpt.map(Employee::getId).orElse(null);
+                locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+                departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+                teamId = empOpt.map(Employee::getTeamId).orElse(null);
+            }
 
             // Generate token with app-aware permissions
             String accessToken = tokenProvider.generateTokenWithAppPermissions(
@@ -468,6 +487,17 @@ public class AuthService {
                 permissionScopes.putIfAbsent(code, newScope);
             });
 
+            // If UserAppAccess exists but AppRoles have no AppPermissions linked (migration gap),
+            // fall back to RoleHierarchy defaults based on the role codes.
+            if (permissionScopes.isEmpty() && !userAccess.getRoles().isEmpty()) {
+                log.warn("UserAppAccess for user {} has roles but no permissions. Deriving from RoleHierarchy defaults.", userId);
+                userAccess.getRoleCodes().forEach(roleCode -> {
+                    com.hrms.common.security.RoleHierarchy.getDefaultPermissions(roleCode).forEach(perm -> {
+                        permissionScopes.putIfAbsent(perm, com.hrms.domain.user.RoleScope.ALL);
+                    });
+                });
+            }
+
             log.debug("Loaded {} permissions from UserAppAccess for user {}", permissionScopes.size(), userId);
             mergeImplicitPermissions(userId, appCode, permissionScopes);
             return permissionScopes;
@@ -483,12 +513,12 @@ public class AuthService {
                 log.debug("Processing role: {} with {} permissions", role.getCode(), role.getPermissions().size());
                 role.getPermissions().forEach(rp -> {
                     String code = rp.getPermission().getCode();
-                    String originalCode = code;
-                    // Add app prefix if missing
-                    if (!code.contains(":") || !code.startsWith(appCode + ":")) {
-                        code = appCode + ":" + code;
+                    // Normalize: strip app prefix if present (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")
+                    // to be consistent with NU Platform RBAC path which stores MODULE:ACTION format
+                    if (code.startsWith(appCode + ":")) {
+                        code = code.substring(appCode.length() + 1);
                     }
-                    log.debug("Permission: {} -> {} (scope: {})", originalCode, code, rp.getScope());
+                    log.debug("Permission: {} -> {} (scope: {})", rp.getPermission().getCode(), code, rp.getScope());
 
                     com.hrms.domain.user.RoleScope newScope = rp.getScope();
                     com.hrms.domain.user.RoleScope existingScope = permissionScopes.get(code);
@@ -500,7 +530,18 @@ public class AuthService {
             });
         }
 
-        log.info("Loaded permissions for user {}: {}", userId, permissionScopes.keySet());
+        // If still empty after legacy fallback, derive permissions from RoleHierarchy defaults.
+        // This handles cases where role_permission join table is empty but user has assigned roles.
+        if (permissionScopes.isEmpty() && user != null && !user.getRoles().isEmpty()) {
+            log.warn("No permissions found in role_permission table for user {}. Deriving from RoleHierarchy defaults.", userId);
+            user.getRoles().forEach(role -> {
+                com.hrms.common.security.RoleHierarchy.getDefaultPermissions(role.getCode()).forEach(perm -> {
+                    permissionScopes.putIfAbsent(perm, com.hrms.domain.user.RoleScope.ALL);
+                });
+            });
+        }
+
+        log.info("Loaded permissions for user {}: {} permissions", userId, permissionScopes.size());
         mergeImplicitPermissions(userId, appCode, permissionScopes);
         return permissionScopes;
     }
@@ -639,6 +680,69 @@ public class AuthService {
         emailNotificationService.sendPasswordChangedEmail(user.getEmail(), userName);
     }
 
+    // ==================== SuperAdmin Employee Linking ====================
+
+    /**
+     * Check if the given set of role codes contains SUPER_ADMIN.
+     */
+    private boolean isSuperAdmin(Set<String> appRoles) {
+        return appRoles != null && appRoles.contains("SUPER_ADMIN");
+    }
+
+    /**
+     * For SuperAdmin users without an employee record, attempt to:
+     * 1. Find and link an existing employee with matching email
+     * 2. If no employee exists, create a minimal employee record
+     *
+     * @param user the user entity
+     * @param tenantId the tenant ID
+     * @return Optional containing the linked/created employee
+     */
+    private Optional<Employee> autoLinkOrCreateEmployeeForSuperAdmin(User user, UUID tenantId) {
+        try {
+            // Step 1: Try to find an existing employee with the same email
+            List<Employee> matchingEmployees = employeeRepository.findByTenantId(tenantId).stream()
+                    .filter(e -> e.getUser() != null && e.getUser().getEmail().equals(user.getEmail()))
+                    .toList();
+
+            if (!matchingEmployees.isEmpty()) {
+                // Link the first matching employee to this user
+                Employee employee = matchingEmployees.get(0);
+                employee.setUser(user);
+                employee = employeeRepository.save(employee);
+                log.info("Auto-linked existing employee {} to SuperAdmin user {}", employee.getId(), user.getId());
+                return Optional.of(employee);
+            }
+
+            // Step 2: Create a minimal employee record for the SuperAdmin
+            String[] nameParts = user.getFullName().split(" ", 2);
+            String firstName = nameParts[0];
+            String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+            // Generate a unique employee code
+            String employeeCode = "ADMIN-" + user.getId().toString().substring(0, 8).toUpperCase();
+
+            Employee newEmployee = Employee.builder()
+                    .employeeCode(employeeCode)
+                    .user(user)
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .joiningDate(LocalDate.now())
+                    .employmentType(Employee.EmploymentType.FULL_TIME)
+                    .status(Employee.EmployeeStatus.ACTIVE)
+                    .tenantId(tenantId)
+                    .build();
+
+            newEmployee = employeeRepository.save(newEmployee);
+            log.info("Created minimal employee record for SuperAdmin user {} with employee ID {}", user.getId(), newEmployee.getId());
+
+            return Optional.of(newEmployee);
+        } catch (Exception e) {
+            log.error("Failed to auto-link/create employee for SuperAdmin user {}: {}", user.getId(), e.getMessage(), e);
+            return Optional.empty();
+        }
+    }
+
     /**
      * Complete login after MFA verification.
      * Called after user successfully enters MFA code during login flow.
@@ -670,6 +774,15 @@ public class AuthService {
         UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
         UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
         UUID teamId = empOpt.map(Employee::getTeamId).orElse(null);
+
+        // Auto-link employee if user has SUPER_ADMIN role and no employee record
+        if (employeeId == null && isSuperAdmin(appRoles)) {
+            empOpt = autoLinkOrCreateEmployeeForSuperAdmin(user, tenantId);
+            employeeId = empOpt.map(Employee::getId).orElse(null);
+            locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
+            departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
+            teamId = empOpt.map(Employee::getTeamId).orElse(null);
+        }
 
         // Generate token with app-aware permissions
         String accessToken = tokenProvider.generateTokenWithAppPermissions(

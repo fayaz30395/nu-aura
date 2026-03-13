@@ -1,0 +1,146 @@
+package com.hrms.api.knowledge.controller;
+
+import com.hrms.api.knowledge.dto.CreateWikiPageRequest;
+import com.hrms.api.knowledge.dto.UpdateWikiPageRequest;
+import com.hrms.api.knowledge.dto.WikiPageDto;
+import com.hrms.application.knowledge.service.WikiPageService;
+import com.hrms.common.api.ApiResponses;
+import com.hrms.common.security.Permission;
+import com.hrms.common.security.RequiresPermission;
+import com.hrms.domain.knowledge.WikiPage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/v1/knowledge/wiki/pages")
+@RequiredArgsConstructor
+@Slf4j
+@Tag(name = "Wiki Pages", description = "Wiki page management")
+public class WikiPageController {
+
+    private final WikiPageService wikiPageService;
+
+    @PostMapping
+    @Operation(summary = "Create wiki page")
+    @ApiResponses.Created
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_CREATE)
+    public ResponseEntity<WikiPageDto> createPage(@RequestBody CreateWikiPageRequest request) {
+        WikiPage page = WikiPage.builder()
+                .title(request.getTitle())
+                .slug(request.getSlug())
+                .excerpt(request.getExcerpt())
+                .content(request.getContent())
+                .visibility(WikiPage.VisibilityLevel.valueOf(request.getVisibility()))
+                .status(WikiPage.PageStatus.valueOf(request.getStatus()))
+                .build();
+
+        WikiPage created = wikiPageService.createPage(page);
+        return ResponseEntity.status(HttpStatus.CREATED).body(WikiPageDto.fromEntity(created));
+    }
+
+    @GetMapping("/{pageId}")
+    @Operation(summary = "Get wiki page by ID")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<WikiPageDto> getPageById(@PathVariable UUID pageId) {
+        WikiPage page = wikiPageService.getPageById(pageId);
+        return ResponseEntity.ok(WikiPageDto.fromEntity(page));
+    }
+
+    @GetMapping("/space/{spaceId}")
+    @Operation(summary = "Get pages by space")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<Page<WikiPageDto>> getPagesBySpace(
+            @PathVariable UUID spaceId,
+            Pageable pageable) {
+        Page<WikiPage> pages = wikiPageService.getPagesBySpace(spaceId, pageable);
+        return ResponseEntity.ok(pages.map(WikiPageDto::fromEntity));
+    }
+
+    @PutMapping("/{pageId}")
+    @Operation(summary = "Update wiki page")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
+    public ResponseEntity<WikiPageDto> updatePage(
+            @PathVariable UUID pageId,
+            @RequestBody UpdateWikiPageRequest request) {
+        WikiPage pageData = WikiPage.builder()
+                .title(request.getTitle())
+                .slug(request.getSlug())
+                .excerpt(request.getExcerpt())
+                .content(request.getContent())
+                .visibility(WikiPage.VisibilityLevel.valueOf(request.getVisibility()))
+                .status(WikiPage.PageStatus.valueOf(request.getStatus()))
+                .build();
+
+        WikiPage updated = wikiPageService.updatePage(pageId, pageData);
+        return ResponseEntity.ok(WikiPageDto.fromEntity(updated));
+    }
+
+    @PostMapping("/{pageId}/publish")
+    @Operation(summary = "Publish wiki page")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_PUBLISH)
+    public ResponseEntity<WikiPageDto> publishPage(@PathVariable UUID pageId) {
+        WikiPage published = wikiPageService.publishPage(pageId);
+        return ResponseEntity.ok(WikiPageDto.fromEntity(published));
+    }
+
+    @PostMapping("/{pageId}/archive")
+    @Operation(summary = "Archive wiki page")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
+    public ResponseEntity<WikiPageDto> archivePage(@PathVariable UUID pageId) {
+        WikiPage archived = wikiPageService.archivePage(pageId);
+        return ResponseEntity.ok(WikiPageDto.fromEntity(archived));
+    }
+
+    @PostMapping("/{pageId}/toggle-pin")
+    @Operation(summary = "Toggle pin status")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
+    public ResponseEntity<WikiPageDto> togglePin(@PathVariable UUID pageId) {
+        WikiPage toggled = wikiPageService.togglePin(pageId);
+        return ResponseEntity.ok(WikiPageDto.fromEntity(toggled));
+    }
+
+    @DeleteMapping("/{pageId}")
+    @Operation(summary = "Delete wiki page")
+    @ApiResponses.NoContent
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_DELETE)
+    public ResponseEntity<Void> deletePage(@PathVariable UUID pageId) {
+        wikiPageService.deletePage(pageId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search wiki pages")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_SEARCH)
+    public ResponseEntity<Page<WikiPageDto>> searchPages(
+            @RequestParam String query,
+            Pageable pageable) {
+        Page<WikiPage> results = wikiPageService.searchPages(query, pageable);
+        return ResponseEntity.ok(results.map(WikiPageDto::fromEntity));
+    }
+
+    @GetMapping("/{pageId}/versions")
+    @Operation(summary = "Get page version history")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<List<?>> getPageVersions(@PathVariable UUID pageId) {
+        return ResponseEntity.ok(wikiPageService.getPageVersionHistory(pageId));
+    }
+}

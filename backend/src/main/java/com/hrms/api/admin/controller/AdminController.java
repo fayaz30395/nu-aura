@@ -3,7 +3,9 @@ package com.hrms.api.admin.controller;
 import com.hrms.api.admin.dto.AdminStatsResponse;
 import com.hrms.api.admin.dto.AdminUserResponse;
 import com.hrms.api.admin.dto.UpdateUserRoleRequest;
+import com.hrms.api.employee.dto.EmployeeResponse;
 import com.hrms.application.admin.service.AdminService;
+import com.hrms.application.auth.service.EmployeeLinkerService;
 import com.hrms.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,6 +36,7 @@ import static com.hrms.common.security.Permission.SYSTEM_ADMIN;
 public class AdminController {
 
     private final AdminService adminService;
+    private final EmployeeLinkerService employeeLinkerService;
 
     /**
      * Get global platform statistics
@@ -76,5 +79,20 @@ public class AdminController {
         log.info("SuperAdmin updating roles for user: {}", userId);
         AdminUserResponse updatedUser = adminService.updateUserRole(userId, request);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    /**
+     * Link or create an employee record for a user
+     * SuperAdmin only - used to link users to employees or create new employee records
+     */
+    @PostMapping("/users/{userId}/link-employee")
+    @RequiresPermission(SYSTEM_ADMIN)
+    @Operation(summary = "Link or create employee for user", description = "Link an existing employee to a user or create a new minimal employee record. Useful for SuperAdmin and other users who don't have employee profiles.")
+    public ResponseEntity<EmployeeResponse> linkOrCreateEmployee(
+            @Parameter(description = "User ID to link employee for")
+            @PathVariable UUID userId) {
+        log.info("SuperAdmin linking/creating employee for user: {}", userId);
+        EmployeeResponse employee = employeeLinkerService.linkOrCreateEmployeeForUser(userId);
+        return ResponseEntity.ok(employee);
     }
 }

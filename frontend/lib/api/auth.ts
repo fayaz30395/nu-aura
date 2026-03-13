@@ -13,7 +13,7 @@ export const authApi = {
    * Tokens are set via httpOnly cookies by the backend.
    */
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/v1/auth/login', data);
+    const response = await apiClient.post<AuthResponse>('/auth/login', data);
     return response.data;
   },
 
@@ -22,7 +22,7 @@ export const authApi = {
    * Backend clears cookies and blacklists tokens.
    */
   logout: async (): Promise<void> => {
-    await apiClient.post('/v1/auth/logout');
+    await apiClient.post('/auth/logout');
     apiClient.clearTokens();
   },
 
@@ -32,7 +32,7 @@ export const authApi = {
    */
   refresh: async (): Promise<AuthResponse> => {
     // No need to manually pass refresh token - it's in httpOnly cookie
-    const response = await apiClient.post<AuthResponse>('/v1/auth/refresh', null);
+    const response = await apiClient.post<AuthResponse>('/auth/refresh', null);
     return response.data;
   },
 
@@ -40,7 +40,7 @@ export const authApi = {
    * Change password for authenticated user.
    */
   changePassword: async (data: ChangePasswordRequest): Promise<void> => {
-    await apiClient.post('/v1/auth/change-password', data);
+    await apiClient.post('/auth/change-password', data);
   },
 
   /**
@@ -48,7 +48,7 @@ export const authApi = {
    * Tokens are set via httpOnly cookies by the backend.
    */
   googleLogin: async (data: GoogleLoginRequest): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/v1/auth/google', data);
+    const response = await apiClient.post<AuthResponse>('/auth/google', data);
     return response.data;
   },
 };

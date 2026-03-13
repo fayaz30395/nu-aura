@@ -4,7 +4,11 @@ import com.hrms.api.analytics.dto.*;
 import com.hrms.common.security.TenantContext;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.analytics.*;
+import com.hrms.domain.employee.Employee;
+import com.hrms.domain.payroll.SalaryStructure;
 import com.hrms.infrastructure.analytics.repository.*;
+import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,8 @@ public class PredictiveAnalyticsService {
     private final WorkforceTrendRepository trendRepository;
     private final AnalyticsInsightRepository insightRepository;
     private final SkillGapRepository skillGapRepository;
+    private final EmployeeRepository employeeRepository;
+    private final SalaryStructureRepository salaryStructureRepository;
 
     // ==================== DASHBOARD ====================
 
@@ -463,73 +470,273 @@ public class PredictiveAnalyticsService {
         return metrics;
     }
 
+    /**
+     * Generate a data-driven attrition prediction based on actual employee data.
+     * Uses heuristic scoring across multiple risk dimensions:
+     * - Tenure risk: employees with < 1 year or > 5 years tenure are higher risk
+     * - Compensation risk: estimated from salary percentile within tenant
+     * - Promotion gap risk: entry-level employees with long tenure and no level change
+     * - Engagement/performance: derived from available data, defaults to moderate if absent
+     */
     private AttritionPrediction simulatePrediction(UUID tenantId, UUID employeeId) {
-        // Simulate ML prediction - in real world, this would call an ML service
-        Random random = new Random();
-        BigDecimal riskScore = BigDecimal.valueOf(10 + random.nextInt(80));
+        Optional<Employee> employeeOpt = employeeRepository.findByIdAndTenantId(employeeId, tenantId);
+
+        // Compute tenure
+        int tenureMonths = 24; // default
+        LocalDate joiningDate = null;
+        Employee.EmployeeLevel level = null;
+
+        if (employeeOpt.isPresent()) {
+            Employee emp = employeeOpt.get();
+            joiningDate = emp.getJoiningDate();
+            level = emp.getLevel();
+
+            if (joiningDate != null) {
+                tenureMonths = (int) ChronoUnit.MONTHS.between(joiningDate, LocalDate.now());
+            }
+        }
+
+        // Tenure risk: < 12 months (new hire flight risk) or > 60 months (stagnation)
+        BigDecimal tenureRisk;
+        if (tenureMonths < 6) {
+            tenureRisk = BigDecimal.valueOf(70); // Very new, high flight risk
+        } else if (tenureMonths < 12) {
+            tenureRisk = BigDecimal.valueOf(55);
+        } else if (tenureMonths < 24) {
+            tenureRisk = BigDecimal.valueOf(30); // Sweet spot
+        } else if (tenureMonths < 48) {
+            tenureRisk = BigDecimal.valueOf(35);
+        } else if (tenureMonths < 72) {
+            tenureRisk = BigDecimal.valueOf(50); // Stagnation risk
+        } else {
+            tenureRisk = BigDecimal.valueOf(60); // Long tenure, potential burnout
+        }
+
+        // Compensation risk: check salary relative to peers
+        BigDecimal compensationRisk = BigDecimal.valueOf(40); // default moderate
+        BigDecimal salaryPercentile = BigDecimal.valueOf(50);
+
+        List<SalaryStructure> empSalary = salaryStructureRepository
+                .findAllByTenantIdAndEmployeeId(tenantId, employeeId);
+        if (!empSalary.isEmpty()) {
+            SalaryStructure latest = empSalary.stream()
+                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()))
+                    .findFirst()
+                    .orElse(empSalary.get(empSalary.size() - 1));
+
+            BigDecimal basicSalary = latest.getBasicSalary();
+            if (basicSalary != null && basicSalary.compareTo(BigDecimal.ZERO) > 0) {
+                // Get all active salary structures for the tenant to compute percentile
+                List<SalaryStructure> allSalaries = salaryStructureRepository
+                        .findAllByTenantId(tenantId, org.springframework.data.domain.Pageable.unpaged())
+                        .getContent();
+
+                long belowCount = allSalaries.stream()
+                        .filter(s -> s.getBasicSalary() != null && s.getBasicSalary().compareTo(basicSalary) < 0)
+                        .count();
+                long totalCount = allSalaries.size();
+
+                if (totalCount > 0) {
+                    salaryPercentile = BigDecimal.valueOf(belowCount * 100.0 / totalCount)
+                            .setScale(0, RoundingMode.HALF_UP);
+                }
+
+                // Below 30th percentile = high comp risk
+                if (salaryPercentile.compareTo(BigDecimal.valueOf(25)) < 0) {
+                    compensationRisk = BigDecimal.valueOf(75);
+                } else if (salaryPercentile.compareTo(BigDecimal.valueOf(40)) < 0) {
+                    compensationRisk = BigDecimal.valueOf(55);
+                } else if (salaryPercentile.compareTo(BigDecimal.valueOf(60)) < 0) {
+                    compensationRisk = BigDecimal.valueOf(30);
+                } else {
+                    compensationRisk = BigDecimal.valueOf(20);
+                }
+            }
+        }
+
+        // Promotion gap risk: based on level and tenure
+        BigDecimal promotionGapRisk = BigDecimal.valueOf(30);
+        int estimatedLastPromotionMonths = tenureMonths; // assume no promotion since join
+        if (level != null) {
+            switch (level) {
+                case ENTRY -> {
+                    if (tenureMonths > 18) promotionGapRisk = BigDecimal.valueOf(70);
+                    else promotionGapRisk = BigDecimal.valueOf(40);
+                }
+                case MID -> {
+                    if (tenureMonths > 36) promotionGapRisk = BigDecimal.valueOf(60);
+                    else promotionGapRisk = BigDecimal.valueOf(30);
+                }
+                case SENIOR -> {
+                    if (tenureMonths > 48) promotionGapRisk = BigDecimal.valueOf(50);
+                    else promotionGapRisk = BigDecimal.valueOf(25);
+                }
+                case LEAD, MANAGER, SENIOR_MANAGER -> promotionGapRisk = BigDecimal.valueOf(20);
+                case DIRECTOR, VP, SVP, CXO -> promotionGapRisk = BigDecimal.valueOf(15);
+                default -> promotionGapRisk = BigDecimal.valueOf(35);
+            }
+        }
+
+        // Engagement and performance risk: use moderate defaults
+        // (Real ML would pull from performance_reviews and survey tables)
+        BigDecimal engagementRisk = BigDecimal.valueOf(35);
+        BigDecimal performanceRisk = BigDecimal.valueOf(30);
+        BigDecimal workloadRisk = BigDecimal.valueOf(30);
+        BigDecimal engagementScore = BigDecimal.valueOf(3.5);
+        BigDecimal performanceRating = BigDecimal.valueOf(3.5);
+
+        // Compute weighted overall risk score
+        BigDecimal riskScore = tenureRisk.multiply(BigDecimal.valueOf(0.20))
+                .add(compensationRisk.multiply(BigDecimal.valueOf(0.25)))
+                .add(promotionGapRisk.multiply(BigDecimal.valueOf(0.20)))
+                .add(engagementRisk.multiply(BigDecimal.valueOf(0.15)))
+                .add(performanceRisk.multiply(BigDecimal.valueOf(0.10)))
+                .add(workloadRisk.multiply(BigDecimal.valueOf(0.10)))
+                .setScale(0, RoundingMode.HALF_UP);
 
         AttritionPrediction.RiskLevel riskLevel;
-        if (riskScore.compareTo(BigDecimal.valueOf(80)) >= 0) {
+        if (riskScore.compareTo(BigDecimal.valueOf(70)) >= 0) {
             riskLevel = AttritionPrediction.RiskLevel.CRITICAL;
-        } else if (riskScore.compareTo(BigDecimal.valueOf(60)) >= 0) {
+        } else if (riskScore.compareTo(BigDecimal.valueOf(55)) >= 0) {
             riskLevel = AttritionPrediction.RiskLevel.HIGH;
-        } else if (riskScore.compareTo(BigDecimal.valueOf(40)) >= 0) {
+        } else if (riskScore.compareTo(BigDecimal.valueOf(35)) >= 0) {
             riskLevel = AttritionPrediction.RiskLevel.MEDIUM;
         } else {
             riskLevel = AttritionPrediction.RiskLevel.LOW;
         }
+
+        // Confidence: higher when we have more real data
+        int confidenceBase = 50;
+        if (employeeOpt.isPresent()) confidenceBase += 15;
+        if (!empSalary.isEmpty()) confidenceBase += 15;
+        if (joiningDate != null) confidenceBase += 10;
 
         AttritionPrediction prediction = AttritionPrediction.builder()
                 .employeeId(employeeId)
                 .predictionDate(LocalDate.now())
                 .riskScore(riskScore)
                 .riskLevel(riskLevel)
-                .confidenceScore(BigDecimal.valueOf(70 + random.nextInt(25)))
-                .tenureRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .compensationRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .engagementRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .performanceRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .promotionGapRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .workloadRisk(BigDecimal.valueOf(random.nextInt(100)))
-                .tenureMonths(12 + random.nextInt(60))
-                .salaryPercentile(BigDecimal.valueOf(20 + random.nextInt(60)))
-                .lastPromotionMonths(random.nextInt(36))
-                .engagementScore(BigDecimal.valueOf(2 + random.nextInt(3)))
-                .performanceRating(BigDecimal.valueOf(2 + random.nextInt(3)))
+                .confidenceScore(BigDecimal.valueOf(Math.min(confidenceBase, 95)))
+                .tenureRisk(tenureRisk)
+                .compensationRisk(compensationRisk)
+                .engagementRisk(engagementRisk)
+                .performanceRisk(performanceRisk)
+                .promotionGapRisk(promotionGapRisk)
+                .workloadRisk(workloadRisk)
+                .tenureMonths(tenureMonths)
+                .salaryPercentile(salaryPercentile)
+                .lastPromotionMonths(estimatedLastPromotionMonths)
+                .engagementScore(engagementScore)
+                .performanceRating(performanceRating)
                 .actionTaken(false)
                 .build();
 
         prediction.setTenantId(tenantId);
 
         if (riskLevel == AttritionPrediction.RiskLevel.HIGH || riskLevel == AttritionPrediction.RiskLevel.CRITICAL) {
-            prediction.setPredictedLeaveDate(LocalDate.now().plusMonths(3 + random.nextInt(6)));
+            // Predict departure in 3-9 months, inversely proportional to risk
+            int monthsToLeave = riskScore.compareTo(BigDecimal.valueOf(70)) >= 0 ? 3 : 6;
+            prediction.setPredictedLeaveDate(LocalDate.now().plusMonths(monthsToLeave));
         }
 
         return prediction;
     }
 
+    /**
+     * Generate a workforce trend data point based on actual employee data.
+     * Computes headcount and hire/termination counts from employee records.
+     */
     private WorkforceTrend simulateTrend(UUID tenantId, Integer year, Integer month, UUID departmentId) {
-        Random random = new Random();
+        LocalDate periodStart = LocalDate.of(year, month, 1);
+        LocalDate periodEnd = periodStart.withDayOfMonth(periodStart.lengthOfMonth());
+
+        // Get employees for this tenant
+        List<Employee> allEmployees = employeeRepository.findAllByTenantId(tenantId,
+                org.springframework.data.domain.Pageable.unpaged()).getContent();
+
+        // Filter by department if specified
+        List<Employee> scopedEmployees = departmentId != null
+                ? allEmployees.stream().filter(e -> departmentId.equals(e.getDepartmentId())).collect(Collectors.toList())
+                : allEmployees;
+
+        // Headcount: employees who joined on or before period end and are still active
+        long headcount = scopedEmployees.stream()
+                .filter(e -> e.getJoiningDate() != null && !e.getJoiningDate().isAfter(periodEnd))
+                .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE
+                        || e.getStatus() == Employee.EmployeeStatus.ON_LEAVE)
+                .count();
+
+        // New hires in this period
+        long newHires = scopedEmployees.stream()
+                .filter(e -> e.getJoiningDate() != null
+                        && !e.getJoiningDate().isBefore(periodStart)
+                        && !e.getJoiningDate().isAfter(periodEnd))
+                .count();
+
+        // Terminated employees (rough estimate from status)
+        long terminated = scopedEmployees.stream()
+                .filter(e -> e.getStatus() == Employee.EmployeeStatus.TERMINATED
+                        || e.getStatus() == Employee.EmployeeStatus.RESIGNED)
+                .count();
+        // Scale terminations proportionally to the month (rough heuristic)
+        int monthlyTerminations = headcount > 0 ? (int) Math.max(0, terminated / 12) : 0;
+
+        // Compute rates
+        BigDecimal attritionRate = headcount > 0
+                ? BigDecimal.valueOf(monthlyTerminations * 100.0 / headcount).setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+        BigDecimal hiringRate = headcount > 0
+                ? BigDecimal.valueOf(newHires * 100.0 / headcount).setScale(2, RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
+
+        // Average salary from salary structures
+        BigDecimal avgSalary = BigDecimal.ZERO;
+        List<SalaryStructure> salaryStructures = salaryStructureRepository
+                .findAllByTenantId(tenantId, org.springframework.data.domain.Pageable.unpaged()).getContent();
+        if (!salaryStructures.isEmpty()) {
+            BigDecimal totalSalary = salaryStructures.stream()
+                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()) && s.getBasicSalary() != null)
+                    .map(SalaryStructure::getBasicSalary)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            long activeSalaryCount = salaryStructures.stream()
+                    .filter(s -> Boolean.TRUE.equals(s.getIsActive()) && s.getBasicSalary() != null)
+                    .count();
+            if (activeSalaryCount > 0) {
+                avgSalary = totalSalary.divide(BigDecimal.valueOf(activeSalaryCount), 2, RoundingMode.HALF_UP);
+            }
+        }
+
+        // Average tenure in months
+        BigDecimal avgTenure = BigDecimal.ZERO;
+        List<Long> tenures = scopedEmployees.stream()
+                .filter(e -> e.getJoiningDate() != null && e.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .map(e -> ChronoUnit.MONTHS.between(e.getJoiningDate(), periodEnd))
+                .collect(Collectors.toList());
+        if (!tenures.isEmpty()) {
+            long totalTenure = tenures.stream().mapToLong(Long::longValue).sum();
+            avgTenure = BigDecimal.valueOf(totalTenure).divide(BigDecimal.valueOf(tenures.size()), 1, RoundingMode.HALF_UP);
+        }
 
         WorkforceTrend trend = WorkforceTrend.builder()
                 .periodYear(year)
                 .periodMonth(month)
                 .trendType(departmentId != null ? WorkforceTrend.TrendType.DEPARTMENT : WorkforceTrend.TrendType.ORGANIZATION)
                 .departmentId(departmentId)
-                .totalHeadcount(100 + random.nextInt(400))
-                .newHires(random.nextInt(20))
-                .terminations(random.nextInt(10))
-                .voluntaryAttrition(random.nextInt(8))
-                .involuntaryAttrition(random.nextInt(3))
-                .internalTransfersIn(random.nextInt(5))
-                .internalTransfersOut(random.nextInt(5))
-                .attritionRate(BigDecimal.valueOf(2 + random.nextDouble() * 8))
-                .hiringRate(BigDecimal.valueOf(1 + random.nextDouble() * 5))
-                .avgSalary(BigDecimal.valueOf(50000 + random.nextInt(50000)))
-                .avgEngagementScore(BigDecimal.valueOf(3 + random.nextDouble() * 1.5))
-                .avgPerformanceRating(BigDecimal.valueOf(3 + random.nextDouble()))
-                .openPositions(random.nextInt(30))
-                .avgTimeToFillDays(BigDecimal.valueOf(20 + random.nextInt(40)))
+                .totalHeadcount((int) headcount)
+                .newHires((int) newHires)
+                .terminations(monthlyTerminations)
+                .voluntaryAttrition((int) (monthlyTerminations * 0.7)) // ~70% voluntary
+                .involuntaryAttrition((int) (monthlyTerminations * 0.3))
+                .internalTransfersIn(0) // Would need transfer tracking to compute
+                .internalTransfersOut(0)
+                .attritionRate(attritionRate)
+                .hiringRate(hiringRate)
+                .avgSalary(avgSalary)
+                .avgTenureMonths(avgTenure)
+                .avgEngagementScore(BigDecimal.valueOf(3.5)) // Default until survey data is integrated
+                .avgPerformanceRating(BigDecimal.valueOf(3.5)) // Default until reviews are integrated
+                .openPositions(0) // Would need job opening data
+                .avgTimeToFillDays(BigDecimal.valueOf(30)) // Default
                 .build();
 
         trend.setTenantId(tenantId);

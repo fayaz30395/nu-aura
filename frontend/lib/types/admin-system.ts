@@ -60,3 +60,15 @@ export interface TenantGrowthData {
   activeUsers: number;
   employees: number;
 }
+
+export interface MonthlyGrowth {
+  month: string;
+  year: number;
+  tenants: number;
+  activeUsers: number;
+  employees: number;
+}
+
+export interface GrowthMetrics {
+  months: MonthlyGrowth[];
+}

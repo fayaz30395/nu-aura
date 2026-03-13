@@ -28,7 +28,7 @@ export interface HealthComponent {
 }
 
 export interface HealthResponse {
-  status: 'UP' | 'DOWN';
+  status: 'UP' | 'DOWN' | 'DEGRADED';
   components?: Record<string, HealthComponent>;
 }
 

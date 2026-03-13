@@ -17,6 +17,7 @@ import {
   Eye,
   Share2,
 } from 'lucide-react';
+import { AppLayout } from '@/components/layout';
 import {
   feedback360Service,
   Feedback360Cycle,
@@ -263,14 +264,17 @@ export default function Feedback360Page() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">360-Degree Feedback</h1>
@@ -1069,5 +1073,6 @@ export default function Feedback360Page() {
         </div>
       )}
     </div>
+    </AppLayout>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } from 'lucide-react';
 
@@ -103,9 +104,9 @@ const ChildrenFlyover: React.FC<{
         ref={panelRef}
         className={cn(
           'fixed z-50 w-64 bg-white dark:bg-surface-900',
-          'border border-surface-200 dark:border-surface-700 rounded-lg shadow-2xl',
-          'transform transition-all duration-200 ease-out',
-          isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-2 opacity-0 scale-95 pointer-events-none'
+          'border border-surface-200 dark:border-surface-700 rounded-lg shadow-xl',
+          'transform transition-all duration-250 ease-out',
+          isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
         style={{
           left: `${triggerRect.right + 8}px`,
@@ -139,13 +140,13 @@ const ChildrenFlyover: React.FC<{
         </div>
 
         {/* Children items */}
-        <div className="py-2 max-h-[400px] overflow-y-auto">
+        <div className="py-2 max-h-[400px] overflow-y-auto scrollbar-hide">
           {item.children?.map((child) => {
             const childClasses = cn(
-              'w-full flex items-center gap-3 px-4 py-2.5 text-sm',
+              'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-out',
               activeId === child.id
                 ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-medium'
-                : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200'
+                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200'
             );
 
             const childContent = (
@@ -244,26 +245,33 @@ const SidebarMenuItem: React.FC<{
 
   const commonClasses = cn(
     'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
+    'transition-all duration-200 ease-out',
     isActive || isFlyoverOpen
-      ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
-      : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900 dark:text-surface-400 dark:hover:bg-surface-800 dark:hover:text-surface-200',
+      ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 shadow-sm'
+      : 'text-surface-600 dark:text-surface-400',
+    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
   const content = (
     <>
-      {/* Active indicator */}
-      {(isActive || isFlyoverOpen) && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-500 rounded-r-full" />
-      )}
+      {/* Active indicator with smooth animation */}
+      <div
+        className={cn(
+          'absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-250 ease-out',
+          isActive || isFlyoverOpen
+            ? 'w-1 h-6 bg-primary-500'
+            : 'w-0 h-0 bg-primary-500'
+        )}
+      />
 
       {item.icon && (
         <span
           className={cn(
-            'flex items-center justify-center w-6 h-6 flex-shrink-0',
+            'flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200',
             isActive || isFlyoverOpen
               ? 'text-primary-600 dark:text-primary-400'
-              : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-200'
+              : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-300'
           )}
         >
           {item.icon}
@@ -272,11 +280,11 @@ const SidebarMenuItem: React.FC<{
 
       {!isCollapsed && (
         <div className="flex flex-1 items-center justify-between min-w-0">
-          <span className="truncate">{item.label}</span>
+          <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
           <div className="flex items-center gap-2">
             {item.badge && (
               <span className={cn(
-                'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium',
+                'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
                 isActive || isFlyoverOpen
                   ? 'bg-primary-500 text-white'
                   : 'bg-surface-200 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
@@ -287,7 +295,8 @@ const SidebarMenuItem: React.FC<{
             {hasChildren && (
               <ChevronRight
                 className={cn(
-                  'h-4 w-4 text-surface-400'
+                  'h-4 w-4 text-surface-400 transition-all duration-200',
+                  isFlyoverOpen && 'translate-x-0.5'
                 )}
               />
             )}
@@ -297,7 +306,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (items without children) */}
       {isCollapsed && !hasChildren && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-lg pointer-events-none">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-lg pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs">
@@ -351,27 +360,36 @@ const SectionDivider: React.FC<{
 }> = ({ label, sectionId, isCollapsed, isSectionExpanded, onToggleSection }) => {
   if (isCollapsed) {
     return (
-      <div className="px-3 py-2">
-        <div className="w-full h-px bg-surface-200 dark:bg-surface-700" />
+      <div className="px-3 py-3">
+        <div className="w-full h-px bg-gradient-to-r from-surface-200 via-surface-200 to-transparent dark:from-surface-700 dark:via-surface-700 dark:to-transparent" />
       </div>
     );
   }
 
   return (
-    <button
+    <motion.button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2 group hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-md transition-colors"
+      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-surface-50/60 dark:hover:bg-surface-800/30 rounded-md transition-all duration-200"
+      whileHover={{ x: 2 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors duration-200 relative">
         {label}
+        {/* Subtle left border highlight on hover */}
+        <motion.div
+          className="absolute -left-3 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary-500 rounded-full"
+          initial={{ opacity: 0, scaleY: 0 }}
+          whileHover={{ opacity: 1, scaleY: 1 }}
+          transition={{ duration: 0.2 }}
+        />
       </span>
       <ChevronDown
         className={cn(
-          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-200',
+          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-300 ease-out',
           !isSectionExpanded && '-rotate-90'
         )}
       />
-    </button>
+    </motion.button>
   );
 };
 
@@ -505,22 +523,29 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     return (
       <>
-        <div
-          ref={ref}
+        <motion.div
+          ref={ref as React.Ref<HTMLDivElement>}
           data-sidebar
           className={cn(
-            'flex flex-col bg-white border-r border-surface-200 transition-all duration-300 ease-in-out h-screen relative',
+            'flex flex-col bg-white border-r border-surface-200 h-screen relative',
             'dark:bg-surface-900 dark:border-surface-800',
-            isCollapsed ? 'w-[72px]' : 'w-64',
+            'hover:shadow-sm dark:hover:shadow-none transition-shadow duration-300',
             className
           )}
+          animate={{
+            width: isCollapsed ? 72 : 256,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 260,
+            damping: 20,
+          }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          {...props}
         >
           {/* Logo Header */}
           <div className={cn(
-            'flex items-center border-b border-surface-200 dark:border-surface-800 h-16 px-4',
+            'flex items-center border-b border-surface-200 dark:border-surface-800 h-16 px-4 transition-all duration-300',
             isCollapsed ? 'justify-center' : 'justify-between'
           )}>
             {!isCollapsed ? (
@@ -551,26 +576,27 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {/* Collapse Toggle */}
           {collapsible && (
             <div className={cn(
-              'px-3 py-2 border-b border-surface-100 dark:border-surface-800',
+              'px-3 py-2.5 border-b border-surface-100 dark:border-surface-800 transition-all duration-300',
               isCollapsed ? 'flex justify-center' : ''
             )}>
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 p-2 rounded-lg text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-all duration-150',
+                  'flex items-center gap-2 p-2 rounded-lg text-surface-500 transition-all duration-200 ease-out',
+                  'hover:text-surface-700 hover:bg-surface-100/70 dark:hover:bg-surface-800/70 dark:hover:text-surface-300',
                   isCollapsed ? 'w-full justify-center' : 'w-full',
-                  isCollapsed && isHovering && 'bg-surface-100 dark:bg-surface-800'
+                  isCollapsed && isHovering && 'bg-surface-100/50 dark:bg-surface-800/50'
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
               >
                 {isCollapsed ? (
-                  <PanelLeft className="h-5 w-5" />
+                  <PanelLeft className="h-5 w-5 transition-transform duration-300" />
                 ) : (
                   <>
-                    <PanelLeftClose className="h-5 w-5" />
-                    <span className="text-xs font-medium">Collapse</span>
-                    <kbd className="ml-auto text-[10px] font-mono text-surface-400 bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded">
+                    <PanelLeftClose className="h-5 w-5 transition-transform duration-300" />
+                    <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
+                    <kbd className="ml-auto text-[10px] font-mono text-surface-400 bg-surface-100/50 dark:bg-surface-800/50 px-1.5 py-0.5 rounded transition-colors duration-200">
                       ⌘B
                     </kbd>
                   </>
@@ -580,7 +606,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-hide">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 
@@ -598,14 +624,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2 group hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-md transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-surface-50/60 dark:hover:bg-surface-800/30 rounded-md transition-all duration-200"
                     >
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors duration-200">
                         {section.label}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-200',
+                          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-300 ease-out',
                           !isSectionExpanded && '-rotate-90'
                         )}
                       />
@@ -613,25 +639,30 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   )}
 
                   {/* Collapsible items container */}
-                  <div
-                    className={cn(
-                      'space-y-0.5 overflow-hidden transition-all duration-200',
-                      isSectionExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                  <AnimatePresence initial={false}>
+                    {isSectionExpanded && (
+                      <motion.div
+                        className="space-y-0.5 overflow-hidden"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      >
+                        {section.items.map((item) => (
+                          <SidebarMenuItem
+                            key={item.id}
+                            item={item}
+                            isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
+                            isCollapsed={isCollapsed}
+                            onItemClick={onItemClick}
+                            activeId={activeId}
+                            openFlyoverId={openFlyoverId}
+                            onToggleFlyover={handleToggleFlyover}
+                          />
+                        ))}
+                      </motion.div>
                     )}
-                  >
-                    {section.items.map((item) => (
-                      <SidebarMenuItem
-                        key={item.id}
-                        item={item}
-                        isActive={activeId === item.id || (item.children?.some(c => c.id === activeId) ?? false)}
-                        isCollapsed={isCollapsed}
-                        onItemClick={onItemClick}
-                        activeId={activeId}
-                        openFlyoverId={openFlyoverId}
-                        onToggleFlyover={handleToggleFlyover}
-                      />
-                    ))}
-                  </div>
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -639,13 +670,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
           {/* Footer */}
           <div className={cn(
-            'border-t border-surface-200 dark:border-surface-800 p-3',
+            'border-t border-surface-200 dark:border-surface-800 p-3 transition-all duration-300',
             isCollapsed && 'flex justify-center'
           )}>
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary-50 dark:bg-primary-950/50">
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50">
-                  <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-primary-50 to-primary-50/50 dark:from-primary-950/50 dark:to-primary-950/30 border border-primary-100/50 dark:border-primary-900/30 transition-all duration-200">
+                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 transition-colors duration-200">
+                  <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-primary-700 dark:text-primary-300 truncate">
@@ -657,15 +688,15 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center group relative">
-                <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+              <div className="w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-200 dark:hover:bg-primary-900/70">
+                <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
                 <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-lg">
                   Pro Features Active
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Children Flyover Panel */}
         {flyoverItem && (

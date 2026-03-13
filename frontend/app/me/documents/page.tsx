@@ -88,8 +88,11 @@ export default function MyDocumentsPage() {
   useEffect(() => {
     if (user?.employeeId) {
       loadRequests();
+    } else if (user) {
+      // User without employee profile (e.g., SuperAdmin) — stop loading
+      setIsLoading(false);
     }
-  }, [user?.employeeId]);
+  }, [user?.employeeId, user]);
 
   const loadRequests = async () => {
     if (!user?.employeeId) return;
@@ -141,6 +144,32 @@ export default function MyDocumentsPage() {
       >
         <div className="flex items-center justify-center min-h-[400px]">
           <Loading />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!user?.employeeId) {
+    return (
+      <AppLayout
+        activeMenuItem="profile"
+        breadcrumbs={[
+          { label: 'My Dashboard', href: '/me/dashboard' },
+          { label: 'Documents', href: '/me/documents' },
+        ]}
+      >
+        <div className="text-center py-12">
+          <FileText className="h-16 w-16 mx-auto text-surface-300 dark:text-surface-600 mb-4" />
+          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">No Employee Profile Linked</h2>
+          <p className="text-surface-500 dark:text-surface-400 max-w-md mx-auto">
+            Document requests require an employee profile. Use the admin panels to manage employee documents.
+          </p>
+          <button
+            onClick={() => router.push('/documents')}
+            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Go to Document Management
+          </button>
         </div>
       </AppLayout>
     );

@@ -8,10 +8,11 @@ import com.hrms.common.security.TenantContext;
 import com.hrms.domain.event.recruitment.CandidateHiredEvent;
 import com.hrms.domain.onboarding.OnboardingProcess;
 import com.hrms.domain.recruitment.JobOpening;
+import com.hrms.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.TransactionPhase;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDate;
@@ -109,7 +110,7 @@ public class CandidateHiredEventListener {
         // Job and organizational info
         request.setDesignation(event.getOfferedDesignation());
         request.setDepartmentId(event.getDepartmentId());
-        request.setEmploymentType(event.getEmploymentType());
+        request.setEmploymentType(mapEmploymentType(event.getEmploymentType()));
         request.setJoiningDate(event.getProposedJoiningDate() != null ? event.getProposedJoiningDate() : LocalDate.now());
 
         // Generate a temporary password - in production this should use secure generation or SSO
@@ -131,5 +132,22 @@ public class CandidateHiredEventListener {
             password.append(chars.charAt((int) (Math.random() * chars.length())));
         }
         return password.toString();
+    }
+
+    /**
+     * Map JobOpening.EmploymentType to Employee.EmploymentType
+     */
+    private Employee.EmploymentType mapEmploymentType(JobOpening.EmploymentType jobEmploymentType) {
+        if (jobEmploymentType == null) {
+            return Employee.EmploymentType.FULL_TIME; // default
+        }
+        
+        return switch (jobEmploymentType) {
+            case FULL_TIME -> Employee.EmploymentType.FULL_TIME;
+            case PART_TIME -> Employee.EmploymentType.PART_TIME;
+            case CONTRACT -> Employee.EmploymentType.CONTRACT;
+            case INTERNSHIP -> Employee.EmploymentType.INTERN;
+            case TEMPORARY -> Employee.EmploymentType.CONSULTANT;
+        };
     }
 }

@@ -1,0 +1,250 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/Button';
+import { AppLayout } from '@/components/layout';
+import RichTextEditor from '@/components/fluence/RichTextEditor';
+import { useCreateWikiPage, useWikiSpaces } from '@/lib/hooks/queries/useFluence';
+import { notifications } from '@mantine/notifications';
+import { TextInput, Select, LoadingOverlay } from '@mantine/core';
+import { ArrowLeft } from 'lucide-react';
+
+const createWikiPageSchema = z.object({
+  title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
+  spaceId: z.string().min(1, 'Space is required'),
+  visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'TEAM', 'PRIVATE', 'RESTRICTED'], {
+    errorMap: () => ({ message: 'Invalid visibility option' }),
+  }),
+  parentId: z.string().optional(),
+  content: z.record(z.unknown()).default({
+    type: 'doc',
+    content: [{ type: 'paragraph' }],
+  }),
+});
+
+type CreateWikiPageInput = z.infer<typeof createWikiPageSchema>;
+
+export default function CreateWikiPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { mutate: createWikiPage } = useCreateWikiPage();
+  const { data: spacesData, isLoading: spacesLoading } = useWikiSpaces(0, 100);
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<CreateWikiPageInput>({
+    resolver: zodResolver(createWikiPageSchema),
+    defaultValues: {
+      title: '',
+      spaceId: '',
+      visibility: 'ORGANIZATION',
+      parentId: '',
+      content: {
+        type: 'doc',
+        content: [{ type: 'paragraph' }],
+      },
+    },
+  });
+
+  const selectedSpaceId = watch('spaceId');
+  const content = watch('content');
+  const spaces = spacesData?.content || [];
+
+  const onSubmit = async (data: CreateWikiPageInput) => {
+    if (!data.content || Object.keys(data.content).length === 0) {
+      notifications.show({
+        title: 'Validation Error',
+        message: 'Content cannot be empty',
+        color: 'red',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      createWikiPage(
+        {
+          title: data.title,
+          spaceId: data.spaceId,
+          visibility: data.visibility,
+          parentId: data.parentId,
+          content: data.content,
+          status: 'DRAFT',
+        },
+        {
+          onSuccess: (page) => {
+            notifications.show({
+              title: 'Success',
+              message: 'Wiki page created successfully',
+              color: 'green',
+            });
+            router.push(`/fluence/wiki/${page.id}`);
+          },
+          onError: (error: any) => {
+            notifications.show({
+              title: 'Error',
+              message: error.response?.data?.message || 'Failed to create wiki page',
+              color: 'red',
+            });
+          },
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AppLayout>
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <button
+                onClick={() => router.back()}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Create Wiki Page
+              </h1>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 ml-11">
+              Create a new page in your knowledge base
+            </p>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Title
+            </label>
+            <TextInput
+              placeholder="Enter page title"
+              error={errors.title?.message}
+              {...register('title')}
+              disabled={isSubmitting}
+              className="w-full"
+            />
+          </div>
+
+          {/* Space Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Space
+            </label>
+            <Controller
+              control={control}
+              name="spaceId"
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  placeholder="Select a space"
+                  disabled={spacesLoading || isSubmitting}
+                  error={errors.spaceId?.message}
+                  data={spaces.map((space) => ({
+                    value: space.id,
+                    label: space.name,
+                  }))}
+                />
+              )}
+            />
+          </div>
+
+          {/* Visibility */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Visibility
+            </label>
+            <Controller
+              control={control}
+              name="visibility"
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  placeholder="Select visibility"
+                  disabled={isSubmitting}
+                  data={[
+                    { value: 'PUBLIC', label: 'Public' },
+                    { value: 'ORGANIZATION', label: 'Organization' },
+                    { value: 'TEAM', label: 'Team' },
+                    { value: 'PRIVATE', label: 'Private' },
+                    { value: 'RESTRICTED', label: 'Restricted' },
+                  ]}
+                />
+              )}
+            />
+          </div>
+
+          {/* Parent Page (Optional) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Parent Page (Optional)
+            </label>
+            <TextInput
+              placeholder="Enter parent page ID (optional)"
+              {...register('parentId')}
+              disabled={isSubmitting}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Leave empty for a top-level page
+            </p>
+          </div>
+
+          {/* Content Editor */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Content
+            </label>
+            <Controller
+              control={control}
+              name="content"
+              render={({ field }) => (
+                <RichTextEditor
+                  content={field.value}
+                  onChange={field.onChange}
+                  placeholder="Write your page content here..."
+                  minHeight="400px"
+                  maxHeight="800px"
+                />
+              )}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 justify-end pt-6 border-t border-gray-200 dark:border-gray-700">
+            <Button
+              onClick={() => router.back()}
+              variant="secondary"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-violet-600 hover:bg-violet-700"
+            >
+              {isSubmitting ? 'Creating...' : 'Create Page'}
+            </Button>
+          </div>
+        </form>
+
+        <LoadingOverlay visible={isSubmitting} />
+      </div>
+    </AppLayout>
+  );
+}

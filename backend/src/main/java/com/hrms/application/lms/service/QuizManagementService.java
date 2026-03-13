@@ -199,17 +199,21 @@ public class QuizManagementService {
     /**
      * Reorder questions in a quiz
      */
+    /**
+     * Reorder questions in a quiz
+     */
     public void reorderQuestions(UUID quizId, List<UUID> questionIds, UUID tenantId) {
         for (int i = 0; i < questionIds.size(); i++) {
-            QuizQuestion question = questionRepository.findByIdAndTenantId(questionIds.get(i), tenantId)
+            final int orderIndex = i;
+            QuizQuestion question = questionRepository.findByIdAndTenantId(questionIds.get(orderIndex), tenantId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Question not found: " + questionIds.get(i)));
+                            "Question not found: " + questionIds.get(orderIndex)));
             
             if (!question.getQuizId().equals(quizId)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Question does not belong to this quiz");
             }
             
-            question.setOrderIndex(i + 1);
+            question.setOrderIndex(orderIndex + 1);
             questionRepository.save(question);
         }
     }

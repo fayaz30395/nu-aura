@@ -239,12 +239,13 @@ public class MultiTenantAsyncIsolationTest {
         TenantContext.setCurrentTenant(tenantA);
 
         ApprovalTaskAssignedEvent taskA = new ApprovalTaskAssignedEvent(
+                this, // source
+                tenantA, // tenantId
                 UUID.randomUUID(), // stepExecutionId
-                tenantA,
-                userA1, // assignedTo
-                userA2, // requester
-                "John Doe",
-                "LeaveRequest"
+                userA1, // assignedToUserId
+                "LeaveRequest", // entityType
+                "John Doe", // requesterName
+                userA2 // requesterId
         );
 
         eventPublisher.publishEvent(taskA);
@@ -253,12 +254,13 @@ public class MultiTenantAsyncIsolationTest {
         TenantContext.setCurrentTenant(tenantB);
 
         ApprovalTaskAssignedEvent taskB = new ApprovalTaskAssignedEvent(
-                UUID.randomUUID(),
-                tenantB,
-                userB1,
-                userB2,
-                "Jane Smith",
-                "ExpenseClaim"
+                this, // source
+                tenantB, // tenantId
+                UUID.randomUUID(), // stepExecutionId
+                userB1, // assignedToUserId
+                "ExpenseClaim", // entityType
+                "Jane Smith", // requesterName
+                userB2 // requesterId
         );
 
         eventPublisher.publishEvent(taskB);

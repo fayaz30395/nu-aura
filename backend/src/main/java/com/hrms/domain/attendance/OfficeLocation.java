@@ -3,6 +3,7 @@ package com.hrms.domain.attendance;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class OfficeLocation extends TenantAware {
 
     @Column(name = "location_name", nullable = false, length = 100)

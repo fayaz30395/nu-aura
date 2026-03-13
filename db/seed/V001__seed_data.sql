@@ -1,0 +1,169 @@
+-- ============================================================================
+-- NU-AURA HRMS Platform - Seed Data Script
+-- Run against PostgreSQL: psql -h localhost -p 5432 -U hrms -d hrms_dev -f V001__seed_data.sql
+-- ============================================================================
+
+-- ============================================================================
+-- 1. TENANT (extends BaseEntity — NO tenant_id column)
+-- ============================================================================
+INSERT INTO tenants (id, code, name, status, description, contact_email, contact_phone, settings, created_at, updated_at, version, is_deleted)
+VALUES (
+    '660e8400-e29b-41d4-a716-446655440001',
+    'nulogic',
+    'NuLogic',
+    'ACTIVE',
+    'NuLogic - Primary tenant',
+    'admin@nulogic.io',
+    '+91-9876543210',
+    '{}',
+    NOW(), NOW(), 0, false
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 2. USER (extends TenantAware — has tenant_id)
+-- ============================================================================
+INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, failed_login_attempts, mfa_enabled, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440030',
+    '660e8400-e29b-41d4-a716-446655440001',
+    'fayaz.m@nulogic.io',
+    'Fayaz',
+    'M',
+    '',
+    'ACTIVE',
+    0,
+    false,
+    NOW(), NOW(), 0, false
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 3. ROLE — SUPER_ADMIN (extends TenantAware)
+-- ============================================================================
+INSERT INTO roles (id, tenant_id, code, name, description, is_system_role, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440020',
+    '660e8400-e29b-41d4-a716-446655440001',
+    'SUPER_ADMIN',
+    'Super Administrator',
+    'Full system access - bypasses all RBAC checks',
+    true,
+    NOW(), NOW(), 0, false
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 4. USER-ROLE JUNCTION (ManyToMany join table)
+-- ============================================================================
+INSERT INTO user_roles (user_id, role_id)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440030',
+    '550e8400-e29b-41d4-a716-446655440020'
+) ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- 5. EMPLOYEE (extends TenantAware)
+-- ============================================================================
+INSERT INTO employees (id, tenant_id, employee_code, user_id, first_name, last_name, personal_email, joining_date, designation, level, job_role, employment_type, status, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440040',
+    '660e8400-e29b-41d4-a716-446655440001',
+    'EMP-0001',
+    '550e8400-e29b-41d4-a716-446655440030',
+    'Fayaz',
+    'M',
+    'fayaz.m@nulogic.io',
+    CURRENT_DATE,
+    'System Administrator',
+    'CXO',
+    'EXECUTIVE',
+    'FULL_TIME',
+    'ACTIVE',
+    NOW(), NOW(), 0, false
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 6. NU-HRMS APPLICATION (extends BaseEntity — NO tenant_id)
+-- ============================================================================
+INSERT INTO nu_applications (id, code, name, description, icon_url, base_url, api_base_path, status, display_order, is_system_app, app_version, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440010',
+    'HRMS',
+    'NU-HRMS',
+    'Human Resource Management System',
+    '/assets/icons/hrms.svg',
+    'http://localhost:3000',
+    '/api/v1',
+    'ACTIVE',
+    1, true, '1.0.0',
+    NOW(), NOW(), 0, false
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 7. CORE PERMISSIONS (permissions table, extends BaseEntity — NO tenant_id)
+-- ============================================================================
+INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES
+-- Employee
+('660e8401-0001-0001-0001-000000000001', 'employee.read', 'View Employees', 'View employee profiles', 'employee', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000002', 'employee.create', 'Create Employees', 'Add new employees', 'employee', 'create', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000003', 'employee.update', 'Update Employees', 'Modify employee info', 'employee', 'update', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000004', 'employee.delete', 'Delete Employees', 'Remove employees', 'employee', 'delete', NOW(), NOW(), 0, false),
+-- Department
+('660e8401-0001-0001-0001-000000000011', 'department.read', 'View Departments', 'View departments', 'department', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000012', 'department.create', 'Create Departments', 'Create departments', 'department', 'create', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000013', 'department.update', 'Update Departments', 'Modify departments', 'department', 'update', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000014', 'department.delete', 'Delete Departments', 'Remove departments', 'department', 'delete', NOW(), NOW(), 0, false),
+-- Attendance
+('660e8401-0001-0001-0001-000000000021', 'attendance.read', 'View Attendance', 'View attendance', 'attendance', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000022', 'attendance.manage', 'Manage Attendance', 'Manage attendance', 'attendance', 'manage', NOW(), NOW(), 0, false),
+-- Leave
+('660e8401-0001-0001-0001-000000000031', 'leave.read', 'View Leave', 'View leave info', 'leave', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000032', 'leave.request', 'Request Leave', 'Apply for leave', 'leave', 'request', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000033', 'leave.approve', 'Approve Leave', 'Approve leave', 'leave', 'approve', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000034', 'leave.manage', 'Manage Leave', 'Full leave management', 'leave', 'manage', NOW(), NOW(), 0, false),
+-- Payroll
+('660e8401-0001-0001-0001-000000000041', 'payroll.read', 'View Payroll', 'View payroll', 'payroll', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000042', 'payroll.manage', 'Manage Payroll', 'Manage payroll', 'payroll', 'manage', NOW(), NOW(), 0, false),
+-- Performance
+('660e8401-0001-0001-0001-000000000051', 'performance.read', 'View Performance', 'View performance', 'performance', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000052', 'performance.manage', 'Manage Performance', 'Manage performance', 'performance', 'manage', NOW(), NOW(), 0, false),
+-- Recruitment
+('660e8401-0001-0001-0001-000000000061', 'recruitment.read', 'View Recruitment', 'View recruitment', 'recruitment', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000062', 'recruitment.manage', 'Manage Recruitment', 'Manage recruitment', 'recruitment', 'manage', NOW(), NOW(), 0, false),
+-- Reports
+('660e8401-0001-0001-0001-000000000071', 'report.view', 'View Reports', 'View reports', 'report', 'view', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000072', 'report.manage', 'Manage Reports', 'Manage reports', 'report', 'manage', NOW(), NOW(), 0, false),
+-- Settings
+('660e8401-0001-0001-0001-000000000081', 'settings.read', 'View Settings', 'View settings', 'settings', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000082', 'settings.manage', 'Manage Settings', 'Manage settings', 'settings', 'manage', NOW(), NOW(), 0, false),
+-- Role/User admin
+('660e8401-0001-0001-0001-000000000091', 'role.read', 'View Roles', 'View roles', 'role', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000092', 'role.manage', 'Manage Roles', 'Manage roles', 'role', 'manage', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000093', 'user.read', 'View Users', 'View users', 'user', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000094', 'user.manage', 'Manage Users', 'Manage users', 'user', 'manage', NOW(), NOW(), 0, false),
+-- Project
+('660e8401-0001-0001-0001-000000000101', 'project.view', 'View Projects', 'View projects', 'project', 'view', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000102', 'project.manage', 'Manage Projects', 'Manage projects', 'project', 'manage', NOW(), NOW(), 0, false),
+-- Announcement
+('660e8401-0001-0001-0001-000000000111', 'announcement.read', 'View Announcements', 'View announcements', 'announcement', 'read', NOW(), NOW(), 0, false),
+('660e8401-0001-0001-0001-000000000112', 'announcement.manage', 'Manage Announcements', 'Manage announcements', 'announcement', 'manage', NOW(), NOW(), 0, false),
+-- System admin
+('660e8401-0001-0001-0001-000000000999', 'system.admin', 'System Admin', 'Full system admin', 'system', 'admin', NOW(), NOW(), 0, false)
+ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================================
+-- 8. ROLE_PERMISSIONS (extends TenantAware — has tenant_id, role_id FK, permission_id FK)
+-- ============================================================================
+INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, created_at, updated_at, version, is_deleted)
+SELECT
+    gen_random_uuid(),
+    '660e8400-e29b-41d4-a716-446655440001',
+    '550e8400-e29b-41d4-a716-446655440020',
+    p.id,
+    'ALL',
+    NOW(), NOW(), 0, false
+FROM permissions p
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DONE
+-- ============================================================================

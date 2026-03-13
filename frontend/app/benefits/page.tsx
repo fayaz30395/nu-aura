@@ -32,6 +32,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  EmptyState,
 } from '@/components/ui';
 import { benefitsService } from '@/lib/services/benefits.service';
 import {
@@ -351,13 +352,26 @@ export default function BenefitsPage() {
     { label: 'Benefits' },
   ];
 
-  if (!hasHydrated || loading) {
+  if (!hasHydrated || (loading && user?.employeeId)) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
           <span className="ml-2 text-surface-600 dark:text-surface-400">Loading benefits...</span>
         </div>
+      </AppLayout>
+    );
+  }
+
+  // SuperAdmin (no employeeId) - show message
+  if (!user?.employeeId) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
+        <EmptyState
+          icon={<Gift className="h-12 w-12" />}
+          title="Benefits Management"
+          description="As an administrator, you don't have personal benefits. Select an employee to view their benefits enrollment."
+        />
       </AppLayout>
     );
   }

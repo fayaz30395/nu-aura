@@ -20,6 +20,7 @@ import {
 import { goalService, reviewCycleService } from '@/lib/services/performance.service';
 import { okrService, OkrSummary } from '@/lib/services/okr.service';
 import { feedback360Service } from '@/lib/services/feedback360.service';
+import { AppLayout } from '@/components/layout';
 
 interface DashboardStats {
   totalGoals: number;
@@ -207,6 +208,7 @@ export default function PerformancePage() {
   }, []);
 
   return (
+    <AppLayout activeMenuItem="performance">
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Performance Management</h1>
@@ -328,5 +330,6 @@ export default function PerformancePage() {
         </div>
       </div>
     </div>
+    </AppLayout>
   );
 }

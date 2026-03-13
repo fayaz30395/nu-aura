@@ -30,17 +30,33 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     boolean existsByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
+    /**
+     * Find all employees with eager loading of user, department, location, and manager.
+     * Prevents N+1 queries when displaying employee lists with related data.
+     */
     @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantId(UUID tenantId, Pageable pageable);
 
+    /**
+     * Find all employees without pagination (use with caution on large datasets).
+     */
     List<Employee> findByTenantId(UUID tenantId);
 
+    /**
+     * Find employees by department with eager loading to prevent N+1 queries.
+     */
     @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantIdAndDepartmentId(UUID tenantId, UUID departmentId, Pageable pageable);
 
+    /**
+     * Find employees by status with eager loading to prevent N+1 queries.
+     */
     @EntityGraph(attributePaths = {"user"})
     Page<Employee> findAllByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status, Pageable pageable);
 
+    /**
+     * Search employees with eager loading to prevent N+1 queries.
+     */
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND " +
            "(LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
@@ -51,7 +67,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.managerId = :managerId")
     Iterable<Employee> findAllByManagerId(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId);
 
-    // Get direct reports for a manager
+    // Get direct reports for a manager with full relationship loading
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.managerId = :managerId AND e.status = 'ACTIVE'")
     List<Employee> findDirectReportsByManagerId(@Param("tenantId") UUID tenantId, @Param("managerId") UUID managerId);
@@ -85,16 +101,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
 
     Long countByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
 
-    // Find employees by status
+    // Find employees by status with eager loading
     @EntityGraph(attributePaths = {"user"})
     List<Employee> findByTenantIdAndStatus(UUID tenantId, Employee.EmployeeStatus status);
 
-    // Find employees by department IDs
+    // Find employees by department IDs with eager loading
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.departmentId IN :departmentIds AND e.status = 'ACTIVE'")
     List<Employee> findByTenantIdAndDepartmentIdIn(@Param("tenantId") UUID tenantId, @Param("departmentIds") Set<UUID> departmentIds);
 
-    // Find employees by location IDs
+    // Find employees by location IDs with eager loading
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT e FROM Employee e WHERE e.tenantId = :tenantId AND e.officeLocationId IN :locationIds AND e.status = 'ACTIVE'")
     List<Employee> findByTenantIdAndOfficeLocationIdIn(@Param("tenantId") UUID tenantId, @Param("locationIds") Set<UUID> locationIds);

@@ -3,6 +3,7 @@ package com.hrms.domain.lms;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Certificate extends TenantAware {
 
     @Column(name = "certificate_number", nullable = false, unique = true, length = 50)

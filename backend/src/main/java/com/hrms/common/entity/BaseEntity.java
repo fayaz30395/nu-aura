@@ -3,6 +3,9 @@ package com.hrms.common.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -16,6 +19,9 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {
@@ -46,9 +52,6 @@ public abstract class BaseEntity implements Serializable {
 
     @Version
     private Long version;
-
-    @Column(name = "tenant_id")
-    private UUID tenantId;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
@@ -99,14 +102,6 @@ public abstract class BaseEntity implements Serializable {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public UUID getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(UUID tenantId) {
-        this.tenantId = tenantId;
     }
 
     public boolean isDeleted() {

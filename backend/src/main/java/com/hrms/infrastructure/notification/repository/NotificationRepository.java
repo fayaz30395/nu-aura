@@ -41,6 +41,13 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     Page<Notification> findAllByTenantId(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     /**
+     * Find all notifications for a tenant (unpaginated).
+     * WARNING: Use with caution on large datasets. Prefer findAllByTenantId(tenantId, pageable).
+     */
+    @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId ORDER BY n.createdAt DESC")
+    List<Notification> findByTenantId(@Param("tenantId") UUID tenantId);
+
+    /**
      * Delete notification by ID with mandatory tenant isolation.
      * Use this instead of the inherited deleteById().
      */

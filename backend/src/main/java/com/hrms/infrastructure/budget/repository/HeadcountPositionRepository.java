@@ -15,6 +15,12 @@ public interface HeadcountPositionRepository extends JpaRepository<HeadcountPosi
 
     Optional<HeadcountPosition> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    List<HeadcountPosition> findByBudgetIdAndTenantId(UUID budgetId, UUID tenantId);
+
+    /**
+     * @deprecated Use {@link #findByBudgetIdAndTenantId(UUID, UUID)} for tenant isolation.
+     */
+    @Deprecated
     List<HeadcountPosition> findByBudgetId(UUID budgetId);
 
     @Query("SELECT p FROM HeadcountPosition p WHERE p.tenantId = :tenantId AND p.status = :status")

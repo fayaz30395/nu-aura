@@ -50,7 +50,12 @@ export function AuthGuard({
     isHR,
     isManager,
     isReady,
+    roles,
   } = usePermissions();
+
+  // SuperAdmin bypasses ALL route-level permission checks
+  // Note: Middleware handles the primary 401 → login redirect via cookie inspection
+  const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
@@ -83,6 +88,12 @@ export function AuthGuard({
       return;
     }
 
+    // SuperAdmin bypasses all route-level checks
+    if (isSuperAdmin) {
+      setIsAuthorized(true);
+      return;
+    }
+
     // Check authorization
     const authorized = checkAuthorization(routeConfig);
     setIsAuthorized(authorized);
@@ -90,7 +101,7 @@ export function AuthGuard({
     if (!authorized) {
       console.warn(`[AuthGuard] Access denied to ${pathname}`);
     }
-  }, [pathname, isAuthenticated, hasHydrated, isReady]);
+  }, [pathname, isAuthenticated, hasHydrated, isReady, isSuperAdmin]);
 
   function checkAuthorization(config: RouteConfig): boolean {
     // Auth only check

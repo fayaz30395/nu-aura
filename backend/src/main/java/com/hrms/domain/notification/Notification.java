@@ -3,6 +3,7 @@ package com.hrms.domain.notification;
 import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Notification extends TenantAware {
 
     @Column(nullable = false)
@@ -75,6 +76,7 @@ public class Notification extends TenantAware {
         SHIFT_CHANGED,
         ROLE_UPDATED,
         SYSTEM_ALERT,
+        TASK_ASSIGNED,
         GENERAL
     }
 
