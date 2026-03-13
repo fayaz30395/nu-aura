@@ -9,6 +9,7 @@ import {
   isPublicRoute,
   RouteConfig,
 } from '@/lib/config/routes';
+import { NuAuraLoader } from '@/components/ui/Loading';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -161,11 +162,7 @@ export function AuthGuard({
       return loadingComponent;
     }
 
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-      </div>
-    );
+    return <NuAuraLoader message="Preparing your workspace..." />;
   }
 
   // Access denied
@@ -183,7 +180,7 @@ export function AuthGuard({
             You don&apos;t have permission to access this page.
           </p>
           <button
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/me/dashboard')}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Go to Home

@@ -43,7 +43,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
     name: 'NU-HRMS',
     shortName: 'HRMS',
     description: 'Core HR management',
-    entryRoute: '/home',
+    entryRoute: '/me/dashboard',
     gradient: 'from-blue-600 to-blue-700',
     iconName: 'Users',
     permissionPrefixes: [
@@ -56,7 +56,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       'timesheet', 'project', 'psa', 'resource', 'email',
     ],
     routePrefixes: [
-      '/home', '/dashboard', '/dashboards',
+      '/me', '/dashboard', '/dashboards',
       '/me', '/employees', '/departments',
       '/attendance', '/leave', '/payroll',
       '/compensation', '/benefits', '/expenses',
@@ -122,6 +122,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       'knowledge',
     ],
     routePrefixes: [
+      '/fluence/wall',
       '/fluence/wiki',
       '/fluence/blogs',
       '/fluence/templates',

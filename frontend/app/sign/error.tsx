@@ -60,7 +60,7 @@ export default function SignError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/home')}
+                onClick={() => (window.location.href = '/me/dashboard')}
                 className="w-full"
               >
                 <Pen className="mr-2 h-4 w-4" />
@@ -68,7 +68,7 @@ export default function SignError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/home')}
+                onClick={() => (window.location.href = '/me/dashboard')}
                 className="w-full"
               >
                 <Home className="mr-2 h-4 w-4" />

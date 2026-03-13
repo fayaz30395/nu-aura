@@ -33,7 +33,7 @@ export default function OrgHierarchyPage() {
     }
 
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
+      router.push('/me/dashboard');
       return;
     }
 
