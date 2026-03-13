@@ -67,8 +67,8 @@ export default function OfficeLocationsPage() {
       setEditingId(null);
       resetForm();
       loadLocations();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save location');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save location');
     }
   };
 
@@ -95,8 +95,8 @@ export default function OfficeLocationsPage() {
     try {
       await officeLocationService.deleteLocation(id);
       loadLocations();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete location');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete location');
     }
   };
 

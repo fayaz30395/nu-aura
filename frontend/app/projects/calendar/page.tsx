@@ -108,9 +108,9 @@ export default function ProjectCalendarPage() {
         }
         setTasks(allTasks);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching data:', err);
-      setError(err.response?.data?.message || 'Failed to load data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }

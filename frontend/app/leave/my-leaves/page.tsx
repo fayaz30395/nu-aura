@@ -56,8 +56,8 @@ export default function MyLeavesPage() {
       await leaveService.cancelLeaveRequest(id, reason);
       alert('Leave request cancelled successfully');
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to cancel leave request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
     }
   };
 

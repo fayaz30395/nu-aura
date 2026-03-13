@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { handleError, getUserMessage, categorizeError } from '@/lib/utils/error-handler';
+import { useEffect, useState } from 'react';
+import { Paper, Container, Center, Stack, Button, Group, Text, Alert, Accordion, Badge } from '@mantine/core';
+import { IconAlertTriangle, IconRefresh, IconHome } from '@tabler/icons-react';
+import { handleError, getUserMessage, categorizeError, ErrorCategory } from '@/lib/utils/error-handler';
 import { isDevelopment } from '@/lib/config';
 
 interface ErrorProps {
@@ -12,58 +11,135 @@ interface ErrorProps {
   reset: () => void;
 }
 
+/**
+ * Error page for segment-level errors (SSR + client boundary errors)
+ * This is rendered when an error.tsx file catches an error in a page segment
+ */
 export default function Error({ error, reset }: ErrorProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   useEffect(() => {
     // Log and report the error using centralized error handler
-    handleError(error, { source: 'error-boundary', digest: error.digest });
+    handleError(error, {
+      source: 'page-error-boundary',
+      digest: error.digest,
+      isDevelopment
+    });
   }, [error]);
 
   const category = categorizeError(error);
   const userMessage = getUserMessage(category, error.message);
 
+  const getCategoryColor = (cat: ErrorCategory): string => {
+    switch (cat) {
+      case ErrorCategory.NETWORK:
+        return 'orange';
+      case ErrorCategory.AUTH:
+      case ErrorCategory.PERMISSION:
+        return 'red';
+      case ErrorCategory.SERVER:
+        return 'red';
+      case ErrorCategory.NOT_FOUND:
+        return 'yellow';
+      default:
+        return 'blue';
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
-            <AlertTriangle className="h-6 w-6 text-red-600" />
-          </div>
-          <CardTitle className="text-xl font-semibold text-gray-900">
-            Something went wrong
-          </CardTitle>
-          <CardDescription className="text-gray-600">
-            {userMessage}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {isDevelopment && (
-            <div className="rounded-md bg-gray-100 p-3">
-              <p className="text-sm font-mono text-gray-700 break-all">
-                {error.message}
-              </p>
-              {error.digest && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Error ID: {error.digest}
-                </p>
-              )}
+    <Container size="xs" py="xl">
+      <Center style={{ minHeight: '100vh' }}>
+        <Paper p="xl" radius="md" shadow="md" w="100%">
+          <Center mb="lg">
+            <div style={{
+              width: '4rem',
+              height: '4rem',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#fee2e2',
+            }}>
+              <IconAlertTriangle size={28} color="#dc2626" />
             </div>
+          </Center>
+
+          <Stack gap="sm" align="center">
+            <Text fw={600} size="lg" c="dark">
+              Something went wrong
+            </Text>
+            <Badge color={getCategoryColor(category)} variant="light">
+              {category.replace('_', ' ')}
+            </Badge>
+            <Text c="dimmed" ta="center">
+              {userMessage}
+            </Text>
+          </Stack>
+
+          {isDevelopment && (
+            <Accordion mt="lg" defaultValue="error-details">
+              <Accordion.Item value="error-details">
+                <Accordion.Control>Developer Details</Accordion.Control>
+                <Accordion.Panel>
+                  <Stack gap="xs">
+                    <Text size="xs" c="dimmed" fw={500}>Error Message:</Text>
+                    <Text
+                      size="xs"
+                      ff="monospace"
+                      c="red"
+                      style={{ wordBreak: 'break-all' }}
+                    >
+                      {error.message}
+                    </Text>
+                    {error.stack && (
+                      <>
+                        <Text size="xs" c="dimmed" fw={500} mt="sm">Stack Trace:</Text>
+                        <Text
+                          size="xs"
+                          ff="monospace"
+                          c="dark"
+                          style={{
+                            wordBreak: 'break-all',
+                            whiteSpace: 'pre-wrap',
+                            maxHeight: '200px',
+                            overflow: 'auto'
+                          }}
+                        >
+                          {error.stack}
+                        </Text>
+                      </>
+                    )}
+                    {error.digest && (
+                      <>
+                        <Text size="xs" c="dimmed" fw={500} mt="sm">Error ID:</Text>
+                        <Text size="xs" ff="monospace" c="blue">{error.digest}</Text>
+                      </>
+                    )}
+                  </Stack>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
           )}
-          <div className="flex flex-col gap-2">
-            <Button onClick={reset} className="w-full">
-              <RefreshCw className="mr-2 h-4 w-4" />
+
+          <Group grow mt="lg">
+            <Button
+              leftSection={<IconRefresh size={16} />}
+              onClick={reset}
+              color="blue"
+            >
               Try Again
             </Button>
             <Button
-              variant="outline"
+              leftSection={<IconHome size={16} />}
+              variant="light"
               onClick={() => (window.location.href = '/me/dashboard')}
-              className="w-full"
+              color="gray"
             >
-              <Home className="mr-2 h-4 w-4" />
-              Go to Home
+              Go Home
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </Group>
+        </Paper>
+      </Center>
+    </Container>
   );
 }

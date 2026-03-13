@@ -198,9 +198,9 @@ export default function AssetManagementPage() {
       setAssets(filteredAssets);
       setTotalElements(response.totalElements);
       setTotalPages(response.totalPages);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching assets:', err);
-      setError(err.response?.data?.message || 'Failed to load assets');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load assets');
       setAssets([]);
     } finally {
       setLoading(false);
@@ -296,9 +296,9 @@ export default function AssetManagementPage() {
       setShowAddModal(false);
       resetForm();
       fetchAssets();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving asset:', err);
-      setError(err.response?.data?.message || 'Failed to save asset');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save asset');
     } finally {
       setSaving(false);
     }
@@ -312,9 +312,9 @@ export default function AssetManagementPage() {
       setShowDeleteModal(false);
       setSelectedAsset(null);
       fetchAssets();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting asset:', err);
-      setError(err.response?.data?.message || 'Failed to delete asset');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete asset');
     } finally {
       setDeleting(false);
     }
@@ -329,9 +329,9 @@ export default function AssetManagementPage() {
       setSelectedAsset(null);
       setAssignEmployeeId('');
       fetchAssets();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error assigning asset:', err);
-      setError(err.response?.data?.message || 'Failed to assign asset');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
     } finally {
       setSaving(false);
     }
@@ -341,9 +341,9 @@ export default function AssetManagementPage() {
     try {
       await assetService.returnAsset(asset.id);
       fetchAssets();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error returning asset:', err);
-      setError(err.response?.data?.message || 'Failed to return asset');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to return asset');
     }
   };
 

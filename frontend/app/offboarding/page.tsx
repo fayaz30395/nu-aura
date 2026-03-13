@@ -194,9 +194,9 @@ export default function OffboardingPage() {
       const paginationMeta = extractPaginationMeta(response);
       setTotalElements(paginationMeta.totalElements || content.length);
       setTotalPages(paginationMeta.totalPages || 1);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching exit processes:', err);
-      setError(err.response?.data?.message || 'Failed to load exit processes');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load exit processes');
       setExitProcesses([]);
     } finally {
       setLoading(false);
@@ -282,9 +282,9 @@ export default function OffboardingPage() {
       setShowAddModal(false);
       resetForm();
       fetchExitProcesses();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving exit process:', err);
-      setError(err.response?.data?.message || 'Failed to save exit process');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save exit process');
     } finally {
       setSaving(false);
     }
@@ -298,9 +298,9 @@ export default function OffboardingPage() {
       setShowDeleteModal(false);
       setSelectedProcess(null);
       fetchExitProcesses();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting exit process:', err);
-      setError(err.response?.data?.message || 'Failed to delete exit process');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete exit process');
     } finally {
       setDeleting(false);
     }
@@ -310,9 +310,9 @@ export default function OffboardingPage() {
     try {
       await exitService.updateExitStatus(process.id, newStatus);
       fetchExitProcesses();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating status:', err);
-      setError(err.response?.data?.message || 'Failed to update status');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status');
     }
   };
 

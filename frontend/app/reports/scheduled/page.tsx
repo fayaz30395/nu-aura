@@ -127,8 +127,8 @@ export default function ScheduledReportsPage() {
       setShowModal(false);
       resetForm();
       await loadReports();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save scheduled report');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save scheduled report');
     } finally {
       setLoading(false);
     }
@@ -142,8 +142,8 @@ export default function ScheduledReportsPage() {
       setShowDeleteConfirm(false);
       setSelectedReport(null);
       await loadReports();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete scheduled report');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete scheduled report');
     } finally {
       setLoading(false);
     }
@@ -153,8 +153,8 @@ export default function ScheduledReportsPage() {
     try {
       await scheduledReportService.toggleStatus(report.id);
       await loadReports();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to toggle report status');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to toggle report status');
     }
   };
 

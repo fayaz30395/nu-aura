@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout';
 import {
   ArrowLeft,
   Clock,
@@ -109,8 +110,8 @@ export default function QuizPage() {
       // Reset answers
       setAnswers(new Map());
       setCurrentQuestionIdx(0);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to start quiz');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to start quiz');
     } finally {
       setSubmitting(false);
     }
@@ -136,8 +137,8 @@ export default function QuizPage() {
 
       setResult(response.data);
       setState('submitted');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to submit quiz');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit quiz');
     } finally {
       setSubmitting(false);
     }
@@ -182,7 +183,8 @@ export default function QuizPage() {
 
   if (error || !quiz) {
     return (
-      <div className="min-h-screen bg-surface-50 p-6">
+      <AppLayout>
+        <div className="min-h-screen bg-surface-50 p-6">
         <div className="max-w-2xl mx-auto">
           <Link href={`/learning/courses/${courseId}`} className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-6 w-fit">
             <ArrowLeft className="h-4 w-4" /> Back to Course
@@ -192,7 +194,8 @@ export default function QuizPage() {
             <p className="text-red-600 font-medium">{error || 'Quiz not found'}</p>
           </div>
         </div>
-      </div>
+        </div>
+      </AppLayout>
     );
   }
 
@@ -207,7 +210,8 @@ export default function QuizPage() {
   // ─── INTRO STATE ──────────────────────────────────────────────────────────
   if (state === 'intro') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      <AppLayout>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
         <div className="max-w-2xl mx-auto">
           <Link href={`/learning/courses/${courseId}`} className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-8 w-fit">
             <ArrowLeft className="h-4 w-4" /> Back to Course
@@ -287,7 +291,8 @@ export default function QuizPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </AppLayout>
     );
   }
 
@@ -298,6 +303,7 @@ export default function QuizPage() {
     const isLastQuestion = currentQuestionIdx === quiz.questions.length - 1;
 
     return (
+      <AppLayout>
       <div className="min-h-screen bg-surface-50 flex flex-col">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
@@ -493,6 +499,7 @@ export default function QuizPage() {
           </div>
         </div>
       </div>
+      </AppLayout>
     );
   }
 
@@ -503,7 +510,8 @@ export default function QuizPage() {
     const canRetry = (quiz.status === 'AVAILABLE' || quiz.status === 'FAILED') && !passed;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      <AppLayout>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
         <div className="max-w-4xl mx-auto">
           {/* Result Card */}
           <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
@@ -602,7 +610,8 @@ export default function QuizPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </AppLayout>
     );
   }
 

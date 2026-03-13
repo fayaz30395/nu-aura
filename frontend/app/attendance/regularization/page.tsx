@@ -62,8 +62,6 @@ export default function RegularizationPage() {
     e.preventDefault();
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-
       // In real implementation, call regularization API
       alert('Regularization request submitted successfully');
       setShowCreateModal(false);
@@ -74,8 +72,9 @@ export default function RegularizationPage() {
         reason: '',
       });
       loadRequests();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to submit request');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      alert(msg || 'Failed to submit request');
     } finally {
       setLoading(false);
     }

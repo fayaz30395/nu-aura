@@ -91,7 +91,7 @@ export default function CreateWikiPage() {
           onError: (error: any) => {
             notifications.show({
               title: 'Error',
-              message: error.response?.data?.message || 'Failed to create wiki page',
+              message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create wiki page',
               color: 'red',
             });
           },

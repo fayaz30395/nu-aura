@@ -2,9 +2,11 @@ import { apiClient } from '@/lib/api/client';
 import { homeService } from './home.service';
 import { announcementService } from './announcement.service';
 import { recognitionService } from './recognition.service';
+import { linkedinService } from './linkedin.service';
 import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 import type { Announcement } from './announcement.service';
 import type { Recognition } from '@/lib/types/recognition';
+import type { LinkedInPost } from '@/lib/types/linkedin';
 import type {
   BirthdayResponse,
   WorkAnniversaryResponse,
@@ -27,6 +29,7 @@ class FeedService {
       this.fetchAnniversaries(),
       this.fetchNewJoiners(),
       this.fetchRecognitions(),
+      this.fetchLinkedInPosts(),
     ]);
 
     const items: FeedItem[] = [];
@@ -154,6 +157,25 @@ class FeedService {
         pointsAwarded: r.pointsAwarded,
         likesCount: r.likesCount,
         commentsCount: r.commentsCount,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  private async fetchLinkedInPosts(): Promise<FeedItem[]> {
+    try {
+      const data = await linkedinService.getActiveLinkedInPosts(0, 10);
+      return data.content.map((post: LinkedInPost): FeedItem => ({
+        id: `linkedin-${post.id}`,
+        type: 'LINKEDIN_POST',
+        timestamp: post.postedAt,
+        title: post.contentSnippet.substring(0, 80),
+        linkedinPostUrl: post.postUrl,
+        linkedinAuthor: post.authorName,
+        linkedinAuthorTitle: post.authorTitle,
+        linkedinImageUrl: post.imageUrl,
+        linkedinEngagement: post.engagement,
       }));
     } catch {
       return [];

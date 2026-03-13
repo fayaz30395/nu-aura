@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout';
 import {
   ChevronLeft,
   ChevronRight,
@@ -386,7 +387,8 @@ export default function CoursePlayerPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
+    <AppLayout>
+      <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shrink-0 z-10">
         <div className="flex items-center gap-3">
@@ -586,6 +588,7 @@ export default function CoursePlayerPage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </AppLayout>
   );
 }

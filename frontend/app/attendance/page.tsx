@@ -117,14 +117,8 @@ export default function AttendancePage() {
         // Location not available
       }
 
-      let ip = 'Unknown';
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        ip = ipData.ip;
-      } catch (e) {
-        // IP fetch failed
-      }
+      // IP is resolved server-side from the HTTP request headers (X-Forwarded-For / RemoteAddr).
+      // Never call external third-party IP services from the client — privacy risk + external dependency.
 
       // Use local date-time string to ensure correct timezone handling
       const localTimeString = getLocalDateTimeString();
@@ -134,13 +128,12 @@ export default function AttendancePage() {
         checkInTime: localTimeString,
         source: 'WEB',
         location,
-        ip,
       });
 
       await loadData();
-    } catch (error: any) {
-      console.error('Check-in error:', error);
-      setError(error.response?.data?.message || 'Failed to check in. Please try again.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || 'Failed to check in. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -168,15 +161,7 @@ export default function AttendancePage() {
         // Location not available
       }
 
-      let ip = 'Unknown';
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        ip = ipData.ip;
-      } catch (e) {
-        // IP fetch failed
-      }
-
+      // IP is resolved server-side from the HTTP request headers (X-Forwarded-For / RemoteAddr).
       const now = new Date();
       const localTimeString = now.getFullYear() + '-' +
         String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -190,13 +175,12 @@ export default function AttendancePage() {
         checkOutTime: localTimeString,
         source: 'WEB',
         location,
-        ip,
       });
 
       await loadData();
-    } catch (error: any) {
-      console.error('Check-out error:', error);
-      setError(error.response?.data?.message || 'Failed to check out. Please try again.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || 'Failed to check out. Please try again.');
     } finally {
       setLoading(false);
     }

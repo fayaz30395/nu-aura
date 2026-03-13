@@ -93,10 +93,10 @@ export default function SignupPage() {
         contactPhone: data.contactPhone || undefined,
       });
       setIsSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const message =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
         'Registration failed. Please try again.';
       setError(message);
     } finally {

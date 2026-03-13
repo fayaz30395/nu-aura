@@ -70,8 +70,8 @@ export default function EmployeesPage() {
       setError(null);
       const response = await employeeService.getAllEmployees(0, 100, statusFilter || undefined);
       setEmployees(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load employees');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employees');
       console.error('Error loading employees:', err);
     } finally {
       setLoading(false);
@@ -82,7 +82,7 @@ export default function EmployeesPage() {
     try {
       const response = await employeeService.getAllEmployees(0, 100);
       setManagers(response.content);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading managers:', err);
     }
   };
@@ -91,7 +91,7 @@ export default function EmployeesPage() {
     try {
       const response = await departmentService.getActiveDepartments();
       setDepartments(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading departments:', err);
     }
   };
@@ -131,8 +131,8 @@ export default function EmployeesPage() {
       setShowAddModal(false);
       resetForm();
       loadEmployees();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create employee');
       console.error('Error creating employee:', err);
     }
   };
@@ -182,8 +182,8 @@ export default function EmployeesPage() {
       setError(null);
       const response = await employeeService.searchEmployees(searchQuery);
       setEmployees(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Search failed');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Search failed');
       console.error('Error searching employees:', err);
     } finally {
       setLoading(false);
@@ -199,8 +199,8 @@ export default function EmployeesPage() {
       setShowDeleteModal(false);
       setEmployeeToDelete(null);
       loadEmployees();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee');
       console.error('Error deleting employee:', err);
       setDeleting(false);
       setShowDeleteModal(false);

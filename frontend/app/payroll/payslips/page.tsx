@@ -43,8 +43,8 @@ export default function PayslipsPage() {
       setPayslips(response.content);
       setTotalPages(response.totalPages);
       setTotalElements(response.totalElements);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load payslips');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
       console.error('Error loading payslips:', err);
     } finally {
       setLoading(false);
@@ -63,8 +63,8 @@ export default function PayslipsPage() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to download payslip');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip');
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function PayslipsPage() {
         // Add a small delay to avoid overwhelming the browser
         await new Promise(resolve => setTimeout(resolve, 200));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to download some payslips');
     } finally {
       setLoading(false);

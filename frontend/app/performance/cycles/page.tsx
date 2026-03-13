@@ -85,8 +85,8 @@ export default function ReviewCyclesPage() {
       setShowModal(false);
       resetForm();
       await loadCycles();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save review cycle');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save review cycle');
     } finally {
       setLoading(false);
     }
@@ -100,8 +100,8 @@ export default function ReviewCyclesPage() {
       setShowDeleteConfirm(false);
       setSelectedCycle(null);
       await loadCycles();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete review cycle');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete review cycle');
     } finally {
       setLoading(false);
     }
@@ -148,8 +148,8 @@ export default function ReviewCyclesPage() {
       setShowActivateModal(false);
       setShowActivationResult(true);
       await loadCycles();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to activate review cycle');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to activate review cycle');
     } finally {
       setLoading(false);
     }

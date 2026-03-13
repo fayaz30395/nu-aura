@@ -20,7 +20,9 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
-const ALLOWED_DOMAIN = 'nulogic.io';
+// Configurable via env — falls back to 'nulogic.io' for local dev.
+// Set NEXT_PUBLIC_SSO_ALLOWED_DOMAIN in .env.production for each tenant deployment.
+const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io';
 
 interface GoogleJwtPayload {
   email: string;
@@ -337,11 +339,11 @@ function LoginPage() {
       setDidFreshLogin(true);
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl || '/me/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[LoginPage] Login error:', err);
       incrementLoginAttempts();
       const attemptsRemaining = RATE_LIMIT_MAX_ATTEMPTS - (loginAttempts + 1);
-      let errorMessage = err.response?.data?.message || 'Invalid email or password. Please try again.';
+      let errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Invalid email or password. Please try again.';
       if (attemptsRemaining > 0 && attemptsRemaining < 3) {
         errorMessage += ` (${attemptsRemaining} attempt${attemptsRemaining === 1 ? '' : 's'} remaining)`;
       }
@@ -398,8 +400,8 @@ function LoginPage() {
         setDidFreshLogin(true);
         const returnUrl = searchParams.get('returnUrl');
         router.push(returnUrl || '/me/dashboard');
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
+      } catch (err: unknown) {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Google sign-in failed. Please try again.');
       } finally {
         setIsGoogleLoading(false);
       }
@@ -442,8 +444,8 @@ function LoginPage() {
       setDidFreshLogin(true);
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl || '/me/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Google sign-in failed. Please try again.');
     } finally {
       setIsGoogleLoading(false);
     }

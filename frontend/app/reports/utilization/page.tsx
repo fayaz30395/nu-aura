@@ -77,7 +77,7 @@ export default function UtilizationReportsPage() {
         endDate: currentRange.endDate,
       });
       setDashboardData(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching dashboard data:', err);
       setError('Failed to load utilization data. Please try again later.');
     } finally {

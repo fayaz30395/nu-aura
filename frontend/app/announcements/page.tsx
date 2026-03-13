@@ -739,9 +739,9 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         toast.success('Announcement Published', 'Your announcement has been published successfully.');
       }
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} announcement:`, err);
-      const errorMessage = err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Publish Failed', errorMessage);
     } finally {

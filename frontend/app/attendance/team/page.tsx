@@ -36,8 +36,6 @@ export default function TeamAttendancePage() {
     try {
       setError(null);
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-
       // In a real implementation, this would fetch subordinates' attendance
       const response = await attendanceService.getAttendanceByDate(selectedDate, 0, 100);
       setRecords(response.content);

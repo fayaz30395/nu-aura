@@ -82,9 +82,9 @@ export default function MyAttendancePage() {
       // Load today's time entries and set today as selected
       setSelectedDate(new Date());
       await loadTimeEntries(today);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load attendance:', err);
-      setError(err.response?.data?.message || 'Failed to load attendance');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load attendance');
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +95,7 @@ export default function MyAttendancePage() {
       setIsLoadingTimeEntries(true);
       const entries = await attendanceService.getMyTimeEntries(date);
       setSelectedDateTimeEntries(entries);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load time entries:', err);
       // Don't show error for time entries - it's not critical
       setSelectedDateTimeEntries([]);
@@ -126,9 +126,9 @@ export default function MyAttendancePage() {
       });
 
       await loadAttendance();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to check in:', err);
-      setError(err.response?.data?.message || 'Failed to check in');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
     } finally {
       setIsCheckingIn(false);
     }
@@ -150,9 +150,9 @@ export default function MyAttendancePage() {
       });
 
       await loadAttendance();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to check out:', err);
-      setError(err.response?.data?.message || 'Failed to check out');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
     } finally {
       setIsCheckingIn(false);
     }
@@ -171,9 +171,9 @@ export default function MyAttendancePage() {
       setRegularizationReason('');
       setRegularizingRecord(null);
       await loadAttendance();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to request regularization:', err);
-      setError(err.response?.data?.message || 'Failed to request regularization');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to request regularization');
     }
   };
 

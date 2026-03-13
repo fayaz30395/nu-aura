@@ -68,8 +68,8 @@ export default function FeedbackPage() {
       setShowModal(false);
       resetForm();
       await loadFeedback();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save feedback');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save feedback');
     } finally {
       setLoading(false);
     }
@@ -83,8 +83,8 @@ export default function FeedbackPage() {
       setShowDeleteConfirm(false);
       setSelectedFeedback(null);
       await loadFeedback();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete feedback');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete feedback');
     } finally {
       setLoading(false);
     }

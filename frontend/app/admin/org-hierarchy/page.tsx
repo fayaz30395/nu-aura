@@ -56,8 +56,8 @@ export default function OrgHierarchyPage() {
       // Auto-expand root level
       const rootIds = new Set(employeeTree.map(e => e.id));
       setExpandedNodes(rootIds);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load organization hierarchy');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load organization hierarchy');
       console.error('Error loading org hierarchy:', err);
     } finally {
       setLoading(false);

@@ -1,4 +1,5 @@
 'use client';
+import { AppLayout } from '@/components/layout';
 
 import { useState, useEffect } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, Tabs, Modal, Select, NumberInput, TextInput } from '@mantine/core';
@@ -118,7 +119,8 @@ export default function PsaTimesheetsPage() {
     ));
 
     return (
-        <Container size="xl" py="lg">
+        <AppLayout>
+            <Container size="xl" py="lg">
             <Group justify="space-between" mb="lg">
                 <div>
                     <Title order={2}>Timesheets</Title>
@@ -182,6 +184,7 @@ export default function PsaTimesheetsPage() {
                 </Group>
             </Modal>
 
-        </Container>
+            </Container>
+        </AppLayout>
     );
 }

@@ -74,12 +74,9 @@ export default function SettingsPage() {
       return;
     }
 
-    // Check if tokens exist in localStorage
-    const hasTokens = typeof window !== 'undefined' &&
-                      localStorage.getItem('accessToken') &&
-                      localStorage.getItem('refreshToken');
-
-    if (!isAuthenticated || !hasTokens) {
+    // Tokens are stored in httpOnly cookies — Zustand `isAuthenticated` is the
+    // sole source of truth. Do NOT check localStorage for access/refresh tokens.
+    if (!isAuthenticated) {
       router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
@@ -145,9 +142,9 @@ export default function SettingsPage() {
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to change password:', err);
-      setError(err.response?.data?.message || 'Failed to change password');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to change password');
     } finally {
       setIsSaving(false);
     }
@@ -177,9 +174,9 @@ export default function SettingsPage() {
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to save notification preferences:', err);
-      setError(err.response?.data?.message || 'Failed to save preferences');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save preferences');
     } finally {
       setIsSavingNotifications(false);
     }

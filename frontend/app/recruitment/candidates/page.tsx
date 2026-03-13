@@ -232,10 +232,10 @@ function CandidatesPage() {
       candidateForm.reset();
       setEditingCandidate(null);
       refetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to save candidate',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save candidate',
         color: 'red',
       });
     }
@@ -280,10 +280,10 @@ function CandidatesPage() {
       setShowDeleteModal(false);
       setCandidateToDelete(null);
       refetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to delete candidate',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete candidate',
         color: 'red',
       });
     }
@@ -314,10 +314,10 @@ function CandidatesPage() {
       setCandidateForOffer(null);
       offerForm.reset();
       refetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to create offer',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create offer',
         color: 'red',
       });
     }
@@ -338,10 +338,10 @@ function CandidatesPage() {
       setCandidateForOffer(null);
       setConfirmedJoiningDate('');
       refetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to accept offer',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to accept offer',
         color: 'red',
       });
     }
@@ -362,10 +362,10 @@ function CandidatesPage() {
       setCandidateForOffer(null);
       setDeclineReason('');
       refetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to decline offer',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to decline offer',
         color: 'red',
       });
     }
@@ -383,10 +383,10 @@ function CandidatesPage() {
         message: 'Resume parsed successfully',
         color: 'green',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to parse resume',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to parse resume',
         color: 'red',
       });
     } finally {
@@ -435,10 +435,10 @@ function CandidatesPage() {
         message: 'Match score calculated',
         color: 'green',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to calculate match score',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to calculate match score',
         color: 'red',
       });
     } finally {
@@ -468,10 +468,10 @@ function CandidatesPage() {
         message: 'Screening summary generated',
         color: 'green',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to generate screening summary',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate screening summary',
         color: 'red',
       });
     } finally {
@@ -501,10 +501,10 @@ function CandidatesPage() {
         message: 'Feedback synthesized',
         color: 'green',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to synthesize feedback',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to synthesize feedback',
         color: 'red',
       });
     } finally {

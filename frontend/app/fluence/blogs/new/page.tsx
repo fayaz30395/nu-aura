@@ -96,7 +96,7 @@ export default function CreateBlogPost() {
           onError: (error: any) => {
             notifications.show({
               title: 'Error',
-              message: error.response?.data?.message || 'Failed to create blog post',
+              message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create blog post',
               color: 'red',
             });
           },

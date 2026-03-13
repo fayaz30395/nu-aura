@@ -137,7 +137,7 @@ export default function WorkloadDashboardPage() {
       };
       const data = await resourceManagementService.getWorkloadDashboard(filters);
       setDashboardData(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching workload data:', err);
       setError('Failed to load workload data. Please try again.');
     } finally {
@@ -274,7 +274,7 @@ export default function WorkloadDashboardPage() {
         ...dashboardData,
         employeeWorkloads: updatedEmployeeWorkloads,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to update allocation:', err);
       setError('Failed to update allocation. Please try again.');
     }

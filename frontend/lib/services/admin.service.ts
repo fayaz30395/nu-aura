@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { apiClient } from '../api/client';
+import { publicApiClient } from '../api/public-client';
 import { AdminStats, AdminUserSummary, Page, HealthResponse } from '../types/admin';
 import { apiConfig } from '../config';
 
@@ -37,10 +37,9 @@ class AdminService {
     const healthUrl = `${baseUrl}/actuator/health`;
 
     try {
-      const response = await axios.get<HealthResponse>(healthUrl, {
-        withCredentials: true,
-        timeout: 5000,
-      });
+      // publicApiClient is used here because /actuator/health is unauthenticated.
+      // It accepts absolute URLs — the URL normalizer only strips `/api/v1` from relative paths.
+      const response = await publicApiClient.get<HealthResponse>(healthUrl);
       return response.data;
     } catch (error) {
       // If the health endpoint is not available or times out, return a graceful response

@@ -54,8 +54,8 @@ export default function DepartmentsPage() {
       ]);
       setDepartments(deptResponse.content);
       setEmployees(empResponse.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load departments');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load departments');
       console.error('Error loading departments:', err);
     } finally {
       setLoading(false);
@@ -89,8 +89,8 @@ export default function DepartmentsPage() {
       resetForm();
       setShowAddModal(false);
       setEditingDepartment(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`);
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`);
       console.error('Error saving department:', err);
     }
   };
@@ -132,8 +132,8 @@ export default function DepartmentsPage() {
       setError(null);
       await departmentService.deleteDepartment(id);
       await loadData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete department');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department');
       console.error('Error deleting department:', err);
     }
   };
@@ -147,8 +147,8 @@ export default function DepartmentsPage() {
         await departmentService.activateDepartment(department.id);
       }
       await loadData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update department status');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status');
       console.error('Error toggling department status:', err);
     }
   };

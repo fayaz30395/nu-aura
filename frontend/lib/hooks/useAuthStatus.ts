@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { apiClient } from '../api/client';
+import { is401Error } from '../utils/type-guards';
 
 /**
  * Hook to verify authentication status via the backend.
@@ -33,15 +34,13 @@ export function useAuthStatus() {
       setLastChecked(new Date());
       return true;
     } catch (error: unknown) {
-      // 401 means auth is invalid
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { status?: number } };
-        if (axiosError.response?.status === 401) {
-          setIsValid(false);
-          return false;
-        }
+      if (is401Error(error)) {
+        // 401 means auth is invalid
+        setIsValid(false);
+        return false;
       }
-      // Network error - can't determine status
+
+      // Network error or other error - can't determine status
       setIsValid(null);
       return null;
     } finally {

@@ -62,8 +62,8 @@ export default function LeaveTypesManagementPage() {
       setError(null);
       const response = await leaveService.getAllLeaveTypes(0, 100);
       setLeaveTypes(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load leave types');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave types');
       console.error('Error loading leave types:', err);
     } finally {
       setLoading(false);
@@ -106,8 +106,8 @@ export default function LeaveTypesManagementPage() {
       resetForm();
       setShowModal(false);
       setEditingLeaveType(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${editingLeaveType ? 'update' : 'create'} leave type`);
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingLeaveType ? 'update' : 'create'} leave type`);
       console.error('Error saving leave type:', err);
     } finally {
       setSubmitting(false);
@@ -167,8 +167,8 @@ export default function LeaveTypesManagementPage() {
       setError(null);
       await leaveService.deleteLeaveType(id);
       await loadLeaveTypes();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete leave type');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete leave type');
       console.error('Error deleting leave type:', err);
     }
   };
@@ -182,8 +182,8 @@ export default function LeaveTypesManagementPage() {
         await leaveService.activateLeaveType(leaveType.id);
       }
       await loadLeaveTypes();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update leave type status');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update leave type status');
       console.error('Error toggling leave type status:', err);
     }
   };

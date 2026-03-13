@@ -1,10 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { BulkProcessingWizard } from '@/components/payroll/BulkProcessingWizard';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 
 export default function BulkProcessingPage() {
+  const router = useRouter();
+  const { hasPermission, isReady } = usePermissions();
+
+  useEffect(() => {
+    if (!isReady) return;
+    if (!hasPermission(Permissions.PAYROLL_PROCESS)) {
+      router.replace('/payroll');
+    }
+  }, [isReady, hasPermission, router]);
+
+  // Render nothing while RBAC state hydrates; the effect above will redirect if unauthorised.
+  if (!isReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
+    return null;
+  }
+
   return (
     <AppLayout activeMenuItem="payroll">
       <div className="p-6">

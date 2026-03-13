@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { AppLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Title,
@@ -85,7 +86,8 @@ export default function CalibrationPage() {
   const totalEmployees = data.totalEmployees || 0;
 
   return (
-    <Stack gap="lg" p="md">
+    <AppLayout>
+      <Stack gap="lg" p="md">
       <Group justify="space-between">
         <div>
           <Title order={2}>Calibration</Title>
@@ -188,6 +190,7 @@ export default function CalibrationPage() {
           </Table.Tbody>
         </Table>
       </Paper>
-    </Stack>
+      </Stack>
+    </AppLayout>
   );
 }

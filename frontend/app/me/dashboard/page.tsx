@@ -3,25 +3,19 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, differenceInSeconds, parseISO } from 'date-fns';
-import {
-  User,
-  Calendar,
-  Clock,
-  FileText,
-  CreditCard,
-  Palmtree,
-  Bell,
-  Users,
-  TrendingUp,
-  CheckCircle,
-  AlertCircle,
-  ArrowRight,
-  Download,
-  Play,
-  Pause,
-} from 'lucide-react';
+import { User } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, StatCard, Loading, Badge } from '@/components/ui';
+import { Loading } from '@/components/ui';
+// Dashboard widget components
+import { WelcomeBanner, QuickAccessWidget } from '@/components/dashboard/WelcomeBanner';
+import { TimeClockWidget } from '@/components/dashboard/TimeClockWidget';
+import { HolidayCarousel } from '@/components/dashboard/HolidayCarousel';
+import { TeamPresenceWidget } from '@/components/dashboard/TeamPresenceWidget';
+import { LeaveBalanceWidget } from '@/components/dashboard/LeaveBalanceWidget';
+import { CompanySpotlight } from '@/components/dashboard/CompanySpotlight';
+import { PostComposer } from '@/components/dashboard/PostComposer';
+import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
 import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { selfServiceService } from '@/lib/services/selfservice.service';
@@ -271,382 +265,91 @@ export default function MyDashboardPage() {
       activeMenuItem="my-dashboard"
       breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
     >
-      <div className="space-y-6">
-        {/* Welcome Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-              Welcome back, {dashboard.employeeName?.split(' ')[0]}!
-            </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
-              {format(new Date(), 'EEEE, MMMM d, yyyy')}
-            </p>
-          </div>
+      <div className="space-y-4">
 
-          {/* Quick Check-in/out */}
-          <div className="flex items-center gap-4">
-            {isCheckedIn && checkInTime && (
-              <div className="text-right hidden sm:block">
-                <p className="text-sm text-surface-500 dark:text-surface-400">Working for</p>
-                <p className="font-bold text-lg text-success-600 dark:text-success-400 font-mono">
-                  {formatElapsedTime(elapsedSeconds)}
-                </p>
-              </div>
-            )}
-            <button
-              onClick={isCheckedIn ? handleCheckOut : handleCheckIn}
-              disabled={checkingIn}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                isCheckedIn
-                  ? 'bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400'
-                  : 'bg-primary-600 text-white hover:bg-primary-700'
-              }`}
-            >
-              <Clock className="h-5 w-5" />
-              {checkingIn ? 'Processing...' : isCheckedIn ? 'Check Out' : 'Check In'}
-            </button>
-          </div>
-        </div>
+        {/* Welcome Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <WelcomeBanner
+            employeeName={dashboard.employeeName || user?.fullName || 'Employee'}
+            designation={dashboard.designation}
+            department={dashboard.department}
+          />
+        </motion.div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Attendance"
-            value={`${dashboard.attendancePercentage ?? 0}%`}
-            description="This month"
-            icon={<CheckCircle className="h-5 w-5" />}
-            trend={{ value: dashboard.presentDaysThisMonth ?? 0, isPositive: true, label: 'days present' }}
-            variant="success"
-          />
-          <StatCard
-            title="Leave Balance"
-            value={String(Object.values(dashboard.leaveBalances ?? {}).reduce((a, b) => a + b, 0))}
-            description="Total days"
-            icon={<Palmtree className="h-5 w-5" />}
-            variant="blue"
-          />
-          <StatCard
-            title="Pending Approvals"
-            value={String(dashboard.pendingApprovals ?? 0)}
-            description="Requires action"
-            icon={<AlertCircle className="h-5 w-5" />}
-            variant={(dashboard.pendingApprovals ?? 0) > 0 ? 'warning' : 'default'}
-          />
-          <StatCard
-            title="Team Members"
-            value={String(dashboard.teamSize ?? 0)}
-            description={`${dashboard.teamMembersOnLeave ?? 0} on leave`}
-            icon={<Users className="h-5 w-5" />}
-            variant="default"
-          />
-        </div>
+        {/* Main Layout — Left Utility Sidebar + Right Social Feed */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
-        {/* Main Content — 2-column: Feed (left) + Sidebar (right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Left Column — Company Feed (3/5 width) */}
-          <div className="lg:col-span-3">
+          {/* Left Sidebar (5/12) */}
+          <motion.div
+            className="lg:col-span-5 space-y-4"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+          >
+            {/* Quick Access — Pending actions & inbox */}
+            <QuickAccessWidget
+              pendingApprovals={dashboard.pendingApprovals ?? 0}
+              pendingTimesheets={dashboard.pendingTimesheets ?? 0}
+              pendingProfileUpdates={dashboard.pendingProfileUpdates ?? 0}
+              inboxCount={0}
+            />
+
+            {/* Time Clock — Live clock + Check-in/out */}
+            <TimeClockWidget
+              isCheckedIn={isCheckedIn}
+              checkInTime={checkInTime}
+              onCheckIn={handleCheckIn}
+              onCheckOut={handleCheckOut}
+              isLoading={checkingIn}
+            />
+
+            {/* Holiday Carousel — Upcoming holidays */}
+            <HolidayCarousel />
+
+            {/* Team Presence — On leave + Remote workers */}
+            <TeamPresenceWidget />
+
+            {/* Leave Balance — Circular progress ring */}
+            <LeaveBalanceWidget
+              leaveBalances={
+                dashboard.leaveBalances
+                  ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
+                      leaveTypeId: String(idx),
+                      leaveName: name,
+                      available: available as number,
+                      total: (available as number) + 2, // estimate; real API will provide totals
+                      used: 2,
+                    }))
+                  : undefined
+              }
+            />
+          </motion.div>
+
+          {/* Right Main Content (7/12) */}
+          <motion.div
+            className="lg:col-span-7 space-y-4"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.08 }}
+          >
+            {/* Company Spotlight Carousel */}
+            <CompanySpotlight />
+
+            {/* Post Composer — Post / Poll / Praise */}
+            <PostComposer />
+
+            {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
+            <CelebrationTabs />
+
+            {/* Unified Social Feed — Announcements, Recognitions, LinkedIn */}
             <CompanyFeed employeeId={user?.employeeId} />
-          </div>
-
-          {/* Right Column — Compact Sidebar (2/5 width) */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Quick Actions */}
-            <Card>
-              <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
-                  Quick Actions
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <QuickActionCompact
-                    icon={<Palmtree className="h-4 w-4" />}
-                    label="Leave"
-                    onClick={() => router.push('/me/leaves')}
-                  />
-                  <QuickActionCompact
-                    icon={<FileText className="h-4 w-4" />}
-                    label="Documents"
-                    onClick={() => router.push('/me/documents')}
-                  />
-                  <QuickActionCompact
-                    icon={<CreditCard className="h-4 w-4" />}
-                    label="Payslips"
-                    onClick={() => router.push('/me/payslips')}
-                  />
-                  <QuickActionCompact
-                    icon={<User className="h-4 w-4" />}
-                    label="Profile"
-                    onClick={() => router.push('/me/profile')}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Today's Attendance — compact */}
-            <Card>
-              <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
-                  Today&apos;s Attendance
-                </h3>
-                <div className="flex items-center gap-3">
-                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                    isCheckedIn
-                      ? 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400'
-                      : 'bg-surface-100 text-surface-500 dark:bg-surface-800'
-                  }`}>
-                    {isCheckedIn ? <Play className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
-                      {isCheckedIn ? 'Checked In' : 'Not Checked In'}
-                    </p>
-                    {isCheckedIn && checkInTime && (
-                      <p className="text-xs text-success-600 dark:text-success-400 font-mono">
-                        {formatElapsedTime(elapsedSeconds)} since {format(checkInTime, 'h:mm a')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Compact progress bar */}
-                {isCheckedIn && checkInTime && (
-                  <div className="mt-3">
-                    <div className="h-1.5 bg-success-200 dark:bg-success-800 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-1000 rounded-full ${
-                          elapsedSeconds >= 28800
-                            ? 'bg-success-600 dark:bg-success-400'
-                            : elapsedSeconds >= 14400
-                            ? 'bg-success-500'
-                            : 'bg-warning-500 dark:bg-warning-400'
-                        }`}
-                        style={{ width: `${Math.min(100, (elapsedSeconds / 28800) * 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-surface-400 mt-1">
-                      {elapsedSeconds >= 28800
-                        ? 'Full day completed!'
-                        : `${formatElapsedTime(28800 - elapsedSeconds)} to 8h`}
-                    </p>
-                  </div>
-                )}
-
-                {/* Monthly Summary — compact */}
-                <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-surface-200 dark:border-surface-700 text-center">
-                  <div>
-                    <p className="text-sm font-semibold text-success-600">{dashboard.presentDaysThisMonth ?? 0}</p>
-                    <p className="text-xs text-surface-500">Present</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-danger-600">{dashboard.absentDaysThisMonth ?? 0}</p>
-                    <p className="text-xs text-surface-500">Absent</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-warning-600">{dashboard.lateDaysThisMonth ?? 0}</p>
-                    <p className="text-xs text-surface-500">Late</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Leave Balances */}
-            <Card>
-              <CardContent>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
-                    Leave Balances
-                  </h3>
-                  <button
-                    onClick={() => router.push('/me/leaves')}
-                    className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-0.5"
-                  >
-                    View all <ArrowRight className="h-3 w-3" />
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {Object.entries(dashboard.leaveBalances ?? {}).map(([type, balance]) => (
-                    <div key={type} className="flex items-center justify-between">
-                      <span className="text-xs text-surface-600 dark:text-surface-400">{type}</span>
-                      <span className="text-xs font-medium text-surface-900 dark:text-surface-50">{balance} days</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pending Tasks */}
-            <Card>
-              <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
-                  Pending Tasks
-                </h3>
-                <div className="space-y-2">
-                  {dashboard.pendingApprovals > 0 && (
-                    <PendingTaskItem
-                      icon={<CheckCircle className="h-4 w-4" />}
-                      label="Pending Approvals"
-                      count={dashboard.pendingApprovals}
-                      onClick={() => router.push('/leave')}
-                    />
-                  )}
-                  {dashboard.pendingTimesheets > 0 && (
-                    <PendingTaskItem
-                      icon={<Clock className="h-4 w-4" />}
-                      label="Timesheets to Submit"
-                      count={dashboard.pendingTimesheets}
-                      onClick={() => router.push('/timesheets')}
-                    />
-                  )}
-                  {dashboard.pendingProfileUpdates > 0 && (
-                    <PendingTaskItem
-                      icon={<User className="h-4 w-4" />}
-                      label="Profile Updates"
-                      count={dashboard.pendingProfileUpdates}
-                      onClick={() => router.push('/me/profile')}
-                    />
-                  )}
-                  {dashboard.pendingApprovals === 0 &&
-                    dashboard.pendingTimesheets === 0 &&
-                    dashboard.pendingProfileUpdates === 0 && (
-                      <p className="text-center text-surface-500 py-2 text-xs">
-                        No pending tasks
-                      </p>
-                    )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Upcoming Events */}
-            <Card>
-              <CardContent>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
-                    Upcoming Events
-                  </h3>
-                  <Calendar className="h-4 w-4 text-surface-400" />
-                </div>
-                {dashboard.upcomingEvents.length > 0 ? (
-                  <div className="space-y-2">
-                    {dashboard.upcomingEvents.slice(0, 4).map((event, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xs font-medium flex-shrink-0">
-                          {format(new Date(event.date), 'd')}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-medium text-surface-900 dark:text-surface-50 truncate">
-                            {event.title}
-                          </p>
-                          <p className="text-xs text-surface-500">
-                            {format(new Date(event.date), 'MMM d')} - {event.eventType}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-surface-500 py-2 text-xs">
-                    No upcoming events
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Recent Payslips */}
-            <Card>
-              <CardContent>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
-                    Recent Payslips
-                  </h3>
-                  <button
-                    onClick={() => router.push('/me/payslips')}
-                    className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-0.5"
-                  >
-                    View all <ArrowRight className="h-3 w-3" />
-                  </button>
-                </div>
-                {dashboard.recentPayslips.length > 0 ? (
-                  <div className="space-y-1">
-                    {dashboard.recentPayslips.slice(0, 3).map((payslip, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-1.5 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
-                      >
-                        <div>
-                          <p className="text-xs font-medium text-surface-900 dark:text-surface-50">
-                            {payslip.month} {payslip.year}
-                          </p>
-                          <p className="text-xs text-surface-500">
-                            ${payslip.netPay.toLocaleString()}
-                          </p>
-                        </div>
-                        {payslip.downloadUrl && (
-                          <button className="p-1 text-surface-400 hover:text-primary-600">
-                            <Download className="h-3.5 w-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-surface-500 py-2 text-xs">
-                    No recent payslips
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
     </AppLayout>
-  );
-}
-
-// Helper Components
-function QuickActionCompact({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-2 p-2.5 rounded-lg text-left hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors group border border-surface-200 dark:border-surface-700"
-    >
-      <div className="p-1.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors">
-        {icon}
-      </div>
-      <span className="text-xs font-medium text-surface-700 dark:text-surface-300">
-        {label}
-      </span>
-    </button>
-  );
-}
-
-function PendingTaskItem({
-  icon,
-  label,
-  count,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  count: number;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
-    >
-      <div className="flex items-center gap-2">
-        <div className="text-warning-500">{icon}</div>
-        <span className="text-xs text-surface-700 dark:text-surface-300">{label}</span>
-      </div>
-      <Badge variant="warning">{count}</Badge>
-    </button>
   );
 }

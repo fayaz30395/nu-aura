@@ -827,9 +827,9 @@ function MailContent() {
           loadEmails(accessToken, selectedLabel);
         }
       }, 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending email:', err);
-      setSendError(err.message || 'Failed to send email');
+      setSendError(err instanceof Error ? err.message : 'Failed to send email');
     } finally {
       setIsSending(false);
     }

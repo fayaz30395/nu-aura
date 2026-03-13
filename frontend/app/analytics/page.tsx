@@ -85,9 +85,9 @@ export default function AnalyticsPage() {
       setError(null);
       const data = await analyticsService.getDashboardAnalytics();
       setAnalytics(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Analytics error:', err);
-      setError(err.response?.data?.message || 'Failed to load analytics data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load analytics data');
     } finally {
       setIsLoading(false);
     }

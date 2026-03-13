@@ -63,8 +63,8 @@ export default function ShiftsManagementPage() {
       setError(null);
       const response = await shiftsApi.getAllShifts({ page: 0, size: 100 });
       setShifts(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load shifts');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load shifts');
       console.error('Error loading shifts:', err);
     } finally {
       setLoading(false);
@@ -87,8 +87,8 @@ export default function ShiftsManagementPage() {
       resetForm();
       setShowModal(false);
       setEditingShift(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${editingShift ? 'update' : 'create'} shift`);
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingShift ? 'update' : 'create'} shift`);
       console.error('Error saving shift:', err);
     } finally {
       setSubmitting(false);
@@ -148,8 +148,8 @@ export default function ShiftsManagementPage() {
       setError(null);
       await shiftsApi.deleteShift(id);
       await loadShifts();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete shift');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete shift');
       console.error('Error deleting shift:', err);
     }
   };
@@ -159,8 +159,8 @@ export default function ShiftsManagementPage() {
       setError(null);
       await shiftsApi.updateShift(shift.id, { isActive: !shift.isActive });
       await loadShifts();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update shift status');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update shift status');
       console.error('Error toggling shift status:', err);
     }
   };

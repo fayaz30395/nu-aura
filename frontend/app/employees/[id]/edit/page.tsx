@@ -101,8 +101,8 @@ export default function EditEmployeePage() {
         bankIfscCode: data.bankIfscCode || '',
         taxId: data.taxId || '',
       });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
       console.error('Error loading employee:', err);
     } finally {
       setLoading(false);
@@ -113,7 +113,7 @@ export default function EditEmployeePage() {
     try {
       const response = await employeeService.getAllEmployees(0, 100);
       setManagers(response.content);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading managers:', err);
     }
   };
@@ -122,7 +122,7 @@ export default function EditEmployeePage() {
     try {
       const response = await departmentService.getActiveDepartments();
       setDepartments(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading departments:', err);
     }
   };
@@ -243,8 +243,8 @@ export default function EditEmployeePage() {
       } else {
         router.push(`/employees/${employeeId}`);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update employee');
       console.error('Error updating employee:', err);
       setSaving(false);
     }

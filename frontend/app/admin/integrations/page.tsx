@@ -104,10 +104,10 @@ export default function AdminIntegrationsPage() {
       const request: SmsTestRequest = { phoneNumber: testPhoneNumber };
       const result = await integrationService.testSms(request);
       setSmsTestResult(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setSmsTestResult({
         success: false,
-        message: error.message || 'Failed to test SMS',
+        message: (error instanceof Error ? error.message : String(error)) || 'Failed to test SMS',
         timestamp: new Date().toISOString(),
       });
     } finally {
@@ -138,12 +138,12 @@ export default function AdminIntegrationsPage() {
 
       const result = await integrationService.sendSms(request);
       setSmsSendResult(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setSmsSendResult({
         messageId: '',
         success: false,
         phoneNumber: sendPhoneNumber,
-        errorMessage: error.message || 'Failed to send SMS',
+        errorMessage: (error instanceof Error ? error.message : String(error)) || 'Failed to send SMS',
         timestamp: new Date().toISOString(),
       });
     } finally {
@@ -158,10 +158,10 @@ export default function AdminIntegrationsPage() {
     try {
       const result = await integrationService.testPaymentGateway();
       setPaymentTestResult(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setPaymentTestResult({
         success: false,
-        message: error.message || 'Failed to test payment gateway',
+        message: (error instanceof Error ? error.message : String(error)) || 'Failed to test payment gateway',
         timestamp: new Date().toISOString(),
       });
     } finally {

@@ -41,7 +41,6 @@ export default function MyAttendancePage() {
     try {
       setError(null);
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
       // Use utility functions for consistent timezone handling
       const startDate = getMonthStartString(year, month);
       const endDate = getMonthEndString(year, month);

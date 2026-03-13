@@ -70,8 +70,8 @@ export default function OnboardingDetailPage() {
             // Auto-expand first category
             const categories = Array.from(new Set(tData.map(t => t.category)));
             if (categories.length > 0) setExpandedCategories([categories[0]]);
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to load process details');
+        } catch (err: unknown) {
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load process details');
         } finally {
             setLoading(false);
         }

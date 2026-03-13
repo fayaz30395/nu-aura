@@ -326,9 +326,9 @@ export default function TrainingPage() {
       showNotification(`Successfully enrolled in ${program.programName}!`, 'success');
       setActiveTab('my-trainings');
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error enrolling:', err);
-      showNotification(err.response?.data?.message || 'Failed to enroll', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
     } finally {
       setEnrolling(false);
     }
@@ -345,9 +345,9 @@ export default function TrainingPage() {
       }
       setIsModalOpen(false);
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving training program:', err);
-      showNotification(err.response?.data?.message || 'Failed to save program', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save program', 'error');
     }
   };
 
@@ -360,9 +360,9 @@ export default function TrainingPage() {
         const enrollmentList = await trainingService.getEnrollmentsByProgram(selectedProgram.id);
         setEnrollments(enrollmentList);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error enrolling employee:', err);
-      showNotification(err.response?.data?.message || 'Failed to enroll employee', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll employee', 'error');
     }
   };
 
@@ -372,9 +372,9 @@ export default function TrainingPage() {
         await trainingService.deleteProgram(programId);
         showNotification('Program deleted successfully', 'success');
         fetchData();
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error deleting training program:', err);
-        showNotification(err.response?.data?.message || 'Failed to delete program', 'error');
+        showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete program', 'error');
       }
     }
   };
@@ -413,6 +413,18 @@ export default function TrainingPage() {
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
         </div>
+      </AppLayout>
+    );
+  }
+
+  if (!user?.employeeId) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="training">
+        <EmptyState
+          icon={<GraduationCap className="h-12 w-12" />}
+          title="No Employee Profile Linked"
+          description="Training enrollment requires an employee profile. Use the admin panels to manage employee training."
+        />
       </AppLayout>
     );
   }
