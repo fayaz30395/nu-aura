@@ -210,7 +210,8 @@ function CalendarContent() {
       const startDateTime = `${newEvent.startDate}T${newEvent.startTime || '09:00'}:00`;
       const endDateTime = `${newEvent.endDate || newEvent.startDate}T${newEvent.endTime || '10:00'}:00`;
 
-      const eventData: any = {
+      const eventData: CalendarEvent = {
+        id: '',
         summary: newEvent.summary,
         description: newEvent.description,
         location: newEvent.location,

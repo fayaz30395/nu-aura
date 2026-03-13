@@ -338,7 +338,7 @@ export default function CalibrationPage() {
   const publishRatings = async () => {
     if (confirm('Publish calibrated ratings? This will be sent to employees.')) {
       // API call would go here
-      console.log('Publishing ratings...');
+
     }
   };
 

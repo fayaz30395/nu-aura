@@ -14,6 +14,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { recruitmentService } from '@/lib/services/recruitment.service';
+import { isAxiosError } from '@/lib/utils/type-guards';
 import type { Candidate, CreateOfferRequest } from '@/lib/types/recruitment';
 
 interface OfferModalProps {
@@ -44,10 +45,13 @@ export function OfferModal({ opened, onClose, candidate, jobId }: OfferModalProp
       queryClient.invalidateQueries({ queryKey: ['kanban-candidates', jobId] });
       handleClose();
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
+      const message = isAxiosError(err) && typeof err.response?.data === 'object' && err.response?.data !== null && 'message' in err.response.data
+        ? (err.response.data as { message?: string }).message ?? 'Failed to create offer'
+        : 'Failed to create offer';
       notifications.show({
         title: 'Error',
-        message: err?.response?.data?.message ?? 'Failed to create offer',
+        message,
         color: 'red',
       });
     },

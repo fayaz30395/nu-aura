@@ -236,7 +236,7 @@ export default function BenefitsPage() {
         const summaryData = await benefitsService.getEmployeeBenefitsSummary(user.employeeId);
         setSummary(summaryData);
       } catch (e) {
-        console.warn('Failed to fetch benefits summary', e);
+
       }
     } catch (err: unknown) {
       console.error('Error fetching data:', err);

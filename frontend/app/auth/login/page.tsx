@@ -375,7 +375,7 @@ function LoginPage() {
   // Google SSO
   const handleGoogleSSO = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.log('[Google SSO] Success callback triggered', { hasToken: !!tokenResponse.access_token });
+
       setIsGoogleLoading(true);
       setError(null);
       try {
@@ -416,8 +416,8 @@ function LoginPage() {
   });
 
   useEffect(() => {
-    console.log('[Google SSO] Client ID configured:', GOOGLE_CLIENT_ID ? 'Yes' : 'No');
-    console.log('[Google SSO] Client ID value:', GOOGLE_CLIENT_ID);
+
+
   }, []);
 
   // Legacy Google handlers
@@ -638,7 +638,7 @@ function LoginPage() {
                 type="button"
                 className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-white hover:bg-gray-50 text-gray-800 font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-white/10 active:scale-[0.98]"
                 onClick={() => {
-                  console.log('[Google SSO] Button clicked, initiating Google login');
+
                   handleGoogleSSO();
                 }}
                 disabled={isGoogleLoading}

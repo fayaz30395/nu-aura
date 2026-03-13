@@ -375,7 +375,7 @@ export default function ProjectCalendarPage() {
 
   const handleUpdateStatus = async (taskId: string, status: string) => {
     if (!canEditTasks) {
-      console.warn('Unauthorized attempt to update status');
+
       return;
     }
     try {

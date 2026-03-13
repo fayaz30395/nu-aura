@@ -53,7 +53,7 @@ export default function PsaTimesheetsPage() {
             const data = await psaService.getAllProjects();
             setProjects(data);
         } catch (error) {
-            console.log('Error fetching projects for select', error);
+
         }
     }
 
