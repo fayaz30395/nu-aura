@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense, useEffect } from 'react';
+import React, { useState, useMemo, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,10 +11,112 @@ import { Button } from '@/components/ui/Button';
 import { Interview, CreateInterviewRequest, InterviewStatus, InterviewRound, InterviewType, InterviewResult, Candidate, JobOpening } from '@/lib/types/recruitment';
 import { Employee } from '@/lib/types/employee';
 import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validations/recruitment';
-import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings } from '@/lib/hooks/queries/useRecruitment';
+import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings, useAllInterviews, useInterviewsByCandidate } from '@/lib/hooks/queries/useRecruitment';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/ai-recruitment';
-import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save } from 'lucide-react';
+import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown } from 'lucide-react';
+
+// ==================== Searchable Select Component ====================
+interface SearchableSelectOption {
+  value: string;
+  label: string;
+  subtitle?: string;
+}
+
+interface SearchableSelectProps {
+  options: SearchableSelectOption[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  error?: string;
+  className?: string;
+}
+
+function SearchableSelect({ options, value, onChange, placeholder = 'Search...', error, className }: SearchableSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const selectedOption = options.find(o => o.value === value);
+
+  const filtered = useMemo(() => {
+    if (!search) return options;
+    const lower = search.toLowerCase();
+    return options.filter(
+      o => o.label.toLowerCase().includes(lower) || o.subtitle?.toLowerCase().includes(lower)
+    );
+  }, [options, search]);
+
+  const handleSelect = (val: string) => {
+    onChange(val);
+    setSearch('');
+    setIsOpen(false);
+  };
+
+  const handleInputFocus = () => {
+    setIsOpen(true);
+    setSearch('');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    if (!isOpen) setIsOpen(true);
+  };
+
+  // Close on click outside
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+        setSearch('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={containerRef} className={`relative ${className || ''}`}>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={isOpen ? search : (selectedOption?.label || '')}
+          onChange={handleInputChange}
+          onFocus={handleInputFocus}
+          placeholder={selectedOption ? selectedOption.label : placeholder}
+          className="w-full px-3 py-2.5 pr-8 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+        />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400 pointer-events-none" />
+      </div>
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl shadow-lg">
+          {filtered.length === 0 ? (
+            <div className="px-3 py-2 text-sm text-surface-400">No results found</div>
+          ) : (
+            filtered.map(option => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleSelect(option.value)}
+                className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors ${
+                  option.value === value ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-surface-900 dark:text-surface-50'
+                }`}
+              >
+                <div className="font-medium">{option.label}</div>
+                {option.subtitle && (
+                  <div className="text-xs text-surface-400 dark:text-surface-500">{option.subtitle}</div>
+                )}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </div>
+  );
+}
 
 // Loading fallback
 function InterviewsPageLoading() {
@@ -52,8 +154,18 @@ function InterviewsPage() {
   const deleteInterviewMutation = useDeleteInterview();
   const generateQuestionsMutation = useGenerateInterviewQuestions();
 
+  // Interview data from React Query (replaces broken raw fetch)
+  const allInterviewsQuery = useAllInterviews(0, 200);
+  const candidateInterviewsQuery = useInterviewsByCandidate(candidateIdFilter || '', !!candidateIdFilter);
+
+  const interviews: Interview[] = useMemo(() => {
+    if (candidateIdFilter) {
+      return candidateInterviewsQuery.data || [];
+    }
+    return allInterviewsQuery.data?.content || [];
+  }, [candidateIdFilter, candidateInterviewsQuery.data, allInterviewsQuery.data]);
+
   // Local state
-  const [interviews, setInterviews] = useState<Interview[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
@@ -95,42 +207,7 @@ function InterviewsPage() {
   const jobOpenings = jobOpeningsData?.content || [];
   const interviewers = employeesData?.content || [];
 
-  const loadInterviews = async () => {
-    try {
-      if (candidateIdFilter) {
-        // Load interviews for specific candidate
-        const interviewsList = await fetch(
-          `/api/recruitment/candidates/${candidateIdFilter}/interviews`
-        ).then(res => res.json());
-        setInterviews(interviewsList);
-      } else {
-        // Aggregate interviews from all candidates
-        const allInterviews: Interview[] = [];
-        for (const candidate of candidates.slice(0, 20)) {
-          try {
-            const candidateInterviews = await fetch(
-              `/api/recruitment/candidates/${candidate.id}/interviews`
-            ).then(res => res.json());
-            allInterviews.push(...candidateInterviews);
-          } catch (e) {
-            // Ignore errors for individual candidates
-          }
-        }
-        setInterviews(allInterviews);
-      }
-    } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to load interviews',
-        color: 'red',
-      });
-    }
-  };
-
-  // Load interviews on mount and when filters/candidates change
-  useEffect(() => {
-    loadInterviews();
-  }, [candidateIdFilter, statusFilter, candidates.length]);
+  // Data is now loaded via React Query hooks above — no manual fetch needed
 
   const onSubmitCreate = async (data: CreateInterviewFormData) => {
     try {
@@ -172,7 +249,7 @@ function InterviewsPage() {
       setShowAddModal(false);
       resetCreate();
       setEditingInterview(null);
-      loadInterviews();
+      // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (err) {
       notifications.show({
         title: 'Error',
@@ -213,7 +290,7 @@ function InterviewsPage() {
       setShowFeedbackModal(false);
       setSelectedInterview(null);
       resetFeedback();
-      loadInterviews();
+      // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (err) {
       notifications.show({
         title: 'Error',
@@ -278,7 +355,7 @@ function InterviewsPage() {
       });
       setShowDeleteModal(false);
       setInterviewToDelete(null);
-      loadInterviews();
+      // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (err) {
       notifications.show({
         title: 'Error',
@@ -682,36 +759,29 @@ const formatDateTime = (dateString?: string): string => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate *</label>
-                      <select
-                        {...registerCreate('candidateId')}
-                        onChange={(e) => {
-                          const candidate = candidates.find(c => c.id === e.target.value);
-                          setValueCreate('candidateId', e.target.value);
+                      <SearchableSelect
+                        options={candidates.map(c => ({ value: c.id, label: c.fullName, subtitle: c.jobTitle || c.email }))}
+                        value={watchCreate('candidateId') || ''}
+                        onChange={(val) => {
+                          setValueCreate('candidateId', val);
+                          const candidate = candidates.find(c => c.id === val);
                           if (candidate?.jobOpeningId) {
                             setValueCreate('jobOpeningId', candidate.jobOpeningId);
                           }
                         }}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                      >
-                        <option value="">Select Candidate</option>
-                        {candidates.map((candidate) => (
-                          <option key={candidate.id} value={candidate.id}>{candidate.fullName}</option>
-                        ))}
-                      </select>
-                      {errorsCreate.candidateId && <p className="text-red-500 text-xs mt-1">{errorsCreate.candidateId.message}</p>}
+                        placeholder="Search candidates..."
+                        error={errorsCreate.candidateId?.message}
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
-                      <select
-                        {...registerCreate('jobOpeningId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                      >
-                        <option value="">Select Job Opening</option>
-                        {jobOpenings.map((job) => (
-                          <option key={job.id} value={job.id}>{job.jobTitle}</option>
-                        ))}
-                      </select>
-                      {errorsCreate.jobOpeningId && <p className="text-red-500 text-xs mt-1">{errorsCreate.jobOpeningId.message}</p>}
+                      <SearchableSelect
+                        options={jobOpenings.map(j => ({ value: j.id, label: j.jobTitle, subtitle: j.departmentName || j.location }))}
+                        value={watchCreate('jobOpeningId') || ''}
+                        onChange={(val) => setValueCreate('jobOpeningId', val)}
+                        placeholder="Search job openings..."
+                        error={errorsCreate.jobOpeningId?.message}
+                      />
                     </div>
                   </div>
 
@@ -768,15 +838,12 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interviewer</label>
-                    <select
-                      {...registerCreate('interviewerId')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                    >
-                      <option value="">Select Interviewer</option>
-                      {interviewers.map((interviewer: Employee) => (
-                        <option key={interviewer.id} value={interviewer.id}>{interviewer.fullName}</option>
-                      ))}
-                    </select>
+                    <SearchableSelect
+                      options={interviewers.map((emp: Employee) => ({ value: emp.id, label: emp.fullName, subtitle: emp.designation || emp.departmentName }))}
+                      value={watchCreate('interviewerId') || ''}
+                      onChange={(val) => setValueCreate('interviewerId', val)}
+                      placeholder="Search interviewers..."
+                    />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
