@@ -34,4 +34,8 @@ public class InterviewResponse {
     private UUID createdBy;
     private UUID lastModifiedBy;
     private Long version;
+
+    // Google Meet integration
+    private String googleMeetLink;
+    private String googleCalendarEventId;
 }

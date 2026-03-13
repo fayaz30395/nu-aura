@@ -107,16 +107,19 @@ public class NotificationEventConsumer {
         try {
             log.debug("Sending email to {}: subject={}", event.getRecipientId(), subject);
 
+            // recipientId is a UUID; resolve to email string for the email service
+            String recipientIdStr = event.getRecipientId() != null ? event.getRecipientId().toString() : "";
+
             if (templateName != null && !templateName.isEmpty()) {
                 // Send email with template data via EmailService
                 @SuppressWarnings("unchecked")
                 Map<String, String> stringVars = (Map<String, String>) (Map<?, ?>) templateData;
-                emailService.sendEmail(event.getRecipientId(), event.getRecipientName(), null, stringVars);
+                emailService.sendEmail(recipientIdStr, recipientIdStr, null, stringVars);
                 log.info("Email notification sent using template: {}", templateName);
             } else {
                 // Send plain text email via EmailService
                 Map<String, String> vars = Map.of();
-                emailService.sendEmail(event.getRecipientId(), event.getRecipientName(), null, vars);
+                emailService.sendEmail(recipientIdStr, recipientIdStr, null, vars);
                 log.info("Email notification sent with plain text");
             }
         } catch (Exception e) {
@@ -154,14 +157,14 @@ public class NotificationEventConsumer {
             log.debug("Creating in-app notification for {}: subject={}", event.getRecipientId(), event.getSubject());
 
             // Create in-app notification via NotificationService
-            UUID userId = UUID.fromString(event.getRecipientId());
+            UUID userId = event.getRecipientId();
             UUID entityId = event.getRelatedEntityId();
             String entityType = event.getRelatedEntityType();
             String actionUrl = event.getActionUrl();
 
             notificationService.createNotification(
                     userId,
-                    Notification.NotificationType.INFO,
+                    Notification.NotificationType.GENERAL,
                     event.getSubject(),
                     event.getBody(),
                     entityId,

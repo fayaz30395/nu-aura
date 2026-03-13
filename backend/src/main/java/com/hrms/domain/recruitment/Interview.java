@@ -69,6 +69,12 @@ public class Interview {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "google_meet_link", length = 500)
+    private String googleMeetLink;
+
+    @Column(name = "google_calendar_event_id", length = 255)
+    private String googleCalendarEventId;
+
     // ── Audit fields (mapped to existing DB columns from V0__init.sql) ──
 
     @CreatedDate

@@ -248,7 +248,7 @@ public class LetterService {
         candidate.setOfferedCtc(request.getOfferedCtc());
         candidate.setOfferedDesignation(request.getOfferedDesignation());
         candidate.setProposedJoiningDate(request.getProposedJoiningDate());
-        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
         // Note: offerExtendedDate and OFFER_EXTENDED status are set in issueOfferLetterWithESign()
 
         String referenceNumber = generateReferenceNumber(LetterCategory.OFFER, tenantId);

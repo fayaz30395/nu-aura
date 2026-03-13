@@ -134,7 +134,7 @@ integration:
 # Set mock-mode to false and provide OAuth credentials for real sync
 calendar:
   sync:
-    mock-mode: ${CALENDAR_MOCK_MODE:true}
+    mock-mode: ${CALENDAR_MOCK_MODE:false}
   google:
     client-id: ${GOOGLE_CALENDAR_CLIENT_ID:}
     client-secret: ${GOOGLE_CALENDAR_CLIENT_SECRET:}

@@ -156,6 +156,8 @@ export interface Interview {
   notes?: string;
   createdAt: string;
   updatedAt?: string;
+  googleMeetLink?: string;
+  googleCalendarEventId?: string;
 }
 
 export interface CreateInterviewRequest {
@@ -173,6 +175,8 @@ export interface CreateInterviewRequest {
   rating?: number;
   result?: InterviewResult;
   notes?: string;
+  createGoogleMeet?: boolean;
+  googleAccessToken?: string;
 }
 
 export interface Page<T> {

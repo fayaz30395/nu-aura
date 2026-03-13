@@ -14,7 +14,8 @@ import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validation
 import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings, useAllInterviews, useInterviewsByCandidate } from '@/lib/hooks/queries/useRecruitment';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/ai-recruitment';
-import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown, Link2 } from 'lucide-react';
+import { getGoogleToken, hasValidGoogleToken } from '@/lib/utils/googleToken';
 
 // ==================== Searchable Select Component ====================
 interface SearchableSelectOption {
@@ -176,6 +177,7 @@ function InterviewsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingInterview, setEditingInterview] = useState<Interview | null>(null);
   const [generatedQuestions, setGeneratedQuestions] = useState<InterviewQuestionsResponse | null>(null);
+  const [createMeetToggle, setCreateMeetToggle] = useState(false);
 
   // React Hook Form for create/edit modal
   const {
@@ -211,6 +213,7 @@ function InterviewsPage() {
 
   const onSubmitCreate = async (data: CreateInterviewFormData) => {
     try {
+      const googleToken = createMeetToggle ? getGoogleToken() : null;
       const submitData: CreateInterviewRequest = {
         candidateId: data.candidateId,
         jobOpeningId: data.jobOpeningId,
@@ -226,6 +229,8 @@ function InterviewsPage() {
         rating: data.rating,
         result: data.result,
         notes: data.notes,
+        createGoogleMeet: createMeetToggle && !!googleToken,
+        googleAccessToken: googleToken || undefined,
       };
 
       if (editingInterview) {
@@ -249,6 +254,7 @@ function InterviewsPage() {
       setShowAddModal(false);
       resetCreate();
       setEditingInterview(null);
+      setCreateMeetToggle(false);
       // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (err) {
       notifications.show({
@@ -683,7 +689,18 @@ const formatDateTime = (dateString?: string): string => {
                           <div className="text-xs text-surface-500 dark:text-surface-400">{interview.durationMinutes} min</div>
                         </td>
                         <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
-                          {interview.interviewerName || '-'}
+                          <div>{interview.interviewerName || '-'}</div>
+                          {(interview.googleMeetLink || interview.meetingLink) && (
+                            <a
+                              href={interview.googleMeetLink || interview.meetingLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                              <Video className="h-3 w-3" />
+                              Join Meet
+                            </a>
+                          )}
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(interview.status)}`}>
@@ -846,14 +863,80 @@ const formatDateTime = (dateString?: string): string => {
                     />
                   </div>
 
+                  {/* Google Meet Toggle */}
+                  {!editingInterview && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                      <div className="flex items-center gap-2 flex-1">
+                        <Video className="h-5 w-5 text-blue-500" />
+                        <div>
+                          <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Auto-create Google Meet</span>
+                          <p className="text-xs text-surface-500 dark:text-surface-400">
+                            {hasValidGoogleToken()
+                              ? 'Creates a Calendar event with Meet link automatically'
+                              : 'Sign in with Google to enable Meet link generation'}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (hasValidGoogleToken()) {
+                            const newState = !createMeetToggle;
+                            setCreateMeetToggle(newState);
+                            // Auto-set duration to 60 minutes when enabling Meet and no duration is set
+                            if (newState && !watchCreate('durationMinutes')) {
+                              setValueCreate('durationMinutes', 60);
+                            }
+                          } else {
+                            notifications.show({
+                              title: 'Google Sign-in Required',
+                              message: 'Please sign in with Google (with calendar permissions) to auto-create Meet links.',
+                              color: 'yellow',
+                            });
+                          }
+                        }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${
+                          createMeetToggle ? 'bg-blue-500' : 'bg-surface-300 dark:bg-surface-600'
+                        } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        disabled={!hasValidGoogleToken()}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            createMeetToggle ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Time Slot Preview when Google Meet is enabled */}
+                  {createMeetToggle && watchCreate('scheduledAt') && (
+                    <div className="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>
+                        Calendar event: {new Date(watchCreate('scheduledAt')).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                        {' — '}
+                        {watchCreate('durationMinutes')
+                          ? new Date(new Date(watchCreate('scheduledAt')).getTime() + (watchCreate('durationMinutes') as number) * 60000).toLocaleTimeString('en-IN', { timeStyle: 'short' })
+                          : '(set duration)'}
+                        {watchCreate('durationMinutes') ? ` (${watchCreate('durationMinutes')} min)` : ''}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Meeting Link</label>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        {createMeetToggle ? 'Meeting Link (auto-generated)' : 'Meeting Link'}
+                      </label>
                       <input
                         type="url"
                         {...registerCreate('meetingLink')}
-                        placeholder="https://meet.google.com/..."
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
+                        disabled={createMeetToggle}
+                        className={`w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                          createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
+                        }`}
                       />
                       {errorsCreate.meetingLink && <p className="text-red-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
