@@ -57,8 +57,8 @@ export default function EmploymentChangeRequestsPage() {
       await employmentChangeRequestService.approveChangeRequest(id);
       alert('Change request approved successfully. Employee details have been updated.');
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to approve change request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve change request');
     } finally {
       setProcessing(null);
     }
@@ -79,8 +79,8 @@ export default function EmploymentChangeRequestsPage() {
       setShowRejectModal(null);
       setRejectionReason('');
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to reject change request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject change request');
     } finally {
       setProcessing(null);
     }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { AppLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Title,
@@ -145,7 +146,8 @@ export default function FnFPage() {
   const canApprove = data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL';
 
   return (
-    <Stack gap="lg" p="md">
+    <AppLayout>
+      <Stack gap="lg" p="md">
       <Group justify="space-between">
         <div>
           <Title order={2}>Full & Final Settlement</Title>
@@ -307,6 +309,7 @@ export default function FnFPage() {
           </Group>
         </Paper>
       )}
-    </Stack>
+      </Stack>
+    </AppLayout>
   );
 }

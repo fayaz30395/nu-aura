@@ -105,8 +105,8 @@ export default function PayrollPage() {
       setError(null);
       const response = await payrollService.getAllPayrollRuns(0, 100);
       setPayrollRuns(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load payroll runs');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payroll runs');
       console.error('Error loading payroll runs:', err);
     } finally {
       setLoading(false);
@@ -148,8 +148,8 @@ export default function PayrollPage() {
       }
       await loadPayrollRuns();
       setPayrollRunModal({ isOpen: false, mode: 'create' });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save payroll run');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payroll run');
     } finally {
       setLoading(false);
     }
@@ -163,8 +163,8 @@ export default function PayrollPage() {
       await loadPayrollRuns();
       setShowRunDeleteConfirm(false);
       setSelectedPayrollRun(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete payroll run');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payroll run');
     } finally {
       setLoading(false);
     }
@@ -175,8 +175,8 @@ export default function PayrollPage() {
       setLoading(true);
       await payrollService.processPayrollRun(run.id);
       await loadPayrollRuns();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to process payroll run');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to process payroll run');
     } finally {
       setLoading(false);
     }
@@ -187,8 +187,8 @@ export default function PayrollPage() {
       setLoading(true);
       await payrollService.approvePayrollRun(run.id);
       await loadPayrollRuns();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to approve payroll run');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve payroll run');
     } finally {
       setLoading(false);
     }
@@ -201,8 +201,8 @@ export default function PayrollPage() {
       setError(null);
       const response = await payrollService.getAllPayslips(0, 100);
       setPayslips(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load payslips');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
       console.error('Error loading payslips:', err);
     } finally {
       setLoading(false);
@@ -250,8 +250,8 @@ export default function PayrollPage() {
       }
       await loadPayslips();
       setPayslipModal({ isOpen: false, mode: 'create' });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save payslip');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payslip');
     } finally {
       setLoading(false);
     }
@@ -265,8 +265,8 @@ export default function PayrollPage() {
       await loadPayslips();
       setShowPayslipDeleteConfirm(false);
       setSelectedPayslip(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete payslip');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payslip');
     } finally {
       setLoading(false);
     }
@@ -279,8 +279,8 @@ export default function PayrollPage() {
       setError(null);
       const response = await payrollService.getAllSalaryStructures(0, 100);
       setSalaryStructures(response.content);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load salary structures');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load salary structures');
       console.error('Error loading salary structures:', err);
     } finally {
       setLoading(false);
@@ -373,8 +373,8 @@ export default function PayrollPage() {
       }
       await loadSalaryStructures();
       setStructureModal({ isOpen: false, mode: 'create' });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save salary structure');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save salary structure');
     } finally {
       setLoading(false);
     }
@@ -388,8 +388,8 @@ export default function PayrollPage() {
       await loadSalaryStructures();
       setShowStructureDeleteConfirm(false);
       setSelectedStructure(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete salary structure');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete salary structure');
     } finally {
       setLoading(false);
     }

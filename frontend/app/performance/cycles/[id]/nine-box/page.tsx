@@ -1,4 +1,5 @@
 'use client';
+import { AppLayout } from '@/components/layout';
 
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -93,8 +94,9 @@ export default function NineBoxPage() {
   const perfCols: Array<'low' | 'med' | 'high'> = ['low', 'med', 'high'];
 
   return (
-    <Stack gap="lg" p="md">
-      <Group justify="space-between">
+    <AppLayout>
+      <Stack gap="lg" p="md">
+        <Group justify="space-between">
         <div>
           <Title order={2}>9-Box Grid</Title>
           <Text c="dimmed" size="sm">{data.cycleName} — Performance vs Potential</Text>
@@ -170,6 +172,7 @@ export default function NineBoxPage() {
           </Group>
         ))}
       </SimpleGrid>
-    </Stack>
+      </Stack>
+    </AppLayout>
   );
 }

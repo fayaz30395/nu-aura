@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -91,6 +92,7 @@ interface GoogleNotification {
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasPermission, isReady: permissionsReady } = usePermissions();
   const [isLoading, setIsLoading] = useState(true);
   const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -119,18 +121,24 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!hasHydrated) return;
+    if (!hasHydrated || !permissionsReady) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else {
-      loadAnalytics();
-      loadTodayAttendance();
-      loadGoogleNotifications();
-      if (user?.roles?.some(r => r.name === 'ADMIN' || r.name === 'HR')) {
-        loadOnboardingStats();
-      }
+      return;
     }
-  }, [hasHydrated, isAuthenticated, router, user]);
+    // Guard: only users with DASHBOARD_VIEW permission can access this HR overview.
+    // Regular employees should use /me/dashboard instead.
+    if (!hasPermission(Permissions.DASHBOARD_VIEW)) {
+      router.replace('/me/dashboard');
+      return;
+    }
+    loadAnalytics();
+    loadTodayAttendance();
+    loadGoogleNotifications();
+    if (user?.roles?.some(r => r.name === 'ADMIN' || r.name === 'HR')) {
+      loadOnboardingStats();
+    }
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, user, hasPermission]);
 
   const loadOnboardingStats = async () => {
     try {
@@ -336,8 +344,8 @@ export default function DashboardPage() {
       });
       // Reload attendance and time entries to get fresh data
       await loadTodayAttendance();
-    } catch (err: any) {
-      setClockError(err.response?.data?.message || 'Failed to check in');
+    } catch (err: unknown) {
+      setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
     } finally {
       setIsClockingIn(false);
     }
@@ -358,8 +366,8 @@ export default function DashboardPage() {
       });
       // Reload attendance and time entries to get fresh data
       await loadTodayAttendance();
-    } catch (err: any) {
-      setClockError(err.response?.data?.message || 'Failed to check out');
+    } catch (err: unknown) {
+      setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
     } finally {
       setIsClockingIn(false);
     }
@@ -371,13 +379,13 @@ export default function DashboardPage() {
       setError(null);
       const data = await analyticsService.getDashboardAnalytics();
       setAnalytics(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Analytics error:', err);
-      if (err.response?.status === 403) {
+      if ((err as { response?: { status?: number } })?.response?.status === 403) {
         setError('You do not have access to analytics.');
         return;
       }
-      setError(err.response?.data?.message || 'Failed to load analytics data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load analytics data');
     } finally {
       setIsLoading(false);
     }

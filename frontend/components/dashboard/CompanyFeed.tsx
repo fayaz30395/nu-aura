@@ -3,74 +3,75 @@
 import { useState, useEffect } from 'react';
 import { format, formatDistanceToNow, isToday, parseISO } from 'date-fns';
 import {
-  Megaphone,
-  Cake,
-  Trophy,
-  UserPlus,
-  TrendingUp,
-  Award,
-  Heart,
-  MessageCircle,
-  ThumbsUp,
-  Star,
-  Pin,
-  ChevronDown,
-  Sparkles,
-  PartyPopper,
-  Gift,
-  RefreshCw,
+  Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
+  MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown,
+  RefreshCw, Linkedin, Lightbulb, ExternalLink,
 } from 'lucide-react';
-import { Card, CardContent, Badge } from '@/components/ui';
 import { feedService } from '@/lib/services/feed.service';
+import { wallService } from '@/lib/services/wall.service';
 import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 
 // ─── Config ──────────────────────────────────────────────────────────
 const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
   ANNOUNCEMENT: {
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    border: 'border-l-blue-500',
-    icon: 'text-blue-600 dark:text-blue-400',
-    badge: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
   BIRTHDAY: {
-    bg: 'bg-pink-50 dark:bg-pink-950/30',
-    border: 'border-l-pink-500',
-    icon: 'text-pink-600 dark:text-pink-400',
-    badge: 'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
   WORK_ANNIVERSARY: {
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    border: 'border-l-amber-500',
-    icon: 'text-amber-600 dark:text-amber-400',
-    badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
   NEW_JOINER: {
-    bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-    border: 'border-l-emerald-500',
-    icon: 'text-emerald-600 dark:text-emerald-400',
-    badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
   PROMOTION: {
-    bg: 'bg-violet-50 dark:bg-violet-950/30',
-    border: 'border-l-violet-500',
-    icon: 'text-violet-600 dark:text-violet-400',
-    badge: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
   RECOGNITION: {
-    bg: 'bg-orange-50 dark:bg-orange-950/30',
-    border: 'border-l-orange-500',
-    icon: 'text-orange-600 dark:text-orange-400',
-    badge: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+  },
+  LINKEDIN_POST: {
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+  },
+  SPOTLIGHT: {
+    bg: 'bg-gray-50 dark:bg-gray-900',
+    border: 'border-l-gray-400',
+    icon: 'text-gray-500 dark:text-gray-400',
+    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   },
 };
 
 const FEED_ICONS: Record<FeedItemType, React.ReactNode> = {
-  ANNOUNCEMENT: <Megaphone className="h-5 w-5" />,
-  BIRTHDAY: <Cake className="h-5 w-5" />,
-  WORK_ANNIVERSARY: <Trophy className="h-5 w-5" />,
-  NEW_JOINER: <UserPlus className="h-5 w-5" />,
-  PROMOTION: <TrendingUp className="h-5 w-5" />,
-  RECOGNITION: <Award className="h-5 w-5" />,
+  ANNOUNCEMENT: <Megaphone className="h-4 w-4" />,
+  BIRTHDAY: <Cake className="h-4 w-4" />,
+  WORK_ANNIVERSARY: <Trophy className="h-4 w-4" />,
+  NEW_JOINER: <UserPlus className="h-4 w-4" />,
+  PROMOTION: <TrendingUp className="h-4 w-4" />,
+  RECOGNITION: <Award className="h-4 w-4" />,
+  LINKEDIN_POST: <Linkedin className="h-4 w-4" />,
+  SPOTLIGHT: <Lightbulb className="h-4 w-4" />,
 };
 
 const FEED_LABELS: Record<FeedItemType, string> = {
@@ -80,11 +81,12 @@ const FEED_LABELS: Record<FeedItemType, string> = {
   NEW_JOINER: 'New Joiner',
   PROMOTION: 'Promotion',
   RECOGNITION: 'Recognition',
+  LINKEDIN_POST: 'LinkedIn',
+  SPOTLIGHT: 'Spotlight',
 };
 
 const ITEMS_PER_PAGE = 8;
 
-// ─── Filter Types ────────────────────────────────────────────────────
 type FeedFilter = 'ALL' | FeedItemType;
 
 const FILTER_OPTIONS: { value: FeedFilter; label: string }[] = [
@@ -94,6 +96,7 @@ const FILTER_OPTIONS: { value: FeedFilter; label: string }[] = [
   { value: 'WORK_ANNIVERSARY', label: 'Anniversaries' },
   { value: 'NEW_JOINER', label: 'New Joiners' },
   { value: 'RECOGNITION', label: 'Recognition' },
+  { value: 'LINKEDIN_POST', label: 'LinkedIn' },
 ];
 
 // ─── Main Component ──────────────────────────────────────────────────
@@ -114,9 +117,7 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
       else setIsLoading(true);
       const data = await feedService.getCompanyFeed(employeeId);
       setItems(data);
-    } catch (error) {
-      console.error('[CompanyFeed] Failed to load feed:', error);
-      // Set demo data on failure
+    } catch {
       setItems(getDemoFeed());
     } finally {
       setIsLoading(false);
@@ -124,120 +125,90 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
     }
   };
 
-  useEffect(() => {
-    loadFeed();
-  }, [employeeId]);
+  useEffect(() => { loadFeed(); }, [employeeId]);
 
-  const filteredItems = activeFilter === 'ALL'
-    ? items
-    : items.filter(item => item.type === activeFilter);
-
+  const filteredItems = activeFilter === 'ALL' ? items : items.filter(item => item.type === activeFilter);
   const visibleItems = filteredItems.slice(0, visibleCount);
   const hasMore = visibleCount < filteredItems.length;
 
-  const handleShowMore = () => {
-    setVisibleCount(prev => prev + ITEMS_PER_PAGE);
-  };
-
-  // ─── Loading State ───────────────────────────────────────────
   if (isLoading) {
     return (
-      <Card>
-        <CardContent>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary-500" />
-              Company Feed
-            </h3>
-          </div>
-          <div className="space-y-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="animate-pulse">
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
-                  <div className="w-10 h-10 rounded-full bg-surface-200 dark:bg-surface-700" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-surface-200 dark:bg-surface-700 rounded w-1/3" />
-                    <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded w-2/3" />
-                    <div className="h-3 bg-surface-200 dark:bg-surface-700 rounded w-1/2" />
-                  </div>
-                </div>
+      <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Company Feed</h3>
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="animate-pulse flex items-start gap-2.5 p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 
-  // ─── Main Render ─────────────────────────────────────────────
   return (
-    <Card>
-      <CardContent>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary-500" />
-            Company Feed
-          </h3>
-          <button
-            onClick={() => loadFeed(true)}
-            disabled={isRefreshing}
-            className="p-1.5 rounded-lg text-surface-400 hover:text-primary-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
-            title="Refresh feed"
-          >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
+    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          Company Feed
+        </h3>
+        <button
+          onClick={() => loadFeed(true)}
+          disabled={isRefreshing}
+          className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          title="Refresh"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+        </button>
+      </div>
 
-        {/* Filter Chips */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {FILTER_OPTIONS.map(option => (
-            <button
-              key={option.value}
-              onClick={() => {
-                setActiveFilter(option.value);
-                setVisibleCount(ITEMS_PER_PAGE);
-              }}
-              className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                activeFilter === option.value
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-surface-100 text-surface-600 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-400 dark:hover:bg-surface-700'
-              }`}
-            >
-              {option.label}
-            </button>
+      {/* Filter Chips */}
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {FILTER_OPTIONS.map(option => (
+          <button
+            key={option.value}
+            onClick={() => { setActiveFilter(option.value); setVisibleCount(ITEMS_PER_PAGE); }}
+            className={`px-2.5 py-1 text-[11px] font-medium rounded-full transition-colors ${
+              activeFilter === option.value
+                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Feed Items */}
+      {visibleItems.length > 0 ? (
+        <div className="space-y-2">
+          {visibleItems.map(item => (
+            <FeedCard key={item.id} item={item} />
           ))}
         </div>
+      ) : (
+        <div className="text-center py-6">
+          <p className="text-xs text-gray-400">
+            {activeFilter === 'ALL' ? 'No feed items yet.' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items.`}
+          </p>
+        </div>
+      )}
 
-        {/* Feed Items */}
-        {visibleItems.length > 0 ? (
-          <div className="space-y-3">
-            {visibleItems.map(item => (
-              <FeedCard key={item.id} item={item} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <Sparkles className="h-10 w-10 mx-auto text-surface-300 dark:text-surface-600 mb-3" />
-            <p className="text-surface-500 dark:text-surface-400 text-sm">
-              {activeFilter === 'ALL'
-                ? 'No feed items yet. Check back soon!'
-                : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items to show.`}
-            </p>
-          </div>
-        )}
-
-        {/* Show More */}
-        {hasMore && (
-          <button
-            onClick={handleShowMore}
-            className="w-full mt-4 py-2 text-sm font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-primary-950/30 rounded-lg transition-colors flex items-center justify-center gap-1"
-          >
-            Show more <ChevronDown className="h-4 w-4" />
-          </button>
-        )}
-      </CardContent>
-    </Card>
+      {/* Show More */}
+      {hasMore && (
+        <button
+          onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
+          className="w-full mt-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-colors flex items-center justify-center gap-1"
+        >
+          Show more <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -245,83 +216,94 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
 function FeedCard({ item }: { item: FeedItem }) {
   const colors = FEED_COLORS[item.type];
   const icon = FEED_ICONS[item.type];
+  const [liked, setLiked] = useState(false);
+  const [localLikeCount, setLocalLikeCount] = useState(item.likesCount ?? 0);
+
+  const handleLike = async () => {
+    const wasLiked = liked;
+    setLiked(!wasLiked);
+    setLocalLikeCount((prev) => wasLiked ? Math.max(0, prev - 1) : prev + 1);
+    try {
+      if (item.wallPostId) {
+        if (wasLiked) {
+          await wallService.removeReaction(item.wallPostId);
+        } else {
+          await wallService.addReaction(item.wallPostId, 'LIKE');
+        }
+      }
+    } catch {
+      // Revert on error
+      setLiked(wasLiked);
+      setLocalLikeCount(item.likesCount ?? 0);
+    }
+  };
 
   return (
-    <div className={`relative rounded-lg border-l-4 ${colors.border} ${colors.bg} p-4 transition-all hover:shadow-sm`}>
-      <div className="flex items-start gap-3">
-        {/* Icon / Avatar */}
-        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${colors.bg} ${colors.icon}`}>
+    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800`}>
+      <div className="flex items-start gap-2.5">
+        {/* Icon */}
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
           {item.personAvatarUrl ? (
-            <img
-              src={item.personAvatarUrl}
-              alt={item.personName || ''}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          ) : (
-            icon
-          )}
+            <img src={item.personAvatarUrl} alt={item.personName || ''} className="w-8 h-8 rounded-full object-cover" />
+          ) : icon}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Type Badge + Pinned */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${colors.badge}`}>
+          {/* Badge row */}
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded ${colors.badge}`}>
               {FEED_LABELS[item.type]}
             </span>
             {item.isPinned && (
-              <span className="inline-flex items-center gap-0.5 text-xs text-amber-600 dark:text-amber-400">
-                <Pin className="h-3 w-3" /> Pinned
+              <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                <Pin className="h-2.5 w-2.5" /> Pinned
               </span>
             )}
             {item.isToday && (
-              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
-                Today
-              </span>
+              <span className="text-[10px] font-medium text-green-600 dark:text-green-400">Today</span>
             )}
             {item.priority === 'CRITICAL' && (
-              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
-                Urgent
-              </span>
+              <span className="text-[10px] font-medium text-red-600 dark:text-red-400">Urgent</span>
             )}
           </div>
 
           {/* Title */}
-          <p className="text-sm font-semibold text-surface-900 dark:text-surface-50 leading-snug">
+          <p className="text-sm font-medium text-gray-900 dark:text-white leading-snug">
             {item.title}
           </p>
 
-          {/* Type-specific details */}
+          {/* Type-specific content */}
           {item.type === 'ANNOUNCEMENT' && item.description && (
-            <p className="text-xs text-surface-600 dark:text-surface-400 mt-1 line-clamp-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
               {stripHtml(item.description)}
             </p>
           )}
 
           {item.type === 'RECOGNITION' && (
-            <div className="mt-1">
-              <p className="text-xs text-surface-600 dark:text-surface-400">
-                {item.giverName} recognized <span className="font-medium text-surface-800 dark:text-surface-200">{item.receiverName}</span>
+            <div className="mt-0.5">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {item.giverName} recognized <span className="font-medium text-gray-700 dark:text-gray-300">{item.receiverName}</span>
               </p>
               {item.description && (
-                <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5 line-clamp-2 italic">
+                <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 italic">
                   &ldquo;{item.description}&rdquo;
                 </p>
               )}
-              <div className="flex items-center gap-3 mt-1.5">
+              <div className="flex items-center gap-2.5 mt-1">
                 {item.pointsAwarded && item.pointsAwarded > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-amber-600 dark:text-amber-400">
-                    <Star className="h-3 w-3" /> {item.pointsAwarded} pts
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500">
+                    <Star className="h-2.5 w-2.5" /> {item.pointsAwarded} pts
                   </span>
                 )}
                 {(item.likesCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-surface-500">
-                    <ThumbsUp className="h-3 w-3" /> {item.likesCount}
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                    <ThumbsUp className="h-2.5 w-2.5" /> {item.likesCount}
                   </span>
                 )}
                 {(item.commentsCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-xs text-surface-500">
-                    <MessageCircle className="h-3 w-3" /> {item.commentsCount}
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                    <MessageCircle className="h-2.5 w-2.5" /> {item.commentsCount}
                   </span>
                 )}
               </div>
@@ -329,40 +311,91 @@ function FeedCard({ item }: { item: FeedItem }) {
           )}
 
           {item.type === 'BIRTHDAY' && (
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
-              {item.personDepartment && <span>{item.personDepartment}</span>}
-              {!item.isToday && item.daysUntil !== undefined && (
-                <span> &middot; in {item.daysUntil} day{item.daysUntil !== 1 ? 's' : ''}</span>
-              )}
+            <p className="text-xs text-gray-400 mt-0.5">
+              {item.personDepartment}
+              {!item.isToday && item.daysUntil !== undefined && ` · in ${item.daysUntil}d`}
             </p>
           )}
 
           {item.type === 'WORK_ANNIVERSARY' && (
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
-              {item.personDesignation && <span>{item.personDesignation}</span>}
-              {item.personDepartment && <span> &middot; {item.personDepartment}</span>}
+            <p className="text-xs text-gray-400 mt-0.5">
+              {item.personDesignation}{item.personDepartment && ` · ${item.personDepartment}`}
             </p>
           )}
 
           {item.type === 'NEW_JOINER' && (
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">
+            <p className="text-xs text-gray-400 mt-0.5">
               {item.description}
               {item.daysSinceJoining !== undefined && item.daysSinceJoining <= 7 && (
-                <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                <span className="ml-1 text-gray-500 font-medium">
                   (joined {item.daysSinceJoining === 0 ? 'today' : `${item.daysSinceJoining}d ago`})
                 </span>
               )}
             </p>
           )}
 
-          {/* Footer: timestamp + publisher */}
-          <div className="flex items-center gap-2 mt-2 text-xs text-surface-400">
+          {item.type === 'LINKEDIN_POST' && (
+            <div className="mt-1">
+              {item.description && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
+              )}
+              {item.linkedinImageUrl && (
+                <div className="mt-1.5 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  <img src={item.linkedinImageUrl} alt="" className="w-full h-24 object-cover" />
+                </div>
+              )}
+              <div className="flex items-center gap-2.5 mt-1.5">
+                {item.linkedinEngagement && (
+                  <>
+                    {item.linkedinEngagement.likes > 0 && (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                        <ThumbsUp className="h-2.5 w-2.5" /> {item.linkedinEngagement.likes}
+                      </span>
+                    )}
+                    {item.linkedinEngagement.comments > 0 && (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                        <MessageCircle className="h-2.5 w-2.5" /> {item.linkedinEngagement.comments}
+                      </span>
+                    )}
+                  </>
+                )}
+                {item.linkedinPostUrl && (
+                  <a
+                    href={item.linkedinPostUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-0.5 text-[10px] font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ml-auto"
+                  >
+                    View on LinkedIn <ExternalLink className="h-2.5 w-2.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Reaction Bar */}
+          <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-gray-100 dark:border-gray-800">
+            <button
+              onClick={handleLike}
+              className={`inline-flex items-center gap-1 text-[11px] transition-colors ${
+                liked ? 'text-red-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              }`}
+            >
+              <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
+              {localLikeCount > 0 ? localLikeCount : 'Like'}
+            </button>
+            <button className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              <MessageCircle className="h-3 w-3" />
+              {(item.commentsCount ?? 0) > 0 ? item.commentsCount : 'Comment'}
+            </button>
+          </div>
+
+          {/* Timestamp */}
+          <div className="flex items-center gap-1.5 mt-1 text-[10px] text-gray-400">
             <span>{formatFeedDate(item.timestamp)}</span>
-            {item.publishedByName && (
-              <span>&middot; by {item.publishedByName}</span>
-            )}
+            {item.publishedByName && <span>· {item.publishedByName}</span>}
             {item.readCount !== undefined && item.readCount > 0 && (
-              <span>&middot; {item.readCount} read{item.readCount !== 1 ? 's' : ''}</span>
+              <span>· {item.readCount} read{item.readCount !== 1 ? 's' : ''}</span>
             )}
           </div>
         </div>
@@ -380,14 +413,13 @@ function formatFeedDate(dateStr: string): string {
   try {
     const date = parseISO(dateStr);
     if (isToday(date)) return 'Today';
-    const distance = formatDistanceToNow(date, { addSuffix: true });
-    return distance;
+    return formatDistanceToNow(date, { addSuffix: true });
   } catch {
     return dateStr;
   }
 }
 
-// ─── Demo Feed Data (fallback when APIs fail) ────────────────────────
+// ─── Demo Feed Data ──────────────────────────────────────────────────
 function getDemoFeed(): FeedItem[] {
   const today = new Date().toISOString();
   const yesterday = new Date(Date.now() - 86400000).toISOString();
@@ -397,99 +429,63 @@ function getDemoFeed(): FeedItem[] {
 
   return [
     {
-      id: 'demo-ann-1',
-      type: 'ANNOUNCEMENT',
-      timestamp: today,
+      id: 'demo-ann-1', type: 'ANNOUNCEMENT', timestamp: today,
       title: 'Q1 2026 All-Hands Meeting — March 20th',
       description: 'Join us for the quarterly all-hands meeting. We will discuss company performance, upcoming product launches, and open Q&A with leadership.',
-      category: 'EVENT',
-      priority: 'HIGH',
-      isPinned: true,
-      publishedByName: 'HR Team',
-      readCount: 45,
+      category: 'EVENT', priority: 'HIGH', isPinned: true, publishedByName: 'HR Team', readCount: 45,
     },
     {
-      id: 'demo-bday-1',
-      type: 'BIRTHDAY',
-      timestamp: today,
+      id: 'demo-bday-1', type: 'BIRTHDAY', timestamp: today,
       title: 'Happy Birthday, Priya Sharma!',
-      personName: 'Priya Sharma',
-      personDepartment: 'Engineering',
-      isToday: true,
-      daysUntil: 0,
+      personName: 'Priya Sharma', personDepartment: 'Engineering', isToday: true, daysUntil: 0,
     },
     {
-      id: 'demo-recog-1',
-      type: 'RECOGNITION',
-      timestamp: yesterday,
+      id: 'demo-recog-1', type: 'RECOGNITION', timestamp: yesterday,
       title: 'Outstanding Delivery',
       description: 'Incredible work on the payment gateway integration. The client was thrilled with the early delivery!',
-      giverName: 'Arjun Patel',
-      receiverName: 'Meera Nair',
-      recognitionType: 'KUDOS',
-      recognitionCategory: 'GOING_EXTRA_MILE',
-      pointsAwarded: 50,
-      likesCount: 12,
-      commentsCount: 3,
+      giverName: 'Arjun Patel', receiverName: 'Meera Nair',
+      recognitionType: 'KUDOS', recognitionCategory: 'GOING_EXTRA_MILE',
+      pointsAwarded: 50, likesCount: 12, commentsCount: 3,
     },
     {
-      id: 'demo-anniv-1',
-      type: 'WORK_ANNIVERSARY',
-      timestamp: yesterday,
+      id: 'demo-anniv-1', type: 'WORK_ANNIVERSARY', timestamp: yesterday,
       title: 'Rahul Verma completes 3 years!',
-      personName: 'Rahul Verma',
-      personDepartment: 'Product',
-      personDesignation: 'Senior Product Manager',
-      yearsCompleted: 3,
-      isToday: false,
-      daysUntil: 1,
+      personName: 'Rahul Verma', personDepartment: 'Product', personDesignation: 'Senior Product Manager',
+      yearsCompleted: 3, isToday: false, daysUntil: 1,
     },
     {
-      id: 'demo-newjoin-1',
-      type: 'NEW_JOINER',
-      timestamp: twoDaysAgo,
+      id: 'demo-newjoin-1', type: 'NEW_JOINER', timestamp: twoDaysAgo,
       title: 'Welcome Ananya Reddy to the team!',
       description: 'UX Designer - Design',
-      personName: 'Ananya Reddy',
-      personDepartment: 'Design',
-      personDesignation: 'UX Designer',
+      personName: 'Ananya Reddy', personDepartment: 'Design', personDesignation: 'UX Designer',
       daysSinceJoining: 2,
     },
     {
-      id: 'demo-ann-2',
-      type: 'ANNOUNCEMENT',
-      timestamp: threeDaysAgo,
+      id: 'demo-ann-2', type: 'ANNOUNCEMENT', timestamp: threeDaysAgo,
       title: 'Updated Remote Work Policy — Effective April 1',
-      description: 'We are updating our hybrid work policy. Employees can now work remotely up to 3 days per week. Please review the full policy in the HR portal.',
-      category: 'POLICY_UPDATE',
-      priority: 'MEDIUM',
-      isPinned: false,
-      publishedByName: 'Deepa Kumar',
-      readCount: 128,
+      description: 'We are updating our hybrid work policy. Employees can now work remotely up to 3 days per week.',
+      category: 'POLICY_UPDATE', priority: 'MEDIUM', isPinned: false, publishedByName: 'Deepa Kumar', readCount: 128,
     },
     {
-      id: 'demo-recog-2',
-      type: 'RECOGNITION',
-      timestamp: fiveDaysAgo,
+      id: 'demo-recog-2', type: 'RECOGNITION', timestamp: fiveDaysAgo,
       title: 'Team Player Award',
       description: 'Always willing to help others and share knowledge. A true team player!',
-      giverName: 'Vikram Singh',
-      receiverName: 'Kavitha Rajan',
-      recognitionType: 'APPRECIATION',
-      recognitionCategory: 'TEAMWORK',
-      pointsAwarded: 30,
-      likesCount: 8,
-      commentsCount: 1,
+      giverName: 'Vikram Singh', receiverName: 'Kavitha Rajan',
+      recognitionType: 'APPRECIATION', recognitionCategory: 'TEAMWORK',
+      pointsAwarded: 30, likesCount: 8, commentsCount: 1,
     },
     {
-      id: 'demo-bday-2',
-      type: 'BIRTHDAY',
-      timestamp: new Date(Date.now() + 172800000).toISOString(),
+      id: 'demo-bday-2', type: 'BIRTHDAY', timestamp: new Date(Date.now() + 172800000).toISOString(),
       title: "Arun Kumar's birthday is coming up",
-      personName: 'Arun Kumar',
-      personDepartment: 'Finance',
-      isToday: false,
-      daysUntil: 2,
+      personName: 'Arun Kumar', personDepartment: 'Finance', isToday: false, daysUntil: 2,
+    },
+    {
+      id: 'demo-linkedin-1', type: 'LINKEDIN_POST' as FeedItemType, timestamp: yesterday,
+      title: 'Nulogic recognized as Top 50 HR Tech Startups 2026',
+      description: 'Thrilled to announce that Nulogic has been featured in the Top 50 HR Tech Startups to Watch in 2026.',
+      linkedinAuthor: 'Nulogic', linkedinAuthorTitle: 'Official Company Page',
+      linkedinPostUrl: 'https://linkedin.com/company/nulogic', linkedinImageUrl: undefined,
+      linkedinEngagement: { likes: 234, comments: 45, shares: 67 },
     },
   ];
 }

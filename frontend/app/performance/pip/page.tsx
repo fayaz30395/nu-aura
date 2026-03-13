@@ -1,4 +1,5 @@
 'use client';
+import { AppLayout } from '@/components/layout';
 
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -707,8 +708,9 @@ export default function PIPPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <AppLayout>
+      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -832,6 +834,7 @@ export default function PIPPage() {
         onClose={() => setSelectedPIP(null)}
         onUpdated={handlePIPUpdated}
       />
-    </div>
+      </div>
+    </AppLayout>
   );
 }

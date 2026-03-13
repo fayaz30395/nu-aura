@@ -1,4 +1,5 @@
 'use client';
+import { AppLayout } from '@/components/layout';
 
 import { useState, useEffect } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, SimpleGrid, RingProgress, Center, ThemeIcon } from '@mantine/core';
@@ -96,8 +97,9 @@ export default function PsaProjectsPage() {
     ));
 
     return (
-        <Container size="xl" py="lg">
-            <Group justify="space-between" mb="lg">
+        <AppLayout>
+            <Container size="xl" py="lg">
+                <Group justify="space-between" mb="lg">
                 <div>
                     <Title order={2}>Projects</Title>
                     <Text c="dimmed">Manage client projects, resources, and billing</Text>
@@ -178,6 +180,7 @@ export default function PsaProjectsPage() {
                     </Table.Tbody>
                 </Table>
             </Card>
-        </Container>
+            </Container>
+        </AppLayout>
     );
 }

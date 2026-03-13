@@ -39,8 +39,8 @@ export default function OrgChartPage() {
       ]);
       setEmployees(empResponse.content);
       setDepartments(deptResponse);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load organization data');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load organization data');
       console.error('Error loading org data:', err);
     } finally {
       setLoading(false);

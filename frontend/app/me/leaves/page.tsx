@@ -92,9 +92,9 @@ export default function MyLeavesPage() {
       setLeaveRequests(requests.content);
       setLeaveBalances(balances);
       setLeaveTypes(types);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load leave data:', err);
-      setError(err.response?.data?.message || 'Failed to load leave data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave data');
     } finally {
       setIsLoading(false);
     }
@@ -161,9 +161,9 @@ export default function MyLeavesPage() {
       });
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to submit leave request:', err);
-      setError(err.response?.data?.message || 'Failed to submit leave request');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
     } finally {
       setIsSubmitting(false);
     }
@@ -221,9 +221,9 @@ export default function MyLeavesPage() {
       setCancelReason('');
       await loadData();
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to cancel leave request:', err);
-      setError(err.response?.data?.message || 'Failed to cancel leave request');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
     } finally {
       setIsSubmitting(false);
     }
@@ -291,6 +291,26 @@ export default function MyLeavesPage() {
       <AppLayout activeMenuItem="leaves">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!user?.employeeId) {
+    return (
+      <AppLayout activeMenuItem="leaves">
+        <div className="text-center py-12">
+          <Calendar className="h-16 w-16 mx-auto text-slate-300 mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
+          <p className="text-slate-500 max-w-md mx-auto">
+            Leave management requires an employee profile. Use the admin panels to manage employee leaves.
+          </p>
+          <button
+            onClick={() => router.push('/leave')}
+            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            View Leave Management
+          </button>
         </div>
       </AppLayout>
     );

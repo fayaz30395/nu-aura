@@ -80,9 +80,9 @@ export default function TravelRequestDetailsPage() {
       setActionLoading(true);
       await travelService.approveTravelRequest(travelRequest.id, user.employeeId);
       await loadTravelRequestDetails();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error approving travel request:', error);
-      alert(error.response?.data?.message || 'Failed to approve travel request');
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve travel request');
     } finally {
       setActionLoading(false);
     }
@@ -98,9 +98,9 @@ export default function TravelRequestDetailsPage() {
       setActionLoading(true);
       await travelService.rejectTravelRequest(travelRequest.id, user.employeeId, reason);
       await loadTravelRequestDetails();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error rejecting travel request:', error);
-      alert(error.response?.data?.message || 'Failed to reject travel request');
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject travel request');
     } finally {
       setActionLoading(false);
     }
@@ -116,9 +116,9 @@ export default function TravelRequestDetailsPage() {
       setActionLoading(true);
       await travelService.cancelTravelRequest(travelRequest.id, reason);
       await loadTravelRequestDetails();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error cancelling travel request:', error);
-      alert(error.response?.data?.message || 'Failed to cancel travel request');
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel travel request');
     } finally {
       setActionLoading(false);
     }
@@ -133,9 +133,9 @@ export default function TravelRequestDetailsPage() {
       setActionLoading(true);
       await travelService.completeTravelRequest(travelRequest.id);
       await loadTravelRequestDetails();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error completing travel request:', error);
-      alert(error.response?.data?.message || 'Failed to complete travel request');
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete travel request');
     } finally {
       setActionLoading(false);
     }

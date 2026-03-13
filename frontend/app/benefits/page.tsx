@@ -238,9 +238,9 @@ export default function BenefitsPage() {
       } catch (e) {
         console.warn('Failed to fetch benefits summary', e);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching data:', err);
-      setError(err.response?.data?.message || 'Failed to load data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
@@ -280,9 +280,9 @@ export default function BenefitsPage() {
       setIsEnrollModalOpen(false);
       showNotification(`Successfully enrolled in ${selectedBenefit.name}!`, 'success');
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error enrolling:', err);
-      showNotification(err.response?.data?.message || 'Failed to enroll', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
     } finally {
       setEnrolling(false);
     }
@@ -295,9 +295,9 @@ export default function BenefitsPage() {
       await benefitsService.terminateEnrollment(enrollmentId, 'Employee requested termination');
       showNotification('Enrollment terminated successfully', 'success');
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error terminating:', err);
-      showNotification(err.response?.data?.message || 'Failed to terminate enrollment', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
     }
   };
 
@@ -339,9 +339,9 @@ export default function BenefitsPage() {
       showNotification('Claim submitted successfully!', 'success');
       setActiveTab('claims');
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error submitting claim:', err);
-      showNotification(err.response?.data?.message || 'Failed to submit claim', 'error');
+      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit claim', 'error');
     } finally {
       setSubmittingClaim(false);
     }

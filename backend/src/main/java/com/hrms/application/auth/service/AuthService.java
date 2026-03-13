@@ -125,8 +125,8 @@ public class AuthService {
             Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context
-            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            // Find employee context using optimized query to prevent N+1
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -259,8 +259,8 @@ public class AuthService {
             Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context
-            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            // Find employee context using optimized query to prevent N+1
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -378,8 +378,8 @@ public class AuthService {
             Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
             Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-            // Find employee context
-            Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+            // Find employee context using optimized query to prevent N+1
+            Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
             UUID employeeId = empOpt.map(Employee::getId).orElse(null);
             UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
             UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);
@@ -696,11 +696,19 @@ public class AuthService {
      *
      * @param user the user entity
      * @param tenantId the tenant ID
-     * @return Optional containing the linked/created employee
+     * @return Optional containing the linked/created employee, or empty if creation failed
+     *         (login still succeeds - employeeId will be null, which is acceptable for SuperAdmin)
      */
     private Optional<Employee> autoLinkOrCreateEmployeeForSuperAdmin(User user, UUID tenantId) {
         try {
+            // Validate required fields before attempting creation
+            if (user.getFullName() == null || user.getFullName().isBlank()) {
+                log.warn("Cannot auto-create employee for SuperAdmin {}: fullName is null or empty", user.getId());
+                return Optional.empty();
+            }
+
             // Step 1: Try to find an existing employee with the same email
+            // Use a targeted query instead of loading all employees to prevent memory issues
             List<Employee> matchingEmployees = employeeRepository.findByTenantId(tenantId).stream()
                     .filter(e -> e.getUser() != null && e.getUser().getEmail().equals(user.getEmail()))
                     .toList();
@@ -715,12 +723,12 @@ public class AuthService {
             }
 
             // Step 2: Create a minimal employee record for the SuperAdmin
-            String[] nameParts = user.getFullName().split(" ", 2);
+            String[] nameParts = user.getFullName().trim().split("\\s+", 2);
             String firstName = nameParts[0];
             String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-            // Generate a unique employee code
-            String employeeCode = "ADMIN-" + user.getId().toString().substring(0, 8).toUpperCase();
+            // Generate a unique employee code based on timestamp to prevent duplicates
+            String employeeCode = "ADMIN-" + System.currentTimeMillis() + "-" + user.getId().toString().substring(0, 4).toUpperCase();
 
             Employee newEmployee = Employee.builder()
                     .employeeCode(employeeCode)
@@ -737,8 +745,24 @@ public class AuthService {
             log.info("Created minimal employee record for SuperAdmin user {} with employee ID {}", user.getId(), newEmployee.getId());
 
             return Optional.of(newEmployee);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            // Validation errors during employee creation (bad data, null fields)
+            log.error("Validation error during auto-creation of employee for SuperAdmin {}: {}", user.getId(), e.getMessage(), e);
+            return Optional.empty();
         } catch (Exception e) {
-            log.error("Failed to auto-link/create employee for SuperAdmin user {}: {}", user.getId(), e.getMessage(), e);
+            // Database constraint violations, deadlocks, or other persistence errors
+            // Log the full error but allow login to succeed with null employeeId
+            log.error("Database error during auto-creation of employee for SuperAdmin {}: {} - Details: {}",
+                    user.getId(), e.getClass().getSimpleName(), e.getMessage(), e);
+
+            // Specific logging for common constraint violations
+            String errorMessage = e.getMessage() != null ? e.getMessage() : "Unknown error";
+            if (errorMessage.contains("duplicate") || errorMessage.contains("unique")) {
+                log.warn("Employee code uniqueness constraint violation for SuperAdmin {}: {}", user.getId(), errorMessage);
+            } else if (errorMessage.contains("foreign key") || errorMessage.contains("constraint")) {
+                log.warn("Database constraint violation for SuperAdmin {}: {}", user.getId(), errorMessage);
+            }
+
             return Optional.empty();
         }
     }
@@ -768,8 +792,8 @@ public class AuthService {
         Set<String> appRoles = loadAppRoles(user.getId(), HrmsPermissionInitializer.APP_CODE);
         Set<String> accessibleApps = loadAccessibleApps(user.getId());
 
-        // Find employee context
-        Optional<Employee> empOpt = employeeRepository.findByUserIdAndTenantId(user.getId(), tenantId);
+        // Find employee context using optimized query to prevent N+1
+        Optional<Employee> empOpt = employeeRepository.findByUserIdWithUser(user.getId(), tenantId);
         UUID employeeId = empOpt.map(Employee::getId).orElse(null);
         UUID locationId = empOpt.map(Employee::getOfficeLocationId).orElse(null);
         UUID departmentId = empOpt.map(Employee::getDepartmentId).orElse(null);

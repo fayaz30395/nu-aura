@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { AppLayout } from '@/components/layout';
 import {
   ChevronLeft,
   ChevronRight,
@@ -87,8 +88,8 @@ export default function GanttChartPage() {
       }
 
       setGanttTasks(filteredTasks);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load Gantt data');
+    } catch (err: unknown) {
+      setError((err instanceof Error ? err.message : null) || 'Failed to load Gantt data');
     } finally {
       setLoading(false);
     }
@@ -202,7 +203,8 @@ export default function GanttChartPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <AppLayout>
+      <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -427,6 +429,7 @@ export default function GanttChartPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

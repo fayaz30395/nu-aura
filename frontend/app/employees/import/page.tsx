@@ -101,8 +101,8 @@ export default function EmployeeImportPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to download ${type.toUpperCase()} template`);
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to download ${type.toUpperCase()} template`);
     } finally {
       setLoading(false);
     }
@@ -117,8 +117,8 @@ export default function EmployeeImportPage() {
       const previewData = await employeeService.previewImport(selectedFile);
       setPreview(previewData);
       setStep('preview');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to preview import file');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to preview import file');
     } finally {
       setLoading(false);
     }
@@ -133,8 +133,8 @@ export default function EmployeeImportPage() {
       const importResult = await employeeService.executeImport(selectedFile, skipInvalid);
       setResult(importResult);
       setStep('result');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to execute import');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to execute import');
     } finally {
       setLoading(false);
     }

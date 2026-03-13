@@ -88,8 +88,8 @@ export default function LearningPathsPage() {
       await apiClient.post(`/lms/learning-paths/${pathId}/enroll`);
       // Refresh paths
       await loadPaths();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to enroll in learning path');
+    } catch (err: unknown) {
+      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in learning path');
     } finally {
       setEnrolling(null);
     }

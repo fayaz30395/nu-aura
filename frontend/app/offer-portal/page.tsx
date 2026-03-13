@@ -78,8 +78,8 @@ function OfferPortalPage() {
           setConfirmedJoiningDate(offerData.proposedJoiningDate);
         }
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load offer details. The link may be invalid or expired.');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load offer details. The link may be invalid or expired.');
     } finally {
       setLoading(false);
     }
@@ -99,8 +99,8 @@ function OfferPortalPage() {
         offerAcceptedDate: new Date().toISOString().split('T')[0],
       });
       setShowAcceptModal(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to accept offer');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to accept offer');
     } finally {
       setProcessing(false);
     }
@@ -120,8 +120,8 @@ function OfferPortalPage() {
         offerDeclinedDate: new Date().toISOString().split('T')[0],
       });
       setShowDeclineModal(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to decline offer');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to decline offer');
     } finally {
       setProcessing(false);
     }

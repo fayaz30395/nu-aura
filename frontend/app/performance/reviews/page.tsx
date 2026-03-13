@@ -72,8 +72,8 @@ export default function PerformanceReviewsPage() {
       setShowModal(false);
       resetForm();
       await loadReviews();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save review');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save review');
     } finally {
       setLoading(false);
     }
@@ -87,8 +87,8 @@ export default function PerformanceReviewsPage() {
       setShowDeleteConfirm(false);
       setSelectedReview(null);
       await loadReviews();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete review');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete review');
     } finally {
       setLoading(false);
     }
@@ -183,6 +183,30 @@ export default function PerformanceReviewsPage() {
     if (filterStatus !== 'ALL' && review.status !== filterStatus) return false;
     return true;
   });
+
+  if (!user?.employeeId) {
+    return (
+      <AppLayout activeMenuItem="performance">
+        <div className="text-center py-12">
+          <div className="h-16 w-16 mx-auto text-slate-300 mb-4">
+            <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
+          <p className="text-slate-500 max-w-md mx-auto">
+            Performance reviews require an employee profile. Use the admin panels to manage employee reviews.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout activeMenuItem="performance">

@@ -55,9 +55,9 @@ export default function AdminLeaveRequestsPage() {
 
       setLeaveTypes(types);
       setLeaveRequests(Array.isArray(requests) ? requests : requests.content);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading leave requests:', err);
-      setError(err.response?.data?.message || 'Failed to load leave requests');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave requests');
     } finally {
       setLoading(false);
     }
@@ -77,9 +77,9 @@ export default function AdminLeaveRequestsPage() {
       setApprovalComments('');
       setSelectedRequest(null);
       await loadData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error approving leave:', err);
-      alert(err.response?.data?.message || 'Failed to approve leave request');
+      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
     } finally {
       setSubmitting(false);
     }
@@ -102,9 +102,9 @@ export default function AdminLeaveRequestsPage() {
       setRejectionReason('');
       setSelectedRequest(null);
       await loadData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error rejecting leave:', err);
-      alert(err.response?.data?.message || 'Failed to reject leave request');
+      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
     } finally {
       setSubmitting(false);
     }

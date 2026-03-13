@@ -124,7 +124,7 @@ export default function CourseCatalogPage() {
       await lmsService.enrollSelf(course.id);
       setEnrolledIds((prev) => new Set([...prev, course.id]));
       showNotification(`Successfully enrolled in "${course.title}"`, 'success');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to enroll:', err);
       const msg = err?.response?.status === 409
         ? `You are already enrolled in "${course.title}"`

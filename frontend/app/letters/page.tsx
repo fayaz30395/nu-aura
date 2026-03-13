@@ -196,9 +196,9 @@ export default function LettersPage() {
       setLetters(filteredLetters);
       setTotalElements(response.totalElements);
       setTotalPages(response.totalPages);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching letters:', err);
-      setError(err.response?.data?.message || 'Failed to load letters');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load letters');
       setLetters([]);
     } finally {
       setLoading(false);
@@ -210,7 +210,7 @@ export default function LettersPage() {
     try {
       const activeTemplates = await letterService.getActiveTemplates();
       setTemplates(activeTemplates);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching templates:', err);
     }
   }, [isAuthenticated, hasHydrated]);
@@ -224,7 +224,7 @@ export default function LettersPage() {
         (c) => c.status === 'SELECTED' || c.status === 'OFFER_EXTENDED'
       );
       setCandidates(eligibleCandidates);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching candidates:', err);
     }
   }, [isAuthenticated, hasHydrated]);
@@ -324,9 +324,9 @@ export default function LettersPage() {
       setShowGenerateModal(false);
       resetForm();
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error generating letter:', err);
-      setError(err.response?.data?.message || 'Failed to generate letter');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate letter');
     } finally {
       setSaving(false);
     }
@@ -341,9 +341,9 @@ export default function LettersPage() {
       resetOfferForm();
       fetchLetters();
       fetchCandidates();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error generating offer letter:', err);
-      setError(err.response?.data?.message || 'Failed to generate offer letter');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate offer letter');
     } finally {
       setSaving(false);
     }
@@ -353,9 +353,9 @@ export default function LettersPage() {
     try {
       await letterService.submitForApproval(letter.id);
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error submitting for approval:', err);
-      setError(err.response?.data?.message || 'Failed to submit for approval');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit for approval');
     }
   };
 
@@ -363,9 +363,9 @@ export default function LettersPage() {
     try {
       await letterService.approveLetter(letter.id, 'current-user-id');
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error approving letter:', err);
-      setError(err.response?.data?.message || 'Failed to approve letter');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve letter');
     }
   };
 
@@ -373,9 +373,9 @@ export default function LettersPage() {
     try {
       await letterService.issueLetter(letter.id, 'current-user-id');
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error issuing letter:', err);
-      setError(err.response?.data?.message || 'Failed to issue letter');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to issue letter');
     }
   };
 
@@ -383,9 +383,9 @@ export default function LettersPage() {
     try {
       await letterService.issueOfferLetterWithESign(letter.id, 'current-user-id');
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error issuing letter with e-sign:', err);
-      setError(err.response?.data?.message || 'Failed to issue letter with e-signature');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to issue letter with e-signature');
     }
   };
 
@@ -393,9 +393,9 @@ export default function LettersPage() {
     try {
       await letterService.revokeLetter(letter.id);
       fetchLetters();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error revoking letter:', err);
-      setError(err.response?.data?.message || 'Failed to revoke letter');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to revoke letter');
     }
   };
 

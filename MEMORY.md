@@ -549,6 +549,11 @@ When multiple AI agents work in parallel, stale context causes bugs: duplicate c
 - ~~/workflow/inbox/count returns 500~~ — Fixed: `retry: false` on useApprovalInboxCount hook
 - ~~/admin page shows "System DOWN"~~ — Fixed: graceful DEGRADED state + UNAVAILABLE components
 - ~~Raw localStorage usage in leave pages~~ — Fixed: replaced with useAuth() hook in leave/apply, leave/calendar
+- ~~SuperAdmin employeeId: null causing 8+ page spinners~~ — Fixed: AuthService auto-link error handling + frontend null guards on 7 pages
+- ~~13 pages missing AppLayout wrapper (no sidebar/header)~~ — Fixed: learning, projects, offboarding, tax, performance, PSA pages
+- ~~React Query infinite retries on network errors~~ — Fixed: retry:2, staleTime:5min, gcTime:10min, refetchOnWindowFocus:false
+- ~~No session timeout~~ — Fixed: 30-min inactivity timeout with 5-min warning toast
+- ~~Error pages using generic components~~ — Fixed: Mantine UI error.tsx, global-error.tsx, not-found.tsx with error categorization
 
 ---
 
@@ -686,4 +691,411 @@ NU-AURA transformed from a flat HRMS into a multi-app platform with 4 sub-apps.
 
 ---
 
-*Last updated: 2026-03-12*
+---
+
+## 18. KEKA HRMS UI Flow Reference (Captured 2026-03-13)
+
+> Reference flows captured from Nulogic's production Keka instance (nutech.keka.com). Use this as UX/UI benchmark when building NU-AURA modules.
+
+### Global Navigation Structure
+
+**Top Bar:** Keka logo, Tenant name ("NU Information Technologies Pvt Ltd"), Global search bar ("Search employees or actions (Ex: Apply Leave)" with ⌘+K), Notification bell, Profile avatar
+
+**Left Sidebar (9 main modules):**
+1. **Home** — Dashboard
+2. **Me** — Employee Self-Service
+3. **Inbox** — Approvals & Notifications
+4. **My Team** — Manager View
+5. **My Finances** — Payroll & Tax
+6. **Org** — Organization Directory
+7. **Engage** — Social & Announcements
+8. **Performance** — OKRs & Reviews (Admin/Manager)
+9. **Project** — Project & Timesheet Management
+
+Each sidebar item has a hover flyout showing sub-sections.
+
+---
+
+### Module 1: Home (Dashboard)
+
+**Route:** `/#/home/dashboard`
+
+**Left Column Widgets:**
+- **Inbox** — Pending actions count with "Good job! No pending actions" state
+- **Time Today** — Live clock, Clock-in/Clock-out button, day indicator (M T W T F S S), flexible timings bar showing work blocks, "Since Last Login" duration, Attendance Policy link
+- **Holidays** — Carousel slider showing upcoming holidays with type badge (e.g., "FLOATER LEAVE")
+- **On Leave Today** — List of employees on leave (or empty state)
+- **Working Remotely** — Avatar chips of remote employees
+- **Leave Balances** — Donut chart (24 Days Annual Leave), Request Leave button, View All Balances link
+- **Quick Links** — Configurable shortcuts
+
+**Center/Right Column:**
+- **Organization / Department tabs** — Scope filter for the social feed
+- **Social Feed** — Post / Poll / Praise tabs with text input
+- **Announcements** — List with "+" create button
+- **Birthdays / Work Anniversaries / New Joinees** — Tab-based section with avatars, "Wish" button
+- **Activity Feed** — Posts with images, like/comment reactions
+
+**Key UX Pattern:** Dashboard is a two-column layout. Left = personal actionable widgets. Right = social/organizational feed.
+
+---
+
+### Module 2: Me (Employee Self-Service)
+
+**Route:** `/#/me/*`
+
+**Top-level tabs:** ATTENDANCE | TIMESHEET | LEAVE | PERFORMANCE | EXPENSES & TRAVEL | APPS
+
+#### Me → Attendance (`/#/me/attendance/logs`)
+- **Summary card:** Avg Hrs/Day, On Time Arrival %
+- **Timings section:** Weekly day circles (M T W T F S S with active day highlighted), current live time, flexible timings bar showing worked blocks throughout the day, break indicator (60 min)
+- **Actions panel:** Clock-out button, "Since Last Login" duration, Attendance Policy link
+- **Logs & Requests:** Tabs — Attendance Log | Calendar | Attendance Requests
+  - **Attendance Log table:** Date, Attendance Visual (timeline bar showing work blocks), Effective Hours, Gross Hours, Log status icon
+  - **Month filter:** 30 DAYS | FEB | JAN | DEC | NOV | OCT | SEP
+  - **24 hour format toggle**
+
+#### Me → Leave (`/#/me/leave/summary`)
+- **Pending leave requests** section
+- **Actions panel (right sidebar):** Request Leave button (primary CTA), Leave Encashment History, Request Credit for Compensatory Off, Leave Policy Explanation Document
+- **My Leave Stats:** 3 charts — Weekly Pattern (bar by day), Consumed Leave Types (donut), Monthly Stats (bar by month Jan-Dec)
+- **Leave Balances:** Cards per leave type — Annual Leave (donut: 24 Days Available), Comp Off, Unpaid Leave — each with "View details" link
+
+#### Me → Performance (`/#/me/performance/objectives/summary`)
+- **Sub-tabs:** Objectives | 1:1 Meetings | Feedback | PIP | Reviews | Skills | Competencies & Core Values
+- **Objectives view:** Filter bar (Objective Type, Status, Tags, Search), Average progress %, Objective by status donut chart (Not started, On track, At risk, Needs attention, Closed)
+- **Objectives list:** Grouped by year (2025), each showing: Name, Key-results count, Initiatives count, Weight %, Type (Individual/Company/Department), Owner avatar, Due date, Progress bar with % and range (0% → 100%)
+
+#### Me → Expenses & Travel (`/#/me/expenses/pending`)
+- **Sub-tabs:** Pending Expenses | Past Claims | Advance Requests
+- **Sections:** Expenses to be Claimed, Expense claims in process, Advance settlements in process
+
+---
+
+### Module 3: Inbox (Approvals)
+
+**Route:** `/#/inbox/action`
+
+**Tabs:** TAKE ACTION | NOTIFICATIONS | ARCHIVE
+
+- **Take Action:** Pending approval items (leave requests, profile changes, expenses, etc.)
+- **Notifications:** System notifications
+- **Archive:** Past/completed actions
+
+**Key UX Pattern:** Single unified inbox for all approval workflows across modules.
+
+---
+
+### Module 4: My Team (Manager View)
+
+**Route:** `/#/myteam/summary/direct`
+
+**Top tabs:** SUMMARY | LEAVE | ATTENDANCE | EXPENSES & TRAVEL | TIMESHEET | PROFILE CHANGES | PERFORMANCE
+
+**Summary view:**
+- **Report type filter:** Direct Reports | Dotted Line Reports | Peers
+- **Status cards:** "Who is off today", "Not in yet today"
+- **Quick stats row:** Late Arrivals today, Work from Home/On Duty today, Remote Clock-ins today — each with "View Employees" link
+- **Team Attendance Calendar:** Monthly grid per employee, color-coded days (Work from home, On duty, Paid Leave, Unpaid Leave, Leave due to No Attendance, Weekly off, Holiday, Someone on Leave, Multiple Leave on a day, Someone on WFH/OD)
+- **Direct Reports list:** Employee cards with photo, name, title, status badges (IN, REMOTE), location, department
+
+**Key UX Pattern:** Manager dashboard aggregates all direct report data with at-a-glance status indicators.
+
+---
+
+### Module 5: My Finances
+
+**Route:** `/#/myfinances/summary`
+
+**Top tabs:** SUMMARY | MY PAY | MANAGE TAX | LOANS
+
+#### Summary
+- **Payroll Summary:** Last Processed Cycle, Working Days, Loss of Pay, Payslip link
+- **Payment Information:** Salary Payment Mode, Bank Name, Account Number, IFSC Code, Name on Account, Branch
+- **Statutory Information:** PF Account Info (Status, PF Number, UAN, Join Date, Name), ESI Account Info (Status)
+- **Identity Information (right column):** PAN Card (verified badge), Aadhaar Card (verified badge) as Photo ID and Address Proof — each showing masked number, DOB, Name, Address, Gender
+
+#### My Pay (`/#/myfinances/pay/salary`)
+- **Sub-tabs:** My Salary | Pay Slips | Income Tax | Flexible Benefit Plan (FBP)
+- **My Salary:** Current Compensation (annual), Pay Cycle (Monthly), Salary Timeline showing revision history (Effective date, Regular Salary + Bonus = Total, "View Salary breakup" link per revision)
+
+---
+
+### Module 6: Org (Organization)
+
+**Route:** `/#/org/employees/directory`
+
+**Top tabs:** EMPLOYEES | DOCUMENTS | ENGAGE | HELPDESK
+
+#### Employee Directory
+- **Sub-tabs:** Employee Directory | Organization Tree
+- **Filters:** Business Unit, Department, Location, Cost Center, Legal Entity, Search
+- **Card grid (4 per row):** Employee photo/avatar, Name (with ··· menu), Title, Department, Location, Email, Work Phone
+- **Pagination:** "Showing 30 of 108"
+
+#### Organization Tree (`/#/org/employees/tree`)
+- Visual org chart with employee cards: Photo, Name, Title, Location, Department, Direct report count badge (green circle)
+- Navigation: Search employee, "Go to: My Department" button, "Top of tree" button
+- Zoom controls (+/−/fit)
+
+---
+
+### Module 7: Engage
+
+**Route:** `/#/engage/announcements/list`
+
+**Top tabs:** ANNOUNCEMENTS | SURVEYS | POLLS | ARTICLES
+
+**Announcements view:**
+- **Filter tabs:** All Announcements | Announcements by me
+- **Filters:** Date Range, Announcement Type, Status, Created By, Search
+- **Card grid (2 per row):** Image thumbnail, Title, Description preview, Author (avatar + name), Date, Status badge (Closed/Active), Likes count, Comments count, "view more" link
+
+---
+
+### Module 8: Performance (Admin/Manager)
+
+**Route:** `/#/performance/objectives/insights/employee`
+
+**Top tabs:** OBJECTIVES | 1:1 MEETINGS | SALARY & PROMOTION | SKILLS
+
+#### Objectives → Insights
+- **Sub-tabs:** Insights | Me | My Team | Manage Objectives
+- **Filters:** Direct Reports dropdown, Fiscal year (2025-2026, Oct-Mar)
+- **Summary cards:** Employees count, Objectives count, Employees without objectives, Employees objectives not updated
+- **3 Donut charts:** Total objectives (Company/Department/Individual), Objectives by status (On track/Needs attention/At risk/Not started/Closed), Unaligned objectives
+
+---
+
+### Module 9: Project
+
+**Route:** `/#/project-timesheets/projects/list/active-projects`
+
+**Top tabs:** PROJECTS | ANALYTICS
+
+#### Project List
+- **Filter tabs:** Active projects | All projects | Archived projects
+- **Filters:** Billing Model dropdown, Search
+- **Table columns:** PROJECT (name + code), CLIENT, BILLING MODEL, START & END DATE, CREATED ON, PROJECT MANAGERS
+- **View toggle:** Standard View dropdown
+- **Pagination**
+
+---
+
+### Key UX Patterns to Replicate in NU-AURA
+
+1. **Dual-column dashboard:** Personal widgets (left) + social feed (right)
+2. **Module → Top tabs → Sub-tabs → Content** hierarchy (3-level navigation)
+3. **Unified inbox** for all approval workflows (not per-module approval pages)
+4. **Manager team view** with attendance calendar grid (color-coded per-employee per-day)
+5. **Card grid layouts** for employee directory (4 per row) and announcements (2 per row)
+6. **Org tree** with zoom/navigation controls and direct report badges
+7. **Salary timeline** showing revision history with expandable breakdowns
+8. **Leave stats** with 3 complementary charts: weekly pattern, consumed types donut, monthly bar
+9. **Clock-in/out widget** with live time, flexible timings bar, and attendance policy link
+10. **Global search** with ⌘+K shortcut supporting both employee search and action search
+11. **Status badges** throughout (IN, REMOTE, Verified, Closed, FLOATER LEAVE, etc.)
+12. **Hover flyout sub-nav** on sidebar items for quick access without full page navigation
+
+---
+
+*Last updated: 2026-03-13*
+
+---
+
+## 19. KEKA HRMS Deep-Dive: Interaction-Level UI Flows (Captured 2026-03-13)
+
+This section documents the detailed form fields, data models, and interaction patterns observed in Keka's employee-facing views. Use as a blueprint when building equivalent NU-AURA screens.
+
+---
+
+### 19.1 Employee Profile View (`#/myprofile/`)
+
+**Profile Header (shared across all profile tabs):**
+- Cover photo banner (dark, customizable)
+- Avatar (circular, editable)
+- Full Name + Country badge (IN) + Work mode badge (REMOTE, green)
+- Designation below name
+- Contact row: Email icon + email link | Phone icon + number | Location pin + office address | ID icon + Employee Number
+- Org info row: BUSINESS UNIT | DEPARTMENT | COST CENTER | REPORTING MANAGER (with avatar link)
+
+**5 Profile Tabs:** ABOUT | PROFILE | JOB | DOCUMENTS | ASSETS
+
+#### ABOUT Tab
+**Sub-tabs:** Summary | Timeline | Wall Activity
+
+**Summary (two-column layout):**
+- Left column:
+  - About (editable, pencil icon) — free text bio
+  - What I love about my job? (editable)
+  - My interests and hobbies (editable)
+  - Professional Summary (editable) — longer professional bio
+- Right column:
+  - Skills widget: Chip tags with skill name + star rating (1-5), "Manage Skills" link, "+Add Skills", "N Skills more" overflow link
+  - Reporting Team (count) — shows direct reports with avatar + name + designation
+  - Praise section — badge icons with count (e.g., "Top Performer"), "View all" link
+
+#### PROFILE Tab
+**Two-column card layout, each card has "Edit" button:**
+
+- **Primary Details:** First Name, Middle Name, Last Name, Display Name, Gender, Date of Birth, Marital Status, Blood Group, Marriage Date, Physically Handicapped (Yes/No), Alias, Nationality
+- **Contact Details:** Work Email, Personal Email, Mobile Number, Work Number, Residence Number, Emergency Contact, Emergency Contact Name, Relationship
+- **Addresses:** Current Address (multi-line: street, area, city, state, country, pin), Permanent Address (same structure)
+- **Relations:** Spouse details (Name, Email, Mobile, Profession, DOB, Gender) — extendable for parents/children
+- **Experience:** Job Title + Company, Date range (From-To) | Location
+- **Education:** Degrees & Certificates — Branch/Specialization, CGPA/Percentage, Degree, University/College, Year of Completion, Year of Joining
+- **Professional Summary:** Free text (same as About tab)
+- **Bank Details:** Bank Name, Account Number, IFSC, Branch Code, Account Holder Name
+- **Skills and Certifications:** Technical Skills (comma-separated), Soft Skills (comma-separated)
+- **Identity Information:** Photo IDs with verification status badges (PENDING VERIFICATION):
+  - Aadhaar Card: Masked number (XXXX-XXXX-3200), Enrollment Number, DOB, Name, Address, Gender
+  - Pan Card: Masked PAN, Name, DOB, Parent's Name
+  - Voter Id Card: Similar masked structure
+
+#### JOB Tab
+**Two-column layout (no Edit button — read-only for employees):**
+
+- **Job Details (left):** Employee Number, Date of Joining, Job Title - Primary, Job Title - Secondary, In Probation? (Yes/No + date range + policy name), Notice Period (policy name + days), Worker Type (Permanent/Contract/Intern), Time Type (Full Time/Part Time), Contract Status (badge), Pay Band, Pay Grade
+- **Organization (right):** Business Unit, Department, Location, Cost Center, Legal Entity, Dotted Line Manager, Reports To (avatar + name), Manager of Manager / L2 Manager (avatar + name), Direct Reports (count)
+- **Employee Time (left, below Job Details):** Shift, Weekly Off Policy, Leave Plan, Holiday Calendar, Attendance Number, Payroll Time Source, Disable attendance tracking (toggle), Attendance Time Tracking Policy, Attendance Penalisation Policy, Shift Weekly Off Rule, Shift Allowance Policy, Overtime
+- **Other (left, below Employee Time):** Expense Policy, Timesheet Policy, Loan Policy, Air Ticket Policy, Project 1 + Allocation 1, Project 2 + Allocation 2
+
+#### DOCUMENTS Tab
+**Left sidebar + right content area:**
+- Left: Search box + FOLDERS accordion — each folder shows folder icon + name + document count
+- Folder types observed: Degrees & Certificates, Previous Experience, Performance Reviews, Employee Letters, Course Certificates, Identity
+- Right (on folder click): Folder name, document count + access badge ("Restricted access"), description text, document list — each row: PDF icon, Document Title | Generated on date, "View document" button, 3-dot menu
+
+#### ASSETS Tab
+**Sub-tabs:** Assigned assets | Asset requests | Asset damage charges
+
+**Assigned Assets table:** ASSET TYPE | ASSET (name + serial number with icon) | ASSET CATEGORY | ASSIGNED ON | ACKNOWLEDGEMENT STATUS | LATEST CONDITION | ACTIONS (3-dot menu)
+- Pagination at bottom
+
+---
+
+### 19.2 Timesheet View (`#/me/timesheet/`)
+
+**Sub-tabs:** All Timesheets | Past Due (red badge with count) | Rejected Timesheets | Project Time | Time Summary | My Tasks | Projects Allocated
+
+**All Timesheets — Weekly Grid:**
+- Header metrics: Billable (green dot + hours), Non-Billable (orange dot + hours), Time Off (blue dot + hours), Billable Utilization (percentage)
+- "Copy last week hours" button (top-right)
+- List/Grid view toggle
+- Grid structure:
+  - Column headers: PROJECTS | MON date | TUE date | ... | SUN date | TASK TOTAL HRS/WEEK
+  - Row 1: ATTENDANCE HOURS (auto-filled from attendance system, read-only)
+  - Row 2+: Project time entries (editable cells)
+  - "+ Add Time Entry" link to add new project rows
+  - Summary row: Total hours/day
+- Footer actions: "Request Leave" link | "Attach file" button | "Save" button | "Submit weekly timesheet" button
+- Below grid: Comment Summary (left) | Timesheet Activity with date range (right)
+
+---
+
+### 19.3 Expenses & Travel (`#/me/expenses/`)
+
+**Sub-tabs:** Pending Expenses | Past Claims | Advance Requests
+
+**Pending Expenses view (3 sections):**
+1. **Expenses to be Claimed** — list of draft expenses + "+ Add an Expense" CTA button
+2. **Expense claims in process** — submitted claims awaiting approval
+3. **Advance settlements in process** — advance claims awaiting settlement
+
+**Add Expense Form (full-page overlay):**
+- Left: Receipt upload/preview area ("Upload Receipts" button + preview panel)
+- Right form fields:
+  - Expense Category (dropdown — "Select a category")
+  - Project / Cost Center (dropdown)
+  - Expense Title (text input)
+  - Expense Date (date picker)
+  - Currency (dropdown — "Select a currency")
+  - Amount (number input + "Payable Amount = INR" conversion note)
+  - Comment (textarea)
+  - Upload Receipt (file attachment link)
+- Footer: "Save Expense" | "Save and Add Another" | "Submit Claim" (primary)
+
+---
+
+### 19.4 Performance Module (`#/performance/`)
+
+**Top tabs:** OBJECTIVES | 1:1 MEETINGS | SALARY & PROMOTION (manager-only) | SKILLS
+
+#### Objectives
+**Sub-tabs:** Insights | Me | My Team | Manage Objectives
+
+**Insights view:**
+- Filters: Direct Reports dropdown, Fiscal Year dropdown (e.g., "2025-2026 (01 Oct - 31 Mar)")
+- KPI cards (4): Employees count, Objectives count, Employees without objectives, Employees objectives not updated
+- Three donut charts:
+  - Total objectives (Company / Department / Individual)
+  - Objectives by status (On track / Needs attention / At risk / Not started / Closed)
+  - Unaligned objectives (Company / Department / Individual)
+
+#### 1:1 Meetings
+**Sub-tabs:** My Meetings | Team Meetings | Action Items | Agenda Templates | Meeting Logs
+
+**My Meetings view:**
+- "Schedule 1:1 meeting" CTA button (top-right)
+- Filters: Meeting Type (multi-select dropdown), Date Range (date picker), Search
+- Left sidebar: Accordion groups — UPCOMING MEETINGS | PENDING MEETINGS | COMPLETED MEETINGS
+- Right: Meeting detail panel (empty state: "No meetings scheduled in this date range")
+
+#### Skills (accessed under Performance > Skills)
+- Skill inventory / assessment view (observed in sidebar navigation)
+
+---
+
+### 19.5 Engage Module (`#/engage/`)
+
+**Top tabs:** ANNOUNCEMENTS | SURVEYS | POLLS | ARTICLES
+
+#### Announcements
+- Toggle: All Announcements | Announcements by me
+- Filters: Date Range (date picker), Announcement Type (dropdown), Status (dropdown), Created By (dropdown), Search
+- Card grid (2 per row): Thumbnail image, Title, Description preview (truncated with "view more"), Reactions (thumbs-up count + comments count), Author (avatar + name), Date + time, Status badge (Closed/Active), 3-dot menu
+
+---
+
+### 19.6 Project Module (`#/project-timesheets/`)
+
+**Top tabs:** PROJECTS | ANALYTICS
+**Sidebar:** Projects (expandable) | Analytics (expandable)
+
+#### Project List
+- Sub-tabs: Active projects | All projects | Archived projects
+- Filters: Billing Model dropdown, Search, Column filter icon
+- View: Standard View dropdown
+- Table: PROJECT (name + code), CLIENT, BILLING MODEL, START & END DATE, CREATED ON, PROJECT MANAGERS (avatar links, "+N" overflow)
+- Pagination
+
+---
+
+### 19.7 Apps Marketplace (`#/me/apps/`)
+
+**Tabs:** My Apps | Apps center
+
+**My Apps view:**
+- Toggle: Org Enabled | Installed apps
+- Search bar
+- App cards (4 per row): App icon, App name, Description, "Free" badge (or price), "Choice" badge for featured apps
+- Observed apps: Google Meet for 1:1 checkins, Google Calendar for 1:1 checkins, Quicko, ClearTax for Tax Filing
+
+---
+
+### 19.8 Additional UX Patterns Observed (Deep-Dive)
+
+13. **Profile card pattern:** Shared header (avatar + name + badges + contact row + org row) persists across all 5 profile tabs — tab content scrolls below the fixed header
+14. **Inline edit pattern:** Profile sections use "Edit" buttons that likely open inline form or modal — employee can edit personal data, contact, addresses, relations, education, experience, skills, bank details
+15. **Identity verification workflow:** Photo IDs uploaded by employee show "PENDING VERIFICATION" badge — implies admin verification step
+16. **Masked sensitive data:** Aadhaar (XXXX-XXXX-3200), PAN (XXXXXX375D) — partial masking with eye icon for reveal
+17. **Weekly timesheet grid:** Attendance hours auto-populated as read-only row, project time entries as editable cells below — clever integration between attendance and timesheet modules
+18. **Expense receipt-first UX:** Left panel for receipt upload/preview, right panel for form — encourages receipt scanning before manual entry
+19. **Meeting accordion grouping:** Upcoming/Pending/Completed as collapsible sections in left sidebar with meeting details in right panel (master-detail pattern)
+20. **App marketplace pattern:** Org-enabled vs user-installed toggle — allows IT admins to curate available integrations while employees can browse the full catalog
+21. **Document folder taxonomy:** Pre-defined folder categories (Degrees, Experience, Performance Reviews, Employee Letters, Course Certificates, Identity) — each folder with access control badges
+22. **Manager-gated features:** Salary & Promotion tab redirects to home for non-managers — graceful degradation rather than showing empty/forbidden state
+23. **Objective analytics dashboard:** KPI cards + donut charts pattern for management insights — Direct Reports / Fiscal Year as the primary filters
+24. **Project billing model:** Projects tied to clients with billing models (No Billing / T&M / Fixed) — allocation percentages per employee
+
+*Last updated: 2026-03-13 (Deep-dive session)*

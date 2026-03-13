@@ -112,10 +112,10 @@ export default function JobOpeningsPage() {
       setShowAddModal(false);
       reset();
       setEditingJob(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to save job opening',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save job opening',
         color: 'red',
       });
     }
@@ -157,10 +157,10 @@ export default function JobOpeningsPage() {
         message: 'Job opening deleted successfully',
         color: 'green',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to delete job opening',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete job opening',
         color: 'red',
       });
     }
@@ -190,10 +190,10 @@ export default function JobOpeningsPage() {
         keySkills: skillsRequired?.split(',').map(s => s.trim()).filter(s => s),
       });
       setAiGeneratedJD(result);
-    } catch (err: any) {
+    } catch (err: unknown) {
       notifications.show({
         title: 'Error',
-        message: err.response?.data?.message || 'Failed to generate job description',
+        message: (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to generate job description',
         color: 'red',
       });
       setShowAiModal(false);

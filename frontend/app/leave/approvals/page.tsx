@@ -47,8 +47,8 @@ export default function LeaveApprovalsPage() {
       await leaveService.approveLeaveRequest(id, user.employeeId);
       alert('Leave request approved successfully');
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to approve leave request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
     } finally {
       setProcessing(null);
     }
@@ -64,8 +64,8 @@ export default function LeaveApprovalsPage() {
       await leaveService.rejectLeaveRequest(id, user.employeeId, reason);
       alert('Leave request rejected');
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to reject leave request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
     } finally {
       setProcessing(null);
     }

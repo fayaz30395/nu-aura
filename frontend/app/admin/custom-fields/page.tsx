@@ -97,9 +97,9 @@ export default function CustomFieldsPage() {
       setFormData(initialFormData);
       setOptionsText('');
       loadDefinitions();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to create custom field:', err);
-      setError(err.response?.data?.message || 'Failed to create custom field');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create custom field');
     }
   };
 
@@ -118,9 +118,9 @@ export default function CustomFieldsPage() {
       setFormData(initialFormData);
       setOptionsText('');
       loadDefinitions();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to update custom field:', err);
-      setError(err.response?.data?.message || 'Failed to update custom field');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update custom field');
     }
   };
 

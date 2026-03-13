@@ -31,8 +31,8 @@ export default function EmployeeDetailPage() {
       setError(null);
       const data = await employeeService.getEmployee(employeeId);
       setEmployee(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
       console.error('Error loading employee:', err);
     } finally {
       setLoading(false);
@@ -44,8 +44,8 @@ export default function EmployeeDetailPage() {
       setDeleting(true);
       await employeeService.deleteEmployee(employeeId);
       router.push('/employees');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete employee');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee');
       console.error('Error deleting employee:', err);
       setDeleting(false);
       setShowDeleteModal(false);

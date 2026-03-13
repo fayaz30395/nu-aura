@@ -1,4 +1,5 @@
 'use client';
+import { AppLayout } from '@/components/layout';
 
 import { useState, useEffect } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, Select } from '@mantine/core';
@@ -88,8 +89,9 @@ export default function PsaInvoicesPage() {
     ));
 
     return (
-        <Container size="xl" py="lg">
-            <Group justify="space-between" mb="lg">
+        <AppLayout>
+            <Container size="xl" py="lg">
+                <Group justify="space-between" mb="lg">
                 <div>
                     <Title order={2}>Invoices</Title>
                     <Text c="dimmed">Manage client billing and payments</Text>
@@ -128,6 +130,7 @@ export default function PsaInvoicesPage() {
                     </Table.Tbody>
                 </Table>
             </Card>
-        </Container>
+            </Container>
+        </AppLayout>
     );
 }

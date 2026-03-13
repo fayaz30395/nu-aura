@@ -56,8 +56,8 @@ export default function HolidayCalendarManagementPage() {
       setError(null);
       const data = await attendanceService.getHolidaysByYear(selectedYear);
       setHolidays(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load holidays');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load holidays');
       console.error('Error loading holidays:', err);
     } finally {
       setLoading(false);
@@ -91,8 +91,8 @@ export default function HolidayCalendarManagementPage() {
       resetForm();
       setShowModal(false);
       setEditingHoliday(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || `Failed to ${editingHoliday ? 'update' : 'create'} holiday`);
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingHoliday ? 'update' : 'create'} holiday`);
       console.error('Error saving holiday:', err);
     } finally {
       setSubmitting(false);
@@ -134,8 +134,8 @@ export default function HolidayCalendarManagementPage() {
       setError(null);
       await attendanceService.deleteHoliday(id);
       await loadHolidays();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete holiday');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete holiday');
       console.error('Error deleting holiday:', err);
     }
   };

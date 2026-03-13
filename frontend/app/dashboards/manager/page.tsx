@@ -120,9 +120,9 @@ export default function ManagerDashboardPage() {
       setError(null);
       const data = await dashboardService.getManagerDashboard();
       setDashboardData(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading manager dashboard:', err);
-      setError(err.response?.data?.message || 'Failed to load dashboard data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }

@@ -131,9 +131,9 @@ export default function TimesheetsPage() {
       ]);
       setTimesheets(timesheetData);
       setProjects(projectData.content);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching data:', err);
-      setError(err.response?.data?.message || 'Failed to load timesheets');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load timesheets');
     } finally {
       setLoading(false);
     }
@@ -185,9 +185,9 @@ export default function TimesheetsPage() {
 
       fetchData();
       setShowCreateModal(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating timesheet:', err);
-      setError(err.response?.data?.message || 'Failed to create timesheet');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create timesheet');
     } finally {
       setSaving(false);
     }
@@ -213,9 +213,9 @@ export default function TimesheetsPage() {
       await timesheetService.submitTimesheet(selectedTimesheet.id);
       fetchData();
       setShowDetailModal(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error submitting timesheet:', err);
-      setError(err.response?.data?.message || 'Failed to submit timesheet');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit timesheet');
     } finally {
       setSubmitting(false);
     }
@@ -246,9 +246,9 @@ export default function TimesheetsPage() {
       setTimesheetEntries(entries);
       setShowEntryModal(false);
       fetchData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding entry:', err);
-      setError(err.response?.data?.message || 'Failed to add time entry');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add time entry');
     } finally {
       setSaving(false);
     }

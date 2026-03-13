@@ -78,9 +78,9 @@ export default function ExecutiveDashboardPage() {
       const dashboardData = await dashboardService.getExecutiveDashboard();
       setData(dashboardData);
       setLastUpdated(new Date());
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading executive dashboard:', err);
-      setError(err.response?.data?.message || 'Failed to load dashboard data');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }

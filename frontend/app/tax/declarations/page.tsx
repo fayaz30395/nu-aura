@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { AppLayout } from '@/components/layout';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container } from '@mantine/core';
 import { IconPlus, IconDotsVertical, IconFileText, IconCheck, IconX, IconEye } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
@@ -82,7 +83,8 @@ export default function TaxDeclarationsPage() {
     ));
 
     return (
-        <Container size="xl" py="lg">
+        <AppLayout>
+            <Container size="xl" py="lg">
             <Group justify="space-between" mb="lg">
                 <div>
                     <Title order={2}>Tax Declarations</Title>
@@ -125,6 +127,7 @@ export default function TaxDeclarationsPage() {
                     </Table.Tbody>
                 </Table>
             </Card>
-        </Container>
+            </Container>
+        </AppLayout>
     );
 }

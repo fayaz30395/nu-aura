@@ -13,7 +13,9 @@ export type FeedItemType =
   | 'WORK_ANNIVERSARY'
   | 'NEW_JOINER'
   | 'PROMOTION'
-  | 'RECOGNITION';
+  | 'RECOGNITION'
+  | 'LINKEDIN_POST'
+  | 'SPOTLIGHT';
 
 export interface FeedItem {
   id: string;
@@ -45,6 +47,22 @@ export interface FeedItem {
   pointsAwarded?: number;
   likesCount?: number;
   commentsCount?: number;
+  // LinkedIn post-specific
+  linkedinPostUrl?: string;
+  linkedinAuthor?: string;
+  linkedinAuthorTitle?: string;
+  linkedinImageUrl?: string;
+  linkedinEngagement?: {
+    likes: number;
+    comments: number;
+    shares: number;
+  };
+  // Spotlight-specific
+  spotlightImageUrl?: string;
+  spotlightCtaUrl?: string;
+  spotlightCtaLabel?: string;
+  // Wall post reference (for reactions/comments via wall API)
+  wallPostId?: string;
 }
 
 export interface CompanyFeedData {

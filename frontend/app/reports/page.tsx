@@ -138,8 +138,8 @@ const DownloadModal: React.FC<DownloadModalProps> = ({ report, onClose, onDownlo
 
       await onDownload(format, request);
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to download report. Please try again.');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -76,9 +76,9 @@ export default function MyPayslipsPage() {
         const data = await payrollService.getPayslipsByEmployee(user!.employeeId!, 0, 100);
         setPayslips(data?.content || []);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load payslips:', err);
-      setError(err.response?.data?.message || 'Failed to load payslips');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
       setPayslips([]);
     } finally {
       setIsLoading(false);
@@ -134,9 +134,9 @@ export default function MyPayslipsPage() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to download payslip:', err);
-      setError(err.response?.data?.message || 'Failed to download payslip PDF');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip PDF');
     } finally {
       setDownloadingId(null);
     }
@@ -169,6 +169,26 @@ export default function MyPayslipsPage() {
       <AppLayout activeMenuItem="payslips">
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!user?.employeeId && !isAdmin) {
+    return (
+      <AppLayout activeMenuItem="payslips">
+        <div className="text-center py-12">
+          <DollarSign className="h-16 w-16 mx-auto text-slate-300 mb-4" />
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">No Employee Profile Linked</h2>
+          <p className="text-slate-500 max-w-md mx-auto">
+            Payslip access requires an employee profile. Use the admin panels to manage payroll.
+          </p>
+          <button
+            onClick={() => router.push('/payroll')}
+            className="mt-6 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Go to Payroll Management
+          </button>
         </div>
       </AppLayout>
     );

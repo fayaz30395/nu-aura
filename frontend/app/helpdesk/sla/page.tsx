@@ -62,8 +62,8 @@ export default function HelpdeskSLAPage() {
       setEditingId(null);
       resetForm();
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to save SLA');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save SLA');
     }
   };
 
@@ -95,8 +95,8 @@ export default function HelpdeskSLAPage() {
     try {
       await helpdeskSLAService.deleteSLA(id);
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete SLA');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete SLA');
     }
   };
 
@@ -104,8 +104,8 @@ export default function HelpdeskSLAPage() {
     try {
       await helpdeskSLAService.acknowledgeEscalation(escalationId);
       loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to acknowledge escalation');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to acknowledge escalation');
     }
   };
 

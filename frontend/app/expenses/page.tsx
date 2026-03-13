@@ -345,6 +345,18 @@ export default function ExpenseClaims() {
     );
   }
 
+  if (!user?.employeeId) {
+    return (
+      <AppLayout activeMenuItem="expenses">
+        <EmptyState
+          icon={<DollarSign className="h-12 w-12" />}
+          title="No Employee Profile Linked"
+          description="Expense management requires an employee profile. Use the admin panels to manage employee expenses."
+        />
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout activeMenuItem="expenses">
       <div className="max-w-7xl mx-auto">

@@ -274,6 +274,28 @@ export function withServiceErrorHandling<T extends Record<string, (...args: unkn
   return wrapped;
 }
 
+/**
+ * Extract a user-facing error message from an unknown caught value.
+ *
+ * Usage in catch blocks (replaces `err: any` anti-pattern):
+ *
+ *   } catch (err: unknown) {
+ *     setError(getApiErrorMessage(err, 'Failed to load data'));
+ *   }
+ */
+export function getApiErrorMessage(err: unknown, fallback = 'An unexpected error occurred'): string {
+  if (err instanceof ServiceError) {
+    return err.userMessage || err.message || fallback;
+  }
+  if (isAxiosError(err)) {
+    return err.response?.data?.message || err.response?.data?.error || err.message || fallback;
+  }
+  if (err instanceof Error) {
+    return err.message || fallback;
+  }
+  return fallback;
+}
+
 export default {
   ServiceError,
   transformAxiosError,

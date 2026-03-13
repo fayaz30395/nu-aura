@@ -102,9 +102,9 @@ export default function NewOnboardingPage() {
 
             const result = await onboardingService.createProcess(payload);
             router.push(`/onboarding/${result.id}`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to create onboarding process:', err);
-            setError(err.response?.data?.message || 'Failed to initiate onboarding');
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to initiate onboarding');
         } finally {
             setLoading(false);
         }

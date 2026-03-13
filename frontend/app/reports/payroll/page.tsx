@@ -42,8 +42,8 @@ export default function PayrollReportsPage() {
       await reportService.downloadPayrollReport(request);
       setSuccessMessage(`Payroll report downloaded successfully in ${format} format!`);
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to download report. Please try again.');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
     } finally {
       setLoading(false);
     }

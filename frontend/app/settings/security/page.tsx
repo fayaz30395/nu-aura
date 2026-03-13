@@ -38,11 +38,9 @@ export default function SecuritySettingsPage() {
   useEffect(() => {
     if (!hasHydrated) return;
 
-    const hasTokens = typeof window !== 'undefined' &&
-                      localStorage.getItem('accessToken') &&
-                      localStorage.getItem('refreshToken');
-
-    if (!isAuthenticated || !hasTokens) {
+    // Tokens are stored in httpOnly cookies — Zustand `isAuthenticated` is the
+    // sole source of truth. Do NOT check localStorage for access/refresh tokens.
+    if (!isAuthenticated) {
       router.push('/auth/login');
     }
   }, [isAuthenticated, hasHydrated, router]);
@@ -59,10 +57,11 @@ export default function SecuritySettingsPage() {
         if (status.setupAt) {
           setMfaSetupAt(status.setupAt);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to load MFA status:', err);
         setMfaStatus('error');
-        setError(err.response?.data?.message || 'Failed to load security settings');
+        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+        setError(msg || 'Failed to load security settings');
       }
     };
 
@@ -93,9 +92,10 @@ export default function SecuritySettingsPage() {
       setMfaDisableCode('');
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to disable MFA:', err);
-      setError(err.response?.data?.message || 'Failed to disable MFA. Please try again.');
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setError(msg || 'Failed to disable MFA. Please try again.');
       setMfaDisableCode('');
     } finally {
       setIsDisablingMfa(false);

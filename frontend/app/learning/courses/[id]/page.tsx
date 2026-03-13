@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout';
 import {
   ArrowLeft,
   Clock,
@@ -147,7 +148,8 @@ export default function CourseDetailPage() {
   const completionPercentage = progress;
 
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-950">
+    <AppLayout>
+      <div className="min-h-screen bg-surface-50 dark:bg-surface-950">
       {/* Hero */}
       <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="max-w-5xl mx-auto px-6 py-8">
@@ -475,6 +477,7 @@ export default function CourseDetailPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

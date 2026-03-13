@@ -271,3 +271,51 @@ export function narrowResponse<T>(
 ): T | null {
   return validator(response) ? response : null;
 }
+
+// ============================================
+// AUTH ERROR TYPE GUARDS
+// ============================================
+
+/**
+ * Axios error response structure with status code.
+ * Used for type-safe error handling in auth flows.
+ */
+export interface AxiosErrorResponse {
+  response?: {
+    status?: number;
+    data?: unknown;
+  };
+  message?: string;
+}
+
+/**
+ * Type guard to safely check if an error is an Axios error with response
+ */
+export function isAxiosError(error: unknown): error is AxiosErrorResponse {
+  return (
+    error !== null &&
+    typeof error === 'object' &&
+    ('response' in error || 'message' in error)
+  );
+}
+
+/**
+ * Type guard to check if error is a 401 Unauthorized error
+ */
+export function is401Error(error: unknown): error is AxiosErrorResponse {
+  return isAxiosError(error) && error.response?.status === 401;
+}
+
+/**
+ * Type guard to check if error is a 403 Forbidden error
+ */
+export function is403Error(error: unknown): error is AxiosErrorResponse {
+  return isAxiosError(error) && error.response?.status === 403;
+}
+
+/**
+ * Type guard to check if error is a network/connection error
+ */
+export function isNetworkError(error: unknown): error is AxiosErrorResponse {
+  return isAxiosError(error) && !error.response;
+}

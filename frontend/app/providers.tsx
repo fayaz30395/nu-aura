@@ -9,6 +9,7 @@ import { ToastProvider } from '@/components/ui/Toast';
 import { ToastProvider as NotificationsToastProvider } from '@/components/notifications/ToastProvider';
 import { WebSocketProvider } from '@/lib/contexts/WebSocketContext';
 import { useTokenRefresh } from '@/lib/hooks/useTokenRefresh';
+import { useSessionTimeout } from '@/lib/hooks/useSessionTimeout';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { env } from '@/lib/config';
 import { initGlobalErrorHandlers, createQueryErrorHandler } from '@/lib/utils/error-handler';
@@ -21,10 +22,14 @@ const GOOGLE_CLIENT_ID = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 /**
  * Inner component that uses hooks requiring the Zustand store.
  * Separated because useAuth (Zustand) must be called inside a component.
+ * Manages:
+ * - Token refresh (proactive token refresh every 50 min)
+ * - Session timeout (inactivity logout after 30 min)
  */
 function TokenRefreshManager({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuth((state) => state.isAuthenticated);
   useTokenRefresh(isAuthenticated);
+  useSessionTimeout(isAuthenticated);
   return <>{children}</>;
 }
 
@@ -39,10 +44,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
-            retry: 1,
+            // Data is fresh for 5 minutes after fetching
+            staleTime: 5 * 60 * 1000,
+            // Retry failed requests up to 2 times (3 total attempts)
+            retry: 2,
+            // Don't refetch when window regains focus (reduces unnecessary requests)
+            refetchOnWindowFocus: false,
+            // Set a reasonable timeout for queries
+            gcTime: 10 * 60 * 1000, // 10 minutes
           },
           mutations: {
+            retry: 1,
             onError: createQueryErrorHandler(),
           },
         },

@@ -37,8 +37,8 @@ export default function PerformanceReportsPage() {
       await reportService.downloadPerformanceReport(request);
       setSuccessMessage(`Performance report downloaded successfully in ${format} format!`);
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to download report. Please try again.');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -132,9 +132,9 @@ export default function NewTravelRequestPage() {
       }
 
       router.push(`/travel/${response.id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating travel request:', error);
-      setError(error.response?.data?.message || 'Failed to create travel request');
+      setError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create travel request');
     } finally {
       setLoading(false);
     }

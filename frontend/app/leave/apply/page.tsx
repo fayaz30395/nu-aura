@@ -95,8 +95,8 @@ export default function ApplyLeavePage() {
 
       alert('Leave request submitted successfully!');
       router.push('/leave');
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to submit leave request');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
     } finally {
       setLoading(false);
     }

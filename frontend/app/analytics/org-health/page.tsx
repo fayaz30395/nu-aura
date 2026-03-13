@@ -59,9 +59,9 @@ export default function OrganizationHealthPage() {
             setError(null);
             const result = await analyticsService.getOrganizationHealth();
             setData(result);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to load org health data:', err);
-            setError(err.response?.data?.message || 'Unable to fetch organization health metrics.');
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Unable to fetch organization health metrics.');
         } finally {
             setLoading(false);
         }

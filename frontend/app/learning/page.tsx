@@ -45,8 +45,8 @@ export default function LearningPage() {
       setEnrollingId(courseId);
       await lmsService.enrollSelf(courseId);
       await loadData();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to enroll in course');
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in course');
     } finally {
       setEnrollingId(null);
     }
