@@ -1,143 +1,237 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api/client';
-import {
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { paymentService } from '@/lib/services/payment.service';
+import type {
   PaymentTransaction,
+  PaymentTransactionListItem,
+  CreatePaymentTransactionRequest,
+  UpdatePaymentTransactionRequest,
   PaymentConfig,
-  PaymentConfigRequest,
-  PaymentBatch,
+  SavePaymentConfigRequest,
+  TestConnectionRequest,
+  TestConnectionResponse,
+  PaymentRefund,
+  PaymentRefundListItem,
+  ProcessRefundRequest,
   PaymentStats,
-  PaymentRefund
+  PaymentStatusCheckResponse,
+  PaymentProvider,
+  PaymentStatus,
+  PaymentType,
+  Page,
 } from '@/lib/types/payment';
 
-const PAYMENTS_API = '/api/v1/payments';
-const PAYMENT_CONFIG_API = '/api/v1/payments/config';
-
-// Queries
-export const useListPayments = (page = 0, size = 20) => {
-  return useQuery({
-    queryKey: ['payments', page, size],
-    queryFn: async () => {
-      const { data } = await apiClient.get<{
-        content: PaymentTransaction[];
-        totalElements: number;
-        totalPages: number;
-      }>(`${PAYMENTS_API}?page=${page}&size=${size}`);
-      return data;
-    }
-  });
+export const paymentKeys = {
+  all: ['payments'] as const,
+  lists: () => [...paymentKeys.all, 'list'] as const,
+  list: (filters?: PaymentListFilters) => [...paymentKeys.lists(), filters ?? {}] as const,
+  details: () => [...paymentKeys.all, 'detail'] as const,
+  detail: (id: string) => [...paymentKeys.details(), id] as const,
+  byStatus: (status: PaymentStatus) => [...paymentKeys.all, 'status', status] as const,
+  byType: (type: PaymentType) => [...paymentKeys.all, 'type', type] as const,
+  byProvider: (provider: PaymentProvider) => [...paymentKeys.all, 'provider', provider] as const,
+  status: (transactionId: string) => [...paymentKeys.all, 'status-check', transactionId] as const,
+  stats: () => [...paymentKeys.all, 'stats'] as const,
+  statsByType: (type: PaymentType) => [...paymentKeys.all, 'stats', type] as const,
+  refunds: () => ['payment-refunds'] as const,
+  refundList: (filters?: RefundListFilters) => [...paymentKeys.refunds(), 'list', filters ?? {}] as const,
+  refundDetail: (id: string) => [...paymentKeys.refunds(), 'detail', id] as const,
+  refundsByTransaction: (transactionId: string) => [...paymentKeys.refunds(), 'transaction', transactionId] as const,
+  config: () => ['payment-config'] as const,
+  configByProvider: (provider: PaymentProvider) => [...paymentKeys.config(), provider] as const,
+  configAll: () => [...paymentKeys.config(), 'all'] as const,
 };
 
-export const usePaymentDetails = (paymentId: string | null) => {
-  return useQuery({
-    queryKey: ['payments', paymentId],
-    queryFn: async () => {
-      const { data } = await apiClient.get<PaymentTransaction>(
-        `${PAYMENTS_API}/${paymentId}`
-      );
-      return data;
-    },
-    enabled: !!paymentId
-  });
-};
+export interface PaymentListFilters {
+  page?: number;
+  size?: number;
+}
 
-export const useCheckPaymentStatus = (paymentId: string | null) => {
-  return useQuery({
-    queryKey: ['payments', paymentId, 'status'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<PaymentTransaction>(
-        `${PAYMENTS_API}/${paymentId}/status`
-      );
-      return data;
-    },
-    enabled: !!paymentId,
-    refetchInterval: 5000 // Refetch every 5 seconds
-  });
-};
+export interface RefundListFilters {
+  page?: number;
+  size?: number;
+}
 
-export const usePaymentConfig = () => {
-  return useQuery({
-    queryKey: ['payment-config'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<PaymentConfig>(
-        PAYMENT_CONFIG_API
-      );
-      return data;
-    }
-  });
-};
+// ===================== Payment Transaction Queries =====================
 
-// Mutations
-export const useInitiatePayment = () => {
+export function usePayments(filters?: PaymentListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.list(filters),
+    queryFn: () => paymentService.getPayments(filters?.page ?? 0, filters?.size ?? 20),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function usePayment(paymentId: string) {
+  return useQuery({
+    queryKey: paymentKeys.detail(paymentId),
+    queryFn: () => paymentService.getPayment(paymentId),
+  });
+}
+
+export function usePaymentStatus(transactionId: string) {
+  return useQuery({
+    queryKey: paymentKeys.status(transactionId),
+    queryFn: () => paymentService.checkStatus(transactionId),
+  });
+}
+
+export function usePaymentsByStatus(status: PaymentStatus, filters?: PaymentListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.byStatus(status),
+    queryFn: () => paymentService.getPaymentsByStatus(status, filters?.page ?? 0, filters?.size ?? 20),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function usePaymentsByType(type: PaymentType, filters?: PaymentListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.byType(type),
+    queryFn: () => paymentService.getPaymentsByType(type, filters?.page ?? 0, filters?.size ?? 20),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function usePaymentsByProvider(provider: PaymentProvider, filters?: PaymentListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.byProvider(provider),
+    queryFn: () => paymentService.getPaymentsByProvider(provider, filters?.page ?? 0, filters?.size ?? 20),
+    placeholderData: keepPreviousData,
+  });
+}
+
+// ===================== Payment Transaction Mutations =====================
+
+export function useInitiatePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payment: Partial<PaymentTransaction>) => {
-      const { data } = await apiClient.post<PaymentTransaction>(
-        PAYMENTS_API,
-        payment
-      );
-      return data;
+    mutationFn: (data: CreatePaymentTransactionRequest) => paymentService.initiatePayment(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+      queryClient.setQueryData(paymentKeys.detail(data.id), data);
     },
+  });
+}
+
+export function useUpdatePayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdatePaymentTransactionRequest }) =>
+      paymentService.updatePayment(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+      queryClient.setQueryData(paymentKeys.detail(data.id), data);
+    },
+  });
+}
+
+// ===================== Refund Queries =====================
+
+export function useRefunds(filters?: RefundListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.refundList(filters),
+    queryFn: () => paymentService.getRefunds(filters?.page ?? 0, filters?.size ?? 20),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useRefund(refundId: string) {
+  return useQuery({
+    queryKey: paymentKeys.refundDetail(refundId),
+    queryFn: () => paymentService.getRefund(refundId),
+  });
+}
+
+export function useRefundsByTransaction(transactionId: string, filters?: RefundListFilters) {
+  return useQuery({
+    queryKey: paymentKeys.refundsByTransaction(transactionId),
+    queryFn: () =>
+      paymentService.getRefundsByTransaction(transactionId, filters?.page ?? 0, filters?.size ?? 20),
+    enabled: !!transactionId,
+    placeholderData: keepPreviousData,
+  });
+}
+
+// ===================== Refund Mutations =====================
+
+export function useProcessRefund() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ProcessRefundRequest) => paymentService.processRefund(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-    }
+      queryClient.invalidateQueries({ queryKey: paymentKeys.refundList() });
+      queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
+    },
   });
-};
+}
 
-export const useProcessRefund = () => {
+// ===================== Payment Config Queries =====================
+
+export function usePaymentConfig(provider: PaymentProvider) {
+  return useQuery({
+    queryKey: paymentKeys.configByProvider(provider),
+    queryFn: () => paymentService.getConfig(provider),
+    enabled: !!provider,
+  });
+}
+
+export function useAllPaymentConfigs() {
+  return useQuery({
+    queryKey: paymentKeys.configAll(),
+    queryFn: () => paymentService.getAllConfigs(),
+  });
+}
+
+// ===================== Payment Config Mutations =====================
+
+export function useSavePaymentConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      paymentId,
-      reason
-    }: {
-      paymentId: string;
-      reason: string;
-    }) => {
-      const { data } = await apiClient.post<string>(
-        `${PAYMENTS_API}/${paymentId}/refund`,
-        null,
-        { params: { reason } }
-      );
-      return data;
+    mutationFn: (data: SavePaymentConfigRequest) => paymentService.saveConfig(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.configAll() });
+      queryClient.setQueryData(paymentKeys.configByProvider(data.provider), data);
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['payments', variables.paymentId]
-      });
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-    }
   });
-};
+}
 
-export const useSavePaymentConfig = () => {
+export function useTestConnection() {
+  return useMutation({
+    mutationFn: (data: TestConnectionRequest) => paymentService.testConnection(data),
+  });
+}
+
+export function useToggleConfigActive() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (config: PaymentConfigRequest) => {
-      const { data } = await apiClient.post<PaymentConfig>(
-        PAYMENT_CONFIG_API,
-        config
-      );
-      return data;
+    mutationFn: ({ provider, isActive }: { provider: PaymentProvider; isActive: boolean }) =>
+      paymentService.toggleConfigActive(provider, isActive),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: paymentKeys.configAll() });
+      queryClient.setQueryData(paymentKeys.configByProvider(data.provider), data);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payment-config'] });
-    }
   });
-};
+}
 
-export const useTestPaymentConnection = () => {
-  return useMutation({
-    mutationFn: async (config: PaymentConfigRequest) => {
-      const { data } = await apiClient.post<string>(
-        `${PAYMENT_CONFIG_API}/test-connection`,
-        config
-      );
-      return data;
-    }
+// ===================== Statistics Queries =====================
+
+export function usePaymentStats() {
+  return useQuery({
+    queryKey: paymentKeys.stats(),
+    queryFn: () => paymentService.getStats(),
   });
-};
+}
+
+export function usePaymentStatsByType(type: PaymentType) {
+  return useQuery({
+    queryKey: paymentKeys.statsByType(type),
+    queryFn: () => paymentService.getStatsByType(type),
+    enabled: !!type,
+  });
+}

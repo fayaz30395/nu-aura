@@ -7,6 +7,7 @@ const API_URL = apiConfig.baseUrl;
 /**
  * Module-level flag to debounce 401 redirects to login.
  * Prevents multiple concurrent API calls from each triggering a redirect.
+ * Resets after a short delay to allow fresh login sessions to work.
  */
 let isRedirecting = false;
 
@@ -93,6 +94,8 @@ class ApiClient {
               if (typeof window !== 'undefined') {
                 window.location.href = '/auth/login?reason=expired';
               }
+              // Reset the flag after a delay so that after re-login, the interceptor works again
+              setTimeout(() => { isRedirecting = false; }, 3000);
             }, 0);
 
             return Promise.reject(refreshError);
@@ -161,6 +164,15 @@ class ApiClient {
       localStorage.removeItem('user');
       localStorage.removeItem('auth-storage');
     }
+  }
+
+  /**
+   * Reset the 401 redirect debounce flag.
+   * Must be called after successful login to restore the interceptor's ability
+   * to handle future 401s properly.
+   */
+  resetRedirectFlag(): void {
+    isRedirecting = false;
   }
 
   /**

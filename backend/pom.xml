@@ -176,6 +176,13 @@
             <version>${openpdf.version}</version>
         </dependency>
 
+        <!-- Apache Commons CSV for CSV parsing -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+
         <!-- Bucket4j for Rate Limiting (Playbook Prompt 14) -->
         <dependency>
             <groupId>com.bucket4j</groupId>

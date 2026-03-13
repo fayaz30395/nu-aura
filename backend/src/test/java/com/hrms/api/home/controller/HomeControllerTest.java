@@ -189,6 +189,31 @@ class HomeControllerTest {
     // integration tests. These unit tests verify the endpoint mapping and response structure.
 
     @Test
+    @DisplayName("GET /api/v1/home/attendance/me - should return NOT_APPLICABLE for null employeeId (SuperAdmin case)")
+    @WithMockUser
+    void getAttendanceToday_shouldReturnNotApplicableForNullEmployeeId() throws Exception {
+        // Given - return a default response for null employeeId
+        AttendanceTodayResponse notApplicableResponse = AttendanceTodayResponse.builder()
+                .date(LocalDate.now())
+                .status("NOT_APPLICABLE")
+                .isCheckedIn(false)
+                .canCheckIn(false)
+                .canCheckOut(false)
+                .build();
+
+        when(homeService.getAttendanceToday(null)).thenReturn(notApplicableResponse);
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/home/attendance/me")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("NOT_APPLICABLE")))
+                .andExpect(jsonPath("$.canCheckIn", is(false)))
+                .andExpect(jsonPath("$.canCheckOut", is(false)));
+    }
+
+    @Test
     @DisplayName("GET /api/v1/home/holidays - should return upcoming holidays")
     @WithMockUser
     void getUpcomingHolidays_shouldReturnHolidays() throws Exception {

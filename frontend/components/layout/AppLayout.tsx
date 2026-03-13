@@ -355,6 +355,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         { id: 'compensation', label: 'Compensation', icon: <TrendingUp className="h-5 w-5" />, href: '/compensation', requiredPermission: Permissions.COMPENSATION_VIEW },
         { id: 'benefits', label: 'Benefits', icon: <Gift className="h-5 w-5" />, href: '/benefits', requiredPermission: Permissions.BENEFIT_VIEW },
         { id: 'expenses', label: 'Expenses', icon: <Receipt className="h-5 w-5" />, href: '/expenses', requiredPermission: Permissions.EXPENSE_VIEW },
+        { id: 'payments', label: 'Payments', icon: <CreditCard className="h-5 w-5" />, href: '/payments', requiredPermission: Permissions.PAYMENT_VIEW },
         {
           id: 'loans', label: 'Loans', icon: <Banknote className="h-5 w-5" />, href: '/loans', requiredPermission: Permissions.LOAN_VIEW,
           children: [

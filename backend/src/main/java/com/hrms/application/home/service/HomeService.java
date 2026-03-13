@@ -271,6 +271,18 @@ public class HomeService {
      * Get today's attendance status for an employee
      */
     public AttendanceTodayResponse getAttendanceToday(UUID employeeId) {
+        // Handle null employeeId (SuperAdmin or users without employee record)
+        if (employeeId == null) {
+            log.warn("getAttendanceToday called with null employeeId");
+            return AttendanceTodayResponse.builder()
+                    .date(LocalDate.now())
+                    .status("NOT_APPLICABLE")
+                    .isCheckedIn(false)
+                    .canCheckIn(false)
+                    .canCheckOut(false)
+                    .build();
+        }
+
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
 

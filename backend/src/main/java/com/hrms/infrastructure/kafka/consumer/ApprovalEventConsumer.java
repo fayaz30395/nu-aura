@@ -1,7 +1,12 @@
 package com.hrms.infrastructure.kafka.consumer;
 
 import com.hrms.infrastructure.kafka.KafkaTopics;
+import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.ApprovalEvent;
+import com.hrms.application.leave.service.LeaveBalanceService;
+import com.hrms.application.expense.service.ExpenseClaimService;
+import com.hrms.application.asset.service.AssetManagementService;
+import com.hrms.application.knowledge.service.WikiPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,9 +16,9 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Kafka consumer for approval workflow events.
@@ -33,12 +38,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ApprovalEventConsumer {
 
-    /**
-     * In-memory cache of processed event IDs.
-     * In production, use Redis or database for distributed systems.
-     * TODO: Implement distributed idempotency store for multi-instance deployment.
-     */
-    private final Map<String, Boolean> processedEvents = new ConcurrentHashMap<>();
+    private final IdempotencyService idempotencyService;
+    private final LeaveBalanceService leaveBalanceService;
+    private final ExpenseClaimService expenseClaimService;
+    private final AssetManagementService assetManagementService;
+    private final WikiPageService wikiPageService;
 
     /**
      * Handle approval events.
@@ -61,8 +65,8 @@ public class ApprovalEventConsumer {
         String status = event.getStatus();
 
         try {
-            // Check idempotency: skip if already processed
-            if (processedEvents.containsKey(eventId)) {
+            // Check idempotency: skip if already processed (distributed via Redis)
+            if (idempotencyService.isProcessed(eventId)) {
                 log.debug("Event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -80,8 +84,8 @@ public class ApprovalEventConsumer {
                 log.warn("Unknown approval status: {}", status);
             }
 
-            // Mark event as processed
-            processedEvents.put(eventId, true);
+            // Mark event as processed in Redis
+            idempotencyService.markProcessed(eventId);
 
             // Commit offset
             acknowledgment.acknowledge();
@@ -131,12 +135,22 @@ public class ApprovalEventConsumer {
         UUID leaveRequestId = UUID.fromString((String) metadata.get("leaveRequestId"));
         String leaveType = (String) metadata.get("leaveType");
         Integer days = (Integer) metadata.get("days");
+        UUID employeeId = UUID.fromString((String) metadata.get("employeeId"));
 
         try {
             log.info("Deducting {} days of {} leave for request {}", days, leaveType, leaveRequestId);
 
-            // TODO: Integrate with leave service
-            // leaveService.deductLeaveBalance(leaveRequestId, leaveType, days);
+            // Deduct leave balance via LeaveBalanceService
+            // Extract leave type ID from metadata if available; otherwise log a warning
+            UUID leaveTypeId = null;
+            if (metadata.containsKey("leaveTypeId")) {
+                leaveTypeId = UUID.fromString((String) metadata.get("leaveTypeId"));
+            } else {
+                log.warn("leaveTypeId not found in metadata for leave request {}", leaveRequestId);
+                return;
+            }
+
+            leaveBalanceService.deductLeave(employeeId, leaveTypeId, BigDecimal.valueOf(days));
 
             log.info("Successfully deducted leave balance for request {}", leaveRequestId);
         } catch (Exception e) {
@@ -167,8 +181,8 @@ public class ApprovalEventConsumer {
         try {
             log.info("Marking expense claim {} as approved for payment: {}", expenseClaimId, amount);
 
-            // TODO: Integrate with expense service
-            // expenseService.markApprovedForPayment(expenseClaimId);
+            // Mark expense claim as approved via ExpenseClaimService
+            expenseClaimService.approveExpenseClaim(expenseClaimId);
 
             log.info("Successfully updated expense claim status: {}", expenseClaimId);
         } catch (Exception e) {
@@ -199,8 +213,8 @@ public class ApprovalEventConsumer {
         try {
             log.info("Activating asset assignment: asset={}, employee={}", assetId, employeeId);
 
-            // TODO: Integrate with asset service
-            // assetService.activateAssignment(assetId, employeeId);
+            // Assign asset to employee via AssetManagementService
+            assetManagementService.assignAsset(assetId, employeeId);
 
             log.info("Successfully activated asset assignment");
         } catch (Exception e) {
@@ -231,8 +245,8 @@ public class ApprovalEventConsumer {
         try {
             log.info("Publishing wiki page: id={}, title={}", pageId, pageTitle);
 
-            // TODO: Integrate with knowledge/wiki service
-            // wikiService.publishPage(pageId);
+            // Publish wiki page via WikiPageService
+            wikiPageService.publishPage(pageId);
 
             log.info("Successfully published wiki page: {}", pageId);
         } catch (Exception e) {

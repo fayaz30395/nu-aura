@@ -84,6 +84,7 @@ export const useAuth = create<AuthState>()(
           // Tokens are now set via httpOnly cookies by the backend
           // We only store non-sensitive data client-side
           apiClient.setTenantId(response.tenantId);
+          apiClient.resetRedirectFlag(); // Reset 401 redirect flag after fresh login
 
           // Extract roles and permissions from JWT token in response body
           // (still available for frontend permission checks during migration)
@@ -122,6 +123,7 @@ export const useAuth = create<AuthState>()(
 
           // Tokens are now set via httpOnly cookies by the backend
           apiClient.setTenantId(response.tenantId);
+          apiClient.resetRedirectFlag(); // Reset 401 redirect flag after fresh login
 
           // Extract roles and permissions from JWT token in response body
           const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);

@@ -688,6 +688,28 @@ class HomeServiceTest {
             assertThat(result.getSource()).isEqualTo("WEB");
             assertThat(result.getLocation()).isEqualTo("Office - Chennai");
         }
+
+        @Test
+        @DisplayName("should handle null employeeId (SuperAdmin without employee record)")
+        void getAttendanceToday_shouldHandleNullEmployeeId() {
+            // Given - null employeeId (SuperAdmin case)
+            // When
+            AttendanceTodayResponse result = homeService.getAttendanceToday(null);
+
+            // Then
+            assertThat(result).isNotNull();
+            assertThat(result.getStatus()).isEqualTo("NOT_APPLICABLE");
+            assertThat(result.getEmployeeId()).isNull();
+            assertThat(result.getDate()).isEqualTo(LocalDate.now());
+            assertThat(result.isCheckedIn()).isFalse();
+            assertThat(result.isCanCheckIn()).isFalse();
+            assertThat(result.isCanCheckOut()).isFalse();
+
+            // Verify repositories were not called
+            verifyNoInteractions(holidayRepository);
+            verifyNoInteractions(leaveRequestRepository);
+            verifyNoInteractions(attendanceRecordRepository);
+        }
     }
 
     // ==================== Holiday Tests ====================
