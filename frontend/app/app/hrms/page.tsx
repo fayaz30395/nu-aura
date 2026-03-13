@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 
-/** NU-HRMS entry point — redirects to the HRMS home dashboard */
+/** NU-HRMS entry point — redirects to the employee dashboard */
 export default function HrmsEntryPage() {
-  redirect('/home');
+  redirect('/me/dashboard');
 }

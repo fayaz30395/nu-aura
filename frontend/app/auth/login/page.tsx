@@ -255,7 +255,7 @@ function LoginPage() {
     if (!hasHydrated || !didFreshLogin) return;
     if (isAuthenticated && user && !mfaRequired) {
       const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/home');
+      router.push(returnUrl || '/me/dashboard');
     }
   }, [hasHydrated, isAuthenticated, user, didFreshLogin, router, searchParams, mfaRequired]);
 
@@ -336,7 +336,7 @@ function LoginPage() {
       }
       setDidFreshLogin(true);
       const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/home');
+      router.push(returnUrl || '/me/dashboard');
     } catch (err: any) {
       console.error('[LoginPage] Login error:', err);
       incrementLoginAttempts();
@@ -361,7 +361,7 @@ function LoginPage() {
     resetLoginAttempts();
     setDidFreshLogin(true);
     const returnUrl = searchParams.get('returnUrl');
-    router.push(returnUrl || '/home');
+    router.push(returnUrl || '/me/dashboard');
   };
 
   const handleMfaCancel = () => {
@@ -397,7 +397,7 @@ function LoginPage() {
         await googleLogin({ credential: tokenResponse.access_token, accessToken: true });
         setDidFreshLogin(true);
         const returnUrl = searchParams.get('returnUrl');
-        router.push(returnUrl || '/home');
+        router.push(returnUrl || '/me/dashboard');
       } catch (err: any) {
         setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
       } finally {
@@ -441,7 +441,7 @@ function LoginPage() {
       await googleLogin({ credential: credentialResponse.credential });
       setDidFreshLogin(true);
       const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/home');
+      router.push(returnUrl || '/me/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
     } finally {

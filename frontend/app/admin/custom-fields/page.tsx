@@ -64,7 +64,7 @@ export default function CustomFieldsPage() {
     }
 
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
+      router.push('/me/dashboard');
       return;
     }
 

@@ -60,7 +60,7 @@ export default function HomeError({ error, reset }: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/home')}
+                onClick={() => (window.location.href = '/me/dashboard')}
                 className="w-full"
               >
                 <HomeIcon className="mr-2 h-4 w-4" />

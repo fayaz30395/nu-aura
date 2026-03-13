@@ -109,15 +109,19 @@ export function useApprovalInbox(params: InboxFilterParams = {}) {
 
 /**
  * Inbox summary counts for sidebar badge and summary row.
- * Polls every 30 seconds.
- * Silently handles errors to avoid console errors on every page load.
+ * Polls every 30 seconds. Uses `placeholderData` and a generous `staleTime`
+ * so that the sidebar badge doesn't trigger a blocking refetch on every
+ * client-side navigation (the layout component remounts on route change).
  */
 export function useApprovalInboxCount() {
   return useQuery({
     queryKey: approvalKeys.inboxCount(),
     queryFn: () => workflowService.getInboxCounts(),
-    staleTime: 30 * 1000,
-    refetchInterval: 30 * 1000,
+    staleTime: 60 * 1000,          // data considered fresh for 60s
+    gcTime: 5 * 60 * 1000,         // keep cache for 5 min after unmount
+    refetchInterval: 30 * 1000,    // still poll every 30s when mounted
+    refetchOnMount: false,         // don't refetch if cache exists
+    placeholderData: keepPreviousData,
     retry: false,
   });
 }

@@ -35,7 +35,8 @@ const PUBLIC_ROUTES = [
 
 // Authenticated routes that require authentication
 const AUTHENTICATED_ROUTES = [
-  '/home',
+  '/home',   // legacy — redirects to /me/dashboard
+  '/me',
   '/settings',
   '/settings/security',       // MFA and security settings
   '/learning',
@@ -232,6 +233,11 @@ export function middleware(request: NextRequest) {
   // Skip API routes and static assets
   if (matchesPattern(pathname, SKIP_PATTERNS)) {
     return NextResponse.next();
+  }
+
+  // Legacy /home route — redirect to per-employee dashboard
+  if (pathname === '/home' || pathname.startsWith('/home/')) {
+    return NextResponse.redirect(new URL('/me/dashboard', request.url));
   }
 
   // Allow public routes
