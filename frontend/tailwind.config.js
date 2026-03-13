@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /**
- * TailAdmin Theme - Tailwind CSS Configuration
- * Based on https://tailadmin.com
+ * NU-AURA Theme - Tailwind CSS Configuration
+ * Final theme: Material Dashboard 2 navy-tinted palette
  */
 
 module.exports = {
@@ -48,19 +48,19 @@ module.exports = {
           900: '#4c1d95',
           950: '#2e1065',
         },
-        // Surface - Neutral backgrounds (slate scale)
+        // Surface - Material Dashboard 2 navy-tinted palette (FINAL)
         surface: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+          50: '#f0f2f5',   // page bg light
+          100: '#e9ecef',   // subtle bg / hover light
+          200: '#dee2e6',   // borders light
+          300: '#ced4da',   // heavier borders
+          400: '#7b809a',   // muted/secondary text
+          500: '#667085',   // medium gray text
+          600: '#495269',   // medium-dark text
+          700: '#344767',   // heading text light / borders dark
+          800: '#202940',   // card bg dark
+          900: '#1f283e',   // sidebar bg dark
+          950: '#1a2035',   // page bg dark
         },
         // Gray Scale
         gray: {

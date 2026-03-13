@@ -146,7 +146,7 @@ const ChildrenFlyover: React.FC<{
               'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-out',
               activeId === child.id
                 ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-medium'
-                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200'
+                : 'text-surface-700 dark:text-surface-400 hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200'
             );
 
             const childContent = (
@@ -248,7 +248,7 @@ const SidebarMenuItem: React.FC<{
     'transition-all duration-200 ease-out',
     isActive || isFlyoverOpen
       ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 shadow-sm'
-      : 'text-surface-600 dark:text-surface-400',
+      : 'text-surface-700 dark:text-surface-400',
     !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
@@ -373,7 +373,7 @@ const SectionDivider: React.FC<{
       whileHover={{ x: 2 }}
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors duration-200 relative">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-500 dark:text-surface-500 group-hover:text-surface-700 dark:group-hover:text-surface-400 transition-colors duration-200 relative">
         {label}
         {/* Subtle left border highlight on hover */}
         <motion.div
@@ -626,7 +626,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       onClick={() => handleToggleSection(section.id)}
                       className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-surface-50/60 dark:hover:bg-surface-800/30 rounded-md transition-all duration-200"
                     >
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-400 dark:text-surface-500 group-hover:text-surface-600 dark:group-hover:text-surface-400 transition-colors duration-200">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-500 dark:text-surface-500 group-hover:text-surface-700 dark:group-hover:text-surface-400 transition-colors duration-200">
                         {section.label}
                       </span>
                       <ChevronDown

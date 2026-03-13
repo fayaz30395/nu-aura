@@ -4,7 +4,20 @@ export type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
 
 export type CandidateSource = 'JOB_PORTAL' | 'REFERRAL' | 'LINKEDIN' | 'COMPANY_WEBSITE' | 'WALK_IN' | 'CAMPUS' | 'CONSULTANT' | 'OTHER';
 export type CandidateStatus = 'NEW' | 'SCREENING' | 'INTERVIEW' | 'SELECTED' | 'OFFER_EXTENDED' | 'OFFER_ACCEPTED' | 'OFFER_DECLINED' | 'REJECTED' | 'WITHDRAWN';
-export type RecruitmentStage = 'APPLICATION_RECEIVED' | 'SCREENING' | 'TECHNICAL_ROUND' | 'HR_ROUND' | 'MANAGER_ROUND' | 'FINAL_ROUND' | 'OFFER' | 'JOINED';
+export type RecruitmentStage =
+  | 'RECRUITERS_PHONE_CALL'
+  | 'PANEL_REVIEW'
+  | 'PANEL_REJECT'
+  | 'PANEL_SHORTLISTED'
+  | 'TECHNICAL_INTERVIEW_SCHEDULED'
+  | 'TECHNICAL_INTERVIEW_COMPLETED'
+  | 'MANAGEMENT_INTERVIEW_SCHEDULED'
+  | 'MANAGEMENT_INTERVIEW_COMPLETED'
+  | 'CLIENT_INTERVIEW_SCHEDULED'
+  | 'CLIENT_INTERVIEW_COMPLETED'
+  | 'HR_FINAL_INTERVIEW_COMPLETED'
+  | 'CANDIDATE_REJECTED'
+  | 'OFFER_NDA_TO_BE_RELEASED';
 
 export type InterviewRound = 'SCREENING' | 'TECHNICAL_1' | 'TECHNICAL_2' | 'HR' | 'MANAGERIAL' | 'FINAL';
 export type InterviewType = 'PHONE' | 'VIDEO' | 'IN_PERSON';
@@ -192,10 +205,12 @@ export interface DeclineOfferRequest {
   declineReason?: string;
 }
 
-export type CandidateStage = 'APPLIED' | 'SCREENING' | 'INTERVIEW' | 'ASSESSMENT' | 'OFFER' | 'HIRED' | 'REJECTED';
+/** CandidateStage is now unified with RecruitmentStage (13-stage NU-Hire pipeline) */
+export type CandidateStage = RecruitmentStage;
 
 export interface MoveStageRequest {
-  stage: CandidateStage;
+  stage: RecruitmentStage;
+  notes?: string;
 }
 
 export interface CreateOfferRequest {

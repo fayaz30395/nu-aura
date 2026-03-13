@@ -59,7 +59,7 @@ const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
 
 const getStatusColor = (status: ExitStatus | string | null | undefined) => {
   if (!status) {
-    return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+    return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
   switch (status) {
     case ExitStatus.INITIATED:
@@ -73,13 +73,13 @@ const getStatusColor = (status: ExitStatus | string | null | undefined) => {
     case ExitStatus.CANCELLED:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
 const getExitTypeColor = (type: ExitType | string | null | undefined) => {
   if (!type) {
-    return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+    return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
   switch (type) {
     case ExitType.RESIGNATION:
@@ -93,7 +93,7 @@ const getExitTypeColor = (type: ExitType | string | null | undefined) => {
     case ExitType.ABSCONDING:
       return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 

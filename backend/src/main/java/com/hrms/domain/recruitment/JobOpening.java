@@ -2,8 +2,11 @@ package com.hrms.domain.recruitment;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "job_openings")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class JobOpening {
 
     @Id
@@ -78,13 +82,29 @@ public class JobOpening {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @CreationTimestamp
+    // ── Audit fields (mapped to existing DB columns from V0__init.sql) ──
+
+    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private UUID createdBy;
+
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private UUID lastModifiedBy;
+
+    @Version
+    private Long version;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public enum EmploymentType {
         FULL_TIME, PART_TIME, CONTRACT, TEMPORARY, INTERNSHIP

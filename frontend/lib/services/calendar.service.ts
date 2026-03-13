@@ -147,7 +147,7 @@ class CalendarService {
       CONFIRMED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
       TENTATIVE: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
       CANCELLED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      COMPLETED: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      COMPLETED: 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-300',
     };
     return colors[status] || colors.SCHEDULED;
   }

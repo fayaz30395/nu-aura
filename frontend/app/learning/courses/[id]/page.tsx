@@ -147,7 +147,7 @@ export default function CourseDetailPage() {
   const completionPercentage = progress;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-surface-50 dark:bg-surface-950">
       {/* Hero */}
       <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white">
         <div className="max-w-5xl mx-auto px-6 py-8">
@@ -197,7 +197,7 @@ export default function CourseDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           {course.description && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">About this course</h2>
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{course.description}</p>
             </div>
@@ -205,13 +205,13 @@ export default function CourseDetailPage() {
 
           {/* Progress (if enrolled) */}
           {isEnrolled && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Your Progress</h2>
               
               {/* Completion percentage */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="flex-1 h-3 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>
                   <span className="text-sm font-bold text-gray-900 dark:text-white">{completionPercentage}%</span>
@@ -243,8 +243,8 @@ export default function CourseDetailPage() {
 
           {/* Quizzes Section */}
           {isEnrolled && quizzes.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-100 dark:border-surface-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                   <HelpCircle className="h-5 w-5" />
                   Quizzes & Assessments
@@ -294,7 +294,7 @@ export default function CourseDetailPage() {
                           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                             isAvailable || isPassed || isFailed
                               ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                              : 'bg-gray-200 dark:bg-surface-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                           }`}
                         >
                           {isPassed ? 'Review' : isFailed ? 'Retry' : 'Take Quiz'}
@@ -309,8 +309,8 @@ export default function CourseDetailPage() {
 
           {/* Curriculum */}
           {course.modules && course.modules.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-100 dark:border-surface-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Course Curriculum</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   {course.modules.length} modules · {totalContents} lessons
@@ -320,7 +320,7 @@ export default function CourseDetailPage() {
                 {course.modules.map((mod, idx) => {
                   const expanded = expandedModules.has(mod.id);
                   return (
-                    <div key={mod.id} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
+                    <div key={mod.id} className="border-b border-gray-100 dark:border-surface-700 last:border-0">
                       <button
                         onClick={() => toggleModule(mod.id)}
                         className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
@@ -338,9 +338,9 @@ export default function CourseDetailPage() {
                         {expanded ? <ChevronUp className="h-4 w-4 text-gray-400 dark:text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
                       </button>
                       {expanded && mod.contents && (
-                        <div className="bg-gray-50 dark:bg-gray-700/30 border-t border-gray-100 dark:border-gray-700">
+                        <div className="bg-gray-50 dark:bg-surface-700/30 border-t border-gray-100 dark:border-surface-700">
                           {mod.contents.map((content, cIdx) => (
-                            <div key={content.id} className="flex items-center gap-3 px-6 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                            <div key={content.id} className="flex items-center gap-3 px-6 py-2.5 border-b border-gray-100 dark:border-surface-700 last:border-0">
                               <span className="text-xs text-gray-400 dark:text-gray-500 w-4">{cIdx + 1}</span>
                               <BookOpen className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 shrink-0" />
                               <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">{content.title}</p>
@@ -361,7 +361,7 @@ export default function CourseDetailPage() {
 
         {/* Right: CTA card */}
         <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm sticky top-6">
+          <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6 shadow-sm sticky top-6">
             {course.thumbnailUrl && (
               <img
                 src={course.thumbnailUrl}
@@ -377,7 +377,7 @@ export default function CourseDetailPage() {
                     <span className="text-gray-600 dark:text-gray-400">Progress</span>
                     <span className="font-semibold text-gray-900 dark:text-white">{progress}%</span>
                   </div>
-                  <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div className="h-full bg-blue-600 rounded-full" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
@@ -420,7 +420,7 @@ export default function CourseDetailPage() {
                 {enrollment?.status === 'COMPLETED' && enrollment?.certificateId && (
                   <Link
                     href="/learning/certificates"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 dark:border-surface-600 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <Award className="h-4 w-4 text-green-600 dark:text-green-400" /> View All Certificates
                   </Link>

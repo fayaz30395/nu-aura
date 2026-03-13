@@ -29,6 +29,12 @@ public class DataScopeService {
      */
     public <T> Specification<T> getScopeSpecification(String permission) {
         return (root, query, cb) -> {
+            // 0. SuperAdmin role bypasses ALL permission checks (per CLAUDE.md non-negotiable rule).
+            //    This also handles permission format mismatches (dot vs colon notation).
+            if (SecurityContext.isSuperAdmin()) {
+                return cb.conjunction();
+            }
+
             // 1. Get current Max Scope for this permission
             RoleScope scope = SecurityContext.getPermissionScope(permission);
             if (scope == null) {

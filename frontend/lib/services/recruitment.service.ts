@@ -82,8 +82,8 @@ class RecruitmentService {
   }
 
   async getCandidatesByJob(jobId: string): Promise<Candidate[]> {
-    const response = await apiClient.get<Candidate[]>(`/recruitment/jobs/${jobId}/candidates`);
-    return response.data;
+    const response = await apiClient.get<Page<Candidate>>(`/recruitment/candidates/job-opening/${jobId}`);
+    return response.data.content;
   }
 
   async moveCandidateStage(candidateId: string, data: MoveStageRequest): Promise<Candidate> {

@@ -196,7 +196,7 @@ export const NotificationBell: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-surface-800 rounded-lg shadow-2xl border border-gray-200 dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between p-4 border-b">
             <h3 className="text-lg font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export const NotificationBell: React.FC = () => {
                 return (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b dark:border-gray-700 transition-colors ${
+                    className={`p-4 border-b dark:border-surface-700 transition-colors ${
                       !notification.isRead
                         ? 'bg-blue-50 dark:bg-blue-900/20'
                         : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'

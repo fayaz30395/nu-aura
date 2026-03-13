@@ -83,6 +83,17 @@ public class RecruitmentManagementService {
         jobOpening.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
 
         JobOpening savedJobOpening = jobOpeningRepository.save(jobOpening);
+
+        // Audit: job opening created
+        auditLogService.logAction(
+                "JOB_OPENING",
+                savedJobOpening.getId(),
+                AuditAction.CREATE,
+                null,
+                savedJobOpening.getJobCode() + " - " + savedJobOpening.getJobTitle(),
+                "Job opening created: " + savedJobOpening.getJobCode() + " (" + savedJobOpening.getJobTitle() + ")"
+        );
+
         return mapToJobOpeningResponse(savedJobOpening);
     }
 
@@ -112,6 +123,17 @@ public class RecruitmentManagementService {
         jobOpening.setIsActive(request.getIsActive());
 
         JobOpening updatedJobOpening = jobOpeningRepository.save(jobOpening);
+
+        // Audit: job opening updated
+        auditLogService.logAction(
+                "JOB_OPENING",
+                jobOpeningId,
+                AuditAction.UPDATE,
+                null,
+                updatedJobOpening.getJobCode() + " - " + updatedJobOpening.getStatus(),
+                "Job opening updated: " + updatedJobOpening.getJobCode() + " (" + updatedJobOpening.getJobTitle() + ")"
+        );
+
         return mapToJobOpeningResponse(updatedJobOpening);
     }
 
@@ -157,6 +179,17 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+
+        // Audit: job opening deleted
+        auditLogService.logAction(
+                "JOB_OPENING",
+                jobOpeningId,
+                AuditAction.DELETE,
+                jobOpening.getJobCode() + " - " + jobOpening.getJobTitle(),
+                null,
+                "Job opening deleted: " + jobOpening.getJobCode() + " (" + jobOpening.getJobTitle() + ")"
+        );
+
         jobOpeningRepository.delete(jobOpening);
     }
 
@@ -195,6 +228,17 @@ public class RecruitmentManagementService {
         candidate.setAssignedRecruiterId(request.getAssignedRecruiterId());
 
         Candidate savedCandidate = candidateRepository.save(candidate);
+
+        // Audit: candidate created
+        auditLogService.logAction(
+                "CANDIDATE",
+                savedCandidate.getId(),
+                AuditAction.CREATE,
+                null,
+                savedCandidate.getFirstName() + " " + savedCandidate.getLastName() + " (" + savedCandidate.getEmail() + ")",
+                "Candidate created: " + savedCandidate.getCandidateCode() + " - " + savedCandidate.getFullName() + " for job " + savedCandidate.getJobOpeningId()
+        );
+
         return mapToCandidateResponse(savedCandidate);
     }
 
@@ -224,6 +268,17 @@ public class RecruitmentManagementService {
         candidate.setAssignedRecruiterId(request.getAssignedRecruiterId());
 
         Candidate updatedCandidate = candidateRepository.save(candidate);
+
+        // Audit: candidate updated
+        auditLogService.logAction(
+                "CANDIDATE",
+                candidateId,
+                AuditAction.UPDATE,
+                null,
+                updatedCandidate.getFullName() + " - stage: " + updatedCandidate.getCurrentStage() + ", status: " + updatedCandidate.getStatus(),
+                "Candidate updated: " + updatedCandidate.getCandidateCode() + " - " + updatedCandidate.getFullName()
+        );
+
         return mapToCandidateResponse(updatedCandidate);
     }
 
@@ -269,6 +324,17 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        // Audit: candidate deleted
+        auditLogService.logAction(
+                "CANDIDATE",
+                candidateId,
+                AuditAction.DELETE,
+                candidate.getCandidateCode() + " - " + candidate.getFullName(),
+                null,
+                "Candidate deleted: " + candidate.getCandidateCode() + " - " + candidate.getFullName() + " (" + candidate.getEmail() + ")"
+        );
+
         candidateRepository.delete(candidate);
     }
 
@@ -394,8 +460,9 @@ public class RecruitmentManagementService {
             );
         }
 
-        // Publish CandidateHiredEvent when candidate moves to JOINED stage
-        if (stage == Candidate.RecruitmentStage.JOINED && oldStage != Candidate.RecruitmentStage.JOINED) {
+        // Publish CandidateHiredEvent when candidate reaches OFFER_NDA_TO_BE_RELEASED
+        // (This is the terminal success stage in the nu-hire pipeline; actual onboarding triggers separately)
+        if (stage == Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED && oldStage != Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED) {
             try {
                 JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
                         .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
@@ -427,7 +494,7 @@ public class RecruitmentManagementService {
         Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
 
         candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
-        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
         candidate.setOfferedCtc(request.getOfferedSalary());
         candidate.setOfferedDesignation(request.getPositionTitle());
         candidate.setProposedJoiningDate(request.getJoiningDate());
@@ -478,23 +545,28 @@ public class RecruitmentManagementService {
 
     private void updateStatusFromStage(Candidate candidate, Candidate.RecruitmentStage stage) {
         switch (stage) {
-            case APPLICATION_RECEIVED:
+            case RECRUITERS_PHONE_CALL:
                 candidate.setStatus(Candidate.CandidateStatus.NEW);
                 break;
-            case SCREENING:
+            case PANEL_REVIEW:
+            case PANEL_SHORTLISTED:
                 candidate.setStatus(Candidate.CandidateStatus.SCREENING);
                 break;
-            case TECHNICAL_ROUND:
-            case HR_ROUND:
-            case MANAGER_ROUND:
-            case FINAL_ROUND:
+            case TECHNICAL_INTERVIEW_SCHEDULED:
+            case TECHNICAL_INTERVIEW_COMPLETED:
+            case MANAGEMENT_INTERVIEW_SCHEDULED:
+            case MANAGEMENT_INTERVIEW_COMPLETED:
+            case CLIENT_INTERVIEW_SCHEDULED:
+            case CLIENT_INTERVIEW_COMPLETED:
+            case HR_FINAL_INTERVIEW_COMPLETED:
                 candidate.setStatus(Candidate.CandidateStatus.INTERVIEW);
                 break;
-            case OFFER:
+            case OFFER_NDA_TO_BE_RELEASED:
                 candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
                 break;
-            case JOINED:
-                candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
+            case PANEL_REJECT:
+            case CANDIDATE_REJECTED:
+                candidate.setStatus(Candidate.CandidateStatus.REJECTED);
                 break;
         }
     }
@@ -524,6 +596,17 @@ public class RecruitmentManagementService {
         interview.setNotes(request.getNotes());
 
         Interview savedInterview = interviewRepository.save(interview);
+
+        // Audit: interview scheduled
+        auditLogService.logAction(
+                "INTERVIEW",
+                savedInterview.getId(),
+                AuditAction.CREATE,
+                null,
+                savedInterview.getInterviewRound() + " - " + savedInterview.getStatus(),
+                "Interview scheduled: " + savedInterview.getInterviewRound() + " for candidate " + savedInterview.getCandidateId() + " at " + savedInterview.getScheduledAt()
+        );
+
         return mapToInterviewResponse(savedInterview);
     }
 
@@ -548,6 +631,17 @@ public class RecruitmentManagementService {
         interview.setNotes(request.getNotes());
 
         Interview updatedInterview = interviewRepository.save(interview);
+
+        // Audit: interview updated
+        auditLogService.logAction(
+                "INTERVIEW",
+                interviewId,
+                AuditAction.UPDATE,
+                null,
+                updatedInterview.getInterviewRound() + " - " + updatedInterview.getStatus() + (updatedInterview.getResult() != null ? " - " + updatedInterview.getResult() : ""),
+                "Interview updated: " + updatedInterview.getInterviewRound() + " for candidate " + updatedInterview.getCandidateId()
+        );
+
         return mapToInterviewResponse(updatedInterview);
     }
 
@@ -599,6 +693,17 @@ public class RecruitmentManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+
+        // Audit: interview deleted
+        auditLogService.logAction(
+                "INTERVIEW",
+                interviewId,
+                AuditAction.DELETE,
+                interview.getInterviewRound() + " - " + interview.getStatus(),
+                null,
+                "Interview deleted: " + interview.getInterviewRound() + " for candidate " + interview.getCandidateId()
+        );
+
         interviewRepository.delete(interview);
     }
 
@@ -641,6 +746,9 @@ public class RecruitmentManagementService {
                 .candidateCount(candidateCount)
                 .createdAt(jobOpening.getCreatedAt())
                 .updatedAt(jobOpening.getUpdatedAt())
+                .createdBy(jobOpening.getCreatedBy())
+                .lastModifiedBy(jobOpening.getLastModifiedBy())
+                .version(jobOpening.getVersion())
                 .build();
     }
 
@@ -684,6 +792,9 @@ public class RecruitmentManagementService {
                 .assignedRecruiterName(recruiterName)
                 .createdAt(candidate.getCreatedAt())
                 .updatedAt(candidate.getUpdatedAt())
+                .createdBy(candidate.getCreatedBy())
+                .lastModifiedBy(candidate.getLastModifiedBy())
+                .version(candidate.getVersion())
                 .build();
     }
 
@@ -725,6 +836,9 @@ public class RecruitmentManagementService {
                 .notes(interview.getNotes())
                 .createdAt(interview.getCreatedAt())
                 .updatedAt(interview.getUpdatedAt())
+                .createdBy(interview.getCreatedBy())
+                .lastModifiedBy(interview.getLastModifiedBy())
+                .version(interview.getVersion())
                 .build();
     }
 

@@ -249,7 +249,7 @@ export default function RolesPage() {
           placeholder="Search roles..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         />
         <button
           onClick={() => setShowCreateModal(true)}
@@ -355,7 +355,7 @@ export default function RolesPage() {
                     type="text"
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., MANAGER"
                     required
                   />
@@ -373,7 +373,7 @@ export default function RolesPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., Manager"
                     required
                   />
@@ -390,7 +390,7 @@ export default function RolesPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                   placeholder="Optional description of this role..."
                 />
@@ -407,7 +407,7 @@ export default function RolesPage() {
                     value={permissionSearch}
                     onChange={(e) => setPermissionSearch(e.target.value)}
                     onFocus={() => setShowPermissionDropdown(true)}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="Search and select permissions..."
                   />
                   {showPermissionDropdown && permissions.length > 0 && (
@@ -538,7 +538,7 @@ export default function RolesPage() {
                 <input
                   type="text"
                   value={formData.code}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-gray-100 dark:bg-gray-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-gray-100 dark:bg-surface-950 text-surface-900 dark:text-surface-100"
                   disabled
                 />
               </div>
@@ -550,7 +550,7 @@ export default function RolesPage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   required
                 />
               </div>
@@ -561,7 +561,7 @@ export default function RolesPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                 />
               </div>
@@ -601,7 +601,7 @@ export default function RolesPage() {
             </p>
             <div className="space-y-4">
               {Object.entries(groupedPermissions).map(([resource, perms]) => (
-                <div key={resource} className="border border-surface-200 dark:border-surface-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <div key={resource} className="border border-surface-200 dark:border-surface-700 rounded-lg p-4 bg-gray-50 dark:bg-surface-950">
                   <h3 className="font-semibold text-surface-900 dark:text-surface-100 mb-3">{resource}</h3>
                   <div className="space-y-3">
                     {perms.map((permission) => {
@@ -615,7 +615,7 @@ export default function RolesPage() {
                           className={`p-3 rounded-lg border transition-colors ${
                             isSelected
                               ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20'
-                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                              : 'border-gray-200 dark:border-surface-700 hover:border-gray-300 dark:hover:border-gray-600'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-4">
@@ -625,7 +625,7 @@ export default function RolesPage() {
                                 checked={isSelected}
                                 onChange={() => togglePermission(permission.code)}
                                 disabled={selectedRole.isSystemRole}
-                                className="mt-1 rounded text-primary-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                                className="mt-1 rounded text-primary-600 focus:ring-blue-500 dark:bg-surface-700 dark:border-surface-600"
                               />
                               <div>
                                 <span className="text-sm font-medium text-surface-900 dark:text-surface-100">
@@ -644,7 +644,7 @@ export default function RolesPage() {
 
                             {/* Show current scope badge for system roles */}
                             {isSelected && selectedRole.isSystemRole && (
-                              <span className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                              <span className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-surface-700 text-gray-600 dark:text-gray-300">
                                 {SCOPE_LABELS[currentScope]}
                               </span>
                             )}
@@ -671,7 +671,7 @@ export default function RolesPage() {
             </div>
 
             {/* Summary */}
-            <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-2">
+            <div className="mt-4 p-3 bg-gray-100 dark:bg-surface-800 rounded-lg space-y-2">
               <p className="text-sm text-surface-700 dark:text-surface-300">
                 <strong>{selectedPermissions.length}</strong> permission(s) selected
               </p>

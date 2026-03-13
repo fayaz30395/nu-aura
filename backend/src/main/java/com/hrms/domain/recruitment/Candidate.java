@@ -2,8 +2,11 @@ package com.hrms.domain.recruitment;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ import java.util.UUID;
     @UniqueConstraint(name = "uk_candidate_tenant_code", columnNames = {"tenant_id", "candidate_code"})
 })
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class Candidate {
 
     @Id
@@ -83,7 +87,7 @@ public class Candidate {
     @Enumerated(EnumType.STRING)
     private CandidateStatus status;
 
-    @Column(name = "current_stage", length = 50)
+    @Column(name = "current_stage", length = 60)
     @Enumerated(EnumType.STRING)
     private RecruitmentStage currentStage;
 
@@ -121,13 +125,29 @@ public class Candidate {
     @Column(name = "offer_decline_reason", columnDefinition = "TEXT")
     private String offerDeclineReason;
 
-    @CreationTimestamp
+    // ── Audit fields (mapped to existing DB columns from V0__init.sql) ──
+
+    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @CreatedBy
+    @Column(name = "created_by", updatable = false)
+    private UUID createdBy;
+
+    @LastModifiedBy
+    @Column(name = "updated_by")
+    private UUID lastModifiedBy;
+
+    @Version
+    private Long version;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public enum CandidateSource {
         JOB_PORTAL, REFERRAL, LINKEDIN, COMPANY_WEBSITE, WALK_IN, CAMPUS, CONSULTANT, OTHER
@@ -138,7 +158,19 @@ public class Candidate {
     }
 
     public enum RecruitmentStage {
-        APPLICATION_RECEIVED, SCREENING, TECHNICAL_ROUND, HR_ROUND, MANAGER_ROUND, FINAL_ROUND, OFFER, JOINED
+        RECRUITERS_PHONE_CALL,
+        PANEL_REVIEW,
+        PANEL_REJECT,
+        PANEL_SHORTLISTED,
+        TECHNICAL_INTERVIEW_SCHEDULED,
+        TECHNICAL_INTERVIEW_COMPLETED,
+        MANAGEMENT_INTERVIEW_SCHEDULED,
+        MANAGEMENT_INTERVIEW_COMPLETED,
+        CLIENT_INTERVIEW_SCHEDULED,
+        CLIENT_INTERVIEW_COMPLETED,
+        HR_FINAL_INTERVIEW_COMPLETED,
+        CANDIDATE_REJECTED,
+        OFFER_NDA_TO_BE_RELEASED
     }
 
     public String getFullName() {

@@ -155,7 +155,7 @@ function CandidatesPage() {
       resumeUrl: '',
       source: 'JOB_PORTAL',
       status: 'NEW',
-      currentStage: 'APPLICATION_RECEIVED',
+      currentStage: 'RECRUITERS_PHONE_CALL',
       appliedDate: new Date().toISOString().split('T')[0],
       notes: '',
       assignedRecruiterId: '',
@@ -259,7 +259,7 @@ function CandidatesPage() {
       resumeUrl: candidate.resumeUrl || '',
       source: candidate.source || 'JOB_PORTAL',
       status: candidate.status,
-      currentStage: candidate.currentStage || 'APPLICATION_RECEIVED',
+      currentStage: candidate.currentStage || 'RECRUITERS_PHONE_CALL',
       appliedDate: candidate.appliedDate || '',
       notes: candidate.notes || '',
       assignedRecruiterId: candidate.assignedRecruiterId || '',
@@ -530,16 +530,21 @@ function CandidatesPage() {
 
   const getStageColor = (stage?: RecruitmentStage) => {
     const colorMap: Record<RecruitmentStage, string> = {
-      APPLICATION_RECEIVED: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-      SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
-      TECHNICAL_ROUND: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
-      HR_ROUND: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-      MANAGER_ROUND: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
-      FINAL_ROUND: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
-      OFFER: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
-      JOINED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+      RECRUITERS_PHONE_CALL: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+      PANEL_REVIEW: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
+      PANEL_REJECT: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+      PANEL_SHORTLISTED: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300',
+      TECHNICAL_INTERVIEW_SCHEDULED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
+      TECHNICAL_INTERVIEW_COMPLETED: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300',
+      MANAGEMENT_INTERVIEW_SCHEDULED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
+      MANAGEMENT_INTERVIEW_COMPLETED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
+      CLIENT_INTERVIEW_SCHEDULED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
+      CLIENT_INTERVIEW_COMPLETED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
+      HR_FINAL_INTERVIEW_COMPLETED: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
+      CANDIDATE_REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
+      OFFER_NDA_TO_BE_RELEASED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
     };
-    return colorMap[stage || 'APPLICATION_RECEIVED'] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
   };
 
   const getMatchScoreColor = (score: number) => {
@@ -1205,14 +1210,19 @@ function CandidatesPage() {
                         {...candidateForm.register('currentStage')}
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
-                        <option value="APPLICATION_RECEIVED">Application Received</option>
-                        <option value="SCREENING">Screening</option>
-                        <option value="TECHNICAL_ROUND">Technical Round</option>
-                        <option value="HR_ROUND">HR Round</option>
-                        <option value="MANAGER_ROUND">Manager Round</option>
-                        <option value="FINAL_ROUND">Final Round</option>
-                        <option value="OFFER">Offer</option>
-                        <option value="JOINED">Joined</option>
+                        <option value="RECRUITERS_PHONE_CALL">Phone Call</option>
+                        <option value="PANEL_REVIEW">Panel Review</option>
+                        <option value="PANEL_SHORTLISTED">Shortlisted</option>
+                        <option value="TECHNICAL_INTERVIEW_SCHEDULED">Tech Interview Scheduled</option>
+                        <option value="TECHNICAL_INTERVIEW_COMPLETED">Tech Interview Done</option>
+                        <option value="MANAGEMENT_INTERVIEW_SCHEDULED">Mgmt Interview Scheduled</option>
+                        <option value="MANAGEMENT_INTERVIEW_COMPLETED">Mgmt Interview Done</option>
+                        <option value="CLIENT_INTERVIEW_SCHEDULED">Client Interview Scheduled</option>
+                        <option value="CLIENT_INTERVIEW_COMPLETED">Client Interview Done</option>
+                        <option value="HR_FINAL_INTERVIEW_COMPLETED">HR Final Done</option>
+                        <option value="OFFER_NDA_TO_BE_RELEASED">Offer / NDA</option>
+                        <option value="PANEL_REJECT">Panel Reject</option>
+                        <option value="CANDIDATE_REJECTED">Rejected</option>
                       </select>
                     </div>
                   </div>

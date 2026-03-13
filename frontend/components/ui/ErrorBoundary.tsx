@@ -58,8 +58,8 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
+          <div className="max-w-md w-full bg-white dark:bg-surface-800 rounded-lg shadow-lg p-8">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-red-600 dark:text-red-400"
@@ -96,7 +96,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Production: Show only error ID for support reference */}
             {!isDevelopment && this.state.errorId && (
-              <div className="bg-gray-100 dark:bg-gray-700 rounded p-3 mb-6 text-center">
+              <div className="bg-gray-100 dark:bg-surface-700 rounded p-3 mb-6 text-center">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                   Error Reference
                 </p>
@@ -115,7 +115,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => (window.location.href = '/')}
-                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-surface-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
               >
                 Go Home
               </button>
