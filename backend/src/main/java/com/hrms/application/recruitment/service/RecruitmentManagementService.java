@@ -49,6 +49,7 @@ public class RecruitmentManagementService {
     private final WorkflowService workflowService;
     private final AuditLogService auditLogService;
     private final DomainEventPublisher eventPublisher;
+    private final GoogleMeetService googleMeetService;
 
     // ==================== Job Opening Operations ====================
 
@@ -595,6 +596,59 @@ public class RecruitmentManagementService {
         interview.setResult(request.getResult());
         interview.setNotes(request.getNotes());
 
+        // Google Meet integration: create a Calendar event with Meet link if requested
+        if (request.isCreateGoogleMeet() && request.getGoogleAccessToken() != null) {
+            try {
+                String candidateName = candidateRepository.findById(request.getCandidateId())
+                        .map(Candidate::getFullName).orElse("Candidate");
+                String jobTitle = jobOpeningRepository.findById(request.getJobOpeningId())
+                        .map(JobOpening::getJobTitle).orElse("Position");
+                String title = interview.getInterviewRound() + " Interview - " + candidateName + " (" + jobTitle + ")";
+                String description = "Interview scheduled via NU-AURA HRMS\n"
+                        + "Candidate: " + candidateName + "\n"
+                        + "Position: " + jobTitle + "\n"
+                        + "Round: " + interview.getInterviewRound();
+
+                // Collect attendee emails
+                List<String> attendeeEmails = new java.util.ArrayList<>();
+                candidateRepository.findById(request.getCandidateId())
+                        .map(Candidate::getEmail)
+                        .ifPresent(attendeeEmails::add);
+                if (request.getInterviewerId() != null) {
+                    employeeRepository.findById(request.getInterviewerId())
+                            .map(Employee::getPersonalEmail)
+                            .ifPresent(attendeeEmails::add);
+                }
+
+                int duration = request.getDurationMinutes() != null ? request.getDurationMinutes() : 60;
+
+                GoogleMeetService.GoogleMeetResult meetResult = googleMeetService.createMeetEvent(
+                        request.getGoogleAccessToken(),
+                        title,
+                        description,
+                        request.getScheduledAt(),
+                        duration,
+                        attendeeEmails,
+                        request.getLocation()
+                );
+
+                if (meetResult.success()) {
+                    interview.setGoogleMeetLink(meetResult.meetLink());
+                    interview.setGoogleCalendarEventId(meetResult.calendarEventId());
+                    // Also set meetingLink so existing UI can display it
+                    if (interview.getMeetingLink() == null || interview.getMeetingLink().isBlank()) {
+                        interview.setMeetingLink(meetResult.meetLink());
+                    }
+                    log.info("Google Meet created for interview: {}", meetResult.meetLink());
+                } else {
+                    log.warn("Google Meet creation failed: {}. Interview will be saved without Meet link.", meetResult.errorMessage());
+                }
+            } catch (Exception e) {
+                log.error("Error creating Google Meet for interview: {}", e.getMessage(), e);
+                // Don't fail the interview creation if Meet creation fails
+            }
+        }
+
         Interview savedInterview = interviewRepository.save(interview);
 
         // Audit: interview scheduled
@@ -839,6 +893,8 @@ public class RecruitmentManagementService {
                 .createdBy(interview.getCreatedBy())
                 .lastModifiedBy(interview.getLastModifiedBy())
                 .version(interview.getVersion())
+                .googleMeetLink(interview.getGoogleMeetLink())
+                .googleCalendarEventId(interview.getGoogleCalendarEventId())
                 .build();
     }
 

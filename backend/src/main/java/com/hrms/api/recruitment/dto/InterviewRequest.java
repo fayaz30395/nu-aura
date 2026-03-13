@@ -22,4 +22,8 @@ public class InterviewRequest {
     private Integer rating;
     private Interview.InterviewResult result;
     private String notes;
+
+    // Google Meet integration
+    private boolean createGoogleMeet;
+    private String googleAccessToken;
 }

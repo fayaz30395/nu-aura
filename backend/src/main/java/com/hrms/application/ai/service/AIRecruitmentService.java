@@ -24,6 +24,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * AI-powered recruitment service for:
@@ -1084,6 +1086,224 @@ public class AIRecruitmentService {
         }
     }
 
+    /**
+     * Extract text between two delimiters in a string.
+     */
+    private String extractBetween(String text, String startDelim, String endDelim) {
+        if (text == null) return "";
+        int start = text.indexOf(startDelim);
+        if (start == -1) return "";
+        start += startDelim.length();
+        int end = text.indexOf(endDelim, start);
+        if (end == -1) {
+            return text.substring(start).trim();
+        }
+        return text.substring(start, end).trim();
+    }
+
+    /**
+     * Convert a List<String> to JSON array format for mock responses.
+     */
+    private String toJsonArray(List<String> items) {
+        if (items == null || items.isEmpty()) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < items.size(); i++) {
+            sb.append("\"").append(items.get(i).replace("\"", "\\\"")).append("\"");
+            if (i < items.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    /**
+     * Generate a deterministic hash seed from candidate and job data extracted from prompt.
+     * Used to generate consistent but varied mock scores.
+     */
+    private long generateHashSeed(String candidateName, String jobTitle) {
+        try {
+            String combined = (candidateName != null ? candidateName : "") + "|" + (jobTitle != null ? jobTitle : "");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(combined.getBytes());
+            long seed = 0;
+            for (int i = 0; i < 8; i++) {
+                seed = (seed << 8) | (hash[i] & 0xFF);
+            }
+            return seed;
+        } catch (NoSuchAlgorithmException e) {
+            return combined(candidateName, jobTitle).hashCode();
+        }
+    }
+
+    private String combined(String candidateName, String jobTitle) {
+        return (candidateName != null ? candidateName : "") + "|" + (jobTitle != null ? jobTitle : "");
+    }
+
+    /**
+     * Generate a deterministic but varied overall score (45-95) based on hash seed.
+     */
+    private int generateOverallScore(long seed) {
+        java.util.Random rand = new java.util.Random(seed);
+        return 45 + rand.nextInt(51); // 45-95
+    }
+
+    /**
+     * Generate component scores that vary around the overall score ±10.
+     */
+    private int generateComponentScore(long seed, int baseScore, int offset) {
+        java.util.Random rand = new java.util.Random(seed + offset);
+        int variation = rand.nextInt(21) - 10; // -10 to +10
+        int score = baseScore + variation;
+        return Math.max(0, Math.min(100, score));
+    }
+
+    /**
+     * Generate recommendation based on overall score.
+     */
+    private String getRecommendationForScore(int overallScore) {
+        if (overallScore >= 80) {
+            return "HIGHLY_RECOMMENDED";
+        } else if (overallScore >= 65) {
+            return "RECOMMENDED";
+        } else if (overallScore >= 50) {
+            return "CONSIDER";
+        } else {
+            return "NOT_RECOMMENDED";
+        }
+    }
+
+    /**
+     * Generate screening recommendation based on fit level.
+     */
+    private String getScreeningRecommendationForFitLevel(String fitLevel) {
+        if ("HIGH".equals(fitLevel)) {
+            return "ADVANCE";
+        } else if ("MEDIUM".equals(fitLevel)) {
+            return "HOLD";
+        } else {
+            return "REJECT";
+        }
+    }
+
+    /**
+     * Generate fit level based on hash seed.
+     */
+    private String generateFitLevel(long seed) {
+        java.util.Random rand = new java.util.Random(seed);
+        int fitRand = rand.nextInt(100);
+        if (fitRand < 33) {
+            return "HIGH";
+        } else if (fitRand < 66) {
+            return "MEDIUM";
+        } else {
+            return "LOW";
+        }
+    }
+
+    /**
+     * Generate dynamic strengths based on overall score.
+     */
+    private List<String> generateStrengths(long seed, int overallScore) {
+        java.util.Random rand = new java.util.Random(seed);
+        List<String> allStrengths = List.of(
+            "Strong technical skills",
+            "Relevant industry experience",
+            "Excellent communication abilities",
+            "Leadership potential",
+            "Problem-solving aptitude",
+            "Cultural fit",
+            "Proven track record",
+            "Quick learner",
+            "Team collaboration skills",
+            "Adaptability"
+        );
+
+        List<String> selected = new ArrayList<>();
+        int count = overallScore > 75 ? 3 : (overallScore > 50 ? 2 : 1);
+        for (int i = 0; i < count; i++) {
+            selected.add(allStrengths.get(rand.nextInt(allStrengths.size())));
+        }
+        return selected;
+    }
+
+    /**
+     * Generate dynamic gaps based on overall score.
+     */
+    private List<String> generateGaps(long seed, int overallScore) {
+        java.util.Random rand = new java.util.Random(seed + 1000);
+        List<String> allGaps = List.of(
+            "Limited leadership experience",
+            "No cloud platform certification",
+            "Gap in specific technical domain",
+            "Limited experience with modern frameworks",
+            "Lacking advanced degree",
+            "No international experience",
+            "Limited project management background",
+            "Unfamiliar with industry best practices",
+            "Communication gaps",
+            "Geographic mismatch"
+        );
+
+        List<String> selected = new ArrayList<>();
+        int count = overallScore < 60 ? 3 : (overallScore < 80 ? 2 : 1);
+        for (int i = 0; i < count; i++) {
+            selected.add(allGaps.get(rand.nextInt(allGaps.size())));
+        }
+        return selected;
+    }
+
+    /**
+     * Generate follow-up questions for screening.
+     */
+    private List<String> generateFollowUpQuestions(long seed) {
+        java.util.Random rand = new java.util.Random(seed + 2000);
+        List<String> allQuestions = List.of(
+            "Can you elaborate on your most recent project experience?",
+            "How do you approach learning new technologies?",
+            "Tell us about your team collaboration experience",
+            "What are your career goals for the next 3-5 years?",
+            "How do you handle pressure and tight deadlines?",
+            "Describe your approach to problem-solving",
+            "What attracted you to this role?",
+            "How do you stay current with industry trends?",
+            "Tell us about a time you faced conflict at work",
+            "What is your approach to code quality and testing?"
+        );
+
+        List<String> selected = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            selected.add(allQuestions.get(rand.nextInt(allQuestions.size())));
+        }
+        return selected;
+    }
+
+    /**
+     * Generate risk flags for screening.
+     */
+    private List<String> generateRiskFlags(long seed, String fitLevel) {
+        java.util.Random rand = new java.util.Random(seed + 3000);
+        List<String> allRisks = List.of(
+            "High salary expectations may not align with offer",
+            "Short tenure at last position",
+            "Geographic relocation required",
+            "Skill gaps in critical areas",
+            "Limited availability (long notice period)",
+            "Technology stack mismatch",
+            "Career progression expectations unclear"
+        );
+
+        List<String> selected = new ArrayList<>();
+        if ("LOW".equals(fitLevel)) {
+            for (int i = 0; i < 2; i++) {
+                selected.add(allRisks.get(rand.nextInt(allRisks.size())));
+            }
+        }
+        return selected;
+    }
+
     private String getMockResponse(String prompt) {
         // Return mock responses for testing when API is not available
         if (prompt.contains("resume")) {
@@ -1104,20 +1324,95 @@ public class AIRecruitmentService {
                     }
                     """;
         } else if (prompt.contains("match")) {
-            return """
+            // Extract candidate name and job title from prompt for seed generation
+            String candidateName = extractBetween(prompt, "- Name: ", "\n");
+            String jobTitle = extractBetween(prompt, "- Title: ", "\n");
+
+            long seed = generateHashSeed(candidateName, jobTitle);
+            int overallScore = generateOverallScore(seed);
+            int skillsScore = generateComponentScore(seed, overallScore, 1);
+            int experienceScore = generateComponentScore(seed, overallScore, 2);
+            int educationScore = generateComponentScore(seed, overallScore, 3);
+            int culturalFitScore = generateComponentScore(seed, overallScore, 4);
+
+            List<String> strengths = generateStrengths(seed, overallScore);
+            List<String> gaps = generateGaps(seed, overallScore);
+            String recommendation = getRecommendationForScore(overallScore);
+
+            String summary = String.format(
+                "Candidate demonstrates %s match for the role. %s. %s",
+                overallScore >= 75 ? "strong" : (overallScore >= 50 ? "moderate" : "limited"),
+                !strengths.isEmpty() ? "Strengths include: " + String.join(", ", strengths) : "Some training may be required",
+                !gaps.isEmpty() ? "Consider developing: " + String.join(", ", gaps) : "Well-rounded profile"
+            );
+
+            List<String> interviewFocus = generateFollowUpQuestions(seed);
+
+            return String.format("""
                     {
-                      "overallScore": 78,
-                      "skillsScore": 85,
-                      "experienceScore": 75,
-                      "educationScore": 80,
-                      "culturalFitScore": 70,
-                      "strengths": ["Strong technical skills", "Relevant experience", "Good communication"],
-                      "gaps": ["Limited leadership experience", "No cloud certification"],
-                      "recommendation": "RECOMMENDED",
-                      "summary": "Strong candidate with relevant technical skills. Recommended for interview.",
-                      "interviewFocus": ["Leadership potential", "Cloud architecture knowledge"]
+                      "overallScore": %d,
+                      "skillsScore": %d,
+                      "experienceScore": %d,
+                      "educationScore": %d,
+                      "culturalFitScore": %d,
+                      "strengths": %s,
+                      "gaps": %s,
+                      "recommendation": "%s",
+                      "summary": "%s",
+                      "interviewFocus": %s,
+                      "aiModelVersion": "mock-v1"
                     }
-                    """;
+                    """,
+                overallScore,
+                skillsScore,
+                experienceScore,
+                educationScore,
+                culturalFitScore,
+                toJsonArray(strengths),
+                toJsonArray(gaps),
+                recommendation,
+                summary.replace("\"", "\\\""),
+                toJsonArray(interviewFocus)
+            );
+        } else if (prompt.contains("screening summary") || prompt.contains("Screening")) {
+            // Extract candidate name and job title for seed generation
+            String candidateName = extractBetween(prompt, "- Name: ", "\n");
+            String jobTitle = extractBetween(prompt, "- Title: ", "\n");
+
+            long seed = generateHashSeed(candidateName, jobTitle);
+            String fitLevel = generateFitLevel(seed);
+            List<String> strengths = generateStrengths(seed, fitLevel.equals("HIGH") ? 80 : (fitLevel.equals("MEDIUM") ? 60 : 40));
+            List<String> gaps = generateGaps(seed, fitLevel.equals("HIGH") ? 80 : (fitLevel.equals("MEDIUM") ? 60 : 40));
+            List<String> followUpQuestions = generateFollowUpQuestions(seed);
+            List<String> riskFlags = generateRiskFlags(seed, fitLevel);
+            String recommendation = getScreeningRecommendationForFitLevel(fitLevel);
+
+            String summary = String.format(
+                "Candidate shows %s fit for this role. %s",
+                fitLevel.toLowerCase(),
+                fitLevel.equals("HIGH") ? "Ready to advance to next stage." : (fitLevel.equals("MEDIUM") ? "Further evaluation recommended." : "Consider alternative candidates.")
+            );
+
+            return String.format("""
+                    {
+                      "fitLevel": "%s",
+                      "strengths": %s,
+                      "gaps": %s,
+                      "followUpQuestions": %s,
+                      "riskFlags": %s,
+                      "recommendation": "%s",
+                      "summary": "%s",
+                      "aiModelVersion": "mock-v1"
+                    }
+                    """,
+                fitLevel,
+                toJsonArray(strengths),
+                toJsonArray(gaps),
+                toJsonArray(followUpQuestions),
+                toJsonArray(riskFlags),
+                recommendation,
+                summary.replace("\"", "\\\"")
+            );
         } else if (prompt.contains("synthesizing feedback") || prompt.contains("Synthesize")) {
             return """
                     {

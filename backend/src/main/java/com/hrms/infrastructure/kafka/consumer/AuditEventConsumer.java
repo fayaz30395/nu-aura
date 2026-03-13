@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Kafka consumer for audit events.
@@ -121,14 +122,15 @@ public class AuditEventConsumer {
                         .entityType(event.getEntityType())
                         .entityId(event.getEntityId())
                         .action(AuditLog.AuditAction.valueOf(event.getAction()))
-                        .actorId(event.getActorId())
-                        .actorEmail(event.getActorEmail())
+                        .actorId(event.getUserId())
                         .description(event.getDescription())
-                        .changes(event.getChanges())
+                        .changes(event.getOldValue() != null || event.getNewValue() != null
+                                ? "old=" + event.getOldValue() + ", new=" + event.getNewValue()
+                                : null)
                         .ipAddress(event.getIpAddress())
                         .userAgent(event.getUserAgent())
                         .build();
-                auditLog.setId(event.getEventId());
+                auditLog.setId(UUID.fromString(event.getEventId()));
                 auditLogs.add(auditLog);
             }
 
