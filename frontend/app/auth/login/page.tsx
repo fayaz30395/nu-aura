@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,19 +11,13 @@ import { useGoogleLogin, CredentialResponse, GoogleLogin } from '@react-oauth/go
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { MfaVerification } from '@/components/auth/MfaVerification';
 import {
-  Building2,
-  LogIn,
   AlertCircle,
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  ChevronDown,
-  Info,
+  Shield,
+  Zap,
+  Globe,
+  ArrowRight,
 } from 'lucide-react';
 
 const ALLOWED_DOMAIN = 'nulogic.io';
@@ -35,7 +29,6 @@ interface GoogleJwtPayload {
   picture?: string;
 }
 
-// Validation schema with stronger rules
 const loginSchema = z.object({
   email: z
     .string()
@@ -50,29 +43,149 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-// Rate limiting configuration
 const RATE_LIMIT_MAX_ATTEMPTS = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
-
-// Check if demo mode is enabled (only show demo credentials in development)
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const IS_DEMO_MODE = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-
-// Check if Google OAuth is configured
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
-// Loading fallback for Suspense
+// ─── Animated Mesh Background ────────────────────────────────────────
+function AnimatedBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animFrame: number;
+    let time = 0;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Floating orbs
+    const orbs = Array.from({ length: 5 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: 150 + Math.random() * 250,
+      speedX: (Math.random() - 0.5) * 0.3,
+      speedY: (Math.random() - 0.5) * 0.3,
+      hue: 220 + Math.random() * 40, // Blue-purple spectrum
+    }));
+
+    const animate = () => {
+      time += 0.005;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dark base
+      ctx.fillStyle = '#0a0e27';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw orbs with gradient glow
+      orbs.forEach((orb) => {
+        orb.x += orb.speedX + Math.sin(time + orb.hue) * 0.2;
+        orb.y += orb.speedY + Math.cos(time + orb.hue) * 0.2;
+
+        // Wrap around
+        if (orb.x < -orb.radius) orb.x = canvas.width + orb.radius;
+        if (orb.x > canvas.width + orb.radius) orb.x = -orb.radius;
+        if (orb.y < -orb.radius) orb.y = canvas.height + orb.radius;
+        if (orb.y > canvas.height + orb.radius) orb.y = -orb.radius;
+
+        const gradient = ctx.createRadialGradient(
+          orb.x, orb.y, 0,
+          orb.x, orb.y, orb.radius
+        );
+        gradient.addColorStop(0, `hsla(${orb.hue}, 80%, 60%, 0.15)`);
+        gradient.addColorStop(0.5, `hsla(${orb.hue}, 70%, 40%, 0.06)`);
+        gradient.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      });
+
+      // Subtle grid lines
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.04)';
+      ctx.lineWidth = 1;
+      const gridSize = 60;
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      animFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full"
+      style={{ zIndex: 0 }}
+    />
+  );
+}
+
+// ─── Floating Feature Pills ────────────────────────────────────────
+function FeaturePills() {
+  const features = [
+    { icon: Shield, label: 'Enterprise Security', delay: '0s' },
+    { icon: Zap, label: 'Smart Workflows', delay: '0.2s' },
+    { icon: Globe, label: 'Multi-Tenant SaaS', delay: '0.4s' },
+  ];
+
+  return (
+    <div className="flex flex-wrap gap-3 justify-center mt-8">
+      {features.map(({ icon: Icon, label, delay }) => (
+        <div
+          key={label}
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-white/70 text-xs font-medium"
+          style={{
+            animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
+          }}
+        >
+          <Icon className="w-3.5 h-3.5 text-indigo-400" />
+          {label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30">
-      <div className="animate-pulse flex flex-col items-center">
-        <div className="w-48 h-12 bg-surface-200 dark:bg-surface-700 rounded mb-8" />
-        <div className="w-96 h-96 bg-surface-200 dark:bg-surface-700 rounded-xl" />
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0e27]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin" />
+        <p className="text-white/40 text-sm">Loading NU-AURA...</p>
       </div>
     </div>
   );
 }
 
-// Wrap the main component with Suspense for useSearchParams
+// ─── Page Wrapper ────────────────────────────────────────────────────
 export default function LoginPageWrapper() {
   return (
     <Suspense fallback={<LoginPageLoading />}>
@@ -81,44 +194,39 @@ export default function LoginPageWrapper() {
   );
 }
 
+// ─── Main Login Page ─────────────────────────────────────────────────
 function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
 
-  // Form state
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showDemoCredentials, setShowDemoCredentials] = useState(false);
-
-  // MFA state
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaUserId, setMfaUserId] = useState<string | null>(null);
-
-  // Rate limiting state
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
   const [remainingLockoutTime, setRemainingLockoutTime] = useState(0);
-
-  // Google sign-in state
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Initialize rate limiting from localStorage
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Rate limiting from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedAttempts = localStorage.getItem('loginAttempts');
       const storedLockout = localStorage.getItem('lockoutUntil');
-
-      if (storedAttempts) {
-        setLoginAttempts(parseInt(storedAttempts, 10));
-      }
+      if (storedAttempts) setLoginAttempts(parseInt(storedAttempts, 10));
       if (storedLockout) {
         const lockoutTime = parseInt(storedLockout, 10);
         if (lockoutTime > Date.now()) {
           setLockoutUntil(lockoutTime);
         } else {
-          // Clear expired lockout
           localStorage.removeItem('loginAttempts');
           localStorage.removeItem('lockoutUntil');
         }
@@ -126,19 +234,12 @@ function LoginPage() {
     }
   }, []);
 
-  // Track whether the user performed a fresh login on THIS page visit.
-  // This distinguishes "stale localStorage auth on page load" from "user just logged in".
   const [didFreshLogin, setDidFreshLogin] = useState(false);
 
-  // On mount: if Zustand says authenticated but we landed on the login page,
-  // it means the httpOnly cookie is gone (middleware/API client sent us here).
-  // Clear the stale auth state immediately to prevent redirect loops.
+  // Clear stale auth on mount
   useEffect(() => {
     if (!hasHydrated) return;
-
     if (isAuthenticated && user && !didFreshLogin) {
-      // Stale auth: cookie expired but localStorage still has user data.
-      // Clear it to break the loop.
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth-storage');
         localStorage.removeItem('user');
@@ -149,28 +250,21 @@ function LoginPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 
-  // Redirect after a FRESH login (not stale localStorage)
+  // Redirect after fresh login
   useEffect(() => {
     if (!hasHydrated || !didFreshLogin) return;
-
     if (isAuthenticated && user && !mfaRequired) {
       const returnUrl = searchParams.get('returnUrl');
-      if (returnUrl) {
-        router.push(returnUrl);
-      } else {
-        const primaryRole = user.roles?.[0]?.code || '';
-        redirectBasedOnRole(primaryRole);
-      }
+      router.push(returnUrl || '/home');
     }
   }, [hasHydrated, isAuthenticated, user, didFreshLogin, router, searchParams, mfaRequired]);
 
-  // Lockout timer countdown
+  // Lockout timer
   useEffect(() => {
     if (lockoutUntil) {
       const interval = setInterval(() => {
         const remaining = Math.max(0, lockoutUntil - Date.now());
         setRemainingLockoutTime(remaining);
-
         if (remaining === 0) {
           setLockoutUntil(null);
           setLoginAttempts(0);
@@ -178,15 +272,9 @@ function LoginPage() {
           localStorage.removeItem('lockoutUntil');
         }
       }, 1000);
-
       return () => clearInterval(interval);
     }
   }, [lockoutUntil]);
-
-  const redirectBasedOnRole = (role: string) => {
-    // Default landing page for all users is /home
-    router.push('/home');
-  };
 
   const {
     register,
@@ -196,11 +284,7 @@ function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: 'onChange',
-    defaultValues: {
-      email: '',
-      password: '',
-      rememberMe: false,
-    },
+    defaultValues: { email: '', password: '', rememberMe: false },
   });
 
   const isLockedOut = Boolean(lockoutUntil && lockoutUntil > Date.now());
@@ -215,7 +299,6 @@ function LoginPage() {
     const newAttempts = loginAttempts + 1;
     setLoginAttempts(newAttempts);
     localStorage.setItem('loginAttempts', newAttempts.toString());
-
     if (newAttempts >= RATE_LIMIT_MAX_ATTEMPTS) {
       const lockout = Date.now() + RATE_LIMIT_WINDOW_MS;
       setLockoutUntil(lockout);
@@ -235,56 +318,33 @@ function LoginPage() {
       setError(`Too many login attempts. Please try again in ${formatLockoutTime(remainingLockoutTime)}`);
       return;
     }
-
     setError(null);
     setIsLoading(true);
-
     try {
-      const response = await login({
-        email: data.email,
-        password: data.password,
-      });
-
-      // Check if MFA is required
+      const response = await login({ email: data.email, password: data.password });
       if ((response as any).mfaRequired && (response as any).userId) {
         setMfaRequired(true);
         setMfaUserId((response as any).userId);
-        // Reset form but keep showing it
         setIsLoading(false);
         return;
       }
-
-      // Reset rate limiting on successful login
       resetLoginAttempts();
-
-      // Handle remember me (store preference)
       if (data.rememberMe) {
         localStorage.setItem('rememberMe', 'true');
       } else {
         localStorage.removeItem('rememberMe');
       }
-
-      // Mark fresh login so the redirect useEffect knows this is real auth
       setDidFreshLogin(true);
-
-      // Role-based redirect
       const returnUrl = searchParams.get('returnUrl');
-      if (returnUrl) {
-        router.push(returnUrl);
-      } else {
-        router.push('/home');
-      }
+      router.push(returnUrl || '/home');
     } catch (err: any) {
       console.error('[LoginPage] Login error:', err);
       incrementLoginAttempts();
-
       const attemptsRemaining = RATE_LIMIT_MAX_ATTEMPTS - (loginAttempts + 1);
       let errorMessage = err.response?.data?.message || 'Invalid email or password. Please try again.';
-
       if (attemptsRemaining > 0 && attemptsRemaining < 3) {
         errorMessage += ` (${attemptsRemaining} attempt${attemptsRemaining === 1 ? '' : 's'} remaining)`;
       }
-
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -310,49 +370,31 @@ function LoginPage() {
     setError(null);
   };
 
-  // Google Sign-In with SSO - uses implicit flow with access token
-  // The access token is saved for Drive/Mail and sent to backend for validation
+  // Google SSO
   const handleGoogleSSO = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       console.log('[Google SSO] Success callback triggered', { hasToken: !!tokenResponse.access_token });
       setIsGoogleLoading(true);
       setError(null);
-
       try {
-        // Get user info to validate domain
         const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
-
-        if (!userInfoResponse.ok) {
-          throw new Error('Failed to get user info');
-        }
-
+        if (!userInfoResponse.ok) throw new Error('Failed to get user info');
         const userInfo = await userInfoResponse.json();
-
-        // Check if the email domain is allowed
-        // Note: hd (hosted domain) might be missing for some Google accounts or flows
         const domain = userInfo.hd || userInfo.email.split('@')[1];
-
         if (domain !== ALLOWED_DOMAIN) {
           setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
           setIsGoogleLoading(false);
           return;
         }
-
-        // Verify email domain as additional check
         if (!userInfo.email.endsWith(`@${ALLOWED_DOMAIN}`)) {
           setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
           setIsGoogleLoading(false);
           return;
         }
-
-        // Save the Google access token for Drive and Mail SSO
         saveGoogleToken(tokenResponse.access_token, tokenResponse.expires_in || 3600);
-
-        // Send access token to backend - backend will validate via Google's tokeninfo endpoint
         await googleLogin({ credential: tokenResponse.access_token, accessToken: true });
-
         setDidFreshLogin(true);
         const returnUrl = searchParams.get('returnUrl');
         router.push(returnUrl || '/home');
@@ -364,52 +406,39 @@ function LoginPage() {
     },
     onError: (errorResponse) => {
       console.error('[Google SSO] Error callback triggered:', errorResponse);
-      setError(
-        'Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled.'
-      );
+      setError('Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled.');
     },
     scope: GOOGLE_SSO_SCOPES + ' openid email profile',
     flow: 'implicit',
-    prompt: 'select_account', // Always show account picker
+    prompt: 'select_account',
   });
 
-  // Log Google Client ID on component mount for debugging
   useEffect(() => {
     console.log('[Google SSO] Client ID configured:', GOOGLE_CLIENT_ID ? 'Yes' : 'No');
     console.log('[Google SSO] Client ID value:', GOOGLE_CLIENT_ID);
   }, []);
 
-  // Legacy Google Sign-In handlers (credential-based, without Drive/Mail scopes)
+  // Legacy Google handlers
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) {
       setError('Google sign-in failed. No credential received.');
       return;
     }
-
     setIsGoogleLoading(true);
     setError(null);
-
     try {
-      // Decode the JWT to check the domain
       const decoded = jwtDecode<GoogleJwtPayload>(credentialResponse.credential);
-
-      // Check if the email domain is allowed
       if (!decoded.hd || decoded.hd !== ALLOWED_DOMAIN) {
         setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
         setIsGoogleLoading(false);
         return;
       }
-
-      // Verify email domain as additional check
       if (!decoded.email.endsWith(`@${ALLOWED_DOMAIN}`)) {
         setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
         setIsGoogleLoading(false);
         return;
       }
-
-      // Send credential to backend for verification
       await googleLogin({ credential: credentialResponse.credential });
-
       setDidFreshLogin(true);
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl || '/home');
@@ -421,21 +450,15 @@ function LoginPage() {
   };
 
   const handleGoogleError = () => {
-    // Common reasons for Google sign-in failure:
-    // 1. Popup blocked - user needs to allow popups
-    // 2. Third-party cookies blocked - required for Google Sign-In
-    // 3. OAuth client misconfigured - authorized origins not set
-    // 4. Network issues
-    setError(
-      'Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled. If the issue persists, please use email/password login.'
-    );
+    setError('Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled.');
   };
 
-  // Show MFA verification screen if required
+  // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
-        <div className="max-w-md w-full">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0e27] py-12 px-4">
+        <AnimatedBackground />
+        <div className="relative z-10 max-w-md w-full">
           <MfaVerification
             userId={mfaUserId}
             onSuccess={handleMfaSuccess}
@@ -447,56 +470,171 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
-      <div className="max-w-md w-full">
+    <>
+      {/* Global keyframe animations */}
+      <style jsx global>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes pulse-ring {
+          0% { transform: scale(0.9); opacity: 0.6; }
+          50% { transform: scale(1.05); opacity: 0.3; }
+          100% { transform: scale(0.9); opacity: 0.6; }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out;
+        }
+        .animate-slide-up {
+          animation: fadeSlideUp 0.6s ease-out;
+        }
+        .btn-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 3s ease-in-out infinite;
+        }
+      `}</style>
 
-        {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center mb-4">
-            <Image
-              src="/images/logo.png"
-              alt="NuLogic"
-              width={200}
-              height={60}
-              className="h-16 w-auto object-contain dark:brightness-110"
-              priority
-            />
+      <div className="min-h-screen flex relative overflow-hidden">
+        <AnimatedBackground />
+
+        {/* ─── Left Panel: Branding ─────────────────────────── */}
+        <div className="hidden lg:flex lg:w-[55%] relative z-10 flex-col justify-center items-center px-16">
+          <div
+            className="max-w-lg"
+            style={{ animation: 'fadeSlideUp 0.8s ease-out 0.1s both' }}
+          >
+            {/* Platform badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-8">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-indigo-300 text-xs font-medium tracking-wider uppercase">
+                NU-AURA Platform v1.0
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-5xl font-bold text-white leading-tight mb-6">
+              Your People.
+              <br />
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+                Amplified.
+              </span>
+            </h1>
+
+            <p className="text-lg text-white/50 leading-relaxed mb-8">
+              One platform for HR, Recruitment, Performance, and Knowledge
+              Management. Built for teams that move fast.
+            </p>
+
+            {/* App icons row */}
+            <div className="flex gap-4 mb-8">
+              {[
+                { name: 'HRMS', color: 'from-indigo-500 to-blue-600', icon: '👥' },
+                { name: 'Hire', color: 'from-emerald-500 to-teal-600', icon: '🎯' },
+                { name: 'Grow', color: 'from-amber-500 to-orange-600', icon: '📈' },
+                { name: 'Fluence', color: 'from-violet-500 to-purple-600', icon: '💡' },
+              ].map((app, i) => (
+                <div
+                  key={app.name}
+                  className="group flex flex-col items-center gap-2"
+                  style={{ animation: `fadeSlideUp 0.5s ease-out ${0.3 + i * 0.1}s both` }}
+                >
+                  <div
+                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                    style={{ animation: `float ${3 + i * 0.5}s ease-in-out infinite` }}
+                  >
+                    {app.icon}
+                  </div>
+                  <span className="text-white/40 text-xs font-medium">
+                    NU-{app.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <FeaturePills />
           </div>
-          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
-            Welcome back! Please sign in to continue
-          </p>
         </div>
 
-        {/* Login Card */}
-        <Card className="backdrop-blur-xl bg-white/95 dark:bg-surface-900/95 border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Sign In</CardTitle>
-            <CardDescription>
-              Sign in with your NuLogic Google account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-5">
+        {/* ─── Right Panel: Login Card ───────────────────────── */}
+        <div className="w-full lg:w-[45%] relative z-10 flex items-center justify-center px-6 py-12">
+          <div
+            className="w-full max-w-[420px]"
+            style={{ animation: mounted ? 'fadeSlideUp 0.6s ease-out 0.2s both' : 'none' }}
+          >
+            {/* Logo */}
+            <div className="flex justify-center mb-10 lg:mb-8">
+              <div className="relative">
+                <div
+                  className="absolute -inset-4 rounded-full bg-indigo-500/10 blur-xl"
+                  style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
+                />
+                <Image
+                  src="/images/logo.png"
+                  alt="NuLogic"
+                  width={180}
+                  height={54}
+                  className="h-14 w-auto object-contain relative brightness-0 invert"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Mobile-only tagline */}
+            <div className="lg:hidden text-center mb-8">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Welcome to <span className="text-indigo-400">NU-AURA</span>
+              </h2>
+              <p className="text-white/40 text-sm">
+                Your unified people platform
+              </p>
+            </div>
+
+            {/* Card */}
+            <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-2xl p-8 shadow-2xl">
+              <div className="text-center mb-7">
+                <h3 className="text-xl font-semibold text-white mb-1">
+                  Sign In
+                </h3>
+                <p className="text-white/40 text-sm">
+                  Access your workspace with Google SSO
+                </p>
+              </div>
+
               {/* Error Alert */}
               {error && (
-                <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl animate-in slide-in-from-top-2 duration-300">
-                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-red-800 dark:text-red-400">
+                <div
+                  className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-red-500/10 border border-red-500/20"
+                  style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
+                >
+                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-red-300">
                       Authentication Failed
                     </p>
-                    <p className="text-sm text-red-700 dark:text-red-400 mt-1">
+                    <p className="text-sm text-red-300/70 mt-0.5">
                       {error}
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* Google Sign-In Button with SSO */}
-              <Button
+              {/* Google SSO Button */}
+              <button
                 type="button"
-                variant="outline"
-                className="w-full py-3 flex items-center justify-center gap-3 border-2"
+                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-white hover:bg-gray-50 text-gray-800 font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-white/10 active:scale-[0.98]"
                 onClick={() => {
                   console.log('[Google SSO] Button clicked, initiating Google login');
                   handleGoogleSSO();
@@ -504,7 +642,7 @@ function LoginPage() {
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (
-                  <div className="w-5 h-5 border-2 border-surface-300 border-t-primary-500 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-500 rounded-full animate-spin" />
                 ) : (
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -525,36 +663,69 @@ function LoginPage() {
                     />
                   </svg>
                 )}
-                <span className="font-medium">Sign in with Google</span>
-              </Button>
+                <span>Continue with Google</span>
+                <ArrowRight className="w-4 h-4 ml-auto opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+              </button>
 
-              {/* Google Domain Notice */}
-              <p className="text-xs text-center text-surface-500 dark:text-surface-400">
-                Google sign-in is restricted to @{ALLOWED_DOMAIN} accounts only.
+              {/* Domain notice */}
+              <p className="text-center text-white/30 text-xs mt-4 leading-relaxed">
+                Restricted to <span className="text-indigo-400/80">@{ALLOWED_DOMAIN}</span> accounts.
                 <br />
-                <span className="text-primary-500">Includes access to NU-Drive and NU-Mail.</span>
+                <span className="text-white/20">Includes NU-Drive and NU-Mail access.</span>
+              </p>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/[0.06]" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="px-3 bg-[#0f1330] text-white/20">
+                    secure enterprise SSO
+                  </span>
+                </div>
+              </div>
+
+              {/* Trust badges */}
+              <div className="flex items-center justify-center gap-6 text-white/20 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>SOC 2</span>
+                </div>
+                <div className="w-1 h-1 rounded-full bg-white/10" />
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  <span>Encrypted</span>
+                </div>
+                <div className="w-1 h-1 rounded-full bg-white/10" />
+                <div className="flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>GDPR</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center mt-8 space-y-2">
+              <p className="text-xs text-white/20">
+                By signing in, you agree to our{' '}
+                <Link href="/terms" className="text-indigo-400/60 hover:text-indigo-400 transition-colors">
+                  Terms
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-indigo-400/60 hover:text-indigo-400 transition-colors">
+                  Privacy Policy
+                </Link>
+              </p>
+              <p className="text-xs text-white/10">
+                NuLogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="mt-6 text-center space-y-2">
-          <p className="text-xs text-surface-500 dark:text-surface-400">
-            By signing in, you agree to our{' '}
-            <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:underline">
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:underline">
-              Privacy Policy
-            </Link>
-          </p>
-          <p className="text-xs text-surface-400 dark:text-surface-500">
-            NuLogic HRMS v1.0 &copy; {new Date().getFullYear()}
-          </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,7 +1,10 @@
 package com.hrms.infrastructure.kafka.consumer;
 
 import com.hrms.infrastructure.kafka.KafkaTopics;
+import com.hrms.infrastructure.kafka.IdempotencyService;
 import com.hrms.infrastructure.kafka.events.AuditEvent;
+import com.hrms.infrastructure.audit.repository.AuditLogRepository;
+import com.hrms.domain.audit.AuditLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Kafka consumer for audit events.
@@ -38,12 +39,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuditEventConsumer {
 
     /**
-     * In-memory cache of processed event IDs.
-     * TODO: Use Redis for distributed systems.
-     */
-    private final Map<String, Boolean> processedEvents = new ConcurrentHashMap<>();
-
-    /**
      * Batch size for persisting audit events.
      */
     private static final int BATCH_SIZE = 50;
@@ -52,6 +47,9 @@ public class AuditEventConsumer {
      * Batch accumulator for efficient bulk inserts.
      */
     private final List<AuditEvent> eventBatch = new ArrayList<>(BATCH_SIZE);
+
+    private final IdempotencyService idempotencyService;
+    private final AuditLogRepository auditLogRepository;
 
     /**
      * Handle a single audit event.
@@ -72,8 +70,8 @@ public class AuditEventConsumer {
         String eventId = event.getEventId();
 
         try {
-            // Check idempotency
-            if (processedEvents.containsKey(eventId)) {
+            // Check idempotency (distributed via Redis)
+            if (idempotencyService.isProcessed(eventId)) {
                 log.debug("Audit event {} already processed, skipping", eventId);
                 acknowledgment.acknowledge();
                 return;
@@ -93,8 +91,8 @@ public class AuditEventConsumer {
                 }
             }
 
-            // Mark as processed
-            processedEvents.put(eventId, true);
+            // Mark as processed in Redis
+            idempotencyService.markProcessed(eventId);
 
             // Always acknowledge (even if persistence fails, we don't retry)
             acknowledgment.acknowledge();
@@ -115,10 +113,27 @@ public class AuditEventConsumer {
         try {
             log.info("Persisting batch of {} audit events", batch.size());
 
-            // TODO: Integrate with audit repository/service
-            // auditLogRepository.saveAll(batch);
-            // or
-            // auditLogService.persistBatch(batch);
+            // Convert AuditEvent messages to AuditLog domain objects and persist
+            List<AuditLog> auditLogs = new ArrayList<>();
+            for (AuditEvent event : batch) {
+                AuditLog auditLog = AuditLog.builder()
+                        .tenantId(event.getTenantId())
+                        .entityType(event.getEntityType())
+                        .entityId(event.getEntityId())
+                        .action(AuditLog.AuditAction.valueOf(event.getAction()))
+                        .actorId(event.getActorId())
+                        .actorEmail(event.getActorEmail())
+                        .description(event.getDescription())
+                        .changes(event.getChanges())
+                        .ipAddress(event.getIpAddress())
+                        .userAgent(event.getUserAgent())
+                        .build();
+                auditLog.setId(event.getEventId());
+                auditLogs.add(auditLog);
+            }
+
+            // Batch save all audit logs
+            auditLogRepository.saveAll(auditLogs);
 
             log.debug("Successfully persisted {} audit events", batch.size());
 

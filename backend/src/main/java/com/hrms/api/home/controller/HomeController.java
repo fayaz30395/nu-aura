@@ -70,6 +70,19 @@ public class HomeController {
     public ResponseEntity<AttendanceTodayResponse> getAttendanceToday() {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         log.debug("Getting today's attendance for employee {}", employeeId);
+
+        // SuperAdmin or users without an employee record may have null employeeId
+        if (employeeId == null) {
+            log.warn("Attendance requested by user without linked employee record (SuperAdmin?)");
+            return ResponseEntity.ok(AttendanceTodayResponse.builder()
+                    .date(java.time.LocalDate.now())
+                    .status("NOT_APPLICABLE")
+                    .isCheckedIn(false)
+                    .canCheckIn(false)
+                    .canCheckOut(false)
+                    .build());
+        }
+
         return ResponseEntity.ok(homeService.getAttendanceToday(employeeId));
     }
 

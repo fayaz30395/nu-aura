@@ -1,0 +1,495 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import { AppLayout } from '@/components/layout';
+import {
+  CreditCard,
+  Filter,
+  ChevronDown,
+  Search,
+  Calendar,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  XCircle,
+} from 'lucide-react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { usePayments, usePaymentStats } from '@/lib/hooks/queries/usePayments';
+import { paymentService } from '@/lib/services/payment.service';
+import {
+  PaymentTransactionListItem,
+  PaymentStatus,
+  PaymentType,
+  PaymentProvider,
+} from '@/lib/types/payment';
+import { EmptyState } from '@/components/ui';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
+
+type TabType = 'all' | 'completed' | 'failed' | 'pending';
+
+interface Filters {
+  status: PaymentStatus | 'ALL';
+  type: PaymentType | 'ALL';
+  provider: PaymentProvider | 'ALL';
+  dateFrom: string;
+  dateTo: string;
+  amountMin: string;
+  amountMax: string;
+  search: string;
+}
+
+export default function PaymentsPage() {
+  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
+  const { data: statsData } = usePaymentStats();
+
+  const [activeTab, setActiveTab] = useState<TabType>('all');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>({
+    status: 'ALL',
+    type: 'ALL',
+    provider: 'ALL',
+    dateFrom: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+    dateTo: format(endOfMonth(new Date()), 'yyyy-MM-dd'),
+    amountMin: '',
+    amountMax: '',
+    search: '',
+  });
+
+  const payments = paymentsData?.content || [];
+
+  // Filter payments based on active tab and filters
+  const filteredPayments = useMemo(() => {
+    return payments.filter((payment) => {
+      // Tab filter
+      if (activeTab === 'completed' && payment.status !== 'COMPLETED') return false;
+      if (activeTab === 'failed' && payment.status !== 'FAILED') return false;
+      if (activeTab === 'pending' && !['INITIATED', 'PROCESSING'].includes(payment.status)) return false;
+
+      // Status filter
+      if (filters.status !== 'ALL' && payment.status !== filters.status) return false;
+
+      // Type filter
+      if (filters.type !== 'ALL' && payment.paymentType !== filters.type) return false;
+
+      // Provider filter
+      if (filters.provider !== 'ALL' && payment.provider !== filters.provider) return false;
+
+      // Date range filter
+      const paymentDate = new Date(payment.paymentDate);
+      if (filters.dateFrom && paymentDate < new Date(filters.dateFrom)) return false;
+      if (filters.dateTo && paymentDate > new Date(filters.dateTo)) return false;
+
+      // Amount range filter
+      if (filters.amountMin && payment.amount < parseFloat(filters.amountMin)) return false;
+      if (filters.amountMax && payment.amount > parseFloat(filters.amountMax)) return false;
+
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const matchesSearch =
+          payment.transactionReference?.toLowerCase().includes(searchLower) ||
+          payment.payeeName?.toLowerCase().includes(searchLower) ||
+          payment.description?.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
+
+      return true;
+    });
+  }, [payments, activeTab, filters]);
+
+  const clearFilters = () => {
+    setFilters({
+      status: 'ALL',
+      type: 'ALL',
+      provider: 'ALL',
+      dateFrom: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+      dateTo: format(endOfMonth(new Date()), 'yyyy-MM-dd'),
+      amountMin: '',
+      amountMax: '',
+      search: '',
+    });
+  };
+
+  const getStatusIcon = (status: PaymentStatus) => {
+    switch (status) {
+      case 'COMPLETED':
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case 'FAILED':
+        return <XCircle className="w-5 h-5 text-red-600" />;
+      case 'PROCESSING':
+      case 'INITIATED':
+        return <Clock className="w-5 h-5 text-yellow-600" />;
+      default:
+        return <AlertCircle className="w-5 h-5 text-gray-600" />;
+    }
+  };
+
+  if (!hasHydrated) {
+    return (
+      <AppLayout activeMenuItem="payments">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout activeMenuItem="payments">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+              <CreditCard className="w-7 h-7 sm:w-8 sm:h-8" />
+              Payment Gateway
+            </h1>
+            <p className="text-surface-600 dark:text-surface-400 mt-1">
+              Monitor and manage payment transactions
+            </p>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        {statsData && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    {statsData.totalTransactions}
+                  </p>
+                  <p className="text-sm text-surface-500">Total Transactions</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    {statsData.completedTransactions}
+                  </p>
+                  <p className="text-sm text-surface-500">Completed</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    {statsData.processingTransactions}
+                  </p>
+                  <p className="text-sm text-surface-500">Processing</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
+                  <XCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    {statsData.failedTransactions}
+                  </p>
+                  <p className="text-sm text-surface-500">Failed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filters Bar */}
+        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 mb-6 border border-surface-200 dark:border-surface-700">
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Search */}
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+              <input
+                type="text"
+                placeholder="Search transactions..."
+                value={filters.search}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+              />
+            </div>
+
+            {/* Filter Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
+                showFilters
+                  ? 'border-primary-500 text-primary-600 bg-primary-50 dark:bg-primary-900/20'
+                  : 'border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-800'
+              }`}
+            >
+              <Filter className="w-4 h-4" />
+              Filters
+              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Clear Filters */}
+            {(filters.status !== 'ALL' ||
+              filters.type !== 'ALL' ||
+              filters.provider !== 'ALL' ||
+              filters.amountMin ||
+              filters.amountMax) && (
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2 text-sm text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+
+          {/* Expanded Filters */}
+          {showFilters && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Status
+                </label>
+                <select
+                  value={filters.status}
+                  onChange={(e) => setFilters({ ...filters, status: e.target.value as PaymentStatus | 'ALL' })}
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="INITIATED">Initiated</option>
+                  <option value="PROCESSING">Processing</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="FAILED">Failed</option>
+                  <option value="REFUNDED">Refunded</option>
+                  <option value="PARTIAL_REFUND">Partially Refunded</option>
+                  <option value="REVERSED">Reversed</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Type
+                </label>
+                <select
+                  value={filters.type}
+                  onChange={(e) => setFilters({ ...filters, type: e.target.value as PaymentType | 'ALL' })}
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                >
+                  <option value="ALL">All Types</option>
+                  <option value="PAYROLL">Payroll</option>
+                  <option value="EXPENSE_REIMBURSEMENT">Expense Reimbursement</option>
+                  <option value="LOAN">Loan</option>
+                  <option value="BENEFIT_PAYMENT">Benefit Payment</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Provider
+                </label>
+                <select
+                  value={filters.provider}
+                  onChange={(e) => setFilters({ ...filters, provider: e.target.value as PaymentProvider | 'ALL' })}
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                >
+                  <option value="ALL">All Providers</option>
+                  <option value="RAZORPAY">Razorpay</option>
+                  <option value="STRIPE">Stripe</option>
+                  <option value="BANK_TRANSFER">Bank Transfer</option>
+                  <option value="PAYPAL">PayPal</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Date From
+                </label>
+                <input
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Date To
+                </label>
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Min Amount
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={filters.amountMin}
+                    onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    Max Amount
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={filters.amountMax}
+                    onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-surface-50 dark:bg-surface-800 rounded-t-lg shadow-sm">
+          <div className="flex border-b">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'all'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              All Transactions
+            </button>
+            <button
+              onClick={() => setActiveTab('completed')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'completed'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              Completed
+            </button>
+            <button
+              onClick={() => setActiveTab('pending')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'pending'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              Pending
+            </button>
+            <button
+              onClick={() => setActiveTab('failed')}
+              className={`px-6 py-3 font-medium transition-colors ${
+                activeTab === 'failed'
+                  ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
+                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+              }`}
+            >
+              Failed
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
+          {paymentsLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
+            </div>
+          ) : filteredPayments.length === 0 ? (
+            <EmptyState
+              icon={<CreditCard className="h-12 w-12" />}
+              title="No Transactions"
+              description="No payment transactions found matching your filters"
+            />
+          ) : (
+            <div className="space-y-4">
+              {filteredPayments.map((payment) => (
+                <div
+                  key={payment.id}
+                  className="border border-surface-200 dark:border-surface-700 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-start gap-3">
+                      {getStatusIcon(payment.status)}
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-lg">{payment.transactionReference}</h3>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${paymentService.getStatusColor(payment.status)}`}
+                          >
+                            {paymentService.getStatusLabel(payment.status)}
+                          </span>
+                        </div>
+                        {payment.description && (
+                          <p className="text-surface-600 dark:text-surface-400">{payment.description}</p>
+                        )}
+                        {payment.payeeName && (
+                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                            Payee: {payment.payeeName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                        {payment.currency} {payment.amount.toFixed(2)}
+                      </div>
+                      <div className="text-sm text-surface-600 dark:text-surface-400">
+                        {paymentService.getTypeLabel(payment.paymentType)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="text-surface-600 dark:text-surface-400">Provider:</span>
+                      <p className="font-medium">{paymentService.getProviderLabel(payment.provider)}</p>
+                    </div>
+                    <div>
+                      <span className="text-surface-600 dark:text-surface-400">Payment Date:</span>
+                      <p className="font-medium">{paymentService.formatDate(payment.paymentDate)}</p>
+                    </div>
+                    <div>
+                      <span className="text-surface-600 dark:text-surface-400">Created:</span>
+                      <p className="font-medium">{paymentService.formatDateTime(payment.createdAt)}</p>
+                    </div>
+                    {payment.completedAt && (
+                      <div>
+                        <span className="text-surface-600 dark:text-surface-400">Completed:</span>
+                        <p className="font-medium">{paymentService.formatDateTime(payment.completedAt)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

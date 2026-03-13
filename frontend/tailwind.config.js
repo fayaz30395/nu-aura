@@ -19,7 +19,7 @@ module.exports = {
         sans: ['Outfit', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Brand Colors - Primary Blue
+        // Brand Colors - Primary Blue (secondary accent in dark mode)
         brand: {
           25: '#f2f7ff',
           50: '#ecf3ff',
@@ -33,6 +33,34 @@ module.exports = {
           800: '#252dae',
           900: '#262e89',
           950: '#161950',
+        },
+        // Primary - Purple/Violet (main accent for dark mode, purple+blue mix)
+        primary: {
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
+          950: '#2e1065',
+        },
+        // Surface - Neutral backgrounds (slate scale)
+        surface: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
         },
         // Gray Scale
         gray: {
@@ -117,6 +145,12 @@ module.exports = {
         'theme-md': '0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06)',
         'theme-lg': '0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)',
         'theme-xl': '0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03)',
+        // Dark mode shadows - subtle glow on dark backgrounds
+        'dark-xs': '0px 1px 2px 0px rgba(0, 0, 0, 0.3)',
+        'dark-sm': '0px 1px 3px 0px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3)',
+        'dark-md': '0px 4px 8px -2px rgba(0, 0, 0, 0.4), 0px 2px 4px -2px rgba(0, 0, 0, 0.3)',
+        'dark-lg': '0px 12px 16px -4px rgba(0, 0, 0, 0.4), 0px 4px 6px -2px rgba(0, 0, 0, 0.2)',
+        'dark-xl': '0px 20px 24px -4px rgba(0, 0, 0, 0.4), 0px 8px 8px -4px rgba(0, 0, 0, 0.2)',
       },
     },
   },

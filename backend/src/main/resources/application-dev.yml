@@ -3,6 +3,10 @@
 # Never commit actual credentials to version control
 
 spring:
+  config:
+    activate:
+      on-profile: dev
+
   datasource:
     # Use environment variables for database credentials
     url: ${DEV_DATABASE_URL:jdbc:postgresql://localhost:5432/hrms}
@@ -21,11 +25,16 @@ spring:
     password: ${MAIL_PASSWORD:}
 
   jpa:
-    show-sql: false
+    # Allow automatic schema updates in development
+    hibernate:
+      ddl-auto: update
+    # Enable SQL logging for debugging
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
-        generate_statistics: false
+        # Enable statistics in dev for performance monitoring
+        generate_statistics: true
         session:
           events:
             log:
@@ -40,6 +49,13 @@ app:
     expiration: 3600000
     refresh-expiration: 86400000
 
+  # Dev profile: disable secure cookies (localhost doesn't have HTTPS)
+  cookie:
+    secure: false
+  security:
+    csrf:
+      enabled: false
+
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
     access-key: ${MINIO_ACCESS_KEY:minioadmin}
@@ -49,12 +65,40 @@ app:
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
 
+  # Rate limiting disabled in development
+  rate-limit:
+    enabled: false
+
+# Development health probes with relaxed group membership validation
+management:
+  endpoint:
+    health:
+      # Show all health details in dev
+      show-details: always
+      probes:
+        enabled: true
+      # Don't validate group membership in dev (not all contributors may have full setup)
+      validate-group-membership: false
+      group:
+        liveness:
+          include: ping,diskSpace
+        readiness:
+          include: ping,db,redis
+
+server:
+  error:
+    # Show detailed error information in development
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
 logging:
   level:
-    com.hrms: INFO
-    org.springframework.security: INFO
-    org.hibernate.stat: WARN
-    org.hibernate.SQL: WARN
+    com.hrms: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.stat: DEBUG
     org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR
     org.springframework.kafka: WARN
     org.apache.kafka: WARN

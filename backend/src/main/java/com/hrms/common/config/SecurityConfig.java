@@ -104,6 +104,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/exit/interview/public/**").permitAll()
                         // Public career page (job listings, no auth required)
                         .requestMatchers("/api/public/careers/**").permitAll()
+                        // WebSocket/SockJS endpoints (auth handled at STOMP level)
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
@@ -132,7 +134,9 @@ public class SecurityConfig {
                     .ignoringRequestMatchers("/api/v1/public/offers/**")
                     .ignoringRequestMatchers("/api/v1/exit/interview/public/**")
                     // Ignore CSRF for actuator health checks
-                    .ignoringRequestMatchers("/actuator/health", "/actuator/health/**"));
+                    .ignoringRequestMatchers("/actuator/health", "/actuator/health/**")
+                    // Ignore CSRF for WebSocket/SockJS transports
+                    .ignoringRequestMatchers("/ws/**"));
         } else {
             http.csrf(AbstractHttpConfigurer::disable);
         }

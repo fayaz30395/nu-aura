@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -71,6 +73,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Build a ResponseEntity with explicit JSON content type.
+     * <p>Prevents HttpMessageNotWritableException when the incoming request
+     * has a non-JSON Content-Type (e.g., application/javascript from SockJS transports).</p>
+     */
+    private ResponseEntity<ErrorResponse> jsonResponse(HttpStatus status, ErrorResponse body) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(body, headers, status);
+    }
+
+    /**
      * Log error with structured context.
      */
     private void logError(String category, String type, Exception ex, HttpStatus status, String path) {
@@ -100,7 +113,7 @@ public class GlobalExceptionHandler {
                 ex.getMostSpecificCause().getMessage(), path);
         errorResponse.setErrorCode("DB_INTEGRITY_VIOLATION");
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -125,7 +138,7 @@ public class GlobalExceptionHandler {
         errorResponse.setErrors(errors);
         errorResponse.setErrorCode("VALIDATION_FAILED");
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -141,7 +154,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Not Found", ex.getMessage(), path);
         errorResponse.setErrorCode("RESOURCE_NOT_FOUND");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -158,7 +171,7 @@ public class GlobalExceptionHandler {
                 "Invalid email or password", path);
         errorResponse.setErrorCode("BAD_CREDENTIALS");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -175,7 +188,7 @@ public class GlobalExceptionHandler {
                 "You don't have permission to access this resource", path);
         errorResponse.setErrorCode("ACCESS_DENIED");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -191,7 +204,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Validation Error", ex.getMessage(), path);
         errorResponse.setErrorCode("VALIDATION_ERROR");
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(BusinessException.class)
@@ -208,7 +221,7 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), path);
         errorResponse.setErrorCode("BUSINESS_RULE_VIOLATION");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -225,7 +238,7 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), path);
         errorResponse.setErrorCode("AUTHENTICATION_FAILED");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
@@ -242,7 +255,7 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), path);
         errorResponse.setErrorCode("DUPLICATE_RESOURCE");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -259,7 +272,7 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), path);
         errorResponse.setErrorCode("UNAUTHORIZED");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -275,7 +288,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Bad Request", ex.getMessage(), path);
         errorResponse.setErrorCode("ILLEGAL_ARGUMENT");
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -291,7 +304,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = buildErrorResponse(status, "Invalid State", ex.getMessage(), path);
         errorResponse.setErrorCode("ILLEGAL_STATE");
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
@@ -308,6 +321,6 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred", path);
         errorResponse.setErrorCode("INTERNAL_ERROR");
 
-        return ResponseEntity.status(status).body(errorResponse);
+        return jsonResponse(status, errorResponse);
     }
 }

@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import {
   Clock,
   Calendar,
@@ -10,7 +9,6 @@ import {
   Award,
   Megaphone,
   ChevronRight,
-  ChevronDown,
   Plus,
   MessageSquare,
   BarChart3,
@@ -21,38 +19,22 @@ import {
   Send,
   ThumbsUp,
   MoreHorizontal,
-  LogIn,
-  LogOut,
   AlertCircle,
   Loader2,
-  MapPin,
-  Briefcase,
   Gift,
-  ExternalLink,
-  Image as ImageIcon,
-  Smile,
   Users,
-  Bell,
   FileText,
-  Link as LinkIcon,
   TrendingUp,
-  PartyPopper,
-  Home,
-  UserCircle,
-  Inbox,
-  Laptop,
-  Target,
-  BarChart2,
-  Folder,
+  Zap,
+  Sun,
+  Moon,
+  Sunrise,
+  CloudSun,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { Badge } from '@/components/ui/Badge';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { dashboardService } from '@/lib/services/dashboard.service';
-import { announcementService, Announcement, getCategoryColor } from '@/lib/services/announcement.service';
 import { attendanceService } from '@/lib/services/attendance.service';
 import {
   homeService,
@@ -66,39 +48,32 @@ import {
 import {
   wallService,
   WallPostResponse,
-  PostType,
-  ReactionType,
 } from '@/lib/services/wall.service';
 import { leaveService } from '@/lib/services/leave.service';
 import { LeaveBalance } from '@/lib/types/leave';
-import { EmployeeDashboardData } from '@/lib/types/dashboard';
-
-interface QuickLink {
-  id: string;
-  title: string;
-  url: string;
-  icon?: string;
-}
 
 type WallTab = 'Post' | 'Poll' | 'Praise';
+
+/* ─── Greeting ─── */
+function getGreeting(): { text: string; icon: React.ReactNode } {
+  const h = new Date().getHours();
+  if (h < 6) return { text: 'Good Night', icon: <Moon className="w-4 h-4" /> };
+  if (h < 12) return { text: 'Good Morning', icon: <Sunrise className="w-4 h-4" /> };
+  if (h < 17) return { text: 'Good Afternoon', icon: <Sun className="w-4 h-4" /> };
+  if (h < 21) return { text: 'Good Evening', icon: <CloudSun className="w-4 h-4" /> };
+  return { text: 'Good Night', icon: <Moon className="w-4 h-4" /> };
+}
 
 export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // State
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dashboardData, setDashboardData] = useState<EmployeeDashboardData | null>(null);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeWallTab, setActiveWallTab] = useState<WallTab>('Post');
   const [postContent, setPostContent] = useState('');
-  const [praiseRecipient, setPraiseRecipient] = useState('');
-  const [pollQuestion, setPollQuestion] = useState('');
-  const [pollOptions, setPollOptions] = useState(['', '']);
 
-  // Real data from APIs
   const [birthdays, setBirthdays] = useState<BirthdayResponse[]>([]);
   const [workAnniversaries, setWorkAnniversaries] = useState<WorkAnniversaryResponse[]>([]);
   const [newJoinees, setNewJoinees] = useState<NewJoineeResponse[]>([]);
@@ -106,21 +81,14 @@ export default function HomePage() {
   const [onLeaveToday, setOnLeaveToday] = useState<OnLeaveEmployeeResponse[]>([]);
   const [attendanceToday, setAttendanceToday] = useState<AttendanceTodayResponse | null>(null);
   const [clockActionLoading, setClockActionLoading] = useState(false);
-
-  // Wall state
   const [wallPosts, setWallPosts] = useState<WallPostResponse[]>([]);
-  const [wallLoading, setWallLoading] = useState(false);
-
-  // Leave balance state
   const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
 
-  // Clock update
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Load data
   useEffect(() => {
     loadData();
   }, []);
@@ -129,16 +97,7 @@ export default function HomePage() {
     try {
       setLoading(true);
       setError(null);
-
-      const [
-        birthdaysData,
-        anniversariesData,
-        joineesData,
-        holidaysData,
-        leaveData,
-        attendanceData,
-        wallData,
-      ] = await Promise.all([
+      const [bd, ann, jn, hol, lv, att, wall] = await Promise.all([
         homeService.getUpcomingBirthdays(30).catch(() => [] as BirthdayResponse[]),
         homeService.getUpcomingAnniversaries(30).catch(() => [] as WorkAnniversaryResponse[]),
         homeService.getNewJoinees(30).catch(() => [] as NewJoineeResponse[]),
@@ -147,19 +106,16 @@ export default function HomePage() {
         homeService.getMyAttendanceToday().catch(() => null as AttendanceTodayResponse | null),
         wallService.getPosts(0, 10).catch(() => ({ content: [] as WallPostResponse[], totalElements: 0 })),
       ]);
-
-      setBirthdays(birthdaysData);
-      setWorkAnniversaries(anniversariesData);
-      setNewJoinees(joineesData);
-      setHolidays(holidaysData);
-      setOnLeaveToday(leaveData);
-      setAttendanceToday(attendanceData);
-      setWallPosts(wallData.content);
-
-      // Fetch leave balances if we have attendance data with employeeId
-      if (attendanceData?.employeeId) {
-        const balances = await leaveService.getEmployeeBalances(attendanceData.employeeId).catch(() => [] as LeaveBalance[]);
-        setLeaveBalances(balances);
+      setBirthdays(bd);
+      setWorkAnniversaries(ann);
+      setNewJoinees(jn);
+      setHolidays(hol);
+      setOnLeaveToday(lv);
+      setAttendanceToday(att);
+      setWallPosts(wall.content);
+      if (att?.employeeId) {
+        const bal = await leaveService.getEmployeeBalances(att.employeeId).catch(() => [] as LeaveBalance[]);
+        setLeaveBalances(bal);
       }
     } catch (err) {
       console.error('Error loading dashboard:', err);
@@ -173,551 +129,480 @@ export default function HomePage() {
     if (!user?.id || !attendanceToday?.employeeId) return;
     try {
       setClockActionLoading(true);
-      await attendanceService.checkIn({
-        employeeId: attendanceToday.employeeId,
-        checkInTime: new Date().toISOString(),
-        source: 'WEB'
-      });
+      await attendanceService.checkIn({ employeeId: attendanceToday.employeeId, checkInTime: new Date().toISOString(), source: 'WEB' });
       await loadData();
-    } catch (err) {
-      console.error('Clock in failed:', err);
-    } finally {
-      setClockActionLoading(false);
-    }
+    } catch (err) { console.error('Clock in failed:', err); }
+    finally { setClockActionLoading(false); }
   };
 
   const handleClockOut = async () => {
     if (!user?.id || !attendanceToday?.employeeId) return;
     try {
       setClockActionLoading(true);
-      await attendanceService.checkOut({
-        employeeId: attendanceToday.employeeId,
-        checkOutTime: new Date().toISOString(),
-        source: 'WEB'
-      });
+      await attendanceService.checkOut({ employeeId: attendanceToday.employeeId, checkOutTime: new Date().toISOString(), source: 'WEB' });
       await loadData();
-    } catch (err) {
-      console.error('Clock out failed:', err);
-    } finally {
-      setClockActionLoading(false);
-    }
+    } catch (err) { console.error('Clock out failed:', err); }
+    finally { setClockActionLoading(false); }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
-
+  const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const formatDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const getInitials = (name?: string | null) => {
     if (!name) return '??';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const getClockStatus = () => {
     if (!attendanceToday) return { canClockIn: false, canClockOut: false, status: 'UNKNOWN' };
-    if (attendanceToday.status === 'HOLIDAY') return { canClockIn: false, canClockOut: false, status: 'HOLIDAY' };
-    if (attendanceToday.status === 'WEEKLY_OFF') return { canClockIn: false, canClockOut: false, status: 'WEEKLY_OFF' };
-    if (attendanceToday.status === 'ON_LEAVE') return { canClockIn: false, canClockOut: false, status: 'ON_LEAVE' };
-    return {
-      canClockIn: attendanceToday.canCheckIn,
-      canClockOut: attendanceToday.canCheckOut,
-      status: attendanceToday.status,
-    };
+    if (['HOLIDAY', 'WEEKLY_OFF', 'ON_LEAVE'].includes(attendanceToday.status))
+      return { canClockIn: false, canClockOut: false, status: attendanceToday.status };
+    return { canClockIn: attendanceToday.canCheckIn, canClockOut: attendanceToday.canCheckOut, status: attendanceToday.status };
   };
 
-  // Loading state
+  const greeting = useMemo(() => getGreeting(), []);
+  const clockStatus = getClockStatus();
+  const todayBirthdays = birthdays.filter((b) => b.isToday);
+  const upcomingBirthdays = birthdays.filter((b) => !b.isToday);
+  const todayAnniversaries = workAnniversaries.filter((a) => a.isToday);
+  const nextHoliday = holidays[0];
+  const totalLeave = leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0);
+
   if (loading) {
     return (
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
-        <div className="p-4 md:p-5 lg:p-6 max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-4 space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-32 w-full rounded-lg" />
-              ))}
-            </div>
-            <div className="lg:col-span-8 space-y-3">
-              <Skeleton className="h-24 w-full rounded-lg" />
-              <Skeleton className="h-48 w-full rounded-lg" />
-            </div>
+        <div className="p-5">
+          <Skeleton className="h-20 w-full rounded-xl mb-4" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-4">
+            <Skeleton className="lg:col-span-2 h-64 rounded-xl" />
+            <Skeleton className="h-64 rounded-xl" />
           </div>
         </div>
       </AppLayout>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Card className="max-w-md w-full border-0 shadow-md">
-            <CardContent className="p-6 text-center">
-              <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-3" />
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">Unable to Load</h2>
-              <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">{error}</p>
-              <Button variant="primary" onClick={loadData} className="h-9 px-4 text-sm">Try Again</Button>
-            </CardContent>
-          </Card>
+          <div className="text-center max-w-sm">
+            <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-1">Something went wrong</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{error}</p>
+            <Button variant="primary" onClick={loadData} size="sm">Retry</Button>
+          </div>
         </div>
       </AppLayout>
     );
   }
 
-  // Compute derived state
-  const clockStatus = getClockStatus();
-  const todayBirthdays = birthdays.filter((b) => b.isToday);
-  const upcomingBirthdays = birthdays.filter((b) => !b.isToday);
-  const allCelebrations = [...todayBirthdays, ...workAnniversaries.filter(a => a.isToday)];
-
-  const nextHoliday = holidays[0];
-
   return (
     <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
-      {/* Keka-style light theme layout */}
-      <div className="min-h-screen bg-gray-50">
-        {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-blue-900 via-indigo-800 to-purple-900 px-8 py-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
-          <div className="relative z-10">
-            <h1 className="text-2xl font-bold text-white">
-              Welcome {user?.fullName?.split(' ')[0] || 'there'}!
+      <div className="p-4 md:p-5 space-y-4">
+
+        {/* ═══ WELCOME STRIP ═══ */}
+        <div className="bg-gray-900 dark:bg-surface-800 rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-theme-md dark:shadow-dark-md">
+          <div>
+            <div className="flex items-center gap-2 text-brand-300 dark:text-primary-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
+              {greeting.icon}
+              <span>{greeting.text}</span>
+            </div>
+            <h1 className="text-xl font-semibold text-white">
+              {user?.fullName?.split(' ')[0] || 'there'}
             </h1>
+            <p className="text-xs text-gray-400 mt-0.5">{formatDate(currentTime)}</p>
+          </div>
+          <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur rounded-lg px-4 py-2.5 self-start sm:self-auto border border-white/5">
+            <div className="w-2 h-2 rounded-full bg-success-400 animate-pulse" />
+            <span className="text-lg font-mono font-medium text-white tracking-wider">
+              {formatTime(currentTime)}
+            </span>
           </div>
         </div>
 
-        {/* Main Content - Three Column Layout */}
-        <div className="px-4 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Left Sidebar - Quick Access */}
-            <div className="lg:col-span-3 space-y-4">
-              {/* Inbox Card */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <Inbox className="w-6 h-6 text-gray-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">Inbox</h3>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-gray-600">Good job!</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">You have no pending actions</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+        {/* ═══ STAT CARDS ROW ═══ */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-              {/* Time Card - Purple gradient like Keka */}
-              <Card className="bg-gradient-to-br from-purple-400 to-purple-300 border-0 shadow-lg overflow-hidden">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-purple-900">
-                      Time Today - {formatDate(currentTime).split(',')[0]}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-purple-900 hover:bg-purple-500/20 h-7 px-2 text-xs"
-                      onClick={() => router.push('/attendance')}
-                    >
-                      View All
-                    </Button>
-                  </div>
-                  <div className="mb-4">
-                    <p className="text-xs font-medium text-purple-900/70 mb-1">CURRENT TIME</p>
-                    <div className="text-4xl font-bold text-purple-900">
-                      {formatTime(currentTime).replace(' ', '')}
-                    </div>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full bg-white text-purple-900 hover:bg-purple-50 font-medium"
-                    disabled={clockActionLoading || (!clockStatus.canClockIn && !clockStatus.canClockOut)}
-                    onClick={clockStatus.canClockIn ? handleClockIn : handleClockOut}
-                  >
-                    {clockActionLoading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</>
-                    ) : clockStatus.canClockIn ? (
-                      <>Remote Clock-In</>
-                    ) : clockStatus.canClockOut ? (
-                      <>Clock-Out</>
-                    ) : (
-                      <>{clockStatus.status.replace('_', ' ')}</>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Next Holiday - Indian flag style */}
-              {nextHoliday && (
-                <Card className="bg-gradient-to-br from-cyan-400 via-white to-green-400 border-0 shadow-lg overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-orange-500 to-transparent opacity-80" />
-                  <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-green-600 to-transparent opacity-80" />
-                  <div className="absolute inset-0" style={{ backgroundImage: 'repeating-linear-gradient(120deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 20px)' }} />
-
-                  <CardContent className="p-5 relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm font-semibold text-gray-800">Holidays</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-800 hover:bg-white/30 h-7 px-2 text-xs"
-                      >
-                        View All
-                      </Button>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">{nextHoliday.name}</h3>
-                      <p className="text-sm text-gray-700">
-                        {new Date(nextHoliday.date).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* On Leave Today */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">On Leave Today</h3>
-                  {onLeaveToday.length === 0 ? (
-                    <div className="text-center py-6">
-                      <div className="flex items-center justify-center mb-3">
-                        <CheckCircle2 className="w-10 h-10 text-green-600" />
-                        <Users className="w-6 h-6 text-gray-400 ml-2" />
-                      </div>
-                      <p className="text-sm text-gray-700">Everyone is working today!</p>
-                      <p className="text-xs text-gray-500 mt-1">No one is on leave today.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {onLeaveToday.slice(0, 3).map((emp) => (
-                        <div key={emp.employeeId} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
-                            {getInitials(emp.employeeName)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{emp.employeeName}</p>
-                            <p className="text-xs text-gray-500">{emp.leaveType}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Working Remotely */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Working Remotely</h3>
-                  <div className="text-center py-6">
-                    <div className="flex items-center justify-center mb-3">
-                      <Laptop className="w-10 h-10 text-blue-600" />
-                      <MapPin className="w-6 h-6 text-gray-400 ml-2" />
-                    </div>
-                    <p className="text-sm text-gray-700">Everyone is at office!</p>
-                    <p className="text-xs text-gray-500 mt-1">No one is working remotely today.</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Leave Balance */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Leave Balances</h3>
-                  <div className="flex items-center justify-center py-6">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-full border-4 border-blue-500 flex items-center justify-center mb-3">
-                        <div>
-                          <div className="text-3xl font-bold text-gray-900">
-                            {leaveBalances.length > 0
-                              ? leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0).toFixed(1)
-                              : '0'}
-                          </div>
-                          <div className="text-xs text-gray-500">Days</div>
-                        </div>
-                      </div>
-                      <p className="text-xs font-medium text-gray-500">
-                        {leaveBalances.length > 0 ? 'TOTAL AVAILABLE' : 'NO BALANCE DATA'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="flex-1 bg-indigo-600 text-white hover:bg-indigo-700 font-medium text-xs"
-                      onClick={() => router.push('/leave/request')}
-                    >
-                      Request Leave
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-600 hover:bg-gray-100 text-xs"
-                      onClick={() => router.push('/leave/balances')}
-                    >
-                      View All Balances
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Attendance */}
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Attendance</h3>
+              <button onClick={() => router.push('/attendance')} className="text-[11px] text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
+                View
+              </button>
             </div>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-brand-50 dark:bg-primary-950 flex items-center justify-center">
+                <Clock className="w-4 h-4 text-brand-500 dark:text-primary-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {attendanceToday?.checkInTime
+                    ? new Date(attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+                    : 'Not clocked in'}
+                </p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500">{clockStatus.status.replace(/_/g, ' ')}</p>
+              </div>
+            </div>
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full bg-brand-500 hover:bg-brand-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white text-xs font-medium rounded-lg h-8"
+              disabled={clockActionLoading || (!clockStatus.canClockIn && !clockStatus.canClockOut)}
+              onClick={clockStatus.canClockIn ? handleClockIn : handleClockOut}
+            >
+              {clockActionLoading ? (
+                <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Processing</>
+              ) : clockStatus.canClockIn ? (
+                <>Clock In</>
+              ) : clockStatus.canClockOut ? (
+                <>Clock Out</>
+              ) : (
+                <>{clockStatus.status.replace(/_/g, ' ')}</>
+              )}
+            </Button>
+          </div>
 
-            {/* Center Column - Main Content */}
-            <div className="lg:col-span-6 space-y-4">
-              {/* Quick Links / Tabs */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-4">
-                  <div className="flex gap-2">
-                    <Button
-                      variant={activeWallTab === 'Post' ? 'default' : 'ghost'}
-                      size="sm"
-                      className={activeWallTab === 'Post' ? 'bg-indigo-600 text-white border border-indigo-700' : 'text-gray-700 hover:bg-gray-100 border border-gray-300'}
-                      onClick={() => setActiveWallTab('Post')}
-                    >
-                      Organization
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-700 hover:bg-gray-100 border border-gray-300"
-                    >
-                      Delivery India
-                    </Button>
+          {/* Leave Balance */}
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Leave</h3>
+              <button onClick={() => router.push('/leave')} className="text-[11px] text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
+                Details
+              </button>
+            </div>
+            <div className="mb-3">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalLeave > 0 ? totalLeave.toFixed(1) : '0'}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">days left</span>
+            </div>
+            {leaveBalances.length > 0 && (
+              <div className="space-y-1.5 mb-3">
+                {leaveBalances.slice(0, 2).map((bal) => (
+                  <div key={bal.leaveTypeId} className="flex justify-between text-[11px]">
+                    <span className="text-gray-500 dark:text-gray-400 truncate pr-2">{bal.leaveTypeId}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">{(bal.available || 0).toFixed(1)}</span>
                   </div>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
+            )}
+            <Button
+              variant="secondary"
+              size="sm"
+              className="w-full text-xs font-medium rounded-lg h-8 border-brand-200 dark:border-primary-800 text-brand-600 dark:text-primary-400 hover:bg-brand-25 dark:hover:bg-primary-950"
+              onClick={() => router.push('/leave/request')}
+            >
+              Request Leave
+            </Button>
+          </div>
 
-              {/* Post/Poll/Praise Tabs */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <div className="flex gap-6 border-b border-gray-200 pb-3 mb-4">
-                    <button
-                      onClick={() => setActiveWallTab('Post')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Post'
-                        ? 'border-indigo-600 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                      <MessageSquare className="w-4 h-4" />
-                      <span className="text-sm font-medium">Post</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveWallTab('Poll')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Poll'
-                        ? 'border-indigo-600 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                      <BarChart3 className="w-4 h-4" />
-                      <span className="text-sm font-medium">Poll</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveWallTab('Praise')}
-                      className={`flex items-center gap-2 pb-1 border-b-2 transition-colors ${activeWallTab === 'Praise'
-                        ? 'border-indigo-600 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                      <Heart className="w-4 h-4" />
-                      <span className="text-sm font-medium">Praise</span>
-                    </button>
+          {/* Next Holiday */}
+          <div className="bg-brand-500 dark:bg-primary-600 rounded-xl p-4 text-white relative overflow-hidden shadow-theme-sm dark:shadow-dark-sm">
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/10 -translate-y-1/2 translate-x-1/3" />
+            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-brand-600/50 dark:bg-primary-700/50 translate-y-1/3 -translate-x-1/4" />
+            <h3 className="text-xs font-semibold text-brand-100 dark:text-primary-200 uppercase tracking-wide mb-3 relative z-10">Next Holiday</h3>
+            {nextHoliday ? (
+              <div className="relative z-10">
+                <p className="text-sm font-semibold text-white mb-1">{nextHoliday.name}</p>
+                <p className="text-xs text-brand-100 dark:text-primary-200">
+                  {new Date(nextHoliday.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
+                </p>
+                {holidays.length > 1 && (
+                  <p className="text-[11px] text-brand-200 dark:text-primary-300 mt-2">+{holidays.length - 1} more upcoming</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-brand-200 dark:text-primary-300 relative z-10">No upcoming holidays</p>
+            )}
+          </div>
+
+          {/* Who's Out */}
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Who&apos;s Out</h3>
+              <span className="text-[11px] bg-success-50 dark:bg-success-950 text-success-600 dark:text-success-400 px-1.5 py-0.5 rounded font-medium">
+                {onLeaveToday.length}
+              </span>
+            </div>
+            {onLeaveToday.length === 0 ? (
+              <div className="text-center py-2">
+                <CheckCircle2 className="w-5 h-5 text-success-400 mx-auto mb-1" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">Everyone is in</p>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                {onLeaveToday.slice(0, 3).map((emp) => (
+                  <div key={emp.employeeId} className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-brand-50 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold shrink-0">
+                      {getInitials(emp.employeeName)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200 truncate">{emp.employeeName}</p>
+                    </div>
                   </div>
+                ))}
+                {onLeaveToday.length > 3 && (
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">+{onLeaveToday.length - 3} more</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
+        {/* ═══ MAIN CONTENT ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+          {/* LEFT — Feed */}
+          <div className="lg:col-span-2 space-y-3">
+
+            {/* Composer */}
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <div className="flex gap-4 border-b border-gray-100 dark:border-surface-700 pb-2.5 mb-3">
+                {(['Post', 'Poll', 'Praise'] as WallTab[]).map((tab) => {
+                  const icons = { Post: MessageSquare, Poll: BarChart3, Praise: Heart };
+                  const Icon = icons[tab];
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveWallTab(tab)}
+                      className={`flex items-center gap-1.5 pb-1 border-b-2 text-xs font-medium transition-colors
+                        ${activeWallTab === tab
+                          ? 'border-brand-500 dark:border-primary-400 text-brand-600 dark:text-primary-400'
+                          : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+                        }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {tab}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[10px] font-bold shrink-0">
+                  {getInitials(user?.fullName)}
+                </div>
+                <div className="flex-1">
                   <textarea
-                    placeholder="Write your post here and mention your peers"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                    rows={3}
+                    placeholder={
+                      activeWallTab === 'Post' ? 'Share something with your team...'
+                      : activeWallTab === 'Praise' ? 'Give a shout-out to a colleague...'
+                      : 'Ask a question to your team...'
+                    }
+                    className="w-full bg-gray-50 dark:bg-surface-900 border border-gray-200 dark:border-surface-600 rounded-lg p-2.5 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-primary-700 focus:border-brand-300 dark:focus:border-primary-600 resize-none"
+                    rows={2}
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}
                   />
-                </CardContent>
-              </Card>
-
-              {/* Announcements */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-semibold text-gray-900">Announcements</h3>
+                  <div className="flex justify-end mt-1.5">
                     <Button
                       variant="primary"
                       size="sm"
-                      className="bg-indigo-600 hover:bg-indigo-700 h-8 w-8 p-0 rounded-full"
+                      className="bg-brand-500 hover:bg-brand-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white rounded-lg h-7 px-3 text-[11px] font-medium"
+                      disabled={!postContent.trim()}
                     >
-                      <Plus className="w-4 h-4" />
+                      <Send className="w-3 h-3 mr-1" /> Post
                     </Button>
                   </div>
-                  {announcements.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Megaphone className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-sm text-gray-600">No announcements</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {announcements.map((announcement) => (
-                        <div key={announcement.id} className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                          <h4 className="text-sm font-medium text-gray-900 mb-1">{announcement.title}</h4>
-                          <p className="text-xs text-gray-600">{announcement.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Celebrations Section */}
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Cake className="w-4 h-4 text-pink-600" />
-                        <span className="text-gray-900 font-medium">{todayBirthdays.length} Birthdays</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Award className="w-4 h-4 text-yellow-600" />
-                        <span className="text-gray-900 font-medium">{workAnniversaries.filter(a => a.isToday).length} Work Anniversaries</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <UserPlus className="w-4 h-4 text-green-600" />
-                        <span className="text-gray-900 font-medium">{newJoinees.length} New Joinees</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Birthdays Today */}
-                  {todayBirthdays.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Birthdays today</h4>
-                      <div className="flex items-center justify-center py-6">
-                        <Cake className="w-12 h-12 text-gray-400" />
-                        <Gift className="w-8 h-8 text-gray-300 ml-2" />
-                      </div>
-                      <p className="text-center text-sm text-gray-600">No birthdays today.</p>
-                    </div>
-                  )}
-
-                  {/* Upcoming Birthdays */}
-                  {upcomingBirthdays.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Upcoming Birthdays</h4>
-                      <div className="flex gap-4 overflow-x-auto pb-2">
-                        {upcomingBirthdays.slice(0, 5).map((birthday) => (
-                          <div key={birthday.employeeId} className="flex flex-col items-center flex-shrink-0">
-                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold mb-2">
-                              {getInitials(birthday.employeeName)}
-                            </div>
-                            <p className="text-xs font-medium text-gray-900 text-center max-w-[80px] truncate">
-                              {birthday.employeeName?.split(' ')[0] || 'Unknown'}
-                            </p>
-                            <p className="text-xs text-gray-500">{birthday.birthdayDate}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Wall Posts */}
-              {wallPosts.map((post) => (
-                <Card key={post.id} className="bg-white border-gray-200 shadow-sm">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                        {getInitials(post.author?.fullName)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-semibold text-gray-900">{post.author?.fullName || 'Unknown'}</h4>
-                            <p className="text-xs text-gray-500">
-                              {new Date(post.createdAt).toLocaleDateString('en-US', {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric'
-                              })}
-                            </p>
-                          </div>
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <MoreHorizontal className="w-5 h-5" />
-                          </button>
-                        </div>
-                        <p className="text-sm text-gray-700 mt-2">{post.content}</p>
-                        {post.imageUrl && (
-                          <div className="mt-3 rounded-lg overflow-hidden">
-                            <img src={post.imageUrl} alt="Post" className="w-full" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                </div>
+              </div>
             </div>
 
-            {/* Right Column - Additional Info */}
-            <div className="lg:col-span-3 space-y-4">
-              <Card className="bg-white border-gray-200 shadow-sm">
-                <CardContent className="p-5">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Quick Links</h3>
-                  <div className="space-y-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      onClick={() => router.push('/attendance')}
-                    >
-                      <Clock className="w-4 h-4 mr-2" />
-                      Attendance
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      onClick={() => router.push('/leave')}
-                    >
-                      <Palmtree className="w-4 h-4 mr-2" />
-                      Leave Management
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      onClick={() => router.push('/employee')}
-                    >
-                      <Users className="w-4 h-4 mr-2" />
-                      Employees
-                    </Button>
+            {/* Announcements */}
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Announcements</h3>
+                <button className="w-6 h-6 rounded-full bg-gray-100 dark:bg-surface-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-surface-600 transition-colors">
+                  <Plus className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+              <div className="text-center py-4">
+                <Megaphone className="w-8 h-8 text-gray-200 dark:text-surface-600 mx-auto mb-2" />
+                <p className="text-xs text-gray-400 dark:text-gray-500">No announcements</p>
+              </div>
+            </div>
+
+            {/* Posts */}
+            {wallPosts.length === 0 ? (
+              <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
+                <MessageSquare className="w-8 h-8 text-gray-200 dark:text-surface-600 mx-auto mb-2" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">No posts yet</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Be the first to share something</p>
+              </div>
+            ) : (
+              wallPosts.map((post) => (
+                <div key={post.id} className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[10px] font-bold shrink-0">
+                      {getInitials(post.author?.fullName)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{post.author?.fullName || 'Unknown'}</span>
+                          <span className="text-[11px] text-gray-400 dark:text-gray-500 ml-2">
+                            {new Date(post.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                          </span>
+                        </div>
+                        <button className="text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{post.content}</p>
+                      {post.imageUrl && (
+                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-100 dark:border-surface-700">
+                          <img src={post.imageUrl} alt="Post" className="w-full" />
+                        </div>
+                      )}
+                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-surface-700">
+                        <button className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                          <ThumbsUp className="w-3 h-3" /> Like
+                        </button>
+                        <button className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                          <MessageSquare className="w-3 h-3" /> Comment
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* RIGHT — Sidebar widgets */}
+          <div className="lg:col-span-1 space-y-3">
+
+            {/* Celebrations */}
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Celebrations</h3>
+
+              {todayBirthdays.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Cake className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Birthdays Today</span>
+                  </div>
+                  {todayBirthdays.map((b) => (
+                    <div key={b.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-50 dark:bg-surface-700/50 mb-1">
+                      <div className="w-6 h-6 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold">
+                        {getInitials(b.employeeName)}
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200">{b.employeeName}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {todayAnniversaries.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Award className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Work Anniversaries</span>
+                  </div>
+                  {todayAnniversaries.map((a) => (
+                    <div key={a.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-50 dark:bg-surface-700/50 mb-1">
+                      <div className="w-6 h-6 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold">
+                        {getInitials(a.employeeName)}
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200">{a.employeeName}</p>
+                        <p className="text-[10px] text-gray-400 dark:text-gray-500">{a.yearsCompleted} year{a.yearsCompleted !== 1 ? 's' : ''}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {upcomingBirthdays.length > 0 && (
+                <div className="mb-2">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Gift className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Upcoming</span>
+                  </div>
+                  <div className="flex -space-x-1.5">
+                    {upcomingBirthdays.slice(0, 5).map((b) => (
+                      <div
+                        key={b.employeeId}
+                        title={`${b.employeeName} — ${b.birthdayDate}`}
+                        className="w-7 h-7 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[8px] font-bold border-2 border-white dark:border-surface-800 hover:scale-110 transition-transform cursor-default"
+                      >
+                        {getInitials(b.employeeName)}
+                      </div>
+                    ))}
+                    {upcomingBirthdays.length > 5 && (
+                      <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-surface-700 flex items-center justify-center text-[8px] font-bold text-gray-500 dark:text-gray-400 border-2 border-white dark:border-surface-800">
+                        +{upcomingBirthdays.length - 5}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {todayBirthdays.length === 0 && todayAnniversaries.length === 0 && upcomingBirthdays.length === 0 && (
+                <div className="text-center py-3">
+                  <Cake className="w-6 h-6 text-gray-200 dark:text-surface-600 mx-auto mb-1" />
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">No celebrations this month</p>
+                </div>
+              )}
+            </div>
+
+            {/* New Joinees */}
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">New Joinees</h3>
+                <span className="text-[11px] bg-brand-50 dark:bg-primary-950 text-brand-600 dark:text-primary-400 px-1.5 py-0.5 rounded font-medium">
+                  {newJoinees.length}
+                </span>
+              </div>
+              {newJoinees.length === 0 ? (
+                <div className="text-center py-3">
+                  <UserPlus className="w-6 h-6 text-gray-200 dark:text-surface-600 mx-auto mb-1" />
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">No new joinees this month</p>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {newJoinees.slice(0, 4).map((j) => (
+                    <div key={j.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-700/50 transition-colors">
+                      <div className="w-6 h-6 rounded-full bg-brand-50 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold shrink-0">
+                        {getInitials(j.employeeName)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200 truncate">{j.employeeName}</p>
+                        <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">{j.department || 'New member'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Quick Actions</h3>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { label: 'Attendance', icon: Clock, path: '/attendance' },
+                  { label: 'Leave', icon: Palmtree, path: '/leave' },
+                  { label: 'Employees', icon: Users, path: '/employee' },
+                  { label: 'Documents', icon: FileText, path: '/documents' },
+                  { label: 'Performance', icon: TrendingUp, path: '/performance' },
+                  { label: 'Payroll', icon: BarChart3, path: '/payroll' },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => router.push(item.path)}
+                    className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-surface-700/50 transition-colors group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-brand-25 dark:bg-primary-950/50 flex items-center justify-center text-brand-500 dark:text-primary-400 group-hover:bg-brand-50 dark:group-hover:bg-primary-950 transition-colors">
+                      <item.icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{item.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
