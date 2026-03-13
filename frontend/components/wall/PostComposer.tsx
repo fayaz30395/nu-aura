@@ -20,11 +20,15 @@ const postSchema = z.object({
   visibility: z.enum(['ORGANIZATION', 'DEPARTMENT', 'TEAM'] as const),
 });
 
+const pollOptionSchema = z.object({
+  value: z.string().min(1, 'Option cannot be empty').max(500, 'Option must be 500 characters or less'),
+});
+
 const pollSchema = z.object({
   type: z.literal('POLL' as const),
   content: z.string().min(1, 'Poll question is required').max(500, 'Question must be 500 characters or less'),
   pollOptions: z
-    .array(z.string().min(1, 'Option cannot be empty').max(500, 'Option must be 500 characters or less'))
+    .array(pollOptionSchema)
     .min(2, 'At least 2 options are required')
     .max(6, 'Maximum 6 options allowed'),
   visibility: z.enum(['ORGANIZATION', 'DEPARTMENT', 'TEAM'] as const),
@@ -69,7 +73,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
     defaultValues: {
       type: 'POLL',
       content: '',
-      pollOptions: ['', ''],
+      pollOptions: [{ value: '' }, { value: '' }],
       visibility: 'ORGANIZATION',
     },
   });
@@ -106,7 +110,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
     const request: CreatePostRequest = {
       type: 'POLL',
       content: data.content,
-      pollOptions: data.pollOptions,
+      pollOptions: data.pollOptions.map((o) => o.value),
       visibility: data.visibility,
     };
     onSubmit(request);
@@ -320,14 +324,14 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       <div key={field.id} className="flex items-center gap-2">
                         <span className="text-xs font-medium text-surface-500 dark:text-surface-400 w-6">{index + 1}.</span>
                         <input
-                          {...pollForm.register(`pollOptions.${index}`)}
+                          {...pollForm.register(`pollOptions.${index}.value`)}
                           placeholder={`Option ${index + 1}`}
                           className={cn(
                             'flex-1 px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
                             'border-surface-200 dark:border-surface-700',
                             'placeholder-surface-400 dark:placeholder-surface-500',
                             'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
-                            pollForm.formState.errors.pollOptions?.[index] && 'border-danger-500 focus:ring-danger-500/50'
+                            pollForm.formState.errors.pollOptions?.[index]?.value && 'border-danger-500 focus:ring-danger-500/50'
                           )}
                         />
                         {fields.length > 2 && (
@@ -350,7 +354,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   {fields.length < 6 && (
                     <button
                       type="button"
-                      onClick={() => append('')}
+                      onClick={() => append({ value: '' })}
                       className="mt-2 flex items-center gap-2 px-3 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950 rounded-lg transition-colors"
                     >
                       <Plus className="w-4 h-4" />

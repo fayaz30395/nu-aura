@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, StatCard, Loading, Badge } from '@/components/ui';
+import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { selfServiceService } from '@/lib/services/selfservice.service';
 import { attendanceService } from '@/lib/services/attendance.service';
@@ -311,66 +312,138 @@ export default function MyDashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Attendance"
-            value={`${dashboard.attendancePercentage}%`}
+            value={`${dashboard.attendancePercentage ?? 0}%`}
             description="This month"
             icon={<CheckCircle className="h-5 w-5" />}
-            trend={{ value: dashboard.presentDaysThisMonth, isPositive: true, label: 'days present' }}
+            trend={{ value: dashboard.presentDaysThisMonth ?? 0, isPositive: true, label: 'days present' }}
             variant="success"
           />
           <StatCard
             title="Leave Balance"
-            value={Object.values(dashboard.leaveBalances).reduce((a, b) => a + b, 0).toString()}
+            value={String(Object.values(dashboard.leaveBalances ?? {}).reduce((a, b) => a + b, 0))}
             description="Total days"
             icon={<Palmtree className="h-5 w-5" />}
             variant="blue"
           />
           <StatCard
             title="Pending Approvals"
-            value={dashboard.pendingApprovals.toString()}
+            value={String(dashboard.pendingApprovals ?? 0)}
             description="Requires action"
             icon={<AlertCircle className="h-5 w-5" />}
-            variant={dashboard.pendingApprovals > 0 ? 'warning' : 'default'}
+            variant={(dashboard.pendingApprovals ?? 0) > 0 ? 'warning' : 'default'}
           />
           <StatCard
             title="Team Members"
-            value={dashboard.teamSize.toString()}
-            description={`${dashboard.teamMembersOnLeave} on leave`}
+            value={String(dashboard.teamSize ?? 0)}
+            description={`${dashboard.teamMembersOnLeave ?? 0} on leave`}
             icon={<Users className="h-5 w-5" />}
             variant="default"
           />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Quick Actions */}
-          <div className="space-y-6">
+        {/* Main Content — 2-column: Feed (left) + Sidebar (right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left Column — Company Feed (3/5 width) */}
+          <div className="lg:col-span-3">
+            <CompanyFeed employeeId={user?.employeeId} />
+          </div>
+
+          {/* Right Column — Compact Sidebar (2/5 width) */}
+          <div className="lg:col-span-2 space-y-4">
             {/* Quick Actions */}
             <Card>
               <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
+                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
                   Quick Actions
                 </h3>
-                <div className="space-y-2">
-                  <QuickActionButton
-                    icon={<Palmtree className="h-5 w-5" />}
-                    label="Request Leave"
+                <div className="grid grid-cols-2 gap-2">
+                  <QuickActionCompact
+                    icon={<Palmtree className="h-4 w-4" />}
+                    label="Leave"
                     onClick={() => router.push('/me/leaves')}
                   />
-                  <QuickActionButton
-                    icon={<FileText className="h-5 w-5" />}
-                    label="Request Document"
+                  <QuickActionCompact
+                    icon={<FileText className="h-4 w-4" />}
+                    label="Documents"
                     onClick={() => router.push('/me/documents')}
                   />
-                  <QuickActionButton
-                    icon={<CreditCard className="h-5 w-5" />}
-                    label="View Payslips"
+                  <QuickActionCompact
+                    icon={<CreditCard className="h-4 w-4" />}
+                    label="Payslips"
                     onClick={() => router.push('/me/payslips')}
                   />
-                  <QuickActionButton
-                    icon={<User className="h-5 w-5" />}
-                    label="Update Profile"
+                  <QuickActionCompact
+                    icon={<User className="h-4 w-4" />}
+                    label="Profile"
                     onClick={() => router.push('/me/profile')}
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Today's Attendance — compact */}
+            <Card>
+              <CardContent>
+                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
+                  Today&apos;s Attendance
+                </h3>
+                <div className="flex items-center gap-3">
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                    isCheckedIn
+                      ? 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400'
+                      : 'bg-surface-100 text-surface-500 dark:bg-surface-800'
+                  }`}>
+                    {isCheckedIn ? <Play className="h-5 w-5" /> : <Clock className="h-5 w-5" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                      {isCheckedIn ? 'Checked In' : 'Not Checked In'}
+                    </p>
+                    {isCheckedIn && checkInTime && (
+                      <p className="text-xs text-success-600 dark:text-success-400 font-mono">
+                        {formatElapsedTime(elapsedSeconds)} since {format(checkInTime, 'h:mm a')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Compact progress bar */}
+                {isCheckedIn && checkInTime && (
+                  <div className="mt-3">
+                    <div className="h-1.5 bg-success-200 dark:bg-success-800 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-1000 rounded-full ${
+                          elapsedSeconds >= 28800
+                            ? 'bg-success-600 dark:bg-success-400'
+                            : elapsedSeconds >= 14400
+                            ? 'bg-success-500'
+                            : 'bg-warning-500 dark:bg-warning-400'
+                        }`}
+                        style={{ width: `${Math.min(100, (elapsedSeconds / 28800) * 100)}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-surface-400 mt-1">
+                      {elapsedSeconds >= 28800
+                        ? 'Full day completed!'
+                        : `${formatElapsedTime(28800 - elapsedSeconds)} to 8h`}
+                    </p>
+                  </div>
+                )}
+
+                {/* Monthly Summary — compact */}
+                <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-surface-200 dark:border-surface-700 text-center">
+                  <div>
+                    <p className="text-sm font-semibold text-success-600">{dashboard.presentDaysThisMonth ?? 0}</p>
+                    <p className="text-xs text-surface-500">Present</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-danger-600">{dashboard.absentDaysThisMonth ?? 0}</p>
+                    <p className="text-xs text-surface-500">Absent</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-warning-600">{dashboard.lateDaysThisMonth ?? 0}</p>
+                    <p className="text-xs text-surface-500">Late</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -378,130 +451,24 @@ export default function MyDashboardPage() {
             {/* Leave Balances */}
             <Card>
               <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
                     Leave Balances
                   </h3>
                   <button
                     onClick={() => router.push('/me/leaves')}
-                    className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                    className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-0.5"
                   >
-                    View all <ArrowRight className="h-4 w-4" />
+                    View all <ArrowRight className="h-3 w-3" />
                   </button>
                 </div>
-                <div className="space-y-3">
-                  {Object.entries(dashboard.leaveBalances).map(([type, balance]) => (
+                <div className="space-y-2">
+                  {Object.entries(dashboard.leaveBalances ?? {}).map(([type, balance]) => (
                     <div key={type} className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">
-                        {type}
-                      </span>
-                      <span className="font-medium text-surface-900 dark:text-surface-50">
-                        {balance} days
-                      </span>
+                      <span className="text-xs text-surface-600 dark:text-surface-400">{type}</span>
+                      <span className="text-xs font-medium text-surface-900 dark:text-surface-50">{balance} days</span>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Middle Column - Attendance & Activity */}
-          <div className="space-y-6">
-            {/* Today's Attendance */}
-            <Card>
-              <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
-                  Today&apos;s Attendance
-                </h3>
-                <div className="text-center py-4">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 ${
-                    isCheckedIn
-                      ? 'bg-success-100 text-success-600 dark:bg-success-900/30 dark:text-success-400'
-                      : 'bg-surface-100 text-surface-500 dark:bg-surface-800'
-                  }`}>
-                    {isCheckedIn ? <Play className="h-8 w-8" /> : <Clock className="h-8 w-8" />}
-                  </div>
-                  <p className="font-medium text-surface-900 dark:text-surface-50">
-                    {isCheckedIn ? 'Checked In' : 'Not Checked In'}
-                  </p>
-
-                  {/* Real-time Timer */}
-                  {isCheckedIn && checkInTime && (
-                    <div className="mt-3 p-3 bg-success-50 dark:bg-success-900/20 rounded-lg">
-                      <p className="text-xs text-success-600 dark:text-success-400 uppercase tracking-wide mb-1">
-                        Working Time
-                      </p>
-                      <p className="text-2xl font-bold text-success-700 dark:text-success-300 font-mono">
-                        {formatElapsedTime(elapsedSeconds)}
-                      </p>
-                      <p className="text-xs text-success-600 dark:text-success-400 mt-1">
-                        Since {format(checkInTime, 'h:mm a')}
-                      </p>
-
-                      {/* Progress bar - 8 hours = 28800 seconds */}
-                      <div className="mt-3">
-                        <div className="flex justify-between text-xs text-success-600 dark:text-success-400 mb-1">
-                          <span>0h</span>
-                          <span>4h</span>
-                          <span>8h</span>
-                        </div>
-                        <div className="h-2 bg-success-200 dark:bg-success-800 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full transition-all duration-1000 rounded-full ${
-                              elapsedSeconds >= 28800
-                                ? 'bg-success-600 dark:bg-success-400'
-                                : elapsedSeconds >= 14400
-                                ? 'bg-success-500 dark:bg-success-500'
-                                : 'bg-warning-500 dark:bg-warning-400'
-                            }`}
-                            style={{ width: `${Math.min(100, (elapsedSeconds / 28800) * 100)}%` }}
-                          />
-                        </div>
-                        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                          {elapsedSeconds >= 28800 ? (
-                            <span className="text-success-600 dark:text-success-400 font-medium">Full day completed!</span>
-                          ) : elapsedSeconds >= 14400 ? (
-                            <span>Half day completed, {formatElapsedTime(28800 - elapsedSeconds)} to go</span>
-                          ) : (
-                            <span>{formatElapsedTime(28800 - elapsedSeconds)} to complete 8 hours</span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {!isCheckedIn && (
-                    <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                      Click the button above to check in
-                    </p>
-                  )}
-                </div>
-
-                {/* Monthly Summary */}
-                <div className="border-t border-surface-200 dark:border-surface-700 pt-4 mt-4">
-                  <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
-                    This Month
-                  </h4>
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div>
-                      <p className="text-lg font-semibold text-success-600">
-                        {dashboard.presentDaysThisMonth}
-                      </p>
-                      <p className="text-xs text-surface-500">Present</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-semibold text-danger-600">
-                        {dashboard.absentDaysThisMonth}
-                      </p>
-                      <p className="text-xs text-surface-500">Absent</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-semibold text-warning-600">
-                        {dashboard.lateDaysThisMonth}
-                      </p>
-                      <p className="text-xs text-surface-500">Late</p>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -509,13 +476,13 @@ export default function MyDashboardPage() {
             {/* Pending Tasks */}
             <Card>
               <CardContent>
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
+                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 text-sm">
                   Pending Tasks
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {dashboard.pendingApprovals > 0 && (
                     <PendingTaskItem
-                      icon={<CheckCircle className="h-5 w-5" />}
+                      icon={<CheckCircle className="h-4 w-4" />}
                       label="Pending Approvals"
                       count={dashboard.pendingApprovals}
                       onClick={() => router.push('/leave')}
@@ -523,7 +490,7 @@ export default function MyDashboardPage() {
                   )}
                   {dashboard.pendingTimesheets > 0 && (
                     <PendingTaskItem
-                      icon={<Clock className="h-5 w-5" />}
+                      icon={<Clock className="h-4 w-4" />}
                       label="Timesheets to Submit"
                       count={dashboard.pendingTimesheets}
                       onClick={() => router.push('/timesheets')}
@@ -531,7 +498,7 @@ export default function MyDashboardPage() {
                   )}
                   {dashboard.pendingProfileUpdates > 0 && (
                     <PendingTaskItem
-                      icon={<User className="h-5 w-5" />}
+                      icon={<User className="h-4 w-4" />}
                       label="Profile Updates"
                       count={dashboard.pendingProfileUpdates}
                       onClick={() => router.push('/me/profile')}
@@ -540,35 +507,32 @@ export default function MyDashboardPage() {
                   {dashboard.pendingApprovals === 0 &&
                     dashboard.pendingTimesheets === 0 &&
                     dashboard.pendingProfileUpdates === 0 && (
-                      <p className="text-center text-surface-500 py-4">
+                      <p className="text-center text-surface-500 py-2 text-xs">
                         No pending tasks
                       </p>
                     )}
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Right Column - Recent & Upcoming */}
-          <div className="space-y-6">
             {/* Upcoming Events */}
             <Card>
               <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
                     Upcoming Events
                   </h3>
-                  <Calendar className="h-5 w-5 text-surface-400" />
+                  <Calendar className="h-4 w-4 text-surface-400" />
                 </div>
                 {dashboard.upcomingEvents.length > 0 ? (
-                  <div className="space-y-3">
-                    {dashboard.upcomingEvents.slice(0, 5).map((event, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-sm font-medium">
+                  <div className="space-y-2">
+                    {dashboard.upcomingEvents.slice(0, 4).map((event, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xs font-medium flex-shrink-0">
                           {format(new Date(event.date), 'd')}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium text-surface-900 dark:text-surface-50 truncate">
                             {event.title}
                           </p>
                           <p className="text-xs text-surface-500">
@@ -579,46 +543,8 @@ export default function MyDashboardPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-surface-500 py-4">
+                  <p className="text-center text-surface-500 py-2 text-xs">
                     No upcoming events
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Recent Announcements */}
-            <Card>
-              <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50">
-                    Announcements
-                  </h3>
-                  <button
-                    onClick={() => router.push('/announcements')}
-                    className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
-                  >
-                    View all <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-                {dashboard.recentAnnouncements.length > 0 ? (
-                  <div className="space-y-3">
-                    {dashboard.recentAnnouncements.slice(0, 3).map((announcement, index) => (
-                      <div key={index} className="border-l-2 border-primary-500 pl-3">
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
-                          {announcement.title}
-                        </p>
-                        <p className="text-xs text-surface-500 mt-1 line-clamp-2">
-                          {announcement.excerpt}
-                        </p>
-                        <p className="text-xs text-surface-400 mt-1">
-                          {format(new Date(announcement.postedOn), 'MMM d, yyyy')}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-surface-500 py-4">
-                    No recent announcements
                   </p>
                 )}
               </CardContent>
@@ -627,26 +553,26 @@ export default function MyDashboardPage() {
             {/* Recent Payslips */}
             <Card>
               <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-sm">
                     Recent Payslips
                   </h3>
                   <button
                     onClick={() => router.push('/me/payslips')}
-                    className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                    className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-0.5"
                   >
-                    View all <ArrowRight className="h-4 w-4" />
+                    View all <ArrowRight className="h-3 w-3" />
                   </button>
                 </div>
                 {dashboard.recentPayslips.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {dashboard.recentPayslips.slice(0, 3).map((payslip, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+                        className="flex items-center justify-between p-1.5 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
                       >
                         <div>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs font-medium text-surface-900 dark:text-surface-50">
                             {payslip.month} {payslip.year}
                           </p>
                           <p className="text-xs text-surface-500">
@@ -654,15 +580,15 @@ export default function MyDashboardPage() {
                           </p>
                         </div>
                         {payslip.downloadUrl && (
-                          <button className="p-2 text-surface-400 hover:text-primary-600">
-                            <Download className="h-4 w-4" />
+                          <button className="p-1 text-surface-400 hover:text-primary-600">
+                            <Download className="h-3.5 w-3.5" />
                           </button>
                         )}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-surface-500 py-4">
+                  <p className="text-center text-surface-500 py-2 text-xs">
                     No recent payslips
                   </p>
                 )}
@@ -676,7 +602,7 @@ export default function MyDashboardPage() {
 }
 
 // Helper Components
-function QuickActionButton({
+function QuickActionCompact({
   icon,
   label,
   onClick,
@@ -688,15 +614,14 @@ function QuickActionButton({
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors group"
+      className="flex items-center gap-2 p-2.5 rounded-lg text-left hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors group border border-surface-200 dark:border-surface-700"
     >
-      <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors">
+      <div className="p-1.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors">
         {icon}
       </div>
-      <span className="font-medium text-surface-700 dark:text-surface-300">
+      <span className="text-xs font-medium text-surface-700 dark:text-surface-300">
         {label}
       </span>
-      <ArrowRight className="h-4 w-4 ml-auto text-surface-400 group-hover:text-surface-600 transition-colors" />
     </button>
   );
 }
@@ -715,11 +640,11 @@ function PendingTaskItem({
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="text-warning-500">{icon}</div>
-        <span className="text-sm text-surface-700 dark:text-surface-300">{label}</span>
+        <span className="text-xs text-surface-700 dark:text-surface-300">{label}</span>
       </div>
       <Badge variant="warning">{count}</Badge>
     </button>
