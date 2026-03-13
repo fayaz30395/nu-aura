@@ -37,4 +37,7 @@ public class JobOpeningResponse {
     private Integer candidateCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID createdBy;
+    private UUID lastModifiedBy;
+    private Long version;
 }

@@ -6,7 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 /* ================================================================
-   TAILADMIN THEME - CSS VARIABLES
+   NU-AURA THEME - CSS VARIABLES (Material Dashboard 2 palette)
    ================================================================ */
 
 :root {
@@ -51,7 +51,7 @@ html {
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-white;
+  @apply bg-surface-50 text-gray-900 antialiased dark:bg-surface-950 dark:text-white;
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   line-height: 1.5;
@@ -71,11 +71,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded bg-gray-300 dark:bg-gray-700;
+  @apply rounded bg-gray-300 dark:bg-surface-700;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-600;
+  @apply bg-gray-400 dark:bg-surface-600;
 }
 
 /* ================================================================
@@ -87,7 +87,7 @@ body {
 }
 
 .dark ::selection {
-  @apply bg-brand-800 text-brand-100;
+  @apply bg-primary-800 text-primary-100;
 }
 
 /* ================================================================
@@ -95,7 +95,7 @@ body {
    ================================================================ */
 
 *:focus-visible {
-  @apply outline-none ring-2 ring-brand-500 ring-offset-2 dark:ring-offset-gray-900;
+  @apply outline-none ring-2 ring-brand-500 ring-offset-2 dark:ring-offset-surface-950;
 }
 
 /* ================================================================
@@ -123,11 +123,11 @@ a {
 @layer components {
   /* Card Component */
   .card {
-    @apply rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-800;
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm dark:border-surface-700 dark:bg-surface-800;
   }
 
   .card-header {
-    @apply border-b border-gray-200 p-6 dark:border-gray-800;
+    @apply border-b border-gray-200 p-6 dark:border-surface-700;
   }
 
   .card-body {
@@ -135,16 +135,16 @@ a {
   }
 
   .card-footer {
-    @apply border-t border-gray-200 p-6 dark:border-gray-800;
+    @apply border-t border-gray-200 p-6 dark:border-surface-700;
   }
 
   /* Form Controls */
   .form-control {
-    @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 transition-colors duration-200 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-brand-500;
+    @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 transition-colors duration-200 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-surface-600 dark:bg-surface-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-brand-500;
   }
 
   .form-control:disabled {
-    @apply cursor-not-allowed bg-gray-100 opacity-60 dark:bg-gray-900;
+    @apply cursor-not-allowed bg-gray-100 opacity-60 dark:bg-surface-950;
   }
 
   .form-label {
@@ -182,7 +182,7 @@ a {
   }
 
   .btn-secondary {
-    @apply bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700;
+    @apply bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200 focus:ring-gray-500 dark:bg-surface-800 dark:text-gray-300 dark:hover:bg-surface-700;
   }
 
   .btn-success {
@@ -202,7 +202,7 @@ a {
   }
 
   .btn-ghost {
-    @apply bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-400 dark:hover:bg-gray-800;
+    @apply bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-400 dark:hover:bg-surface-800;
   }
 
   /* Badge */
@@ -227,7 +227,7 @@ a {
   }
 
   .badge-secondary {
-    @apply bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300;
+    @apply bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-300;
   }
 
   /* Alert */
@@ -258,28 +258,28 @@ a {
 
   .table th,
   .table td {
-    @apply border-b border-gray-200 p-4 dark:border-gray-800;
+    @apply border-b border-gray-200 p-4 dark:border-surface-700;
   }
 
   .table thead th {
-    @apply bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-600 dark:bg-gray-800 dark:text-gray-400;
+    @apply bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-600 dark:bg-surface-800 dark:text-gray-400;
   }
 
   .table tbody tr:hover {
-    @apply bg-gray-50 dark:bg-gray-800;
+    @apply bg-gray-50 dark:bg-surface-800;
   }
 
   /* Dropdown Menu */
   .dropdown-menu {
-    @apply absolute z-50 min-w-[10rem] rounded-lg border border-gray-200 bg-white p-1 shadow-lg dark:border-gray-800 dark:bg-gray-800;
+    @apply absolute z-50 min-w-[10rem] rounded-lg border border-gray-200 bg-white p-1 shadow-lg dark:border-surface-700 dark:bg-surface-900;
   }
 
   .dropdown-item {
-    @apply flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800;
+    @apply flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-surface-800;
   }
 
   .dropdown-divider {
-    @apply my-1 h-px bg-gray-200 dark:bg-gray-800;
+    @apply my-1 h-px bg-gray-200 dark:bg-surface-700;
   }
 
   /* Modal */
@@ -288,11 +288,11 @@ a {
   }
 
   .modal-content {
-    @apply relative z-50 w-full max-w-lg rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-800;
+    @apply relative z-50 w-full max-w-lg rounded-xl border border-gray-200 bg-white shadow-xl dark:border-surface-700 dark:bg-surface-800;
   }
 
   .modal-header {
-    @apply flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-800;
+    @apply flex items-center justify-between border-b border-gray-200 p-6 dark:border-surface-700;
   }
 
   .modal-title {
@@ -304,7 +304,7 @@ a {
   }
 
   .modal-footer {
-    @apply flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-gray-800;
+    @apply flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-surface-700;
   }
 }
 
@@ -518,11 +518,11 @@ a {
 
 /* Code */
 .tiptap-editor code {
-  @apply px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-sm font-mono text-red-600 dark:text-red-400;
+  @apply px-2 py-1 rounded bg-gray-100 dark:bg-surface-700 text-sm font-mono text-red-600 dark:text-red-400;
 }
 
 .tiptap-editor pre {
-  @apply my-4 rounded-lg bg-gray-100 dark:bg-gray-900 p-4 overflow-x-auto;
+  @apply my-4 rounded-lg bg-gray-100 dark:bg-surface-950 p-4 overflow-x-auto;
 }
 
 .tiptap-editor pre code {
@@ -541,7 +541,7 @@ a {
 
 /* Horizontal Rule */
 .tiptap-editor hr {
-  @apply my-4 border-gray-300 dark:border-gray-600;
+  @apply my-4 border-gray-300 dark:border-surface-600;
 }
 
 /* Tables */
@@ -551,19 +551,19 @@ a {
 
 .tiptap-editor table td,
 .tiptap-editor table th {
-  @apply border border-gray-300 dark:border-gray-700 px-3 py-2 text-left;
+  @apply border border-gray-300 dark:border-surface-600 px-3 py-2 text-left;
 }
 
 .tiptap-editor table th {
-  @apply bg-gray-100 dark:bg-gray-800 font-semibold text-gray-900 dark:text-gray-100;
+  @apply bg-gray-100 dark:bg-surface-800 font-semibold text-gray-900 dark:text-gray-100;
 }
 
 .tiptap-editor table td {
-  @apply bg-white dark:bg-gray-900;
+  @apply bg-white dark:bg-surface-950;
 }
 
 .tiptap-editor table tbody tr:hover td {
-  @apply bg-gray-50 dark:bg-gray-800;
+  @apply bg-gray-50 dark:bg-surface-800;
 }
 
 .tiptap-editor .selectedCell {
@@ -682,15 +682,15 @@ a {
 }
 
 .dark .tiptap-content blockquote {
-  @apply border-gray-700 text-gray-100;
+  @apply border-surface-700 text-gray-100;
 }
 
 .dark .tiptap-content code {
-  @apply text-red-400 bg-gray-800;
+  @apply text-red-400 bg-surface-800;
 }
 
 .dark .tiptap-content pre {
-  @apply bg-gray-800 text-gray-100;
+  @apply bg-surface-800 text-gray-100;
 }
 
 .dark .tiptap-content pre code {
@@ -698,9 +698,9 @@ a {
 }
 
 .dark .tiptap-content table th {
-  @apply border-gray-600;
+  @apply border-surface-600;
 }
 
 .dark .tiptap-content table td {
-  @apply border-gray-700;
+  @apply border-surface-700;
 }

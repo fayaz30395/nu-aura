@@ -107,7 +107,7 @@ export default function EventDetailPage() {
         icon: XCircle,
       },
       COMPLETED: {
-        bg: 'bg-gray-100 dark:bg-gray-800',
+        bg: 'bg-gray-100 dark:bg-surface-800',
         text: 'text-gray-700 dark:text-gray-400',
         icon: CheckCircle,
       },

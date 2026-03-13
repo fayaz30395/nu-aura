@@ -107,7 +107,7 @@ export default function ContractsPage() {
         </div>
 
         {/* Contracts Table */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow">
+        <div className="bg-white dark:bg-surface-950 rounded-lg shadow">
           {isLoading ? (
             <div className="p-8 text-center text-gray-500">Loading contracts...</div>
           ) : contracts.length === 0 ? (

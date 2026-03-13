@@ -141,7 +141,7 @@ const getCategoryColor = (category: TrainingCategory) => {
     case TrainingCategory.SAFETY:
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      return 'bg-gray-100 text-gray-800 dark:bg-surface-950 dark:text-gray-200';
   }
 };
 
@@ -749,7 +749,7 @@ export default function TrainingPage() {
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
                                 {program.category.replace('_', ' ')}
                               </span>
-                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-surface-800 dark:text-gray-200">
                                 {program.deliveryMode.replace('_', ' ')}
                               </span>
                               {program.isMandatory && (
@@ -915,7 +915,7 @@ export default function TrainingPage() {
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
                             {program.category.replace('_', ' ')}
                           </span>
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-surface-800 dark:text-gray-200">
                             {program.deliveryMode.replace('_', ' ')}
                           </span>
                           {program.isMandatory && (

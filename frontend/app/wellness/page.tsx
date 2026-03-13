@@ -68,7 +68,7 @@ const getCategoryColor = (category: ProgramCategory) => {
     case ProgramCategory.STRESS_MANAGEMENT:
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      return 'bg-gray-100 text-gray-800 dark:bg-surface-950 dark:text-gray-200';
   }
 };
 

@@ -88,7 +88,7 @@ const getTypeColor = (type: RecognitionType) => {
     case RecognitionType.PEER_NOMINATION:
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      return 'bg-gray-100 text-gray-800 dark:bg-surface-950 dark:text-gray-200';
   }
 };
 

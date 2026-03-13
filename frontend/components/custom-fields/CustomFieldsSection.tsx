@@ -114,12 +114,12 @@ export default function CustomFieldsSection({
   if (loading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+        <div className="h-6 bg-gray-200 dark:bg-surface-700 rounded w-1/4 mb-4"></div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i}>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
-              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-1/3 mb-2"></div>
+              <div className="h-10 bg-gray-200 dark:bg-surface-700 rounded"></div>
             </div>
           ))}
         </div>
@@ -144,7 +144,7 @@ export default function CustomFieldsSection({
       {showGroupHeaders ? (
         Object.entries(groupedDefinitions).map(([group, defs]) => (
           <div key={group} className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 pb-2 border-b border-gray-200 dark:border-surface-700">
               {group}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

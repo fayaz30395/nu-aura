@@ -75,7 +75,7 @@ export function ScopeSelector({
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors ${
               value === scope
                 ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500'
-                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                : 'bg-white dark:bg-surface-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-surface-600 hover:bg-gray-50 dark:hover:bg-gray-600'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             title={SCOPE_DESCRIPTIONS[scope]}
           >

@@ -179,9 +179,9 @@ class PaymentService {
       FAILED: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
       REFUNDED: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
       PARTIAL_REFUND: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
-      REVERSED: 'bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-300',
+      REVERSED: 'bg-gray-100 text-gray-700 dark:bg-surface-950/50 dark:text-gray-300',
     };
-    return colors[status] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/50 dark:text-gray-300';
+    return colors[status] || 'bg-gray-100 text-gray-700 dark:bg-surface-950/50 dark:text-gray-300';
   }
 
   getTypeLabel(type: PaymentType): string {

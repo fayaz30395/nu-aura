@@ -4,7 +4,7 @@ import { Skeleton } from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Logo skeleton */}
         <div className="flex justify-center">

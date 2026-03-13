@@ -227,9 +227,9 @@ export default function HomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
           {/* Attendance */}
-          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Attendance</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">Attendance</h3>
               <button onClick={() => router.push('/attendance')} className="text-[11px] text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
                 View
               </button>
@@ -244,7 +244,7 @@ export default function HomePage() {
                     ? new Date(attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
                     : 'Not clocked in'}
                 </p>
-                <p className="text-[11px] text-gray-400 dark:text-gray-500">{clockStatus.status.replace(/_/g, ' ')}</p>
+                <p className="text-[11px] text-gray-500 dark:text-gray-500">{clockStatus.status.replace(/_/g, ' ')}</p>
               </div>
             </div>
             <Button
@@ -267,16 +267,16 @@ export default function HomePage() {
           </div>
 
           {/* Leave Balance */}
-          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Leave</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">Leave</h3>
               <button onClick={() => router.push('/leave')} className="text-[11px] text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
                 Details
               </button>
             </div>
             <div className="mb-3">
               <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalLeave > 0 ? totalLeave.toFixed(1) : '0'}</span>
-              <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">days left</span>
+              <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">days left</span>
             </div>
             {leaveBalances.length > 0 && (
               <div className="space-y-1.5 mb-3">
@@ -319,9 +319,9 @@ export default function HomePage() {
           </div>
 
           {/* Who's Out */}
-          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Who&apos;s Out</h3>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">Who&apos;s Out</h3>
               <span className="text-[11px] bg-success-50 dark:bg-success-950 text-success-600 dark:text-success-400 px-1.5 py-0.5 rounded font-medium">
                 {onLeaveToday.length}
               </span>
@@ -358,8 +358,8 @@ export default function HomePage() {
           <div className="lg:col-span-2 space-y-3">
 
             {/* Composer */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <div className="flex gap-4 border-b border-gray-100 dark:border-surface-700 pb-2.5 mb-3">
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <div className="flex gap-4 border-b border-gray-200 dark:border-surface-700 pb-2.5 mb-3">
                 {(['Post', 'Poll', 'Praise'] as WallTab[]).map((tab) => {
                   const icons = { Post: MessageSquare, Poll: BarChart3, Praise: Heart };
                   const Icon = icons[tab];
@@ -370,7 +370,7 @@ export default function HomePage() {
                       className={`flex items-center gap-1.5 pb-1 border-b-2 text-xs font-medium transition-colors
                         ${activeWallTab === tab
                           ? 'border-brand-500 dark:border-primary-400 text-brand-600 dark:text-primary-400'
-                          : 'border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+                          : 'border-transparent text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
                         }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -410,29 +410,29 @@ export default function HomePage() {
             </div>
 
             {/* Announcements */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Announcements</h3>
+                <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">Announcements</h3>
                 <button className="w-6 h-6 rounded-full bg-gray-100 dark:bg-surface-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-surface-600 transition-colors">
                   <Plus className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                 </button>
               </div>
               <div className="text-center py-4">
-                <Megaphone className="w-8 h-8 text-gray-200 dark:text-surface-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-400 dark:text-gray-500">No announcements</p>
+                <Megaphone className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
+                <p className="text-xs text-gray-500 dark:text-gray-500">No announcements</p>
               </div>
             </div>
 
             {/* Posts */}
             {wallPosts.length === 0 ? (
-              <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
-                <MessageSquare className="w-8 h-8 text-gray-200 dark:text-surface-600 mx-auto mb-2" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">No posts yet</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Be the first to share something</p>
+              <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
+                <MessageSquare className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 dark:text-gray-400">No posts yet</p>
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Be the first to share something</p>
               </div>
             ) : (
               wallPosts.map((post) => (
-                <div key={post.id} className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+                <div key={post.id} className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
                   <div className="flex items-start gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[10px] font-bold shrink-0">
                       {getInitials(post.author?.fullName)}
@@ -445,21 +445,21 @@ export default function HomePage() {
                             {new Date(post.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
                           </span>
                         </div>
-                        <button className="text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400">
+                        <button className="text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400">
                           <MoreHorizontal className="w-4 h-4" />
                         </button>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{post.content}</p>
                       {post.imageUrl && (
-                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-100 dark:border-surface-700">
+                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-surface-700">
                           <img src={post.imageUrl} alt="Post" className="w-full" />
                         </div>
                       )}
-                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-surface-700">
-                        <button className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-200 dark:border-surface-700">
+                        <button className="flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                           <ThumbsUp className="w-3 h-3" /> Like
                         </button>
-                        <button className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <button className="flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                           <MessageSquare className="w-3 h-3" /> Comment
                         </button>
                       </div>
@@ -474,14 +474,14 @@ export default function HomePage() {
           <div className="lg:col-span-1 space-y-3">
 
             {/* Celebrations */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Celebrations</h3>
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide mb-3">Celebrations</h3>
 
               {todayBirthdays.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <Cake className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Birthdays Today</span>
+                    <Cake className="w-3.5 h-3.5 text-gray-500 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400">Birthdays Today</span>
                   </div>
                   {todayBirthdays.map((b) => (
                     <div key={b.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-50 dark:bg-surface-700/50 mb-1">
@@ -499,8 +499,8 @@ export default function HomePage() {
               {todayAnniversaries.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <Award className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Work Anniversaries</span>
+                    <Award className="w-3.5 h-3.5 text-gray-500 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400">Work Anniversaries</span>
                   </div>
                   {todayAnniversaries.map((a) => (
                     <div key={a.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg bg-gray-50 dark:bg-surface-700/50 mb-1">
@@ -519,8 +519,8 @@ export default function HomePage() {
               {upcomingBirthdays.length > 0 && (
                 <div className="mb-2">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <Gift className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
-                    <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">Upcoming</span>
+                    <Gift className="w-3.5 h-3.5 text-gray-500 dark:text-gray-500" />
+                    <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400">Upcoming</span>
                   </div>
                   <div className="flex -space-x-1.5">
                     {upcomingBirthdays.slice(0, 5).map((b) => (
@@ -543,24 +543,24 @@ export default function HomePage() {
 
               {todayBirthdays.length === 0 && todayAnniversaries.length === 0 && upcomingBirthdays.length === 0 && (
                 <div className="text-center py-3">
-                  <Cake className="w-6 h-6 text-gray-200 dark:text-surface-600 mx-auto mb-1" />
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500">No celebrations this month</p>
+                  <Cake className="w-6 h-6 text-gray-300 dark:text-surface-600 mx-auto mb-1" />
+                  <p className="text-[11px] text-gray-500 dark:text-gray-500">No celebrations this month</p>
                 </div>
               )}
             </div>
 
             {/* New Joinees */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">New Joinees</h3>
+                <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">New Joinees</h3>
                 <span className="text-[11px] bg-brand-50 dark:bg-primary-950 text-brand-600 dark:text-primary-400 px-1.5 py-0.5 rounded font-medium">
                   {newJoinees.length}
                 </span>
               </div>
               {newJoinees.length === 0 ? (
                 <div className="text-center py-3">
-                  <UserPlus className="w-6 h-6 text-gray-200 dark:text-surface-600 mx-auto mb-1" />
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500">No new joinees this month</p>
+                  <UserPlus className="w-6 h-6 text-gray-300 dark:text-surface-600 mx-auto mb-1" />
+                  <p className="text-[11px] text-gray-500 dark:text-gray-500">No new joinees this month</p>
                 </div>
               ) : (
                 <div className="space-y-1.5">
@@ -580,8 +580,8 @@ export default function HomePage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-100 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Quick Actions</h3>
+            <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide mb-3">Quick Actions</h3>
               <div className="grid grid-cols-3 gap-1.5">
                 {[
                   { label: 'Attendance', icon: Clock, path: '/attendance' },
@@ -599,7 +599,7 @@ export default function HomePage() {
                     <div className="w-8 h-8 rounded-lg bg-brand-25 dark:bg-primary-950/50 flex items-center justify-center text-brand-500 dark:text-primary-400 group-hover:bg-brand-50 dark:group-hover:bg-primary-950 transition-colors">
                       <item.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400">{item.label}</span>
+                    <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">{item.label}</span>
                   </button>
                 ))}
               </div>

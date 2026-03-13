@@ -423,7 +423,7 @@ export default function ShiftsManagementPage() {
                             required
                             value={formatTime(formData.startTime)}
                             onChange={(e) => setFormData({ ...formData, startTime: e.target.value + ':00' })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -435,7 +435,7 @@ export default function ShiftsManagementPage() {
                             required
                             value={formatTime(formData.endTime)}
                             onChange={(e) => setFormData({ ...formData, endTime: e.target.value + ':00' })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -449,7 +449,7 @@ export default function ShiftsManagementPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, breakDurationMinutes: parseInt(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                       </div>
@@ -465,7 +465,7 @@ export default function ShiftsManagementPage() {
                             min="0"
                             value={formData.fullDayHours}
                             onChange={(e) => setFormData({ ...formData, fullDayHours: parseFloat(e.target.value) || 8 })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -476,7 +476,7 @@ export default function ShiftsManagementPage() {
                             type="text"
                             value={formData.workingDays}
                             onChange={(e) => setFormData({ ...formData, workingDays: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                             placeholder="MONDAY,TUESDAY,WEDNESDAY"
                           />
                         </div>
@@ -498,7 +498,7 @@ export default function ShiftsManagementPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, gracePeriodInMinutes: parseInt(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -512,7 +512,7 @@ export default function ShiftsManagementPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, lateMarkAfterMinutes: parseInt(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -526,7 +526,7 @@ export default function ShiftsManagementPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, halfDayAfterMinutes: parseInt(e.target.value) || 0 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                       </div>
@@ -580,7 +580,7 @@ export default function ShiftsManagementPage() {
                             onChange={(e) =>
                               setFormData({ ...formData, overtimeMultiplier: parseFloat(e.target.value) || 1.5 })
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                             disabled={!formData.allowsOvertime}
                           />
                         </div>

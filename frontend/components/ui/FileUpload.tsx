@@ -190,7 +190,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           transition-all cursor-pointer
           ${isDragging
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-            : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500'
+            : 'border-gray-300 dark:border-surface-600 hover:border-blue-400 dark:hover:border-blue-500'
           }
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${uploading ? 'pointer-events-none' : ''}
@@ -224,7 +224,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div className="relative h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
               <div
                 className="absolute inset-y-0 left-0 bg-blue-500 transition-all duration-300"
                 style={{ width: `${progress}%` }}

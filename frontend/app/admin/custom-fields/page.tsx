@@ -217,12 +217,12 @@ export default function CustomFieldsPage() {
               placeholder="Search fields..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={filterEntityType}
               onChange={(e) => setFilterEntityType(e.target.value as EntityType | 'ALL')}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="ALL">All Entity Types</option>
               {ENTITY_TYPES.map((type) => (
@@ -306,7 +306,7 @@ export default function CustomFieldsPage() {
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           definition.isActive
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            : 'bg-gray-100 text-gray-800 dark:bg-surface-700 dark:text-gray-300'
                         }`}
                       >
                         {definition.isActive ? 'Active' : 'Inactive'}
@@ -352,7 +352,7 @@ export default function CustomFieldsPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, fieldCode: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '_') })
                       }
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., blood_group"
                       required
                       disabled={showEditModal}
@@ -366,7 +366,7 @@ export default function CustomFieldsPage() {
                       type="text"
                       value={formData.fieldName}
                       onChange={(e) => setFormData({ ...formData, fieldName: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Blood Group"
                       required
                     />
@@ -380,7 +380,7 @@ export default function CustomFieldsPage() {
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
                     placeholder="Optional description..."
                   />
@@ -394,7 +394,7 @@ export default function CustomFieldsPage() {
                     <select
                       value={formData.entityType}
                       onChange={(e) => setFormData({ ...formData, entityType: e.target.value as EntityType })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       disabled={showEditModal}
                     >
                       {ENTITY_TYPES.map((type) => (
@@ -411,7 +411,7 @@ export default function CustomFieldsPage() {
                     <select
                       value={formData.fieldType}
                       onChange={(e) => setFormData({ ...formData, fieldType: e.target.value as FieldType })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       disabled={showEditModal}
                     >
                       {FIELD_TYPES.map((type) => (
@@ -432,7 +432,7 @@ export default function CustomFieldsPage() {
                       type="text"
                       value={formData.fieldGroup}
                       onChange={(e) => setFormData({ ...formData, fieldGroup: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
                   </div>
@@ -444,7 +444,7 @@ export default function CustomFieldsPage() {
                       type="number"
                       value={formData.displayOrder}
                       onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -457,7 +457,7 @@ export default function CustomFieldsPage() {
                     <textarea
                       value={optionsText}
                       onChange={(e) => setOptionsText(e.target.value)}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
@@ -473,7 +473,7 @@ export default function CustomFieldsPage() {
                       type="text"
                       value={formData.placeholder}
                       onChange={(e) => setFormData({ ...formData, placeholder: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Placeholder text..."
                     />
                   </div>
@@ -485,7 +485,7 @@ export default function CustomFieldsPage() {
                       type="text"
                       value={formData.defaultValue}
                       onChange={(e) => setFormData({ ...formData, defaultValue: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
@@ -498,7 +498,7 @@ export default function CustomFieldsPage() {
                     <select
                       value={formData.viewVisibility}
                       onChange={(e) => setFormData({ ...formData, viewVisibility: e.target.value as FieldVisibility })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {VISIBILITIES.map((v) => (
                         <option key={v} value={v}>
@@ -514,7 +514,7 @@ export default function CustomFieldsPage() {
                     <select
                       value={formData.editVisibility}
                       onChange={(e) => setFormData({ ...formData, editVisibility: e.target.value as FieldVisibility })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-gray-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       {VISIBILITIES.map((v) => (
                         <option key={v} value={v}>

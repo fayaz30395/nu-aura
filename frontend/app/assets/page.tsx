@@ -85,7 +85,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.SOFTWARE_LICENSE:
       return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
@@ -98,11 +98,11 @@ const getStatusColor = (status: AssetStatus) => {
     case AssetStatus.IN_MAINTENANCE:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case AssetStatus.RETIRED:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
     case AssetStatus.LOST:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 

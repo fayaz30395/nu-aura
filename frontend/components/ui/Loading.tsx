@@ -20,7 +20,7 @@ export function Loading({ size = 'md', text, fullScreen = false }: LoadingProps)
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-white/80 dark:bg-surface-950/80 backdrop-blur-sm flex items-center justify-center z-50">
         {spinner}
       </div>
     );

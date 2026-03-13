@@ -33,25 +33,54 @@ import { StageBadge } from '@/components/recruitment/StageBadge';
 import { OfferModal } from './OfferModal';
 import { recruitmentService } from '@/lib/services/recruitment.service';
 import { useRankedCandidates } from '@/lib/hooks/queries/useRecruitment';
-import type { Candidate, CandidateStage } from '@/lib/types/recruitment';
+import type { Candidate, RecruitmentStage } from '@/lib/types/recruitment';
 import type { CandidateMatchResponse } from '@/lib/types/ai-recruitment';
 
-// Pipeline order — HIRED and REJECTED are terminal stages.
-const PIPELINE_STAGES: CandidateStage[] = [
-  'APPLIED',
-  'SCREENING',
-  'INTERVIEW',
-  'ASSESSMENT',
-  'OFFER',
-  'HIRED',
+// ── 13-stage NU-Hire pipeline ──────────────────────────────────────────
+// Terminal / rejection stages are excluded from the main board columns.
+const PIPELINE_STAGES: RecruitmentStage[] = [
+  'RECRUITERS_PHONE_CALL',
+  'PANEL_REVIEW',
+  'PANEL_SHORTLISTED',
+  'TECHNICAL_INTERVIEW_SCHEDULED',
+  'TECHNICAL_INTERVIEW_COMPLETED',
+  'MANAGEMENT_INTERVIEW_SCHEDULED',
+  'MANAGEMENT_INTERVIEW_COMPLETED',
+  'CLIENT_INTERVIEW_SCHEDULED',
+  'CLIENT_INTERVIEW_COMPLETED',
+  'HR_FINAL_INTERVIEW_COMPLETED',
+  'OFFER_NDA_TO_BE_RELEASED',
 ];
 
-const TERMINAL_STAGES: CandidateStage[] = ['HIRED', 'REJECTED'];
+const REJECTION_STAGES: RecruitmentStage[] = ['PANEL_REJECT', 'CANDIDATE_REJECTED'];
 
-function nextStage(stage: CandidateStage): CandidateStage | null {
+// Short labels for column headers
+const STAGE_SHORT_LABEL: Record<RecruitmentStage, string> = {
+  RECRUITERS_PHONE_CALL: 'Phone Call',
+  PANEL_REVIEW: 'Panel Review',
+  PANEL_REJECT: 'Panel Reject',
+  PANEL_SHORTLISTED: 'Shortlisted',
+  TECHNICAL_INTERVIEW_SCHEDULED: 'Tech Scheduled',
+  TECHNICAL_INTERVIEW_COMPLETED: 'Tech Done',
+  MANAGEMENT_INTERVIEW_SCHEDULED: 'Mgmt Scheduled',
+  MANAGEMENT_INTERVIEW_COMPLETED: 'Mgmt Done',
+  CLIENT_INTERVIEW_SCHEDULED: 'Client Scheduled',
+  CLIENT_INTERVIEW_COMPLETED: 'Client Done',
+  HR_FINAL_INTERVIEW_COMPLETED: 'HR Final',
+  CANDIDATE_REJECTED: 'Rejected',
+  OFFER_NDA_TO_BE_RELEASED: 'Offer / NDA',
+};
+
+function nextStage(stage: RecruitmentStage): RecruitmentStage | null {
   const idx = PIPELINE_STAGES.indexOf(stage);
   if (idx === -1 || idx === PIPELINE_STAGES.length - 1) return null;
   return PIPELINE_STAGES[idx + 1];
+}
+
+function prevStage(stage: RecruitmentStage): RecruitmentStage | null {
+  const idx = PIPELINE_STAGES.indexOf(stage);
+  if (idx <= 0) return null;
+  return PIPELINE_STAGES[idx - 1];
 }
 
 // ── Score badge helper ─────────────────────────────────────────────────
@@ -67,9 +96,10 @@ function ScoreBadge({ score }: { score: number }) {
 }
 
 interface KanbanColumnProps {
-  stage: CandidateStage;
+  stage: RecruitmentStage;
   candidates: Candidate[];
   onMoveForward: (candidate: Candidate) => void;
+  onMoveBackward: (candidate: Candidate) => void;
   onReject: (candidate: Candidate) => void;
   onOpenOffer: (candidate: Candidate) => void;
   isPending: boolean;
@@ -81,20 +111,23 @@ function KanbanColumn({
   stage,
   candidates,
   onMoveForward,
+  onMoveBackward,
   onReject,
   onOpenOffer,
   isPending,
   pendingCandidateId,
   scoreMap,
 }: KanbanColumnProps) {
-  const canAdvance = !TERMINAL_STAGES.includes(stage);
-  const isOfferStage = stage === 'OFFER';
+  const isOfferStage = stage === 'OFFER_NDA_TO_BE_RELEASED';
+  const isTerminal = isOfferStage; // last pipeline column — no further advance
+  const next = nextStage(stage);
+  const prev = prevStage(stage);
 
   return (
     <Stack
       style={{
-        minWidth: 240,
-        maxWidth: 280,
+        minWidth: 220,
+        maxWidth: 260,
         flexShrink: 0,
         background: 'var(--mantine-color-gray-0)',
         borderRadius: 'var(--mantine-radius-md)',
@@ -148,36 +181,60 @@ function KanbanColumn({
 
                 {/* Action buttons */}
                 <Group gap={4} mt={4}>
-                  {canAdvance && (
-                    <Tooltip label={isOfferStage ? 'Generate Offer' : `Move to ${nextStage(stage) ?? ''}`}>
+                  {prev && (
+                    <Tooltip label={`Move back to ${STAGE_SHORT_LABEL[prev]}`}>
                       <ActionIcon
                         size="sm"
                         variant="light"
-                        color={isOfferStage ? 'yellow' : 'blue'}
+                        color="gray"
                         loading={isPending && pendingCandidateId === candidate.id}
-                        onClick={() =>
-                          isOfferStage ? onOpenOffer(candidate) : onMoveForward(candidate)
-                        }
-                        aria-label={isOfferStage ? 'Generate offer' : 'Move forward'}
+                        onClick={() => onMoveBackward(candidate)}
+                        aria-label="Move backward"
                       >
-                        {isOfferStage ? <IconSend size={14} /> : <IconArrowRight size={14} />}
+                        <IconArrowLeft size={14} />
                       </ActionIcon>
                     </Tooltip>
                   )}
-                  {!TERMINAL_STAGES.includes(stage) && (
-                    <Tooltip label="Reject">
+                  {!isTerminal && next && (
+                    <Tooltip label={`Move to ${STAGE_SHORT_LABEL[next]}`}>
                       <ActionIcon
                         size="sm"
                         variant="light"
-                        color="red"
+                        color="blue"
                         loading={isPending && pendingCandidateId === candidate.id}
-                        onClick={() => onReject(candidate)}
-                        aria-label="Reject candidate"
+                        onClick={() => onMoveForward(candidate)}
+                        aria-label="Move forward"
                       >
-                        <IconX size={14} />
+                        <IconArrowRight size={14} />
                       </ActionIcon>
                     </Tooltip>
                   )}
+                  {isOfferStage && (
+                    <Tooltip label="Generate Offer">
+                      <ActionIcon
+                        size="sm"
+                        variant="light"
+                        color="yellow"
+                        loading={isPending && pendingCandidateId === candidate.id}
+                        onClick={() => onOpenOffer(candidate)}
+                        aria-label="Generate offer"
+                      >
+                        <IconSend size={14} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                  <Tooltip label="Reject">
+                    <ActionIcon
+                      size="sm"
+                      variant="light"
+                      color="red"
+                      loading={isPending && pendingCandidateId === candidate.id}
+                      onClick={() => onReject(candidate)}
+                      aria-label="Reject candidate"
+                    >
+                      <IconX size={14} />
+                    </ActionIcon>
+                  </Tooltip>
                 </Group>
               </Stack>
             </Paper>
@@ -224,7 +281,7 @@ export default function KanbanPage() {
 
   // ── Move stage mutation ────────────────────────────────────────────────
   const stageMutation = useMutation({
-    mutationFn: ({ candidateId, stage }: { candidateId: string; stage: CandidateStage }) =>
+    mutationFn: ({ candidateId, stage }: { candidateId: string; stage: RecruitmentStage }) =>
       recruitmentService.moveCandidateStage(candidateId, { stage }),
     onMutate: ({ candidateId }) => {
       setPendingCandidateId(candidateId);
@@ -232,12 +289,12 @@ export default function KanbanPage() {
     onSuccess: (_, { stage }) => {
       notifications.show({
         title: 'Stage updated',
-        message: `Candidate moved to ${stage}`,
+        message: `Candidate moved to ${STAGE_SHORT_LABEL[stage] ?? stage}`,
         color: 'green',
       });
       queryClient.invalidateQueries({ queryKey: ['kanban-candidates', jobId] });
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { message?: string } } }) => {
       notifications.show({
         title: 'Error',
         message: err?.response?.data?.message ?? 'Failed to update stage',
@@ -251,20 +308,27 @@ export default function KanbanPage() {
 
   // ── Handlers ───────────────────────────────────────────────────────────
   function handleMoveForward(candidate: Candidate) {
-    const current = (candidate.currentStage as unknown as CandidateStage) ?? 'APPLIED';
+    const current = (candidate.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
     const target = nextStage(current);
     if (!target) return;
     stageMutation.mutate({ candidateId: candidate.id, stage: target });
   }
 
+  function handleMoveBackward(candidate: Candidate) {
+    const current = (candidate.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
+    const target = prevStage(current);
+    if (!target) return;
+    stageMutation.mutate({ candidateId: candidate.id, stage: target });
+  }
+
   function handleReject(candidate: Candidate) {
-    stageMutation.mutate({ candidateId: candidate.id, stage: 'REJECTED' });
+    stageMutation.mutate({ candidateId: candidate.id, stage: 'CANDIDATE_REJECTED' });
   }
 
   // ── Group candidates by stage ──────────────────────────────────────────
-  function candidatesForStage(stage: CandidateStage): Candidate[] {
+  function candidatesForStage(stage: RecruitmentStage): Candidate[] {
     const filtered = candidates.filter((c) => {
-      const s = (c.currentStage as unknown as CandidateStage) ?? 'APPLIED';
+      const s = (c.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
       return s === stage;
     });
 
@@ -279,9 +343,9 @@ export default function KanbanPage() {
     return filtered;
   }
 
-  // Collect REJECTED candidates separately
-  const rejectedCandidates = candidates.filter(
-    (c) => (c.currentStage as unknown as CandidateStage) === 'REJECTED'
+  // Collect rejected candidates (PANEL_REJECT + CANDIDATE_REJECTED)
+  const rejectedCandidates = candidates.filter((c) =>
+    REJECTION_STAGES.includes(c.currentStage as RecruitmentStage)
   );
 
   // ── Render ─────────────────────────────────────────────────────────────
@@ -299,7 +363,7 @@ export default function KanbanPage() {
     return (
       <AppLayout activeMenuItem="recruitment">
         <Alert icon={<IconAlertCircle size={16} />} color="red" title="Failed to load candidates" m="md">
-          {(error as any)?.response?.data?.message ?? 'An unexpected error occurred.'}
+          {(error as Error & { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'An unexpected error occurred.'}
         </Alert>
       </AppLayout>
     );
@@ -322,7 +386,7 @@ export default function KanbanPage() {
             <div>
               <Title order={3}>Recruitment Pipeline</Title>
               <Text size="sm" c="dimmed">
-                Drag-free Kanban — click arrows to advance candidates
+                13-stage pipeline — use arrows to move candidates forward or backward
               </Text>
             </div>
           </Group>
@@ -346,7 +410,7 @@ export default function KanbanPage() {
           </Group>
         </Group>
 
-        {/* Kanban board */}
+        {/* Kanban board — horizontally scrollable */}
         <ScrollArea type="scroll" scrollbarSize={8}>
           <Group
             align="flex-start"
@@ -360,6 +424,7 @@ export default function KanbanPage() {
                 stage={stage}
                 candidates={candidatesForStage(stage)}
                 onMoveForward={handleMoveForward}
+                onMoveBackward={handleMoveBackward}
                 onReject={handleReject}
                 onOpenOffer={(c) => setOfferCandidate(c)}
                 isPending={stageMutation.isPending}
@@ -386,6 +451,9 @@ export default function KanbanPage() {
                 <Paper key={c.id} withBorder p="xs" radius="sm" style={{ minWidth: 160 }}>
                   <Text size="sm" fw={500} lineClamp={1}>
                     {c.fullName}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    {(c.currentStage as RecruitmentStage) === 'PANEL_REJECT' ? 'Panel Reject' : 'Rejected'}
                   </Text>
                   {c.appliedDate && (
                     <Text size="xs" c="dimmed">

@@ -78,7 +78,7 @@ const getCategoryLabel = (category: LetterCategory) => {
 const getStatusColor = (status: LetterStatus) => {
   switch (status) {
     case LetterStatus.DRAFT:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
     case LetterStatus.PENDING_APPROVAL:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case LetterStatus.APPROVED:
@@ -90,7 +90,7 @@ const getStatusColor = (status: LetterStatus) => {
     case LetterStatus.EXPIRED:
       return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300';
+      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
@@ -481,7 +481,7 @@ export default function LettersPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-gray-100 p-3 dark:bg-gray-800">
+                <div className="rounded-lg bg-gray-100 p-3 dark:bg-surface-800">
                   <FilePlus className="h-6 w-6 text-gray-600 dark:text-gray-400" />
                 </div>
                 <div>

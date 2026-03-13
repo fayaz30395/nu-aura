@@ -110,7 +110,7 @@ class LoanService {
   // Helpers
   getStatusColor(status: LoanStatus): string {
     const colors: Record<LoanStatus, string> = {
-      DRAFT: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      DRAFT: 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-300',
       PENDING_APPROVAL: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
       APPROVED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
       REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
