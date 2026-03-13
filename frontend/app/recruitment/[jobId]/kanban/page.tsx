@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -9,7 +9,6 @@ import {
   Stack,
   Group,
   Paper,
-  Button,
   Loader,
   Center,
   Alert,
@@ -27,7 +26,14 @@ import {
   IconX,
   IconSend,
   IconSparkles,
+  IconGripVertical,
 } from '@tabler/icons-react';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from '@hello-pangea/dnd';
 import { AppLayout } from '@/components/layout';
 import { StageBadge } from '@/components/recruitment/StageBadge';
 import { OfferModal } from './OfferModal';
@@ -60,11 +66,11 @@ const STAGE_SHORT_LABEL: Record<RecruitmentStage, string> = {
   PANEL_REVIEW: 'Panel Review',
   PANEL_REJECT: 'Panel Reject',
   PANEL_SHORTLISTED: 'Shortlisted',
-  TECHNICAL_INTERVIEW_SCHEDULED: 'Tech Scheduled',
+  TECHNICAL_INTERVIEW_SCHEDULED: 'Tech Interview',
   TECHNICAL_INTERVIEW_COMPLETED: 'Tech Done',
-  MANAGEMENT_INTERVIEW_SCHEDULED: 'Mgmt Scheduled',
+  MANAGEMENT_INTERVIEW_SCHEDULED: 'Mgmt Interview',
   MANAGEMENT_INTERVIEW_COMPLETED: 'Mgmt Done',
-  CLIENT_INTERVIEW_SCHEDULED: 'Client Scheduled',
+  CLIENT_INTERVIEW_SCHEDULED: 'Client Interview',
   CLIENT_INTERVIEW_COMPLETED: 'Client Done',
   HR_FINAL_INTERVIEW_COMPLETED: 'HR Final',
   CANDIDATE_REJECTED: 'Rejected',
@@ -95,6 +101,149 @@ function ScoreBadge({ score }: { score: number }) {
   );
 }
 
+// ── Draggable candidate card ───────────────────────────────────────────
+interface CandidateCardProps {
+  candidate: Candidate;
+  index: number;
+  stage: RecruitmentStage;
+  onMoveForward: (candidate: Candidate) => void;
+  onMoveBackward: (candidate: Candidate) => void;
+  onReject: (candidate: Candidate) => void;
+  onOpenOffer: (candidate: Candidate) => void;
+  isPending: boolean;
+  pendingCandidateId: string | null;
+  score: number | undefined;
+}
+
+function CandidateCard({
+  candidate,
+  index,
+  stage,
+  onMoveForward,
+  onMoveBackward,
+  onReject,
+  onOpenOffer,
+  isPending,
+  pendingCandidateId,
+  score,
+}: CandidateCardProps) {
+  const isOfferStage = stage === 'OFFER_NDA_TO_BE_RELEASED';
+  const isTerminal = isOfferStage;
+  const next = nextStage(stage);
+  const prev = prevStage(stage);
+  const isThisPending = isPending && pendingCandidateId === candidate.id;
+
+  return (
+    <Draggable draggableId={candidate.id} index={index}>
+      {(provided, snapshot) => (
+        <Paper
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          withBorder
+          p="sm"
+          radius="sm"
+          style={{
+            ...provided.draggableProps.style,
+            background: snapshot.isDragging
+              ? 'var(--mantine-color-blue-0)'
+              : 'white',
+            boxShadow: snapshot.isDragging
+              ? '0 8px 24px rgba(0,0,0,0.15)'
+              : undefined,
+            opacity: isThisPending ? 0.6 : 1,
+          }}
+        >
+          <Stack gap={6}>
+            <Group justify="space-between" align="center" gap={4}>
+              <Group gap={4} style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  {...provided.dragHandleProps}
+                  style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}
+                >
+                  <IconGripVertical size={14} color="var(--mantine-color-gray-4)" />
+                </div>
+                <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1 }}>
+                  {candidate.fullName}
+                </Text>
+              </Group>
+              {score !== undefined && <ScoreBadge score={score} />}
+            </Group>
+            {candidate.currentDesignation && (
+              <Text size="xs" c="dimmed" lineClamp={1}>
+                {candidate.currentDesignation}
+              </Text>
+            )}
+            {candidate.appliedDate && (
+              <Text size="xs" c="dimmed">
+                Applied: {new Date(candidate.appliedDate).toLocaleDateString()}
+              </Text>
+            )}
+
+            {/* Action buttons */}
+            <Group gap={4} mt={4}>
+              {prev && (
+                <Tooltip label={`Move back to ${STAGE_SHORT_LABEL[prev]}`}>
+                  <ActionIcon
+                    size="sm"
+                    variant="light"
+                    color="gray"
+                    loading={isThisPending}
+                    onClick={() => onMoveBackward(candidate)}
+                    aria-label="Move backward"
+                  >
+                    <IconArrowLeft size={14} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {!isTerminal && next && (
+                <Tooltip label={`Move to ${STAGE_SHORT_LABEL[next]}`}>
+                  <ActionIcon
+                    size="sm"
+                    variant="light"
+                    color="blue"
+                    loading={isThisPending}
+                    onClick={() => onMoveForward(candidate)}
+                    aria-label="Move forward"
+                  >
+                    <IconArrowRight size={14} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              {isOfferStage && (
+                <Tooltip label="Generate Offer">
+                  <ActionIcon
+                    size="sm"
+                    variant="light"
+                    color="yellow"
+                    loading={isThisPending}
+                    onClick={() => onOpenOffer(candidate)}
+                    aria-label="Generate offer"
+                  >
+                    <IconSend size={14} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              <Tooltip label="Reject">
+                <ActionIcon
+                  size="sm"
+                  variant="light"
+                  color="red"
+                  loading={isThisPending}
+                  onClick={() => onReject(candidate)}
+                  aria-label="Reject candidate"
+                >
+                  <IconX size={14} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+          </Stack>
+        </Paper>
+      )}
+    </Draggable>
+  );
+}
+
+// ── Droppable kanban column ────────────────────────────────────────────
 interface KanbanColumnProps {
   stage: RecruitmentStage;
   candidates: Candidate[];
@@ -118,20 +267,13 @@ function KanbanColumn({
   pendingCandidateId,
   scoreMap,
 }: KanbanColumnProps) {
-  const isOfferStage = stage === 'OFFER_NDA_TO_BE_RELEASED';
-  const isTerminal = isOfferStage; // last pipeline column — no further advance
-  const next = nextStage(stage);
-  const prev = prevStage(stage);
-
   return (
     <Stack
       style={{
         minWidth: 220,
         maxWidth: 260,
+        width: 240,
         flexShrink: 0,
-        background: 'var(--mantine-color-gray-0)',
-        borderRadius: 'var(--mantine-radius-md)',
-        padding: 'var(--mantine-spacing-sm)',
       }}
       gap="xs"
     >
@@ -143,108 +285,58 @@ function KanbanColumn({
         </Badge>
       </Group>
 
-      {/* Cards */}
-      <ScrollArea style={{ maxHeight: 'calc(100vh - 220px)' }} scrollbarSize={4}>
-        <Stack gap="xs">
-          {candidates.length === 0 && (
-            <Text size="xs" c="dimmed" ta="center" py="md">
-              No candidates
-            </Text>
-          )}
-          {candidates.map((candidate) => (
-            <Paper
-              key={candidate.id}
-              withBorder
-              p="sm"
-              radius="sm"
-              style={{ background: 'white' }}
-            >
-              <Stack gap={6}>
-                <Group justify="space-between" align="center" gap={4}>
-                  <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1 }}>
-                    {candidate.fullName}
-                  </Text>
-                  {scoreMap.has(candidate.id) && (
-                    <ScoreBadge score={scoreMap.get(candidate.id)!} />
-                  )}
-                </Group>
-                {candidate.currentDesignation && (
-                  <Text size="xs" c="dimmed" lineClamp={1}>
-                    {candidate.currentDesignation}
-                  </Text>
-                )}
-                {candidate.appliedDate && (
-                  <Text size="xs" c="dimmed">
-                    Applied: {new Date(candidate.appliedDate).toLocaleDateString()}
-                  </Text>
-                )}
-
-                {/* Action buttons */}
-                <Group gap={4} mt={4}>
-                  {prev && (
-                    <Tooltip label={`Move back to ${STAGE_SHORT_LABEL[prev]}`}>
-                      <ActionIcon
-                        size="sm"
-                        variant="light"
-                        color="gray"
-                        loading={isPending && pendingCandidateId === candidate.id}
-                        onClick={() => onMoveBackward(candidate)}
-                        aria-label="Move backward"
-                      >
-                        <IconArrowLeft size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                  {!isTerminal && next && (
-                    <Tooltip label={`Move to ${STAGE_SHORT_LABEL[next]}`}>
-                      <ActionIcon
-                        size="sm"
-                        variant="light"
-                        color="blue"
-                        loading={isPending && pendingCandidateId === candidate.id}
-                        onClick={() => onMoveForward(candidate)}
-                        aria-label="Move forward"
-                      >
-                        <IconArrowRight size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                  {isOfferStage && (
-                    <Tooltip label="Generate Offer">
-                      <ActionIcon
-                        size="sm"
-                        variant="light"
-                        color="yellow"
-                        loading={isPending && pendingCandidateId === candidate.id}
-                        onClick={() => onOpenOffer(candidate)}
-                        aria-label="Generate offer"
-                      >
-                        <IconSend size={14} />
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                  <Tooltip label="Reject">
-                    <ActionIcon
-                      size="sm"
-                      variant="light"
-                      color="red"
-                      loading={isPending && pendingCandidateId === candidate.id}
-                      onClick={() => onReject(candidate)}
-                      aria-label="Reject candidate"
-                    >
-                      <IconX size={14} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
-              </Stack>
-            </Paper>
-          ))}
-        </Stack>
-      </ScrollArea>
+      {/* Droppable area */}
+      <Droppable droppableId={stage}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            style={{
+              minHeight: 80,
+              maxHeight: 'calc(100vh - 240px)',
+              overflowY: 'auto',
+              background: snapshot.isDraggingOver
+                ? 'var(--mantine-color-blue-0)'
+                : 'var(--mantine-color-gray-0)',
+              borderRadius: 'var(--mantine-radius-md)',
+              padding: 'var(--mantine-spacing-xs)',
+              border: snapshot.isDraggingOver
+                ? '2px dashed var(--mantine-color-blue-4)'
+                : '2px solid transparent',
+              transition: 'background 200ms ease, border 200ms ease',
+            }}
+          >
+            <Stack gap="xs">
+              {candidates.length === 0 && !snapshot.isDraggingOver && (
+                <Text size="xs" c="dimmed" ta="center" py="md">
+                  No candidates
+                </Text>
+              )}
+              {candidates.map((candidate, index) => (
+                <CandidateCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  index={index}
+                  stage={stage}
+                  onMoveForward={onMoveForward}
+                  onMoveBackward={onMoveBackward}
+                  onReject={onReject}
+                  onOpenOffer={onOpenOffer}
+                  isPending={isPending}
+                  pendingCandidateId={pendingCandidateId}
+                  score={scoreMap.get(candidate.id)}
+                />
+              ))}
+            </Stack>
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </Stack>
   );
 }
 
+// ── Main page component ────────────────────────────────────────────────
 export default function KanbanPage() {
   const { jobId } = useParams<{ jobId: string }>();
   const router = useRouter();
@@ -306,7 +398,24 @@ export default function KanbanPage() {
     },
   });
 
-  // ── Handlers ───────────────────────────────────────────────────────────
+  // ── Drag-and-drop handler ──────────────────────────────────────────────
+  const handleDragEnd = useCallback(
+    (result: DropResult) => {
+      const { draggableId, destination, source } = result;
+
+      // Dropped outside a valid droppable or back in the same column
+      if (!destination) return;
+      if (destination.droppableId === source.droppableId) return;
+
+      const targetStage = destination.droppableId as RecruitmentStage;
+
+      // Fire mutation
+      stageMutation.mutate({ candidateId: draggableId, stage: targetStage });
+    },
+    [stageMutation]
+  );
+
+  // ── Button handlers ───────────────────────────────────────────────────
   function handleMoveForward(candidate: Candidate) {
     const current = (candidate.currentStage as RecruitmentStage) ?? 'RECRUITERS_PHONE_CALL';
     const target = nextStage(current);
@@ -386,7 +495,7 @@ export default function KanbanPage() {
             <div>
               <Title order={3}>Recruitment Pipeline</Title>
               <Text size="sm" c="dimmed">
-                13-stage pipeline — use arrows to move candidates forward or backward
+                Drag candidates between stages or use arrows to move forward / backward
               </Text>
             </div>
           </Group>
@@ -410,30 +519,32 @@ export default function KanbanPage() {
           </Group>
         </Group>
 
-        {/* Kanban board — horizontally scrollable */}
-        <ScrollArea type="scroll" scrollbarSize={8}>
-          <Group
-            align="flex-start"
-            gap="md"
-            wrap="nowrap"
-            style={{ paddingBottom: 16 }}
-          >
-            {PIPELINE_STAGES.map((stage) => (
-              <KanbanColumn
-                key={stage}
-                stage={stage}
-                candidates={candidatesForStage(stage)}
-                onMoveForward={handleMoveForward}
-                onMoveBackward={handleMoveBackward}
-                onReject={handleReject}
-                onOpenOffer={(c) => setOfferCandidate(c)}
-                isPending={stageMutation.isPending}
-                pendingCandidateId={pendingCandidateId}
-                scoreMap={scoreMap}
-              />
-            ))}
-          </Group>
-        </ScrollArea>
+        {/* Kanban board — drag-and-drop enabled, horizontally scrollable */}
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <ScrollArea type="scroll" scrollbarSize={8}>
+            <Group
+              align="flex-start"
+              gap="md"
+              wrap="nowrap"
+              style={{ paddingBottom: 16 }}
+            >
+              {PIPELINE_STAGES.map((stage) => (
+                <KanbanColumn
+                  key={stage}
+                  stage={stage}
+                  candidates={candidatesForStage(stage)}
+                  onMoveForward={handleMoveForward}
+                  onMoveBackward={handleMoveBackward}
+                  onReject={handleReject}
+                  onOpenOffer={(c) => setOfferCandidate(c)}
+                  isPending={stageMutation.isPending}
+                  pendingCandidateId={pendingCandidateId}
+                  scoreMap={scoreMap}
+                />
+              ))}
+            </Group>
+          </ScrollArea>
+        </DragDropContext>
 
         {/* Rejected section (collapsed at bottom) */}
         {rejectedCandidates.length > 0 && (

@@ -17,6 +17,7 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
     label?: string;
   };
   variant?: 'default' | 'primary' | 'success' | 'warning' | 'destructive' | 'purple' | 'teal' | 'orange' | 'blue';
+  size?: 'default' | 'compact';
   animated?: boolean;
   href?: string;
   onAction?: () => void;
@@ -99,6 +100,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       description,
       trend,
       variant = 'default',
+      size = 'default',
       animated = true,
       href,
       onAction,
@@ -109,6 +111,69 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
   ) => {
     const config = variantConfig[variant];
     const isClickable = !!href || !!onAction;
+    const isCompact = size === 'compact';
+
+    if (isCompact) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          whileHover={isClickable ? { y: -2 } : undefined}
+        >
+          <div
+            ref={ref}
+            onClick={onAction}
+            className={cn(
+              'group relative overflow-hidden rounded-xl border px-4 py-3 transition-all duration-300',
+              config.bg,
+              config.border,
+              isClickable && 'cursor-pointer hover:shadow-md',
+              className
+            )}
+            {...props}
+          >
+            {/* Decorative accent line */}
+            <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-xl', config.accent)} />
+
+            <div className="flex items-center gap-3">
+              {icon && (
+                <div
+                  className={cn(
+                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                    config.iconBg,
+                    config.iconColor
+                  )}
+                >
+                  {icon}
+                </div>
+              )}
+              <span className="flex-1 min-w-0 text-xs font-medium text-surface-500 dark:text-surface-400 truncate">
+                {title}
+              </span>
+              <span className="text-lg font-bold text-surface-900 dark:text-surface-50 shrink-0">
+                {value}
+              </span>
+              {trend && (
+                <span
+                  className={cn(
+                    'text-xs font-semibold shrink-0',
+                    trend.isPositive
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  )}
+                >
+                  {trend.isPositive ? '+' : ''}{trend.value}%
+                </span>
+              )}
+              {actionLabel && (
+                <ArrowRight className={cn('h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1', config.iconColor)} />
+              )}
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
 
     return (
       <motion.div

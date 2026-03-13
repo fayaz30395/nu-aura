@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
@@ -164,17 +164,46 @@ export default function RecruitmentDashboard() {
       .slice(0, 5);
   }, [jobOpeningsQuery.data]);
 
-  // Get recent applications
+  // Get recent applications (all sorted, no slice — lazy-rendered in UI)
   const recentApplications: Candidate[] = useMemo(() => {
     const candidates = candidatesQuery.data?.content || [];
-    return candidates
-      .sort(
-        (a, b) =>
-          new Date(b.appliedDate || b.createdAt).getTime() -
-          new Date(a.appliedDate || a.createdAt).getTime()
-      )
-      .slice(0, 10);
+    return candidates.sort(
+      (a, b) =>
+        new Date(b.appliedDate || b.createdAt).getTime() -
+        new Date(a.appliedDate || a.createdAt).getTime()
+    );
   }, [candidatesQuery.data]);
+
+  // Lazy-load: show 10 initially, load 10 more when scrolled to bottom
+  const BATCH_SIZE = 10;
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const visibleApplications = useMemo(
+    () => recentApplications.slice(0, visibleCount),
+    [recentApplications, visibleCount]
+  );
+
+  const hasMore = visibleCount < recentApplications.length;
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    const container = scrollContainerRef.current;
+    if (!sentinel || !container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, recentApplications.length));
+        }
+      },
+      { root: container, rootMargin: '100px' }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, recentApplications.length]);
 
   // Get today's interviews from actual interview data
   const todaysInterviews: Interview[] = useMemo(() => {
@@ -207,7 +236,7 @@ export default function RecruitmentDashboard() {
   return (
     <AppLayout>
       <motion.div
-        className="space-y-8"
+        className="space-y-6"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -242,154 +271,43 @@ export default function RecruitmentDashboard() {
         </motion.div>
 
         {/* Summary Stats Row */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatCard
-            icon={<Briefcase className="h-6 w-6" />}
+            icon={<Briefcase className="h-5 w-5" />}
             title="Active Job Openings"
             value={stats.activeJobs}
             variant="primary"
+            size="compact"
             onAction={() => router.push('/recruitment/jobs')}
             actionLabel="View Jobs"
           />
           <StatCard
-            icon={<Users className="h-6 w-6" />}
+            icon={<Users className="h-5 w-5" />}
             title="Total Candidates"
             value={stats.totalCandidates}
             variant="success"
+            size="compact"
             onAction={() => router.push('/recruitment/candidates')}
             actionLabel="View All"
           />
           <StatCard
-            icon={<Calendar className="h-6 w-6" />}
+            icon={<Calendar className="h-5 w-5" />}
             title="Interviews This Week"
             value={stats.interviewsThisWeek}
             variant="blue"
+            size="compact"
             onAction={() => router.push('/recruitment/interviews')}
             actionLabel="Schedule"
           />
           <StatCard
-            icon={<FileText className="h-6 w-6" />}
+            icon={<FileText className="h-5 w-5" />}
             title="Pending Offers"
             value={stats.pendingOffers}
             variant="orange"
+            size="compact"
             onAction={() => router.push('/recruitment/candidates')}
             actionLabel="Review"
           />
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Active Openings Card */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
-                Active Job Openings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentOpenings.length === 0 ? (
-                <EmptyState
-                  icon={<Briefcase className="h-12 w-12" />}
-                  title="No Active Openings"
-                  description="Start by posting a new job opening"
-                  action={{
-                    label: 'Post Job',
-                    onClick: () => router.push('/recruitment/jobs'),
-                  }}
-                />
-              ) : (
-                <div className="space-y-4">
-                  {recentOpenings.map((job, index) => (
-                    <motion.div
-                      key={job.id}
-                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
-                      onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-surface-900 dark:text-surface-50">
-                            {job.jobTitle}
-                          </h3>
-                          <div className="flex gap-4 mt-2 text-sm text-surface-500 dark:text-surface-400">
-                            {job.departmentName && (
-                              <span className="flex items-center gap-1">
-                                <Users className="h-3.5 w-3.5" />
-                                {job.departmentName}
-                              </span>
-                            )}
-                            {job.location && (
-                              <span className="flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5" />
-                                {job.location}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <Badge variant="success" size="sm">
-                          {job.candidateCount || 0} Applications
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Applications Card */}
-          <Card className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
-                Recent Applications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentApplications.length === 0 ? (
-                <EmptyState
-                  icon={<Users className="h-12 w-12" />}
-                  title="No Applications Yet"
-                  description="Applications will appear here as they arrive"
-                />
-              ) : (
-                <div className="space-y-4">
-                  {recentApplications.map((candidate, index) => (
-                    <motion.div
-                      key={candidate.id}
-                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
-                      onClick={() =>
-                        router.push(`/recruitment/candidates?id=${candidate.id}`)
-                      }
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-surface-900 dark:text-surface-50 truncate">
-                            {candidate.fullName}
-                          </h3>
-                          <p className="text-sm text-surface-500 dark:text-surface-400 truncate">
-                            {candidate.jobTitle || 'Position not specified'}
-                          </p>
-                          <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">
-                            Applied {formatDate(candidate.appliedDate)}
-                          </p>
-                        </div>
-                        <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
-                          {candidate.status.replace(/_/g, ' ')}
-                        </Badge>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </motion.div>
 
         {/* Interviews Today Card */}
@@ -451,6 +369,140 @@ export default function RecruitmentDashboard() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Main Content Grid */}
+        <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Active Openings Card */}
+          <Card className="h-fit">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                Active Job Openings
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recentOpenings.length === 0 ? (
+                <EmptyState
+                  icon={<Briefcase className="h-12 w-12" />}
+                  title="No Active Openings"
+                  description="Start by posting a new job opening"
+                  action={{
+                    label: 'Post Job',
+                    onClick: () => router.push('/recruitment/jobs'),
+                  }}
+                />
+              ) : (
+                <div className="space-y-4 max-h-[460px] overflow-y-auto pr-1">
+                  {recentOpenings.map((job, index) => (
+                    <motion.div
+                      key={job.id}
+                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                      onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                            {job.jobTitle}
+                          </h3>
+                          <div className="flex gap-4 mt-2 text-sm text-surface-500 dark:text-surface-400">
+                            {job.departmentName && (
+                              <span className="flex items-center gap-1">
+                                <Users className="h-3.5 w-3.5" />
+                                {job.departmentName}
+                              </span>
+                            )}
+                            {job.location && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="h-3.5 w-3.5" />
+                                {job.location}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <Badge variant="success" size="sm">
+                          {job.candidateCount || 0} Applications
+                        </Badge>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Applications Card */}
+          <Card className="h-fit">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-success-600 dark:text-success-400" />
+                  Recent Applications
+                </CardTitle>
+                {recentApplications.length > 0 && (
+                  <span className="text-xs text-surface-400 dark:text-surface-500">
+                    {visibleApplications.length} of {recentApplications.length}
+                  </span>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {recentApplications.length === 0 ? (
+                <EmptyState
+                  icon={<Users className="h-12 w-12" />}
+                  title="No Applications Yet"
+                  description="Applications will appear here as they arrive"
+                />
+              ) : (
+                <div
+                  ref={scrollContainerRef}
+                  className="space-y-4 max-h-[460px] overflow-y-auto pr-1"
+                >
+                  {visibleApplications.map((candidate, index) => (
+                    <motion.div
+                      key={candidate.id}
+                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                      onClick={() =>
+                        router.push(`/recruitment/candidates?id=${candidate.id}`)
+                      }
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: Math.min(index, 5) * 0.05 }}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-surface-900 dark:text-surface-50 truncate">
+                            {candidate.fullName}
+                          </h3>
+                          <p className="text-sm text-surface-500 dark:text-surface-400 truncate">
+                            {candidate.jobTitle || 'Position not specified'}
+                          </p>
+                          <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">
+                            Applied {formatDate(candidate.appliedDate)}
+                          </p>
+                        </div>
+                        <Badge variant={getCandidateStatusColor(candidate.status)} size="sm">
+                          {candidate.status.replace(/_/g, ' ')}
+                        </Badge>
+                      </div>
+                    </motion.div>
+                  ))}
+                  {/* Lazy-load sentinel */}
+                  {hasMore && (
+                    <div ref={loadMoreRef} className="flex justify-center py-2">
+                      <span className="text-xs text-surface-400 dark:text-surface-500">
+                        Loading more...
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
       </motion.div>
     </AppLayout>
   );
