@@ -12,6 +12,7 @@ import { useCreateWikiPage, useWikiSpaces } from '@/lib/hooks/queries/useFluence
 import { notifications } from '@mantine/notifications';
 import { TextInput, Select, LoadingOverlay } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
+import { isAxiosError } from '@/lib/utils/type-guards';
 
 const createWikiPageSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
@@ -88,10 +89,13 @@ export default function CreateWikiPage() {
             });
             router.push(`/fluence/wiki/${page.id}`);
           },
-          onError: (error: any) => {
+          onError: (error: unknown) => {
+            const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
+              ? (error.response.data as { message?: string }).message ?? 'Failed to create wiki page'
+              : 'Failed to create wiki page';
             notifications.show({
               title: 'Error',
-              message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create wiki page',
+              message,
               color: 'red',
             });
           },
