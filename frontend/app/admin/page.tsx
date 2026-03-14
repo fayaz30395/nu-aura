@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
 import { Roles } from '@/lib/hooks/usePermissions';
-import { AdminUserSummary } from '@/lib/types/admin';
+import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/admin';
 import { AppLayout } from '@/components/layout';
 
 const PAGE_SIZE = 10;
@@ -288,7 +288,7 @@ function StatCard(props: { title: string; value: number | string; description?: 
   );
 }
 
-function SystemHealthCard(props: { isLoading: boolean; health: any }) {
+function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | undefined }) {
   const { isLoading, health } = props;
 
   const getStatusColors = (status?: string) => {
@@ -369,7 +369,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: any }) {
           transition={{ duration: 0.4, delay: 0.2 }}
           className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
         >
-          {Object.entries(health.components).map(([componentName, component]: [string, any], index) => {
+          {Object.entries(health.components).map(([componentName, component]: [string, HealthComponent], index) => {
             const status = component.status?.toUpperCase();
             const isUp = status === 'UP';
             const isUnavailable = status === 'UNAVAILABLE';

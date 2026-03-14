@@ -1,6 +1,6 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, MutationCache } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useState, useEffect } from 'react';
 import { DarkModeProvider, MantineThemeProvider } from '@/components/layout';
@@ -42,6 +42,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
+        mutationCache: new MutationCache({
+          onError: (error) => {
+            // Global error handler for all mutations
+            // Shows user-friendly error notifications
+            createQueryErrorHandler()(error as Error);
+          },
+        }),
         defaultOptions: {
           queries: {
             // Data is fresh for 5 minutes after fetching
@@ -55,7 +62,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           },
           mutations: {
             retry: 1,
-            onError: createQueryErrorHandler(),
+            // Note: onError handler can still be defined per-mutation for custom behavior
+            // The global MutationCache.onError above runs for all mutations
           },
         },
       })

@@ -12,6 +12,7 @@ import { useCreateBlogPost, useBlogCategories } from '@/lib/hooks/queries/useFlu
 import { notifications } from '@mantine/notifications';
 import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
+import { isAxiosError } from '@/lib/utils/type-guards';
 
 const createBlogPostSchema = z.object({
   title: z.string().min(1, 'Title is required').min(3, 'Title must be at least 3 characters'),
@@ -93,10 +94,13 @@ export default function CreateBlogPost() {
             });
             router.push(`/fluence/blogs/${post.id}`);
           },
-          onError: (error: any) => {
+          onError: (error: unknown) => {
+            const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
+              ? (error.response.data as { message?: string }).message ?? 'Failed to create blog post'
+              : 'Failed to create blog post';
             notifications.show({
               title: 'Error',
-              message: (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create blog post',
+              message,
               color: 'red',
             });
           },

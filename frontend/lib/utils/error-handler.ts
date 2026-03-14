@@ -270,11 +270,51 @@ export function initGlobalErrorHandlers(): void {
 }
 
 /**
- * Create an error handler for React Query
+ * Extract error message from various error types
+ */
+function getErrorMessage(error: unknown): string {
+  // Check for Axios error with response data
+  const axiosError = error as { response?: { data?: { message?: string } } };
+  if (axiosError?.response?.data?.message) {
+    return axiosError.response.data.message;
+  }
+
+  // Check for standard Error object
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  // Fallback
+  return 'An unexpected error occurred';
+}
+
+/**
+ * Create an error handler for React Query that shows toast notifications
+ * This is applied globally via MutationCache so mutations don't need individual onError handlers
  */
 export function createQueryErrorHandler() {
   return (error: Error) => {
     handleError(error, { source: 'react-query' });
+
+    // Show Mantine notification to user
+    // Dynamic import to avoid circular dependencies and SSR issues
+    try {
+      const { notifications } = require('@mantine/notifications');
+      const category = categorizeError(error);
+      const message = getErrorMessage(error);
+      const userMessage = getUserMessage(category, message);
+
+      notifications.show({
+        title: 'Error',
+        message: userMessage,
+        color: 'red',
+        icon: null,
+        autoClose: 5000,
+      });
+    } catch (e) {
+      // Silently fail if Mantine notifications is not available (e.g., during SSR)
+      // The error is still logged via handleError() above
+    }
   };
 }
 
