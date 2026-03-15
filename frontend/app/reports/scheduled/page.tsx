@@ -238,7 +238,7 @@ export default function ScheduledReportsPage() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Scheduled Reports</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Configure automated report delivery to your team
             </p>
           </div>
@@ -256,9 +256,9 @@ export default function ScheduledReportsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className="text-sm font-medium text-[var(--text-secondary)]">
               Status:
             </label>
             <div className="flex gap-2">
@@ -269,7 +269,7 @@ export default function ScheduledReportsPage() {
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     filterActive === status
                       ? 'bg-primary-600 text-white'
-                      : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700'
+                      : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
                   {status === 'ALL' ? 'All' : status === 'ACTIVE' ? 'Active' : 'Inactive'}
@@ -282,12 +282,12 @@ export default function ScheduledReportsPage() {
         {/* Reports List */}
         {loading && reports.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-surface-600 dark:text-surface-400">Loading scheduled reports...</div>
+            <div className="text-[var(--text-secondary)]">Loading scheduled reports...</div>
           </div>
         ) : filteredReports.length === 0 ? (
-          <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-12 text-center">
-            <Clock className="h-12 w-12 text-surface-400 mx-auto mb-4" />
-            <div className="text-surface-600 dark:text-surface-400 mb-4">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+            <Clock className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+            <div className="text-[var(--text-secondary)] mb-4">
               {filterActive === 'ALL' ? 'No scheduled reports found' : `No ${filterActive.toLowerCase()} scheduled reports`}
             </div>
             {filterActive === 'ALL' && (
@@ -312,7 +312,7 @@ export default function ScheduledReportsPage() {
               return (
                 <div
                   key={report.id}
-                  className={`bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow ${
+                  className={`bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow ${
                     !report.isActive ? 'opacity-60' : ''
                   }`}
                 >
@@ -323,7 +323,7 @@ export default function ScheduledReportsPage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold">{report.scheduleName}</h3>
-                        <p className="text-sm text-surface-600 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-secondary)]">
                           {REPORT_TYPE_LABELS[report.reportType]}
                         </p>
                       </div>
@@ -333,7 +333,7 @@ export default function ScheduledReportsPage() {
                       className={`p-2 rounded-lg transition-colors ${
                         report.isActive
                           ? 'bg-green-50 dark:bg-green-950/20 text-green-600 hover:bg-green-100'
-                          : 'bg-surface-100 dark:bg-surface-800 text-surface-500 hover:bg-surface-200'
+                          : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)]'
                       }`}
                       title={report.isActive ? 'Pause schedule' : 'Activate schedule'}
                     >
@@ -343,34 +343,34 @@ export default function ScheduledReportsPage() {
 
                   <div className="space-y-3 mb-4">
                     <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-surface-400" />
-                      <span className="text-surface-600 dark:text-surface-400">
+                      <Clock className="h-4 w-4 text-[var(--text-muted)]" />
+                      <span className="text-[var(--text-secondary)]">
                         {getScheduleDescription(report)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-surface-400" />
-                      <span className="text-surface-600 dark:text-surface-400">
+                      <Mail className="h-4 w-4 text-[var(--text-muted)]" />
+                      <span className="text-[var(--text-secondary)]">
                         {report.recipients.length} recipient{report.recipients.length !== 1 ? 's' : ''}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <FileText className="h-4 w-4 text-surface-400" />
-                      <span className="text-surface-600 dark:text-surface-400">
+                      <FileText className="h-4 w-4 text-[var(--text-muted)]" />
+                      <span className="text-[var(--text-secondary)]">
                         {report.exportFormat} format
                       </span>
                     </div>
                     {report.departmentName && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Users className="h-4 w-4 text-surface-400" />
-                        <span className="text-surface-600 dark:text-surface-400">
+                        <Users className="h-4 w-4 text-[var(--text-muted)]" />
+                        <span className="text-[var(--text-secondary)]">
                           Filtered: {report.departmentName}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex items-center justify-between pt-4 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {report.isActive ? (
                         <span className="flex items-center gap-1 text-xs text-green-600">
@@ -378,13 +378,13 @@ export default function ScheduledReportsPage() {
                           Active
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-xs text-surface-500">
+                        <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
                           <XCircle className="h-3 w-3" />
                           Inactive
                         </span>
                       )}
                       {report.nextRunAt && report.isActive && (
-                        <span className="text-xs text-surface-500 ml-2">
+                        <span className="text-xs text-[var(--text-muted)] ml-2">
                           Next: {new Date(report.nextRunAt).toLocaleDateString()}
                         </span>
                       )}
@@ -415,7 +415,7 @@ export default function ScheduledReportsPage() {
         {/* Create/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedReport ? 'Edit Scheduled Report' : 'Create Scheduled Report'}
@@ -424,26 +424,26 @@ export default function ScheduledReportsPage() {
                   <div className="space-y-4">
                     {/* Schedule Name */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Schedule Name *
                       </label>
                       <input
                         type="text"
                         placeholder="e.g., Weekly Attendance Report"
                         {...register('scheduleName')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       />
                       {errors.scheduleName && <p className="text-red-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
 
                     {/* Report Type */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Report Type *
                       </label>
                       <select
                         {...register('reportType')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       >
                         {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
@@ -455,12 +455,12 @@ export default function ScheduledReportsPage() {
                     {/* Frequency */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Frequency *
                         </label>
                         <select
                           {...register('frequency')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         >
                           {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
                             <option key={value} value={value}>{label}</option>
@@ -472,12 +472,12 @@ export default function ScheduledReportsPage() {
                       {/* Day Selection based on frequency */}
                       {frequency === 'WEEKLY' && (
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Day of Week *
                           </label>
                           <select
                             {...register('dayOfWeek', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
@@ -489,12 +489,12 @@ export default function ScheduledReportsPage() {
 
                       {frequency === 'MONTHLY' && (
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Day of Month *
                           </label>
                           <select
                             {...register('dayOfMonth', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                           >
                             {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
@@ -508,25 +508,25 @@ export default function ScheduledReportsPage() {
                     {/* Time */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Time *
                         </label>
                         <input
                           type="time"
                           {...register('timeOfDay')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         />
                         {errors.timeOfDay && <p className="text-red-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
                       </div>
 
                       {/* Export Format */}
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Export Format *
                         </label>
                         <select
                           {...register('exportFormat')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         >
                           <option value="EXCEL">Excel (.xlsx)</option>
                           <option value="PDF">PDF</option>
@@ -538,12 +538,12 @@ export default function ScheduledReportsPage() {
 
                     {/* Department Filter (optional) */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Filter by Department (optional)
                       </label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       >
                         <option value="">All Departments</option>
                         {departments.map((dept) => (
@@ -554,7 +554,7 @@ export default function ScheduledReportsPage() {
 
                     {/* Recipients */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Recipients *
                       </label>
                       <div className="space-y-2">
@@ -564,7 +564,7 @@ export default function ScheduledReportsPage() {
                               type="email"
                               placeholder="email@example.com"
                               {...register(`recipients.${index}.email`)}
-                              className="flex-1 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
+                              className="flex-1 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                             />
                             {recipientFields.length > 1 && (
                               <button
@@ -598,7 +598,7 @@ export default function ScheduledReportsPage() {
                         reset();
                         setSelectedReport(null);
                       }}
-                      className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>
@@ -619,9 +619,9 @@ export default function ScheduledReportsPage() {
         {/* Delete Confirmation */}
         {showDeleteConfirm && selectedReport && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Scheduled Report</h2>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete &quot;{selectedReport.scheduleName}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -630,7 +630,7 @@ export default function ScheduledReportsPage() {
                     setShowDeleteConfirm(false);
                     setSelectedReport(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>

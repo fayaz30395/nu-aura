@@ -195,7 +195,7 @@ export default function PreboardingPortalPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-500 border-t-transparent" />
       </div>
     );
@@ -203,12 +203,12 @@ export default function PreboardingPortalPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="p-8 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">Access Error</h2>
-            <p className="text-surface-500">{error}</p>
+            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Access Error</h2>
+            <p className="text-[var(--text-muted)]">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -232,18 +232,18 @@ export default function PreboardingPortalPage() {
           <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center mx-auto mb-4">
             <Building2 className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Welcome, {data.firstName}!</h1>
-          <p className="text-surface-500 mt-1">Complete your pre-boarding checklist before joining on {new Date(data.expectedJoiningDate).toLocaleDateString()}</p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Welcome, {data.firstName}!</h1>
+          <p className="text-[var(--text-muted)] mt-1">Complete your pre-boarding checklist before joining on {new Date(data.expectedJoiningDate).toLocaleDateString()}</p>
         </div>
 
         {/* Progress */}
         <Card className="mb-6">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Overall Progress</span>
+              <span className="text-sm font-medium text-[var(--text-secondary)]">Overall Progress</span>
               <span className="text-sm font-bold text-primary-600">{data.completionPercentage}%</span>
             </div>
-            <div className="w-full bg-surface-100 dark:bg-surface-700 rounded-full h-3">
+            <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-3">
               <div
                 className="bg-gradient-to-r from-primary-500 to-primary-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${data.completionPercentage}%` }}
@@ -266,14 +266,14 @@ export default function PreboardingPortalPage() {
                     ? 'bg-green-500 text-white'
                     : idx === activeStep
                     ? 'bg-primary-500 text-white'
-                    : 'bg-surface-200 dark:bg-surface-700 text-surface-500'
+                    : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                 }`}>
                   {step.complete ? <CheckCircle2 className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
                 </div>
-                <span className="text-xs font-medium text-surface-600 dark:text-surface-400">{step.label}</span>
+                <span className="text-xs font-medium text-[var(--text-secondary)]">{step.label}</span>
               </button>
               {idx < steps.length - 1 && (
-                <div className="flex-1 h-0.5 mx-2 bg-surface-200 dark:bg-surface-700 relative top-[-12px]">
+                <div className="flex-1 h-0.5 mx-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] relative top-[-12px]">
                   <div className={`h-full transition-all ${step.complete ? 'bg-green-500 w-full' : 'w-0'}`} />
                 </div>
               )}
@@ -302,7 +302,7 @@ export default function PreboardingPortalPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Address *</label>
                   <textarea
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-surface-800 dark:border-surface-600"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
                     rows={2}
                     {...registerPersonalInfo('address')}
                   />
@@ -388,44 +388,44 @@ export default function PreboardingPortalPage() {
               <div className="space-y-4">
                 <h2 className="text-lg font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-green-500' : 'border-dashed border-surface-300'}`}>
+                  <Card className={`p-4 border-2 ${data.photoUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-3">
-                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-surface-400" />}
+                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Passport Photo</p>
-                        <p className="text-xs text-surface-500">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.idProofUploaded ? 'border-green-500' : 'border-dashed border-surface-300'}`}>
+                  <Card className={`p-4 border-2 ${data.idProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-3">
-                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-surface-400" />}
+                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">ID Proof</p>
-                        <p className="text-xs text-surface-500">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.addressProofUploaded ? 'border-green-500' : 'border-dashed border-surface-300'}`}>
+                  <Card className={`p-4 border-2 ${data.addressProofUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-3">
-                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-surface-400" />}
+                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Address Proof</p>
-                        <p className="text-xs text-surface-500">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
                       </div>
                     </div>
                   </Card>
-                  <Card className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-green-500' : 'border-dashed border-surface-300'}`}>
+                  <Card className={`p-4 border-2 ${data.educationDocsUploaded ? 'border-green-500' : 'border-dashed border-[var(--border-main)]'}`}>
                     <div className="flex items-center gap-3">
-                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-surface-400" />}
+                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-green-500" /> : <Upload className="h-6 w-6 text-[var(--text-muted)]" />}
                       <div>
                         <p className="font-medium">Education Docs</p>
-                        <p className="text-xs text-surface-500">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
+                        <p className="text-xs text-[var(--text-muted)]">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
                       </div>
                     </div>
                   </Card>
                 </div>
-                <p className="text-sm text-surface-500">Note: Document upload functionality will be integrated with file storage.</p>
+                <p className="text-sm text-[var(--text-muted)]">Note: Document upload functionality will be integrated with file storage.</p>
                 <div className="flex justify-between pt-4">
                   <Button type="button" variant="ghost" onClick={() => setActiveStep(1)}>Back</Button>
                   <Button type="button" variant="primary" onClick={() => setActiveStep(3)}>
@@ -442,17 +442,17 @@ export default function PreboardingPortalPage() {
                 {data.offerLetterSigned ? (
                   <div className="text-center py-8">
                     <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-surface-900 dark:text-surface-50">All Done!</h3>
-                    <p className="text-surface-500 mt-2">You have completed your pre-boarding checklist. See you on {new Date(data.expectedJoiningDate).toLocaleDateString()}!</p>
+                    <h3 className="text-xl font-bold text-[var(--text-primary)]">All Done!</h3>
+                    <p className="text-[var(--text-muted)] mt-2">You have completed your pre-boarding checklist. See you on {new Date(data.expectedJoiningDate).toLocaleDateString()}!</p>
                   </div>
                 ) : (
                   <>
-                    <Card className="p-4 bg-surface-50 dark:bg-surface-800/50">
+                    <Card className="p-4 bg-[var(--bg-secondary)]/50">
                       <div className="flex items-start gap-3">
                         <FileText className="h-6 w-6 text-primary-500 mt-1" />
                         <div>
                           <p className="font-medium">Employment Offer Letter</p>
-                          <p className="text-sm text-surface-500 mt-1">
+                          <p className="text-sm text-[var(--text-muted)] mt-1">
                             Please review your offer letter and sign to confirm your acceptance of the position as {data.designation}.
                           </p>
                         </div>

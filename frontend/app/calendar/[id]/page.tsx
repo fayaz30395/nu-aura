@@ -93,7 +93,7 @@ export default function EventDetailPage() {
         icon: XCircle,
       },
       COMPLETED: {
-        bg: 'bg-[var(--bg-surface)] dark:bg-surface-800',
+        bg: 'bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]',
         text: 'text-gray-700 dark:text-[var(--text-muted)]',
         icon: CheckCircle,
       },
@@ -107,7 +107,7 @@ export default function EventDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading event...</p>
+            <p className="text-[var(--text-secondary)]">Loading event...</p>
           </div>
         </div>
       </AppLayout>
@@ -120,7 +120,7 @@ export default function EventDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Event not found'}
             </p>
             <button
@@ -145,9 +145,9 @@ export default function EventDetailPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ export default function EventDetailPage() {
                   event.eventType
                 )}`}
               />
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 {event.title}
               </h1>
               <span
@@ -166,7 +166,7 @@ export default function EventDetailPage() {
                 {event.status}
               </span>
             </div>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               {calendarService.getEventTypeLabel(event.eventType)}
             </p>
           </div>
@@ -202,16 +202,16 @@ export default function EventDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6">
           {/* Location */}
           {event.location && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <MapPin className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <MapPin className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Location</p>
-                <p className="text-surface-900 dark:text-surface-100 font-medium">
+                <p className="text-sm text-[var(--text-muted)]">Location</p>
+                <p className="text-[var(--text-primary)] font-medium">
                   {event.location}
                 </p>
               </div>
@@ -221,11 +221,11 @@ export default function EventDetailPage() {
           {/* Meeting Link */}
           {event.meetingLink && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <Video className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <Video className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Meeting Link</p>
+                <p className="text-sm text-[var(--text-muted)]">Meeting Link</p>
                 <a
                   href={event.meetingLink}
                   target="_blank"
@@ -242,12 +242,12 @@ export default function EventDetailPage() {
           {/* Organizer */}
           {event.organizerName && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <Users className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <Users className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Organizer</p>
-                <p className="text-surface-900 dark:text-surface-100 font-medium">
+                <p className="text-sm text-[var(--text-muted)]">Organizer</p>
+                <p className="text-[var(--text-primary)] font-medium">
                   {event.organizerName}
                 </p>
               </div>
@@ -257,16 +257,16 @@ export default function EventDetailPage() {
           {/* Attendees */}
           {event.attendeeNames && event.attendeeNames.length > 0 && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <Users className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <Users className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Attendees</p>
+                <p className="text-sm text-[var(--text-muted)]">Attendees</p>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {event.attendeeNames.map((name, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-1 bg-surface-100 dark:bg-surface-800 rounded-lg text-sm text-surface-700 dark:text-surface-300"
+                      className="px-2 py-1 bg-[var(--bg-secondary)] rounded-lg text-sm text-[var(--text-secondary)]"
                     >
                       {name}
                     </span>
@@ -279,12 +279,12 @@ export default function EventDetailPage() {
           {/* Reminder */}
           {event.reminderMinutes !== undefined && event.reminderMinutes !== null && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <Bell className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <Bell className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Reminder</p>
-                <p className="text-surface-900 dark:text-surface-100 font-medium">
+                <p className="text-sm text-[var(--text-muted)]">Reminder</p>
+                <p className="text-[var(--text-primary)] font-medium">
                   {event.reminderMinutes === 0
                     ? 'At time of event'
                     : event.reminderMinutes < 60
@@ -300,12 +300,12 @@ export default function EventDetailPage() {
           {/* Visibility */}
           {event.visibility && (
             <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800">
-                <Globe className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)]">
+                <Globe className="h-5 w-5 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400">Visibility</p>
-                <p className="text-surface-900 dark:text-surface-100 font-medium">
+                <p className="text-sm text-[var(--text-muted)]">Visibility</p>
+                <p className="text-[var(--text-primary)] font-medium">
                   {event.visibility}
                 </p>
               </div>
@@ -315,11 +315,11 @@ export default function EventDetailPage() {
 
         {/* Description */}
         {event.description && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
-            <p className="text-surface-700 dark:text-surface-300 whitespace-pre-wrap">
+            <p className="text-[var(--text-secondary)] whitespace-pre-wrap">
               {event.description}
             </p>
           </div>
@@ -327,23 +327,23 @@ export default function EventDetailPage() {
 
         {/* Notes */}
         {event.notes && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
-            <p className="text-surface-600 dark:text-surface-400">{event.notes}</p>
+            <p className="text-[var(--text-secondary)]">{event.notes}</p>
           </div>
         )}
 
         {/* Sync Status */}
         {event.syncProvider && event.syncProvider !== 'NONE' && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                   Calendar Sync
                 </h3>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+                <p className="text-sm text-[var(--text-muted)] mt-1">
                   {event.syncProvider} Calendar •{' '}
                   {event.syncStatus === 'SYNCED'
                     ? `Last synced ${calendarService.formatDateTime(event.lastSyncedAt!)}`
@@ -369,7 +369,7 @@ export default function EventDetailPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => router.push('/calendar')}
-            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Back to Calendar
           </button>

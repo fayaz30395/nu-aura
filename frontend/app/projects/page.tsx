@@ -227,12 +227,12 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-surface-200 bg-white shadow-lg dark:border-surface-700 dark:bg-surface-800">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-white shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
           {loading && (
-            <div className="px-4 py-3 text-sm text-surface-500">Searching owners...</div>
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching owners...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-3 text-sm text-surface-500">No owners found</div>
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">No owners found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -240,13 +240,13 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
                 <li key={owner.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-surface-700 hover:bg-surface-100 dark:text-surface-200 dark:hover:bg-surface-700"
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200 dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(owner)}
                   >
-                    <span className="font-medium text-surface-900 dark:text-surface-50">
+                    <span className="font-medium text-[var(--text-primary)]">
                       {buildEmployeeName(owner)}
                     </span>
-                    <span className="text-xs text-surface-500 dark:text-surface-400">
+                    <span className="text-xs text-[var(--text-muted)]">
                       {owner.employeeCode || owner.officialEmail}
                     </span>
                   </button>
@@ -416,8 +416,8 @@ export default function ProjectsPage() {
       header: 'Project',
       accessor: (project: HrmsProject) => (
         <div className="space-y-1">
-          <div className="font-semibold text-surface-900 dark:text-surface-100">{project.name}</div>
-          <div className="text-xs text-surface-500 dark:text-surface-400">
+          <div className="font-semibold text-[var(--text-primary)]">{project.name}</div>
+          <div className="text-xs text-[var(--text-muted)]">
             {project.projectCode}
             {project.clientName ? ` • ${project.clientName}` : ''}
           </div>
@@ -469,7 +469,7 @@ export default function ProjectsPage() {
       header: 'Manager',
       accessor: (project: HrmsProject) => (
         <div className="space-y-1">
-          <div className="text-sm text-surface-900 dark:text-surface-100">
+          <div className="text-sm text-[var(--text-primary)]">
             {project.projectManagerName || '—'}
           </div>
         </div>
@@ -480,7 +480,7 @@ export default function ProjectsPage() {
       key: 'dates',
       header: 'Dates',
       accessor: (project: HrmsProject) => (
-        <div className="text-sm text-surface-700 dark:text-surface-300">
+        <div className="text-sm text-[var(--text-secondary)]">
           {formatDate(project.startDate)}
           {' → '}
           {project.endDate ? formatDate(project.endDate) : project.expectedEndDate ? `${formatDate(project.expectedEndDate)} (Exp)` : '—'}
@@ -495,10 +495,10 @@ export default function ProjectsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Projects & Allocations
             </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               Track projects and manage team allocations.
             </p>
           </div>
@@ -709,7 +709,7 @@ export default function ProjectsPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-surface-700 dark:text-surface-200">
+              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                 Description (optional)
               </label>
               <Textarea placeholder="Add a short description or scope notes" {...register('description')} />

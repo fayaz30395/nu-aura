@@ -166,7 +166,7 @@ const StarRating: React.FC<StarRatingProps> = ({ value, readOnly = false, size =
       >
         <Star
           size={size}
-          className={i < value ? 'fill-yellow-400 text-yellow-400' : 'text-surface-300'}
+          className={i < value ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--text-muted)]'}
         />
       </button>
     ))}
@@ -203,16 +203,16 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}
-        className="p-1 rounded text-surface-400 hover:text-surface-600 hover:bg-surface-100 transition-colors"
+        className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
         aria-label="More options"
       >
         <MoreHorizontal size={14} />
       </button>
       {open && (
-        <div className="absolute right-0 top-6 z-30 w-44 bg-white border border-surface-200 rounded-lg shadow-lg py-1 text-sm">
+        <div className="absolute right-0 top-6 z-30 w-44 bg-white border border-[var(--border-main)] rounded-lg shadow-lg py-1 text-sm">
           <button
             type="button"
-            className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+            className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
             onClick={() => { setOpen(false); onViewDetails(); }}
           >
             View Details
@@ -220,7 +220,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {!isTerminal && nextStage && (
             <button
               type="button"
-              className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+              className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
               onClick={() => { setOpen(false); onMoveToNextStage(); }}
             >
               Move to {STAGE_LABELS[nextStage]}
@@ -229,7 +229,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ applicant, onViewDetails, onMoveToN
           {(applicant.status === ApplicationStatus.HR_ROUND || applicant.status === ApplicationStatus.OFFER_PENDING) && (
             <button
               type="button"
-              className="w-full text-left px-3 py-2 hover:bg-surface-50 text-surface-700 transition-colors"
+              className="w-full text-left px-3 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors"
               onClick={() => { setOpen(false); onCreateOffer?.(); }}
             >
               Create Offer Letter
@@ -305,40 +305,40 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {/* Total Active */}
-      <div className="bg-white border border-surface-200 rounded-xl p-4">
+      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <User size={14} className="text-primary-500" />
-          <span className="text-xs text-surface-500 font-medium">Active Pipeline</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Active Pipeline</span>
         </div>
-        <p className="text-2xl font-bold text-surface-900">{totalActive}</p>
-        <p className="text-xs text-surface-400 mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)]">{totalActive}</p>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">{totalAccepted} accepted, {totalRejected} rejected</p>
       </div>
 
       {/* Conversion Rate */}
-      <div className="bg-white border border-surface-200 rounded-xl p-4">
+      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <TrendingUp size={14} className="text-green-500" />
-          <span className="text-xs text-surface-500 font-medium">Conversion Rate</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Conversion Rate</span>
         </div>
-        <p className="text-2xl font-bold text-surface-900">{conversionRate}%</p>
-        <p className="text-xs text-surface-400 mt-0.5">Applied → Accepted</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)]">{conversionRate}%</p>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">Applied → Accepted</p>
       </div>
 
       {/* Avg Time in Stage */}
-      <div className="bg-white border border-surface-200 rounded-xl p-4">
+      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <Clock size={14} className="text-orange-500" />
-          <span className="text-xs text-surface-500 font-medium">Avg. Time in Stage</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Avg. Time in Stage</span>
         </div>
-        <p className="text-2xl font-bold text-surface-900">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
-        <p className="text-xs text-surface-400 mt-0.5">Across all stages</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)]">{avgDaysInStage !== null ? `${avgDaysInStage}d` : '—'}</p>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">Across all stages</p>
       </div>
 
       {/* Top Sources */}
-      <div className="bg-white border border-surface-200 rounded-xl p-4">
+      <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 size={14} className="text-indigo-500" />
-          <span className="text-xs text-surface-500 font-medium">Top Sources</span>
+          <span className="text-xs text-[var(--text-muted)] font-medium">Top Sources</span>
         </div>
         {sourceBreakdown.length > 0 ? (
           <div className="flex flex-wrap gap-1.5 mt-1">
@@ -349,7 +349,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-surface-400 mt-1">No data</p>
+          <p className="text-sm text-[var(--text-muted)] mt-1">No data</p>
         )}
       </div>
     </div>
@@ -374,8 +374,8 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
   const maxCount = Math.max(...counts, 1);
 
   return (
-    <div className="bg-white border border-surface-200 rounded-xl p-4">
-      <p className="text-xs font-semibold text-surface-600 mb-3 flex items-center gap-1.5">
+    <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
+      <p className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-1.5">
         <TrendingUp size={13} className="text-primary-500" />
         Hiring Funnel
       </p>
@@ -386,12 +386,12 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
           const colors = STAGE_COLORS[stage];
           return (
             <div key={stage} className="flex-1 flex flex-col items-center gap-1" title={`${STAGE_LABELS[stage]}: ${count}`}>
-              <span className="text-xs font-semibold text-surface-600">{count}</span>
+              <span className="text-xs font-semibold text-[var(--text-secondary)]">{count}</span>
               <div
                 className={`w-full rounded-t-sm ${colors.badge.split(' ')[0]}`}
                 style={{ height: `${height}%`, minHeight: '2px' }}
               />
-              <span className="text-[9px] text-surface-400 truncate w-full text-center">{STAGE_LABELS[stage].split(' ')[0]}</span>
+              <span className="text-[9px] text-[var(--text-muted)] truncate w-full text-center">{STAGE_LABELS[stage].split(' ')[0]}</span>
             </div>
           );
         })}
@@ -759,12 +759,12 @@ export default function ApplicantPipelinePage() {
         { label: 'Pipeline' },
       ]}
     >
-      <div className="p-6 space-y-5 min-h-screen bg-surface-50">
+      <div className="p-6 space-y-5 min-h-screen bg-[var(--bg-secondary)]">
         {/* ── Header ────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900">ATS Pipeline</h1>
-            <p className="text-sm text-surface-500 mt-0.5">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">ATS Pipeline</h1>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">
               Drag candidates between stages or use the quick-move buttons
             </p>
           </div>
@@ -773,7 +773,7 @@ export default function ApplicantPipelinePage() {
             {/* Job Selector */}
             <div className="w-72">
               {jobsLoading ? (
-                <div className="flex items-center gap-2 text-sm text-surface-500 h-10 px-3 border border-surface-300 rounded-lg bg-white">
+                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)] h-10 px-3 border border-[var(--border-main)] rounded-lg bg-white">
                   <Loader2 size={14} className="animate-spin" />
                   Loading job openings...
                 </div>
@@ -828,18 +828,18 @@ export default function ApplicantPipelinePage() {
         {/* ── Empty / Loading / Content ─────────────────────────────────── */}
         {!selectedJobId && !jobsLoading ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 rounded-full bg-surface-100 flex items-center justify-center mb-4">
-              <User size={28} className="text-surface-400" />
+            <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
+              <User size={28} className="text-[var(--text-muted)]" />
             </div>
-            <h3 className="text-surface-700 font-semibold mb-1">No Job Selected</h3>
-            <p className="text-surface-500 text-sm">
+            <h3 className="text-[var(--text-secondary)] font-semibold mb-1">No Job Selected</h3>
+            <p className="text-[var(--text-muted)] text-sm">
               Select a job opening above to view its applicant pipeline.
             </p>
           </div>
         ) : pipelineLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={32} className="animate-spin text-primary-500" />
-            <span className="ml-3 text-surface-500">
+            <span className="ml-3 text-[var(--text-muted)]">
               Loading pipeline for {selectedJob?.jobTitle ?? 'selected job'}...
             </span>
           </div>
@@ -851,17 +851,17 @@ export default function ApplicantPipelinePage() {
           <>
             {/* ── Pipeline Stats Bar ──────────────────────────────────── */}
             {selectedJob && (
-              <div className="flex flex-wrap items-center gap-3 text-sm text-surface-600">
-                <span className="font-medium text-surface-800">{selectedJob.jobTitle}</span>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--text-secondary)]">
+                <span className="font-medium text-[var(--text-secondary)]">{selectedJob.jobTitle}</span>
                 {selectedJob.jobCode && (
-                  <span className="bg-surface-100 px-2 py-0.5 rounded text-surface-500 font-mono text-xs">
+                  <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded text-[var(--text-muted)] font-mono text-xs">
                     {selectedJob.jobCode}
                   </span>
                 )}
                 {selectedJob.departmentName && (
-                  <span className="text-surface-500">{selectedJob.departmentName}</span>
+                  <span className="text-[var(--text-muted)]">{selectedJob.departmentName}</span>
                 )}
-                <span className="ml-auto text-surface-500">
+                <span className="ml-auto text-[var(--text-muted)]">
                   {totalApplicants} applicant{totalApplicants !== 1 ? 's' : ''} total
                 </span>
               </div>
@@ -878,18 +878,18 @@ export default function ApplicantPipelinePage() {
             {/* ── Search & Filters ───────────────────────────────────── */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative flex-1 min-w-[200px] max-w-md">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" />
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search by candidate name..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-surface-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 text-surface-800 placeholder:text-surface-400"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 text-[var(--text-secondary)] placeholder:text-[var(--text-muted)]"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                   >
                     <X size={14} />
                   </button>
@@ -901,7 +901,7 @@ export default function ApplicantPipelinePage() {
                 className={`flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
                   hasActiveFilters
                     ? 'border-primary-300 bg-primary-50 text-primary-700'
-                    : 'border-surface-200 bg-white text-surface-600 hover:bg-surface-50'
+                    : 'border-[var(--border-main)] bg-white text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 <Filter size={14} />
@@ -926,13 +926,13 @@ export default function ApplicantPipelinePage() {
 
             {/* ── Filter Dropdowns ───────────────────────────────────── */}
             {showFilters && (
-              <div className="flex flex-wrap items-end gap-4 bg-white border border-surface-200 rounded-xl p-4 animate-in fade-in slide-in-from-top-1">
+              <div className="flex flex-wrap items-end gap-4 bg-white border border-[var(--border-main)] rounded-xl p-4 animate-in fade-in slide-in-from-top-1">
                 <div className="min-w-[160px]">
-                  <label className="block text-xs font-medium text-surface-600 mb-1">Source</label>
+                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                   <select
                     value={sourceFilter}
                     onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
-                    className="w-full px-3 py-2 text-sm border border-surface-200 rounded-lg bg-white text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                    className="w-full px-3 py-2 text-sm border border-[var(--border-main)] rounded-lg bg-white text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                   >
                     <option value="">All sources</option>
                     {Object.values(ApplicationSource).map(src => (
@@ -942,11 +942,11 @@ export default function ApplicantPipelinePage() {
                 </div>
 
                 <div className="min-w-[140px]">
-                  <label className="block text-xs font-medium text-surface-600 mb-1">Min. Rating</label>
-                  <div className="flex items-center gap-2 px-3 py-2 border border-surface-200 rounded-lg bg-white">
+                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</label>
+                  <div className="flex items-center gap-2 px-3 py-2 border border-[var(--border-main)] rounded-lg bg-white">
                     <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15} />
                     {minRating > 0 && (
-                      <button onClick={() => setMinRating(0)} className="text-xs text-surface-400 hover:text-surface-600">
+                      <button onClick={() => setMinRating(0)} className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
                         <X size={12} />
                       </button>
                     )}
@@ -976,14 +976,14 @@ export default function ApplicantPipelinePage() {
                           <div
                             ref={provided.innerRef}
                             {...provided.droppableProps}
-                            className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-surface-200 border-t-4 ${colors.col} overflow-hidden transition-colors ${
+                            className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-4 ${colors.col} overflow-hidden transition-colors ${
                               snapshot.isDraggingOver ? `${colors.bg} ring-2 ring-primary-300` : 'bg-white'
                             }`}
                             style={{ maxHeight: 'calc(100vh - 380px)' }}
                           >
                             {/* Column Header */}
                             <div className={`px-3 py-2.5 ${colors.header} flex items-center justify-between`}>
-                              <span className="text-sm font-semibold text-surface-800">
+                              <span className="text-sm font-semibold text-[var(--text-secondary)]">
                                 {STAGE_LABELS[stage]}
                               </span>
                               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>
@@ -996,7 +996,7 @@ export default function ApplicantPipelinePage() {
                             {/* Cards scroll area */}
                             <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[60px]">
                               {applicants.length === 0 ? (
-                                <div className="py-6 text-center text-xs text-surface-400">
+                                <div className="py-6 text-center text-xs text-[var(--text-muted)]">
                                   {hasActiveFilters ? 'No matches' : 'No applicants'}
                                 </div>
                               ) : (
@@ -1014,7 +1014,7 @@ export default function ApplicantPipelinePage() {
                                           className={`bg-white border rounded-lg p-3 transition-all cursor-pointer group ${
                                             dragSnapshot.isDragging
                                               ? 'shadow-lg border-primary-300 ring-2 ring-primary-200 rotate-1'
-                                              : 'border-surface-200 shadow-sm hover:shadow-md hover:border-surface-300'
+                                              : 'border-[var(--border-main)] shadow-sm hover:shadow-md hover:border-[var(--border-main)]'
                                           } ${isMoving ? 'opacity-50' : ''}`}
                                           onClick={() => !dragSnapshot.isDragging && openDetailModal(applicant)}
                                         >
@@ -1023,16 +1023,16 @@ export default function ApplicantPipelinePage() {
                                             <div className="flex items-start gap-1.5 flex-1 min-w-0">
                                               <div
                                                 {...dragProvided.dragHandleProps}
-                                                className="mt-0.5 text-surface-300 hover:text-surface-500 cursor-grab active:cursor-grabbing flex-shrink-0"
+                                                className="mt-0.5 text-[var(--text-muted)] hover:text-[var(--text-muted)] cursor-grab active:cursor-grabbing flex-shrink-0"
                                               >
                                                 <GripVertical size={12} />
                                               </div>
                                               <div className="min-w-0 flex-1">
-                                                <p className="text-sm font-semibold text-surface-900 truncate leading-tight">
+                                                <p className="text-sm font-semibold text-[var(--text-primary)] truncate leading-tight">
                                                   {applicant.candidateName || `Candidate ${applicant.candidateId.slice(0, 8)}`}
                                                 </p>
                                                 {applicant.jobTitle && (
-                                                  <p className="text-xs text-surface-500 truncate mt-0.5">
+                                                  <p className="text-xs text-[var(--text-muted)] truncate mt-0.5">
                                                     {applicant.jobTitle}
                                                   </p>
                                                 )}
@@ -1064,7 +1064,7 @@ export default function ApplicantPipelinePage() {
                                               </span>
                                             )}
                                             {days !== null && (
-                                              <span className="text-xs text-surface-400">
+                                              <span className="text-xs text-[var(--text-muted)]">
                                                 {days === 0 ? 'Today' : `${days}d ago`}
                                               </span>
                                             )}
@@ -1074,14 +1074,14 @@ export default function ApplicantPipelinePage() {
                                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                             {/* Time in stage */}
                                             {stageTime !== '—' && (
-                                              <span className="flex items-center gap-0.5 text-xs text-surface-400">
+                                              <span className="flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                                                 <Clock size={9} />
                                                 {stageTime}
                                               </span>
                                             )}
                                             {/* Expected salary */}
                                             {applicant.expectedSalary && (
-                                              <span className="flex items-center gap-0.5 text-xs text-surface-400">
+                                              <span className="flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                                                 <DollarSign size={9} />
                                                 {(applicant.expectedSalary / 100000).toFixed(1)}L
                                               </span>
@@ -1101,7 +1101,7 @@ export default function ApplicantPipelinePage() {
                                               type="button"
                                               disabled={isMoving}
                                               onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
-                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-surface-50 hover:bg-primary-50 text-surface-500 hover:text-primary-600 border border-surface-200 hover:border-primary-200 transition-all"
+                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-[var(--bg-secondary)] hover:bg-primary-50 text-[var(--text-muted)] hover:text-primary-600 border border-[var(--border-main)] hover:border-primary-200 transition-all"
                                             >
                                               {isMoving ? (
                                                 <Loader2 size={10} className="animate-spin" />
@@ -1154,7 +1154,7 @@ export default function ApplicantPipelinePage() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Job Opening *
               </label>
               <Select
@@ -1171,7 +1171,7 @@ export default function ApplicantPipelinePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Source
               </label>
               <Select
@@ -1199,7 +1199,7 @@ export default function ApplicantPipelinePage() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Notes
               </label>
               <Textarea
@@ -1236,33 +1236,33 @@ export default function ApplicantPipelinePage() {
               )}
 
               {/* Info Grid */}
-              <div className="grid grid-cols-2 gap-4 bg-surface-50 rounded-lg p-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 bg-[var(--bg-secondary)] rounded-lg p-4 text-sm">
                 <div>
-                  <p className="text-surface-500 text-xs mb-0.5">Candidate</p>
-                  <p className="font-semibold text-surface-900">
+                  <p className="text-[var(--text-muted)] text-xs mb-0.5">Candidate</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {activeApplicant.candidateName || `ID: ${activeApplicant.candidateId}`}
                   </p>
                 </div>
                 <div>
-                  <p className="text-surface-500 text-xs mb-0.5">Job Title</p>
-                  <p className="font-medium text-surface-800">{activeApplicant.jobTitle || '—'}</p>
+                  <p className="text-[var(--text-muted)] text-xs mb-0.5">Job Title</p>
+                  <p className="font-medium text-[var(--text-secondary)]">{activeApplicant.jobTitle || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-surface-500 text-xs mb-0.5">Current Stage</p>
-                  <span className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full ${STAGE_COLORS[activeApplicant.status]?.badge ?? 'bg-surface-100 text-surface-600'}`}>
+                  <p className="text-[var(--text-muted)] text-xs mb-0.5">Current Stage</p>
+                  <span className={`inline-flex text-xs font-semibold px-2 py-0.5 rounded-full ${STAGE_COLORS[activeApplicant.status]?.badge ?? 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'}`}>
                     {STAGE_LABELS[activeApplicant.status] ?? formatLabel(activeApplicant.status)}
                   </span>
                 </div>
                 <div>
-                  <p className="text-surface-500 text-xs mb-0.5">Source</p>
-                  <p className="font-medium text-surface-800">
+                  <p className="text-[var(--text-muted)] text-xs mb-0.5">Source</p>
+                  <p className="font-medium text-[var(--text-secondary)]">
                     {activeApplicant.source ? formatLabel(activeApplicant.source) : '—'}
                   </p>
                 </div>
                 {activeApplicant.appliedDate && (
                   <div>
-                    <p className="text-surface-500 text-xs mb-0.5">Applied</p>
-                    <p className="font-medium text-surface-800">
+                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Applied</p>
+                    <p className="font-medium text-[var(--text-secondary)]">
                       {new Date(activeApplicant.appliedDate).toLocaleDateString('en-IN', {
                         day: '2-digit', month: 'short', year: 'numeric',
                       })}
@@ -1270,8 +1270,8 @@ export default function ApplicantPipelinePage() {
                   </div>
                 )}
                 <div>
-                  <p className="text-surface-500 text-xs mb-0.5">Expected Salary</p>
-                  <p className="font-medium text-surface-800">
+                  <p className="text-[var(--text-muted)] text-xs mb-0.5">Expected Salary</p>
+                  <p className="font-medium text-[var(--text-secondary)]">
                     {activeApplicant.expectedSalary
                       ? activeApplicant.expectedSalary.toLocaleString('en-IN')
                       : '—'}
@@ -1279,8 +1279,8 @@ export default function ApplicantPipelinePage() {
                 </div>
                 {activeApplicant.currentStageEnteredAt && (
                   <div>
-                    <p className="text-surface-500 text-xs mb-0.5">Time in Current Stage</p>
-                    <p className="font-medium text-surface-800">
+                    <p className="text-[var(--text-muted)] text-xs mb-0.5">Time in Current Stage</p>
+                    <p className="font-medium text-[var(--text-secondary)]">
                       {getTimeInStage(activeApplicant.currentStageEnteredAt)}
                     </p>
                   </div>
@@ -1290,7 +1290,7 @@ export default function ApplicantPipelinePage() {
               {/* Move to Stage */}
               {(STATUS_TRANSITIONS[activeApplicant.status] || []).length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Move to Stage
                   </label>
                   <Select
@@ -1309,7 +1309,7 @@ export default function ApplicantPipelinePage() {
 
               {/* Rating */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Rating
                 </label>
                 <StarRating
@@ -1320,7 +1320,7 @@ export default function ApplicantPipelinePage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Notes
                 </label>
                 <Textarea
@@ -1335,7 +1335,7 @@ export default function ApplicantPipelinePage() {
               {(detailNextStatus === ApplicationStatus.REJECTED ||
                 activeApplicant.status === ApplicationStatus.REJECTED) && (
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Rejection Reason
                   </label>
                   <Textarea
@@ -1389,11 +1389,11 @@ export default function ApplicantPipelinePage() {
 
             {/* Template selector */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Offer Letter Template *
               </label>
               {offerTemplatesLoading ? (
-                <div className="flex items-center gap-2 h-10 px-3 border border-surface-300 rounded-lg bg-surface-50 text-sm text-surface-500">
+                <div className="flex items-center gap-2 h-10 px-3 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)] text-sm text-[var(--text-muted)]">
                   <Loader2 size={14} className="animate-spin" /> Loading templates...
                 </div>
               ) : (
@@ -1431,7 +1431,7 @@ export default function ApplicantPipelinePage() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Proposed Joining Date *
               </label>
               <input
@@ -1440,12 +1440,12 @@ export default function ApplicantPipelinePage() {
                 onChange={e => setOfferForm(prev => ({ ...prev, proposedJoiningDate: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 disabled={offerLoading}
-                className="w-full px-3 py-2 border border-surface-300 rounded-lg text-sm text-surface-900 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:bg-surface-50 disabled:text-surface-400"
+                className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-surface-700 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Additional Notes
               </label>
               <Textarea

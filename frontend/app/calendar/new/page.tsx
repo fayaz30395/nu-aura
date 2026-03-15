@@ -137,15 +137,15 @@ export default function NewEventPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               New Event
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Schedule a new calendar event
             </p>
           </div>
@@ -159,10 +159,10 @@ export default function NewEventPage() {
         )}
 
         {/* Form */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Event Title *
             </label>
             <input
@@ -170,11 +170,11 @@ export default function NewEventPage() {
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Enter event title"
-              className={`w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+              className={`w-full px-4 py-3 bg-[var(--bg-secondary)] border ${
                 validationErrors.title
                   ? 'border-red-500'
-                  : 'border-surface-200 dark:border-surface-700'
-              } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  : 'border-[var(--border-main)]'
+              } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
             />
             {validationErrors.title && (
               <p className="mt-1 text-sm text-red-500">{validationErrors.title}</p>
@@ -188,9 +188,9 @@ export default function NewEventPage() {
                 type="checkbox"
                 checked={formData.allDay}
                 onChange={(e) => setFormData({ ...formData, allDay: e.target.checked })}
-                className="w-5 h-5 rounded border-surface-300 text-primary-500 focus:ring-primary-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-primary-500 focus:ring-primary-500"
               />
-              <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+              <span className="text-sm font-medium text-[var(--text-secondary)]">
                 All Day Event
               </span>
             </label>
@@ -199,20 +199,20 @@ export default function NewEventPage() {
           {/* Date/Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start {formData.allDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type={formData.allDay ? 'date' : 'datetime-local'}
                   value={formData.allDay ? formData.startTime.slice(0, 10) : formData.startTime}
                   onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                  className={`w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+                  className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                     validationErrors.startTime
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
                 />
               </div>
               {validationErrors.startTime && (
@@ -220,20 +220,20 @@ export default function NewEventPage() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End {formData.allDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type={formData.allDay ? 'date' : 'datetime-local'}
                   value={formData.allDay ? formData.endTime.slice(0, 10) : formData.endTime}
                   onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                  className={`w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+                  className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                     validationErrors.endTime
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
                 />
               </div>
               {validationErrors.endTime && (
@@ -244,7 +244,7 @@ export default function NewEventPage() {
 
           {/* Event Type */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Event Type
             </label>
             <select
@@ -252,7 +252,7 @@ export default function NewEventPage() {
               onChange={(e) =>
                 setFormData({ ...formData, eventType: e.target.value as EventType })
               }
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               {eventTypes.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -264,45 +264,45 @@ export default function NewEventPage() {
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Location
             </label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 value={formData.location || ''}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 placeholder="Add location"
-                className="w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
           </div>
 
           {/* Meeting Link */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Meeting Link
             </label>
             <div className="relative">
-              <Video className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Video className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="url"
                 value={formData.meetingLink || ''}
                 onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
                 placeholder="https://meet.google.com/..."
-                className="w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
           </div>
 
           {/* Reminder */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Reminder
             </label>
             <div className="relative">
-              <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Bell className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 value={formData.reminderMinutes ?? ''}
                 onChange={(e) =>
@@ -311,7 +311,7 @@ export default function NewEventPage() {
                     reminderMinutes: e.target.value ? parseInt(e.target.value) : undefined,
                   })
                 }
-                className="w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">No reminder</option>
                 {reminderOptions.map((opt) => (
@@ -325,17 +325,17 @@ export default function NewEventPage() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <div className="relative">
-              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 value={formData.visibility}
                 onChange={(e) =>
                   setFormData({ ...formData, visibility: e.target.value as EventVisibility })
                 }
-                className="w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 {visibilities.map((vis) => (
                   <option key={vis.value} value={vis.value}>
@@ -348,24 +348,24 @@ export default function NewEventPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Description
             </label>
             <div className="relative">
-              <FileText className="absolute left-4 top-4 h-5 w-5 text-surface-400" />
+              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]" />
               <textarea
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Add event description..."
                 rows={4}
-                className="w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
               />
             </div>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Notes
             </label>
             <textarea
@@ -373,7 +373,7 @@ export default function NewEventPage() {
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Private notes..."
               rows={2}
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
           </div>
         </div>
@@ -382,7 +382,7 @@ export default function NewEventPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => router.back()}
-            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Cancel
           </button>

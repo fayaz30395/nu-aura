@@ -52,7 +52,7 @@ const TARGET_DISTRIBUTION = {
 // ─── Components ────────────────────────────────────────────────────────────────
 
 function RatingBadge({ rating }: { rating: number | null }) {
-  if (!rating) return <span className="text-surface-400 text-sm">—</span>;
+  if (!rating) return <span className="text-[var(--text-muted)] text-sm">—</span>;
   const rounded = Math.round(rating);
   const meta = RATING_LABELS[rounded] || RATING_LABELS[3];
   return (
@@ -78,8 +78,8 @@ function DistributionChart({
 
   return (
     <div className="space-y-2">
-      {label && <p className="text-sm font-semibold text-surface-800 dark:text-surface-200">{label}</p>}
-      <div className="flex gap-1 h-10 rounded-lg overflow-hidden bg-surface-100 dark:bg-surface-700">
+      {label && <p className="text-sm font-semibold text-[var(--text-primary)]">{label}</p>}
+      <div className="flex gap-1 h-10 rounded-lg overflow-hidden bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
         {ratings.map((r, i) => {
           const pct = total > 0 ? ((counts[r] || 0) / total) * 100 : 0;
           return (
@@ -94,12 +94,12 @@ function DistributionChart({
           );
         })}
         {total === 0 && (
-          <div className="bg-surface-200 flex-1 flex items-center justify-center text-xs text-surface-400">
+          <div className="bg-[var(--bg-secondary)] flex-1 flex items-center justify-center text-xs text-[var(--text-muted)]">
             No ratings
           </div>
         )}
       </div>
-      <div className="flex gap-2 text-xs text-surface-500 flex-wrap">
+      <div className="flex gap-2 text-xs text-[var(--text-muted)] flex-wrap">
         {ratings.map((r, i) => (
           <span key={r} className="flex items-center gap-1">
             <span className={`inline-block w-2 h-2 rounded-sm ${colors[i]}`} />
@@ -337,15 +337,15 @@ export default function CalibrationPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Calibration & Distribution
             </h1>
-            <p className="text-surface-500 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Review and finalize employee performance ratings
             </p>
           </div>
@@ -353,7 +353,7 @@ export default function CalibrationPage() {
             <button
               onClick={exportCsv}
               disabled={filteredAndSorted.length === 0}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
             >
               <Download size={16} />
               Export
@@ -369,19 +369,19 @@ export default function CalibrationPage() {
         </div>
 
         {/* Cycle Selector */}
-        <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+        <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Review Cycle
               </label>
               {cyclesLoading ? (
-                <div className="h-10 bg-surface-200 dark:bg-surface-700 rounded-lg animate-pulse" />
+                <div className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
               ) : (
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -400,7 +400,7 @@ export default function CalibrationPage() {
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                       : selectedCycle.status === 'CALIBRATION'
                         ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
-                        : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                        : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                   }`}
                 >
                   {selectedCycle.status}
@@ -415,16 +415,16 @@ export default function CalibrationPage() {
             {/* Distribution Overview */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Current vs Target */}
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
                 <div>
-                  <h2 className="text-sm font-semibold text-surface-900 dark:text-white mb-3">
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
                     Current Distribution
                   </h2>
                   <DistributionChart
                     counts={ratingCounts}
                     total={totalRated}
                   />
-                  <p className="text-xs text-surface-500 mt-2">
+                  <p className="text-xs text-[var(--text-muted)] mt-2">
                     {totalRated} of {filteredAndSorted.length} employees have ratings
                   </p>
                 </div>
@@ -432,42 +432,42 @@ export default function CalibrationPage() {
 
               {/* Stats */}
               <div className="space-y-3">
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                       <Users className="text-blue-600 dark:text-blue-400" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-surface-500">Total Employees</p>
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                      <p className="text-xs text-[var(--text-muted)]">Total Employees</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {filteredAndSorted.length}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                       <Target className="text-green-600 dark:text-green-400" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-surface-500">Rated</p>
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                      <p className="text-xs text-[var(--text-muted)]">Rated</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {totalRated} ({Math.round((totalRated / Math.max(1, filteredAndSorted.length)) * 100)}%)
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                       <BarChart3 className="text-purple-600 dark:text-purple-400" size={20} />
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs text-surface-500">Avg Rating</p>
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                      <p className="text-xs text-[var(--text-muted)]">Avg Rating</p>
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {totalRated > 0
                           ? (
                               Object.entries(ratingCounts).reduce(
@@ -507,14 +507,14 @@ export default function CalibrationPage() {
                 <div className="flex-1 relative">
                   <Search
                     size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
                   />
                   <input
                     type="text"
                     placeholder="Search employee..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -522,7 +522,7 @@ export default function CalibrationPage() {
                   <select
                     value={departmentFilter}
                     onChange={e => setDepartmentFilter(e.target.value)}
-                    className="px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     <option value="">All Departments</option>
                     {uniqueDepartments.map(dept => (
@@ -542,37 +542,37 @@ export default function CalibrationPage() {
                   size={24}
                   className="animate-spin text-primary-500 mr-3"
                 />
-                <span className="text-surface-500">Loading reviews...</span>
+                <span className="text-[var(--text-muted)]">Loading reviews...</span>
               </div>
             ) : filteredAndSorted.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
-                <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
-                <p className="text-surface-600 dark:text-surface-400 font-medium">
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+                <Info size={32} className="text-[var(--text-muted)] mb-3" />
+                <p className="text-[var(--text-secondary)] font-medium">
                   No reviews found
                 </p>
-                <p className="text-surface-500 text-sm mt-1">
+                <p className="text-[var(--text-muted)] text-sm mt-1">
                   Activate the cycle to generate reviews for employees
                 </p>
               </div>
             ) : (
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-surface-50 dark:bg-surface-700 border-b border-surface-200 dark:border-surface-700">
-                        <th className="px-4 py-3 text-left font-semibold text-surface-700 dark:text-surface-300">
+                      <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                        <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('name');
                               setSortOrder(sortOrder === 'asc' && sortField === 'name' ? 'desc' : 'asc');
                             }}
-                            className="hover:text-surface-900 dark:hover:text-white transition-colors flex items-center gap-1"
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors flex items-center gap-1"
                           >
                             Employee
                             {sortField === 'name' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-left font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-3 text-left font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('department');
@@ -580,19 +580,19 @@ export default function CalibrationPage() {
                                 sortOrder === 'asc' && sortField === 'department' ? 'desc' : 'asc'
                               );
                             }}
-                            className="hover:text-surface-900 dark:hover:text-white transition-colors"
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                           >
                             Department
                             {sortField === 'department' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
                           Self Rating
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
                           Manager Rating
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
                           <button
                             onClick={() => {
                               setSortField('rating');
@@ -600,13 +600,13 @@ export default function CalibrationPage() {
                                 sortOrder === 'asc' && sortField === 'rating' ? 'desc' : 'asc'
                               );
                             }}
-                            className="hover:text-surface-900 dark:hover:text-white transition-colors"
+                            className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                           >
                             Final Rating
                             {sortField === 'rating' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                           </button>
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-3 text-center font-semibold text-[var(--text-secondary)]">
                           Action
                         </th>
                       </tr>
@@ -625,14 +625,14 @@ export default function CalibrationPage() {
                         return (
                           <tr
                             key={row.employeeId}
-                            className={`hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors ${
+                            className={`hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors ${
                               isDirty ? 'bg-yellow-50 dark:bg-yellow-900/10' : ''
                             } ${differsFromManager ? 'border-l-2 border-orange-400' : ''}`}
                           >
-                            <td className="px-4 py-3 font-medium text-surface-900 dark:text-white">
+                            <td className="px-4 py-3 font-medium text-[var(--text-primary)]">
                               {row.employeeName}
                             </td>
-                            <td className="px-4 py-3 text-surface-600 dark:text-surface-400 text-sm">
+                            <td className="px-4 py-3 text-[var(--text-secondary)] text-sm">
                               {row.department}
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -652,7 +652,7 @@ export default function CalibrationPage() {
                                   handleFinalRatingChange(row.employeeId, e.target.value)
                                 }
                                 placeholder="1–5"
-                                className="w-20 text-center px-2 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                className="w-20 text-center px-2 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                               />
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -676,12 +676,12 @@ export default function CalibrationPage() {
             )}
           </>
         ) : !selectedCycleId && !cyclesLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
-            <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
-            <p className="text-surface-600 dark:text-surface-400 font-medium">
+          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+            <Info size={32} className="text-[var(--text-muted)] mb-3" />
+            <p className="text-[var(--text-secondary)] font-medium">
               No review cycle selected
             </p>
-            <p className="text-surface-500 text-sm mt-1">
+            <p className="text-[var(--text-muted)] text-sm mt-1">
               Select a review cycle to see the calibration view
             </p>
           </div>

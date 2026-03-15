@@ -1,5 +1,6 @@
 'use client';
 import { AppLayout } from '@/components/layout';
+import { Button } from '@/components/ui/Button';
 
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -233,11 +234,11 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-surface-900 dark:text-white">Create Performance Improvement Plan</h2>
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Create Performance Improvement Plan</h2>
           <button
             onClick={onClose}
-            className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
           >
             ✕
           </button>
@@ -248,28 +249,28 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
           {/* Employee & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Employee
               </label>
               <input
                 type="text"
                 placeholder="Employee name or ID"
                 {...register('employeeId')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {errors.employeeId && (
                 <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Manager
               </label>
               <input
                 type="text"
                 placeholder="Manager name or ID"
                 {...register('managerId')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {errors.managerId && (
                 <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>
@@ -279,12 +280,12 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 
           {/* Reason */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Reason
             </label>
             <select
               {...register('reason')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="">Select a reason</option>
               {PIP_REASONS.map(reason => (
@@ -300,7 +301,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 
           {/* Dates */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Duration
             </label>
             <div className="flex gap-2 mb-3">
@@ -309,7 +310,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                   key={preset.days}
                   type="button"
                   onClick={() => setDuration(preset.days)}
-                  className="px-3 py-1.5 text-sm rounded-lg border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+                  className="px-3 py-1.5 text-sm rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                 >
                   {preset.label}
                 </button>
@@ -317,22 +318,22 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-surface-500 mb-1">Start Date</label>
+                <label className="block text-xs text-[var(--text-muted)] mb-1">Start Date</label>
                 <input
                   type="date"
                   {...register('startDate')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
                 )}
               </div>
               <div>
-                <label className="block text-xs text-surface-500 mb-1">End Date</label>
+                <label className="block text-xs text-[var(--text-muted)] mb-1">End Date</label>
                 <input
                   type="date"
                   {...register('endDate')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -343,14 +344,14 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 
           {/* Goals */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Goals & Objectives
             </label>
             <textarea
               placeholder="Describe the specific goals and success criteria..."
               rows={4}
               {...register('goals')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
             {errors.goals && (
               <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
@@ -359,12 +360,12 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
 
           {/* Check-in Frequency */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Check-in Frequency
             </label>
             <select
               {...register('checkInFrequency')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="WEEKLY">Weekly</option>
               <option value="BIWEEKLY">Bi-weekly</option>
@@ -376,31 +377,24 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-            <button
+          <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-main)]">
+            <Button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+              variant="outline"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+              variant="primary"
+              isLoading={isSubmitting}
+              loadingText="Creating..."
+              leftIcon={<Plus size={16} />}
             >
-              {isSubmitting ? (
-                <>
-                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Plus size={16} />
-                  Create PIP
-                </>
-              )}
-            </button>
+              Create PIP
+            </Button>
           </div>
         </form>
       </div>
@@ -475,14 +469,14 @@ function PIPDetailModal({
     <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
       <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-[var(--border-main)] px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-surface-900 dark:text-white">PIP Details</h2>
-            <p className="text-sm text-surface-500 mt-0.5">{pip.employeeName}</p>
+            <h2 className="text-xl font-bold text-[var(--text-primary)]">PIP Details</h2>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">{pip.employeeName}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
           >
             ✕
           </button>
@@ -493,21 +487,21 @@ function PIPDetailModal({
           {/* Info Grid */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-surface-500 mb-1">Employee</p>
-              <p className="font-semibold text-surface-900 dark:text-white">{pip.employeeName}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Employee</p>
+              <p className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</p>
             </div>
             <div>
-              <p className="text-xs text-surface-500 mb-1">Manager</p>
-              <p className="font-semibold text-surface-900 dark:text-white">{pip.managerName}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Manager</p>
+              <p className="font-semibold text-[var(--text-primary)]">{pip.managerName}</p>
             </div>
             <div>
-              <p className="text-xs text-surface-500 mb-1">Period</p>
-              <p className="font-semibold text-surface-900 dark:text-white">
+              <p className="text-xs text-[var(--text-muted)] mb-1">Period</p>
+              <p className="font-semibold text-[var(--text-primary)]">
                 {formatDate(pip.startDate)} → {formatDate(pip.endDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-surface-500 mb-1">Status</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Status</p>
               <div
                 className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                   STATUS_CONFIG[pip.status].bg
@@ -522,10 +516,10 @@ function PIPDetailModal({
           {pip.status === 'ACTIVE' && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-surface-700 dark:text-surface-300">Progress</p>
-                <span className="text-sm text-surface-500">{progress}% • {daysRemaining} days remaining</span>
+                <p className="text-sm font-medium text-[var(--text-secondary)]">Progress</p>
+                <span className="text-sm text-[var(--text-muted)]">{progress}% • {daysRemaining} days remaining</span>
               </div>
-              <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+              <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                 <div
                   className="bg-primary-500 h-2 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
@@ -537,15 +531,15 @@ function PIPDetailModal({
           {/* Reason & Goals */}
           {pip.reason && (
             <div>
-              <p className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Reason</p>
-              <p className="text-surface-600 dark:text-surface-400">{pip.reason}</p>
+              <p className="text-sm font-medium text-[var(--text-secondary)] mb-1.5">Reason</p>
+              <p className="text-[var(--text-secondary)]">{pip.reason}</p>
             </div>
           )}
 
           {pip.goals && (
             <div>
-              <p className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">Goals & Objectives</p>
-              <div className="bg-surface-50 dark:bg-surface-700 rounded-lg p-3 text-sm text-surface-700 dark:text-surface-300">
+              <p className="text-sm font-medium text-[var(--text-secondary)] mb-1.5">Goals & Objectives</p>
+              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg p-3 text-sm text-[var(--text-secondary)]">
                 {pip.goals}
               </div>
             </div>
@@ -553,43 +547,43 @@ function PIPDetailModal({
 
           {/* Check-ins */}
           <div>
-            <h3 className="text-sm font-semibold text-surface-900 dark:text-white mb-3">Check-ins</h3>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Check-ins</h3>
             {pip.checkIns && pip.checkIns.length > 0 ? (
               <div className="space-y-3 mb-4">
                 {pip.checkIns.map((checkIn, idx) => (
                   <div
                     key={checkIn.id || idx}
-                    className="border border-surface-200 dark:border-surface-700 rounded-lg p-3 bg-surface-50 dark:bg-surface-700/50"
+                    className="border border-[var(--border-main)] rounded-lg p-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-medium text-surface-900 dark:text-white">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">
                         {formatDate(checkIn.checkInDate)}
                       </p>
                     </div>
                     {checkIn.progressNotes && (
-                      <p className="text-sm text-surface-700 dark:text-surface-300 mb-1">
-                        <span className="text-surface-500">Progress: </span>{checkIn.progressNotes}
+                      <p className="text-sm text-[var(--text-secondary)] mb-1">
+                        <span className="text-[var(--text-muted)]">Progress: </span>{checkIn.progressNotes}
                       </p>
                     )}
                     {checkIn.managerComments && (
-                      <p className="text-sm text-surface-700 dark:text-surface-300">
-                        <span className="text-surface-500">Manager: </span>{checkIn.managerComments}
+                      <p className="text-sm text-[var(--text-secondary)]">
+                        <span className="text-[var(--text-muted)]">Manager: </span>{checkIn.managerComments}
                       </p>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-surface-500 mb-4">No check-ins yet</p>
+              <p className="text-sm text-[var(--text-muted)] mb-4">No check-ins yet</p>
             )}
 
             {pip.status === 'ACTIVE' && (
-              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-3 border-t border-surface-200 dark:border-surface-700 pt-4">
+              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-3 border-t border-[var(--border-main)] pt-4">
                 <textarea
                   placeholder="Employee progress notes..."
                   rows={2}
                   {...registerCheckIn('progressNotes')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {checkInErrors.progressNotes && (
                   <p className="text-red-500 text-sm">{checkInErrors.progressNotes.message}</p>
@@ -598,30 +592,31 @@ function PIPDetailModal({
                   placeholder="Manager comments..."
                   rows={2}
                   {...registerCheckIn('managerComments')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {checkInErrors.managerComments && (
                   <p className="text-red-500 text-sm">{checkInErrors.managerComments.message}</p>
                 )}
-                <button
+                <Button
                   type="submit"
                   disabled={checkInSubmitting}
-                  className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                  variant="primary"
+                  className="w-full"
+                  leftIcon={<Clock size={16} />}
                 >
-                  <Clock size={16} />
                   Add Check-in
-                </button>
+                </Button>
               </form>
             )}
           </div>
 
           {/* Status Actions */}
           {pip.status === 'ACTIVE' && (
-            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-surface-200 dark:border-surface-700 pt-4 space-y-3">
-              <p className="text-sm font-medium text-surface-700 dark:text-surface-300">Update Status</p>
+            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-[var(--border-main)] pt-4 space-y-3">
+              <p className="text-sm font-medium text-[var(--text-secondary)]">Update Status</p>
               <select
                 {...registerClose('status')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="COMPLETED">Mark Complete</option>
                 <option value="EXTENDED">Extend PIP</option>
@@ -634,7 +629,7 @@ function PIPDetailModal({
                 placeholder="Closing notes..."
                 rows={2}
                 {...registerClose('notes')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {closeErrors.notes && (
                 <p className="text-red-500 text-sm">{closeErrors.notes.message}</p>
@@ -661,11 +656,11 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4 hover:shadow-lg transition-shadow">
+    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="font-semibold text-surface-900 dark:text-white">{pip.employeeName}</h3>
-          <p className="text-sm text-surface-500">{pip.reason || 'General'}</p>
+          <h3 className="font-semibold text-[var(--text-primary)]">{pip.employeeName}</h3>
+          <p className="text-sm text-[var(--text-muted)]">{pip.reason || 'General'}</p>
         </div>
         <div
           className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusConfig.bg} ${statusConfig.color} border ${statusConfig.border}`}
@@ -674,7 +669,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
         </div>
       </div>
 
-      <div className="space-y-2 mb-4 text-sm text-surface-600 dark:text-surface-400">
+      <div className="space-y-2 mb-4 text-sm text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
           <Calendar size={14} />
           <span>
@@ -690,13 +685,13 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
       {pip.status === 'ACTIVE' && (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-medium text-surface-600 dark:text-surface-400">Progress</span>
-            <span className="text-xs text-surface-500">{progress}%</span>
+            <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
+            <span className="text-xs text-[var(--text-muted)]">{progress}%</span>
           </div>
-          <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+          <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
             <div className="bg-primary-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
           </div>
-          <p className="text-xs text-surface-500 mt-1.5">{daysRemaining} days remaining</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1.5">{daysRemaining} days remaining</p>
         </div>
       )}
 
@@ -780,55 +775,55 @@ export default function PIPPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Performance Improvement Plans</h1>
-            <p className="text-surface-500 mt-1">Manage and track employee PIPs</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Performance Improvement Plans</h1>
+            <p className="text-[var(--text-muted)] mt-1">Manage and track employee PIPs</p>
           </div>
-          <button
+          <Button
             onClick={() => setCreateOpen(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 font-medium"
+            variant="primary"
+            leftIcon={<Plus size={18} />}
           >
-            <Plus size={18} />
             Create PIP
-          </button>
+          </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <TrendingUp className="text-blue-600 dark:text-blue-400" size={20} />
               </div>
               <div>
-                <p className="text-sm text-surface-500">Active PIPs</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.active}</p>
+                <p className="text-sm text-[var(--text-muted)]">Active PIPs</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.active}</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <CheckCircle2 className="text-green-600 dark:text-green-400" size={20} />
               </div>
               <div>
-                <p className="text-sm text-surface-500">Completed</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.completed}</p>
+                <p className="text-sm text-[var(--text-muted)]">Completed</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Calendar className="text-purple-600 dark:text-purple-400" size={20} />
               </div>
               <div>
-                <p className="text-sm text-surface-500">Avg Duration</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.avgDuration} days</p>
+                <p className="text-sm text-[var(--text-muted)]">Avg Duration</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.avgDuration} days</p>
               </div>
             </div>
           </div>
@@ -844,7 +839,7 @@ export default function PIPPage() {
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   activeTab === tab
                     ? 'bg-primary-600 text-white'
-                    : 'bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700'
+                    : 'bg-[var(--bg-input)] text-[var(--text-secondary)] border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 {tab === 'ACTIVE' && 'Active'}
@@ -857,16 +852,16 @@ export default function PIPPage() {
           {/* Search & Filters */}
           <div className="flex gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={16} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16} />
               <input
                 type="text"
                 placeholder="Search by employee name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
             </div>
-            <button className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2">
               <Filter size={16} />
               Filter
             </button>
@@ -879,10 +874,10 @@ export default function PIPPage() {
             <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
           </div>
         ) : pips.length === 0 ? (
-          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-12 text-center">
-            <FileText className="w-12 h-12 text-surface-300 dark:text-surface-600 mx-auto mb-3" />
-            <p className="text-surface-600 dark:text-surface-400 font-medium">No PIPs found</p>
-            <p className="text-surface-500 text-sm mt-1">Create your first PIP to get started</p>
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-12 text-center">
+            <FileText className="w-12 h-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-3" />
+            <p className="text-[var(--text-secondary)] font-medium">No PIPs found</p>
+            <p className="text-[var(--text-muted)] text-sm mt-1">Create your first PIP to get started</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

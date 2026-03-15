@@ -58,8 +58,8 @@ export default function LoansPage() {
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
       DRAFT: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: FileText,
       },
       PENDING_APPROVAL: {
@@ -107,7 +107,7 @@ export default function LoansPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading loans data...</p>
+            <p className="text-[var(--text-secondary)]">Loading loans data...</p>
           </div>
         </div>
       </AppLayout>
@@ -120,7 +120,7 @@ export default function LoansPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error}</p>
+            <p className="text-[var(--text-secondary)]">{error}</p>
           </div>
         </div>
       </AppLayout>
@@ -133,10 +133,10 @@ export default function LoansPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Employee Loans
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your loan applications and repayments
             </p>
           </div>
@@ -151,65 +151,65 @@ export default function LoansPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
                 <CreditCard className="h-5 w-5 text-white" />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               Active Loans
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <span className="text-3xl font-bold text-[var(--text-primary)]">
                 {summary.activeLoans}
               </span>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               Outstanding Balance
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <span className="text-3xl font-bold text-[var(--text-primary)]">
                 {loanService.formatCurrency(summary.totalOutstanding)}
               </span>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               Total Repaid
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <span className="text-3xl font-bold text-[var(--text-primary)]">
                 {loanService.formatCurrency(summary.totalRepaid)}
               </span>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
-            <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               Pending Approvals
             </h3>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <span className="text-3xl font-bold text-[var(--text-primary)]">
                 {summary.pendingApprovals}
               </span>
             </div>
@@ -217,9 +217,9 @@ export default function LoansPage() {
         </div>
 
         {/* Loans List */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               My Loans
             </h2>
           </div>
@@ -235,26 +235,26 @@ export default function LoansPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-surface-50 dark:bg-surface-800/50">
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                  <tr className="bg-[var(--bg-secondary)]/50">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Loan #
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Amount
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Term
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Balance
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                       Actions
                     </th>
                   </tr>
@@ -267,26 +267,26 @@ export default function LoansPage() {
                     return (
                       <tr
                         key={loan.id}
-                        className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer"
+                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
                         onClick={() => router.push(`/loans/${loan.id}`)}
                       >
                         <td className="px-5 py-4">
-                          <span className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                          <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-700 dark:text-surface-300">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {loanService.getLoanTypeLabel(loan.loanType)}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                          <span className="text-sm font-medium text-[var(--text-primary)]">
                             {loanService.formatCurrency(loan.approvedAmount || loan.requestedAmount)}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {loan.termMonths} months
                           </span>
                         </td>
@@ -299,7 +299,7 @@ export default function LoansPage() {
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-700 dark:text-surface-300">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {loanService.formatCurrency(loan.remainingBalance)}
                           </span>
                         </td>
@@ -327,36 +327,36 @@ export default function LoansPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => router.push('/loans/new')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Loan
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               Submit a new loan application
             </p>
           </button>
 
           <button
             onClick={() => router.push('/loans?filter=active')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               View Active Loans
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               Check your active loan details and payments
             </p>
           </button>

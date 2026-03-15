@@ -153,7 +153,7 @@ export default function HomePage() {
       <div className="p-4 md:p-5 space-y-4">
 
         {/* ═══ WELCOME STRIP ═══ */}
-        <div className="bg-gray-900 dark:bg-surface-800 rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-theme-md dark:shadow-dark-md">
+        <div className="bg-gray-900 dark:bg-[var(--bg-secondary)] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-theme-md dark:shadow-dark-md">
           <div>
             <div className="flex items-center gap-2 text-brand-300 dark:text-primary-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
               {greeting.icon}
@@ -176,7 +176,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
           {/* Attendance */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Attendance</h3>
               <button onClick={() => router.push('/attendance')} className="text-xs text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
@@ -199,7 +199,7 @@ export default function HomePage() {
             <Button
               variant="primary"
               size="sm"
-              className="w-full bg-brand-500 hover:bg-brand-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white text-xs font-medium rounded-lg h-8"
+              className="w-full"
               disabled={checkInMutation.isPending || checkOutMutation.isPending || (!clockStatus.canClockIn && !clockStatus.canClockOut)}
               onClick={clockStatus.canClockIn ? handleClockIn : handleClockOut}
             >
@@ -216,7 +216,7 @@ export default function HomePage() {
           </div>
 
           {/* Leave Balance */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Leave</h3>
               <button onClick={() => router.push('/leave')} className="text-xs text-brand-500 dark:text-primary-400 hover:text-brand-600 dark:hover:text-primary-300 font-medium">
@@ -268,7 +268,7 @@ export default function HomePage() {
           </div>
 
           {/* Who's Out */}
-          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+          <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Who&apos;s Out</h3>
               <span className="text-xs status-success px-1.5 py-0.5 rounded font-medium">
@@ -312,8 +312,8 @@ export default function HomePage() {
           <div className="lg:col-span-2 space-y-3">
 
             {/* Composer */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
-              <div className="flex gap-4 border-b border-[var(--border-main)] dark:border-surface-700 pb-2.5 mb-3">
+            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
+              <div className="flex gap-4 border-b border-[var(--border-main)] dark:border-[var(--border-main)] pb-2.5 mb-3">
                 {(['Post', 'Poll', 'Praise'] as WallTab[]).map((tab) => {
                   const icons = { Post: MessageSquare, Poll: BarChart3, Praise: Heart };
                   const Icon = icons[tab];
@@ -344,7 +344,7 @@ export default function HomePage() {
                       : activeWallTab === 'Praise' ? 'Give a shout-out to a colleague...'
                       : 'Ask a question to your team...'
                     }
-                    className="w-full bg-[var(--bg-surface)] dark:bg-surface-900 border border-[var(--border-main)] dark:border-surface-600 rounded-lg p-2.5 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-primary-700 focus:border-brand-300 dark:focus:border-primary-600 resize-none"
+                    className="w-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2.5 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-200 dark:focus:ring-primary-700 focus:border-brand-300 dark:focus:border-primary-600 resize-none"
                     rows={2}
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}
@@ -353,10 +353,10 @@ export default function HomePage() {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="bg-brand-500 hover:bg-brand-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white rounded-lg h-7 px-3 text-[11px] font-medium"
                       disabled={!postContent.trim()}
+                      leftIcon={<Send className="w-3 h-3" />}
                     >
-                      <Send className="w-3 h-3 mr-1" /> Post
+                      Post
                     </Button>
                   </div>
                 </div>
@@ -364,10 +364,10 @@ export default function HomePage() {
             </div>
 
             {/* Announcements */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">Announcements</h3>
-                <button className="w-6 h-6 rounded-full bg-[var(--bg-surface)] dark:bg-surface-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-surface-600 transition-colors">
+                <button className="w-6 h-6 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] transition-colors">
                   <Plus className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                 </button>
               </div>
@@ -383,14 +383,14 @@ export default function HomePage() {
                 <Skeleton className="h-48 rounded-xl" />
               </>
             ) : dashboardData.wallPosts.length === 0 ? (
-              <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
-                <MessageSquare className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
+              <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
+                <MessageSquare className="w-8 h-8 text-gray-300 dark:text-[var(--text-secondary)] mx-auto mb-2" />
                 <p className="text-sm text-[var(--text-secondary)]">No posts yet</p>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">Be the first to share something</p>
               </div>
             ) : (
               dashboardData.wallPosts.map((post) => (
-                <div key={post.id} className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+                <div key={post.id} className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
                   <div className="flex items-start gap-2.5">
                     <div className="w-8 h-8 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-primary-400 text-xs font-bold shrink-0">
                       {getInitials(post.author?.fullName)}
@@ -409,11 +409,11 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm text-[var(--text-secondary)] mt-1.5 leading-relaxed">{post.content}</p>
                       {post.imageUrl && (
-                        <div className="mt-2 rounded-lg overflow-hidden border border-[var(--border-main)] dark:border-surface-700 relative w-full h-48">
+                        <div className="mt-2 rounded-lg overflow-hidden border border-[var(--border-main)] dark:border-[var(--border-main)] relative w-full h-48">
                           <Image src={post.imageUrl} alt={`${post.author?.fullName || 'User'}'s post`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                         </div>
                       )}
-                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-[var(--border-main)] dark:border-surface-700">
+                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                         <button className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                           <ThumbsUp className="w-3 h-3" /> Like
                         </button>
@@ -432,7 +432,7 @@ export default function HomePage() {
           <div className="lg:col-span-1 space-y-3">
 
             {/* Celebrations */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3">Celebrations</h3>
 
               {todayBirthdays.length > 0 && (
@@ -485,13 +485,13 @@ export default function HomePage() {
                       <div
                         key={b.employeeId}
                         title={`${b.employeeName} — ${b.birthdayDate}`}
-                        className="w-7 h-7 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-primary-400 text-[8px] font-bold border-2 border-white dark:border-surface-800 hover:scale-110 transition-transform cursor-default"
+                        className="w-7 h-7 rounded-full tint-info flex items-center justify-center text-brand-600 dark:text-primary-400 text-[8px] font-bold border-2 border-white dark:border-[var(--border-main)]800 hover:scale-110 transition-transform cursor-default"
                       >
                         {getInitials(b.employeeName)}
                       </div>
                     ))}
                     {upcomingBirthdays.length > 5 && (
-                      <div className="w-7 h-7 rounded-full bg-[var(--bg-surface)] dark:bg-surface-700 flex items-center justify-center text-[8px] font-bold text-[var(--text-muted)] border-2 border-white dark:border-surface-800">
+                      <div className="w-7 h-7 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center text-[8px] font-bold text-[var(--text-muted)] border-2 border-white dark:border-[var(--border-main)]800">
                         +{upcomingBirthdays.length - 5}
                       </div>
                     )}
@@ -501,14 +501,14 @@ export default function HomePage() {
 
               {todayBirthdays.length === 0 && todayAnniversaries.length === 0 && upcomingBirthdays.length === 0 && (
                 <div className="text-center py-3">
-                  <Cake className="w-6 h-6 text-gray-300 dark:text-surface-600 mx-auto mb-1" />
+                  <Cake className="w-6 h-6 text-gray-300 dark:text-[var(--text-secondary)] mx-auto mb-1" />
                   <p className="text-xs text-[var(--text-muted)]">No celebrations this month</p>
                 </div>
               )}
             </div>
 
             {/* New Joinees */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide">New Joinees</h3>
                 <span className="text-xs status-info px-1.5 py-0.5 rounded font-medium">
@@ -517,13 +517,13 @@ export default function HomePage() {
               </div>
               {newJoinees.length === 0 ? (
                 <div className="text-center py-3">
-                  <UserPlus className="w-6 h-6 text-gray-300 dark:text-surface-600 mx-auto mb-1" />
+                  <UserPlus className="w-6 h-6 text-gray-300 dark:text-[var(--text-secondary)] mx-auto mb-1" />
                   <p className="text-xs text-[var(--text-muted)]">No new joinees this month</p>
                 </div>
               ) : (
                 <div className="space-y-1.5">
                   {newJoinees.slice(0, 4).map((j) => (
-                    <div key={j.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-surface-700/50 transition-colors">
+                    <div key={j.employeeId} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                       <div className="w-6 h-6 rounded-full tint-success flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold shrink-0">
                         {getInitials(j.employeeName)}
                       </div>
@@ -538,7 +538,7 @@ export default function HomePage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
+            <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-[var(--text-muted)] uppercase tracking-wide mb-3">Quick Actions</h3>
               <div className="grid grid-cols-3 gap-1.5">
                 {[
@@ -552,7 +552,7 @@ export default function HomePage() {
                   <button
                     key={item.label}
                     onClick={() => router.push(item.path)}
-                    className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-surface-700/50 transition-colors group"
+                    className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors group"
                   >
                     <div className="w-8 h-8 rounded-lg tint-info flex items-center justify-center text-brand-500 dark:text-primary-400 group-hover:tint-info dark:group-hover:tint-info transition-colors">
                       <item.icon className="w-4 h-4" />

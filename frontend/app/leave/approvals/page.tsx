@@ -133,18 +133,18 @@ export default function LeaveApprovalsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Pending Requests</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Requests</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
           </div>
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Approved (This Month)</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Approved (This Month)</div>
             <div className="text-3xl font-bold text-green-600 dark:text-green-500">0</div>
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
+            <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Rejected (This Month)</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Rejected (This Month)</div>
             <div className="text-3xl font-bold text-red-600 dark:text-red-500">0</div>
-            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
+            <p className="text-xs text-[var(--text-muted)] mt-2">Updated when filters applied</p>
           </div>
         </div>
 
@@ -170,7 +170,7 @@ export default function LeaveApprovalsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-surface-50 dark:bg-surface-800/50">
+                <thead className="bg-[var(--bg-secondary)]/50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
@@ -184,7 +184,7 @@ export default function LeaveApprovalsPage() {
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                   {requests.map((request) => (
-                    <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                    <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                       <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                         {request.requestNumber}
                       </td>
@@ -194,18 +194,18 @@ export default function LeaveApprovalsPage() {
                       <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                         {getLeaveTypeName(request.leaveTypeId)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                         {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                         {request.totalDays} {request.isHalfDay && '(Half)'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs">
+                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs">
                         <div className="truncate" title={request.reason}>
                           {request.reason}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                      <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                         {new Date(request.appliedOn).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-sm">

@@ -310,27 +310,27 @@ export default function KekaImportPage() {
 
   return (
     <AdminPageContent>
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
             <button
               onClick={() => router.push('/admin')}
-              className="flex items-center text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100 mb-4"
+              className="flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Admin
             </button>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               KEKA Data Import
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-2">
+            <p className="text-[var(--text-secondary)] mt-2">
               Migrate employees and related data from KEKA HRMS into NU-AURA
             </p>
           </div>
 
           {/* Progress Stepper */}
-          <div className="mb-8 bg-surface-0 dark:bg-surface-800 rounded-lg p-6">
+          <div className="mb-8 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg p-6">
             <Stepper active={['upload', 'mapping', 'preview', 'import', 'result'].indexOf(step)}>
               <Stepper.Step label="Upload" description="Select KEKA export file" />
               <Stepper.Step label="Mapping" description="Map columns" />
@@ -359,14 +359,14 @@ export default function KekaImportPage() {
 
           {/* Step 1: Upload */}
           {step === 'upload' && (
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 space-y-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
               {/* Download Templates */}
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3 flex items-center">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Download className="w-5 h-5 mr-2" />
                   Download Template
                 </h3>
-                <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
                   Download a template file to see the required format for KEKA data export.
                 </p>
                 <div className="flex gap-3 flex-wrap">
@@ -402,7 +402,7 @@ export default function KekaImportPage() {
 
               {/* File Upload */}
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3 flex items-center">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Upload className="w-5 h-5 mr-2" />
                   Upload File
                 </h3>
@@ -412,7 +412,7 @@ export default function KekaImportPage() {
                       ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
                       : selectedFile
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                      : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                      : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -430,10 +430,10 @@ export default function KekaImportPage() {
                   {selectedFile ? (
                     <div className="flex flex-col items-center">
                       <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
-                      <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                      <p className="text-lg font-medium text-[var(--text-primary)]">
                         {selectedFile.name}
                       </p>
-                      <p className="text-sm text-surface-500 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-muted)]">
                         {(selectedFile.size / 1024).toFixed(2)} KB
                       </p>
                       <Button
@@ -453,11 +453,11 @@ export default function KekaImportPage() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <Upload className="w-12 h-12 text-surface-400 dark:text-surface-600 mb-3" />
-                      <p className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-1">
+                      <Upload className="w-12 h-12 text-[var(--text-muted)] mb-3" />
+                      <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                         Drag and drop your file here
                       </p>
-                      <p className="text-sm text-surface-500 dark:text-surface-400 mb-3">
+                      <p className="text-sm text-[var(--text-muted)] mb-3">
                         or
                       </p>
                       <Button
@@ -465,7 +465,7 @@ export default function KekaImportPage() {
                       >
                         Browse Files
                       </Button>
-                      <p className="text-xs text-surface-400 dark:text-surface-600 mt-3">
+                      <p className="text-xs text-[var(--text-muted)] mt-3">
                         Supports CSV, XLS, and XLSX files (max 50MB)
                       </p>
                     </div>
@@ -489,13 +489,13 @@ export default function KekaImportPage() {
 
           {/* Step 2: Mapping */}
           {step === 'mapping' && (
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 space-y-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <MapPin className="w-5 h-5 mr-2" />
                   Column Mapping
                 </h3>
-                <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
                   Map each column from your KEKA file to the corresponding NU-AURA field.
                 </p>
               </div>
@@ -553,7 +553,7 @@ export default function KekaImportPage() {
                             onChange={(e) =>
                               updateMapping(mapping.sourceColumn, e.target.value)
                             }
-                            className="px-2 py-1 border border-surface-300 dark:border-surface-600 rounded text-sm"
+                            className="px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded text-sm"
                           >
                             <option value="">Select field...</option>
                             {Object.entries(KEKA_COLUMN_PRESETS).map(([label, field]) => (
@@ -567,7 +567,7 @@ export default function KekaImportPage() {
                           {mapping.targetField ? (
                             <CheckCircle className="w-5 h-5 text-green-500" />
                           ) : (
-                            <XCircle className="w-5 h-5 text-surface-400" />
+                            <XCircle className="w-5 h-5 text-[var(--text-muted)]" />
                           )}
                         </Table.Td>
                       </Table.Tr>
@@ -594,7 +594,7 @@ export default function KekaImportPage() {
 
           {/* Step 3: Preview */}
           {step === 'preview' && preview && (
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 space-y-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
               {/* Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -652,11 +652,11 @@ export default function KekaImportPage() {
 
               {/* Preview Table */}
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-3 flex items-center">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                   <Eye className="w-5 h-5 mr-2" />
                   Data Preview (First 10 rows)
                 </h3>
-                <div className="overflow-x-auto border border-surface-200 dark:border-surface-700 rounded-lg">
+                <div className="overflow-x-auto border border-[var(--border-main)] rounded-lg">
                   <Table striped>
                     <Table.Thead>
                       <Table.Tr>
@@ -706,20 +706,20 @@ export default function KekaImportPage() {
 
           {/* Step 4: Import Options */}
           {step === 'import' && preview && (
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 space-y-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2 flex items-center">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2 flex items-center">
                   <Settings className="w-5 h-5 mr-2" />
                   Import Options
                 </h3>
-                <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
                   Configure how the data should be imported into NU-AURA.
                 </p>
               </div>
 
               {/* Options */}
               <div className="space-y-4">
-                <label className="flex items-center p-3 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 cursor-pointer">
+                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={skipInvalidRows}
@@ -727,16 +727,16 @@ export default function KekaImportPage() {
                     className="w-4 h-4"
                   />
                   <div className="ml-3">
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Skip Invalid Rows
                     </p>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Continue importing even if some rows have errors
                     </p>
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 cursor-pointer">
+                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={updateExistingEmployees}
@@ -744,16 +744,16 @@ export default function KekaImportPage() {
                     className="w-4 h-4"
                   />
                   <div className="ml-3">
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Update Existing Employees
                     </p>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Update employee data if they already exist in NU-AURA
                     </p>
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 cursor-pointer">
+                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendWelcomeEmail}
@@ -761,16 +761,16 @@ export default function KekaImportPage() {
                     className="w-4 h-4"
                   />
                   <div className="ml-3">
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Send Welcome Emails
                     </p>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Send welcome emails to newly created employees
                     </p>
                   </div>
                 </label>
 
-                <label className="flex items-center p-3 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 cursor-pointer">
+                <label className="flex items-center p-3 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={autoApproveEmployees}
@@ -778,10 +778,10 @@ export default function KekaImportPage() {
                     className="w-4 h-4"
                   />
                   <div className="ml-3">
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Auto-approve Employees
                     </p>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       Automatically approve imported employees (SuperAdmin only)
                     </p>
                   </div>
@@ -813,11 +813,11 @@ export default function KekaImportPage() {
 
           {/* Step 5: Result */}
           {step === 'result' && result && (
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 space-y-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 space-y-6">
               {/* Status Badge */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 flex items-center">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] flex items-center">
                     {result.status === 'SUCCESS' ? (
                       <>
                         <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
@@ -886,8 +886,8 @@ export default function KekaImportPage() {
               </div>
 
               {/* Duration */}
-              <div className="bg-surface-100 dark:bg-surface-700 p-4 rounded-lg">
-                <p className="text-sm text-surface-600 dark:text-surface-400">
+              <div className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-4 rounded-lg">
+                <p className="text-sm text-[var(--text-secondary)]">
                   Import completed in {result.duration}ms
                 </p>
               </div>

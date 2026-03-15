@@ -40,7 +40,7 @@ export default function TeamAttendancePage() {
       case 'HALF_DAY': return 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400';
       case 'LATE': return 'bg-orange-100 dark:bg-orange-950/30 text-orange-800 dark:text-orange-400';
       case 'LEAVE': return 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-400';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
   };
 
@@ -74,8 +74,8 @@ export default function TeamAttendancePage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Team Attendance</h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Team Attendance</h1>
+            <p className="text-[var(--text-muted)] mt-1">
               Monitor your team&apos;s attendance records
             </p>
           </div>
@@ -104,13 +104,13 @@ export default function TeamAttendancePage() {
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               <div className="flex gap-4 items-center">
-                <Calendar className="h-5 w-5 text-surface-500 dark:text-surface-400" />
-                <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Date:</label>
+                <Calendar className="h-5 w-5 text-[var(--text-muted)]" />
+                <label className="text-sm font-medium text-[var(--text-secondary)]">Date:</label>
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-2">
@@ -119,7 +119,7 @@ export default function TeamAttendancePage() {
                   className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                     viewMode === 'daily'
                       ? 'bg-primary-500 text-white'
-                      : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700'
+                      : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
                   Daily View
@@ -129,7 +129,7 @@ export default function TeamAttendancePage() {
                   className={`px-4 py-2 rounded-xl font-medium transition-colors ${
                     viewMode === 'summary'
                       ? 'bg-primary-500 text-white'
-                      : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700'
+                      : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
                 >
                   Summary View
@@ -148,8 +148,8 @@ export default function TeamAttendancePage() {
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Present</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.present}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Present</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.present}</p>
                 </div>
               </div>
             </CardContent>
@@ -162,8 +162,8 @@ export default function TeamAttendancePage() {
                   <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Absent</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.absent}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Absent</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.absent}</p>
                 </div>
               </div>
             </CardContent>
@@ -176,8 +176,8 @@ export default function TeamAttendancePage() {
                   <AlertCircle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Late</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.late}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Late</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.late}</p>
                 </div>
               </div>
             </CardContent>
@@ -190,8 +190,8 @@ export default function TeamAttendancePage() {
                   <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">On Leave</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.onLeave}</p>
+                  <p className="text-sm text-[var(--text-muted)]">On Leave</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.onLeave}</p>
                 </div>
               </div>
             </CardContent>
@@ -201,64 +201,64 @@ export default function TeamAttendancePage() {
         {/* Attendance Records */}
         <Card className="bg-[var(--bg-card)]">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
               <Users className="h-5 w-5" />
               Team Attendance Records
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+              <div className="text-center py-12 text-[var(--text-muted)]">
                 Loading team attendance...
               </div>
             ) : records.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                <p className="text-surface-500 dark:text-surface-400">
+                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <p className="text-[var(--text-muted)]">
                   No attendance records found for this date
                 </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Employee
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Check In
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Check Out
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Work Hours
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Source
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)]">
                         Remarks
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {records.map((record) => (
-                      <tr key={record.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
+                      <tr key={record.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                           {record.employeeId.substring(0, 8)}...
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {formatTime(record.checkInTime)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {formatTime(record.checkOutTime)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {record.totalWorkHours?.toFixed(2) || '--'} hrs
                         </td>
                         <td className="px-6 py-4">
@@ -266,15 +266,15 @@ export default function TeamAttendancePage() {
                             {record.status || 'PRESENT'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {record.checkInSource || 'N/A'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {record.isRegularization && (
                             <span className="text-orange-600 dark:text-orange-400 font-medium">Regularized</span>
                           )}
                           {record.remarks && (
-                            <div className="text-xs text-surface-500 dark:text-surface-500 max-w-xs truncate" title={record.remarks}>
+                            <div className="text-xs text-[var(--text-muted)] max-w-xs truncate" title={record.remarks}>
                               {record.remarks}
                             </div>
                           )}
@@ -299,8 +299,8 @@ export default function TeamAttendancePage() {
               <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center mb-4">
                 <Clock className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">My Attendance</h3>
-              <p className="text-surface-500 dark:text-surface-400 text-sm">View your own attendance</p>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">My Attendance</h3>
+              <p className="text-[var(--text-muted)] text-sm">View your own attendance</p>
             </CardContent>
           </Card>
 
@@ -313,8 +313,8 @@ export default function TeamAttendancePage() {
               <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center mb-4">
                 <AlertCircle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
               </div>
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">Regularization Requests</h3>
-              <p className="text-surface-500 dark:text-surface-400 text-sm">Review correction requests</p>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Regularization Requests</h3>
+              <p className="text-[var(--text-muted)] text-sm">Review correction requests</p>
             </CardContent>
           </Card>
 
@@ -327,8 +327,8 @@ export default function TeamAttendancePage() {
               <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center mb-4">
                 <Printer className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">Print Report</h3>
-              <p className="text-surface-500 dark:text-surface-400 text-sm">Generate attendance report</p>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Print Report</h3>
+              <p className="text-[var(--text-muted)] text-sm">Generate attendance report</p>
             </CardContent>
           </Card>
         </div>

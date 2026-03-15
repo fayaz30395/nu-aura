@@ -118,7 +118,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.SOFTWARE_LICENSE:
       return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
 };
 
@@ -131,11 +131,11 @@ const getStatusColor = (status: AssetStatus) => {
     case AssetStatus.IN_MAINTENANCE:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case AssetStatus.RETIRED:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
     case AssetStatus.LOST:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
 };
 
@@ -383,7 +383,7 @@ export default function AssetManagementPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading assets...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading assets...</span>
         </div>
       </AppLayout>
     );
@@ -395,10 +395,10 @@ export default function AssetManagementPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Asset Management
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Manage and track company assets
             </p>
           </div>
@@ -432,8 +432,8 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Assets</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Assets</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -445,8 +445,8 @@ export default function AssetManagementPage() {
                   <Package className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Available</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.available}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Available</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.available}</p>
                 </div>
               </div>
             </CardContent>
@@ -458,8 +458,8 @@ export default function AssetManagementPage() {
                   <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Assigned</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.assigned}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Assigned</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.assigned}</p>
                 </div>
               </div>
             </CardContent>
@@ -471,8 +471,8 @@ export default function AssetManagementPage() {
                   <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">In Maintenance</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.maintenance}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">In Maintenance</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.maintenance}</p>
                 </div>
               </div>
             </CardContent>
@@ -482,19 +482,19 @@ export default function AssetManagementPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-surface-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
             <input
               type="text"
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input-aura"
           >
             <option value="">All Status</option>
             <option value={AssetStatus.AVAILABLE}>Available</option>
@@ -506,7 +506,7 @@ export default function AssetManagementPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="input-aura"
           >
             <option value="">All Categories</option>
             <option value={AssetCategory.LAPTOP}>Laptop</option>
@@ -527,47 +527,47 @@ export default function AssetManagementPage() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800">
+                  <thead className="bg-[var(--bg-secondary)]">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Asset
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Assigned To
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Value
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Location
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {filteredAssets.map((asset) => (
-                      <tr key={asset.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                      <tr key={asset.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
                               {getCategoryIcon(asset.category)}
                             </div>
                             <div>
-                              <p className="font-medium text-surface-900 dark:text-white">{asset.assetName}</p>
-                              <p className="text-xs text-surface-500">{asset.assetCode}</p>
+                              <p className="font-medium text-[var(--text-primary)]">{asset.assetName}</p>
+                              <p className="text-xs text-[var(--text-muted)]">{asset.assetCode}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {asset.category.replace('_', ' ')}
                           </span>
                         </td>
@@ -577,36 +577,36 @@ export default function AssetManagementPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {asset.assignedToName || '-'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {formatCurrency(asset.currentValue)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {asset.location || '-'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="relative group inline-block">
-                            <button className="p-1 rounded hover:bg-surface-100 dark:hover:bg-surface-700">
-                              <MoreVertical className="h-4 w-4 text-surface-400" />
+                            <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]">
+                              <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(asset)}
-                                className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
                               </button>
                               <button
                                 onClick={() => handleOpenEditModal(asset)}
-                                className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Edit className="h-4 w-4" />
                                 Edit
@@ -614,7 +614,7 @@ export default function AssetManagementPage() {
                               {asset.status === AssetStatus.AVAILABLE && (
                                 <button
                                   onClick={() => handleAssignClick(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <UserPlus className="h-4 w-4" />
                                   Assign
@@ -623,7 +623,7 @@ export default function AssetManagementPage() {
                               {asset.status === AssetStatus.ASSIGNED && (
                                 <button
                                   onClick={() => handleReturn(asset)}
-                                  className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <RotateCcw className="h-4 w-4" />
                                   Return
@@ -667,7 +667,7 @@ export default function AssetManagementPage() {
             >
               Previous
             </Button>
-            <span className="text-sm text-surface-600 dark:text-surface-400">
+            <span className="text-sm text-[var(--text-secondary)]">
               Page {currentPage + 1} of {assetsQuery.data?.totalPages || 0}
             </span>
             <Button
@@ -684,7 +684,7 @@ export default function AssetManagementPage() {
         {/* Add/Edit Asset Modal */}
         <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {isEditing ? 'Edit Asset' : 'Add New Asset'}
             </h2>
           </ModalHeader>
@@ -693,24 +693,24 @@ export default function AssetManagementPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Asset Code *
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="AST001"
                       {...register('assetCode')}
                     />
                     {errors.assetCode && <span className="text-red-500 text-sm">{errors.assetCode.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Asset Name *
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16"
                       {...register('assetName')}
                     />
@@ -720,11 +720,11 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Category *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('category')}
                     >
                       <option value={AssetCategory.LAPTOP}>Laptop</option>
@@ -740,11 +740,11 @@ export default function AssetManagementPage() {
                     {errors.category && <span className="text-red-500 text-sm">{errors.category.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('status')}
                     >
                       <option value={AssetStatus.AVAILABLE}>Available</option>
@@ -759,23 +759,23 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Brand
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Apple"
                       {...register('brand')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Model
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16 M3"
                       {...register('model')}
                     />
@@ -783,12 +783,12 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Serial Number
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="C02XG2JHH7JY"
                     {...register('serialNumber')}
                   />
@@ -796,22 +796,22 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Purchase Date
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('purchaseDate')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Warranty Expiry
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('warrantyExpiry')}
                     />
                   </div>
@@ -819,25 +819,25 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Purchase Cost
                     </label>
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
                       {...register('purchaseCost')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Current Value
                     </label>
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
                       {...register('currentValue')}
                     />
@@ -845,24 +845,24 @@ export default function AssetManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Location
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Main Office - Floor 3"
                     {...register('location')}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />
@@ -899,8 +899,8 @@ export default function AssetManagementPage() {
                     {getCategoryIcon(selectedAsset.category)}
                   </div>
                   <div>
-                    <p className="text-sm text-surface-500 font-mono">{selectedAsset.assetCode}</p>
-                    <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+                    <p className="text-sm text-[var(--text-muted)] font-mono">{selectedAsset.assetCode}</p>
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedAsset.assetName}
                     </h2>
                   </div>
@@ -922,23 +922,23 @@ export default function AssetManagementPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   {selectedAsset.brand && (
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                      <p className="text-sm text-surface-500 flex items-center gap-2">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <Tag className="h-4 w-4" />
                         Brand
                       </p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedAsset.brand}
                       </p>
                     </div>
                   )}
                   {selectedAsset.model && (
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                      <p className="text-sm text-surface-500 flex items-center gap-2">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <Package className="h-4 w-4" />
                         Model
                       </p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedAsset.model}
                       </p>
                     </div>
@@ -946,75 +946,75 @@ export default function AssetManagementPage() {
                 </div>
 
                 {selectedAsset.serialNumber && (
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500">Serial Number</p>
-                    <p className="text-lg font-mono font-semibold text-surface-900 dark:text-white">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)]">Serial Number</p>
+                    <p className="text-lg font-mono font-semibold text-[var(--text-primary)]">
                       {selectedAsset.serialNumber}
                     </p>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Purchase Cost
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatCurrency(selectedAsset.purchaseCost)}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <DollarSign className="h-4 w-4" />
                       Current Value
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatCurrency(selectedAsset.currentValue)}
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Purchase Date
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatDate(selectedAsset.purchaseDate)}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Warranty Expiry
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatDate(selectedAsset.warrantyExpiry)}
                     </p>
                   </div>
                 </div>
 
                 {selectedAsset.assignedToName && (
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <User className="h-4 w-4" />
                       Assigned To
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedAsset.assignedToName}
                     </p>
                   </div>
                 )}
 
                 {selectedAsset.location && (
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       Location
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedAsset.location}
                     </p>
                   </div>
@@ -1022,8 +1022,8 @@ export default function AssetManagementPage() {
 
                 {selectedAsset.notes && (
                   <div>
-                    <h4 className="text-sm font-medium text-surface-500 mb-1">Notes</h4>
-                    <p className="text-surface-700 dark:text-surface-300">
+                    <h4 className="text-sm font-medium text-[var(--text-muted)] mb-1">Notes</h4>
+                    <p className="text-[var(--text-secondary)]">
                       {selectedAsset.notes}
                     </p>
                   </div>
@@ -1048,12 +1048,12 @@ export default function AssetManagementPage() {
         {/* Delete Confirmation Modal */}
         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} size="sm">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Delete Asset
             </h2>
           </ModalHeader>
           <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Are you sure you want to delete <strong>{selectedAsset?.assetName}</strong>? This action cannot be undone.
             </p>
           </ModalBody>
@@ -1080,22 +1080,22 @@ export default function AssetManagementPage() {
         {/* Assign Asset Modal */}
         <Modal isOpen={showAssignModal} onClose={() => setShowAssignModal(false)} size="sm">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Assign Asset
             </h2>
           </ModalHeader>
           <form onSubmit={handleSubmitAssign(onAssignSubmit)}>
             <ModalBody>
-              <p className="text-surface-600 dark:text-surface-400 mb-4">
+              <p className="text-[var(--text-secondary)] mb-4">
                 Assign <strong>{selectedAsset?.assetName}</strong> to an employee.
               </p>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Employee ID
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Enter employee ID"
                   {...registerAssign('assignEmployeeId')}
                 />

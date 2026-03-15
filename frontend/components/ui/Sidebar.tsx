@@ -254,17 +254,18 @@ const SidebarMenuItem: React.FC<{
     'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     isActive || isFlyoverOpen
       ? 'font-semibold shadow-sm border-l-[3px]'
-      : 'text-secondary',
-    !item.disabled && !isActive && !isFlyoverOpen && 'hover:text-primary',
+      : '',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
-  // Active state styling with CSS variables
+  // Active state styling with CSS variables (dark sidebar aware)
   const activeStyles = isActive || isFlyoverOpen ? {
     backgroundColor: 'var(--sidebar-active-bg)',
     borderLeftColor: 'var(--sidebar-active-border)',
-    color: 'var(--border-focus)',
-  } : {};
+    color: 'var(--sidebar-text-active)',
+  } : {
+    color: 'var(--sidebar-text)',
+  };
 
   const content = (
     <>
@@ -272,12 +273,12 @@ const SidebarMenuItem: React.FC<{
 
       {item.icon && (
         <span
-          className={cn(
-            'flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200',
-            isActive || isFlyoverOpen
-              ? 'text-primary-500'
-              : 'text-secondary group-hover:text-primary'
-          )}
+          className="flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200"
+          style={{
+            color: isActive || isFlyoverOpen
+              ? 'var(--sidebar-text-active)'
+              : 'var(--sidebar-text)',
+          }}
         >
           {item.icon}
         </span>
@@ -292,7 +293,7 @@ const SidebarMenuItem: React.FC<{
                 'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
                 isActive || isFlyoverOpen
                   ? 'bg-primary-500 text-white'
-                  : 'bg-surface border border-main text-secondary'
+                  : 'bg-white/10 text-[var(--sidebar-text)]'
               )}>
                 {item.badge}
               </span>
@@ -300,9 +301,10 @@ const SidebarMenuItem: React.FC<{
             {hasChildren && (
               <ChevronRight
                 className={cn(
-                  'h-4 w-4 text-secondary/30 transition-all duration-200',
-                  isFlyoverOpen && 'translate-x-0.5 text-primary-500'
+                  'h-4 w-4 transition-all duration-200',
+                  isFlyoverOpen && 'translate-x-0.5'
                 )}
+                style={{ color: isFlyoverOpen ? 'var(--sidebar-text-active)' : 'var(--sidebar-text-muted)' }}
               />
             )}
           </div>
@@ -311,7 +313,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-primary text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs text-white">
@@ -368,7 +370,7 @@ const SectionDivider: React.FC<{
   if (isCollapsed) {
     return (
       <div className="px-3 py-3 text-center">
-        <div className="w-full h-px border-t border-main mx-auto" />
+        <div className="w-full h-px mx-auto" style={{ borderTop: '1px solid var(--sidebar-border)' }} />
       </div>
     );
   }
@@ -376,13 +378,16 @@ const SectionDivider: React.FC<{
   return (
     <motion.button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-primary-500/5 rounded-md transition-all duration-200"
+      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200"
+      style={{ ['--tw-hover-bg' as string]: 'var(--sidebar-hover-bg)' }}
       whileHover={{ x: 2 }}
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary group-hover:text-primary transition-colors duration-200 relative">
+      <span
+        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200 relative"
+        style={{ color: 'var(--sidebar-section-text)' }}
+      >
         {label}
-        {/* Subtle left border highlight on hover */}
         <motion.div
           className="absolute -left-3 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary-500 rounded-full"
           initial={{ opacity: 0, scaleY: 0 }}
@@ -392,9 +397,10 @@ const SectionDivider: React.FC<{
       </span>
       <ChevronDown
         className={cn(
-          'h-3 w-3 text-secondary/30 transition-transform duration-300 ease-out',
+          'h-3 w-3 transition-transform duration-300 ease-out',
           !isSectionExpanded && '-rotate-90'
         )}
+        style={{ color: 'var(--sidebar-text-muted)' }}
       />
     </motion.button>
   );
@@ -535,7 +541,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
           style={{
             backgroundColor: 'var(--bg-sidebar)',
-            borderColor: 'var(--border-main)',
+            borderColor: 'var(--sidebar-border)',
             width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
             minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
           }}
@@ -548,7 +554,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               'flex items-center h-16 px-4 transition-all duration-300',
               isCollapsed ? 'justify-center' : 'justify-between'
             )}
-            style={{ borderBottom: '1px solid var(--border-main)' }}
+            style={{ borderBottom: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
               <div className="flex items-center gap-2">
@@ -557,7 +563,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   alt="NuLogic"
                   width={120}
                   height={32}
-                  className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
+                  className="h-8 w-auto object-contain brightness-0 invert"
                   priority
                 />
               </div>
@@ -568,7 +574,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   alt="NuLogic"
                   width={32}
                   height={32}
-                  className="h-8 w-8 object-contain dark:brightness-0 dark:invert"
+                  className="h-8 w-8 object-contain brightness-0 invert"
                   priority
                 />
               </div>
@@ -582,16 +588,17 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 'px-3 py-2.5 transition-all duration-300',
                 isCollapsed ? 'flex justify-center' : ''
               )}
-              style={{ borderBottom: '1px solid var(--border-subtle)' }}
+              style={{ borderBottom: '1px solid var(--sidebar-border)' }}
             >
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 p-2 rounded-lg text-secondary transition-all duration-200 ease-out',
-                  'hover:text-primary hover:bg-primary-500/10',
+                  'flex items-center gap-2 p-2 rounded-lg transition-all duration-200 ease-out',
                   isCollapsed ? 'w-full justify-center' : 'w-full',
-                  isCollapsed && isHovering && 'bg-surface'
                 )}
+                style={{
+                  color: 'var(--sidebar-text)',
+                }}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
               >
@@ -601,7 +608,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <>
                     <PanelLeftClose className="h-5 w-5 transition-transform duration-300" />
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
-                    <kbd className="ml-auto text-[10px] font-mono text-secondary-500/50 bg-surface border border-main px-1.5 py-0.5 rounded transition-colors duration-200">
+                    <kbd className="ml-auto text-xs font-mono px-1.5 py-0.5 rounded transition-colors duration-200" style={{ color: 'var(--sidebar-text-muted)', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
                       ⌘B
                     </kbd>
                   </>
@@ -629,16 +636,20 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-primary-500/5 rounded-md transition-all duration-200"
+                      className="w-full flex items-center justify-between px-3 py-2.5 group rounded-md transition-all duration-200"
                     >
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary group-hover:text-primary transition-colors duration-200">
+                      <span
+                        className="text-xs font-semibold uppercase tracking-wider transition-colors duration-200"
+                        style={{ color: 'var(--sidebar-section-text)' }}
+                      >
                         {section.label}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-3 w-3 text-secondary/30 transition-transform duration-300 ease-out',
+                          'h-3 w-3 transition-transform duration-300 ease-out',
                           !isSectionExpanded && '-rotate-90'
                         )}
+                        style={{ color: 'var(--sidebar-text-muted)' }}
                       />
                     </button>
                   )}
@@ -679,26 +690,26 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               'p-3 transition-all duration-300',
               isCollapsed && 'flex justify-center'
             )}
-            style={{ borderTop: '1px solid var(--border-main)' }}
+            style={{ borderTop: '1px solid var(--sidebar-border)' }}
           >
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface border border-main shadow-sm transition-all duration-200">
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/10 transition-colors duration-200">
-                  <Sparkles className="h-4 w-4 text-primary-500 transition-transform duration-200" />
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg shadow-sm transition-all duration-200" style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid var(--sidebar-border)' }}>
+                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
+                  <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-primary truncate">
+                  <p className="text-xs font-medium truncate" style={{ color: 'var(--sidebar-text-active)' }}>
                     Pro Features
                   </p>
-                  <p className="text-[11px] text-secondary">
+                  <p className="text-xs" style={{ color: 'var(--sidebar-text-muted)' }}>
                     All modules active
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-md bg-primary-500/10 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/20 shadow-sm">
-                <Sparkles className="h-4 w-4 text-primary-500 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-primary text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
+              <div className="w-8 h-8 rounded-md bg-primary-500/20 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/30 shadow-sm">
+                <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
                   Pro Features Active
                 </div>
               </div>

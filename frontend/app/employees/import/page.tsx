@@ -160,27 +160,27 @@ export default function EmployeeImportPage() {
       case 'FAILED':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-200';
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200';
     }
   };
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.push('/employees')}
-            className="flex items-center text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100 mb-4"
+            className="flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)] mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Employees
           </button>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
             Bulk Import Employees
           </h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-1">
+          <p className="text-[var(--text-secondary)] mt-1">
             Upload a CSV or Excel file to import multiple employees at once
           </p>
         </div>
@@ -197,13 +197,13 @@ export default function EmployeeImportPage() {
             >
               {step === 'upload' ? '1' : <CheckCircle className="w-5 h-5" />}
             </div>
-            <span className="ml-2 font-medium text-surface-900 dark:text-surface-100">
+            <span className="ml-2 font-medium text-[var(--text-primary)]">
               Upload
             </span>
           </div>
           <div
             className={`w-24 h-1 mx-4 ${
-              step !== 'upload' ? 'bg-green-600' : 'bg-surface-300 dark:bg-surface-700'
+              step !== 'upload' ? 'bg-green-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
             }`}
           />
           <div className="flex items-center">
@@ -213,7 +213,7 @@ export default function EmployeeImportPage() {
                   ? 'bg-primary-500 text-white'
                   : step === 'result'
                   ? 'bg-green-600 text-white'
-                  : 'bg-surface-300 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                  : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
               }`}
             >
               {step === 'result' ? <CheckCircle className="w-5 h-5" /> : '2'}
@@ -221,8 +221,8 @@ export default function EmployeeImportPage() {
             <span
               className={`ml-2 font-medium ${
                 step !== 'upload'
-                  ? 'text-surface-900 dark:text-surface-100'
-                  : 'text-surface-400 dark:text-surface-600'
+                  ? 'text-[var(--text-primary)]'
+                  : 'text-[var(--text-muted)]'
               }`}
             >
               Preview
@@ -230,7 +230,7 @@ export default function EmployeeImportPage() {
           </div>
           <div
             className={`w-24 h-1 mx-4 ${
-              step === 'result' ? 'bg-green-600' : 'bg-surface-300 dark:bg-surface-700'
+              step === 'result' ? 'bg-green-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'
             }`}
           />
           <div className="flex items-center">
@@ -238,7 +238,7 @@ export default function EmployeeImportPage() {
               className={`flex items-center justify-center w-10 h-10 rounded-full ${
                 step === 'result'
                   ? 'bg-green-600 text-white'
-                  : 'bg-surface-300 dark:bg-surface-700 text-surface-600 dark:text-surface-400'
+                  : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
               }`}
             >
               3
@@ -246,8 +246,8 @@ export default function EmployeeImportPage() {
             <span
               className={`ml-2 font-medium ${
                 step === 'result'
-                  ? 'text-surface-900 dark:text-surface-100'
-                  : 'text-surface-400 dark:text-surface-600'
+                  ? 'text-[var(--text-primary)]'
+                  : 'text-[var(--text-muted)]'
               }`}
             >
               Import
@@ -268,38 +268,38 @@ export default function EmployeeImportPage() {
 
         {/* Step 1: Upload */}
         {step === 'upload' && (
-          <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
             {/* Download Templates */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-3">
+              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                 Download Template
               </h3>
-              <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
                 Download a template file with the required columns and fill it with your employee data.
               </p>
               <div className="flex gap-4">
                 <button
                   onClick={() => downloadTemplate('csv')}
                   disabled={loading}
-                  className="flex items-center px-4 py-2 border border-surface-300 rounded-lg hover:bg-surface-50 dark:border-surface-600 dark:hover:bg-surface-700"
+                  className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
                 >
                   <FileText className="w-5 h-5 mr-2 text-green-600" />
-                  <span className="text-surface-700 dark:text-surface-300">CSV Template</span>
+                  <span className="text-[var(--text-secondary)]">CSV Template</span>
                 </button>
                 <button
                   onClick={() => downloadTemplate('xlsx')}
                   disabled={loading}
-                  className="flex items-center px-4 py-2 border border-surface-300 rounded-lg hover:bg-surface-50 dark:border-surface-600 dark:hover:bg-surface-700"
+                  className="flex items-center px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:hover:bg-[var(--bg-secondary)]"
                 >
                   <FileSpreadsheet className="w-5 h-5 mr-2 text-primary-600 dark:text-primary-400" />
-                  <span className="text-surface-700 dark:text-surface-300">Excel Template</span>
+                  <span className="text-[var(--text-secondary)]">Excel Template</span>
                 </button>
               </div>
             </div>
 
             {/* File Upload Area */}
-            <div className="border-t border-surface-200 dark:border-surface-700 pt-6">
-              <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-3">
+            <div className="border-t border-[var(--border-main)] pt-6">
+              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                 Upload File
               </h3>
               <div
@@ -308,7 +308,7 @@ export default function EmployeeImportPage() {
                     ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
                     : selectedFile
                     ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                    : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                    : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -326,10 +326,10 @@ export default function EmployeeImportPage() {
                 {selectedFile ? (
                   <div className="flex flex-col items-center">
                     <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
-                    <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-lg font-medium text-[var(--text-primary)]">
                       {selectedFile.name}
                     </p>
-                    <p className="text-sm text-surface-500 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {(selectedFile.size / 1024).toFixed(2)} KB
                     </p>
                     <button
@@ -346,11 +346,11 @@ export default function EmployeeImportPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <Upload className="w-12 h-12 text-surface-400 dark:text-surface-600 mb-3" />
-                    <p className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-1">
+                    <Upload className="w-12 h-12 text-[var(--text-muted)] mb-3" />
+                    <p className="text-lg font-medium text-[var(--text-primary)] mb-1">
                       Drag and drop your file here
                     </p>
-                    <p className="text-sm text-surface-500 dark:text-surface-400 mb-3">
+                    <p className="text-sm text-[var(--text-muted)] mb-3">
                       or
                     </p>
                     <button
@@ -359,7 +359,7 @@ export default function EmployeeImportPage() {
                     >
                       Browse Files
                     </button>
-                    <p className="text-xs text-surface-400 dark:text-surface-600 mt-3">
+                    <p className="text-xs text-[var(--text-muted)] mt-3">
                       Supports CSV, XLS, and XLSX files
                     </p>
                   </div>
@@ -393,21 +393,21 @@ export default function EmployeeImportPage() {
 
         {/* Step 2: Preview */}
         {step === 'preview' && preview && (
-          <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm">
             {/* Summary Cards */}
-            <div className="p-6 border-b border-surface-200 dark:border-surface-700">
-              <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">
+            <div className="p-6 border-b border-[var(--border-main)]">
+              <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">
                 Import Preview
               </h3>
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-surface-50 dark:bg-surface-800/50 rounded-lg p-4">
+                <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-4">
                   <div className="flex items-center">
                     <Users className="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3" />
                     <div>
-                      <p className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {preview.totalRows}
                       </p>
-                      <p className="text-sm text-surface-500 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-muted)]">
                         Total Rows
                       </p>
                     </div>
@@ -446,27 +446,27 @@ export default function EmployeeImportPage() {
             <div className="p-6">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-                  <thead className="bg-surface-50 dark:bg-surface-700">
+                  <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Row
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Employee Code
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Name
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Email
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Department
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                         Errors
                       </th>
                     </tr>
@@ -481,7 +481,7 @@ export default function EmployeeImportPage() {
                             : 'bg-red-50 dark:bg-red-900/10'
                         }
                       >
-                        <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                           {row.rowNumber}
                         </td>
                         <td className="px-4 py-3">
@@ -491,16 +491,16 @@ export default function EmployeeImportPage() {
                             <XCircle className="w-5 h-5 text-red-500" />
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                           {row.employeeCode}
                         </td>
-                        <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                           {row.fullName}
                         </td>
-                        <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                           {row.workEmail}
                         </td>
-                        <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                        <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                           {row.departmentName || '-'}
                         </td>
                         <td className="px-4 py-3 text-sm">
@@ -538,9 +538,9 @@ export default function EmployeeImportPage() {
                         type="checkbox"
                         checked={skipInvalid}
                         onChange={(e) => setSkipInvalid(e.target.checked)}
-                        className="rounded border-surface-300 dark:border-surface-600 text-primary-500 focus:ring-primary-500"
+                        className="rounded border-[var(--border-main)] dark:border-[var(--border-main)] text-primary-500 focus:ring-primary-500"
                       />
-                      <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">
+                      <span className="ml-2 text-sm text-[var(--text-secondary)]">
                         Skip invalid rows and import only valid employees ({preview.validRows} employees)
                       </span>
                     </label>
@@ -550,10 +550,10 @@ export default function EmployeeImportPage() {
             )}
 
             {/* Actions */}
-            <div className="p-6 border-t border-surface-200 dark:border-surface-700 flex justify-between">
+            <div className="p-6 border-t border-[var(--border-main)] flex justify-between">
               <button
                 onClick={resetImport}
-                className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               >
                 Start Over
               </button>
@@ -580,7 +580,7 @@ export default function EmployeeImportPage() {
 
         {/* Step 3: Result */}
         {step === 'result' && result && (
-          <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
             {/* Result Header */}
             <div className="text-center mb-8">
               {result.status === 'COMPLETED' ? (
@@ -590,7 +590,7 @@ export default function EmployeeImportPage() {
               ) : (
                 <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
               )}
-              <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
                 Import {result.status === 'COMPLETED' ? 'Completed' : result.status === 'PARTIAL_SUCCESS' ? 'Partially Completed' : 'Failed'}
               </h2>
               <span
@@ -631,20 +631,20 @@ export default function EmployeeImportPage() {
             {/* Imported Employees */}
             {result.importedEmployees && result.importedEmployees.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-3">
+                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                   Imported Employees
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-                    <thead className="bg-surface-50 dark:bg-surface-700">
+                    <thead className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Employee Code
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Name
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-300 uppercase">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] dark:text-[var(--text-muted)] uppercase">
                           Email
                         </th>
                       </tr>
@@ -652,13 +652,13 @@ export default function EmployeeImportPage() {
                     <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                       {result.importedEmployees.slice(0, 10).map((emp) => (
                         <tr key={emp.employeeId}>
-                          <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                             {emp.employeeCode}
                           </td>
-                          <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                             {emp.fullName}
                           </td>
-                          <td className="px-4 py-3 text-sm text-surface-900 dark:text-surface-100">
+                          <td className="px-4 py-3 text-sm text-[var(--text-primary)]">
                             {emp.workEmail}
                           </td>
                         </tr>
@@ -666,7 +666,7 @@ export default function EmployeeImportPage() {
                     </tbody>
                   </table>
                   {result.importedEmployees.length > 10 && (
-                    <p className="text-sm text-surface-500 dark:text-surface-400 mt-2 text-center">
+                    <p className="text-sm text-[var(--text-muted)] mt-2 text-center">
                       ...and {result.importedEmployees.length - 10} more employees
                     </p>
                   )}
@@ -677,7 +677,7 @@ export default function EmployeeImportPage() {
             {/* Failed Imports */}
             {result.failedImports && result.failedImports.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-3">
+                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                   Failed Imports
                 </h3>
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
@@ -703,10 +703,10 @@ export default function EmployeeImportPage() {
             )}
 
             {/* Actions */}
-            <div className="flex justify-between pt-6 border-t border-surface-200 dark:border-surface-700">
+            <div className="flex justify-between pt-6 border-t border-[var(--border-main)]">
               <button
                 onClick={resetImport}
-                className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               >
                 Import More
               </button>

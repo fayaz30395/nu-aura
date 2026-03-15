@@ -59,8 +59,8 @@ export default function TravelPage() {
   const getStatusConfig = (status: TravelStatus) => {
     const configs = {
       DRAFT: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: Clock,
       },
       SUBMITTED: {
@@ -99,8 +99,8 @@ export default function TravelPage() {
         icon: CheckCircle,
       },
       CANCELLED: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: XCircle,
       },
     };
@@ -151,7 +151,7 @@ export default function TravelPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading travel requests...</p>
+            <p className="text-[var(--text-secondary)]">Loading travel requests...</p>
           </div>
         </div>
       </AppLayout>
@@ -164,10 +164,10 @@ export default function TravelPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Travel Management
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Manage travel requests and expenses
             </p>
           </div>
@@ -181,11 +181,11 @@ export default function TravelPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search by destination, purpose..."
@@ -194,20 +194,20 @@ export default function TravelPage() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               />
             </div>
 
             {/* Status Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as TravelStatus | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -224,14 +224,14 @@ export default function TravelPage() {
 
             {/* Type Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <select
                 value={typeFilter}
                 onChange={(e) => {
                   setTypeFilter(e.target.value as TravelType | 'ALL');
                   setCurrentPage(0);
                 }}
-                className="w-full pl-10 pr-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
+                className="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="BUSINESS">Business</option>
@@ -245,16 +245,16 @@ export default function TravelPage() {
           </div>
 
           {/* Results count */}
-          <div className="mt-4 text-sm text-surface-600 dark:text-surface-400">
+          <div className="mt-4 text-sm text-[var(--text-secondary)]">
             Showing {travelRequests.length} of {totalElements} travel requests
           </div>
         </div>
 
         {/* Travel Requests List */}
         {error ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)]">
             <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-            <p className="text-surface-600 dark:text-surface-400 mb-4">{error instanceof Error ? error.message : String(error)}</p>
+            <p className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
               onClick={() => void refetch()}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
@@ -281,7 +281,7 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 cursor-pointer"
+                  className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">
@@ -293,7 +293,7 @@ export default function TravelPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                                 {request.requestNumber}
                               </h3>
                               <span
@@ -303,21 +303,21 @@ export default function TravelPage() {
                                 {request.status.replace(/_/g, ' ')}
                               </span>
                             </div>
-                            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                            <p className="text-sm text-[var(--text-secondary)] mt-1">
                               {request.travelType.replace(/_/g, ' ')}
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
                       </div>
 
                       {/* Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="flex items-start gap-3">
-                          <MapPin className="h-5 w-5 text-surface-400 mt-0.5" />
+                          <MapPin className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-surface-500 dark:text-surface-400">Route</p>
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                            <p className="text-xs text-[var(--text-muted)]">Route</p>
+                            <p className="text-sm font-medium text-[var(--text-primary)]">
                               {request.originCity} → {request.destinationCity}
                             </p>
                             {request.isInternational && (
@@ -329,27 +329,27 @@ export default function TravelPage() {
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <Calendar className="h-5 w-5 text-surface-400 mt-0.5" />
+                          <Calendar className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-surface-500 dark:text-surface-400">Duration</p>
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                            <p className="text-xs text-[var(--text-muted)]">Duration</p>
+                            <p className="text-sm font-medium text-[var(--text-primary)]">
                               {formatDate(request.departureDate)}
                             </p>
-                            <p className="text-xs text-surface-500 dark:text-surface-400">
+                            <p className="text-xs text-[var(--text-muted)]">
                               to {formatDate(request.returnDate)}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <TransportIcon className="h-5 w-5 text-surface-400 mt-0.5" />
+                          <TransportIcon className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-surface-500 dark:text-surface-400">Transport</p>
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                            <p className="text-xs text-[var(--text-muted)]">Transport</p>
+                            <p className="text-sm font-medium text-[var(--text-primary)]">
                               {request.transportMode}
                             </p>
                             {request.transportClass && (
-                              <p className="text-xs text-surface-500 dark:text-surface-400">
+                              <p className="text-xs text-[var(--text-muted)]">
                                 {request.transportClass}
                               </p>
                             )}
@@ -357,12 +357,12 @@ export default function TravelPage() {
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <DollarSign className="h-5 w-5 text-surface-400 mt-0.5" />
+                          <DollarSign className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
-                            <p className="text-xs text-surface-500 dark:text-surface-400">
+                            <p className="text-xs text-[var(--text-muted)]">
                               Estimated Cost
                             </p>
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                            <p className="text-sm font-medium text-[var(--text-primary)]">
                               {formatCurrency(request.estimatedCost)}
                             </p>
                             {request.advanceRequired > 0 && (
@@ -375,9 +375,9 @@ export default function TravelPage() {
                       </div>
 
                       {/* Purpose */}
-                      <div className="pt-4 border-t border-surface-100 dark:border-surface-800">
-                        <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Purpose</p>
-                        <p className="text-sm text-surface-700 dark:text-surface-300 line-clamp-2">
+                      <div className="pt-4 border-t border-[var(--border-main)]">
+                        <p className="text-xs text-[var(--text-muted)] mb-1">Purpose</p>
+                        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                           {request.purpose}
                         </p>
                       </div>
@@ -395,17 +395,17 @@ export default function TravelPage() {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
               disabled={currentPage === 0}
-              className="px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
-            <span className="text-sm text-surface-600 dark:text-surface-400">
+            <span className="text-sm text-[var(--text-secondary)]">
               Page {currentPage + 1} of {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
               disabled={currentPage >= totalPages - 1}
-              className="px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>

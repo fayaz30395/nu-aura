@@ -145,13 +145,13 @@ export default function GoalsPage() {
 
   const getStatusColor = (status: GoalStatus) => {
     switch (status) {
-      case 'DRAFT': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       case 'ACTIVE': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
       case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'CANCELLED': return 'bg-red-100 text-red-800';
       case 'ON_HOLD': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -163,7 +163,7 @@ export default function GoalsPage() {
       case 'TEAM': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
       case 'DEPARTMENT': return 'bg-pink-100 text-pink-800';
       case 'ORGANIZATION': return 'bg-red-100 text-red-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -218,16 +218,16 @@ export default function GoalsPage() {
           </button>
         </div>
 
-        <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as GoalType | 'ALL')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="OKR">OKR</option>
@@ -239,13 +239,13 @@ export default function GoalsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Status
               </label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as GoalStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="DRAFT">Draft</option>
@@ -261,11 +261,11 @@ export default function GoalsPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="text-surface-600 dark:text-surface-400">Loading goals...</div>
+            <div className="text-[var(--text-secondary)]">Loading goals...</div>
           </div>
         ) : filteredGoals.length === 0 ? (
-          <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-12 text-center">
-            <div className="text-surface-600 dark:text-surface-400 mb-4">No goals found</div>
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+            <div className="text-[var(--text-secondary)] mb-4">No goals found</div>
             <button
               onClick={() => {
                 resetFormHandler();
@@ -281,7 +281,7 @@ export default function GoalsPage() {
             {filteredGoals.map((goal) => {
               const progress = calculateProgress(goal.currentValue, goal.targetValue);
               return (
-                <div key={goal.id} className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div key={goal.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2">{goal.title}</h3>
@@ -297,27 +297,27 @@ export default function GoalsPage() {
                   </div>
 
                   {goal.description && (
-                    <p className="text-sm text-surface-600 dark:text-surface-400 mb-4 line-clamp-2">{goal.description}</p>
+                    <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">{goal.description}</p>
                   )}
 
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-surface-600 dark:text-surface-400">Progress</span>
+                      <span className="text-[var(--text-secondary)]">Progress</span>
                       <span className="font-semibold">{progress}%</span>
                     </div>
-                    <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                    <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                       <div
                         className="bg-primary-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: progress + '%' }}
                       ></div>
                     </div>
-                    <div className="flex justify-between text-xs text-surface-600 dark:text-surface-400 mt-1">
+                    <div className="flex justify-between text-xs text-[var(--text-secondary)] mt-1">
                       <span>{goal.currentValue} {goal.unit}</span>
                       <span>{goal.targetValue} {goal.unit}</span>
                     </div>
                   </div>
 
-                  <div className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+                  <div className="text-sm text-[var(--text-secondary)] mb-4">
                     <div>Start: {goal.startDate ? new Date(goal.startDate).toLocaleDateString() : 'N/A'}</div>
                     <div>End: {goal.endDate ? new Date(goal.endDate).toLocaleDateString() : 'N/A'}</div>
                   </div>
@@ -344,7 +344,7 @@ export default function GoalsPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedGoal ? 'Edit Goal' : 'Create Goal'}
@@ -352,13 +352,13 @@ export default function GoalsPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Title *
                       </label>
                       <input
                         type="text"
                         {...register('title')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.title && (
                         <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -366,13 +366,13 @@ export default function GoalsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.description && (
                         <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -381,12 +381,12 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Goal Type *
                         </label>
                         <select
                           {...register('goalType')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="OKR">OKR</option>
                           <option value="KPI">KPI</option>
@@ -401,12 +401,12 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Status *
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="DRAFT">Draft</option>
                           <option value="ACTIVE">Active</option>
@@ -423,13 +423,13 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Target Value *
                         </label>
                         <input
                           type="number"
                           {...register('targetValue')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.targetValue && (
                           <p className="text-red-500 text-sm mt-1">{errors.targetValue.message}</p>
@@ -437,13 +437,13 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Current Value *
                         </label>
                         <input
                           type="number"
                           {...register('currentValue')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.currentValue && (
                           <p className="text-red-500 text-sm mt-1">{errors.currentValue.message}</p>
@@ -451,14 +451,14 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Unit *
                         </label>
                         <input
                           type="text"
                           placeholder="e.g., tasks, %"
                           {...register('unit')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.unit && (
                           <p className="text-red-500 text-sm mt-1">{errors.unit.message}</p>
@@ -468,13 +468,13 @@ export default function GoalsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Start Date *
                         </label>
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.startDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -482,13 +482,13 @@ export default function GoalsPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           End Date *
                         </label>
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.endDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -504,7 +504,7 @@ export default function GoalsPage() {
                         setShowModal(false);
                         resetFormHandler();
                       }}
-                      className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>
@@ -524,9 +524,9 @@ export default function GoalsPage() {
 
         {showDeleteConfirm && selectedGoal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Goal</h2>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete &quot;{selectedGoal.title}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -535,7 +535,7 @@ export default function GoalsPage() {
                     setShowDeleteConfirm(false);
                     setSelectedGoal(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>

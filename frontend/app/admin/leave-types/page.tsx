@@ -257,8 +257,8 @@ export default function LeaveTypesManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100">Leave Types Management</h1>
-            <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Types Management</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
               Configure and manage leave types for your organization
             </p>
           </div>
@@ -326,14 +326,14 @@ export default function LeaveTypesManagementPage() {
                       <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
-                      <p className="text-surface-600 dark:text-surface-400">No leave types configured</p>
+                      <p className="text-[var(--text-secondary)]">No leave types configured</p>
                       <p className="text-sm text-[var(--text-muted)] mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 leaveTypes.map((leaveType) => (
-                  <tr key={leaveType.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                  <tr key={leaveType.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div
@@ -341,17 +341,17 @@ export default function LeaveTypesManagementPage() {
                           style={{ backgroundColor: leaveType.colorCode || '#3B82F6' }}
                         />
                         <div>
-                          <div className="text-sm font-medium text-surface-900 dark:text-surface-100">{leaveType.leaveName}</div>
+                          <div className="text-sm font-medium text-[var(--text-primary)]">{leaveType.leaveName}</div>
                           <div className="text-sm text-[var(--text-muted)]">{leaveType.leaveCode}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? 'bg-green-100 text-green-800' : 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200'}`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${leaveType.isPaid ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'}`}>
                         {leaveType.isPaid ? 'Paid' : 'Unpaid'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-900 dark:text-surface-100">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {leaveType.annualQuota ? `${leaveType.annualQuota} days` : '-'}
                     </td>
                     <td className="px-6 py-4">
@@ -423,7 +423,7 @@ export default function LeaveTypesManagementPage() {
             <div className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingLeaveType ? 'Edit Leave Type' : 'Add New Leave Type'}
                   </h2>
                   <button
@@ -441,16 +441,16 @@ export default function LeaveTypesManagementPage() {
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Basic Information</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Leave Code *
                         </label>
                         <input
                           type="text"
                           {...form.register('leaveCode')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="AL, SL, CL"
                         />
                         {form.formState.errors.leaveCode && (
@@ -458,13 +458,13 @@ export default function LeaveTypesManagementPage() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Leave Name *
                         </label>
                         <input
                           type="text"
                           {...form.register('leaveName')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="Annual Leave, Sick Leave"
                         />
                         {form.formState.errors.leaveName && (
@@ -474,26 +474,26 @@ export default function LeaveTypesManagementPage() {
                     </div>
 
                     <div className="mt-4">
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Description
                       </label>
                       <textarea
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="Brief description of this leave type..."
                       />
                     </div>
 
                     <div className="grid grid-cols-3 gap-4 mt-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Color Code
                         </label>
                         <input
                           type="color"
                           {...form.register('colorCode')}
-                          className="w-full h-10 px-1 py-1 border border-surface-300 dark:border-surface-600 rounded-md"
+                          className="w-full h-10 px-1 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md"
                         />
                       </div>
                       <div className="flex items-center pt-6">
@@ -501,18 +501,18 @@ export default function LeaveTypesManagementPage() {
                           <input
                             type="checkbox"
                             {...form.register('isPaid')}
-                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
-                          <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Paid Leave</span>
+                          <span className="ml-2 text-sm text-[var(--text-secondary)]">Paid Leave</span>
                         </label>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Gender Specific
                         </label>
                         <select
                           {...form.register('genderSpecific')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           {genderOptions.map(option => (
                             <option key={option} value={option}>{option}</option>
@@ -524,10 +524,10 @@ export default function LeaveTypesManagementPage() {
 
                   {/* Quota & Limits */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Quota & Limits</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Quota & Limits</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Annual Quota (days)
                         </label>
                         <input
@@ -535,54 +535,54 @@ export default function LeaveTypesManagementPage() {
                           step="0.5"
                           min="0"
                           {...form.register('annualQuota')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Max Consecutive Days
                         </label>
                         <input
                           type="number"
                           min="1"
                           {...form.register('maxConsecutiveDays')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Max Days Per Request
                         </label>
                         <input
                           type="number"
                           min="1"
                           {...form.register('maxDaysPerRequest')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Min Days Notice
                         </label>
                         <input
                           type="number"
                           min="0"
                           {...form.register('minDaysNotice')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable After (days)
                         </label>
                         <input
                           type="number"
                           min="0"
                           {...form.register('applicableAfterDays')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
@@ -590,15 +590,15 @@ export default function LeaveTypesManagementPage() {
 
                   {/* Accrual Settings */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Accrual Settings</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Accrual Settings</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Accrual Type
                         </label>
                         <select
                           {...form.register('accrualType')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">No Accrual</option>
                           {accrualTypes.map(type => (
@@ -607,7 +607,7 @@ export default function LeaveTypesManagementPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Accrual Rate (days/period)
                         </label>
                         <input
@@ -615,7 +615,7 @@ export default function LeaveTypesManagementPage() {
                           step="0.1"
                           min="0"
                           {...form.register('accrualRate')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
@@ -623,20 +623,20 @@ export default function LeaveTypesManagementPage() {
 
                   {/* Carry Forward & Encashment */}
                   <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Carry Forward & Encashment</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Carry Forward & Encashment</h3>
                     <div className="space-y-4">
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           {...form.register('isCarryForwardAllowed')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Allow Carry Forward</span>
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Allow Carry Forward</span>
                       </label>
 
                       {form.watch('isCarryForwardAllowed') && (
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Max Carry Forward Days
                           </label>
                           <input
@@ -644,7 +644,7 @@ export default function LeaveTypesManagementPage() {
                             step="0.5"
                             min="0"
                             {...form.register('maxCarryForwardDays')}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                       )}
@@ -653,18 +653,18 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="checkbox"
                           {...form.register('isEncashable')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Encashable</span>
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Encashable</span>
                       </label>
 
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           {...form.register('requiresDocument')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Requires Supporting Document</span>
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Requires Supporting Document</span>
                       </label>
                     </div>
                   </div>
@@ -678,7 +678,7 @@ export default function LeaveTypesManagementPage() {
                         setEditingLeaveType(null);
                         resetForm();
                       }}
-                      className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>

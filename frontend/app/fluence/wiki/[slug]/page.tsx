@@ -43,7 +43,7 @@ export default function WikiPageDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className="w-8 h-8 text-surface-400 animate-spin" />
+          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin" />
         </div>
       </AppLayout>
     );
@@ -53,11 +53,11 @@ export default function WikiPageDetailPage() {
     return (
       <AppLayout>
         <div className="text-center py-16">
-          <BookOpen className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-          <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+          <BookOpen className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+          <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
             Page not found
           </h3>
-          <p className="text-surface-500 dark:text-surface-400 mb-4">
+          <p className="text-[var(--text-muted)] mb-4">
             The page you're looking for doesn't exist
           </p>
           <Button
@@ -85,10 +85,10 @@ export default function WikiPageDetailPage() {
               <ArrowLeft className="w-4 h-4" />
               Back
             </button>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
               {page.title}
             </h1>
-            <div className="flex items-center gap-4 text-sm text-surface-500 dark:text-surface-400">
+            <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
                 {page.authorName || 'Unknown Author'}
@@ -140,15 +140,15 @@ export default function WikiPageDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Views</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Views</span>
                   <span className="font-semibold">{page.viewCount || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Likes</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Likes</span>
                   <span className="font-semibold">{page.likeCount || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Version</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Version</span>
                   <span className="font-semibold">{page.version}</span>
                 </div>
               </CardContent>
@@ -187,20 +187,20 @@ export default function WikiPageDetailPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {comments.length === 0 ? (
-              <p className="text-center text-surface-500 dark:text-surface-400 py-8">
+              <p className="text-center text-[var(--text-muted)] py-8">
                 No comments yet. Be the first to comment!
               </p>
             ) : (
               <div className="space-y-4">
                 {comments.map((comment) => (
-                  <div key={comment.id} className="flex gap-3 pb-4 border-b border-surface-200 dark:border-surface-700 last:border-b-0">
+                  <div key={comment.id} className="flex gap-3 pb-4 border-b border-[var(--border-main)] last:border-b-0">
                     <div className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/30 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{comment.authorName || 'Anonymous'}</p>
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-1">
                         {comment.body}
                       </p>
-                      <p className="text-xs text-surface-500 dark:text-surface-500 mt-2">
+                      <p className="text-xs text-[var(--text-muted)] mt-2">
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </p>
                     </div>

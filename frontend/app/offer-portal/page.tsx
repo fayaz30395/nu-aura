@@ -29,7 +29,7 @@ function OfferPortalLoading() {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 flex items-center justify-center">
       <div className="animate-pulse text-center">
         <Loader2 className="h-12 w-12 text-primary-500 animate-spin mx-auto mb-4" />
-        <p className="text-surface-600 dark:text-surface-400">Loading offer details...</p>
+        <p className="text-[var(--text-secondary)]">Loading offer details...</p>
       </div>
     </div>
   );
@@ -155,10 +155,10 @@ function OfferPortalPage() {
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
             </div>
-            <h1 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+            <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
               Unable to Load Offer
             </h1>
-            <p className="text-surface-500 dark:text-surface-400">{error}</p>
+            <p className="text-[var(--text-muted)]">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -182,10 +182,10 @@ function OfferPortalPage() {
           <div className="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <FileText className="h-10 w-10 text-primary-600 dark:text-primary-400" />
           </div>
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
             Your Offer Letter
           </h1>
-          <p className="text-surface-600 dark:text-surface-400">
+          <p className="text-[var(--text-secondary)]">
             {offer?.companyName ? `from ${offer.companyName}` : 'Review your offer details and respond below'}
           </p>
         </div>
@@ -251,46 +251,46 @@ function OfferPortalPage() {
                 </span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+                <h2 className="text-xl font-bold text-[var(--text-primary)]">
                   {offer?.candidateName}
                 </h2>
-                <p className="text-surface-500 dark:text-surface-400">{offer?.email}</p>
+                <p className="text-[var(--text-muted)]">{offer?.email}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                <Building className="h-5 w-5 text-surface-400" />
+              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+                <Building className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Position</p>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className="text-xs text-[var(--text-muted)]">Position</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {offer?.offeredDesignation || offer?.jobTitle || '-'}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                <DollarSign className="h-5 w-5 text-surface-400" />
+              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+                <DollarSign className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Annual CTC</p>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className="text-xs text-[var(--text-muted)]">Annual CTC</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {formatCurrency(offer?.offeredCtc)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                <Calendar className="h-5 w-5 text-surface-400" />
+              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+                <Calendar className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Proposed Joining Date</p>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className="text-xs text-[var(--text-muted)]">Proposed Joining Date</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {formatDate(offer?.proposedJoiningDate)}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                <Clock className="h-5 w-5 text-surface-400" />
+              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+                <Clock className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Offer Extended On</p>
-                  <p className="font-semibold text-surface-900 dark:text-surface-50">
+                  <p className="text-xs text-[var(--text-muted)]">Offer Extended On</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {formatDate(offer?.offerExtendedDate)}
                   </p>
                 </div>
@@ -303,17 +303,17 @@ function OfferPortalPage() {
         {offer?.offerLetterId && (
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary-500" />
                 Offer Letter Document
               </h3>
-              <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <div>
-                  <p className="font-medium text-surface-900 dark:text-surface-50">
+                  <p className="font-medium text-[var(--text-primary)]">
                     Offer Letter
                   </p>
                   {offer.offerLetterReferenceNumber && (
-                    <p className="text-sm text-surface-500 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-muted)]">
                       Reference: {offer.offerLetterReferenceNumber}
                     </p>
                   )}
@@ -338,10 +338,10 @@ function OfferPortalPage() {
         {isOfferPending && (
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                 Your Response
               </h3>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 Please review the offer details above and let us know your decision.
               </p>
               <div className="flex gap-4">
@@ -370,8 +370,8 @@ function OfferPortalPage() {
         {/* Contact Info */}
         <Card>
           <CardContent className="p-6 text-center">
-            <Mail className="h-6 w-6 text-surface-400 mx-auto mb-2" />
-            <p className="text-surface-600 dark:text-surface-400">
+            <Mail className="h-6 w-6 text-[var(--text-muted)] mx-auto mb-2" />
+            <p className="text-[var(--text-secondary)]">
               Have questions? Contact HR at{' '}
               <a href="mailto:hr@company.com" className="text-primary-600 hover:underline">
                 hr@company.com
@@ -390,25 +390,25 @@ function OfferPortalPage() {
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Accept Offer
                 </h2>
-                <p className="text-surface-600 dark:text-surface-400">
+                <p className="text-[var(--text-secondary)]">
                   Confirm your acceptance of this offer
                 </p>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Confirmed Joining Date
                 </label>
                 <input
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
-                <p className="text-xs text-surface-500 mt-1">
+                <p className="text-xs text-[var(--text-muted)] mt-1">
                   Please confirm your expected joining date
                 </p>
               </div>
@@ -451,16 +451,16 @@ function OfferPortalPage() {
                 <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
                 </div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
                   Decline Offer
                 </h2>
-                <p className="text-surface-600 dark:text-surface-400">
+                <p className="text-[var(--text-secondary)]">
                   We&apos;re sorry to hear that. Please let us know why.
                 </p>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Reason for Declining (Optional)
                 </label>
                 <textarea
@@ -468,7 +468,7 @@ function OfferPortalPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Please share your reason..."
-                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
 

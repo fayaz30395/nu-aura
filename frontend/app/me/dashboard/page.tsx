@@ -240,11 +240,11 @@ export default function MyDashboardPage() {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="text-center py-12">
-          <User className="h-16 w-16 mx-auto text-surface-300 dark:text-surface-600 mb-4" />
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">
+          <User className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             No Employee Profile Linked
           </h2>
-          <p className="text-surface-500 dark:text-surface-400 max-w-md mx-auto">
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             {user?.roles?.some(r => typeof r === 'string' ? r === 'SUPER_ADMIN' : r?.code === 'SUPER_ADMIN')
               ? 'You are signed in as a Super Admin. Self-service features require an employee profile. Use the admin panels to manage employees.'
               : 'Your account is not linked to an employee profile. Please contact your HR administrator.'}
@@ -258,7 +258,7 @@ export default function MyDashboardPage() {
             </button>
             <button
               onClick={() => router.push('/employees')}
-              className="px-4 py-2 border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Manage Employees
             </button>

@@ -923,10 +923,10 @@ function MailContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-100 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-          <p className="text-surface-500 font-medium">Loading Nu-Mail...</p>
+          <p className="text-[var(--text-muted)] font-medium">Loading Nu-Mail...</p>
         </div>
       </div>
     );
@@ -945,8 +945,8 @@ function MailContent() {
               <Mail className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Nu-Mail</h1>
-              <p className="text-sm text-surface-500">Your organization&apos;s Gmail inbox</p>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Nu-Mail</h1>
+              <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Gmail inbox</p>
             </div>
           </div>
           {!accessToken ? (
@@ -984,7 +984,7 @@ function MailContent() {
                 variant="ghost"
                 size="sm"
                 onClick={clearToken}
-                className="text-surface-500 hover:text-red-600"
+                className="text-[var(--text-muted)] hover:text-red-600"
               >
                 Disconnect
               </Button>
@@ -1009,16 +1009,16 @@ function MailContent() {
 
         {!accessToken ? (
           /* Connect Card */
-          <Card className="border-2 border-dashed border-surface-300 dark:border-surface-700">
+          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-6">
                   <Mail className="h-10 w-10 text-red-600 dark:text-red-400" />
                 </div>
-                <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Gmail
                 </h2>
-                <p className="text-surface-500 mb-6 max-w-md mx-auto">
+                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
                   Access your organization&apos;s Gmail directly within NuLogic.
                   Read, send, and manage your emails all in one place.
                 </p>
@@ -1030,7 +1030,7 @@ function MailContent() {
                 >
                   Connect Gmail
                 </Button>
-                <p className="text-xs text-surface-400 mt-4">
+                <p className="text-xs text-[var(--text-muted)] mt-4">
                   You&apos;ll be asked to grant access to read and send emails.
                 </p>
               </div>
@@ -1057,7 +1057,7 @@ function MailContent() {
                       className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                         selectedLabel === label.id
                           ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
-                          : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -1078,10 +1078,10 @@ function MailContent() {
             {/* Email List */}
             <Card className="lg:col-span-3">
               {/* Toolbar */}
-              <div className="border-b border-surface-100 dark:border-surface-800 p-3">
+              <div className="border-b border-[var(--border-main)] p-3">
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                     <Input
                       placeholder="Search emails..."
                       value={searchQuery}
@@ -1115,7 +1115,7 @@ function MailContent() {
                 <div className="flex items-center justify-center py-16">
                   <div className="flex flex-col items-center gap-4">
                     <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-                    <p className="text-surface-500">Loading emails...</p>
+                    <p className="text-[var(--text-muted)]">Loading emails...</p>
                   </div>
                 </div>
               ) : selectedEmail ? (
@@ -1125,7 +1125,7 @@ function MailContent() {
                     <div className="flex items-center justify-center py-16">
                       <div className="flex flex-col items-center gap-4">
                         <Loader2 className="w-10 h-10 text-primary-500 animate-spin" />
-                        <p className="text-surface-500">Loading email content...</p>
+                        <p className="text-[var(--text-muted)]">Loading email content...</p>
                       </div>
                     </div>
                   ) : (
@@ -1188,12 +1188,12 @@ function MailContent() {
                       {/* Email header */}
                       <div className="space-y-4">
                         <div className="flex items-start justify-between gap-4">
-                          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+                          <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                             {selectedEmail.subject}
                           </h2>
                           <button
                             onClick={() => toggleStar(selectedEmail.id, selectedEmail.isStarred)}
-                            className={selectedEmail.isStarred ? 'text-yellow-500' : 'text-surface-300 hover:text-yellow-500'}
+                            className={selectedEmail.isStarred ? 'text-yellow-500' : 'text-[var(--text-muted)] hover:text-yellow-500'}
                           >
                             <Star className={`h-5 w-5 ${selectedEmail.isStarred ? 'fill-current' : ''}`} />
                           </button>
@@ -1205,37 +1205,37 @@ function MailContent() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-surface-900 dark:text-surface-50">
+                              <span className="font-medium text-[var(--text-primary)]">
                                 {selectedEmail.from}
                               </span>
-                              <span className="text-sm text-surface-500">
+                              <span className="text-sm text-[var(--text-muted)]">
                                 &lt;{selectedEmail.fromEmail}&gt;
                               </span>
                             </div>
-                            <p className="text-sm text-surface-500">to {selectedEmail.to}</p>
+                            <p className="text-sm text-[var(--text-muted)]">to {selectedEmail.to}</p>
                             {selectedEmail.cc && (
-                              <p className="text-sm text-surface-500">cc: {selectedEmail.cc}</p>
+                              <p className="text-sm text-[var(--text-muted)]">cc: {selectedEmail.cc}</p>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-surface-500">
+                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                             <Calendar className="h-4 w-4" />
                             {new Date(selectedEmail.date).toLocaleString()}
                           </div>
                         </div>
 
                         {/* Email body */}
-                        <div className="border-t border-surface-100 dark:border-surface-800 pt-4">
+                        <div className="border-t border-[var(--border-main)] pt-4">
                           {selectedEmail.bodyHtml ? (
                             <div
                               className="prose dark:prose-invert max-w-none email-content"
                               dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(selectedEmail.bodyHtml) }}
                             />
                           ) : selectedEmail.body ? (
-                            <pre className="text-surface-700 dark:text-surface-300 whitespace-pre-wrap font-sans text-sm">
+                            <pre className="text-[var(--text-secondary)] whitespace-pre-wrap font-sans text-sm">
                               {selectedEmail.body}
                             </pre>
                           ) : (
-                            <p className="text-surface-500 italic">
+                            <p className="text-[var(--text-muted)] italic">
                               {selectedEmail.snippet}
                             </p>
                           )}
@@ -1243,8 +1243,8 @@ function MailContent() {
 
                         {/* Attachments */}
                         {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
-                          <div className="border-t border-surface-100 dark:border-surface-800 pt-4">
-                            <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2 flex items-center gap-2">
+                          <div className="border-t border-[var(--border-main)] pt-4">
+                            <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
                               <Paperclip className="h-4 w-4" />
                               Attachments ({selectedEmail.attachments.length})
                             </h4>
@@ -1253,16 +1253,16 @@ function MailContent() {
                                 <button
                                   key={attachment.id}
                                   onClick={() => downloadAttachment(selectedEmail.id, attachment.id, attachment.filename)}
-                                  className="flex items-center gap-2 px-3 py-2 bg-surface-100 dark:bg-surface-800 rounded-lg hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                                  className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                                 >
-                                  <FileText className="h-4 w-4 text-surface-500" />
-                                  <span className="text-sm text-surface-700 dark:text-surface-300">
+                                  <FileText className="h-4 w-4 text-[var(--text-muted)]" />
+                                  <span className="text-sm text-[var(--text-secondary)]">
                                     {attachment.filename}
                                   </span>
-                                  <span className="text-xs text-surface-500">
+                                  <span className="text-xs text-[var(--text-muted)]">
                                     ({formatFileSize(attachment.size)})
                                   </span>
-                                  <Download className="h-3 w-3 text-surface-400" />
+                                  <Download className="h-3 w-3 text-[var(--text-muted)]" />
                                 </button>
                               ))}
                             </div>
@@ -1270,7 +1270,7 @@ function MailContent() {
                         )}
 
                         {/* Action buttons */}
-                        <div className="border-t border-surface-100 dark:border-surface-800 pt-4 flex items-center gap-2">
+                        <div className="border-t border-[var(--border-main)] pt-4 flex items-center gap-2">
                           <Button
                             variant="outline"
                             onClick={() => openCompose('reply')}
@@ -1294,11 +1294,11 @@ function MailContent() {
                 /* Empty State */
                 <div className="py-16">
                   <div className="text-center">
-                    <MailOpen className="h-16 w-16 text-surface-300 dark:text-surface-700 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-50 mb-2">
+                    <MailOpen className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                       {searchQuery ? 'No emails found' : 'No emails here'}
                     </h3>
-                    <p className="text-surface-500">
+                    <p className="text-[var(--text-muted)]">
                       {searchQuery
                         ? 'Try adjusting your search query'
                         : `Your ${selectedLabel.toLowerCase()} is empty`}
@@ -1312,7 +1312,7 @@ function MailContent() {
                     <div
                       key={email.id}
                       onClick={() => loadEmailContent(email.id)}
-                      className={`flex items-center gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800 cursor-pointer transition-colors ${
+                      className={`flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors ${
                         !email.isRead ? 'bg-blue-50/50 dark:bg-blue-950/20' : ''
                       }`}
                     >
@@ -1324,7 +1324,7 @@ function MailContent() {
                         className={`flex-shrink-0 ${
                           email.isStarred
                             ? 'text-yellow-500'
-                            : 'text-surface-300 dark:text-surface-600 hover:text-yellow-500'
+                            : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)] hover:text-yellow-500'
                         }`}
                       >
                         <Star className={`h-5 w-5 ${email.isStarred ? 'fill-current' : ''}`} />
@@ -1333,29 +1333,29 @@ function MailContent() {
                         <div className="flex items-center gap-2 mb-1">
                           <span className={`text-sm truncate ${
                             !email.isRead
-                              ? 'font-semibold text-surface-900 dark:text-surface-50'
-                              : 'font-medium text-surface-700 dark:text-surface-300'
+                              ? 'font-semibold text-[var(--text-primary)]'
+                              : 'font-medium text-[var(--text-secondary)]'
                           }`}>
                             {email.from}
                           </span>
                           {email.hasAttachments && (
-                            <Paperclip className="h-4 w-4 text-surface-400 flex-shrink-0" />
+                            <Paperclip className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                           )}
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`text-sm truncate ${
                             !email.isRead
-                              ? 'font-medium text-surface-900 dark:text-surface-50'
-                              : 'text-surface-700 dark:text-surface-300'
+                              ? 'font-medium text-[var(--text-primary)]'
+                              : 'text-[var(--text-secondary)]'
                           }`}>
                             {email.subject}
                           </span>
-                          <span className="text-sm text-surface-400 truncate hidden sm:inline">
+                          <span className="text-sm text-[var(--text-muted)] truncate hidden sm:inline">
                             - {email.snippet}
                           </span>
                         </div>
                       </div>
-                      <div className="flex-shrink-0 text-xs text-surface-500">
+                      <div className="flex-shrink-0 text-xs text-[var(--text-muted)]">
                         {formatDate(email.date)}
                       </div>
                     </div>
@@ -1370,15 +1370,15 @@ function MailContent() {
         {showCompose && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
             <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+              <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+                <h3 className="font-semibold text-[var(--text-primary)]">
                   {composeMode === 'new' ? 'New Message' :
                    composeMode === 'reply' ? 'Reply' :
                    composeMode === 'replyAll' ? 'Reply All' : 'Forward'}
                 </h3>
                 <button
                   onClick={() => setShowCompose(false)}
-                  className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                  className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1401,7 +1401,7 @@ function MailContent() {
 
                 {/* To field with auto-complete */}
                 <div className="relative">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     To
                   </label>
                   <div className="relative">
@@ -1416,28 +1416,28 @@ function MailContent() {
                       placeholder="Start typing to search employees..."
                       className="pr-10"
                     />
-                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                   </div>
                   {/* Suggestions dropdown for To */}
                   {showSuggestions && activeField === 'to' && filteredContacts.length > 0 && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
                       {filteredContacts.map((contact, index) => (
                         <button
                           key={contact.email}
                           onClick={() => selectContact(contact, 'to')}
-                          className="w-full px-4 py-2 text-left hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
                             <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate">
+                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                               {contact.name}
                             </p>
-                            <p className="text-xs text-surface-500 truncate">
+                            <p className="text-xs text-[var(--text-muted)] truncate">
                               {contact.email}
                               {contact.designation && ` • ${contact.designation}`}
                               {contact.department && ` • ${contact.department}`}
@@ -1451,7 +1451,7 @@ function MailContent() {
 
                 {/* Cc field with auto-complete */}
                 <div className="relative">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Cc
                   </label>
                   <div className="relative">
@@ -1466,28 +1466,28 @@ function MailContent() {
                       placeholder="Start typing to search employees..."
                       className="pr-10"
                     />
-                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                    <Users className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                   </div>
                   {/* Suggestions dropdown for Cc */}
                   {showSuggestions && activeField === 'cc' && filteredContacts.length > 0 && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
                       {filteredContacts.map((contact, index) => (
                         <button
                           key={contact.email}
                           onClick={() => selectContact(contact, 'cc')}
-                          className="w-full px-4 py-2 text-left hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3 transition-colors"
                         >
                           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center flex-shrink-0">
                             <User className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate">
+                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                               {contact.name}
                             </p>
-                            <p className="text-xs text-surface-500 truncate">
+                            <p className="text-xs text-[var(--text-muted)] truncate">
                               {contact.email}
                               {contact.designation && ` • ${contact.designation}`}
                               {contact.department && ` • ${contact.department}`}
@@ -1500,7 +1500,7 @@ function MailContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Subject
                   </label>
                   <Input
@@ -1511,7 +1511,7 @@ function MailContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Message
                   </label>
                   <textarea
@@ -1519,27 +1519,27 @@ function MailContent() {
                     onChange={(e) => setComposeEmail({ ...composeEmail, body: e.target.value })}
                     placeholder="Write your message..."
                     rows={8}
-                    className="w-full px-3 py-2 border border-surface-200 dark:border-surface-600 rounded-t-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 placeholder-surface-400 dark:placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-t-lg bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 dark:placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                   />
                   {/* Signature Preview */}
                   {emailSignatureHtml && (
-                    <div className="border border-t-0 border-surface-200 dark:border-surface-600 rounded-b-lg bg-surface-50 dark:bg-surface-700/50 p-3">
-                      <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">-- Signature --</p>
+                    <div className="border border-t-0 border-[var(--border-main)] dark:border-[var(--border-main)] rounded-b-lg bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]/50 p-3">
+                      <p className="text-xs text-[var(--text-muted)] mb-2">-- Signature --</p>
                       <div
-                        className="signature-preview text-sm text-surface-600 dark:text-surface-300"
+                        className="signature-preview text-sm text-[var(--text-secondary)] dark:text-[var(--text-muted)]"
                         dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(emailSignatureHtml) }}
                       />
                     </div>
                   )}
                   {!emailSignatureHtml && emailSignature && (
-                    <p className="text-xs text-surface-500 mt-1">
+                    <p className="text-xs text-[var(--text-muted)] mt-1">
                       Your Gmail signature will be added when sending.
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 border-t border-surface-100 dark:border-surface-700 bg-surface-50 dark:bg-surface-800">
+              <div className="flex items-center justify-between p-4 border-t border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-secondary)]">
                 <Button
                   variant="ghost"
                   onClick={() => setShowCompose(false)}

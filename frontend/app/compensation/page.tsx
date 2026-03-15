@@ -252,10 +252,10 @@ export default function CompensationPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Compensation Planning
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Manage compensation review cycles and salary revisions
             </p>
           </div>
@@ -270,7 +270,7 @@ export default function CompensationPage() {
           <Card>
             <CardContent className="p-12 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-4" />
-              <p className="text-surface-600 dark:text-surface-400">Loading compensation data...</p>
+              <p className="text-[var(--text-secondary)]">Loading compensation data...</p>
             </CardContent>
           </Card>
         )}
@@ -298,11 +298,11 @@ export default function CompensationPage() {
                   <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Budget</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  <p className="text-sm text-[var(--text-secondary)]">Total Budget</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     ${(stats.totalBudget / 1000000).toFixed(1)}M
                   </p>
-                  <p className="text-xs text-surface-500">
+                  <p className="text-xs text-[var(--text-muted)]">
                     {stats.budgetUtilization}% utilized
                   </p>
                 </div>
@@ -316,11 +316,11 @@ export default function CompensationPage() {
                   <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Revisions</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  <p className="text-sm text-[var(--text-secondary)]">Total Revisions</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.totalRevisions}
                   </p>
-                  <p className="text-xs text-surface-500">
+                  <p className="text-xs text-[var(--text-muted)]">
                     {stats.approvedRevisions} approved
                   </p>
                 </div>
@@ -334,11 +334,11 @@ export default function CompensationPage() {
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Pending Approvals</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  <p className="text-sm text-[var(--text-secondary)]">Pending Approvals</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.pendingApprovals}
                   </p>
-                  <p className="text-xs text-surface-500">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Awaiting review
                   </p>
                 </div>
@@ -352,11 +352,11 @@ export default function CompensationPage() {
                   <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Avg. Increment</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                  <p className="text-sm text-[var(--text-secondary)]">Avg. Increment</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {stats.avgIncrement}%
                   </p>
-                  <p className="text-xs text-surface-500">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Target: {activeCycle?.averageIncrementTarget || 8}%
                   </p>
                 </div>
@@ -366,14 +366,14 @@ export default function CompensationPage() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-surface-200 dark:border-surface-700">
+        <div className="border-b border-[var(--border-main)]">
           <nav className="flex gap-4">
             <button
               onClick={() => setActiveTab('cycles')}
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'cycles'
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
               Review Cycles
@@ -383,7 +383,7 @@ export default function CompensationPage() {
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'revisions'
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
               All Revisions
@@ -393,7 +393,7 @@ export default function CompensationPage() {
               className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === 'pending'
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-[var(--text-muted)] dark:hover:text-white'
               }`}
             >
               Pending Approvals
@@ -451,10 +451,10 @@ export default function CompensationPage() {
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-surface-900 dark:text-white">
+                        <h3 className="font-semibold text-[var(--text-primary)]">
                           {cycle.name}
                         </h3>
-                        <p className="text-sm text-surface-500">
+                        <p className="text-sm text-[var(--text-muted)]">
                           {cycleTypeLabels[cycle.cycleType]} - FY{cycle.fiscalYear}
                         </p>
                       </div>
@@ -464,20 +464,20 @@ export default function CompensationPage() {
                     </div>
 
                     {cycle.description && (
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mb-4 line-clamp-2">
+                      <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">
                         {cycle.description}
                       </p>
                     )}
 
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-surface-500">Budget</span>
-                        <span className="font-medium text-surface-900 dark:text-white">
+                        <span className="text-[var(--text-muted)]">Budget</span>
+                        <span className="font-medium text-[var(--text-primary)]">
                           ${((cycle.budgetAmount || 0) / 1000000).toFixed(1)}M
                         </span>
                       </div>
                       {cycle.budgetAmount && cycle.utilizedAmount !== undefined && (
-                        <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                        <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                           <div
                             className="bg-primary-500 h-2 rounded-full"
                             style={{ width: `${Math.min((cycle.utilizedAmount / cycle.budgetAmount) * 100, 100)}%` }}
@@ -485,12 +485,12 @@ export default function CompensationPage() {
                         </div>
                       )}
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-surface-500">Employees</span>
-                        <span className="text-surface-900 dark:text-white">{cycle.totalEmployees}</span>
+                        <span className="text-[var(--text-muted)]">Employees</span>
+                        <span className="text-[var(--text-primary)]">{cycle.totalEmployees}</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-surface-500">Effective Date</span>
-                        <span className="text-surface-900 dark:text-white">
+                        <span className="text-[var(--text-muted)]">Effective Date</span>
+                        <span className="text-[var(--text-primary)]">
                           {new Date(cycle.effectiveDate).toLocaleDateString()}
                         </span>
                       </div>
@@ -525,7 +525,7 @@ export default function CompensationPage() {
             {/* Search */}
             <div className="flex gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                 <Input
                   placeholder="Search by name, code, or department..."
                   value={searchTerm}
@@ -544,26 +544,26 @@ export default function CompensationPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-surface-200 dark:border-surface-700">
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                    <tr className="border-b border-[var(--border-main)]">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Employee
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Type
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Current Salary
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         New Salary
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Increment
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Status
                       </th>
-                      <th className="text-left p-4 text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <th className="text-left p-4 text-sm font-medium text-[var(--text-secondary)]">
                         Actions
                       </th>
                     </tr>
@@ -572,30 +572,30 @@ export default function CompensationPage() {
                     {filteredRevisions.map((revision) => (
                       <tr
                         key={revision.id}
-                        className="border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800"
+                        className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
                         <td className="p-4">
                           <div>
-                            <p className="font-medium text-surface-900 dark:text-white">
+                            <p className="font-medium text-[var(--text-primary)]">
                               {revision.employeeName}
                             </p>
-                            <p className="text-sm text-surface-500">
+                            <p className="text-sm text-[var(--text-muted)]">
                               {revision.employeeCode} - {revision.department}
                             </p>
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {revisionTypeLabels[revision.revisionType]}
                           </span>
                         </td>
                         <td className="p-4">
-                          <span className="text-surface-900 dark:text-white">
+                          <span className="text-[var(--text-primary)]">
                             ${revision.previousSalary.toLocaleString()}
                           </span>
                         </td>
                         <td className="p-4">
-                          <span className="font-medium text-surface-900 dark:text-white">
+                          <span className="font-medium text-[var(--text-primary)]">
                             ${revision.newSalary.toLocaleString()}
                           </span>
                         </td>
@@ -636,10 +636,10 @@ export default function CompensationPage() {
               <Card>
                 <CardContent className="p-12 text-center">
                   <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                     All Caught Up!
                   </h3>
-                  <p className="text-surface-600 dark:text-surface-400">
+                  <p className="text-[var(--text-secondary)]">
                     There are no pending salary revisions requiring your approval.
                   </p>
                 </CardContent>
@@ -656,37 +656,37 @@ export default function CompensationPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-surface-900 dark:text-white">
+                              <h3 className="font-semibold text-[var(--text-primary)]">
                                 {revision.employeeName}
                               </h3>
                               <Badge variant={getRevisionStatusColor(revision.status) as 'default' | 'success' | 'warning' | 'danger' | 'info'}>
                                 {revisionStatusLabels[revision.status]}
                               </Badge>
                             </div>
-                            <p className="text-sm text-surface-500">
+                            <p className="text-sm text-[var(--text-muted)]">
                               {revision.employeeCode} - {revision.department} - {revision.designation}
                             </p>
-                            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                            <p className="text-sm text-[var(--text-secondary)] mt-1">
                               {revisionTypeLabels[revision.revisionType]}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-center">
-                            <p className="text-sm text-surface-500">Current</p>
-                            <p className="text-lg font-medium text-surface-900 dark:text-white">
+                            <p className="text-sm text-[var(--text-muted)]">Current</p>
+                            <p className="text-lg font-medium text-[var(--text-primary)]">
                               ${revision.previousSalary.toLocaleString()}
                             </p>
                           </div>
-                          <ChevronRight className="h-5 w-5 text-surface-400" />
+                          <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
                           <div className="text-center">
-                            <p className="text-sm text-surface-500">Proposed</p>
+                            <p className="text-sm text-[var(--text-muted)]">Proposed</p>
                             <p className="text-lg font-bold text-green-600 dark:text-green-400">
                               ${revision.newSalary.toLocaleString()}
                             </p>
                           </div>
                           <div className="text-center">
-                            <p className="text-sm text-surface-500">Increment</p>
+                            <p className="text-sm text-[var(--text-muted)]">Increment</p>
                             <p className="text-lg font-medium text-green-600 dark:text-green-400">
                               +{revision.incrementPercentage?.toFixed(1)}%
                             </p>
@@ -726,10 +726,10 @@ export default function CompensationPage() {
                     <PieChart className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {selectedCycle.name}
                     </h2>
-                    <p className="text-sm text-surface-500">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {cycleTypeLabels[selectedCycle.cycleType]} - FY{selectedCycle.fiscalYear}
                     </p>
                   </div>
@@ -747,92 +747,92 @@ export default function CompensationPage() {
                 </div>
 
                 {selectedCycle.description && (
-                  <p className="text-surface-600 dark:text-surface-400">
+                  <p className="text-[var(--text-secondary)]">
                     {selectedCycle.description}
                   </p>
                 )}
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500">Start Date</p>
-                    <p className="text-lg font-medium text-surface-900 dark:text-white">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)]">Start Date</p>
+                    <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.startDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500">End Date</p>
-                    <p className="text-lg font-medium text-surface-900 dark:text-white">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)]">End Date</p>
+                    <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.endDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500">Effective Date</p>
-                    <p className="text-lg font-medium text-surface-900 dark:text-white">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)]">Effective Date</p>
+                    <p className="text-lg font-medium text-[var(--text-primary)]">
                       {new Date(selectedCycle.effectiveDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500">Total Budget</p>
-                    <p className="text-lg font-medium text-surface-900 dark:text-white">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)]">Total Budget</p>
+                    <p className="text-lg font-medium text-[var(--text-primary)]">
                       ${((selectedCycle.budgetAmount || 0) / 1000000).toFixed(2)}M
                     </p>
                   </div>
                 </div>
 
-                <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-                  <h4 className="font-medium text-surface-900 dark:text-white mb-4">
+                <div className="border-t border-[var(--border-main)] pt-4">
+                  <h4 className="font-medium text-[var(--text-primary)] mb-4">
                     Increment Guidelines
                   </h4>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <div className="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.minIncrementPercentage || 0}%
                       </p>
-                      <p className="text-sm text-surface-500">Minimum</p>
+                      <p className="text-sm text-[var(--text-muted)]">Minimum</p>
                     </div>
                     <div className="text-center p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
                       <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
-                      <p className="text-sm text-surface-500">Target Avg</p>
+                      <p className="text-sm text-[var(--text-muted)]">Target Avg</p>
                     </div>
-                    <div className="text-center p-3 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <div className="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.maxIncrementPercentage || 0}%
                       </p>
-                      <p className="text-sm text-surface-500">Maximum</p>
+                      <p className="text-sm text-[var(--text-muted)]">Maximum</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-                  <h4 className="font-medium text-surface-900 dark:text-white mb-4">
+                <div className="border-t border-[var(--border-main)] pt-4">
+                  <h4 className="font-medium text-[var(--text-primary)] mb-4">
                     Progress
                   </h4>
                   <div className="grid grid-cols-4 gap-4">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                      <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.totalEmployees}
                       </p>
-                      <p className="text-sm text-surface-500">Total</p>
+                      <p className="text-sm text-[var(--text-muted)]">Total</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                         {selectedCycle.revisionsDrafted}
                       </p>
-                      <p className="text-sm text-surface-500">Drafted</p>
+                      <p className="text-sm text-[var(--text-muted)]">Drafted</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                         {selectedCycle.revisionsApproved}
                       </p>
-                      <p className="text-sm text-surface-500">Approved</p>
+                      <p className="text-sm text-[var(--text-muted)]">Approved</p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                         {selectedCycle.revisionsApplied}
                       </p>
-                      <p className="text-sm text-surface-500">Applied</p>
+                      <p className="text-sm text-[var(--text-muted)]">Applied</p>
                     </div>
                   </div>
                 </div>
@@ -852,7 +852,7 @@ export default function CompensationPage() {
         {/* Revision Detail Modal */}
         <Modal isOpen={isRevisionModalOpen} onClose={() => setIsRevisionModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Salary Revision Details
             </h2>
           </ModalHeader>
@@ -860,17 +860,17 @@ export default function CompensationPage() {
             {selectedRevision && (
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="bg-surface-100 dark:bg-surface-800 rounded-full h-14 w-14 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-surface-600 dark:text-surface-400" />
+                  <div className="bg-[var(--bg-secondary)] rounded-full h-14 w-14 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-[var(--text-secondary)]" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedRevision.employeeName}
                     </h3>
-                    <p className="text-sm text-surface-500">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {selectedRevision.employeeCode} - {selectedRevision.department}
                     </p>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {selectedRevision.designation}
                     </p>
                   </div>
@@ -882,15 +882,15 @@ export default function CompensationPage() {
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div>
-                    <p className="text-sm text-surface-500 mb-1">Current Salary</p>
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <p className="text-sm text-[var(--text-muted)] mb-1">Current Salary</p>
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">
                       ${selectedRevision.previousSalary.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-surface-500 mb-1">Proposed Salary</p>
+                    <p className="text-sm text-[var(--text-muted)] mb-1">Proposed Salary</p>
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       ${selectedRevision.newSalary.toLocaleString()}
                     </p>
@@ -899,19 +899,19 @@ export default function CompensationPage() {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
-                    <p className="text-sm text-surface-500">Increment Amount</p>
+                    <p className="text-sm text-[var(--text-muted)]">Increment Amount</p>
                     <p className="text-xl font-bold text-green-600 dark:text-green-400">
                       +${selectedRevision.incrementAmount?.toLocaleString()}
                     </p>
                   </div>
                   <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
-                    <p className="text-sm text-surface-500">Increment %</p>
+                    <p className="text-sm text-[var(--text-muted)]">Increment %</p>
                     <p className="text-xl font-bold text-green-600 dark:text-green-400">
                       +{selectedRevision.incrementPercentage?.toFixed(2)}%
                     </p>
                   </div>
                   <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
-                    <p className="text-sm text-surface-500">Performance</p>
+                    <p className="text-sm text-[var(--text-muted)]">Performance</p>
                     <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                       {selectedRevision.performanceRating?.toFixed(1) || 'N/A'}
                     </p>
@@ -920,21 +920,21 @@ export default function CompensationPage() {
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-surface-500">Revision Type</span>
-                    <span className="text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Revision Type</span>
+                    <span className="text-[var(--text-primary)]">
                       {revisionTypeLabels[selectedRevision.revisionType]}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-surface-500">Effective Date</span>
-                    <span className="text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Effective Date</span>
+                    <span className="text-[var(--text-primary)]">
                       {new Date(selectedRevision.effectiveDate).toLocaleDateString()}
                     </span>
                   </div>
                   {selectedRevision.newDesignation && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-surface-500">New Designation</span>
-                      <span className="text-surface-900 dark:text-white">
+                      <span className="text-[var(--text-muted)]">New Designation</span>
+                      <span className="text-[var(--text-primary)]">
                         {selectedRevision.newDesignation}
                       </span>
                     </div>
@@ -942,11 +942,11 @@ export default function CompensationPage() {
                 </div>
 
                 {selectedRevision.justification && (
-                  <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
-                    <h4 className="font-medium text-surface-900 dark:text-white mb-2">
+                  <div className="border-t border-[var(--border-main)] pt-4">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-2">
                       Justification
                     </h4>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {selectedRevision.justification}
                     </p>
                   </div>
@@ -956,8 +956,8 @@ export default function CompensationPage() {
           </ModalBody>
           <ModalFooter className="flex-col gap-4">
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
-              <div className="w-full space-y-3 border-t border-surface-200 dark:border-surface-700 pt-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+              <div className="w-full space-y-3 border-t border-[var(--border-main)] pt-4">
+                <label className="block text-sm font-medium text-[var(--text-secondary)]">
                   Rejection Reason <span className="text-red-600">*</span>
                 </label>
                 <Textarea
@@ -998,7 +998,7 @@ export default function CompensationPage() {
                     <>
                       <Button
                         variant="outline"
-                        className="text-red-600 border-red-600 hover:bg-red-50"
+                        className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-900/40 dark:text-red-400 dark:border-red-700"
                         disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
                         onClick={() => setShowRejectionReasonInput(true)}
                       >
@@ -1021,21 +1021,21 @@ export default function CompensationPage() {
         {/* Create Cycle Modal */}
         <Modal isOpen={isCreateCycleModalOpen} onClose={() => setIsCreateCycleModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Create Review Cycle
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Cycle Name
                 </label>
                 <Input placeholder="e.g., Annual Review 2025" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Cycle Type
                   </label>
                   <Select>
@@ -1047,7 +1047,7 @@ export default function CompensationPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Fiscal Year
                   </label>
                   <Select>
@@ -1058,56 +1058,56 @@ export default function CompensationPage() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date
                   </label>
                   <Input type="date" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
                   <Input type="date" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Effective Date
                   </label>
                   <Input type="date" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Budget Amount
                 </label>
                 <Input type="number" placeholder="Enter budget amount" />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Increment %
                   </label>
                   <Input type="number" placeholder="0" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Target Avg %
                   </label>
                   <Input type="number" placeholder="8" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Increment %
                   </label>
                   <Input type="number" placeholder="25" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <textarea
-                  className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-surface-900 dark:text-white"
+                  className="w-full rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-[var(--text-primary)]"
                   rows={3}
                   placeholder="Describe this review cycle..."
                 />

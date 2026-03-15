@@ -429,10 +429,10 @@ function CalendarContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-100 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-          <p className="text-surface-500 font-medium">Loading NU-Calendar...</p>
+          <p className="text-[var(--text-muted)] font-medium">Loading NU-Calendar...</p>
         </div>
       </div>
     );
@@ -451,8 +451,8 @@ function CalendarContent() {
               <CalendarIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">NU-Calendar</h1>
-              <p className="text-sm text-surface-500">Your Google Calendar events</p>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Calendar</h1>
+              <p className="text-sm text-[var(--text-muted)]">Your Google Calendar events</p>
             </div>
           </div>
           {!accessToken ? (
@@ -485,7 +485,7 @@ function CalendarContent() {
                 variant="ghost"
                 size="sm"
                 onClick={clearToken}
-                className="text-surface-500 hover:text-red-600"
+                className="text-[var(--text-muted)] hover:text-red-600"
               >
                 Disconnect
               </Button>
@@ -510,16 +510,16 @@ function CalendarContent() {
 
         {!accessToken ? (
           /* Connect Card */
-          <Card className="border-2 border-dashed border-surface-300 dark:border-surface-700">
+          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-full bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center mx-auto mb-6">
                   <CalendarIcon className="h-10 w-10 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Google Calendar
                 </h2>
-                <p className="text-surface-500 mb-6 max-w-md mx-auto">
+                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
                   View and manage your Google Calendar events directly within NuLogic.
                   Schedule meetings, track appointments, and stay organized.
                 </p>
@@ -547,22 +547,22 @@ function CalendarContent() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={goToPrevious}
-                        className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
                       <button
                         onClick={goToNext}
-                        className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
                     </div>
-                    <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                     </h2>
                   </div>
-                  <div className="flex items-center border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+                  <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
                     {(['month', 'week', 'day', 'agenda'] as ViewMode[]).map((mode) => (
                       <button
                         key={mode}
@@ -570,7 +570,7 @@ function CalendarContent() {
                         className={`px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
                           viewMode === mode
                             ? 'bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400'
-                            : 'text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-800'
+                            : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                       >
                         {mode}
@@ -586,11 +586,11 @@ function CalendarContent() {
               <Card>
                 <CardContent className="p-0">
                   {/* Day Headers */}
-                  <div className="grid grid-cols-7 border-b border-surface-200 dark:border-surface-700">
+                  <div className="grid grid-cols-7 border-b border-[var(--border-main)]">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                       <div
                         key={day}
-                        className="p-3 text-center text-sm font-medium text-surface-500"
+                        className="p-3 text-center text-sm font-medium text-[var(--text-muted)]"
                       >
                         {day}
                       </div>
@@ -608,8 +608,8 @@ function CalendarContent() {
                         <div
                           key={index}
                           onClick={() => openCreateModal(day)}
-                          className={`min-h-[120px] p-2 border-b border-r border-surface-100 dark:border-surface-800 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors ${
-                            !isCurrentMonth ? 'bg-surface-50 dark:bg-surface-900/50' : ''
+                          className={`min-h-[120px] p-2 border-b border-r border-[var(--border-main)] cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors ${
+                            !isCurrentMonth ? 'bg-[var(--bg-secondary)]/50' : ''
                           }`}
                         >
                           <div
@@ -617,8 +617,8 @@ function CalendarContent() {
                               isToday
                                 ? 'bg-primary-500 text-white'
                                 : isCurrentMonth
-                                  ? 'text-surface-900 dark:text-surface-50'
-                                  : 'text-surface-400'
+                                  ? 'text-[var(--text-primary)]'
+                                  : 'text-[var(--text-muted)]'
                             }`}
                           >
                             {day.getDate()}
@@ -641,7 +641,7 @@ function CalendarContent() {
                               </div>
                             ))}
                             {dayEvents.length > 3 && (
-                              <div className="text-xs text-surface-500 px-1.5">
+                              <div className="text-xs text-[var(--text-muted)] px-1.5">
                                 +{dayEvents.length - 3} more
                               </div>
                             )}
@@ -659,7 +659,7 @@ function CalendarContent() {
               <Card>
                 <CardContent className="divide-y divide-surface-100 dark:divide-surface-800">
                   {events.length === 0 ? (
-                    <div className="py-12 text-center text-surface-500">
+                    <div className="py-12 text-center text-[var(--text-muted)]">
                       No events found for this period
                     </div>
                   ) : (
@@ -670,15 +670,15 @@ function CalendarContent() {
                           setSelectedEvent(event);
                           setShowEventModal(true);
                         }}
-                        className="p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                        className="p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                       >
                         <div className="flex items-start gap-4">
                           <div className={`w-1 h-full min-h-[60px] rounded-full ${getEventColor(event)}`} />
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-medium text-surface-900 dark:text-surface-50">
+                            <h3 className="font-medium text-[var(--text-primary)]">
                               {event.summary}
                             </h3>
-                            <div className="flex items-center gap-4 mt-1 text-sm text-surface-500">
+                            <div className="flex items-center gap-4 mt-1 text-sm text-[var(--text-muted)]">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-4 w-4" />
                                 {formatEventDate(event)}
@@ -691,7 +691,7 @@ function CalendarContent() {
                               )}
                             </div>
                             {event.attendees && event.attendees.length > 0 && (
-                              <div className="flex items-center gap-1 mt-2 text-sm text-surface-500">
+                              <div className="flex items-center gap-1 mt-2 text-sm text-[var(--text-muted)]">
                                 <Users className="h-4 w-4" />
                                 {event.attendees.length} attendee(s)
                               </div>
@@ -722,11 +722,11 @@ function CalendarContent() {
             {(viewMode === 'week' || viewMode === 'day') && (
               <Card>
                 <CardContent className="py-16 text-center">
-                  <CalendarIcon className="h-12 w-12 text-surface-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-surface-900 dark:text-surface-50 mb-2">
+                  <CalendarIcon className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                     {viewMode === 'week' ? 'Week View' : 'Day View'}
                   </h3>
-                  <p className="text-surface-500">
+                  <p className="text-[var(--text-muted)]">
                     Coming soon. Use Month or Agenda view for now.
                   </p>
                 </CardContent>
@@ -736,7 +736,7 @@ function CalendarContent() {
             {/* Upcoming Events */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4">
+                <h3 className="font-semibold text-[var(--text-primary)] mb-4">
                   Upcoming Events
                 </h3>
                 <div className="space-y-3">
@@ -747,14 +747,14 @@ function CalendarContent() {
                         setSelectedEvent(event);
                         setShowEventModal(true);
                       }}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 cursor-pointer transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
                     >
                       <div className={`w-2 h-10 rounded-full ${getEventColor(event)}`} />
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-surface-900 dark:text-surface-50 truncate">
+                        <p className="font-medium text-[var(--text-primary)] truncate">
                           {event.summary}
                         </p>
-                        <p className="text-sm text-surface-500 truncate">
+                        <p className="text-sm text-[var(--text-muted)] truncate">
                           {formatEventDate(event)}
                         </p>
                       </div>
@@ -774,32 +774,32 @@ function CalendarContent() {
       {showEventModal && selectedEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Event Details</h3>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">Event Details</h3>
               <button
                 onClick={() => {
                   setShowEventModal(false);
                   setSelectedEvent(null);
                 }}
-                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+                <h4 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedEvent.summary}
                 </h4>
               </div>
 
-              <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+              <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                 <Clock className="h-4 w-4" />
                 <span>{formatEventDate(selectedEvent)}</span>
               </div>
 
               {selectedEvent.location && (
-                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                   <MapPin className="h-4 w-4" />
                   <span>{selectedEvent.location}</span>
                 </div>
@@ -818,8 +818,8 @@ function CalendarContent() {
 
               {selectedEvent.description && (
                 <div>
-                  <h5 className="text-sm font-medium text-surface-500 mb-1">Description</h5>
-                  <p className="text-surface-700 dark:text-surface-300 text-sm whitespace-pre-wrap">
+                  <h5 className="text-sm font-medium text-[var(--text-muted)] mb-1">Description</h5>
+                  <p className="text-[var(--text-secondary)] text-sm whitespace-pre-wrap">
                     {selectedEvent.description}
                   </p>
                 </div>
@@ -827,7 +827,7 @@ function CalendarContent() {
 
               {selectedEvent.attendees && selectedEvent.attendees.length > 0 && (
                 <div>
-                  <h5 className="text-sm font-medium text-surface-500 mb-2">
+                  <h5 className="text-sm font-medium text-[var(--text-muted)] mb-2">
                     Attendees ({selectedEvent.attendees.length})
                   </h5>
                   <div className="space-y-2">
@@ -836,11 +836,11 @@ function CalendarContent() {
                         key={idx}
                         className="flex items-center gap-2 text-sm"
                       >
-                        <div className="w-8 h-8 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
                           {(attendee.displayName || attendee.email)[0].toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-surface-900 dark:text-surface-50">
+                          <p className="text-[var(--text-primary)]">
                             {attendee.displayName || attendee.email}
                           </p>
                           {attendee.responseStatus && (
@@ -859,7 +859,7 @@ function CalendarContent() {
                 </div>
               )}
 
-              <div className="flex gap-2 pt-4 border-t border-surface-100 dark:border-surface-800">
+              <div className="flex gap-2 pt-4 border-t border-[var(--border-main)]">
                 {selectedEvent.htmlLink && (
                   <Button
                     variant="outline"
@@ -890,18 +890,18 @@ function CalendarContent() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Create Event</h3>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">Create Event</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
                 </label>
                 <Input
@@ -913,7 +913,7 @@ function CalendarContent() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date *
                   </label>
                   <Input
@@ -923,7 +923,7 @@ function CalendarContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Time
                   </label>
                   <Input
@@ -936,7 +936,7 @@ function CalendarContent() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
                   <Input
@@ -946,7 +946,7 @@ function CalendarContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Time
                   </label>
                   <Input
@@ -958,7 +958,7 @@ function CalendarContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Location
                 </label>
                 <Input
@@ -969,7 +969,7 @@ function CalendarContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <textarea
@@ -977,12 +977,12 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                   placeholder="Add description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Attendees (comma-separated emails)
                 </label>
                 <Input
@@ -998,9 +998,9 @@ function CalendarContent() {
                   id="addMeet"
                   checked={newEvent.addMeet}
                   onChange={(e) => setNewEvent({ ...newEvent, addMeet: e.target.checked })}
-                  className="rounded border-surface-300"
+                  className="rounded border-[var(--border-main)]"
                 />
-                <label htmlFor="addMeet" className="text-sm text-surface-700 dark:text-surface-300">
+                <label htmlFor="addMeet" className="text-sm text-[var(--text-secondary)]">
                   Add Google Meet video conferencing
                 </label>
               </div>

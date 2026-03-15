@@ -37,7 +37,7 @@ import { Project } from '@/lib/types/project';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
+    DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-secondary)] dark:text-gray-300',
     SUBMITTED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
     UNDER_REVIEW: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
     APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
@@ -261,7 +261,7 @@ export default function TimesheetsPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading timesheets...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading timesheets...</span>
         </div>
       </AppLayout>
     );
@@ -286,10 +286,10 @@ export default function TimesheetsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Timesheets
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Track your time against projects
             </p>
           </div>
@@ -316,8 +316,8 @@ export default function TimesheetsPage() {
                   <Timer className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Hours</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.totalHours.toFixed(1)}h</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Hours</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalHours.toFixed(1)}h</p>
                 </div>
               </div>
             </CardContent>
@@ -329,8 +329,8 @@ export default function TimesheetsPage() {
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Pending Approval</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.pending}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Pending Approval</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
@@ -342,8 +342,8 @@ export default function TimesheetsPage() {
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Approved</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.approved}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Approved</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.approved}</p>
                 </div>
               </div>
             </CardContent>
@@ -359,10 +359,10 @@ export default function TimesheetsPage() {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="text-center">
-                  <h3 className="font-semibold text-surface-900 dark:text-white">
+                  <h3 className="font-semibold text-[var(--text-primary)]">
                     Week of {formatDate(currentWeekStart.toISOString())}
                   </h3>
-                  <p className="text-sm text-surface-500">
+                  <p className="text-sm text-[var(--text-muted)]">
                     {formatDate(weekDates[0].toISOString())} - {formatDate(weekDates[6].toISOString())}
                   </p>
                 </div>
@@ -394,12 +394,12 @@ export default function TimesheetsPage() {
               {weekDates.map((date, index) => (
                 <div
                   key={index}
-                  className="text-center p-3 rounded-lg bg-surface-50 dark:bg-surface-800"
+                  className="text-center p-3 rounded-lg bg-[var(--bg-secondary)]"
                 >
-                  <p className="text-xs text-surface-500 uppercase">
+                  <p className="text-xs text-[var(--text-muted)] uppercase">
                     {date.toLocaleDateString('en-US', { weekday: 'short' })}
                   </p>
-                  <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                  <p className="text-lg font-semibold text-[var(--text-primary)]">
                     {date.getDate()}
                   </p>
                   {currentWeekTimesheet && (
@@ -413,10 +413,10 @@ export default function TimesheetsPage() {
             </div>
 
             {currentWeekTimesheet && (
-              <div className="mt-4 pt-4 border-t border-surface-200 dark:border-surface-700 flex items-center justify-between">
+              <div className="mt-4 pt-4 border-t border-[var(--border-main)] flex items-center justify-between">
                 <div className="flex gap-6 text-sm">
-                  <span className="text-surface-600 dark:text-surface-400">
-                    Total: <strong className="text-surface-900 dark:text-white">{currentWeekTimesheet.totalHours}h</strong>
+                  <span className="text-[var(--text-secondary)]">
+                    Total: <strong className="text-[var(--text-primary)]">{currentWeekTimesheet.totalHours}h</strong>
                   </span>
                   {currentWeekTimesheet.billableHours !== undefined && (
                     <span className="text-green-600 dark:text-green-400">
@@ -431,7 +431,7 @@ export default function TimesheetsPage() {
 
         {/* Timesheet History */}
         <div>
-          <h2 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
             Timesheet History
           </h2>
           <div className="space-y-3">
@@ -441,21 +441,21 @@ export default function TimesheetsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="rounded-lg bg-surface-100 p-3 dark:bg-surface-800">
-                          <FileSpreadsheet className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+                        <div className="rounded-lg bg-[var(--bg-secondary)] p-3 dark:bg-[var(--bg-secondary)]">
+                          <FileSpreadsheet className="h-5 w-5 text-[var(--text-secondary)]" />
                         </div>
                         <div>
-                          <p className="font-medium text-surface-900 dark:text-white">
+                          <p className="font-medium text-[var(--text-primary)]">
                             Week of {formatDate(timesheet.weekStartDate)}
                           </p>
-                          <p className="text-sm text-surface-500">
+                          <p className="text-sm text-[var(--text-muted)]">
                             {formatDate(timesheet.weekStartDate)} - {formatDate(timesheet.weekEndDate)}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                          <p className="text-lg font-semibold text-[var(--text-primary)]">
                             {timesheet.totalHours}h
                           </p>
                           {timesheet.billableHours !== undefined && (
@@ -489,12 +489,12 @@ export default function TimesheetsPage() {
         {/* Create Timesheet Modal */}
         <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="sm">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Create Timesheet
             </h2>
           </ModalHeader>
           <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Create a timesheet for the week of{' '}
               <strong>{formatFullDate(currentWeekStart.toISOString())}</strong>?
             </p>
@@ -527,10 +527,10 @@ export default function TimesheetsPage() {
                 <FileSpreadsheet className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   Timesheet Details
                 </h2>
-                <p className="text-sm text-surface-500">
+                <p className="text-sm text-[var(--text-muted)]">
                   {selectedTimesheet && `${formatDate(selectedTimesheet.weekStartDate)} - ${formatDate(selectedTimesheet.weekEndDate)}`}
                 </p>
               </div>
@@ -544,10 +544,10 @@ export default function TimesheetsPage() {
                     {selectedTimesheet.status.replace('_', ' ')}
                   </Badge>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <p className="text-2xl font-bold text-[var(--text-primary)]">
                       {selectedTimesheet.totalHours}h
                     </p>
-                    <p className="text-sm text-surface-500">Total Hours</p>
+                    <p className="text-sm text-[var(--text-muted)]">Total Hours</p>
                   </div>
                 </div>
 
@@ -559,7 +559,7 @@ export default function TimesheetsPage() {
 
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium text-surface-900 dark:text-white">Time Entries</h3>
+                    <h3 className="font-medium text-[var(--text-primary)]">Time Entries</h3>
                     {selectedTimesheet.status === 'DRAFT' && (
                       <Button size="sm" onClick={handleAddEntry}>
                         <Plus className="h-4 w-4 mr-2" />
@@ -573,28 +573,28 @@ export default function TimesheetsPage() {
                       {entriesData.map((entry) => (
                         <div
                           key={entry.id}
-                          className="p-3 bg-surface-50 dark:bg-surface-800 rounded-lg"
+                          className="p-3 bg-[var(--bg-secondary)] rounded-lg"
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="font-medium text-surface-900 dark:text-white">
+                              <p className="font-medium text-[var(--text-primary)]">
                                 {projects.find(p => p.id === entry.projectId)?.name || 'Unknown Project'}
                               </p>
-                              <p className="text-sm text-surface-500">
+                              <p className="text-sm text-[var(--text-muted)]">
                                 {formatDate(entry.entryDate)} - {entry.activityType?.replace('_', ' ')}
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-surface-900 dark:text-white">
+                              <p className="font-semibold text-[var(--text-primary)]">
                                 {entry.hours}h
                               </p>
-                              <p className="text-xs text-surface-500">
+                              <p className="text-xs text-[var(--text-muted)]">
                                 {entry.isBillable ? 'Billable' : 'Non-billable'}
                               </p>
                             </div>
                           </div>
                           {entry.workDescription && (
-                            <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                            <p className="mt-2 text-sm text-[var(--text-secondary)]">
                               {entry.workDescription}
                             </p>
                           )}
@@ -602,7 +602,7 @@ export default function TimesheetsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-center text-surface-500 py-4">
+                    <p className="text-center text-[var(--text-muted)] py-4">
                       No time entries yet. Add your first entry to track your work.
                     </p>
                   )}
@@ -635,21 +635,21 @@ export default function TimesheetsPage() {
         {/* Add Time Entry Modal */}
         <Modal isOpen={showEntryModal} onClose={() => setShowEntryModal(false)} size="md">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Add Time Entry
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Project *
                 </label>
                 <select
                   required
                   value={entryForm.projectId}
                   onChange={(e) => setEntryForm({ ...entryForm, projectId: e.target.value })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Select a project</option>
                   {projects.map((project) => (
@@ -662,7 +662,7 @@ export default function TimesheetsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Date *
                   </label>
                   <input
@@ -670,11 +670,11 @@ export default function TimesheetsPage() {
                     required
                     value={entryForm.entryDate}
                     onChange={(e) => setEntryForm({ ...entryForm, entryDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Hours *
                   </label>
                   <input
@@ -685,19 +685,19 @@ export default function TimesheetsPage() {
                     step="0.5"
                     value={entryForm.hours}
                     onChange={(e) => setEntryForm({ ...entryForm, hours: parseFloat(e.target.value) })}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Activity Type
                 </label>
                 <select
                   value={entryForm.activityType}
                   onChange={(e) => setEntryForm({ ...entryForm, activityType: e.target.value as ActivityType })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   {ACTIVITY_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -708,14 +708,14 @@ export default function TimesheetsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Work Description
                 </label>
                 <textarea
                   rows={3}
                   value={entryForm.workDescription}
                   onChange={(e) => setEntryForm({ ...entryForm, workDescription: e.target.value })}
-                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Describe the work done..."
                 />
               </div>
@@ -726,18 +726,18 @@ export default function TimesheetsPage() {
                     type="checkbox"
                     checked={entryForm.isBillable}
                     onChange={(e) => setEntryForm({ ...entryForm, isBillable: e.target.checked })}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-surface-700 dark:text-surface-300">Billable</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Billable</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     checked={entryForm.isOvertime || false}
                     onChange={(e) => setEntryForm({ ...entryForm, isOvertime: e.target.checked })}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-surface-700 dark:text-surface-300">Overtime</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Overtime</span>
                 </label>
               </div>
             </div>

@@ -63,13 +63,13 @@ export default function NewTemplatePage() {
                         className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                         onClick={() => router.back()}
                     >
-                        <ArrowLeft className="h-5 w-5 text-surface-500 group-hover:text-primary-600 transition-colors" />
+                        <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-black tracking-tight text-surface-900 dark:text-white">
+                        <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
                             New <span className="text-primary-600">Template</span>
                         </h1>
-                        <p className="text-surface-500 font-bold">Define the core metadata for your onboarding blueprint.</p>
+                        <p className="text-[var(--text-muted)] font-bold">Define the core metadata for your onboarding blueprint.</p>
                     </div>
                 </div>
 
@@ -81,7 +81,7 @@ export default function NewTemplatePage() {
                         <CardContent className="p-10">
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         Template Name
                                     </label>
@@ -94,20 +94,20 @@ export default function NewTemplatePage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                         <Info className="h-3.5 w-3.5" />
                                         Description
                                     </label>
                                     <textarea
                                         rows={4}
                                         placeholder="Briefly describe what this template is for and which departments should use it."
-                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-6 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-primary-500 outline-none"
                                         {...register('description')}
                                     />
                                     {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
                                 </div>
 
-                                <div className="pt-6 border-t border-surface-200/50 dark:border-surface-700/50 flex justify-end">
+                                <div className="pt-6 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex justify-end">
                                     <Button
                                         type="submit"
                                         isLoading={isSubmitting}
@@ -128,7 +128,7 @@ export default function NewTemplatePage() {
                     <CardContent className="p-6 flex gap-4">
                         <CheckCircle2 className="h-6 w-6 text-primary-500 shrink-0 mt-1" />
                         <div>
-                            <p className="font-black text-primary-900 dark:text-primary-100 uppercase tracking-widest text-[10px] mb-1">Standardization Tip</p>
+                            <p className="font-black text-primary-900 dark:text-primary-100 uppercase tracking-widest text-xs mb-1">Standardization Tip</p>
                             <p className="text-sm font-bold text-primary-700 dark:text-primary-300">
                                 Creating specialized templates for different roles (e.g., &quot;Software Engineer&quot; vs &quot;Account Executive&quot;) ensures that every new hire gets the exact resources they need from day one.
                             </p>

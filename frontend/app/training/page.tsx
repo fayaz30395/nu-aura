@@ -152,7 +152,7 @@ const getCategoryColor = (category: TrainingCategory) => {
     case TrainingCategory.SAFETY:
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-950 dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
   }
 };
 
@@ -436,10 +436,10 @@ export default function TrainingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Training Programs
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Enroll in courses and track your learning progress
             </p>
           </div>
@@ -460,8 +460,8 @@ export default function TrainingPage() {
                   <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">My Enrollments</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myEnrolled}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">My Enrollments</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myEnrolled}</p>
                 </div>
               </div>
             </CardContent>
@@ -473,8 +473,8 @@ export default function TrainingPage() {
                   <PlayCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">In Progress</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myInProgress}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">In Progress</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myInProgress}</p>
                 </div>
               </div>
             </CardContent>
@@ -486,8 +486,8 @@ export default function TrainingPage() {
                   <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Completed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.myCompleted}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.myCompleted}</p>
                 </div>
               </div>
             </CardContent>
@@ -499,8 +499,8 @@ export default function TrainingPage() {
                   <GraduationCap className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Available Programs</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Available Programs</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -508,13 +508,13 @@ export default function TrainingPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm">
-          <div className="flex border-b border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+          <div className="flex border-b border-[var(--border-main)]">
             <button
               onClick={() => setActiveTab('my-trainings')}
               className={`px-6 py-3 font-medium transition-colors ${activeTab === 'my-trainings'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
               <BookOpen className="h-4 w-4 inline-block mr-2" />
@@ -524,7 +524,7 @@ export default function TrainingPage() {
               onClick={() => setActiveTab('catalog')}
               className={`px-6 py-3 font-medium transition-colors ${activeTab === 'catalog'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
               <GraduationCap className="h-4 w-4 inline-block mr-2" />
@@ -534,7 +534,7 @@ export default function TrainingPage() {
               onClick={() => setActiveTab('manage')}
               className={`px-6 py-3 font-medium transition-colors ${activeTab === 'manage'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
               <Edit className="h-4 w-4 inline-block mr-2" />
@@ -544,7 +544,7 @@ export default function TrainingPage() {
               onClick={() => setActiveTab('growth-roadmap')}
               className={`px-6 py-3 font-medium transition-colors ${activeTab === 'growth-roadmap'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                 }`}
             >
               <Target className="h-4 w-4 inline-block mr-2" />
@@ -593,11 +593,11 @@ export default function TrainingPage() {
                         {/* Progress Bar */}
                         {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
                           <div className="mb-3">
-                            <div className="flex justify-between text-sm text-surface-600 dark:text-surface-400 mb-1">
+                            <div className="flex justify-between text-sm text-[var(--text-secondary)] mb-1">
                               <span>Progress</span>
                               <span>{enrollment.attendancePercentage || 0}%</span>
                             </div>
-                            <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                            <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                               <div
                                 className="bg-primary-500 h-2 rounded-full transition-all duration-300"
                                 style={{ width: `${enrollment.attendancePercentage || 0}%` }}
@@ -608,7 +608,7 @@ export default function TrainingPage() {
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
-                            <span className="text-surface-600 dark:text-surface-400">Enrolled:</span>
+                            <span className="text-[var(--text-secondary)]">Enrolled:</span>
                             <p className="font-medium">
                               {enrollment.enrollmentDate
                                 ? new Date(enrollment.enrollmentDate).toLocaleDateString()
@@ -617,7 +617,7 @@ export default function TrainingPage() {
                           </div>
                           {enrollment.completedAt && (
                             <div>
-                              <span className="text-surface-600 dark:text-surface-400">Completed:</span>
+                              <span className="text-[var(--text-secondary)]">Completed:</span>
                               <p className="font-medium">
                                 {new Date(enrollment.completedAt).toLocaleDateString()}
                               </p>
@@ -625,20 +625,20 @@ export default function TrainingPage() {
                           )}
                           {enrollment.assessmentScore !== undefined && (
                             <div>
-                              <span className="text-surface-600 dark:text-surface-400">Score:</span>
+                              <span className="text-[var(--text-secondary)]">Score:</span>
                               <p className="font-medium">{enrollment.assessmentScore}%</p>
                             </div>
                           )}
                           {enrollment.attendancePercentage !== undefined && (
                             <div>
-                              <span className="text-surface-600 dark:text-surface-400">Attendance:</span>
+                              <span className="text-[var(--text-secondary)]">Attendance:</span>
                               <p className="font-medium">{enrollment.attendancePercentage}%</p>
                             </div>
                           )}
                         </div>
 
                         {enrollment.feedback && (
-                          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                          <p className="mt-2 text-sm text-[var(--text-secondary)]">
                             <span className="font-medium">Feedback:</span> {enrollment.feedback}
                           </p>
                         )}
@@ -678,7 +678,7 @@ export default function TrainingPage() {
               <CardContent className="p-4">
                 <div className="flex flex-col gap-4 sm:flex-row">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
                     <Input
                       type="text"
                       placeholder="Search programs..."
@@ -711,11 +711,11 @@ export default function TrainingPage() {
             ) : filteredPrograms.filter(p => p.status === ProgramStatus.SCHEDULED || p.status === ProgramStatus.IN_PROGRESS).length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <GraduationCap className="h-12 w-12 text-surface-400" />
-                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                  <GraduationCap className="h-12 w-12 text-[var(--text-muted)]" />
+                  <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                     No courses available
                   </p>
-                  <p className="text-surface-600 dark:text-surface-400">
+                  <p className="text-[var(--text-secondary)]">
                     Check back later for new training programs
                   </p>
                 </CardContent>
@@ -748,7 +748,7 @@ export default function TrainingPage() {
                               <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
                                 {program.category.replace('_', ' ')}
                               </span>
-                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-200">
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
                                 {program.deliveryMode.replace('_', ' ')}
                               </span>
                               {program.isMandatory && (
@@ -758,32 +758,32 @@ export default function TrainingPage() {
                               )}
                             </div>
 
-                            <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                            <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                               {program.description || 'No description provided'}
                             </p>
 
                             <div className="space-y-2 text-sm">
                               {program.durationHours && (
-                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                                   <Clock className="h-4 w-4" />
                                   <span>{program.durationHours} hours</span>
                                 </div>
                               )}
                               {program.startDate && (
-                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                                   <Calendar className="h-4 w-4" />
                                   <span>Starts: {new Date(program.startDate).toLocaleDateString()}</span>
                                 </div>
                               )}
                               {program.location && (
-                                <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                                   <MapPin className="h-4 w-4" />
                                   <span>{program.location}</span>
                                 </div>
                               )}
                             </div>
 
-                            <div className="flex gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
+                            <div className="flex gap-2 pt-2 border-t border-[var(--border-main)]">
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -839,7 +839,7 @@ export default function TrainingPage() {
               <CardContent className="p-4">
                 <div className="flex flex-col gap-4 sm:flex-row">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
                     <Input
                       type="text"
                       placeholder="Search programs..."
@@ -914,7 +914,7 @@ export default function TrainingPage() {
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(program.category)}`}>
                             {program.category.replace('_', ' ')}
                           </span>
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-200">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
                             {program.deliveryMode.replace('_', ' ')}
                           </span>
                           {program.isMandatory && (
@@ -924,25 +924,25 @@ export default function TrainingPage() {
                           )}
                         </div>
 
-                        <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                        <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                           {program.description || 'No description provided'}
                         </p>
 
                         <div className="space-y-2 text-sm">
                           {program.trainerName && (
-                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                               <Users className="h-4 w-4" />
                               <span>Trainer: {program.trainerName}</span>
                             </div>
                           )}
                           {program.durationHours && (
-                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                               <Clock className="h-4 w-4" />
                               <span>{program.durationHours} hours</span>
                             </div>
                           )}
                           {program.startDate && (
-                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                               <Calendar className="h-4 w-4" />
                               <span>
                                 {new Date(program.startDate).toLocaleDateString()}
@@ -951,14 +951,14 @@ export default function TrainingPage() {
                             </div>
                           )}
                           {program.costPerParticipant && (
-                            <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                               <DollarSign className="h-4 w-4" />
                               <span>${program.costPerParticipant} per participant</span>
                             </div>
                           )}
                         </div>
 
-                        <div className="flex gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
+                        <div className="flex gap-2 pt-2 border-t border-[var(--border-main)]">
                           <Button size="sm" variant="outline" onClick={() => handleViewProgram(program)}>
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -1011,14 +1011,14 @@ export default function TrainingPage() {
         {/* Create/Edit Program Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {editingProgram ? 'Edit Training Program' : 'Create Training Program'}
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Program Code *
                 </label>
                 <Input
@@ -1028,7 +1028,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Program Name *
                 </label>
                 <Input
@@ -1038,7 +1038,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <Textarea
@@ -1049,7 +1049,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Category *
                 </label>
                 <Select
@@ -1064,7 +1064,7 @@ export default function TrainingPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Delivery Mode *
                 </label>
                 <Select
@@ -1079,7 +1079,7 @@ export default function TrainingPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Status
                 </label>
                 <Select
@@ -1094,7 +1094,7 @@ export default function TrainingPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Duration (Hours)
                 </label>
                 <Input
@@ -1105,7 +1105,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date
                 </label>
                 <Input
@@ -1115,7 +1115,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   End Date
                 </label>
                 <Input
@@ -1125,7 +1125,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Trainer Name
                 </label>
                 <Input
@@ -1135,7 +1135,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Location
                 </label>
                 <Input
@@ -1145,7 +1145,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Max Participants
                 </label>
                 <Input
@@ -1156,7 +1156,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Cost per Participant ($)
                 </label>
                 <Input
@@ -1167,7 +1167,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Learning Objectives
                 </label>
                 <Textarea
@@ -1183,9 +1183,9 @@ export default function TrainingPage() {
                     type="checkbox"
                     checked={formData.isMandatory}
                     onChange={(e) => setFormData({ ...formData, isMandatory: e.target.checked })}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Mandatory Training
                   </span>
                 </label>
@@ -1205,7 +1205,7 @@ export default function TrainingPage() {
         {/* View Program Modal */}
         <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {selectedProgram?.programName}
             </h2>
           </ModalHeader>
@@ -1214,11 +1214,11 @@ export default function TrainingPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-surface-500">Program Code:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">{selectedProgram.programCode}</p>
+                    <span className="text-[var(--text-muted)]">Program Code:</span>
+                    <p className="font-medium text-[var(--text-primary)]">{selectedProgram.programCode}</p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Status:</span>
+                    <span className="text-[var(--text-muted)]">Status:</span>
                     <p>
                       <Badge variant={toBadgeVariant(selectedProgram.status)}>
                         {selectedProgram.status.replace('_', ' ')}
@@ -1226,14 +1226,14 @@ export default function TrainingPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Category:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Category:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedProgram.category.replace('_', ' ')}
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Delivery Mode:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Delivery Mode:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedProgram.deliveryMode.replace('_', ' ')}
                     </p>
                   </div>
@@ -1241,8 +1241,8 @@ export default function TrainingPage() {
 
                 {selectedProgram.description && (
                   <div>
-                    <h4 className="font-medium text-surface-900 dark:text-white mb-2">Description</h4>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {selectedProgram.description}
                     </p>
                   </div>
@@ -1250,31 +1250,31 @@ export default function TrainingPage() {
 
                 {selectedProgram.learningObjectives && (
                   <div>
-                    <h4 className="font-medium text-surface-900 dark:text-white mb-2">Learning Objectives</h4>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-2">Learning Objectives</h4>
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {selectedProgram.learningObjectives}
                     </p>
                   </div>
                 )}
 
                 <div>
-                  <h4 className="font-medium text-surface-900 dark:text-white mb-2">
+                  <h4 className="font-medium text-[var(--text-primary)] mb-2">
                     Enrollments ({enrollments.length})
                   </h4>
                   {enrollments.length === 0 ? (
-                    <p className="text-sm text-surface-500">No enrollments yet</p>
+                    <p className="text-sm text-[var(--text-muted)]">No enrollments yet</p>
                   ) : (
                     <div className="space-y-2">
                       {enrollments.map((enrollment) => (
                         <div
                           key={enrollment.id}
-                          className="flex items-center justify-between p-2 bg-surface-50 dark:bg-surface-800 rounded-lg"
+                          className="flex items-center justify-between p-2 bg-[var(--bg-secondary)] rounded-lg"
                         >
                           <div>
-                            <p className="font-medium text-surface-900 dark:text-white">
+                            <p className="font-medium text-[var(--text-primary)]">
                               {enrollment.employeeName || enrollment.employeeId}
                             </p>
-                            <p className="text-xs text-surface-500">
+                            <p className="text-xs text-[var(--text-muted)]">
                               Enrolled: {new Date(enrollment.enrollmentDate || '').toLocaleDateString()}
                             </p>
                           </div>
@@ -1317,20 +1317,20 @@ export default function TrainingPage() {
         {/* Enroll Employee Modal */}
         <Modal isOpen={isEnrollModalOpen} onClose={() => setIsEnrollModalOpen(false)}>
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Enroll Employee
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Program
                 </label>
                 <Input value={selectedProgram?.programName || ''} disabled />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Employee ID *
                 </label>
                 <Input
@@ -1340,7 +1340,7 @@ export default function TrainingPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Enrollment Date
                 </label>
                 <Input

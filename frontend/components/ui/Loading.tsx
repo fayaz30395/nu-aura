@@ -150,36 +150,33 @@ export function SkeletonCard() {
  */
 export function NuAuraLoader({ message = 'Loading your workspace...' }: { message?: string }) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-surface-50 via-white to-primary-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 transition-colors">
+    <div className="flex items-center justify-center min-h-screen bg-[var(--bg-page)] transition-colors">
       <div className="flex flex-col items-center gap-6">
         {/* Animated Logo Container */}
         <div className="relative w-24 h-24">
           {/* Outer orbit ring */}
-          <div className="absolute inset-0 rounded-full border-2 border-primary-200 dark:border-primary-800 animate-[spin_3s_linear_infinite]">
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
+          <div className="absolute inset-0 rounded-full border-2 border-primary-400 dark:border-primary-500 animate-[spin_3s_linear_infinite]">
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary-500 dark:bg-primary-400 shadow-lg shadow-primary-500/60" />
           </div>
           {/* Middle orbit ring */}
-          <div className="absolute inset-4 rounded-full border-2 border-info-200 dark:border-info-800 animate-[spin_2s_linear_infinite_reverse]">
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-info-500 shadow-lg shadow-info-500/50" />
+          <div className="absolute inset-4 rounded-full border-2 border-info-400 dark:border-info-500 animate-[spin_2s_linear_infinite_reverse]">
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-info-500 dark:bg-info-400 shadow-lg shadow-info-500/60" />
           </div>
           {/* Inner pulsing core */}
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary-500 to-info-600 shadow-xl shadow-primary-500/30 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary-500 to-info-600 shadow-xl shadow-primary-500/40 dark:shadow-primary-400/30 animate-pulse flex items-center justify-center">
             <span className="text-white font-bold text-lg tracking-tight">N</span>
           </div>
         </div>
 
         {/* Brand text */}
         <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-info-600 dark:from-primary-400 dark:to-info-400 bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-info-600 dark:from-primary-300 dark:to-info-300 bg-clip-text text-transparent">
             NU-AURA
           </h2>
-          {/* Shimmer loading text */}
-          <div className="relative overflow-hidden">
-            <p className="text-sm text-[var(--text-muted)]">
-              {message}
-            </p>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 dark:via-surface-800/60 to-transparent animate-[shimmer_2s_infinite]" />
-          </div>
+          {/* Loading text — no shimmer overlay to avoid washing out */}
+          <p className="text-sm text-[var(--text-secondary)] animate-pulse">
+            {message}
+          </p>
         </div>
 
         {/* Animated progress dots */}
@@ -187,9 +184,9 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-primary-400 dark:bg-primary-500"
+              className="w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400"
               style={{
-                animation: `bounce 1.4s ease-in-out ${i * 0.16}s infinite both`,
+                animation: `nuaura-dot 1.4s ease-in-out ${i * 0.16}s infinite both`,
               }}
             />
           ))}
@@ -198,13 +195,9 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
 
       {/* Keyframes injected via style tag */}
       <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes bounce {
-          0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-          40% { transform: scale(1); opacity: 1; }
+        @keyframes nuaura-dot {
+          0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+          40% { transform: scale(1.2); opacity: 1; }
         }
       `}</style>
     </div>

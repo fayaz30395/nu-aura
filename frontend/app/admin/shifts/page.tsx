@@ -304,17 +304,17 @@ export default function ShiftsManagementPage() {
 
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center text-sm">
-                        <Clock className="h-4 w-4 text-surface-600 dark:text-surface-400 mr-2" />
-                        <span className="text-surface-700 dark:text-surface-300">
+                        <Clock className="h-4 w-4 text-[var(--text-secondary)] mr-2" />
+                        <span className="text-[var(--text-secondary)]">
                           {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
                         </span>
                       </div>
                       {(shift.breakDurationMinutes ?? 0) > 0 && (
-                        <div className="text-sm text-surface-600 dark:text-surface-400">
+                        <div className="text-sm text-[var(--text-secondary)]">
                           Break: {shift.breakDurationMinutes} min
                         </div>
                       )}
-                      <div className="text-sm text-surface-600 dark:text-surface-400">
+                      <div className="text-sm text-[var(--text-secondary)]">
                         Working Hours: {shift.netWorkingHours || shift.fullDayHours}h
                       </div>
                     </div>
@@ -337,7 +337,7 @@ export default function ShiftsManagementPage() {
                       )}
                     </div>
 
-                    <div className="flex justify-end gap-2 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
                       <button
                         onClick={() => handleEdit(shift)}
                         className="p-2 text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/30 rounded-lg transition-colors"
@@ -404,17 +404,17 @@ export default function ShiftsManagementPage() {
 
                   <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                     {/* Basic Information */}
-                    <div className="border-b border-surface-200 dark:border-surface-700 pb-4">
-                      <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-4">Basic Information</h3>
+                    <div className="border-b border-[var(--border-main)] pb-4">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Basic Information</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Shift Code *
                           </label>
                           <input
                             type="text"
                             {...form.register('shiftCode')}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                             placeholder="DS, NS, GS"
                           />
                           {form.formState.errors.shiftCode && (
@@ -422,13 +422,13 @@ export default function ShiftsManagementPage() {
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Shift Name *
                           </label>
                           <input
                             type="text"
                             {...form.register('shiftName')}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                             placeholder="Day Shift, Night Shift"
                           />
                           {form.formState.errors.shiftName && (
@@ -439,12 +439,12 @@ export default function ShiftsManagementPage() {
 
                       <div className="mt-4 grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Shift Type
                           </label>
                           <select
                             {...form.register('shiftType')}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                           >
                             <option value="REGULAR">Regular</option>
                             <option value="ROTATIONAL">Rotational</option>
@@ -452,33 +452,33 @@ export default function ShiftsManagementPage() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Color Code
                           </label>
                           <input
                             type="color"
                             {...form.register('colorCode')}
-                            className="w-full h-10 px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700"
+                            className="w-full h-10 px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700"
                           />
                         </div>
                       </div>
 
                       <div className="mt-4">
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Description
                         </label>
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                           placeholder="Brief description of this shift..."
                         />
                       </div>
                     </div>
 
                     {/* Shift Timing */}
-                    <div className="border-b border-surface-200 dark:border-surface-700 pb-4">
-                      <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-4">Shift Timing</h3>
+                    <div className="border-b border-[var(--border-main)] pb-4">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Timing</h3>
                       <div className="grid grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -487,7 +487,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="time"
                             {...form.register('startTime')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -497,7 +497,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="time"
                             {...form.register('endTime')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -508,7 +508,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('breakDurationMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                       </div>
@@ -523,7 +523,7 @@ export default function ShiftsManagementPage() {
                             step="0.5"
                             min="0"
                             {...form.register('fullDayHours')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -533,7 +533,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="text"
                             {...form.register('workingDays')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                             placeholder="MONDAY,TUESDAY,WEDNESDAY"
                           />
                         </div>
@@ -541,8 +541,8 @@ export default function ShiftsManagementPage() {
                     </div>
 
                     {/* Attendance Rules */}
-                    <div className="border-b border-surface-200 dark:border-surface-700 pb-4">
-                      <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-4">Attendance Rules</h3>
+                    <div className="border-b border-[var(--border-main)] pb-4">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Attendance Rules</h3>
                       <div className="grid grid-cols-3 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -552,7 +552,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('gracePeriodInMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -563,7 +563,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('lateMarkAfterMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                         <div>
@@ -574,42 +574,42 @@ export default function ShiftsManagementPage() {
                             type="number"
                             min="0"
                             {...form.register('halfDayAfterMinutes')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Shift Properties */}
-                    <div className="border-b border-surface-200 dark:border-surface-700 pb-4">
-                      <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-4">Shift Properties</h3>
+                    <div className="border-b border-[var(--border-main)] pb-4">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Shift Properties</h3>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-3">
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
                               {...form.register('isNightShift')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Night Shift</span>
+                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Night Shift</span>
                           </label>
 
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
                               {...form.register('allowsOvertime')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Allows Overtime</span>
+                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Allows Overtime</span>
                           </label>
 
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
                               {...form.register('isActive')}
-                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                             />
-                            <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Active</span>
+                            <span className="ml-2 text-sm text-[var(--text-secondary)]">Active</span>
                           </label>
                         </div>
 
@@ -622,7 +622,7 @@ export default function ShiftsManagementPage() {
                             step="0.1"
                             min="1"
                             {...form.register('overtimeMultiplier')}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                             disabled={!form.watch('allowsOvertime')}
                           />
                         </div>
@@ -638,7 +638,7 @@ export default function ShiftsManagementPage() {
                           setEditingShift(null);
                           resetForm();
                         }}
-                        className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700"
+                        className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
                         Cancel
                       </button>

@@ -133,7 +133,7 @@ export default function LinkedInPostsPage() {
                 placeholder="Search by content or author..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-surface-50 dark:bg-surface-800/50 dark:text-white"
+                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--bg-secondary)]/50 dark:text-white"
               />
             </div>
           </motion.div>
@@ -166,10 +166,10 @@ export default function LinkedInPostsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
+                    className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
                   >
                     {/* Card Header */}
-                    <div className="p-5 border-b border-surface-200 dark:border-surface-700">
+                    <div className="p-5 border-b border-[var(--border-main)]">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
@@ -219,7 +219,7 @@ export default function LinkedInPostsPage() {
                       )}
 
                       {/* Engagement Stats */}
-                      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-surface-200 dark:border-surface-700">
+                      <div className="grid grid-cols-3 gap-3 pt-3 border-t border-[var(--border-main)]">
                         <div className="flex items-center gap-2 text-sm">
                           <Heart className="w-4 h-4 text-red-500" />
                           <span className="text-[var(--text-secondary)]">
@@ -242,7 +242,7 @@ export default function LinkedInPostsPage() {
                     </div>
 
                     {/* Footer */}
-                    <div className="px-5 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700">
+                    <div className="px-5 py-4 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
@@ -270,7 +270,7 @@ export default function LinkedInPostsPage() {
 
                     {/* Actions */}
                     {isAdmin(user?.roles) && (
-                      <div className="px-5 py-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-surface-200 dark:border-surface-700">
+                      <div className="px-5 py-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-[var(--border-main)]">
                         <button
                           onClick={() => handleEditPost(post)}
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
@@ -436,7 +436,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit LinkedIn Post' : 'Add LinkedIn Post'}
           </h2>
@@ -452,14 +452,14 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
           {/* Post URL */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Post URL <span className="text-red-500">*</span>
             </label>
             <input
               type="url"
               value={formData.postUrl}
               onChange={(e) => setFormData({ ...formData, postUrl: e.target.value })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="https://www.linkedin.com/feed/update/..."
             />
           </div>
@@ -467,26 +467,26 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           {/* Author Name and Title */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Author Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.authorName}
                 onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 placeholder="John Doe"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Author Title
               </label>
               <input
                 type="text"
                 value={formData.authorTitle || ''}
                 onChange={(e) => setFormData({ ...formData, authorTitle: e.target.value })}
-                className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 placeholder="CEO at Company"
               />
             </div>
@@ -494,55 +494,55 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
 
           {/* Content Snippet */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content Snippet <span className="text-red-500">*</span>
             </label>
             <textarea
               value={formData.contentSnippet}
               onChange={(e) => setFormData({ ...formData, contentSnippet: e.target.value })}
               rows={4}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
               placeholder="Paste the post content or a snippet..."
             />
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Image URL
             </label>
             <input
               type="url"
               value={formData.imageUrl || ''}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="https://..."
             />
           </div>
 
           {/* Posted Date */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Posted Date
             </label>
             <input
               type="date"
               value={formData.postedAt?.split('T')[0] || ''}
               onChange={(e) => setFormData({ ...formData, postedAt: e.target.value })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
             />
           </div>
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Tags
             </label>
             <input
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="tag1, tag2, tag3"
             />
             <p className="mt-1 text-xs text-[var(--text-muted)]">
@@ -552,12 +552,12 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
 
           {/* Engagement Stats */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
               Engagement Stats
             </label>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs text-surface-600 dark:text-surface-400 mb-1">
+                <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Likes
                 </label>
                 <input
@@ -568,11 +568,11 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                     ...formData,
                     engagement: { ...formData.engagement, likes: parseInt(e.target.value) || 0 }
                   })}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-xs text-surface-600 dark:text-surface-400 mb-1">
+                <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Comments
                 </label>
                 <input
@@ -583,11 +583,11 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                     ...formData,
                     engagement: { ...formData.engagement, comments: parseInt(e.target.value) || 0 }
                   })}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
               </div>
               <div>
-                <label className="block text-xs text-surface-600 dark:text-surface-400 mb-1">
+                <label className="block text-xs text-[var(--text-secondary)] mb-1">
                   Shares
                 </label>
                 <input
@@ -598,21 +598,21 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
                     ...formData,
                     engagement: { ...formData.engagement, shares: parseInt(e.target.value) || 0 }
                   })}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
               </div>
             </div>
           </div>
 
           {/* Checkbox Options */}
-          <label className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+          <label className="flex items-center gap-2 cursor-pointer p-3 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
             <input
               type="checkbox"
               checked={formData.isFromNulogic}
               onChange={(e) => setFormData({ ...formData, isFromNulogic: e.target.checked })}
               className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span className="text-sm text-surface-700 dark:text-surface-300">
+            <span className="text-sm text-[var(--text-secondary)]">
               This post is from Nulogic
             </span>
           </label>
@@ -626,10 +626,10 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

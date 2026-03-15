@@ -92,7 +92,7 @@ export default function AppSwitcher() {
           <span className="text-sm font-semibold text-[var(--text-primary)]">
             {app.name}
           </span>
-          <span className="text-[10px] text-[var(--text-muted)] -mt-0.5">
+          <span className="text-xs text-[var(--text-muted)] -mt-0.5">
             NU-AURA Platform
           </span>
         </div>
@@ -120,7 +120,7 @@ export default function AppSwitcher() {
                   <p className="text-sm font-semibold text-[var(--dropdown-text)]">
                     NU-AURA Platform
                   </p>
-                  <p className="text-[10px] text-[var(--dropdown-text-secondary)]">
+                  <p className="text-xs text-[var(--dropdown-text-secondary)]">
                     Switch between apps
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function AppSwitcher() {
                           }`}>
                             {targetApp.name}
                           </p>
-                          <p className={`text-[10px] mt-0.5 ${
+                          <p className={`text-xs mt-0.5 ${
                             isLocked
                               ? 'text-[var(--text-muted)]'
                               : 'text-[var(--text-secondary)]'
@@ -228,7 +228,7 @@ export default function AppSwitcher() {
 
             {/* Footer */}
             <div className="px-5 py-3 bg-[var(--bg-surface)] border-t border-[var(--dropdown-divider)]">
-              <p className="text-[10px] text-[var(--text-muted)] text-center">
+              <p className="text-xs text-[var(--text-muted)] text-center">
                 {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
               </p>
             </div>

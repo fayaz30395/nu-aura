@@ -51,7 +51,7 @@ export default function PerformanceRevolutionPage() {
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">
                             Performance Revolution
                         </h1>
-                        <p className="text-surface-600 dark:text-surface-400 mt-1">Advanced OKR visualization and 360° performance insights</p>
+                        <p className="text-[var(--text-secondary)] mt-1">Advanced OKR visualization and 360° performance insights</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" onClick={() => { okrGraphQuery.refetch(); performanceSpiderQuery.refetch(); }} leftIcon={<RefreshCw className="h-4 w-4" />}>
@@ -65,7 +65,7 @@ export default function PerformanceRevolutionPage() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* OKR Progress Galaxy - Placeholder for d3/custom SVG */}
-                    <Card className="lg:col-span-8 overflow-hidden bg-surface-900 border-none text-white relative h-[600px]">
+                    <Card className="lg:col-span-8 overflow-hidden bg-[var(--bg-secondary)] border-none text-white relative h-[600px]">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent)]" />
                         <CardHeader className="relative z-10 border-b border-white/5">
                             <div className="flex items-center justify-between">
@@ -73,12 +73,12 @@ export default function PerformanceRevolutionPage() {
                                     <CardTitle className="text-white flex items-center gap-2">
                                         <Target className="h-5 w-5 text-primary-400" /> OKR Alignment Galaxy
                                     </CardTitle>
-                                    <CardDescription className="text-surface-400">Visual mapping of objectives from Company to Individual</CardDescription>
+                                    <CardDescription className="text-[var(--text-muted)]">Visual mapping of objectives from Company to Individual</CardDescription>
                                 </div>
                                 <div className="flex items-center gap-4 text-xs">
                                     <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary-500" /> Company</div>
                                     <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-indigo-500" /> Team</div>
-                                    <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-surface-500" /> Personal</div>
+                                    <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[var(--text-muted)]" /> Personal</div>
                                 </div>
                             </div>
                         </CardHeader>
@@ -100,18 +100,18 @@ export default function PerformanceRevolutionPage() {
                                         <div className={`
                        relative w-16 h-16 rounded-full flex items-center justify-center border-2 
                        ${node.type === 'COMPANY' ? 'bg-primary-600/20 border-primary-500 h-24 w-24 shadow-[0_0_20px_rgba(59,130,246,0.5)]' :
-                                                node.type === 'TEAM' ? 'bg-indigo-600/20 border-indigo-500' : 'bg-surface-800 border-surface-600'}
+                                                node.type === 'TEAM' ? 'bg-indigo-600/20 border-indigo-500' : 'bg-[var(--bg-secondary)] border-[var(--border-main)]'}
                      `}>
                                             <div className="text-center">
-                                                <div className="text-[10px] font-black">{Math.round(node.progress)}%</div>
+                                                <div className="text-xs font-black">{Math.round(node.progress)}%</div>
                                                 <div className="w-8 h-1 bg-white/10 rounded-full mt-1 overflow-hidden mx-auto">
                                                     <div className="h-full bg-primary-400" style={{ width: `${node.progress}%` }} />
                                                 </div>
                                             </div>
                                             {/* Tooltip on hover */}
-                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white text-surface-900 p-2 rounded text-[10px] whitespace-nowrap z-50 shadow-xl">
+                                            <div className="absolute invisible group-hover:visible bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white text-[var(--text-primary)] p-2 rounded text-xs whitespace-nowrap z-50 shadow-xl">
                                                 <p className="font-bold">{node.title}</p>
-                                                <p className="text-surface-500">{node.ownerName}</p>
+                                                <p className="text-[var(--text-muted)]">{node.ownerName}</p>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -165,9 +165,9 @@ export default function PerformanceRevolutionPage() {
                                 </ResponsiveContainer>
                             </div>
                             <div className="flex justify-center gap-4 mt-6">
-                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-green-500" /> <span className="text-[10px]">Self</span></div>
-                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-purple-500" /> <span className="text-[10px]">Peers</span></div>
-                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-primary-500" /> <span className="text-[10px]">Manager</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-green-500" /> <span className="text-xs">Self</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-purple-500" /> <span className="text-xs">Peers</span></div>
+                                <div className="flex items-center gap-1.5"><div className="w-3 h-1.5 rounded-full bg-primary-500" /> <span className="text-xs">Manager</span></div>
                             </div>
                         </CardContent>
                     </Card>
@@ -189,9 +189,9 @@ export default function PerformanceRevolutionPage() {
                                     </div>
                                     <div>
                                         <h5 className="text-xs font-bold group-hover:text-primary-600 transition-colors">Amazing Sprint Finish!</h5>
-                                        <p className="text-[10px] text-surface-500 line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
+                                        <p className="text-xs text-[var(--text-muted)] line-clamp-2">&quot;Thanks to the team for pushing through the last few bugs before release.&quot;</p>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-[8px] text-surface-400 uppercase font-bold">2 hours ago</span>
+                                            <span className="text-[8px] text-[var(--text-muted)] uppercase font-bold">2 hours ago</span>
                                             <div className="flex items-center gap-0.5 text-[8px] text-yellow-600 font-bold">
                                                 <Star className="h-2 w-2 fill-current" /> +5 Karma
                                             </div>
@@ -218,18 +218,18 @@ export default function PerformanceRevolutionPage() {
                                 <div className="p-4 bg-[var(--bg-input)] rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                                     <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Growth Opportunity</h4>
                                     <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
-                                    <p className="text-xs text-surface-500">Based on your &quot;System Design&quot; skill Gap</p>
+                                    <p className="text-xs text-[var(--text-muted)]">Based on your &quot;System Design&quot; skill Gap</p>
                                     <div className="mt-4 flex items-center justify-between">
-                                        <span className="text-[10px] font-bold text-surface-400">Estimated Effort: 4h</span>
+                                        <span className="text-xs font-bold text-[var(--text-muted)]">Estimated Effort: 4h</span>
                                         <ChevronRight className="h-4 w-4 text-indigo-400" />
                                     </div>
                                 </div>
                                 <div className="p-4 bg-[var(--bg-input)] rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                                     <h4 className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Peak Performance</h4>
                                     <p className="text-sm font-semibold mb-1">Consistency King</p>
-                                    <p className="text-xs text-surface-500">9 weeks of meeting all Weekly Commitments</p>
+                                    <p className="text-xs text-[var(--text-muted)]">9 weeks of meeting all Weekly Commitments</p>
                                     <div className="mt-4 flex items-center justify-between">
-                                        <span className="text-[10px] font-bold text-surface-400">Awarded last Friday</span>
+                                        <span className="text-xs font-bold text-[var(--text-muted)]">Awarded last Friday</span>
                                         <Award className="h-4 w-4 text-yellow-500" />
                                     </div>
                                 </div>

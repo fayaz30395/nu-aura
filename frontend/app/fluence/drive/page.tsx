@@ -86,10 +86,10 @@ function FluenceDriveContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-100 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-          <p className="text-surface-500 font-medium">Loading NU-Fluence Drive...</p>
+          <p className="text-[var(--text-muted)] font-medium">Loading NU-Fluence Drive...</p>
         </div>
       </div>
     );
@@ -108,10 +108,10 @@ function FluenceDriveContent() {
               <HardDrive className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                 NU-Fluence Drive
               </h1>
-              <p className="text-surface-500 dark:text-surface-400">
+              <p className="text-[var(--text-muted)]">
                 Share and embed documents across your knowledge base
               </p>
             </div>
@@ -127,17 +127,17 @@ function FluenceDriveContent() {
 
         {!accessToken ? (
           // Connection CTA
-          <Card className="border-2 border-dashed border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900/50">
+          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
             <CardContent className="py-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
                   <HardDrive className="h-8 w-8 text-violet-600 dark:text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-2">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                     Connect Your Google Drive
                   </h3>
-                  <p className="text-surface-500 dark:text-surface-400 max-w-md mx-auto">
+                  <p className="text-[var(--text-muted)] max-w-md mx-auto">
                     Access your team's documents, share files, and embed them directly into wiki
                     pages and blogs.
                   </p>
@@ -184,7 +184,7 @@ function FluenceDriveContent() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex gap-2 border-b border-[var(--border-main)]">
               {[
                 { id: 'team-docs' as const, label: 'Team Documents', icon: FileText },
                 { id: 'shared' as const, label: 'Shared with Me', icon: Users },
@@ -199,7 +199,7 @@ function FluenceDriveContent() {
                       'flex items-center gap-2 px-4 py-3 font-medium border-b-2 transition-colors',
                       activeTab === tab.id
                         ? 'text-violet-600 dark:text-violet-400 border-violet-600 dark:border-violet-400'
-                        : 'text-surface-600 dark:text-surface-400 border-transparent hover:text-surface-900 dark:hover:text-surface-50'
+                        : 'text-[var(--text-secondary)] border-transparent hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
                     )}
                   >
                     <TabIcon className="h-4 w-4" />
@@ -215,14 +215,14 @@ function FluenceDriveContent() {
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-                        <FileText className="h-6 w-6 text-surface-400" />
+                      <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                        <FileText className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-surface-900 dark:text-surface-50">
+                        <h4 className="font-medium text-[var(--text-primary)]">
                           No team documents yet
                         </h4>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-muted)]">
                           Start by uploading your first document
                         </p>
                       </div>
@@ -239,14 +239,14 @@ function FluenceDriveContent() {
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-                        <Users className="h-6 w-6 text-surface-400" />
+                      <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                        <Users className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-surface-900 dark:text-surface-50">
+                        <h4 className="font-medium text-[var(--text-primary)]">
                           No shared documents
                         </h4>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-muted)]">
                           Files shared with you will appear here
                         </p>
                       </div>
@@ -259,14 +259,14 @@ function FluenceDriveContent() {
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-12 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-                        <Clock className="h-6 w-6 text-surface-400" />
+                      <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                        <Clock className="h-6 w-6 text-[var(--text-muted)]" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-surface-900 dark:text-surface-50">
+                        <h4 className="font-medium text-[var(--text-primary)]">
                           No recent files
                         </h4>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-muted)]">
                           Your recently accessed files will appear here
                         </p>
                       </div>
@@ -279,7 +279,7 @@ function FluenceDriveContent() {
             {/* How to Embed Section */}
             <Card className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800">
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                   How to Embed Files in Wiki Pages
                 </h3>
@@ -289,10 +289,10 @@ function FluenceDriveContent() {
                       1
                     </div>
                     <div>
-                      <p className="font-medium text-surface-900 dark:text-surface-50">
+                      <p className="font-medium text-[var(--text-primary)]">
                         Upload your document
                       </p>
-                      <p className="text-sm text-surface-600 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-secondary)]">
                         Use the "Upload Document" button to add files to your team drive
                       </p>
                     </div>
@@ -302,10 +302,10 @@ function FluenceDriveContent() {
                       2
                     </div>
                     <div>
-                      <p className="font-medium text-surface-900 dark:text-surface-50">
+                      <p className="font-medium text-[var(--text-primary)]">
                         Copy the file link
                       </p>
-                      <p className="text-sm text-surface-600 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-secondary)]">
                         Right-click on the file and select "Share File" to get a shareable link
                       </p>
                     </div>
@@ -315,10 +315,10 @@ function FluenceDriveContent() {
                       3
                     </div>
                     <div>
-                      <p className="font-medium text-surface-900 dark:text-surface-50">
+                      <p className="font-medium text-[var(--text-primary)]">
                         Embed in wiki/blog
                       </p>
-                      <p className="text-sm text-surface-600 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-secondary)]">
                         Paste the link in your wiki page or blog post using the embed syntax
                       </p>
                     </div>
@@ -330,32 +330,32 @@ function FluenceDriveContent() {
             {/* Embed Examples */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                   <Code className="h-5 w-5" />
                   Embed Examples
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For Google Docs:
                     </p>
-                    <pre className="bg-surface-100 dark:bg-surface-900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://docs.google.com/document/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For PDFs:
                     </p>
-                    <pre className="bg-surface-100 dark:bg-surface-900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://drive.google.com/file/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <p className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       For Spreadsheets:
                     </p>
-                    <pre className="bg-surface-100 dark:bg-surface-900 p-3 rounded-lg text-xs overflow-x-auto">
+                    <pre className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 p-3 rounded-lg text-xs overflow-x-auto">
                       {`[embed]https://docs.google.com/spreadsheets/d/FILE_ID/preview[/embed]`}
                     </pre>
                   </div>
@@ -364,7 +364,7 @@ function FluenceDriveContent() {
             </Card>
 
             {/* Disconnect Button */}
-            <div className="flex justify-end pt-4 border-t border-surface-200 dark:border-surface-700">
+            <div className="flex justify-end pt-4 border-t border-[var(--border-main)]">
               <Button variant="outline" onClick={handleDisconnect} size="sm">
                 Disconnect Google Drive
               </Button>

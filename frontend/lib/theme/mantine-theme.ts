@@ -3,11 +3,10 @@
 import { createTheme, MantineColorsTuple } from '@mantine/core';
 import {
   amber,
+  blue,
   grass,
-  jade,
+  indigo,
   orange,
-  sand,
-  sky,
   slate,
   tomato,
 } from '@radix-ui/colors';
@@ -25,8 +24,8 @@ const toMantineTuple = (scale: Record<string, string>, name: string): MantineCol
   scale[`${name}10`],
 ];
 
-// Primary - Jade (fresh, modern teal)
-const primary = toMantineTuple(jade, 'jade');
+// Primary - Indigo (vibrant, modern SaaS)
+const primary = toMantineTuple(indigo, 'indigo');
 
 // Secondary - Slate (neutral foundations)
 const secondary = toMantineTuple(slate, 'slate');
@@ -43,8 +42,8 @@ const warning = toMantineTuple(amber, 'amber');
 // Danger - Tomato
 const danger = toMantineTuple(tomato, 'tomato');
 
-// Info - Sky
-const info = toMantineTuple(sky, 'sky');
+// Info - Blue
+const info = toMantineTuple(blue, 'blue');
 
 // Surface - Slate (cool neutral background)
 const surface = toMantineTuple(slate, 'slate');
@@ -61,8 +60,8 @@ export const theme = createTheme({
     surface,
     // Legacy aliases to keep existing Mantine color props consistent
     blue: info,
-    indigo: info,
-    violet: accent,
+    indigo: primary,
+    violet: primary,
     purple: primary,
     pink: accent,
     teal: primary,

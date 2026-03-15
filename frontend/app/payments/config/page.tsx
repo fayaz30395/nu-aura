@@ -163,10 +163,10 @@ export default function PaymentConfigPage() {
         <div className="flex items-center gap-3 mb-6">
           <Settings className="w-8 h-8 text-primary-600" />
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">
               Payment Configuration
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Configure and manage payment gateway providers
             </p>
           </div>
@@ -188,7 +188,7 @@ export default function PaymentConfigPage() {
 
         {/* Provider Selection */}
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3 text-surface-900 dark:text-surface-50">Payment Providers</h2>
+          <h2 className="text-lg font-semibold mb-3 text-[var(--text-primary)]">Payment Providers</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const).map((provider) => {
               const config = configs.find((c) => c.provider === provider);
@@ -200,15 +200,15 @@ export default function PaymentConfigPage() {
                   className={`p-4 rounded-lg border-2 transition-colors text-left ${
                     isSelected
                       ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                      : 'border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-600'
+                      : 'border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-600'
                   }`}
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                      <h3 className="font-semibold text-[var(--text-primary)]">
                         {paymentService.getProviderLabel(provider)}
                       </h3>
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-1">
                         {config ? 'Configured' : 'Not configured'}
                       </p>
                     </div>
@@ -225,8 +225,8 @@ export default function PaymentConfigPage() {
         </div>
 
         {/* Configuration Form */}
-        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6">
-          <h2 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-50">
+        <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-6">
+          <h2 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">
             Configure {paymentService.getProviderLabel(selectedProvider)}
           </h2>
 
@@ -237,9 +237,9 @@ export default function PaymentConfigPage() {
                 <input
                   type="checkbox"
                   {...register('testMode')}
-                  className="w-5 h-5 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                  className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                <span className="text-sm font-medium text-[var(--text-secondary)]">
                   Test Mode (use sandbox credentials)
                 </span>
               </label>
@@ -247,57 +247,57 @@ export default function PaymentConfigPage() {
 
             {/* Credentials */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Credentials (JSON)
               </label>
               <textarea
                 {...register('credentialsJson')}
                 rows={6}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 font-mono text-sm"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] font-mono text-sm"
                 placeholder='{&#10;  "api_key": "your_api_key",&#10;  "api_secret": "your_api_secret"&#10;}'
               />
               {errors.credentialsJson && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.credentialsJson.message}</p>
               )}
-              <p className="mt-1 text-xs text-surface-600 dark:text-surface-400">
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">
                 Enter your provider credentials as JSON. Check your provider dashboard for API keys.
               </p>
             </div>
 
             {/* Webhook Secret */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Webhook Secret (Optional)
               </label>
               <input
                 type="password"
                 {...register('webhookSecret')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Your webhook secret"
               />
-              <p className="mt-1 text-xs text-surface-600 dark:text-surface-400">
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">
                 Used to verify webhook signatures from your payment provider.
               </p>
             </div>
 
             {/* Webhook URL */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Webhook URL (Optional)
               </label>
               <input
                 type="url"
                 {...register('webhookUrl')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="https://your-domain.com/webhooks/payments"
               />
-              <p className="mt-1 text-xs text-surface-600 dark:text-surface-400">
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">
                 URL where your payment provider will send webhook notifications.
               </p>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+            <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
               <button
                 type="submit"
                 disabled={isSubmitting || saveConfigMutation.isPending}
@@ -363,20 +363,20 @@ export default function PaymentConfigPage() {
         {/* Active Configurations */}
         {configs.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-50">
+            <h2 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">
               Active Configurations
             </h2>
             <div className="space-y-3">
               {configs.map((config) => (
                 <div
                   key={config.id}
-                  className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4 flex items-center justify-between"
+                  className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] p-4 flex items-center justify-between"
                 >
                   <div>
-                    <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                    <h3 className="font-semibold text-[var(--text-primary)]">
                       {paymentService.getProviderLabel(config.provider)}
                     </h3>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {config.testMode ? 'Test Mode' : 'Live Mode'} • Updated{' '}
                       {paymentService.formatDate(config.updatedAt)}
                     </p>
@@ -389,9 +389,9 @@ export default function PaymentConfigPage() {
                         handleToggleActive(config.provider, e.target.checked)
                       }
                       disabled={toggleConfigMutation.isPending}
-                      className="w-5 h-5 rounded border-surface-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
+                      className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500 disabled:opacity-50"
                     />
-                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">
                       {config.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </label>

@@ -105,7 +105,7 @@ export default function OrgHierarchyPage() {
       'MID': { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-700' },
       'ENTRY': { bg: 'bg-pink-50', border: 'border-pink-300', text: 'text-pink-700' },
     };
-    return level && colors[level] ? colors[level] : { bg: 'bg-surface-50 dark:bg-surface-800/50', border: 'border-surface-300 dark:border-surface-600', text: 'text-surface-700 dark:text-surface-300' };
+    return level && colors[level] ? colors[level] : { bg: 'bg-[var(--bg-secondary)]/50', border: 'border-[var(--border-main)] dark:border-[var(--border-main)]', text: 'text-[var(--text-secondary)]' };
   };
 
   const renderEmployeeCard = (employee: EmployeeNode, level: number = 0) => {
@@ -218,7 +218,7 @@ export default function OrgHierarchyPage() {
 
           {/* Connector line to subordinates */}
           {hasSubordinates && isExpanded && (
-            <div className="absolute left-1/2 -translate-x-1/2 h-8 w-0.5 bg-surface-300 dark:bg-surface-600"></div>
+            <div className="absolute left-1/2 -translate-x-1/2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
           )}
         </div>
 
@@ -228,7 +228,7 @@ export default function OrgHierarchyPage() {
             {/* Horizontal line connecting subordinates */}
             {employee.subordinates!.length > 1 && (
               <div
-                className="absolute top-0 h-0.5 bg-surface-300 dark:bg-surface-600"
+                className="absolute top-0 h-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"
                 style={{
                   left: '50%',
                   right: '50%',
@@ -243,7 +243,7 @@ export default function OrgHierarchyPage() {
               {employee.subordinates!.map((subordinate) => (
                 <div key={subordinate.id} className="relative">
                   {/* Vertical line to subordinate */}
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-2 h-8 w-0.5 bg-surface-300 dark:bg-surface-600"></div>
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-2 h-8 w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600"></div>
                   {renderEmployeeCard(subordinate, level + 1)}
                 </div>
               ))}
@@ -259,13 +259,13 @@ export default function OrgHierarchyPage() {
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-surface-800 dark:text-surface-200 flex items-center space-x-3">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center space-x-3">
             <svg className="h-8 w-8 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
             </svg>
             <span>Organization Chart</span>
           </h1>
-          <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Employee reporting structure and team hierarchy
           </p>
         </div>
@@ -287,7 +287,7 @@ export default function OrgHierarchyPage() {
                 collectIds(hierarchy);
                 setExpandedNodes(allIds);
               }}
-              className="px-4 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors flex items-center space-x-2"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -296,7 +296,7 @@ export default function OrgHierarchyPage() {
             </button>
             <button
               onClick={() => setExpandedNodes(new Set())}
-              className="px-4 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors flex items-center space-x-2"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6m0 0L4 11m5-5l5 5" />
@@ -305,7 +305,7 @@ export default function OrgHierarchyPage() {
             </button>
           </div>
 
-          <div className="text-sm text-surface-600 dark:text-surface-400">
+          <div className="text-sm text-[var(--text-secondary)]">
             {hierarchy.length > 0 && (
               <span>
                 <strong>{hierarchy.reduce((sum, emp) => {
@@ -325,7 +325,7 @@ export default function OrgHierarchyPage() {
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary-600 mx-auto"></div>
-                <p className="mt-6 text-surface-600 dark:text-surface-400 font-medium">Loading organization chart...</p>
+                <p className="mt-6 text-[var(--text-secondary)] font-medium">Loading organization chart...</p>
               </div>
             </div>
           ) : error ? (
@@ -347,8 +347,8 @@ export default function OrgHierarchyPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
-                <p className="text-surface-600 dark:text-surface-400 font-medium mb-2">No employees found</p>
-                <p className="text-sm text-surface-600 dark:text-surface-400">Add employees to build your organization chart</p>
+                <p className="text-[var(--text-secondary)] font-medium mb-2">No employees found</p>
+                <p className="text-sm text-[var(--text-secondary)]">Add employees to build your organization chart</p>
               </div>
             </div>
           ) : (

@@ -53,8 +53,8 @@ function CandidatesPageLoading() {
   return (
     <AppLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-surface-200 dark:bg-surface-700 rounded w-1/4" />
-        <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
+        <div className="h-8 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded w-1/4" />
+        <div className="h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded" />
       </div>
     </AppLayout>
   );
@@ -515,9 +515,9 @@ function CandidatesPage() {
       OFFER_ACCEPTED: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
       OFFER_DECLINED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
       REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
-      WITHDRAWN: 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300',
+      WITHDRAWN: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]',
     };
-    return colorMap[status] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    return colorMap[status] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   };
 
   const getStageColor = (stage?: RecruitmentStage) => {
@@ -536,7 +536,7 @@ function CandidatesPage() {
       CANDIDATE_REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
       OFFER_NDA_TO_BE_RELEASED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
     };
-    return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    return colorMap[stage || 'RECRUITERS_PHONE_CALL'] || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   };
 
   const getMatchScoreColor = (score: number) => {
@@ -573,8 +573,8 @@ function CandidatesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Candidates</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">Track and manage candidate applications</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Candidates</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Track and manage candidate applications</p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -608,8 +608,8 @@ function CandidatesPage() {
                   <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Total Candidates</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Total Candidates</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -621,8 +621,8 @@ function CandidatesPage() {
                   <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">New</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.new}</p>
+                  <p className="text-sm text-[var(--text-muted)]">New</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.new}</p>
                 </div>
               </div>
             </CardContent>
@@ -634,8 +634,8 @@ function CandidatesPage() {
                   <Users className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">In Interview</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.interview}</p>
+                  <p className="text-sm text-[var(--text-muted)]">In Interview</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.interview}</p>
                 </div>
               </div>
             </CardContent>
@@ -647,8 +647,8 @@ function CandidatesPage() {
                   <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Selected</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.selected}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Selected</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.selected}</p>
                 </div>
               </div>
             </CardContent>
@@ -660,19 +660,19 @@ function CandidatesPage() {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search candidates..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <select
                 value={selectedJobFilter}
                 onChange={(e) => setSelectedJobFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Job Openings</option>
                 {jobOpenings.map((job) => (
@@ -682,7 +682,7 @@ function CandidatesPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Status</option>
                 <option value="NEW">New</option>
@@ -703,11 +703,11 @@ function CandidatesPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             {candidatesLoading ? (
-              <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading candidates...</div>
+              <div className="text-center py-12 text-[var(--text-muted)]">Loading candidates...</div>
             ) : filteredCandidates.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                <p className="text-surface-500 dark:text-surface-400">No candidates found</p>
+                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <p className="text-[var(--text-muted)]">No candidates found</p>
                 <Button onClick={() => { setEditingCandidate(null); candidateForm.reset(); setShowAddModal(true); }} className="mt-4">
                   Add First Candidate
                 </Button>
@@ -715,22 +715,22 @@ function CandidatesPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Candidate</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Job</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Experience</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Stage</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Source</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Experience</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Stage</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Source</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {filteredCandidates.map((candidate) => {
                       const matchScore = matchScores.get(candidate.id);
                       return (
-                        <tr key={candidate.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                        <tr key={candidate.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
@@ -739,16 +739,16 @@ function CandidatesPage() {
                                 </span>
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{candidate.fullName}</div>
-                                <div className="text-sm text-surface-500 dark:text-surface-400">{candidate.email}</div>
+                                <div className="text-sm font-medium text-[var(--text-primary)]">{candidate.fullName}</div>
+                                <div className="text-sm text-[var(--text-muted)]">{candidate.email}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-sm text-surface-900 dark:text-surface-50">{candidate.jobTitle || '-'}</div>
-                            <div className="text-xs text-surface-500 dark:text-surface-400">{candidate.candidateCode}</div>
+                            <div className="text-sm text-[var(--text-primary)]">{candidate.jobTitle || '-'}</div>
+                            <div className="text-xs text-[var(--text-muted)]">{candidate.candidateCode}</div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                          <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                             {candidate.totalExperience ? `${candidate.totalExperience} years` : '-'}
                           </td>
                           <td className="px-6 py-4">
@@ -763,14 +763,14 @@ function CandidatesPage() {
                               {candidate.status.replace(/_/g, ' ')}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                          <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                             {candidate.source?.replace(/_/g, ' ') || '-'}
                           </td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => { setSelectedCandidate(candidate); setShowViewModal(true); }}
-                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                                 title="View"
                               >
                                 <Eye className="h-4 w-4" />
@@ -778,7 +778,7 @@ function CandidatesPage() {
                               <button
                                 onClick={() => handleCalculateMatchScore(candidate)}
                                 disabled={aiLoadingState === `match-${candidate.id}`}
-                                className="p-2 text-surface-500 hover:text-purple-600 dark:text-surface-400 dark:hover:text-purple-400 transition-colors disabled:opacity-50"
+                                className="p-2 text-[var(--text-muted)] hover:text-purple-600 dark:text-[var(--text-muted)] dark:hover:text-purple-400 transition-colors disabled:opacity-50"
                                 title="Calculate Match Score"
                               >
                                 {aiLoadingState === `match-${candidate.id}` ? (
@@ -795,7 +795,7 @@ function CandidatesPage() {
                               <button
                                 onClick={() => handleGenerateScreeningSummary(candidate)}
                                 disabled={aiLoadingState === `screening-${candidate.id}`}
-                                className="p-2 text-surface-500 hover:text-cyan-600 dark:text-surface-400 dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
+                                className="p-2 text-[var(--text-muted)] hover:text-cyan-600 dark:text-[var(--text-muted)] dark:hover:text-cyan-400 transition-colors disabled:opacity-50"
                                 title="Screening Summary"
                               >
                                 {aiLoadingState === `screening-${candidate.id}` ? (
@@ -807,7 +807,7 @@ function CandidatesPage() {
                               <button
                                 onClick={() => handleSynthesizeFeedback(candidate)}
                                 disabled={aiLoadingState === `feedback-${candidate.id}`}
-                                className="p-2 text-surface-500 hover:text-lime-600 dark:text-surface-400 dark:hover:text-lime-400 transition-colors disabled:opacity-50"
+                                className="p-2 text-[var(--text-muted)] hover:text-lime-600 dark:text-[var(--text-muted)] dark:hover:text-lime-400 transition-colors disabled:opacity-50"
                                 title="Synthesize Feedback"
                               >
                                 {aiLoadingState === `feedback-${candidate.id}` ? (
@@ -818,7 +818,7 @@ function CandidatesPage() {
                               </button>
                               <button
                                 onClick={() => router.push(`/recruitment/interviews?candidateId=${candidate.id}`)}
-                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                                 title="Schedule Interview"
                               >
                                 <Calendar className="h-4 w-4" />
@@ -826,7 +826,7 @@ function CandidatesPage() {
                               {candidate.status === 'SELECTED' && (
                                 <button
                                   onClick={() => { setCandidateForOffer(candidate); setShowOfferModal(true); }}
-                                  className="p-2 text-surface-500 hover:text-teal-600 dark:text-surface-400 dark:hover:text-teal-400 transition-colors"
+                                  className="p-2 text-[var(--text-muted)] hover:text-teal-600 dark:text-[var(--text-muted)] dark:hover:text-teal-400 transition-colors"
                                   title="Generate Offer Letter"
                                 >
                                   <Send className="h-4 w-4" />
@@ -836,14 +836,14 @@ function CandidatesPage() {
                                 <>
                                   <button
                                     onClick={() => { setCandidateForOffer(candidate); setConfirmedJoiningDate(candidate.proposedJoiningDate || ''); setShowAcceptModal(true); }}
-                                    className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
+                                    className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:text-[var(--text-muted)] dark:hover:text-green-400 transition-colors"
                                     title="Accept Offer"
                                   >
                                     <CheckCircle className="h-4 w-4" />
                                   </button>
                                   <button
                                     onClick={() => { setCandidateForOffer(candidate); setDeclineReason(''); setShowDeclineModal(true); }}
-                                    className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                                    className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
                                     title="Decline Offer"
                                   >
                                     <XCircle className="h-4 w-4" />
@@ -852,14 +852,14 @@ function CandidatesPage() {
                               )}
                               <button
                                 onClick={() => handleEditCandidate(candidate)}
-                                className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                                 title="Edit"
                               >
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => { setCandidateToDelete(candidate); setShowDeleteModal(true); }}
-                                className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
                                 title="Delete"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -881,14 +881,14 @@ function CandidatesPage() {
         {/* Parse Resume Modal */}
         {showParseResumeModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                     <Sparkles className="h-6 w-6 text-primary-500" />
                     Parse Resume
                   </h2>
-                  <button onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -896,34 +896,34 @@ function CandidatesPage() {
                 {!parsedResume ? (
                   <form onSubmit={resumeParseForm.handleSubmit(handleParseResume)} className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume Text</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume Text</label>
                       <textarea
                         {...resumeParseForm.register('resumeText')}
                         rows={6}
                         placeholder="Paste resume content here..."
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {resumeParseForm.formState.errors.resumeText && (
                         <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeText.message}</p>
                       )}
                     </div>
 
-                    <div className="text-center text-surface-500 dark:text-surface-400">OR</div>
+                    <div className="text-center text-[var(--text-muted)]">OR</div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume URL</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume URL</label>
                       <input
                         {...resumeParseForm.register('resumeUrl')}
                         type="url"
                         placeholder="https://example.com/resume.pdf"
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {resumeParseForm.formState.errors.resumeUrl && (
                         <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeUrl.message}</p>
                       )}
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                       <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); resumeParseForm.reset(); setParsedResume(null); }} className="flex-1">
                         Cancel
                       </Button>
@@ -937,43 +937,43 @@ function CandidatesPage() {
                     <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl space-y-3">
                       {parsedResume.fullName && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Full Name</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.fullName}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Full Name</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.fullName}</p>
                         </div>
                       )}
                       {parsedResume.email && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Email</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.email}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Email</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.email}</p>
                         </div>
                       )}
                       {parsedResume.phone && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Phone</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.phone}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.phone}</p>
                         </div>
                       )}
                       {parsedResume.currentCompany && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Current Company</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.currentCompany}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Current Company</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.currentCompany}</p>
                         </div>
                       )}
                       {parsedResume.currentDesignation && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Current Designation</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.currentDesignation}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Current Designation</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.currentDesignation}</p>
                         </div>
                       )}
                       {parsedResume.totalExperienceYears && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Total Experience</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{parsedResume.totalExperienceYears} years</p>
+                          <p className="text-xs text-[var(--text-muted)]">Total Experience</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{parsedResume.totalExperienceYears} years</p>
                         </div>
                       )}
                       {parsedResume.skills && parsedResume.skills.length > 0 && (
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Skills</p>
+                          <p className="text-xs text-[var(--text-muted)] mb-2">Skills</p>
                           <div className="flex flex-wrap gap-2">
                             {parsedResume.skills.map((skill, idx) => (
                               <span key={idx} className="px-2.5 py-1 text-xs rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300">
@@ -985,7 +985,7 @@ function CandidatesPage() {
                       )}
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                       <Button type="button" variant="outline" onClick={() => { setShowParseResumeModal(false); setParsedResume(null); resumeParseForm.reset(); }} className="flex-1">
                         Cancel
                       </Button>
@@ -1003,13 +1003,13 @@ function CandidatesPage() {
         {/* Add/Edit Candidate Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingCandidate ? 'Edit Candidate' : 'Add Candidate'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1017,11 +1017,11 @@ function CandidatesPage() {
                 <form onSubmit={candidateForm.handleSubmit(handleCandidateSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate Code *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate Code *</label>
                       <input
                         type="text"
                         {...candidateForm.register('candidateCode')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="CAN-001"
                       />
                       {candidateForm.formState.errors.candidateCode && (
@@ -1029,10 +1029,10 @@ function CandidatesPage() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
                       <select
                         {...candidateForm.register('jobOpeningId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Job Opening</option>
                         {jobOpenings.map((job) => (
@@ -1047,22 +1047,22 @@ function CandidatesPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">First Name *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">First Name *</label>
                       <input
                         type="text"
                         {...candidateForm.register('firstName')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.firstName && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Last Name *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Last Name *</label>
                       <input
                         type="text"
                         {...candidateForm.register('lastName')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.lastName && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
@@ -1072,22 +1072,22 @@ function CandidatesPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Email *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Email *</label>
                       <input
                         type="email"
                         {...candidateForm.register('email')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.email && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.email.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Phone</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Phone</label>
                       <input
                         type="tel"
                         {...candidateForm.register('phone')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.phone && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
@@ -1097,73 +1097,73 @@ function CandidatesPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Company</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Company</label>
                       <input
                         type="text"
                         {...candidateForm.register('currentCompany')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Designation</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Designation</label>
                       <input
                         type="text"
                         {...candidateForm.register('currentDesignation')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
                       <input
                         type="text"
                         {...candidateForm.register('currentLocation')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-4 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Experience (years)</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience (years)</label>
                       <input
                         type="number"
                         step="0.5"
                         {...candidateForm.register('totalExperience', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current CTC</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current CTC</label>
                       <input
                         type="number"
                         {...candidateForm.register('currentCtc', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Expected CTC</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expected CTC</label>
                       <input
                         type="number"
                         {...candidateForm.register('expectedCtc', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notice (days)</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notice (days)</label>
                       <input
                         type="number"
                         {...candidateForm.register('noticePeriodDays', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Source</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Source</label>
                       <select
                         {...candidateForm.register('source')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="JOB_PORTAL">Job Portal</option>
                         <option value="REFERRAL">Referral</option>
@@ -1176,10 +1176,10 @@ function CandidatesPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
                       <select
                         {...candidateForm.register('status')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="NEW">New</option>
                         <option value="SCREENING">Screening</option>
@@ -1193,10 +1193,10 @@ function CandidatesPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Stage</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Current Stage</label>
                       <select
                         {...candidateForm.register('currentStage')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="RECRUITERS_PHONE_CALL">Phone Call</option>
                         <option value="PANEL_REVIEW">Panel Review</option>
@@ -1217,10 +1217,10 @@ function CandidatesPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Assigned Recruiter</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Assigned Recruiter</label>
                       <select
                         {...candidateForm.register('assignedRecruiterId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Recruiter</option>
                         {recruiters.map((recruiter) => (
@@ -1229,11 +1229,11 @@ function CandidatesPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Resume URL</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Resume URL</label>
                       <input
                         type="url"
                         {...candidateForm.register('resumeUrl')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="https://..."
                       />
                       {candidateForm.formState.errors.resumeUrl && (
@@ -1243,16 +1243,16 @@ function CandidatesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
                     <textarea
                       rows={3}
                       {...candidateForm.register('notes')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Additional notes..."
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); setEditingCandidate(null); candidateForm.reset(); }} className="flex-1">
                       Cancel
                     </Button>
@@ -1269,11 +1269,11 @@ function CandidatesPage() {
         {/* View Candidate Modal */}
         {showViewModal && selectedCandidate && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Candidate Details</h2>
-                  <button onClick={() => setShowViewModal(false)} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">Candidate Details</h2>
+                  <button onClick={() => setShowViewModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1286,8 +1286,8 @@ function CandidatesPage() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-50">{selectedCandidate.fullName}</h3>
-                      <p className="text-surface-500 dark:text-surface-400">{selectedCandidate.candidateCode}</p>
+                      <h3 className="text-xl font-semibold text-[var(--text-primary)]">{selectedCandidate.fullName}</h3>
+                      <p className="text-[var(--text-muted)]">{selectedCandidate.candidateCode}</p>
                       <div className="flex gap-2 mt-2">
                         <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedCandidate.status)}`}>
                           {selectedCandidate.status.replace(/_/g, ' ')}
@@ -1302,77 +1302,77 @@ function CandidatesPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                      <Mail className="h-5 w-5 text-surface-400" />
+                    <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                       <div>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">Email</p>
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{selectedCandidate.email}</p>
+                        <p className="text-xs text-[var(--text-muted)]">Email</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)]">{selectedCandidate.email}</p>
                       </div>
                     </div>
                     {selectedCandidate.phone && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Phone className="h-5 w-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Phone className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Phone</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{selectedCandidate.phone}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{selectedCandidate.phone}</p>
                         </div>
                       </div>
                     )}
                     {selectedCandidate.currentLocation && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <MapPin className="h-5 w-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <MapPin className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Location</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{selectedCandidate.currentLocation}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Location</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{selectedCandidate.currentLocation}</p>
                         </div>
                       </div>
                     )}
                     {selectedCandidate.currentCompany && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Building className="h-5 w-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Building className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Current Company</p>
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{selectedCandidate.currentCompany}</p>
+                          <p className="text-xs text-[var(--text-muted)]">Current Company</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">{selectedCandidate.currentCompany}</p>
                         </div>
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl text-center">
-                      <p className="text-xs text-surface-500 dark:text-surface-400">Experience</p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                      <p className="text-xs text-[var(--text-muted)]">Experience</p>
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.totalExperience ? `${selectedCandidate.totalExperience}y` : '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl text-center">
-                      <p className="text-xs text-surface-500 dark:text-surface-400">Current CTC</p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                      <p className="text-xs text-[var(--text-muted)]">Current CTC</p>
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.currentCtc?.toLocaleString() || '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl text-center">
-                      <p className="text-xs text-surface-500 dark:text-surface-400">Expected CTC</p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                      <p className="text-xs text-[var(--text-muted)]">Expected CTC</p>
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.expectedCtc?.toLocaleString() || '-'}
                       </p>
                     </div>
-                    <div className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl text-center">
-                      <p className="text-xs text-surface-500 dark:text-surface-400">Notice Period</p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                    <div className="p-3 bg-[var(--bg-secondary)] rounded-xl text-center">
+                      <p className="text-xs text-[var(--text-muted)]">Notice Period</p>
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {selectedCandidate.noticePeriodDays ? `${selectedCandidate.noticePeriodDays}d` : '-'}
                       </p>
                     </div>
                   </div>
 
                   {selectedCandidate.notes && (
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                      <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Notes</p>
-                      <p className="text-sm text-surface-900 dark:text-surface-50">{selectedCandidate.notes}</p>
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                      <p className="text-xs text-[var(--text-muted)] mb-2">Notes</p>
+                      <p className="text-sm text-[var(--text-primary)]">{selectedCandidate.notes}</p>
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button variant="outline" onClick={() => setShowViewModal(false)} className="flex-1">
                       Close
                     </Button>
@@ -1392,15 +1392,15 @@ function CandidatesPage() {
         {/* Delete Candidate Modal */}
         {showDeleteModal && candidateToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Delete Candidate</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Candidate</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Are you sure you want to delete <strong className="text-surface-700 dark:text-surface-300">{candidateToDelete.fullName}</strong>? This action cannot be undone.
+              <p className="text-sm text-[var(--text-muted)] mb-6">
+                Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{candidateToDelete.fullName}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setCandidateToDelete(null); }} className="flex-1">
@@ -1417,7 +1417,7 @@ function CandidatesPage() {
         {/* Screening Summary Modal */}
         {showScreeningSummaryModal && screeningSummary && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 {/* Demo Mode Banner */}
                 {screeningSummary.aiModelVersion === 'mock-v1' && (
@@ -1432,11 +1432,11 @@ function CandidatesPage() {
 
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                     <Brain className="h-6 w-6 text-purple-500" />
                     AI Screening Summary
                   </h2>
-                  <button onClick={() => { setShowScreeningSummaryModal(false); setScreeningSummary(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowScreeningSummaryModal(false); setScreeningSummary(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1444,13 +1444,13 @@ function CandidatesPage() {
                 {/* Info Bar */}
                 <div className="mb-6 space-y-3">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                      <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Candidate</p>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{screeningSummary.candidateName}</p>
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                      <p className="text-xs text-[var(--text-muted)] mb-1">Candidate</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{screeningSummary.candidateName}</p>
                     </div>
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                      <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Job Title</p>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{screeningSummary.jobTitle}</p>
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                      <p className="text-xs text-[var(--text-muted)] mb-1">Job Title</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{screeningSummary.jobTitle}</p>
                     </div>
                   </div>
 
@@ -1555,17 +1555,17 @@ function CandidatesPage() {
                 </div>
 
                 {/* Summary Section */}
-                <div className="mb-6 p-4 bg-surface-50 dark:bg-surface-800 rounded-xl border border-surface-200 dark:border-surface-700">
-                  <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-3">Summary</p>
-                  <p className="text-sm text-surface-700 dark:text-surface-300 leading-relaxed">{screeningSummary.summary}</p>
+                <div className="mb-6 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-main)]">
+                  <p className="text-sm font-medium text-[var(--text-primary)] mb-3">Summary</p>
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{screeningSummary.summary}</p>
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-between items-center pt-4 border-t border-surface-200 dark:border-surface-700">
-                  <div className="flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
+                <div className="flex justify-between items-center pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
                     <Sparkles className="h-3.5 w-3.5" />
                     <span>Powered by AI</span>
-                    <span className="px-2 py-1 rounded bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300 font-mono">
+                    <span className="px-2 py-1 rounded bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] font-mono">
                       {screeningSummary.aiModelVersion}
                     </span>
                   </div>
@@ -1581,35 +1581,35 @@ function CandidatesPage() {
         {/* Feedback Synthesis Modal */}
         {showFeedbackSynthesisModal && feedbackSynthesis && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                     <MessageSquare className="h-6 w-6 text-lime-500" />
                     Feedback Synthesis
                   </h2>
-                  <button onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Candidate</p>
-                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{feedbackSynthesis.candidateName}</p>
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                    <p className="text-xs text-[var(--text-muted)] mb-1">Candidate</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{feedbackSynthesis.candidateName}</p>
                   </div>
 
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Candidate Narrative</p>
-                    <p className="text-sm text-surface-900 dark:text-surface-50">{feedbackSynthesis.candidateNarrative}</p>
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                    <p className="text-xs text-[var(--text-muted)] mb-2">Candidate Narrative</p>
+                    <p className="text-sm text-[var(--text-primary)]">{feedbackSynthesis.candidateNarrative}</p>
                   </div>
 
                   {feedbackSynthesis.themes && feedbackSynthesis.themes.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Key Themes</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Key Themes</p>
                       <ul className="list-disc list-inside space-y-1">
                         {feedbackSynthesis.themes.map((theme, idx) => (
-                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{theme}</li>
+                          <li key={idx} className="text-sm text-[var(--text-secondary)]">{theme}</li>
                         ))}
                       </ul>
                     </div>
@@ -1639,10 +1639,10 @@ function CandidatesPage() {
 
                   {feedbackSynthesis.missingData && feedbackSynthesis.missingData.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Missing Data</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Missing Data</p>
                       <ul className="list-disc list-inside space-y-1">
                         {feedbackSynthesis.missingData.map((missing, idx) => (
-                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{missing}</li>
+                          <li key={idx} className="text-sm text-[var(--text-secondary)]">{missing}</li>
                         ))}
                       </ul>
                     </div>
@@ -1650,21 +1650,21 @@ function CandidatesPage() {
 
                   {feedbackSynthesis.openQuestions && feedbackSynthesis.openQuestions.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 mb-2">Open Questions</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Open Questions</p>
                       <ul className="list-disc list-inside space-y-1">
                         {feedbackSynthesis.openQuestions.map((question, idx) => (
-                          <li key={idx} className="text-sm text-surface-600 dark:text-surface-400">{question}</li>
+                          <li key={idx} className="text-sm text-[var(--text-secondary)]">{question}</li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-2">Recommended Next Step</p>
-                    <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{feedbackSynthesis.recommendedNextStep}</p>
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-xl">
+                    <p className="text-xs text-[var(--text-muted)] mb-2">Recommended Next Step</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{feedbackSynthesis.recommendedNextStep}</p>
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button variant="outline" onClick={() => { setShowFeedbackSynthesisModal(false); setFeedbackSynthesis(null); }} className="flex-1">
                       Close
                     </Button>
@@ -1678,13 +1678,13 @@ function CandidatesPage() {
         {/* Generate Offer Modal */}
         {showOfferModal && candidateForOffer && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
                     Generate Offer Letter
                   </h2>
-                  <button onClick={() => setShowOfferModal(false)} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => setShowOfferModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1697,11 +1697,11 @@ function CandidatesPage() {
 
                 <form onSubmit={offerForm.handleSubmit(handleOfferSubmit)} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offered Salary *</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offered Salary *</label>
                     <input
                       type="number"
                       {...offerForm.register('offeredSalary', { valueAsNumber: true })}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {offerForm.formState.errors.offeredSalary && (
                       <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
@@ -1709,20 +1709,20 @@ function CandidatesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Position Title</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Position Title</label>
                     <input
                       type="text"
                       {...offerForm.register('positionTitle')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Joining Date *</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Joining Date *</label>
                     <input
                       type="date"
                       {...offerForm.register('joiningDate')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {offerForm.formState.errors.joiningDate && (
                       <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
@@ -1730,24 +1730,24 @@ function CandidatesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Offer Expiry Date</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Offer Expiry Date</label>
                     <input
                       type="date"
                       {...offerForm.register('offerExpiryDate')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Notes</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Notes</label>
                     <textarea
                       rows={3}
                       {...offerForm.register('notes')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => setShowOfferModal(false)} className="flex-1">
                       Cancel
                     </Button>
@@ -1764,23 +1764,23 @@ function CandidatesPage() {
         {/* Accept Offer Modal */}
         {showAcceptModal && candidateForOffer && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Accept Offer</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Accept Offer</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-4">
-                Mark offer as accepted for <strong className="text-surface-700 dark:text-surface-300">{candidateForOffer.fullName}</strong>?
+              <p className="text-sm text-[var(--text-muted)] mb-4">
+                Mark offer as accepted for <strong className="text-[var(--text-secondary)]">{candidateForOffer.fullName}</strong>?
               </p>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Confirmed Joining Date</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Confirmed Joining Date</label>
                 <input
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-3">
@@ -1798,24 +1798,24 @@ function CandidatesPage() {
         {/* Decline Offer Modal */}
         {showDeclineModal && candidateForOffer && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Decline Offer</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Decline Offer</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-4">
-                Mark offer as declined for <strong className="text-surface-700 dark:text-surface-300">{candidateForOffer.fullName}</strong>?
+              <p className="text-sm text-[var(--text-muted)] mb-4">
+                Mark offer as declined for <strong className="text-[var(--text-secondary)]">{candidateForOffer.fullName}</strong>?
               </p>
               <div className="mb-6">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Decline Reason</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Decline Reason</label>
                 <textarea
                   rows={3}
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Optional: Enter reason for declining..."
-                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-3">

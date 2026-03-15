@@ -125,10 +125,10 @@ export default function AvailabilityCalendarPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Team Availability
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               View team availability, leaves, and project allocations
             </p>
           </div>
@@ -140,7 +140,7 @@ export default function AvailabilityCalendarPage() {
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className={showFilters ? 'bg-surface-100 dark:bg-surface-700' : ''}
+              className={showFilters ? 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]' : ''}
             >
               <Filter className="mr-2 h-4 w-4" />
               Filters
@@ -154,13 +154,13 @@ export default function AvailabilityCalendarPage() {
             <CardContent className="flex flex-wrap items-center gap-4 p-4">
               {/* Department filter */}
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-500">
+                <label className="mb-1 block text-xs font-medium text-[var(--text-muted)]">
                   Department
                 </label>
                 <select
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}
-                  className="rounded-lg border border-surface-200 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none dark:border-surface-700 dark:bg-surface-800"
+                  className="rounded-lg border border-[var(--border-main)] bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
                 >
                   <option value="">All Departments</option>
                   {/* Department options would be loaded from API */}
@@ -174,7 +174,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeLeaves}
                     onChange={(e) => setIncludeLeaves(e.target.checked)}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
                   Show Leaves
                 </label>
@@ -183,7 +183,7 @@ export default function AvailabilityCalendarPage() {
                     type="checkbox"
                     checked={includeHolidays}
                     onChange={(e) => setIncludeHolidays(e.target.checked)}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
                   Show Holidays
                 </label>
@@ -234,7 +234,7 @@ export default function AvailabilityCalendarPage() {
             <Button variant="ghost" size="sm" onClick={navigateNext}>
               <ChevronRight className="h-4 w-4" />
             </Button>
-            <h2 className="ml-2 text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <h2 className="ml-2 text-lg font-semibold text-[var(--text-primary)]">
               {viewMode === 'month'
                 ? format(currentDate, 'MMMM yyyy')
                 : `Week of ${format(startOfWeek(currentDate, { weekStartsOn: 1 }), 'MMM d, yyyy')}`}
@@ -242,13 +242,13 @@ export default function AvailabilityCalendarPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="inline-flex rounded-lg border border-surface-200 dark:border-surface-700">
+            <div className="inline-flex rounded-lg border border-[var(--border-main)]">
               <button
                 onClick={() => setViewMode('week')}
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'week'
                     ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-100 dark:text-surface-400'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-l-lg`}
               >
                 Week
@@ -258,7 +258,7 @@ export default function AvailabilityCalendarPage() {
                 className={`px-4 py-2 text-sm font-medium ${
                   viewMode === 'month'
                     ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-100 dark:text-surface-400'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 } rounded-r-lg`}
               >
                 Month
@@ -313,12 +313,12 @@ function SummaryCard({
   return (
     <Card>
       <CardContent className="flex items-center gap-3 p-4">
-        <div className={`rounded-lg bg-surface-100 p-2 dark:bg-surface-700 ${color}`}>
+        <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{value}</p>
-          <p className="text-xs text-surface-500 dark:text-surface-400">{label}</p>
+          <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+          <p className="text-xs text-[var(--text-muted)]">{label}</p>
         </div>
       </CardContent>
     </Card>

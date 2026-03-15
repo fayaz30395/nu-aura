@@ -40,7 +40,7 @@ const statusFilterOptions: { key: AllocationStatus; label: string; color: string
   { key: 'OVER_ALLOCATED', label: 'Over Allocated', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
   { key: 'OPTIMAL', label: 'Optimal', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
   { key: 'UNDER_UTILIZED', label: 'Under Utilized', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
-  { key: 'UNASSIGNED', label: 'Unassigned', color: 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-400' },
+  { key: 'UNASSIGNED', label: 'Unassigned', color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]' },
 ];
 
 type AllocationRange = '0-25' | '25-50' | '50-75' | '75-100' | '100+';
@@ -258,10 +258,10 @@ export default function WorkloadDashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
               Resource Utilization
             </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               {dateRangeOptions.find(o => o.key === selectedDateRange)?.label}
             </p>
           </div>
@@ -269,13 +269,13 @@ export default function WorkloadDashboardPage() {
             <button
               onClick={() => refetchData()}
               disabled={isLoading}
-              className="rounded-md p-2 text-surface-500 hover:bg-surface-100 hover:text-surface-700 dark:hover:bg-surface-800 dark:hover:text-surface-300"
+              className="rounded-md p-2 text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-secondary)] dark:hover:bg-[var(--bg-secondary)] dark:hover:text-[var(--text-muted)]"
             >
               <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
             </button>
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 rounded-md border border-surface-200 bg-white px-3 py-1.5 text-sm font-medium text-surface-700 hover:bg-surface-50 dark:border-surface-700 dark:bg-surface-800 dark:text-surface-300 dark:hover:bg-surface-700"
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-white px-3 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
             >
               <Download className="h-4 w-4" />
               Export
@@ -289,14 +289,14 @@ export default function WorkloadDashboardPage() {
           <select
             value={selectedDateRange}
             onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-            className="rounded-md border border-surface-200 bg-white px-3 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+            className="rounded-md border border-[var(--border-main)] bg-white px-3 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
           >
             {dateRangeOptions.map((opt) => (
               <option key={opt.key} value={opt.key}>{opt.label}</option>
             ))}
           </select>
 
-          <div className="h-6 w-px bg-surface-200 dark:bg-surface-700" />
+          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]" />
 
           {/* Status pills */}
           <div className="flex items-center gap-1">
@@ -308,7 +308,7 @@ export default function WorkloadDashboardPage() {
                   'rounded-full px-3 py-1 text-xs font-medium transition-all',
                   selectedStatus.includes(opt.key)
                     ? opt.color
-                    : 'text-surface-500 hover:bg-surface-100 dark:text-surface-400 dark:hover:bg-surface-800'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]'
                 )}
               >
                 {opt.label}
@@ -316,7 +316,7 @@ export default function WorkloadDashboardPage() {
             ))}
           </div>
 
-          <div className="h-6 w-px bg-surface-200 dark:bg-surface-700" />
+          <div className="h-6 w-px bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]" />
 
           {/* Allocation range pills */}
           <div className="flex items-center gap-1">
@@ -327,8 +327,8 @@ export default function WorkloadDashboardPage() {
                 className={cn(
                   'rounded-full px-3 py-1 text-xs font-medium transition-all',
                   selectedRanges.includes(opt.key)
-                    ? 'bg-surface-900 text-white dark:bg-surface-100 dark:text-surface-900'
-                    : 'text-surface-500 hover:bg-surface-100 dark:text-surface-400 dark:hover:bg-surface-800'
+                    ? 'bg-[var(--bg-secondary)] text-white dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]'
                 )}
               >
                 {opt.label}
@@ -344,7 +344,7 @@ export default function WorkloadDashboardPage() {
                 setSelectedRanges([]);
                 setSearchQuery('');
               }}
-              className="text-xs text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
             >
               Clear all
             </button>
@@ -352,13 +352,13 @@ export default function WorkloadDashboardPage() {
 
           {/* Search */}
           <div className="relative ml-auto">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="text"
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-56 rounded-md border border-surface-200 bg-white py-1.5 pl-9 pr-3 text-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="w-56 rounded-md border border-[var(--border-main)] bg-white py-1.5 pl-9 pr-3 text-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
             />
           </div>
         </div>
@@ -389,7 +389,7 @@ export default function WorkloadDashboardPage() {
             <WorkloadSummaryStats summary={dashboardData.summary} />
 
             {/* Tabs */}
-            <div className="border-b border-surface-200 dark:border-surface-700">
+            <div className="border-b border-[var(--border-main)]">
               <nav className="-mb-px flex gap-6">
                 {[
                   { key: 'overview', label: 'Overview' },
@@ -403,8 +403,8 @@ export default function WorkloadDashboardPage() {
                     className={cn(
                       'border-b-2 pb-3 text-sm font-medium transition-colors',
                       activeTab === tab.key
-                        ? 'border-surface-900 text-surface-900 dark:border-surface-100 dark:text-surface-100'
-                        : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-300'
+                        ? 'border-[var(--border-main)] text-[var(--text-primary)] dark:border-[var(--border-main)] dark:text-[var(--text-primary)]'
+                        : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)]'
                     )}
                   >
                     {tab.label}
@@ -424,7 +424,7 @@ export default function WorkloadDashboardPage() {
                         Over-Allocated ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                       {(() => {
                         const overAllocated = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OVER_ALLOCATED')
@@ -439,7 +439,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-surface-500">No over-allocated employees</p>
+                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No over-allocated employees</p>
                         );
                       })()}
                     </div>
@@ -452,7 +452,7 @@ export default function WorkloadDashboardPage() {
                         Under-Utilized ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                       {(() => {
                         const underUtilized = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNDER_UTILIZED')
@@ -467,7 +467,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-surface-500">No under-utilized employees</p>
+                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No under-utilized employees</p>
                         );
                       })()}
                     </div>
@@ -476,11 +476,11 @@ export default function WorkloadDashboardPage() {
                   {/* Unassigned */}
                   <div>
                     <div className="mb-3 flex items-center justify-between">
-                      <h3 className="text-sm font-medium text-surface-500 dark:text-surface-400">
+                      <h3 className="text-sm font-medium text-[var(--text-muted)]">
                         Unassigned ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                       {(() => {
                         const unassigned = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'UNASSIGNED')
@@ -495,7 +495,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-surface-500">No unassigned employees</p>
+                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No unassigned employees</p>
                         );
                       })()}
                     </div>
@@ -508,7 +508,7 @@ export default function WorkloadDashboardPage() {
                         Optimal ({filteredEmployees.filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL').length})
                       </h3>
                     </div>
-                    <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                    <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                       {(() => {
                         const optimal = filteredEmployees
                           .filter((e) => calculateDynamicStatus(calculateActiveAllocation(e)) === 'OPTIMAL')
@@ -523,7 +523,7 @@ export default function WorkloadDashboardPage() {
                             />
                           ))
                         ) : (
-                          <p className="py-8 text-center text-sm text-surface-500">No optimally allocated employees</p>
+                          <p className="py-8 text-center text-sm text-[var(--text-muted)]">No optimally allocated employees</p>
                         );
                       })()}
                     </div>
@@ -531,7 +531,7 @@ export default function WorkloadDashboardPage() {
 
                   {/* Departments */}
                   <div className="lg:col-span-2">
-                    <h3 className="mb-3 text-sm font-medium text-surface-900 dark:text-surface-100">
+                    <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">
                       By Department
                     </h3>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -544,7 +544,7 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'employees' && (
-                <div className="divide-y divide-surface-100 rounded-lg border border-surface-200 bg-white dark:divide-surface-800 dark:border-surface-700 dark:bg-surface-900">
+                <div className="divide-y divide-surface-100 rounded-lg border border-[var(--border-main)] bg-white dark:divide-surface-800 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.map((emp) => (
                       <EmployeeWorkloadCard
@@ -574,7 +574,7 @@ export default function WorkloadDashboardPage() {
               )}
 
               {activeTab === 'heatmap' && (
-                <div className="rounded-lg border border-surface-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-900">
+                <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
                   <WorkloadHeatmap
                     data={dashboardData.heatmapData || []}
                     onEmployeeClick={(id) => {
@@ -616,13 +616,13 @@ function DepartmentCard({
   const allocationColor = avgAllocation > 100 ? 'text-red-600' : avgAllocation >= 70 ? 'text-green-600' : 'text-amber-600';
 
   return (
-    <div className="rounded-lg border border-surface-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-900">
+    <div className="rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-medium text-surface-900 dark:text-surface-100">
+          <h3 className="text-sm font-medium text-[var(--text-primary)]">
             {department.departmentName}
           </h3>
-          <p className="mt-0.5 text-xs text-surface-500">
+          <p className="mt-0.5 text-xs text-[var(--text-muted)]">
             {department.employeeCount} members · {department.activeProjects} projects
           </p>
         </div>
@@ -632,7 +632,7 @@ function DepartmentCard({
       </div>
 
       {/* Progress bar */}
-      <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-100 dark:bg-surface-800">
+      <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-[var(--bg-secondary)]">
         <div
           className={cn(
             'h-full rounded-full transition-all',
@@ -648,7 +648,7 @@ function DepartmentCard({
             <span className="text-red-600">{department.overAllocatedCount} over</span>
             <span className="text-green-600">{department.optimalCount} optimal</span>
             <span className="text-amber-600">{department.underUtilizedCount} under</span>
-            <span className="text-surface-400">{department.unassignedCount} free</span>
+            <span className="text-[var(--text-muted)]">{department.unassignedCount} free</span>
           </div>
         </div>
       )}

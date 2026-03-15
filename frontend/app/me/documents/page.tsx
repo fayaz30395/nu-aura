@@ -63,7 +63,7 @@ const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; colo
   GENERATED: { icon: <CheckCircle className="h-4 w-4" />, color: 'text-success-600', bgColor: 'bg-success-100 dark:bg-success-900/30' },
   DELIVERED: { icon: <Truck className="h-4 w-4" />, color: 'text-primary-600', bgColor: 'bg-primary-100 dark:bg-primary-900/30' },
   REJECTED: { icon: <XCircle className="h-4 w-4" />, color: 'text-danger-600', bgColor: 'bg-danger-100 dark:bg-danger-900/30' },
-  CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-surface-500', bgColor: 'bg-surface-100 dark:bg-surface-800' },
+  CANCELLED: { icon: <X className="h-4 w-4" />, color: 'text-[var(--text-muted)]', bgColor: 'bg-[var(--bg-secondary)]' },
 };
 
 export default function MyDocumentsPage() {
@@ -148,9 +148,9 @@ export default function MyDocumentsPage() {
         ]}
       >
         <div className="text-center py-12">
-          <FileText className="h-16 w-16 mx-auto text-surface-300 dark:text-surface-600 mb-4" />
-          <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">No Employee Profile Linked</h2>
-          <p className="text-surface-500 dark:text-surface-400 max-w-md mx-auto">
+          <FileText className="h-16 w-16 mx-auto text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No Employee Profile Linked</h2>
+          <p className="text-[var(--text-muted)] max-w-md mx-auto">
             Document requests require an employee profile. Use the admin panels to manage employee documents.
           </p>
           <button
@@ -176,10 +176,10 @@ export default function MyDocumentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Document Requests
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Request official documents and track their status
             </p>
           </div>
@@ -197,10 +197,10 @@ export default function MyDocumentsPage() {
                 <Clock className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'PENDING').length}
                 </p>
-                <p className="text-sm text-surface-500">Pending</p>
+                <p className="text-sm text-[var(--text-muted)]">Pending</p>
               </div>
             </div>
           </Card>
@@ -210,10 +210,10 @@ export default function MyDocumentsPage() {
                 <AlertCircle className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'IN_PROGRESS').length}
                 </p>
-                <p className="text-sm text-surface-500">In Progress</p>
+                <p className="text-sm text-[var(--text-muted)]">In Progress</p>
               </div>
             </div>
           </Card>
@@ -223,23 +223,23 @@ export default function MyDocumentsPage() {
                 <CheckCircle className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.filter((r) => r.status === 'GENERATED' || r.status === 'DELIVERED').length}
                 </p>
-                <p className="text-sm text-surface-500">Ready</p>
+                <p className="text-sm text-[var(--text-muted)]">Ready</p>
               </div>
             </div>
           </Card>
           <Card padding="md">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800 text-surface-600">
+              <div className="p-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                 <FileText className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {requests.length}
                 </p>
-                <p className="text-sm text-surface-500">Total</p>
+                <p className="text-sm text-[var(--text-muted)]">Total</p>
               </div>
             </div>
           </Card>
@@ -265,7 +265,7 @@ export default function MyDocumentsPage() {
                     {/* Details */}
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                        <h3 className="font-semibold text-[var(--text-primary)]">
                           {request.documentTypeDisplayName}
                         </h3>
                         <div className="flex items-center gap-2">
@@ -276,11 +276,11 @@ export default function MyDocumentsPage() {
                         </div>
                       </div>
 
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-1">
                         {request.purpose}
                       </p>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-sm text-surface-500">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-sm text-[var(--text-muted)]">
                         <span>
                           Requested: {format(new Date(request.createdAt), 'MMM d, yyyy')}
                         </span>
@@ -332,7 +332,7 @@ export default function MyDocumentsPage() {
             <div className="space-y-4">
               {/* Document Type */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Document Type *
                 </label>
                 <select
@@ -340,7 +340,7 @@ export default function MyDocumentsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, documentType: e.target.value as DocumentType })
                   }
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   {DOCUMENT_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -348,14 +348,14 @@ export default function MyDocumentsPage() {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-surface-500 mt-1">
+                <p className="text-xs text-[var(--text-muted)] mt-1">
                   {DOCUMENT_TYPES.find((t) => t.value === formData.documentType)?.description}
                 </p>
               </div>
 
               {/* Purpose */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Purpose *
                 </label>
                 <textarea
@@ -363,13 +363,13 @@ export default function MyDocumentsPage() {
                   onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 />
               </div>
 
               {/* Addressed To */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Addressed To (Optional)
                 </label>
                 <input
@@ -377,13 +377,13 @@ export default function MyDocumentsPage() {
                   value={formData.addressedTo}
                   onChange={(e) => setFormData({ ...formData, addressedTo: e.target.value })}
                   placeholder="e.g., Immigration Department, Bank Name"
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 />
               </div>
 
               {/* Required By Date */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Required By *
                 </label>
                 <input
@@ -391,13 +391,13 @@ export default function MyDocumentsPage() {
                   value={formData.requiredByDate}
                   onChange={(e) => setFormData({ ...formData, requiredByDate: e.target.value })}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 />
               </div>
 
               {/* Delivery Mode */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Delivery Mode *
                 </label>
                 <div className="flex gap-4">
@@ -413,7 +413,7 @@ export default function MyDocumentsPage() {
                         }
                         className="text-primary-600"
                       />
-                      <span className="text-sm text-surface-700 dark:text-surface-300 capitalize">
+                      <span className="text-sm text-[var(--text-secondary)] capitalize">
                         {mode.toLowerCase()}
                       </span>
                     </label>
@@ -424,7 +424,7 @@ export default function MyDocumentsPage() {
               {/* Delivery Address - only for physical delivery */}
               {(formData.deliveryMode === 'PHYSICAL' || formData.deliveryMode === 'BOTH') && (
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Delivery Address *
                   </label>
                   <textarea
@@ -432,20 +432,20 @@ export default function MyDocumentsPage() {
                     onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
                     placeholder="Enter delivery address"
                     rows={2}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                   />
                 </div>
               )}
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority
                 </label>
                 <select
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   <option value={1}>High - Urgent</option>
                   <option value={2}>Normal</option>

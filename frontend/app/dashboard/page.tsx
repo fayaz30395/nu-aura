@@ -573,7 +573,7 @@ export default function DashboardPage() {
                       )}
                       {/* Show session count if more than 1 */}
                       {timeEntries.length > 1 && (
-                        <span className="text-xs px-2 py-0.5 bg-surface-100 dark:bg-surface-800 rounded-full text-[var(--text-secondary)]">
+                        <span className="text-xs px-2 py-0.5 bg-[var(--bg-secondary)] rounded-full text-[var(--text-secondary)]">
                           {timeEntries.length} sessions
                         </span>
                       )}
@@ -697,12 +697,12 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all min-h-[88px]"
+                      className="flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all min-h-[88px]"
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${action.color} flex items-center justify-center`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 text-center">{action.label}</span>
+                      <span className="text-xs sm:text-sm font-medium text-[var(--text-secondary)] text-center">{action.label}</span>
                     </button>
                   ))}
                 </div>
@@ -724,22 +724,22 @@ export default function DashboardPage() {
                   <div className="text-center p-3 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
                     <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onTime}</p>
-                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">On Time</p>
+                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Time</p>
                   </div>
                   <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
                     <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.late}</p>
-                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">Late</p>
+                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Late</p>
                   </div>
                   <div className="text-center p-3 sm:p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
                     <Coffee className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onLeave}</p>
-                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">On Leave</p>
+                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Leave</p>
                   </div>
                   <div className="text-center p-3 sm:p-4 bg-danger-50 dark:bg-danger-950/20 rounded-xl">
                     <UserX className="h-5 w-5 sm:h-6 sm:w-6 text-danger-600 dark:text-danger-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.absent}</p>
-                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">Absent</p>
+                    <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Absent</p>
                   </div>
                 </div>
               </CardContent>
@@ -761,10 +761,10 @@ export default function DashboardPage() {
                       return (
                         <div key={idx}>
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium text-surface-700 dark:text-surface-300">{dept.department}</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary)]">{dept.department}</span>
                             <span className="text-sm text-[var(--text-secondary)]">{dept.count} ({percentage}%)</span>
                           </div>
-                          <div className="w-full h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+                          <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                             <div className={`h-full ${colors[idx % colors.length]} rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }} />
                           </div>
                         </div>
@@ -790,7 +790,7 @@ export default function DashboardPage() {
                     <p className="text-3xl font-bold text-[var(--text-primary)] mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">Current Month</p>
                   </div>
-                  <div className="border-t border-surface-100 dark:border-surface-800 pt-4 mt-4">
+                  <div className="border-t border-[var(--border-main)] pt-4 mt-4">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm text-[var(--text-secondary)]">Processed</span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
@@ -820,7 +820,7 @@ export default function DashboardPage() {
                         <Gift className="h-5 w-5 text-pink-600 dark:text-pink-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-surface-100 truncate">{event.employeeName}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.employeeName}</p>
                         <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                       </div>
                     </div>
@@ -831,7 +831,7 @@ export default function DashboardPage() {
                         <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-surface-100 truncate">{event.name}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-[var(--text-primary)] truncate">{event.name}</p>
                         <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                       </div>
                     </div>
@@ -855,7 +855,7 @@ export default function DashboardPage() {
                       <button
                         onClick={loadGoogleNotifications}
                         disabled={notificationsLoading}
-                        className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                        className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <RefreshCw className={`h-4 w-4 text-[var(--text-muted)] ${notificationsLoading ? 'animate-spin' : ''}`} />
                       </button>
@@ -867,7 +867,7 @@ export default function DashboardPage() {
               <CardContent>
                 {!hasGoogleToken ? (
                   <div className="text-center py-6">
-                    <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-3">
+                    <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mx-auto mb-3">
                       <Bell className="h-6 w-6 text-[var(--text-muted)]" />
                     </div>
                     <p className="text-sm text-[var(--text-secondary)] mb-3">Connect Google to see notifications</p>
@@ -900,7 +900,7 @@ export default function DashboardPage() {
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-100 truncate">
+                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                             {notification.title}
                           </p>
                           <div className="flex items-center gap-2 mt-0.5">
@@ -912,7 +912,7 @@ export default function DashboardPage() {
                             )}
                           </div>
                         </div>
-                        <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">
+                        <span className="text-xs text-[var(--text-muted)] flex-shrink-0">
                           {notification.type === 'calendar'
                             ? notification.subtitle
                             : formatRelativeTime(notification.timestamp)}
@@ -997,13 +997,13 @@ export default function DashboardPage() {
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Event Details
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
@@ -1108,14 +1108,14 @@ export default function DashboardPage() {
               )}
 
               {selectedEvent.calendarEvent.description && (
-                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
+                <div className="pt-4 border-t border-[var(--border-main)]">
                   <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
                     {selectedEvent.calendarEvent.description}
                   </p>
                 </div>
               )}
             </div>
-            <div className="p-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
               {selectedEvent.calendarEvent.hangoutLink && (
                 <Button
                   variant="primary"
@@ -1143,7 +1143,7 @@ export default function DashboardPage() {
       {selectedEmail && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
               </h3>
@@ -1152,7 +1152,7 @@ export default function DashboardPage() {
                   setSelectedEmail(null);
                   setEmailContent('');
                 }}
-                className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex-shrink-0"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
@@ -1172,7 +1172,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
+              <div className="border-t border-[var(--border-main)] pt-4">
                 {emailLoading ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
@@ -1185,7 +1185,7 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
-            <div className="p-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
               <Button
                 variant="primary"
                 className="flex-1"
@@ -1203,7 +1203,7 @@ export default function DashboardPage() {
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
                   <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
@@ -1217,12 +1217,12 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors flex-shrink-0"
+                className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex-shrink-0"
               >
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
-            <div className="h-[60vh] bg-surface-100 dark:bg-surface-800">
+            <div className="h-[60vh] bg-[var(--bg-secondary)]">
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
                 <img
                   src={`https://drive.google.com/uc?id=${selectedFile.driveFile.id}`}
@@ -1237,7 +1237,7 @@ export default function DashboardPage() {
                 />
               )}
             </div>
-            <div className="p-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
               <Button
                 variant="primary"
                 className="flex-1"

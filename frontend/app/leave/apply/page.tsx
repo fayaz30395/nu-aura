@@ -122,12 +122,12 @@ export default function ApplyLeavePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Leave Type *
               </label>
               <select
                 {...register('leaveTypeId')}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes.map((type) => (
@@ -138,7 +138,7 @@ export default function ApplyLeavePage() {
               </select>
               {errors.leaveTypeId && <p className="text-red-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
               {balance && (
-                <div className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                <div className="mt-2 text-sm text-[var(--text-secondary)]">
                   Available Balance: <span className="font-semibold">{balance.available} days</span>
                 </div>
               )}
@@ -146,27 +146,27 @@ export default function ApplyLeavePage() {
 
             {/* Start Date */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start Date *
               </label>
               <input
                 type="date"
                 {...register('startDate')}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
               {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             {/* End Date */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End Date *
               </label>
               <input
                 type="date"
                 {...register('endDate')}
                 min={startDate}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
               {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
@@ -179,14 +179,14 @@ export default function ApplyLeavePage() {
                   {...register('isHalfDay')}
                   className="w-4 h-4 text-primary-600"
                 />
-                <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Half Day Leave</span>
+                <span className="text-sm font-medium text-[var(--text-secondary)]">Half Day Leave</span>
               </label>
             </div>
 
             {/* Half Day Period */}
             {isHalfDay && (
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Half Day Period *
                 </label>
                 <div className="flex gap-4">
@@ -197,7 +197,7 @@ export default function ApplyLeavePage() {
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-primary-600"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">First Half (Morning)</span>
+                    <span className="text-sm text-[var(--text-secondary)]">First Half (Morning)</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -206,7 +206,7 @@ export default function ApplyLeavePage() {
                       {...register('halfDayPeriod')}
                       className="w-4 h-4 text-primary-600"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Second Half (Afternoon)</span>
+                    <span className="text-sm text-[var(--text-secondary)]">Second Half (Afternoon)</span>
                   </label>
                 </div>
                 {errors.halfDayPeriod && <p className="text-red-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
@@ -215,19 +215,19 @@ export default function ApplyLeavePage() {
 
             {/* Total Days */}
             <div className="md:col-span-2 bg-primary-50 dark:bg-primary-950/30 p-4 rounded-lg">
-              <div className="text-sm text-surface-700 dark:text-surface-300">Total Days Requested:</div>
+              <div className="text-sm text-[var(--text-secondary)]">Total Days Requested:</div>
               <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{totalDays} days</div>
             </div>
 
             {/* Reason */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Reason *
               </label>
               <textarea
                 {...register('reason')}
                 rows={4}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Please provide a reason for your leave..."
               />
               {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}
@@ -246,7 +246,7 @@ export default function ApplyLeavePage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 font-semibold"
+              className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 font-semibold"
             >
               Cancel
             </button>

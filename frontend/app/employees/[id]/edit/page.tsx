@@ -277,10 +277,10 @@ export default function EditEmployeePage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-surface-50 dark:bg-surface-900 flex items-center justify-center">
+        <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-surface-600 dark:text-surface-400">Loading employee details...</p>
+            <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
       </AppLayout>
@@ -290,20 +290,20 @@ export default function EditEmployeePage() {
   if (error && !employee) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
-          <nav className="bg-surface-0 dark:bg-surface-800 shadow-sm border-b border-surface-200 dark:border-surface-700">
+        <div className="min-h-screen bg-[var(--bg-secondary)]">
+          <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-sm border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => router.push('/employees')}
-                    className="text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                   </button>
-                  <h1 className="text-xl font-bold text-surface-900 dark:text-surface-100">Edit Employee</h1>
+                  <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
                 </div>
               </div>
             </div>
@@ -320,21 +320,21 @@ export default function EditEmployeePage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* Navigation Bar */}
-        <nav className="bg-surface-0 dark:bg-surface-800 shadow-sm border-b border-surface-200 dark:border-surface-700">
+        <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-sm border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => router.push(`/employees/${employeeId}`)}
-                  className="text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold text-surface-900 dark:text-surface-100">Edit Employee</h1>
+                <h1 className="text-xl font-bold text-[var(--text-primary)]">Edit Employee</h1>
               </div>
             </div>
           </div>
@@ -384,7 +384,7 @@ export default function EditEmployeePage() {
         )}
 
         {/* Employee Header */}
-        <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0 h-16 w-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
               <span className="text-xl font-medium text-primary-700 dark:text-primary-400">
@@ -392,23 +392,23 @@ export default function EditEmployeePage() {
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-surface-900 dark:text-surface-100">{employee?.fullName}</h2>
-              <p className="text-sm text-surface-600 dark:text-surface-400">{employee?.employeeCode}</p>
+              <h2 className="text-xl font-bold text-[var(--text-primary)]">{employee?.fullName}</h2>
+              <p className="text-sm text-[var(--text-secondary)]">{employee?.employeeCode}</p>
             </div>
           </div>
         </div>
 
         {/* Form */}
-        <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm">
           {/* Tabs */}
-          <div className="border-b border-surface-200 dark:border-surface-700">
+          <div className="border-b border-[var(--border-main)]">
             <nav className="-mb-px flex space-x-8 px-6">
               <button
                 onClick={() => setCurrentTab('basic')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'basic'
                     ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
                 Basic Info
@@ -418,7 +418,7 @@ export default function EditEmployeePage() {
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'personal'
                     ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
                 Personal Details
@@ -428,7 +428,7 @@ export default function EditEmployeePage() {
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'employment'
                     ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
                 Employment
@@ -438,7 +438,7 @@ export default function EditEmployeePage() {
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'bank'
                     ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
                 Banking & Tax
@@ -448,7 +448,7 @@ export default function EditEmployeePage() {
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   currentTab === 'custom'
                     ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                 }`}
               >
                 Additional Info
@@ -467,61 +467,61 @@ export default function EditEmployeePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Employee Code *
                   </label>
                   <input
                     type="text"
                     required
                     {...register('employeeCode')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
                     placeholder="EMP001"
                   />
                   {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
-                  <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">
                     Unique identifier for this employee. Changing this may affect integrations.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       First Name *
                     </label>
                     <input
                       type="text"
                       required
                       {...register('firstName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Middle Name
                     </label>
                     <input
                       type="text"
                       {...register('middleName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Last Name
                     </label>
                     <input
                       type="text"
                       {...register('lastName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Status *
                   </label>
                   <Controller
@@ -533,7 +533,7 @@ export default function EditEmployeePage() {
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(toEmployeeStatus(e.target.value) || undefined)}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="">Select Status</option>
                         <option value="ACTIVE">Active</option>
@@ -554,25 +554,25 @@ export default function EditEmployeePage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Personal Email
                     </label>
                     <input
                       type="email"
                       {...register('personalEmail')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="personal@email.com"
                     />
                     {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Phone Number
                     </label>
                     <input
                       type="tel"
                       {...register('phoneNumber')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="+1 234 567 8900"
                     />
                     {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
@@ -581,32 +581,32 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Emergency Contact
                     </label>
                     <input
                       type="tel"
                       {...register('emergencyContactNumber')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="+1 234 567 8900"
                     />
                     {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Date of Birth
                     </label>
                     <input
                       type="date"
                       {...register('dateOfBirth')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Gender
                   </label>
                   <Controller
@@ -617,7 +617,7 @@ export default function EditEmployeePage() {
                         {...field}
                         value={field.value || ''}
                         onChange={(e) => field.onChange(toGender(e.target.value) || undefined)}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="">Select Gender</option>
                         <option value="MALE">Male</option>
@@ -631,13 +631,13 @@ export default function EditEmployeePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Address
                   </label>
                   <textarea
                     rows={2}
                     {...register('address')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Street address"
                   />
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
@@ -645,24 +645,24 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       City
                     </label>
                     <input
                       type="text"
                       {...register('city')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       State/Province
                     </label>
                     <input
                       type="text"
                       {...register('state')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
                   </div>
@@ -670,24 +670,24 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Postal Code
                     </label>
                     <input
                       type="text"
                       {...register('postalCode')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Country
                     </label>
                     <input
                       type="text"
                       {...register('country')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
                   </div>
@@ -716,13 +716,13 @@ export default function EditEmployeePage() {
 
                 {/* Change Reason */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Reason for Changes
                   </label>
                   <textarea
                     {...register('changeRequestReason')}
                     rows={2}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
                   />
                   {errors.changeRequestReason && <p className="text-red-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
@@ -730,20 +730,20 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Designation *
                     </label>
                     <input
                       type="text"
                       required
                       {...register('designation')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Senior Software Engineer"
                     />
                     {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Employment Type *
                     </label>
                     <Controller
@@ -755,7 +755,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toEmploymentType(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">Select Type</option>
                           <option value="FULL_TIME">Full Time</option>
@@ -771,7 +771,7 @@ export default function EditEmployeePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Department
                   </label>
                   <Controller
@@ -781,7 +781,7 @@ export default function EditEmployeePage() {
                       <select
                         {...field}
                         value={field.value || ''}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="">Select Department</option>
                         {departments.map((dept) => (
@@ -797,7 +797,7 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Employee Level
                     </label>
                     <Controller
@@ -808,7 +808,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toEmployeeLevel(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">Select Level</option>
                           <option value="ENTRY">Entry (Junior/Associate)</option>
@@ -827,7 +827,7 @@ export default function EditEmployeePage() {
                     {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Job Role
                     </label>
                     <Controller
@@ -838,7 +838,7 @@ export default function EditEmployeePage() {
                           {...field}
                           value={field.value || ''}
                           onChange={(e) => field.onChange(toJobRole(e.target.value) || undefined)}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                       <option value="">Select Role</option>
                       <optgroup label="Engineering">
@@ -924,18 +924,18 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Confirmation Date
                     </label>
                     <input
                       type="date"
                       {...register('confirmationDate')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Reporting Manager *
                     </label>
                     <Controller
@@ -945,7 +945,7 @@ export default function EditEmployeePage() {
                         <select
                           required
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
                         >
                           <option value="">Select Manager</option>
                           <option value={employeeId}>Self (No Reporting Manager)</option>
@@ -958,7 +958,7 @@ export default function EditEmployeePage() {
                       )}
                     />
                     {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
-                    <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">
                       Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                     </p>
                   </div>
@@ -971,25 +971,25 @@ export default function EditEmployeePage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Bank Account Number
                     </label>
                     <input
                       type="text"
                       {...register('bankAccountNumber')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="1234567890"
                     />
                     {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Bank Name
                     </label>
                     <input
                       type="text"
                       {...register('bankName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Bank of America"
                     />
                     {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
@@ -998,25 +998,25 @@ export default function EditEmployeePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       IFSC Code / Routing Number
                     </label>
                     <input
                       type="text"
                       {...register('bankIfscCode')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="HDFC0001234"
                     />
                     {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Tax ID / SSN
                     </label>
                     <input
                       type="text"
                       {...register('taxId')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="XXX-XX-XXXX"
                     />
                     {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
@@ -1045,12 +1045,12 @@ export default function EditEmployeePage() {
             )}
 
             {/* Form Actions */}
-            <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+            <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
               <button
                 type="button"
                 onClick={() => router.push(`/employees/${employeeId}`)}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50"
               >
                 Cancel
               </button>

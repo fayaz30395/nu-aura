@@ -112,10 +112,10 @@ export default function PayslipsPage() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                   Payslips
                 </h1>
-                <p className="text-surface-600 dark:text-surface-400 mt-2">
+                <p className="text-[var(--text-secondary)] mt-2">
                   View and download employee payslips
                 </p>
               </div>
@@ -150,30 +150,30 @@ export default function PayslipsPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Search
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-surface-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Employee name..."
-                    className="w-full pl-10 pr-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                    className="w-full pl-10 pr-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
                   />
                 </div>
               </div>
 
               {/* Month Filter */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Month
                 </label>
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   <option value="">All Months</option>
                   {getMonthOptions().map(option => (
@@ -186,13 +186,13 @@ export default function PayslipsPage() {
 
               {/* Year Filter */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Year
                 </label>
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   <option value="">All Years</option>
                   {[2024, 2023, 2022, 2021, 2020].map(year => (
@@ -205,13 +205,13 @@ export default function PayslipsPage() {
 
               {/* Status Filter */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Status
                 </label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Status</option>
                   <option value="DRAFT">Draft</option>
@@ -223,8 +223,8 @@ export default function PayslipsPage() {
             </div>
 
             {/* Results count */}
-            <div className="mt-4 pt-4 border-t border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-600 dark:text-surface-400">
+            <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-secondary)]">
                 Showing {filteredPayslips.length} of {totalElements} payslips
               </p>
             </div>
@@ -237,10 +237,10 @@ export default function PayslipsPage() {
             </div>
           ) : filteredPayslips.length === 0 ? (
             <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-12 text-center">
-              <div className="text-surface-600 dark:text-surface-400 mb-4">
+              <div className="text-[var(--text-secondary)] mb-4">
                 No payslips found for the selected filters
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-500">
+              <p className="text-sm text-[var(--text-muted)]">
                 Try adjusting your filters or check back later
               </p>
             </div>

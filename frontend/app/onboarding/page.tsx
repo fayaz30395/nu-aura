@@ -73,10 +73,10 @@ export default function OnboardingPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-black tracking-tight text-surface-900 dark:text-white">
+                        <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                             Talent <span className="text-primary-600">Onboarding</span>
                         </h1>
-                        <p className="text-surface-500 font-bold max-w-md">
+                        <p className="text-[var(--text-muted)] font-bold max-w-md">
                             Orchestrate the first 90 days of your new joiners with precision and care.
                         </p>
                     </div>
@@ -84,7 +84,7 @@ export default function OnboardingPage() {
                     <div className="flex items-center gap-3">
                         <Button
                             variant="outline"
-                            className="font-black tracking-widest uppercase text-[10px] rounded-2xl"
+                            className="font-black tracking-widest uppercase text-xs rounded-2xl"
                             leftIcon={<Layout className="h-3.5 w-3.5" />}
                             onClick={() => router.push('/onboarding/templates')}
                         >
@@ -92,7 +92,7 @@ export default function OnboardingPage() {
                         </Button>
                         <Button
                             variant="primary"
-                            className="font-black tracking-widest uppercase text-[10px] bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                            className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
                             leftIcon={<UserPlus className="h-4 w-4" />}
                             onClick={() => router.push('/onboarding/new')}
                         >
@@ -118,8 +118,8 @@ export default function OnboardingPage() {
                                         </div>
                                         <TrendingUp className="h-4 w-4 text-emerald-500" />
                                     </div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-surface-400 mb-1">{stat.label}</p>
-                                    <p className="text-3xl font-black text-surface-900 dark:text-white">{stat.value}</p>
+                                    <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">{stat.label}</p>
+                                    <p className="text-3xl font-black text-[var(--text-primary)]">{stat.value}</p>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -129,9 +129,9 @@ export default function OnboardingPage() {
                 {/* Filters and List */}
                 <div className="space-y-6">
                     <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
-                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center">
+                        <div className="p-6 border-b border-[var(--border-main)] flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search joiners by name or ID..."
                                     className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
@@ -142,9 +142,9 @@ export default function OnboardingPage() {
 
                             <div className="flex items-center gap-4 w-full md:w-auto">
                                 <div className="flex items-center gap-2 bg-[var(--bg-input)] px-4 py-2 rounded-2xl border border-white/20">
-                                    <Filter className="h-4 w-4 text-surface-500" />
+                                    <Filter className="h-4 w-4 text-[var(--text-muted)]" />
                                     <select
-                                        className="bg-transparent border-none text-xs font-black uppercase tracking-widest text-surface-600 dark:text-surface-300 focus:ring-0 cursor-pointer outline-none"
+                                        className="bg-transparent border-none text-xs font-black uppercase tracking-widest text-[var(--text-secondary)] focus:ring-0 cursor-pointer outline-none"
                                         value={statusFilter}
                                         onChange={(e) => setStatusFilter(e.target.value)}
                                     >
@@ -157,7 +157,7 @@ export default function OnboardingPage() {
                             </div>
                         </div>
 
-                        <div className="divide-y divide-surface-200/50 dark:divide-surface-700/50">
+                        <div className="divide-y divide-[var(--border-main)]/50">
                             {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <div key={i} className="p-8 flex items-center gap-6">
@@ -170,11 +170,11 @@ export default function OnboardingPage() {
                                 ))
                             ) : filteredProcesses.length === 0 ? (
                                 <div className="p-20 text-center">
-                                    <div className="h-20 w-20 bg-surface-100 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <Search className="h-10 w-10 text-surface-300" />
+                                    <div className="h-20 w-20 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Search className="h-10 w-10 text-[var(--text-muted)]" />
                                     </div>
-                                    <h3 className="text-xl font-black text-surface-900 dark:text-white">No joiners found</h3>
-                                    <p className="text-surface-500 font-bold mt-2">Adjust your filters or initiate a new onboarding.</p>
+                                    <h3 className="text-xl font-black text-[var(--text-primary)]">No joiners found</h3>
+                                    <p className="text-[var(--text-muted)] font-bold mt-2">Adjust your filters or initiate a new onboarding.</p>
                                 </div>
                             ) : (
                                 <AnimatePresence>
@@ -193,10 +193,10 @@ export default function OnboardingPage() {
                                                         {process.employeeName?.charAt(0) || 'U'}
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-xl font-black text-surface-900 dark:text-white group-hover:text-primary-600 transition-colors">
+                                                        <h3 className="text-xl font-black text-[var(--text-primary)] group-hover:text-primary-600 transition-colors">
                                                             {process.employeeName || `Employee ${process.employeeId.substring(0, 8)}`}
                                                         </h3>
-                                                        <div className="flex items-center gap-4 mt-1 text-[10px] font-black uppercase tracking-widest text-surface-400">
+                                                        <div className="flex items-center gap-4 mt-1 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">
                                                             <span className="flex items-center gap-1.5">
                                                                 <Calendar className="h-3.5 w-3.5" />
                                                                 Starts {new Date(process.startDate).toLocaleDateString()}
@@ -213,9 +213,9 @@ export default function OnboardingPage() {
 
                                                 <div className="flex items-center justify-between sm:justify-end gap-10">
                                                     <div className="text-right hidden sm:block">
-                                                        <span className="text-[10px] font-black uppercase tracking-widest text-surface-400 block mb-2">Momentum</span>
+                                                        <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Momentum</span>
                                                         <div className="flex items-center gap-3">
-                                                            <div className="w-32 h-2.5 bg-surface-100 dark:bg-black/40 rounded-full overflow-hidden shadow-inner">
+                                                            <div className="w-32 h-2.5 bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
                                                                 <motion.div
                                                                     initial={{ width: 0 }}
                                                                     animate={{ width: `${process.completionPercentage}%` }}
@@ -228,12 +228,12 @@ export default function OnboardingPage() {
 
                                                     <Badge
                                                         variant={getStatusVariant(process.status)}
-                                                        className="rounded-xl px-4 py-1.5 font-black tracking-widest uppercase text-[10px]"
+                                                        className="rounded-xl px-4 py-1.5 font-black tracking-widest uppercase text-xs"
                                                     >
                                                         {process.status.replace('_', ' ')}
                                                     </Badge>
 
-                                                    <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-[var(--bg-input)] shadow-sm border border-surface-100 dark:border-surface-700 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                                    <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-[var(--bg-input)] shadow-sm border border-[var(--border-main)] opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
                                                         <ChevronRight className="h-5 w-5 text-primary-600" />
                                                     </div>
                                                 </div>

@@ -57,7 +57,7 @@ export default function MyAttendancePage() {
       case 'HOLIDAY':
         return 'bg-pink-100 dark:bg-pink-950/30 text-pink-800 dark:text-pink-400';
       default:
-        return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-400';
+        return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
   };
 
@@ -79,7 +79,7 @@ export default function MyAttendancePage() {
       case 'HOLIDAY':
         return 'bg-pink-500';
       default:
-        return 'bg-surface-300';
+        return 'bg-[var(--bg-secondary)]';
     }
   };
 
@@ -260,7 +260,7 @@ export default function MyAttendancePage() {
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Present</p>
+                  <p className="text-xs text-[var(--text-muted)]">Present</p>
                   <p className="text-xl font-bold text-[var(--text-primary)]">
                     {stats.present}
                   </p>
@@ -276,7 +276,7 @@ export default function MyAttendancePage() {
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Absent</p>
+                  <p className="text-xs text-[var(--text-muted)]">Absent</p>
                   <p className="text-xl font-bold text-[var(--text-primary)]">
                     {stats.absent}
                   </p>
@@ -292,7 +292,7 @@ export default function MyAttendancePage() {
                   <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Late</p>
+                  <p className="text-xs text-[var(--text-muted)]">Late</p>
                   <p className="text-xl font-bold text-[var(--text-primary)]">
                     {stats.late}
                   </p>
@@ -308,7 +308,7 @@ export default function MyAttendancePage() {
                   <Coffee className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">On Leave</p>
+                  <p className="text-xs text-[var(--text-muted)]">On Leave</p>
                   <p className="text-xl font-bold text-[var(--text-primary)]">
                     {stats.leave}
                   </p>
@@ -324,7 +324,7 @@ export default function MyAttendancePage() {
                   <TrendingUp className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Total Hours</p>
+                  <p className="text-xs text-[var(--text-muted)]">Total Hours</p>
                   <p className="text-xl font-bold text-[var(--text-primary)]">
                     {stats.totalHours.toFixed(0)}h
                   </p>
@@ -342,24 +342,24 @@ export default function MyAttendancePage() {
                 <div className="flex items-center justify-between">
                   <button
                     onClick={() => navigateMonth('prev')}
-                    className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
                   >
-                    <ChevronLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+                    <ChevronLeft className="h-5 w-5 text-[var(--text-secondary)]" />
                   </button>
                   <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                     {months[month]} {year}
                   </h2>
                   <button
                     onClick={() => navigateMonth('next')}
-                    className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
+                    className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
                   >
-                    <ChevronRight className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+                    <ChevronRight className="h-5 w-5 text-[var(--text-secondary)]" />
                   </button>
                 </div>
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+                  <div className="text-center py-12 text-[var(--text-muted)]">
                     Loading...
                   </div>
                 ) : (
@@ -369,7 +369,7 @@ export default function MyAttendancePage() {
                       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                         <div
                           key={day}
-                          className="text-center text-xs font-medium text-surface-500 dark:text-surface-400 py-2"
+                          className="text-center text-xs font-medium text-[var(--text-muted)] py-2"
                         >
                           {day}
                         </div>
@@ -391,14 +391,14 @@ export default function MyAttendancePage() {
                             disabled={!day.isCurrentMonth}
                             className={`
                               aspect-square p-1 rounded-lg text-sm transition-all relative
-                              ${day.isCurrentMonth ? 'hover:bg-surface-100 dark:hover:bg-surface-800' : 'opacity-30 cursor-default'}
+                              ${day.isCurrentMonth ? 'hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]' : 'opacity-30 cursor-default'}
                               ${day.isToday ? 'ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-surface-900' : ''}
                               ${isSelected ? 'bg-primary-100 dark:bg-primary-950/50' : ''}
                             `}
                           >
                             <span
                               className={`
-                              ${day.isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-surface-400 dark:text-surface-600'}
+                              ${day.isCurrentMonth ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)]'}
                               ${day.isToday ? 'font-bold text-primary-600 dark:text-primary-400' : ''}
                             `}
                             >
@@ -419,38 +419,38 @@ export default function MyAttendancePage() {
                     </div>
 
                     {/* Legend */}
-                    <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-[var(--border-main)]">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-green-500" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-secondary)]">
                           Present
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-red-500" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-secondary)]">
                           Absent
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-orange-500" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">Late</span>
+                        <span className="text-xs text-[var(--text-secondary)]">Late</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-blue-500" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-secondary)]">
                           Leave
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-purple-400" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-secondary)]">
                           Weekly Off
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-pink-500" />
-                        <span className="text-xs text-surface-600 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-secondary)]">
                           Holiday
                         </span>
                       </div>
@@ -477,7 +477,7 @@ export default function MyAttendancePage() {
                 {selectedRecord ? (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-500 dark:text-surface-400">Status</span>
+                      <span className="text-sm text-[var(--text-muted)]">Status</span>
                       <span
                         className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(selectedRecord.status)}`}
                       >
@@ -486,7 +486,7 @@ export default function MyAttendancePage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-500 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-muted)]">
                         Check In
                       </span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -495,7 +495,7 @@ export default function MyAttendancePage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-500 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-muted)]">
                         Check Out
                       </span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -504,7 +504,7 @@ export default function MyAttendancePage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-500 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-muted)]">
                         Work Hours
                       </span>
                       <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -514,7 +514,7 @@ export default function MyAttendancePage() {
 
                     {selectedRecord.isLate && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-surface-500 dark:text-surface-400">
+                        <span className="text-sm text-[var(--text-muted)]">
                           Late By
                         </span>
                         <span className="text-sm font-medium text-orange-600 dark:text-orange-400">
@@ -533,9 +533,9 @@ export default function MyAttendancePage() {
                     )}
 
                     {selectedRecord.notes && (
-                      <div className="mt-4 p-3 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                        <p className="text-xs text-surface-500 dark:text-surface-400 mb-1">Notes</p>
-                        <p className="text-sm text-surface-700 dark:text-surface-300">
+                      <div className="mt-4 p-3 bg-[var(--bg-secondary)] rounded-lg">
+                        <p className="text-xs text-[var(--text-muted)] mb-1">Notes</p>
+                        <p className="text-sm text-[var(--text-secondary)]">
                           {selectedRecord.notes}
                         </p>
                       </div>
@@ -543,15 +543,15 @@ export default function MyAttendancePage() {
                   </div>
                 ) : selectedDate ? (
                   <div className="text-center py-8">
-                    <XCircle className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-3" />
-                    <p className="text-surface-500 dark:text-surface-400">
+                    <XCircle className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-3" />
+                    <p className="text-[var(--text-muted)]">
                       No attendance record for this date
                     </p>
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-3" />
-                    <p className="text-surface-500 dark:text-surface-400">
+                    <Calendar className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-3" />
+                    <p className="text-[var(--text-muted)]">
                       Click on a date to view details
                     </p>
                   </div>
@@ -566,14 +566,14 @@ export default function MyAttendancePage() {
             <Card className="bg-[var(--bg-card)]">
               <CardContent className="p-6">
                 <div className="flex flex-wrap gap-4 items-center">
-                  <Calendar className="h-5 w-5 text-surface-500 dark:text-surface-400" />
+                  <Calendar className="h-5 w-5 text-[var(--text-muted)]" />
                   <label className="text-sm font-medium text-[var(--text-primary)]">
                     Select Period:
                   </label>
                   <select
                     value={month}
                     onChange={(e) => setMonth(Number(e.target.value))}
-                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     {months.map((m, i) => (
                       <option key={i} value={i}>
@@ -584,7 +584,7 @@ export default function MyAttendancePage() {
                   <select
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     {[2024, 2025, 2026].map((y) => (
                       <option key={y} value={y}>
@@ -605,34 +605,34 @@ export default function MyAttendancePage() {
               </CardHeader>
               <CardContent className="p-0">
                 {loading ? (
-                  <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+                  <div className="text-center py-12 text-[var(--text-muted)]">
                     Loading...
                   </div>
                 ) : records.length === 0 ? (
-                  <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+                  <div className="text-center py-12 text-[var(--text-muted)]">
                     No attendance records for this month
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-surface-50 dark:bg-surface-800/50">
+                      <thead className="bg-[var(--bg-secondary)]/50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Date
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Check In
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Check Out
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Work Hours
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Status
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                             Remarks
                           </th>
                         </tr>
@@ -641,7 +641,7 @@ export default function MyAttendancePage() {
                         {records.map((record) => (
                           <tr
                             key={record.id}
-                            className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                            className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                           >
                             <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                               {new Date(record.attendanceDate).toLocaleDateString('en-US', {
@@ -650,13 +650,13 @@ export default function MyAttendancePage() {
                                 day: 'numeric',
                               })}
                             </td>
-                            <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {formatTime(record.checkInTime)}
                             </td>
-                            <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {formatTime(record.checkOutTime)}
                             </td>
-                            <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {record.totalWorkHours?.toFixed(2) || '--'} hrs
                             </td>
                             <td className="px-6 py-4">
@@ -666,7 +666,7 @@ export default function MyAttendancePage() {
                                 {record.status || 'PRESENT'}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                            <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                               {record.isRegularization && (
                                 <span className="text-orange-600 dark:text-orange-400">
                                   Regularized

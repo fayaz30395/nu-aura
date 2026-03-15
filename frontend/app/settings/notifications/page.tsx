@@ -124,7 +124,7 @@ export default function NotificationSettingsPage() {
       <AppLayout>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading preferences...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading preferences...</span>
         </div>
       </AppLayout>
     );

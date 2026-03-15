@@ -69,21 +69,21 @@ export default function ForgotPasswordPage() {
             </h1>
           </div>
 
-          <Card className="bg-[var(--bg-card)] border-surface-200 dark:border-surface-700 shadow-xl">
+          <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
-              <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-2">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                 Check Your Email
               </h2>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 We&apos;ve sent a password reset link to{' '}
-                <span className="font-medium text-surface-900 dark:text-surface-100">
+                <span className="font-medium text-[var(--text-primary)]">
                   {getValues('email')}
                 </span>
               </p>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+              <p className="text-sm text-[var(--text-muted)] mb-6">
                 Didn&apos;t receive the email? Check your spam folder or{' '}
                 <button
                   onClick={() => setIsSubmitted(false)}
@@ -116,13 +116,13 @@ export default function ForgotPasswordPage() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
             NU-AURA
           </h1>
-          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Reset your password
           </p>
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="bg-[var(--bg-card)] border-surface-200 dark:border-surface-700 shadow-xl">
+        <Card className="bg-[var(--bg-card)] border-[var(--border-main)] shadow-xl">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">Forgot Password</CardTitle>
             <CardDescription>
@@ -145,12 +145,12 @@ export default function ForgotPasswordPage() {
 
               {/* Email Input */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                <label className="block text-sm font-medium text-[var(--text-secondary)]">
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-surface-400" />
+                    <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                   </div>
                   <input
                     {...register('email')}
@@ -158,10 +158,10 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.email
                         ? 'border-red-500 dark:border-red-500'
-                        : 'border-surface-200 dark:border-surface-700'
+                        : 'border-[var(--border-main)]'
                     } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                 </div>
@@ -198,7 +198,7 @@ export default function ForgotPasswordPage() {
         </Card>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-surface-400 dark:text-surface-500">
+        <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
           NU-AURA v1.0 &copy; {new Date().getFullYear()}
         </p>
       </div>

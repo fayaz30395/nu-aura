@@ -193,7 +193,7 @@ export default function EmployeesPage() {
       case 'ACTIVE': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
       case 'ON_LEAVE': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
       case 'TERMINATED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -435,7 +435,7 @@ export default function EmployeesPage() {
                       reset();
                       setCurrentTab('basic');
                     }}
-                    className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -444,14 +444,14 @@ export default function EmployeesPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className="mb-6 border-b border-surface-200 dark:border-surface-700">
+                <div className="mb-6 border-b border-[var(--border-main)]">
                   <nav className="-mb-px flex space-x-8">
                     <button
                       onClick={() => setCurrentTab('basic')}
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         currentTab === 'basic'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                          : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300 hover:border-surface-300 dark:hover:border-surface-600'
+                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
                       Basic Info
@@ -461,7 +461,7 @@ export default function EmployeesPage() {
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         currentTab === 'personal'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                          : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300 hover:border-surface-300 dark:hover:border-surface-600'
+                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
                       Personal Details
@@ -471,7 +471,7 @@ export default function EmployeesPage() {
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         currentTab === 'employment'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                          : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300 hover:border-surface-300 dark:hover:border-surface-600'
+                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
                       Employment
@@ -481,7 +481,7 @@ export default function EmployeesPage() {
                       className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         currentTab === 'bank'
                           ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                          : 'border-transparent text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300 hover:border-surface-300 dark:hover:border-surface-600'
+                          : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)]'
                       }`}
                     >
                       Banking & Tax
@@ -885,7 +885,7 @@ export default function EmployeesPage() {
                             </select>
                           )}
                         />
-                        <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
+                        <p className="mt-1 text-xs text-[var(--text-muted)]">
                           Select "Self" for top-level employees who don't report to anyone.
                         </p>
                         {errors.managerId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}

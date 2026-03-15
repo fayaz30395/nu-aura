@@ -174,15 +174,15 @@ export default function NewTravelRequestPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               New Travel Request
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Submit a new travel request for approval
             </p>
           </div>
@@ -197,14 +197,14 @@ export default function NewTravelRequestPage() {
         )}
 
         {/* Form */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
           {/* Travel Type & Purpose */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                 <Briefcase className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               </div>
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Travel Details
               </h2>
             </div>
@@ -212,17 +212,17 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Travel Type */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Travel Type <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.travelType}
                   onChange={(e) => handleInputChange('travelType', e.target.value as TravelType)}
-                  className={`w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
                     validationErrors.travelType
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 >
                   <option value="BUSINESS">Business</option>
                   <option value="TRAINING">Training</option>
@@ -238,7 +238,7 @@ export default function NewTravelRequestPage() {
 
               {/* Client Name */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Client Name
                 </label>
                 <input
@@ -246,14 +246,14 @@ export default function NewTravelRequestPage() {
                   value={formData.clientName || ''}
                   onChange={(e) => handleInputChange('clientName', e.target.value)}
                   placeholder="Enter client name"
-                  className="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             {/* Purpose */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Purpose <span className="text-red-500">*</span>
               </label>
               <textarea
@@ -261,11 +261,11 @@ export default function NewTravelRequestPage() {
                 onChange={(e) => handleInputChange('purpose', e.target.value)}
                 placeholder="Describe the purpose of your travel"
                 rows={3}
-                className={`w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border ${
+                className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
                   validationErrors.purpose
                     ? 'border-red-500'
-                    : 'border-surface-200 dark:border-surface-700'
-                } rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none`}
+                    : 'border-[var(--border-main)]'
+                } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none`}
               />
               {validationErrors.purpose && (
                 <p className="mt-1 text-sm text-red-500">{validationErrors.purpose}</p>
@@ -274,12 +274,12 @@ export default function NewTravelRequestPage() {
           </div>
 
           {/* Journey Details */}
-          <div className="p-6 bg-surface-50 dark:bg-surface-800/50 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-700">
+          <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                 <MapPin className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Journey Details
               </h2>
             </div>
@@ -287,7 +287,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Origin City */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Origin City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -298,8 +298,8 @@ export default function NewTravelRequestPage() {
                   className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.originCity
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 />
                 {validationErrors.originCity && (
                   <p className="mt-1 text-sm text-red-500">{validationErrors.originCity}</p>
@@ -308,7 +308,7 @@ export default function NewTravelRequestPage() {
 
               {/* Destination City */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Destination City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -319,8 +319,8 @@ export default function NewTravelRequestPage() {
                   className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.destinationCity
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 />
                 {validationErrors.destinationCity && (
                   <p className="mt-1 text-sm text-red-500">{validationErrors.destinationCity}</p>
@@ -329,7 +329,7 @@ export default function NewTravelRequestPage() {
 
               {/* Departure Date */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Departure Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -339,8 +339,8 @@ export default function NewTravelRequestPage() {
                   className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.departureDate
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 />
                 {validationErrors.departureDate && (
                   <p className="mt-1 text-sm text-red-500">{validationErrors.departureDate}</p>
@@ -349,7 +349,7 @@ export default function NewTravelRequestPage() {
 
               {/* Return Date */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Return Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -360,8 +360,8 @@ export default function NewTravelRequestPage() {
                   className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.returnDate
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 />
                 {validationErrors.returnDate && (
                   <p className="mt-1 text-sm text-red-500">{validationErrors.returnDate}</p>
@@ -376,9 +376,9 @@ export default function NewTravelRequestPage() {
                   type="checkbox"
                   checked={formData.isInternational || false}
                   onChange={(e) => handleInputChange('isInternational', e.target.checked)}
-                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
                 />
-                <span className="text-sm text-surface-700 dark:text-surface-300">
+                <span className="text-sm text-[var(--text-secondary)]">
                   International Travel
                 </span>
               </label>
@@ -389,9 +389,9 @@ export default function NewTravelRequestPage() {
                     type="checkbox"
                     checked={formData.visaRequired || false}
                     onChange={(e) => handleInputChange('visaRequired', e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
                   />
-                  <span className="text-sm text-surface-700 dark:text-surface-300">
+                  <span className="text-sm text-[var(--text-secondary)]">
                     Visa Required
                   </span>
                 </label>
@@ -401,11 +401,11 @@ export default function NewTravelRequestPage() {
 
           {/* Transport Details */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                 <Plane className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
               </div>
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Transport Details
               </h2>
             </div>
@@ -413,7 +413,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Transport Mode */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Transport Mode <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -421,11 +421,11 @@ export default function NewTravelRequestPage() {
                   onChange={(e) =>
                     handleInputChange('transportMode', e.target.value as TransportMode)
                   }
-                  className={`w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
                     validationErrors.transportMode
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 >
                   <option value="FLIGHT">Flight</option>
                   <option value="TRAIN">Train</option>
@@ -440,7 +440,7 @@ export default function NewTravelRequestPage() {
 
               {/* Transport Class */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Class/Type
                 </label>
                 <input
@@ -448,7 +448,7 @@ export default function NewTravelRequestPage() {
                   value={formData.transportClass || ''}
                   onChange={(e) => handleInputChange('transportClass', e.target.value)}
                   placeholder="e.g., Economy, Business"
-                  className="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
@@ -459,21 +459,21 @@ export default function NewTravelRequestPage() {
                 type="checkbox"
                 checked={formData.cabRequired || false}
                 onChange={(e) => handleInputChange('cabRequired', e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-surface-50 dark:bg-surface-800 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 bg-[var(--bg-secondary)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-surface-700 dark:text-surface-300">
+              <span className="text-sm text-[var(--text-secondary)]">
                 Local cab/taxi required
               </span>
             </label>
           </div>
 
           {/* Accommodation */}
-          <div className="p-6 bg-surface-50 dark:bg-surface-800/50 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-700">
+          <div className="p-6 bg-[var(--bg-secondary)]/50 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Hotel className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Accommodation
               </h2>
             </div>
@@ -484,9 +484,9 @@ export default function NewTravelRequestPage() {
                 type="checkbox"
                 checked={formData.accommodationRequired || false}
                 onChange={(e) => handleInputChange('accommodationRequired', e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
               />
-              <span className="text-sm text-surface-700 dark:text-surface-300">
+              <span className="text-sm text-[var(--text-secondary)]">
                 Accommodation required
               </span>
             </label>
@@ -495,7 +495,7 @@ export default function NewTravelRequestPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Hotel Preference */}
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Hotel Preference
                   </label>
                   <input
@@ -503,13 +503,13 @@ export default function NewTravelRequestPage() {
                     value={formData.hotelPreference || ''}
                     onChange={(e) => handleInputChange('hotelPreference', e.target.value)}
                     placeholder="Enter preferred hotel or area"
-                    className="w-full px-4 py-2.5 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   />
                 </div>
 
                 {/* Check-in Date */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-in Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -520,8 +520,8 @@ export default function NewTravelRequestPage() {
                     className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                       validationErrors.checkInDate
                         ? 'border-red-500'
-                        : 'border-surface-200 dark:border-surface-700'
-                    } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                        : 'border-[var(--border-main)]'
+                    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                   />
                   {validationErrors.checkInDate && (
                     <p className="mt-1 text-sm text-red-500">{validationErrors.checkInDate}</p>
@@ -530,7 +530,7 @@ export default function NewTravelRequestPage() {
 
                 {/* Check-out Date */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Check-out Date <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -542,8 +542,8 @@ export default function NewTravelRequestPage() {
                     className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                       validationErrors.checkOutDate
                         ? 'border-red-500'
-                        : 'border-surface-200 dark:border-surface-700'
-                    } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                        : 'border-[var(--border-main)]'
+                    } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                   />
                   {validationErrors.checkOutDate && (
                     <p className="mt-1 text-sm text-red-500">{validationErrors.checkOutDate}</p>
@@ -555,11 +555,11 @@ export default function NewTravelRequestPage() {
 
           {/* Budget */}
           <div className="p-6 space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                 <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Budget Details
               </h2>
             </div>
@@ -567,7 +567,7 @@ export default function NewTravelRequestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Estimated Cost */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Estimated Cost (INR) <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -577,11 +577,11 @@ export default function NewTravelRequestPage() {
                   placeholder="0.00"
                   min="0"
                   step="0.01"
-                  className={`w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-secondary)] border ${
                     validationErrors.estimatedCost
                       ? 'border-red-500'
-                      : 'border-surface-200 dark:border-surface-700'
-                  } rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                      : 'border-[var(--border-main)]'
+                  } rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
                 />
                 {validationErrors.estimatedCost && (
                   <p className="mt-1 text-sm text-red-500">{validationErrors.estimatedCost}</p>
@@ -590,7 +590,7 @@ export default function NewTravelRequestPage() {
 
               {/* Advance Required */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Advance Required (INR)
                 </label>
                 <input
@@ -600,14 +600,14 @@ export default function NewTravelRequestPage() {
                   placeholder="0.00"
                   min="0"
                   step="0.01"
-                  className="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             {/* Special Instructions */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Special Instructions
               </label>
               <textarea
@@ -615,7 +615,7 @@ export default function NewTravelRequestPage() {
                 onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
                 placeholder="Any special requirements or instructions"
                 rows={3}
-                className="w-full px-4 py-2.5 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
+                className="w-full px-4 py-2.5 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
               />
             </div>
           </div>
@@ -626,14 +626,14 @@ export default function NewTravelRequestPage() {
           <button
             onClick={() => router.back()}
             disabled={createMutation.isPending || submitMutation.isPending}
-            className="px-6 py-2.5 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-[var(--bg-card)] border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={() => handleSubmit(true)}
             disabled={createMutation.isPending || submitMutation.isPending}
-            className="flex items-center gap-2 px-6 py-2.5 bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {createMutation.isPending || submitMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

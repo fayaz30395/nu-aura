@@ -223,7 +223,7 @@ export default function SettingsPage() {
       <button
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
+          enabled ? 'bg-primary-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
         }`}
       >
         <span
@@ -314,7 +314,7 @@ export default function SettingsPage() {
                 <button
                   onClick={toggleDarkMode}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    isDark ? 'bg-primary-600' : 'bg-surface-300 dark:bg-surface-600'
+                    isDark ? 'bg-primary-600' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
                   }`}
                 >
                   <span
@@ -347,7 +347,7 @@ export default function SettingsPage() {
                       type={showCurrentPassword ? 'text' : 'password'}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-surface-800 dark:text-surface-100"
+                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
                       placeholder="Enter current password"
                     />
                     <button
@@ -372,7 +372,7 @@ export default function SettingsPage() {
                       type={showNewPassword ? 'text' : 'password'}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-surface-800 dark:text-surface-100"
+                      className="w-full px-3 py-2 pr-10 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
                       placeholder="Enter new password"
                     />
                     <button
@@ -396,7 +396,7 @@ export default function SettingsPage() {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-surface-800 dark:text-surface-100"
+                    className="w-full mt-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-[var(--text-primary)]"
                     placeholder="Confirm new password"
                   />
                 </div>

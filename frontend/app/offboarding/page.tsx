@@ -84,7 +84,7 @@ const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
 
 const getStatusColor = (status: ExitStatus | string | null | undefined) => {
   if (!status) {
-    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
   switch (status) {
     case ExitStatus.INITIATED:
@@ -98,13 +98,13 @@ const getStatusColor = (status: ExitStatus | string | null | undefined) => {
     case ExitStatus.CANCELLED:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
 };
 
 const getExitTypeColor = (type: ExitType | string | null | undefined) => {
   if (!type) {
-    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
   switch (type) {
     case ExitType.RESIGNATION:
@@ -118,7 +118,7 @@ const getExitTypeColor = (type: ExitType | string | null | undefined) => {
     case ExitType.ABSCONDING:
       return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-[var(--bg-primary)] dark:text-gray-300';
   }
 };
 
@@ -347,7 +347,7 @@ export default function OffboardingPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading exit processes...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading exit processes...</span>
         </div>
       </AppLayout>
     );
@@ -359,10 +359,10 @@ export default function OffboardingPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Exit Management
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Manage employee offboarding and exit processes
             </p>
           </div>
@@ -393,8 +393,8 @@ export default function OffboardingPage() {
                   <UserMinus className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Exits</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Exits</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -406,8 +406,8 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Initiated</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.initiated}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Initiated</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.initiated}</p>
                 </div>
               </div>
             </CardContent>
@@ -419,8 +419,8 @@ export default function OffboardingPage() {
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">In Progress</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.inProgress}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">In Progress</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.inProgress}</p>
                 </div>
               </div>
             </CardContent>
@@ -432,8 +432,8 @@ export default function OffboardingPage() {
                   <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Clearance Pending</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.clearancePending}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Clearance Pending</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.clearancePending}</p>
                 </div>
               </div>
             </CardContent>
@@ -445,8 +445,8 @@ export default function OffboardingPage() {
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Completed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.completed}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -456,19 +456,19 @@ export default function OffboardingPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-surface-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
             <input
               type="text"
               placeholder="Search by employee name, company..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Status</option>
             <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -480,7 +480,7 @@ export default function OffboardingPage() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Types</option>
             <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -497,45 +497,45 @@ export default function OffboardingPage() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800">
+                  <thead className="bg-[var(--bg-secondary)]">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Employee
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Exit Type
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Last Working Day
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Notice Period
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Rehire Eligible
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-surface-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {filteredProcesses.map((process: ExitProcess) => (
-                      <tr key={process.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                      <tr key={process.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
-                            <div className="rounded-full bg-surface-200 dark:bg-surface-700 p-2">
-                              <User className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+                            <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
+                              <User className="h-5 w-5 text-[var(--text-secondary)]" />
                             </div>
                             <div>
-                              <p className="font-medium text-surface-900 dark:text-white">
+                              <p className="font-medium text-[var(--text-primary)]">
                                 {process.employeeName || 'Employee'}
                               </p>
                               {process.newCompany && (
-                                <p className="text-xs text-surface-500">Moving to: {process.newCompany}</p>
+                                <p className="text-xs text-[var(--text-muted)]">Moving to: {process.newCompany}</p>
                               )}
                             </div>
                           </div>
@@ -551,12 +551,12 @@ export default function OffboardingPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {formatDate(process.lastWorkingDate)}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {process.noticePeriodServed || 0} / {process.noticePeriodDays || 0} days
                           </span>
                         </td>
@@ -569,20 +569,20 @@ export default function OffboardingPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="relative group inline-block">
-                            <button className="p-1 rounded hover:bg-surface-100 dark:hover:bg-surface-700">
-                              <MoreVertical className="h-4 w-4 text-surface-400" />
+                            <button className="p-1 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]">
+                              <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Eye className="h-4 w-4" />
                                 View Details
                               </button>
                               <button
                                 onClick={() => handleOpenEditModal(process)}
-                                className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                               >
                                 <Edit className="h-4 w-4" />
                                 Edit
@@ -590,7 +590,7 @@ export default function OffboardingPage() {
                               {process.status === ExitStatus.INITIATED && (
                                 <button
                                   onClick={() => handleStatusChange(process, ExitStatus.IN_PROGRESS)}
-                                  className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <Clock className="h-4 w-4" />
                                   Start Process
@@ -599,7 +599,7 @@ export default function OffboardingPage() {
                               {process.status === ExitStatus.IN_PROGRESS && (
                                 <button
                                   onClick={() => handleStatusChange(process, ExitStatus.CLEARANCE_PENDING)}
-                                  className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
+                                  className="w-full px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                 >
                                   <FileText className="h-4 w-4" />
                                   Request Clearance
@@ -635,11 +635,11 @@ export default function OffboardingPage() {
           exitResponse && (
             <Card>
               <CardContent className="p-12 text-center">
-                <UserMinus className="h-12 w-12 mx-auto text-surface-400 mb-4" />
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
+                <UserMinus className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                   No Exit Processes Found
                 </h3>
-                <p className="text-surface-600 dark:text-surface-400 mb-4">
+                <p className="text-[var(--text-secondary)] mb-4">
                   {searchQuery || statusFilter || typeFilter
                     ? 'No exit processes match your search criteria.'
                     : 'No employees are currently in the offboarding process.'}
@@ -659,7 +659,7 @@ export default function OffboardingPage() {
         {/* Add/Edit Exit Process Modal */}
         <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {isEditing ? 'Edit Exit Process' : 'Initiate Exit Process'}
             </h2>
           </ModalHeader>
@@ -667,13 +667,13 @@ export default function OffboardingPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Employee ID *
                   </label>
                   <input
                     type="text"
                     disabled={isEditing}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                     placeholder="Enter employee ID"
                     {...register('employeeId')}
                   />
@@ -682,11 +682,11 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Exit Type *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('exitType')}
                     >
                       <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -698,11 +698,11 @@ export default function OffboardingPage() {
                     {errors.exitType && <span className="text-red-500 text-sm">{errors.exitType.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('status')}
                     >
                       <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -717,34 +717,34 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Resignation Date
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('resignationDate')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Last Working Day
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('lastWorkingDate')}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notice Period (days)
                   </label>
                   <input
                     type="number"
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="30"
                     {...register('noticePeriodDays')}
                   />
@@ -752,12 +752,12 @@ export default function OffboardingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Reason for Leaving
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Reason for leaving..."
                     {...register('reasonForLeaving')}
                   />
@@ -765,23 +765,23 @@ export default function OffboardingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       New Company
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New company name"
                       {...register('newCompany')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       New Designation
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New designation"
                       {...register('newDesignation')}
                     />
@@ -792,21 +792,21 @@ export default function OffboardingPage() {
                   <input
                     type="checkbox"
                     id="rehireEligible"
-                    className="w-4 h-4 text-primary-600 border-surface-300 rounded focus:ring-primary-500"
+                    className="w-4 h-4 text-primary-600 border-[var(--border-main)] rounded focus:ring-primary-500"
                     {...register('rehireEligible')}
                   />
-                  <label htmlFor="rehireEligible" className="text-sm text-surface-700 dark:text-surface-300">
+                  <label htmlFor="rehireEligible" className="text-sm text-[var(--text-secondary)]">
                     Eligible for Rehire
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes
                   </label>
                   <textarea
                     rows={2}
-                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />
@@ -837,14 +837,14 @@ export default function OffboardingPage() {
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
             <div className="flex items-center gap-3">
-              <div className="rounded-full bg-surface-200 dark:bg-surface-700 p-2">
-                <User className="h-6 w-6 text-surface-600 dark:text-surface-400" />
+              <div className="rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] p-2">
+                <User className="h-6 w-6 text-[var(--text-secondary)]" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedProcess?.employeeName || 'Employee'}
                 </h2>
-                <p className="text-sm text-surface-500">Exit Process Details</p>
+                <p className="text-sm text-[var(--text-muted)]">Exit Process Details</p>
               </div>
             </div>
           </ModalHeader>
@@ -866,43 +866,43 @@ export default function OffboardingPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Resignation Date
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatDate(selectedProcess.resignationDate)}
                     </p>
                   </div>
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Last Working Day
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {formatDate(selectedProcess.lastWorkingDate)}
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                    <p className="text-sm text-surface-500 flex items-center gap-2">
+                  <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                    <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       Notice Period
                     </p>
-                    <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">
                       {selectedProcess.noticePeriodServed || 0} / {selectedProcess.noticePeriodDays || 0} days
                     </p>
                   </div>
                   {selectedProcess.finalSettlementAmount && (
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                      <p className="text-sm text-surface-500 flex items-center gap-2">
+                    <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                      <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                         <DollarSign className="h-4 w-4" />
                         Settlement Amount
                       </p>
-                      <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                      <p className="text-lg font-semibold text-[var(--text-primary)]">
                         {formatCurrency(selectedProcess.finalSettlementAmount)}
                       </p>
                     </div>
@@ -911,8 +911,8 @@ export default function OffboardingPage() {
 
                 {selectedProcess.reasonForLeaving && (
                   <div>
-                    <h4 className="text-sm font-medium text-surface-500 mb-1">Reason for Leaving</h4>
-                    <p className="text-surface-700 dark:text-surface-300">
+                    <h4 className="text-sm font-medium text-[var(--text-muted)] mb-1">Reason for Leaving</h4>
+                    <p className="text-[var(--text-secondary)]">
                       {selectedProcess.reasonForLeaving}
                     </p>
                   </div>
@@ -921,23 +921,23 @@ export default function OffboardingPage() {
                 {(selectedProcess.newCompany || selectedProcess.newDesignation) && (
                   <div className="grid grid-cols-2 gap-4">
                     {selectedProcess.newCompany && (
-                      <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                        <p className="text-sm text-surface-500 flex items-center gap-2">
+                      <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                        <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                           <Building className="h-4 w-4" />
                           New Company
                         </p>
-                        <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                        <p className="text-lg font-semibold text-[var(--text-primary)]">
                           {selectedProcess.newCompany}
                         </p>
                       </div>
                     )}
                     {selectedProcess.newDesignation && (
-                      <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
-                        <p className="text-sm text-surface-500 flex items-center gap-2">
+                      <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
+                        <p className="text-sm text-[var(--text-muted)] flex items-center gap-2">
                           <Briefcase className="h-4 w-4" />
                           New Designation
                         </p>
-                        <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                        <p className="text-lg font-semibold text-[var(--text-primary)]">
                           {selectedProcess.newDesignation}
                         </p>
                       </div>
@@ -947,8 +947,8 @@ export default function OffboardingPage() {
 
                 {selectedProcess.notes && (
                   <div>
-                    <h4 className="text-sm font-medium text-surface-500 mb-1">Notes</h4>
-                    <p className="text-surface-700 dark:text-surface-300">
+                    <h4 className="text-sm font-medium text-[var(--text-muted)] mb-1">Notes</h4>
+                    <p className="text-[var(--text-secondary)]">
                       {selectedProcess.notes}
                     </p>
                   </div>
@@ -973,12 +973,12 @@ export default function OffboardingPage() {
         {/* Delete Confirmation Modal */}
         <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} size="sm">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Delete Exit Process
             </h2>
           </ModalHeader>
           <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Are you sure you want to delete the exit process for <strong>{selectedProcess?.employeeName || 'this employee'}</strong>? This action cannot be undone.
             </p>
           </ModalBody>

@@ -20,6 +20,7 @@ import { Permission, RoleWithDetails } from '@/lib/types/roles';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { ConfirmDialog } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import {
   useRoles,
   usePermissions as useQueryPermissions,
@@ -165,7 +166,7 @@ export default function PermissionsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Permission Management
             </h1>
             <p className="text-[var(--text-muted)] mt-1">
@@ -173,18 +174,19 @@ export default function PermissionsPage() {
             </p>
           </div>
           {activeTab === 'roles' && (
-            <button
+            <Button
               onClick={() => setIsCreateRoleModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+              variant="primary"
+              size="md"
+              leftIcon={<Plus className="w-5 h-5" />}
             >
-              <Plus className="w-5 h-5" />
               Create Role
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-surface-200 dark:border-surface-700">
+        <div className="flex gap-2 border-b border-[var(--border-main)]">
           <button
             onClick={() => setActiveTab('roles')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${activeTab === 'roles'
@@ -219,7 +221,7 @@ export default function PermissionsPage() {
             placeholder={activeTab === 'roles' ? 'Search roles...' : 'Search users...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="input-aura pl-10"
           />
         </div>
 
@@ -249,11 +251,11 @@ export default function PermissionsPage() {
                       key={role.id}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden"
+                      className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden"
                     >
                       {/* Role Header */}
                       <div
-                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                        className="flex items-center justify-between p-4 cursor-pointer hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         onClick={() => toggleRoleExpanded(role.id)}
                       >
                         <div className="flex items-center gap-4">
@@ -268,7 +270,7 @@ export default function PermissionsPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-surface-900 dark:text-white">
+                              <h3 className="font-semibold text-[var(--text-primary)]">
                                 {role.name}
                               </h3>
                               {role.isSystemRole && (
@@ -321,10 +323,10 @@ export default function PermissionsPage() {
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="border-t border-surface-200 dark:border-surface-700"
+                            className="border-t border-[var(--border-main)]"
                           >
-                            <div className="p-4 bg-[var(--bg-surface)] dark:bg-surface-800/50">
-                              <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                            <div className="p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/50">
+                              <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-3">
                                 Assigned Permissions
                               </h4>
                               {role.permissions.length === 0 ? (
@@ -334,7 +336,7 @@ export default function PermissionsPage() {
                                   {role.permissions.map((perm) => (
                                     <span
                                       key={perm.code}
-                                      className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded text-xs font-mono text-surface-700 dark:text-surface-300"
+                                      className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded text-xs font-mono text-[var(--text-secondary)]"
                                       title={perm.description}
                                     >
                                       <Key className="w-3 h-3" />
@@ -365,9 +367,9 @@ export default function PermissionsPage() {
                     <p>No users found</p>
                   </div>
                 ) : (
-                  <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden">
+                  <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-surface-50 dark:bg-surface-800 text-surface-700 dark:text-surface-300">
+                      <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                         <tr>
                           <th className="px-6 py-3 font-medium">User</th>
                           <th className="px-6 py-3 font-medium">Email</th>
@@ -377,13 +379,13 @@ export default function PermissionsPage() {
                       </thead>
                       <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                         {filteredUsers.map((user) => (
-                          <tr key={user.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                          <tr key={user.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-medium">
                                   {user.firstName[0]}
                                 </div>
-                                <span className="font-medium text-surface-900 dark:text-white">
+                                <span className="font-medium text-[var(--text-primary)]">
                                   {user.fullName}
                                 </span>
                               </div>
@@ -557,9 +559,9 @@ function EditRoleModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700 shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               Edit Role: {role.code}
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
@@ -574,30 +576,30 @@ function EditRoleModal({
         <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Role Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-aura" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="input-aura" />
             </div>
           </div>
-          <div className="border-t border-surface-200 dark:border-surface-700 my-4"></div>
+          <div className="border-t border-[var(--border-main)] my-4"></div>
           {Object.entries(permissionsByResource).map(([resource, perms]) => (
             <div key={resource} className="mb-6">
-              <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-3 uppercase tracking-wider">{resource}</h3>
+              <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3 uppercase tracking-wider">{resource}</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {perms.map((perm) => (
                   <button
                     key={perm.code}
                     onClick={() => togglePermission(perm.code)}
-                    className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-surface-600 hover:border-blue-300'}`}
+                    className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                   >
-                    <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-surface-600'}`}>
+                    <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
                       {selectedPermissions.has(perm.code) && <Check className="w-3 h-3" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-surface-900 dark:text-white truncate" title={perm.name}>{perm.name}</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
                       <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
                     </div>
                   </button>
@@ -607,12 +609,11 @@ function EditRoleModal({
           ))}
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-surface-200 dark:border-surface-700 shrink-0">
-          <button onClick={onClose} className="px-4 py-2 text-surface-700 dark:text-surface-300 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} disabled={saving || !name.trim()} className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center gap-2">
-            {saving && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-[var(--border-main)] shrink-0">
+          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
+          <Button onClick={handleSave} disabled={saving || !name.trim()} variant="primary" size="md" isLoading={saving} loadingText="Saving...">
             Save Changes
-          </button>
+          </Button>
         </div>
       </motion.div>
     </motion.div>
@@ -672,9 +673,9 @@ function CreateRoleModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700 shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-white">Create New Role</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Create New Role</h2>
             <p className="text-sm text-[var(--text-muted)]">Create a custom role with specific permissions</p>
           </div>
           <button onClick={onClose} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700">
@@ -685,20 +686,20 @@ function CreateRoleModal({
         <div className="p-4 overflow-y-auto max-h-[60vh] space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Role Code *</label>
-              <input type="text" value={roleCode} onChange={(e) => setRoleCode(e.target.value)} placeholder="e.g., FINANCE_MANAGER" className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
+              <input type="text" value={roleCode} onChange={(e) => setRoleCode(e.target.value)} placeholder="e.g., FINANCE_MANAGER" className="input-aura" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Display Name *</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Finance Manager" className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Display Name *</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Finance Manager" className="input-aura" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Description</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe this role's purpose..." rows={2} className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe this role's purpose..." rows={2} className="input-aura" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">Permissions ({selectedPermissions.size} selected)</h3>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">Permissions ({selectedPermissions.size} selected)</h3>
             {Object.entries(permissionsByResource).map(([resource, perms]) => (
               <div key={resource} className="mb-4">
                 <h4 className="text-xs font-medium text-[var(--text-muted)] mb-2 uppercase tracking-wider">{resource}</h4>
@@ -707,13 +708,13 @@ function CreateRoleModal({
                     <button
                       key={perm.code}
                       onClick={() => togglePermission(perm.code)}
-                      className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-surface-600 hover:border-blue-300'}`}
+                      className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-colors ${selectedPermissions.has(perm.code) ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700' : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'}`}
                     >
-                      <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-surface-600'}`}>
+                      <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedPermissions.has(perm.code) ? 'bg-primary-500 text-white' : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'}`}>
                         {selectedPermissions.has(perm.code) && <Check className="w-3 h-3" />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-white truncate" title={perm.name}>{perm.name}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={perm.name}>{perm.name}</p>
                         <p className="text-xs text-[var(--text-muted)] truncate" title={perm.action}>{perm.action}</p>
                       </div>
                     </button>
@@ -724,12 +725,11 @@ function CreateRoleModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-surface-200 dark:border-surface-700 shrink-0">
-          <button onClick={onClose} className="px-4 py-2 text-surface-700 dark:text-surface-300 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} disabled={saving || !roleCode.trim() || !name.trim()} className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center gap-2">
-            {saving && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-[var(--border-main)] shrink-0">
+          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
+          <Button onClick={handleSave} disabled={saving || !roleCode.trim() || !name.trim()} variant="primary" size="md" isLoading={saving} loadingText="Creating...">
             Create Role
-          </button>
+          </Button>
         </div>
       </motion.div>
     </motion.div>
@@ -784,9 +784,9 @@ function EditUserModal({
         className="bg-[var(--bg-card)] rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700 shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)] shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               Edit User Roles
             </h2>
             <p className="text-sm text-[var(--text-muted)]">
@@ -806,17 +806,17 @@ function EditUserModal({
                 onClick={() => toggleRole(role.code)}
                 className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${selectedRoleCodes.has(role.code)
                     ? 'bg-blue-50 border-blue-300 dark:bg-blue-900/30 dark:border-blue-700'
-                    : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-surface-600 hover:border-blue-300'
+                    : 'bg-[var(--bg-surface)] border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-blue-300'
                   }`}
               >
                 <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${selectedRoleCodes.has(role.code)
                     ? 'bg-primary-500 text-white'
-                    : 'bg-gray-200 dark:bg-surface-600'
+                    : 'bg-gray-200 dark:bg-[var(--bg-secondary)]600'
                   }`}>
                   {selectedRoleCodes.has(role.code) && <Check className="w-3 h-3" />}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-surface-900 dark:text-white">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
                     {role.name}
                   </p>
                   <p className="text-xs text-[var(--text-muted)]">
@@ -828,12 +828,11 @@ function EditUserModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-surface-200 dark:border-surface-700 shrink-0">
-          <button onClick={onClose} className="px-4 py-2 text-surface-700 dark:text-surface-300 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center gap-2">
-            {saving && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-[var(--border-main)] shrink-0">
+          <Button onClick={onClose} variant="ghost" size="md">Cancel</Button>
+          <Button onClick={handleSave} disabled={saving} variant="primary" size="md" isLoading={saving} loadingText="Saving...">
             Save Changes
-          </button>
+          </Button>
         </div>
       </motion.div>
     </motion.div>

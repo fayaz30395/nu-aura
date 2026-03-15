@@ -178,7 +178,7 @@ export default function HelpdeskSLAPage() {
       case 'FIRST': return 'bg-yellow-100 text-yellow-800';
       case 'SECOND': return 'bg-orange-100 text-orange-800';
       case 'THIRD': return 'bg-red-100 text-red-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -200,7 +200,7 @@ export default function HelpdeskSLAPage() {
 
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">SLA Management</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">SLA Management</h1>
           {activeTab === 'slas' && (
             <button
               onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
@@ -214,25 +214,25 @@ export default function HelpdeskSLAPage() {
         {/* Dashboard Cards */}
         {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
-              <div className="text-surface-600 dark:text-surface-400">SLA Compliance</div>
-              <div className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+              <div className="text-[var(--text-secondary)]">SLA Compliance</div>
+              <div className="text-sm text-[var(--text-muted)] mt-1">
                 {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
               </div>
             </div>
-            <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
               <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
-              <div className="text-surface-600 dark:text-surface-400">Avg First Response</div>
+              <div className="text-[var(--text-secondary)]">Avg First Response</div>
             </div>
-            <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
-              <div className="text-surface-600 dark:text-surface-400">Avg Resolution Time</div>
+              <div className="text-[var(--text-secondary)]">Avg Resolution Time</div>
             </div>
-            <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
+            <div className="bg-[var(--bg-secondary)] rounded-lg shadow p-6">
               <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
-              <div className="text-surface-600 dark:text-surface-400">Avg CSAT Score</div>
-              <div className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+              <div className="text-[var(--text-secondary)]">Avg CSAT Score</div>
+              <div className="text-sm text-[var(--text-muted)] mt-1">
                 {dashboardData.firstContactResolutions} FCR
               </div>
             </div>
@@ -242,19 +242,19 @@ export default function HelpdeskSLAPage() {
         {/* Tabs */}
         <div className="flex border-b mb-6">
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'dashboard' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('dashboard')}
           >
             Dashboard
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'slas' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('slas')}
           >
             SLA Policies
           </button>
           <button
-            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'}`}
+            className={`px-6 py-3 font-medium ${activeTab === 'escalations' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'}`}
             onClick={() => setActiveTab('escalations')}
           >
             Pending Escalations
@@ -263,7 +263,7 @@ export default function HelpdeskSLAPage() {
 
         {/* SLA Form */}
         {showForm && activeTab === 'slas' && (
-          <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit SLA Policy' : 'Create SLA Policy'}
             </h2>
@@ -274,7 +274,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="text"
                     {...register('name')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   />
                   {errors.name && (
                     <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -284,7 +284,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Priority</label>
                   <select
                     {...register('priority')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   >
                     <option value="">All Priorities</option>
                     <option value="LOW">Low</option>
@@ -299,7 +299,7 @@ export default function HelpdeskSLAPage() {
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
                   {...register('description')}
-                  className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                  className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   rows={2}
                 />
               </div>
@@ -310,7 +310,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('firstResponseMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                   {errors.firstResponseMinutes && (
@@ -322,7 +322,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('resolutionMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                   {errors.resolutionMinutes && (
@@ -334,7 +334,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('escalationAfterMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                 </div>
@@ -345,7 +345,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours Start</label>
                   <select
                     {...register('businessStartHour')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -356,7 +356,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours End</label>
                   <select
                     {...register('businessEndHour')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full p-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -405,7 +405,7 @@ export default function HelpdeskSLAPage() {
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditingId(null); }}
-                  className="px-6 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="px-6 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>
@@ -420,16 +420,16 @@ export default function HelpdeskSLAPage() {
           <>
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && dashboardData && (
-              <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-6">
+              <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">SLA Performance Overview</h2>
                 <div className="space-y-6">
                   {/* SLA Compliance Bar */}
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-surface-700 dark:text-surface-300">SLA Compliance Rate</span>
+                      <span className="text-[var(--text-secondary)]">SLA Compliance Rate</span>
                       <span className="font-bold">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</span>
                     </div>
-                    <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-4">
+                    <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-4">
                       <div
                         className={`h-4 rounded-full ${
                           (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-green-500' :
@@ -441,20 +441,20 @@ export default function HelpdeskSLAPage() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                      <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">SLA Met</div>
+                    <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                      <div className="text-sm text-[var(--text-secondary)] mb-1">SLA Met</div>
                       <div className="text-2xl font-bold text-green-600">{dashboardData.slaMetCount}</div>
                     </div>
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                      <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">SLA Breached</div>
+                    <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                      <div className="text-sm text-[var(--text-secondary)] mb-1">SLA Breached</div>
                       <div className="text-2xl font-bold text-red-600">{dashboardData.slaBreachedCount}</div>
                     </div>
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                      <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">First Contact Resolutions</div>
+                    <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                      <div className="text-sm text-[var(--text-secondary)] mb-1">First Contact Resolutions</div>
                       <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{dashboardData.firstContactResolutions}</div>
                     </div>
-                    <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                      <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Customer Satisfaction</div>
+                    <div className="p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
+                      <div className="text-sm text-[var(--text-secondary)] mb-1">Customer Satisfaction</div>
                       <div className="text-2xl font-bold text-purple-600">
                         {dashboardData.averageCSAT ? `${dashboardData.averageCSAT.toFixed(1)}/5` : 'N/A'}
                       </div>
@@ -466,17 +466,17 @@ export default function HelpdeskSLAPage() {
 
             {/* SLA Policies Tab */}
             {activeTab === 'slas' && (
-              <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md overflow-hidden">
+              <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md overflow-hidden">
                 <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Policy</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">First Response</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Resolution</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Escalation</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Hours</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Policy</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">First Response</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Resolution</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Escalation</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Hours</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
@@ -485,7 +485,7 @@ export default function HelpdeskSLAPage() {
                         <td className="px-6 py-4">
                           <div className="font-medium">{sla.name}</div>
                           {sla.priority && (
-                            <span className="text-xs text-surface-600 dark:text-surface-400">Priority: {sla.priority}</span>
+                            <span className="text-xs text-[var(--text-secondary)]">Priority: {sla.priority}</span>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -529,7 +529,7 @@ export default function HelpdeskSLAPage() {
                     ))}
                     {slas.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="px-6 py-8 text-center text-surface-600 dark:text-surface-400">
+                        <td colSpan={7} className="px-6 py-8 text-center text-[var(--text-secondary)]">
                           No SLA policies found. Create one to get started.
                         </td>
                       </tr>
@@ -544,14 +544,14 @@ export default function HelpdeskSLAPage() {
               <div className="space-y-4">
                 {escalations.length > 0 ? (
                   escalations.map((escalation) => (
-                    <div key={escalation.id} className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-6">
+                    <div key={escalation.id} className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-6">
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <span className={`px-2 py-1 rounded-full text-xs ${getEscalationLevelColor(escalation.escalationLevel)}`}>
                               {escalation.escalationLevel} Level
                             </span>
-                            <span className="px-2 py-1 bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200 rounded-full text-xs">
+                            <span className="px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full text-xs">
                               {escalation.escalationReason.replace('_', ' ')}
                             </span>
                             {escalation.isAutoEscalated && (
@@ -560,13 +560,13 @@ export default function HelpdeskSLAPage() {
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-surface-600 dark:text-surface-400">
+                          <div className="text-sm text-[var(--text-secondary)]">
                             Ticket: {escalation.ticketId.slice(0, 8)}...
                           </div>
                           {escalation.notes && (
-                            <div className="text-sm text-surface-600 dark:text-surface-400 mt-2">{escalation.notes}</div>
+                            <div className="text-sm text-[var(--text-secondary)] mt-2">{escalation.notes}</div>
                           )}
-                          <div className="text-sm text-surface-600 dark:text-surface-400 mt-2">
+                          <div className="text-sm text-[var(--text-secondary)] mt-2">
                             Escalated: {new Date(escalation.escalatedAt).toLocaleString()}
                           </div>
                         </div>
@@ -580,7 +580,7 @@ export default function HelpdeskSLAPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-8 text-center text-surface-500 dark:text-surface-400">
+                  <div className="bg-[var(--bg-secondary)] rounded-lg shadow-md p-8 text-center text-[var(--text-muted)]">
                     No pending escalations. All caught up!
                   </div>
                 )}

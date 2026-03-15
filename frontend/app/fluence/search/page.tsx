@@ -59,26 +59,26 @@ export default function SearchPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
               <Search className="w-6 h-6 text-white" />
             </div>
             Search NU-Fluence
           </h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-1">
+          <p className="text-[var(--text-secondary)] mt-1">
             Find wiki pages, blog posts, and templates
           </p>
         </div>
 
         {/* Search Input */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" />
           <input
             type="text"
             placeholder="Search wiki pages, blog posts, templates..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-rose-500 text-lg"
+            className="w-full pl-12 pr-4 py-3 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-rose-500 text-lg"
           />
         </div>
 
@@ -89,7 +89,7 @@ export default function SearchPage() {
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedType === undefined
                 ? 'bg-rose-600 text-white'
-                : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-600'
+                : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
             }`}
           >
             All
@@ -99,7 +99,7 @@ export default function SearchPage() {
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedType === 'WIKI'
                 ? 'bg-violet-600 text-white'
-                : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-600'
+                : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
             }`}
           >
             Wiki Pages
@@ -109,7 +109,7 @@ export default function SearchPage() {
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedType === 'BLOG'
                 ? 'bg-amber-600 text-white'
-                : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-600'
+                : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
             }`}
           >
             Blog Posts
@@ -119,7 +119,7 @@ export default function SearchPage() {
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedType === 'TEMPLATE'
                 ? 'bg-indigo-600 text-white'
-                : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-600'
+                : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
             }`}
           >
             Templates
@@ -129,19 +129,19 @@ export default function SearchPage() {
         {/* Results */}
         {isLoading && searchQuery.length > 0 ? (
           <div className="flex items-center justify-center py-12">
-            <RefreshCw className="w-6 h-6 text-surface-400 animate-spin" />
-            <span className="ml-2 text-surface-600 dark:text-surface-400">
+            <RefreshCw className="w-6 h-6 text-[var(--text-muted)] animate-spin" />
+            <span className="ml-2 text-[var(--text-secondary)]">
               Searching...
             </span>
           </div>
         ) : searchQuery.length === 0 ? (
           <Card className="border-dashed border-2">
             <CardContent className="py-16 text-center">
-              <Zap className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-              <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <Zap className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+              <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
                 Start searching
               </h3>
-              <p className="text-surface-500 dark:text-surface-400">
+              <p className="text-[var(--text-muted)]">
                 Type a query to search across all NU-Fluence content
               </p>
             </CardContent>
@@ -149,23 +149,23 @@ export default function SearchPage() {
         ) : results.length === 0 ? (
           <Card className="border-dashed border-2">
             <CardContent className="py-16 text-center">
-              <Search className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-              <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <Search className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+              <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
                 No results found
               </h3>
-              <p className="text-surface-500 dark:text-surface-400">
+              <p className="text-[var(--text-muted)]">
                 Try adjusting your search query
               </p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-surface-600 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Found {results.length} result{results.length !== 1 ? 's' : ''}
             </p>
             {results.map((result, index) => {
               const Icon = iconMap[result.type] || FileText;
-              const colorClass = typeColorMap[result.type] || 'bg-surface-100';
+              const colorClass = typeColorMap[result.type] || 'bg-[var(--bg-secondary)]';
               const typeLabel = typeDisplayMap[result.type] || result.type;
 
               return (
@@ -189,7 +189,7 @@ export default function SearchPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-semibold text-surface-900 dark:text-surface-100 line-clamp-1">
+                          <h3 className="font-semibold text-[var(--text-primary)] line-clamp-1">
                             {result.title}
                           </h3>
                           <span className={`inline-block px-2 py-1 rounded text-xs font-medium whitespace-nowrap flex-shrink-0 ${colorClass}`}>
@@ -197,11 +197,11 @@ export default function SearchPage() {
                           </span>
                         </div>
                         {result.excerpt && (
-                          <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2 mb-2">
+                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-2">
                             {result.excerpt}
                           </p>
                         )}
-                        <div className="flex items-center gap-4 text-xs text-surface-500 dark:text-surface-500">
+                        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
                           {result.author && (
                             <span>By {result.author}</span>
                           )}
@@ -211,7 +211,7 @@ export default function SearchPage() {
                           </span>
                         </div>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-surface-400 flex-shrink-0" />
+                      <ArrowRight className="w-5 h-5 text-[var(--text-muted)] flex-shrink-0" />
                     </CardContent>
                   </Card>
                 </motion.div>

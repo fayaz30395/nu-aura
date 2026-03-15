@@ -41,7 +41,7 @@ function Avatar({ name }: { name: string }) {
   const initials = getInitials(name);
   return (
     <div
-      className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-[10px] font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-gray-600 dark:bg-gray-700 dark:text-gray-300"
       title={name}
     >
       {initials}

@@ -97,7 +97,7 @@ const getTypeColor = (type: RecognitionType) => {
     case RecognitionType.PEER_NOMINATION:
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-950 dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
   }
 };
 
@@ -186,10 +186,10 @@ export default function RecognitionPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Employee Recognition
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Celebrate achievements and recognize your colleagues
             </p>
           </div>
@@ -221,8 +221,8 @@ export default function RecognitionPage() {
                   <Award className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Received</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.recognitionsReceived}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Received</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.recognitionsReceived}</p>
                 </div>
               </div>
             </CardContent>
@@ -234,8 +234,8 @@ export default function RecognitionPage() {
                   <Gift className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Given</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.recognitionsGiven}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Given</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.recognitionsGiven}</p>
                 </div>
               </div>
             </CardContent>
@@ -247,8 +247,8 @@ export default function RecognitionPage() {
                   <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Activity</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.totalRecognitions}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Activity</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalRecognitions}</p>
                 </div>
               </div>
             </CardContent>
@@ -304,11 +304,11 @@ export default function RecognitionPage() {
             ) : recognitions.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-12">
-                  <Award className="h-12 w-12 text-surface-400" />
-                  <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                  <Award className="h-12 w-12 text-[var(--text-muted)]" />
+                  <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                     No recognitions yet
                   </p>
-                  <p className="text-surface-600 dark:text-surface-400">
+                  <p className="text-[var(--text-secondary)]">
                     Be the first to recognize a colleague!
                   </p>
                   <Button onClick={handleGiveRecognition} className="mt-4">
@@ -329,10 +329,10 @@ export default function RecognitionPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
-                              <h3 className="font-semibold text-surface-900 dark:text-white break-words">
+                              <h3 className="font-semibold text-[var(--text-primary)] break-words">
                                 {recognition.title}
                               </h3>
-                              <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                              <p className="text-sm text-[var(--text-secondary)] mt-1">
                                 {recognition.isAnonymous ? 'Someone' : recognition.giverName || 'A colleague'} recognized{' '}
                                 <span className="font-medium text-primary-600 dark:text-primary-400">
                                   {recognition.receiverName || 'a team member'}
@@ -353,7 +353,7 @@ export default function RecognitionPage() {
                           </div>
 
                           {recognition.message && (
-                            <p className="mt-2 text-surface-700 dark:text-surface-300 break-words">
+                            <p className="mt-2 text-[var(--text-secondary)] break-words">
                               {recognition.message}
                             </p>
                           )}
@@ -366,7 +366,7 @@ export default function RecognitionPage() {
                             </div>
                           )}
 
-                          <div className="mt-3 flex items-center gap-4 text-sm text-surface-500 flex-wrap">
+                          <div className="mt-3 flex items-center gap-4 text-sm text-[var(--text-muted)] flex-wrap">
                             <button className="flex items-center gap-1 hover:text-red-500 dark:hover:text-red-400 transition-colors" aria-label={`Like recognition (${recognition.likesCount} likes)`}>
                               <Heart className="h-4 w-4" />
                               {recognition.likesCount}
@@ -392,7 +392,7 @@ export default function RecognitionPage() {
           <div className="space-y-4">
             <Card>
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] mb-4">
                   <Crown className="h-5 w-5 text-yellow-500" />
                   Top Contributors
                 </h3>
@@ -404,20 +404,20 @@ export default function RecognitionPage() {
                   </div>
                 ) : leaderboard.length === 0 ? (
                   <div className="text-center py-6">
-                    <AlertCircle className="h-8 w-8 text-surface-400 mx-auto mb-2" />
-                    <p className="text-sm text-surface-500">No data yet</p>
+                    <AlertCircle className="h-8 w-8 text-[var(--text-muted)] mx-auto mb-2" />
+                    <p className="text-sm text-[var(--text-muted)]">No data yet</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {leaderboard.map((employee, index) => (
                       <div
                         key={employee.id}
-                        className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+                        className="flex items-center gap-3 p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-yellow-500 text-white' :
                             index === 1 ? 'bg-gray-400 text-white' :
                               index === 2 ? 'bg-amber-600 text-white' :
-                                'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
+                                'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
                           {index === 0 ? <Crown className="h-4 w-4" /> :
                             index === 1 ? <Medal className="h-4 w-4" /> :
@@ -425,10 +425,10 @@ export default function RecognitionPage() {
                                 <span className="text-sm font-medium">{index + 1}</span>}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-surface-900 dark:text-white text-sm truncate">
+                          <p className="font-medium text-[var(--text-primary)] text-sm truncate">
                             {employee.employeeName || `Employee ${index + 1}`}
                           </p>
-                          <p className="text-xs text-surface-500">
+                          <p className="text-xs text-[var(--text-muted)]">
                             {employee.recognitionsReceived} recognitions
                           </p>
                         </div>
@@ -436,7 +436,7 @@ export default function RecognitionPage() {
                           <p className="font-bold text-yellow-600 dark:text-yellow-400">
                             {employee.totalPointsEarned}
                           </p>
-                          <p className="text-xs text-surface-500">pts</p>
+                          <p className="text-xs text-[var(--text-muted)]">pts</p>
                         </div>
                       </div>
                     ))}
@@ -447,7 +447,7 @@ export default function RecognitionPage() {
 
             <Card>
               <CardContent className="p-4">
-                <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                   Quick Recognize
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
@@ -460,10 +460,10 @@ export default function RecognitionPage() {
                           setFormData({ ...formData, type: type.value });
                           setIsModalOpen(true);
                         }}
-                        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+                        className="flex flex-col items-center gap-2 p-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <Icon className="h-6 w-6 text-primary-500" />
-                        <span className="text-xs text-surface-700 dark:text-surface-300">{type.label}</span>
+                        <span className="text-xs text-[var(--text-secondary)]">{type.label}</span>
                       </button>
                     );
                   })}
@@ -476,7 +476,7 @@ export default function RecognitionPage() {
         {/* Give Recognition Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-yellow-500" />
               Give Recognition
             </h2>
@@ -484,7 +484,7 @@ export default function RecognitionPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Employee ID *
                 </label>
                 <Input
@@ -495,7 +495,7 @@ export default function RecognitionPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Recognition Type *
                   </label>
                   <Select
@@ -510,7 +510,7 @@ export default function RecognitionPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Category
                   </label>
                   <Select
@@ -526,7 +526,7 @@ export default function RecognitionPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
                 </label>
                 <Input
@@ -536,7 +536,7 @@ export default function RecognitionPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Message
                 </label>
                 <Textarea
@@ -548,7 +548,7 @@ export default function RecognitionPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Points to Award
                   </label>
                   <Input
@@ -565,9 +565,9 @@ export default function RecognitionPage() {
                       type="checkbox"
                       checked={formData.isPublic}
                       onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                      className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       Make public
                     </span>
                   </label>
@@ -576,9 +576,9 @@ export default function RecognitionPage() {
                       type="checkbox"
                       checked={formData.isAnonymous}
                       onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
-                      className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                      className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                     />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       Send anonymously
                     </span>
                   </label>

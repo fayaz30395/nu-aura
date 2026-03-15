@@ -44,8 +44,8 @@ export default function EmployeeDetailPage() {
       case 'ON_LEAVE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'ON_NOTICE': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
       case 'TERMINATED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'RESIGNED': return 'bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-200';
-      default: return 'bg-surface-100 text-surface-800 dark:bg-surface-800 dark:text-surface-200';
+      case 'RESIGNED': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200';
     }
   };
 
@@ -66,10 +66,10 @@ export default function EmployeeDetailPage() {
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-surface-50 dark:bg-surface-900 flex items-center justify-center">
+        <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-            <p className="mt-4 text-surface-600 dark:text-surface-400">Loading employee details...</p>
+            <p className="mt-4 text-[var(--text-secondary)]">Loading employee details...</p>
           </div>
         </div>
       </AppLayout>
@@ -79,20 +79,20 @@ export default function EmployeeDetailPage() {
   if (error || !employee) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
-          <nav className="bg-surface-0 dark:bg-surface-800 shadow-sm border-b border-surface-200 dark:border-surface-700">
+        <div className="min-h-screen bg-[var(--bg-secondary)]">
+          <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-sm border-b border-[var(--border-main)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => router.push('/employees')}
-                    className="text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
                   >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                   </button>
-                  <h1 className="text-xl font-bold text-surface-900 dark:text-surface-100">Employee Details</h1>
+                  <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
                 </div>
               </div>
             </div>
@@ -109,21 +109,21 @@ export default function EmployeeDetailPage() {
 
   return (
     <AppLayout activeMenuItem="employees">
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* Navigation Bar */}
-        <nav className="bg-surface-0 dark:bg-surface-800 shadow-sm border-b border-surface-200 dark:border-surface-700">
+        <nav className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-sm border-b border-[var(--border-main)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => router.push('/employees')}
-                  className="text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                  className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </button>
-                <h1 className="text-xl font-bold text-surface-900 dark:text-surface-100">Employee Details</h1>
+                <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
               </div>
               <div className="flex gap-3">
                 <button
@@ -146,7 +146,7 @@ export default function EmployeeDetailPage() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Employee Header */}
-          <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex-shrink-0 h-20 w-20 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
@@ -155,9 +155,9 @@ export default function EmployeeDetailPage() {
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100">{employee.fullName}</h2>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">{employee.designation}</p>
-                  <p className="text-sm text-surface-500 dark:text-surface-500">{employee.employeeCode}</p>
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">{employee.fullName}</h2>
+                  <p className="text-sm text-[var(--text-secondary)]">{employee.designation}</p>
+                  <p className="text-sm text-[var(--text-muted)]">{employee.employeeCode}</p>
                 </div>
               </div>
               <span className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}>
@@ -167,14 +167,14 @@ export default function EmployeeDetailPage() {
           </div>
 
           {/* Tabs */}
-          <div className="bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm">
-            <div className="border-b border-surface-200 dark:border-surface-700">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm">
+            <div className="border-b border-[var(--border-main)]">
               <nav className="-mb-px flex space-x-8 px-6">
                 <button
                   onClick={() => setCurrentTab('basic')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'basic'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Basic Info
@@ -183,7 +183,7 @@ export default function EmployeeDetailPage() {
                   onClick={() => setCurrentTab('personal')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'personal'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Personal Details
@@ -192,7 +192,7 @@ export default function EmployeeDetailPage() {
                   onClick={() => setCurrentTab('employment')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'employment'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Employment
@@ -201,7 +201,7 @@ export default function EmployeeDetailPage() {
                   onClick={() => setCurrentTab('bank')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'bank'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Banking & Tax
@@ -210,7 +210,7 @@ export default function EmployeeDetailPage() {
                   onClick={() => setCurrentTab('custom')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'custom'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Additional Info
@@ -219,7 +219,7 @@ export default function EmployeeDetailPage() {
                   onClick={() => setCurrentTab('talent')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'talent'
                       ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                      : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300 dark:text-surface-400 dark:hover:text-surface-300 dark:hover:border-surface-600'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
                     }`}
                 >
                   Talent Journey
@@ -232,27 +232,27 @@ export default function EmployeeDetailPage() {
               {currentTab === 'basic' && (
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Employee Code</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.employeeCode}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Employee Code</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.employeeCode}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Work Email</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.workEmail}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Work Email</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.workEmail}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">First Name</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.firstName}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">First Name</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.firstName}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Middle Name</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.middleName || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Middle Name</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.middleName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Last Name</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.lastName || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Last Name</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.lastName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Status</label>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Status</label>
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}>
                       {formatEnumValue(employee.status)}
                     </span>
@@ -264,44 +264,44 @@ export default function EmployeeDetailPage() {
               {currentTab === 'personal' && (
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Personal Email</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.personalEmail || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Personal Email</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.personalEmail || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Phone Number</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.phoneNumber || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Phone Number</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.phoneNumber || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Emergency Contact</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.emergencyContactNumber || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Emergency Contact</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.emergencyContactNumber || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Date of Birth</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.dateOfBirth)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Date of Birth</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatDate(employee.dateOfBirth)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Gender</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatEnumValue(employee.gender)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Gender</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatEnumValue(employee.gender)}</p>
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Address</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.address || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Address</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.address || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">City</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.city || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">City</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.city || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">State/Province</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.state || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">State/Province</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.state || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Postal Code</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.postalCode || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Postal Code</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.postalCode || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Country</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.country || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Country</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.country || '-'}</p>
                   </div>
                 </div>
               )}
@@ -310,41 +310,41 @@ export default function EmployeeDetailPage() {
               {currentTab === 'employment' && (
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Designation</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.designation}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Designation</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.designation}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Employment Type</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatEnumValue(employee.employmentType)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Employment Type</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatEnumValue(employee.employmentType)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Department</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.departmentName || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Department</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.departmentName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Employee Level</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatEnumValue(employee.level)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Employee Level</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatEnumValue(employee.level)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Job Role</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatEnumValue(employee.jobRole)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Job Role</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatEnumValue(employee.jobRole)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Reporting Manager</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{employee.managerName || '-'}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Reporting Manager</label>
+                    <p className="text-base text-[var(--text-primary)]">{employee.managerName || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Joining Date</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.joiningDate)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Joining Date</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatDate(employee.joiningDate)}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Confirmation Date</label>
-                    <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.confirmationDate)}</p>
+                    <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Confirmation Date</label>
+                    <p className="text-base text-[var(--text-primary)]">{formatDate(employee.confirmationDate)}</p>
                   </div>
                   {employee.exitDate && (
                     <div>
-                      <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Exit Date</label>
-                      <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.exitDate)}</p>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Exit Date</label>
+                      <p className="text-base text-[var(--text-primary)]">{formatDate(employee.exitDate)}</p>
                     </div>
                   )}
                 </div>
@@ -355,20 +355,20 @@ export default function EmployeeDetailPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Bank Account Number</label>
-                      <p className="text-base text-surface-900 dark:text-surface-100">{employee.bankAccountNumber || '-'}</p>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Bank Account Number</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.bankAccountNumber || '-'}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Bank Name</label>
-                      <p className="text-base text-surface-900 dark:text-surface-100">{employee.bankName || '-'}</p>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Bank Name</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.bankName || '-'}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">IFSC Code / Routing Number</label>
-                      <p className="text-base text-surface-900 dark:text-surface-100">{employee.bankIfscCode || '-'}</p>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">IFSC Code / Routing Number</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.bankIfscCode || '-'}</p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Tax ID / SSN</label>
-                      <p className="text-base text-surface-900 dark:text-surface-100">{employee.taxId || '-'}</p>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Tax ID / SSN</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.taxId || '-'}</p>
                     </div>
                   </div>
                   <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-500 dark:border-primary-500 rounded-md p-4">
@@ -397,25 +397,25 @@ export default function EmployeeDetailPage() {
           </div>
 
           {/* Metadata */}
-          <div className="mt-6 bg-surface-0 dark:bg-surface-800 rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">System Information</h3>
+          <div className="mt-6 bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">System Information</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Created At</label>
-                <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.createdAt)}</p>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Created At</label>
+                <p className="text-base text-[var(--text-primary)]">{formatDate(employee.createdAt)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Last Updated</label>
-                <p className="text-base text-surface-900 dark:text-surface-100">{formatDate(employee.updatedAt)}</p>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Last Updated</label>
+                <p className="text-base text-[var(--text-primary)]">{formatDate(employee.updatedAt)}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">Employee ID</label>
-                <p className="text-base text-surface-900 dark:text-surface-100 font-mono text-sm">{employee.id}</p>
+                <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Employee ID</label>
+                <p className="text-base text-[var(--text-primary)] font-mono text-sm">{employee.id}</p>
               </div>
               {employee.userId && (
                 <div>
-                  <label className="block text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">User ID</label>
-                  <p className="text-base text-surface-900 dark:text-surface-100 font-mono text-sm">{employee.userId}</p>
+                  <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">User ID</label>
+                  <p className="text-base text-[var(--text-primary)] font-mono text-sm">{employee.userId}</p>
                 </div>
               )}
             </div>
@@ -425,23 +425,23 @@ export default function EmployeeDetailPage() {
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-0 dark:bg-surface-800 rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-100">Delete Employee</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Employee</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+              <p className="text-sm text-[var(--text-muted)] mb-6">
                 Are you sure you want to delete <strong>{employee.fullName}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50"
                 >
                   Cancel
                 </button>

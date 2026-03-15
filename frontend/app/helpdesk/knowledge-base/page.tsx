@@ -235,9 +235,9 @@ const ArticleDetailModal: React.FC<{
             onClose();
             onSubmitTicket();
           }}
-          className="bg-primary-600 hover:bg-primary-700 text-white"
+          variant="primary"
+          leftIcon={<MessageSquare className="h-4 w-4" />}
         >
-          <MessageSquare className="h-4 w-4 mr-2" />
           Submit a Ticket
         </Button>
       </ModalFooter>
@@ -325,9 +325,9 @@ export default function KnowledgeBasePage() {
           {isAdmin && (
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="bg-primary-600 hover:bg-primary-700 text-white"
+              variant="primary"
+              leftIcon={<Plus className="h-4 w-4" />}
             >
-              <Plus className="h-4 w-4 mr-2" />
               New Article
             </Button>
           )}
@@ -486,7 +486,7 @@ export default function KnowledgeBasePage() {
                 <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
                   Category
                 </label>
-                <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg">
+                <select className="input-aura">
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -514,7 +514,7 @@ export default function KnowledgeBasePage() {
             </Button>
             <Button
               onClick={() => setShowCreateModal(false)}
-              className="bg-primary-600 hover:bg-primary-700 text-white"
+              variant="primary"
             >
               Create Article
             </Button>
@@ -581,9 +581,9 @@ export default function KnowledgeBasePage() {
             onClick={() => {
               setShowTicketModal(false);
             }}
-            className="bg-primary-600 hover:bg-primary-700 text-white"
+            variant="primary"
+            leftIcon={<MessageSquare className="h-4 w-4" />}
           >
-            <MessageSquare className="h-4 w-4 mr-2" />
             Submit Ticket
           </Button>
         </ModalFooter>

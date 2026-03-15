@@ -139,7 +139,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                     <div>
                                         <h4 className="font-bold text-sm">{achievement.title}</h4>
                                         <p className="text-xs text-surface-500 mt-1 line-clamp-2">{achievement.description}</p>
-                                        <span className="text-[10px] text-primary-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
+                                        <span className="text-xs text-primary-500 font-semibold mt-2 block uppercase">{achievement.date}</span>
                                     </div>
                                 </motion.div>
                             ))}
@@ -158,7 +158,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                     <p className="text-sm italic hover:text-surface-900 dark:text-surface-300">&quot;{feedback.comment}&quot;</p>
                                     <div className="flex items-center justify-between mt-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-[10px] flex items-center justify-center font-bold text-purple-700">
+                                            <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-xs flex items-center justify-center font-bold text-purple-700">
                                                 {feedback.fromName.charAt(0)}
                                             </div>
                                             <span className="text-xs font-semibold">{feedback.fromName}</span>

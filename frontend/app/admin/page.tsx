@@ -96,10 +96,10 @@ export default function AdminDashboardPage() {
       className="p-4 sm:p-6 space-y-6"
     >
       <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
           Super Admin Dashboard
         </h1>
-        <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+        <p className="text-sm text-[var(--text-secondary)] mt-1">
           High-level visibility across tenants, employees, and pending approvals.
         </p>
       </div>
@@ -137,13 +137,13 @@ export default function AdminDashboardPage() {
       <SystemHealthCard isLoading={healthLoading} health={health} />
 
       {/* All employees table */}
-      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-surface-200 dark:border-surface-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-surface-100 dark:border-surface-800">
+      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-[var(--border-main)]">
           <div>
-            <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
               All Employees
             </h2>
-            <p className="text-xs sm:text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-xs sm:text-sm text-[var(--text-muted)]">
               Cross-tenant view of users with role visibility.
             </p>
           </div>
@@ -154,12 +154,12 @@ export default function AdminDashboardPage() {
               value={pendingSearch}
               onChange={(e) => setPendingSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearchApply()}
-              className="flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
             <button
               type="button"
               onClick={handleSearchApply}
-              className="px-3 py-2 text-sm font-medium rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+              className="px-3 py-2 text-sm font-medium rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Search
             </button>
@@ -168,7 +168,7 @@ export default function AdminDashboardPage() {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
-            <thead className="bg-surface-50 dark:bg-surface-800/50">
+            <thead className="bg-[var(--bg-secondary)]/50">
               <tr>
                 <Th>Name</Th>
                 <Th>Email</Th>
@@ -183,7 +183,7 @@ export default function AdminDashboardPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-6 py-10 text-center text-surface-500 dark:text-surface-400 text-sm"
+                    className="px-6 py-10 text-center text-[var(--text-muted)] text-sm"
                   >
                     Loading users...
                   </td>
@@ -192,7 +192,7 @@ export default function AdminDashboardPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-6 py-10 text-center text-surface-500 dark:text-surface-400 text-sm"
+                    className="px-6 py-10 text-center text-[var(--text-muted)] text-sm"
                   >
                     No users found for the current filters.
                   </td>
@@ -201,18 +201,18 @@ export default function AdminDashboardPage() {
                 filteredByEmail.map((user) => (
                   <tr
                     key={user.id}
-                    className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                    className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-900 dark:text-surface-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {user.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-700 dark:text-surface-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-700 dark:text-surface-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.tenantName}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-700 dark:text-surface-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.departmentName ?? '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -223,12 +223,12 @@ export default function AdminDashboardPage() {
                           ? 'bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300'
                           : user.status === 'SUSPENDED'
                           ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                          : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200'
+                          : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200'
                       }`}>
                         {user.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-700 dark:text-surface-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200">
                       {user.roles.join(', ')}
                     </td>
                   </tr>
@@ -239,8 +239,8 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Simple pagination */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100 dark:border-surface-800 text-xs sm:text-sm">
-          <div className="text-surface-500 dark:text-surface-400">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-main)] text-xs sm:text-sm">
+          <div className="text-[var(--text-muted)]">
             Page {totalPages === 0 ? 0 : page + 1} of {totalPages}
           </div>
           <div className="flex gap-2">
@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canPrevious}
               onClick={() => canPrevious && setPage((p) => p - 1)}
-              className="px-3 py-1.5 rounded-lg border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Previous
             </button>
@@ -256,7 +256,7 @@ export default function AdminDashboardPage() {
               type="button"
               disabled={!canNext}
               onClick={() => canNext && setPage((p) => p + 1)}
-              className="px-3 py-1.5 rounded-lg border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               Next
             </button>
@@ -265,18 +265,18 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Role Management Panel */}
-      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-[var(--border-main)] p-4 sm:p-6 space-y-4">
         <div>
-          <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
             Role Management
           </h2>
-          <p className="text-xs sm:text-sm text-surface-500 dark:text-surface-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
             Search by user email and assign or revoke a high-level role.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-xs font-medium text-surface-600 dark:text-surface-300 mb-1">
+            <label className="block text-xs font-medium text-[var(--text-secondary)] dark:text-[var(--text-muted)] mb-1">
               User Email
             </label>
             <input
@@ -284,17 +284,17 @@ export default function AdminDashboardPage() {
               placeholder="user@example.com"
               value={roleEmail}
               onChange={(e) => setRoleEmail(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-surface-600 dark:text-surface-300 mb-1">
+            <label className="block text-xs font-medium text-[var(--text-secondary)] dark:text-[var(--text-muted)] mb-1">
               Role
             </label>
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               {ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -336,15 +336,15 @@ export default function AdminDashboardPage() {
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
-      <div className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">
+    <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
+      <div className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
         {title}
       </div>
-      <div className="mt-2 text-2xl font-semibold text-surface-900 dark:text-surface-50">
+      <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
         {value}
       </div>
       {description && (
-        <div className="mt-1 text-xs text-surface-500 dark:text-surface-400">{description}</div>
+        <div className="mt-1 text-xs text-[var(--text-muted)]">{description}</div>
       )}
     </div>
   );
@@ -390,14 +390,14 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
-      className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 shadow-soft"
+      className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 sm:p-6 shadow-soft"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
+          <h2 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
             System Health
           </h2>
-          <p className="text-xs sm:text-sm text-surface-500 dark:text-surface-400 mt-1">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1">
             Real-time system component status
           </p>
         </div>
@@ -405,7 +405,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
         {/* Overall Status Badge */}
         {isLoading ? (
           <div className={`${statusColor} px-4 py-2 rounded-full inline-block w-fit`}>
-            <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
+            <span className="text-sm font-medium text-[var(--text-secondary)]">
               Checking...
             </span>
           </div>
@@ -465,7 +465,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: 0.05 + index * 0.05 }}
-                className={`${componentColor} rounded-lg p-3 border border-surface-200 dark:border-surface-700`}
+                className={`${componentColor} rounded-lg p-3 border border-[var(--border-main)]`}
               >
                 <div className="flex items-start gap-2">
                   <div className={`${dotColor} w-2 h-2 rounded-full mt-1 flex-shrink-0`} />
@@ -478,7 +478,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                         .join(' ')}
                     </div>
-                    <div className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                    <div className="text-xs text-[var(--text-muted)] mt-1">
                       {statusLabel}
                     </div>
                   </div>
@@ -494,7 +494,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="px-6 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+    <th className="px-6 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
       {children}
     </th>
   );

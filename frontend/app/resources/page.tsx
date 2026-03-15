@@ -89,10 +89,10 @@ export default function ResourcesPage() {
         <div className="space-y-6 p-6">
           {/* Header */}
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Resource Management
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               Manage team capacity, allocations, and availability
             </p>
           </div>
@@ -103,10 +103,10 @@ export default function ResourcesPage() {
               <div className="mb-4 rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
                 <Settings className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
-              <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Resource Management API Not Available
               </h2>
-              <p className="mt-2 max-w-md text-surface-600 dark:text-surface-400">
+              <p className="mt-2 max-w-md text-[var(--text-secondary)]">
                 The Resource Management backend API is not yet implemented. This feature requires
                 backend development to provide workload data, capacity allocation, and availability
                 calendar functionality.
@@ -137,16 +137,16 @@ export default function ResourcesPage() {
                   return (
                     <div
                       key={card.href}
-                      className="flex items-start gap-3 rounded-lg border border-surface-200 p-4 dark:border-surface-700"
+                      className="flex items-start gap-3 rounded-lg border border-[var(--border-main)] p-4 dark:border-[var(--border-main)]"
                     >
                       <div className={`rounded-lg p-2 ${card.color}`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-surface-900 dark:text-surface-50">
+                        <h3 className="font-medium text-[var(--text-primary)]">
                           {card.title}
                         </h3>
-                        <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+                        <p className="mt-1 text-sm text-[var(--text-muted)]">
                           {card.description}
                         </p>
                       </div>
@@ -167,10 +167,10 @@ export default function ResourcesPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Resource Management
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               Manage team capacity, allocations, and availability
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function ResourcesPage() {
               <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
               <div className="flex-1">
                 <p className="font-medium text-red-600 dark:text-red-400">Error Loading Data</p>
-                <p className="text-sm text-surface-600 dark:text-surface-400">
+                <p className="text-sm text-[var(--text-secondary)]">
                   {error instanceof Error ? error.message : 'Failed to load data'}
                 </p>
               </div>
@@ -265,10 +265,10 @@ export default function ResourcesPage() {
                       )}
                     </div>
                     <div className="mt-4 flex-1">
-                      <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                      <h3 className="font-semibold text-[var(--text-primary)]">
                         {card.title}
                       </h3>
-                      <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+                      <p className="mt-1 text-sm text-[var(--text-muted)]">
                         {card.description}
                       </p>
                     </div>
@@ -303,17 +303,17 @@ export default function ResourcesPage() {
                 {pendingApprovals.slice(0, 3).map((approval) => (
                   <div
                     key={approval.id}
-                    className="flex items-center justify-between rounded-lg border border-surface-200 p-3 dark:border-surface-700"
+                    className="flex items-center justify-between rounded-lg border border-[var(--border-main)] p-3 dark:border-[var(--border-main)]"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
                         <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-surface-900 dark:text-surface-50">
+                        <p className="font-medium text-[var(--text-primary)]">
                           {approval.employeeName}
                         </p>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-muted)]">
                           {approval.projectName} • {approval.requestedAllocation}% allocation
                         </p>
                       </div>
@@ -322,7 +322,7 @@ export default function ResourcesPage() {
                       <p className="text-sm font-medium text-red-600 dark:text-red-400">
                         {approval.resultingAllocation}% total
                       </p>
-                      <p className="text-xs text-surface-500 dark:text-surface-400">
+                      <p className="text-xs text-[var(--text-muted)]">
                         Requested by {approval.requestedByName}
                       </p>
                     </div>
@@ -343,7 +343,7 @@ export default function ResourcesPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-surface-600 dark:text-surface-400">
+              <p className="text-[var(--text-secondary)]">
                 <strong>{summary.overAllocatedCount}</strong> employee(s) are currently
                 allocated above 100%. Review their workload to prevent burnout and ensure
                 quality delivery.
@@ -378,12 +378,12 @@ function QuickStatCard({
   return (
     <Card className={highlight ? 'border-red-200 dark:border-red-800' : ''}>
       <CardContent className="flex items-center gap-3 p-4">
-        <div className={`rounded-lg bg-surface-100 p-2 dark:bg-surface-700 ${color}`}>
+        <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{value}</p>
-          <p className="text-xs text-surface-500 dark:text-surface-400">{label}</p>
+          <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+          <p className="text-xs text-[var(--text-muted)]">{label}</p>
         </div>
       </CardContent>
     </Card>

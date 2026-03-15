@@ -27,7 +27,7 @@ export const compactTheme = {
     sectionTitle: 'text-lg font-semibold',
     cardTitle: 'text-base font-semibold',
     label: 'text-xs font-medium',
-    labelMicro: 'text-[11px] font-medium uppercase tracking-wider',
+    labelMicro: 'text-xs font-medium uppercase tracking-wider',
     body: 'text-sm',
     bodySmall: 'text-xs',
     statLarge: 'text-2xl font-bold tabular-nums',

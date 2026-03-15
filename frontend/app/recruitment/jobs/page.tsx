@@ -215,11 +215,11 @@ export default function JobOpeningsPage() {
   const getStatusColor = (status: JobStatus) => {
     switch (status) {
       case 'OPEN': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'DRAFT': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+      case 'DRAFT': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
       case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
       case 'CLOSED': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
       case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
   };
 
@@ -228,8 +228,8 @@ export default function JobOpeningsPage() {
       case 'URGENT': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
       case 'HIGH': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
       case 'MEDIUM': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'LOW': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+      case 'LOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
   };
 
@@ -244,8 +244,8 @@ export default function JobOpeningsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Job Openings</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">Manage job openings and recruitment positions</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Job Openings</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Manage job openings and recruitment positions</p>
           </div>
           <Button onClick={() => { reset(); setEditingJob(null); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -272,8 +272,8 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Total Jobs</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Total Jobs</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -291,8 +291,8 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Open</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.open}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Open</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.open}</p>
                 </div>
               </div>
             </CardContent>
@@ -306,12 +306,12 @@ export default function JobOpeningsPage() {
             <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-                  <Briefcase className="h-6 w-6 text-surface-600 dark:text-surface-400" />
+                <div className="w-12 h-12 rounded-xl bg-[var(--bg-secondary)] flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Draft</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.draft}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Draft</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
@@ -329,8 +329,8 @@ export default function JobOpeningsPage() {
                   <Briefcase className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Closed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.closed}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Closed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.closed}</p>
                 </div>
               </div>
             </CardContent>
@@ -352,19 +352,19 @@ export default function JobOpeningsPage() {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search job openings..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Status</option>
                 <option value="OPEN">Open</option>
@@ -379,7 +379,7 @@ export default function JobOpeningsPage() {
 
         {/* Job Openings Grid */}
         {jobOpeningsQuery.isLoading ? (
-          <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading job openings...</div>
+          <div className="text-center py-12 text-[var(--text-muted)]">Loading job openings...</div>
         ) : filteredJobs.length === 0 ? (
           <EmptyState
             icon={<Briefcase className="h-8 w-8" />}
@@ -410,8 +410,8 @@ export default function JobOpeningsPage() {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-lg">{job.jobTitle}</h3>
-                      <p className="text-sm text-surface-500 dark:text-surface-400">{job.jobCode}</p>
+                      <h3 className="font-semibold text-[var(--text-primary)] text-lg">{job.jobTitle}</h3>
+                      <p className="text-sm text-[var(--text-muted)]">{job.jobCode}</p>
                     </div>
                     <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(job.status)}`}>
                       {job.status}
@@ -420,19 +420,19 @@ export default function JobOpeningsPage() {
 
                   <div className="space-y-2 mb-4">
                     {job.departmentName && (
-                      <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                         <Users className="h-4 w-4" />
                         <span>{job.departmentName}</span>
                       </div>
                     )}
                     {job.location && (
-                      <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                         <MapPin className="h-4 w-4" />
                         <span>{job.location}</span>
                       </div>
                     )}
                     {(job.minSalary || job.maxSalary) && (
-                      <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                         <DollarSign className="h-4 w-4" />
                         <span>
                           {job.minSalary && job.maxSalary
@@ -442,14 +442,14 @@ export default function JobOpeningsPage() {
                       </div>
                     )}
                     {job.closingDate && (
-                      <div className="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                         <Calendar className="h-4 w-4" />
                         <span>Closes: {new Date(job.closingDate).toLocaleDateString()}</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-surface-100 dark:border-surface-800">
+                  <div className="flex items-center justify-between pt-3 border-t border-[var(--border-main)]">
                     <div className="flex items-center gap-2">
                       {job.priority && (
                         <span className={`px-2 py-0.5 text-xs font-medium rounded ${getPriorityColor(job.priority)}`}>
@@ -457,7 +457,7 @@ export default function JobOpeningsPage() {
                         </span>
                       )}
                       {job.numberOfOpenings && (
-                        <span className="text-xs text-surface-500 dark:text-surface-400">
+                        <span className="text-xs text-[var(--text-muted)]">
                           {job.numberOfOpenings} position{job.numberOfOpenings > 1 ? 's' : ''}
                         </span>
                       )}
@@ -465,21 +465,21 @@ export default function JobOpeningsPage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => router.push(`/recruitment/candidates?jobId=${job.id}`)}
-                        className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                         title="View Candidates"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleEdit(job)}
-                        className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                         title="Edit"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => { setJobToDelete(job); setShowDeleteModal(true); }}
-                        className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                        className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
                         title="Delete"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -496,13 +496,13 @@ export default function JobOpeningsPage() {
         {/* Add/Edit Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingJob ? 'Edit Job Opening' : 'Create Job Opening'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); reset(); setEditingJob(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -510,21 +510,21 @@ export default function JobOpeningsPage() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Code *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Code *</label>
                       <input
                         type="text"
                         {...register('jobCode')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="JOB-001"
                       />
                       {errors.jobCode && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobCode.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Title *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Title *</label>
                       <input
                         type="text"
                         {...register('jobTitle')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="Senior Software Engineer"
                       />
                       {errors.jobTitle && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobTitle.message}</p>}
@@ -533,10 +533,10 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Department</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Department</label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Department</option>
                         {(departments || []).map((dept: Department) => (
@@ -546,10 +546,10 @@ export default function JobOpeningsPage() {
                       {errors.departmentId && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.departmentId.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Hiring Manager</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Hiring Manager</label>
                       <select
                         {...register('hiringManagerId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Manager</option>
                         {managers.map((mgr) => (
@@ -562,20 +562,20 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
                       <input
                         type="text"
                         {...register('location')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="Remote / City"
                       />
                       {errors.location && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.location.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Employment Type</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employment Type</label>
                       <select
                         {...register('employmentType')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="FULL_TIME">Full Time</option>
                         <option value="PART_TIME">Part Time</option>
@@ -586,12 +586,12 @@ export default function JobOpeningsPage() {
                       {errors.employmentType && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.employmentType.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">No. of Openings</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">No. of Openings</label>
                       <input
                         type="number"
                         min="1"
                         {...register('numberOfOpenings')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.numberOfOpenings && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.numberOfOpenings.message}</p>}
                     </div>
@@ -599,31 +599,31 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Min Salary</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min Salary</label>
                       <input
                         type="number"
                         {...register('minSalary')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="50000"
                       />
                       {errors.minSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.minSalary.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max Salary</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max Salary</label>
                       <input
                         type="number"
                         {...register('maxSalary')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="80000"
                       />
                       {errors.maxSalary && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.maxSalary.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Experience Required</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Experience Required</label>
                       <input
                         type="text"
                         {...register('experienceRequired')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="3-5 years"
                       />
                       {errors.experienceRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.experienceRequired.message}</p>}
@@ -632,10 +632,10 @@ export default function JobOpeningsPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Status</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Status</label>
                       <select
                         {...register('status')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="DRAFT">Draft</option>
                         <option value="OPEN">Open</option>
@@ -646,10 +646,10 @@ export default function JobOpeningsPage() {
                       {errors.status && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.status.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Priority</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Priority</label>
                       <select
                         {...register('priority')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="LOW">Low</option>
                         <option value="MEDIUM">Medium</option>
@@ -659,11 +659,11 @@ export default function JobOpeningsPage() {
                       {errors.priority && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.priority.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Closing Date</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Closing Date</label>
                       <input
                         type="date"
                         {...register('closingDate')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.closingDate && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.closingDate.message}</p>}
                     </div>
@@ -671,7 +671,7 @@ export default function JobOpeningsPage() {
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">Job Description</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)]">Job Description</label>
                       <button
                         type="button"
                         onClick={handleGenerateJobDescription}
@@ -685,35 +685,35 @@ export default function JobOpeningsPage() {
                     <textarea
                       rows={4}
                       {...register('jobDescription')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Describe the job role and responsibilities..."
                     />
                     {errors.jobDescription && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.jobDescription.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Requirements</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Requirements</label>
                     <textarea
                       rows={3}
                       {...register('requirements')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="List the requirements..."
                     />
                     {errors.requirements && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.requirements.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Skills Required</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Skills Required</label>
                     <textarea
                       rows={2}
                       {...register('skillsRequired')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="React, TypeScript, Node.js..."
                     />
                     {errors.skillsRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button
                       type="button"
                       variant="outline"
@@ -739,15 +739,15 @@ export default function JobOpeningsPage() {
         {/* Delete Modal */}
         {showDeleteModal && jobToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Delete Job Opening</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Job Opening</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Are you sure you want to delete <strong className="text-surface-700 dark:text-surface-300">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
+              <p className="text-sm text-[var(--text-muted)] mb-6">
+                Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <Button
@@ -774,16 +774,16 @@ export default function JobOpeningsPage() {
         {/* AI Generated Job Description Modal */}
         {showAiModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                     <Sparkles className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                     Generated Job Description
                   </h2>
                   <button
                     onClick={() => { setShowAiModal(false); setAiGeneratedJD(null); }}
-                    className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
                   >
                     <X className="h-6 w-6" />
                   </button>
@@ -792,21 +792,21 @@ export default function JobOpeningsPage() {
                 {generateJDMutation.isPending ? (
                   <div className="py-12 text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-                    <p className="text-surface-500 dark:text-surface-400">Generating job description with AI...</p>
+                    <p className="text-[var(--text-muted)]">Generating job description with AI...</p>
                   </div>
                 ) : aiGeneratedJD ? (
                   <div className="space-y-6">
                     {aiGeneratedJD.summary && (
                       <div>
-                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Summary</h3>
-                        <p className="text-sm text-surface-600 dark:text-surface-400">{aiGeneratedJD.summary}</p>
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Summary</h3>
+                        <p className="text-sm text-[var(--text-secondary)]">{aiGeneratedJD.summary}</p>
                       </div>
                     )}
 
                     {aiGeneratedJD.responsibilities && aiGeneratedJD.responsibilities.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Responsibilities</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Responsibilities</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                           {aiGeneratedJD.responsibilities.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
@@ -816,8 +816,8 @@ export default function JobOpeningsPage() {
 
                     {aiGeneratedJD.requirements && aiGeneratedJD.requirements.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Requirements</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Requirements</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                           {aiGeneratedJD.requirements.map((r, i) => (
                             <li key={i}>{r}</li>
                           ))}
@@ -827,8 +827,8 @@ export default function JobOpeningsPage() {
 
                     {aiGeneratedJD.preferredQualifications && aiGeneratedJD.preferredQualifications.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Preferred Qualifications</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Preferred Qualifications</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                           {aiGeneratedJD.preferredQualifications.map((q, i) => (
                             <li key={i}>{q}</li>
                           ))}
@@ -838,8 +838,8 @@ export default function JobOpeningsPage() {
 
                     {aiGeneratedJD.benefits && aiGeneratedJD.benefits.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Benefits</h3>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-surface-600 dark:text-surface-400">
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">Benefits</h3>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-[var(--text-secondary)]">
                           {aiGeneratedJD.benefits.map((b, i) => (
                             <li key={i}>{b}</li>
                           ))}
@@ -847,7 +847,7 @@ export default function JobOpeningsPage() {
                       </div>
                     )}
 
-                    <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                       <Button
                         type="button"
                         variant="outline"

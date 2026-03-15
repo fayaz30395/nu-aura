@@ -108,10 +108,10 @@ export default function ApprovalsPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Allocation Approvals
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               Review and approve over-allocation requests
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function ApprovalsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-surface-200 dark:border-surface-700">
+        <div className="border-b border-[var(--border-main)]">
           <nav className="-mb-px flex gap-6">
             {[
               { key: 'pending', label: 'Pending', count: pendingRequests.length, color: 'amber' },
@@ -134,7 +134,7 @@ export default function ApprovalsPage() {
                 className={`flex items-center gap-2 border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'border-primary-600 text-primary-600 dark:border-primary-400 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:text-surface-400'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
                 {tab.label}
@@ -210,18 +210,18 @@ export default function ApprovalsPage() {
                   )}
 
                   {/* Request info */}
-                  <div className="space-y-3 border-t border-surface-200 pt-4 dark:border-surface-700">
-                    <h4 className="font-medium text-surface-900 dark:text-surface-50">
+                  <div className="space-y-3 border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
+                    <h4 className="font-medium text-[var(--text-primary)]">
                       Requested Assignment
                     </h4>
-                    <div className="rounded-lg bg-surface-50 p-4 dark:bg-surface-800">
+                    <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
                       <div className="flex items-center gap-3">
-                        <Briefcase className="h-5 w-5 text-surface-400" />
+                        <Briefcase className="h-5 w-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="font-medium text-[var(--text-primary)]">
                             {selectedRequest.projectName}
                           </p>
-                          <p className="text-sm text-surface-500">
+                          <p className="text-sm text-[var(--text-muted)]">
                             {selectedRequest.role} • {selectedRequest.projectCode}
                           </p>
                         </div>
@@ -231,29 +231,29 @@ export default function ApprovalsPage() {
                           <p className="text-lg font-semibold text-primary-600 dark:text-primary-400">
                             +{formatAllocationPercentage(selectedRequest.requestedAllocation)}
                           </p>
-                          <p className="text-xs text-surface-500">Requested</p>
+                          <p className="text-xs text-[var(--text-muted)]">Requested</p>
                         </div>
                         <div>
                           <p className="text-lg font-semibold text-red-600 dark:text-red-400">
                             {formatAllocationPercentage(selectedRequest.resultingAllocation)}
                           </p>
-                          <p className="text-xs text-surface-500">Resulting Total</p>
+                          <p className="text-xs text-[var(--text-muted)]">Resulting Total</p>
                         </div>
                       </div>
                     </div>
 
                     {selectedRequest.requestReason && (
                       <div>
-                        <p className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                        <p className="text-sm font-medium text-[var(--text-secondary)]">
                           Reason
                         </p>
-                        <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+                        <p className="mt-1 text-sm text-[var(--text-secondary)]">
                           {selectedRequest.requestReason}
                         </p>
                       </div>
                     )}
 
-                    <div className="text-sm text-surface-500 dark:text-surface-400">
+                    <div className="text-sm text-[var(--text-muted)]">
                       Requested by {selectedRequest.requestedByName} on{' '}
                       {format(parseISO(selectedRequest.createdAt), 'MMM d, yyyy')}
                     </div>
@@ -296,11 +296,11 @@ export default function ApprovalsPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-surface-600 dark:text-surface-400">
+          <p className="text-[var(--text-secondary)]">
             Are you sure you want to approve this over-allocation request for{' '}
             <strong>{selectedRequest?.employeeName}</strong>?
           </p>
-          <p className="mt-2 text-sm text-surface-500">
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             This will allow them to be allocated at{' '}
             <strong className="text-red-600">
               {selectedRequest && formatAllocationPercentage(selectedRequest.resultingAllocation)}
@@ -308,14 +308,14 @@ export default function ApprovalsPage() {
             total capacity.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Comment (optional)
             </label>
             <textarea
               value={approveComment}
               onChange={(e) => setApproveComment(e.target.value)}
               placeholder="Add a comment for the requester..."
-              className="mt-1 w-full rounded-lg border border-surface-200 bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -339,19 +339,19 @@ export default function ApprovalsPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-surface-600 dark:text-surface-400">
+          <p className="text-[var(--text-secondary)]">
             Please provide a reason for rejecting this over-allocation request for{' '}
             <strong>{selectedRequest?.employeeName}</strong>.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Reason <span className="text-red-500">*</span>
             </label>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Explain why this request is being rejected..."
-              className="mt-1 w-full rounded-lg border border-surface-200 bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
               required
             />
@@ -408,10 +408,10 @@ function RequestCard({
               <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
-              <p className="font-medium text-surface-900 dark:text-surface-50">
+              <p className="font-medium text-[var(--text-primary)]">
                 {request.employeeName}
               </p>
-              <p className="text-sm text-surface-500 dark:text-surface-400">
+              <p className="text-sm text-[var(--text-muted)]">
                 {request.projectName}
               </p>
             </div>
@@ -420,13 +420,13 @@ function RequestCard({
         </div>
 
         <div className="mt-3 flex items-center justify-between text-sm">
-          <span className="text-surface-500 dark:text-surface-400">
+          <span className="text-[var(--text-muted)]">
             +{formatAllocationPercentage(request.requestedAllocation)} → {' '}
             <span className="font-medium text-red-600 dark:text-red-400">
               {formatAllocationPercentage(request.resultingAllocation)} total
             </span>
           </span>
-          <span className="text-xs text-surface-400">
+          <span className="text-xs text-[var(--text-muted)]">
             {format(parseISO(request.createdAt), 'MMM d')}
           </span>
         </div>

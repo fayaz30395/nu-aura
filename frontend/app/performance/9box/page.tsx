@@ -75,11 +75,11 @@ function NineBoxGrid({
   ];
 
   return (
-    <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6 overflow-x-auto">
+    <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6 overflow-x-auto">
       <div className="flex gap-4 min-w-max">
         {/* Y-axis */}
         <div className="flex flex-col items-center justify-start w-6 flex-shrink-0">
-          <span className="text-xs font-semibold text-surface-500 mt-2" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+          <span className="text-xs font-semibold text-[var(--text-muted)] mt-2" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
             POTENTIAL ↑
           </span>
         </div>
@@ -91,7 +91,7 @@ function NineBoxGrid({
             <div key={potBand} className="flex gap-3 mb-3">
               {/* Potential label */}
               <div className="w-28 flex-shrink-0 flex items-center justify-end pr-3">
-                <span className="text-xs text-surface-400 text-right font-medium">{potLabel}</span>
+                <span className="text-xs text-[var(--text-muted)] text-right font-medium">{potLabel}</span>
               </div>
 
               {/* 3 cells */}
@@ -131,7 +131,7 @@ function NineBoxGrid({
                           return (
                             <span
                               key={p.employeeId}
-                              className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold border ${meta.bg} ${meta.border} ${meta.text} whitespace-nowrap`}
+                              className={`text-xs px-1.5 py-0.5 rounded-full font-semibold border ${meta.bg} ${meta.border} ${meta.text} whitespace-nowrap`}
                               title={`${p.employeeName} — Perf: ${p.performance.toFixed(1)}, Pot: ${p.potential.toFixed(1)}`}
                             >
                               {initials}
@@ -139,7 +139,7 @@ function NineBoxGrid({
                           );
                         })}
                         {cellPoints.length > 8 && (
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${meta.text} opacity-60 font-semibold`}>
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full ${meta.text} opacity-60 font-semibold`}>
                             +{cellPoints.length - 8}
                           </span>
                         )}
@@ -155,12 +155,12 @@ function NineBoxGrid({
           <div className="flex gap-3 mt-4">
             <div className="w-28 flex-shrink-0" />
             {gridCols.map(({ perfBand, label }) => (
-              <div key={perfBand} className="flex-1 text-center text-xs text-surface-400 font-medium">
+              <div key={perfBand} className="flex-1 text-center text-xs text-[var(--text-muted)] font-medium">
                 {label}
               </div>
             ))}
           </div>
-          <div className="text-center text-xs font-bold text-surface-500 mt-2">
+          <div className="text-center text-xs font-bold text-[var(--text-muted)] mt-2">
             PERFORMANCE →
           </div>
         </div>
@@ -316,22 +316,22 @@ export default function NineBoxPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               9-Box Talent Grid
             </h1>
-            <p className="text-surface-500 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Segment talent by performance and potential
             </p>
           </div>
           <button
             onClick={exportCsv}
             disabled={points.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 transition-colors"
           >
             <Download size={16} />
             Export CSV
@@ -339,19 +339,19 @@ export default function NineBoxPage() {
         </div>
 
         {/* Cycle Selector */}
-        <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+        <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Review Cycle
               </label>
               {cyclesLoading ? (
-                <div className="h-10 bg-surface-200 dark:bg-surface-700 rounded-lg animate-pulse" />
+                <div className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse" />
               ) : (
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -362,7 +362,7 @@ export default function NineBoxPage() {
                 </select>
               )}
             </div>
-            <div className="text-xs text-surface-400 md:mt-6">
+            <div className="text-xs text-[var(--text-muted)] md:mt-6">
               {points.length} employees plotted
             </div>
           </div>
@@ -380,50 +380,50 @@ export default function NineBoxPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Users className="text-purple-600 dark:text-purple-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-surface-500">Total Plotted</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{points.length}</p>
+                <p className="text-xs text-[var(--text-muted)]">Total Plotted</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{points.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
                 <TrendingUp className="text-emerald-600 dark:text-emerald-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-surface-500">Stars</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.stars}</p>
+                <p className="text-xs text-[var(--text-muted)]">Stars</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.stars}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <Target className="text-blue-600 dark:text-blue-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-surface-500">High Performers</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.highPerformers}</p>
+                <p className="text-xs text-[var(--text-muted)]">High Performers</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.highPerformers}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <Grid3x3 className="text-green-600 dark:text-green-400" size={20} />
               </div>
               <div>
-                <p className="text-xs text-surface-500">High Potential</p>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.highPotential}</p>
+                <p className="text-xs text-[var(--text-muted)]">High Potential</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.highPotential}</p>
               </div>
             </div>
           </div>
@@ -432,15 +432,15 @@ export default function NineBoxPage() {
         {reviewsLoading ? (
           <div className="flex items-center justify-center py-20">
             <RefreshCw size={24} className="animate-spin text-primary-500 mr-3" />
-            <span className="text-surface-500">Loading reviews...</span>
+            <span className="text-[var(--text-muted)]">Loading reviews...</span>
           </div>
         ) : points.length === 0 && selectedCycleId ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
-            <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
-            <p className="text-surface-600 dark:text-surface-400 font-medium">
+          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)]">
+            <Info size={32} className="text-[var(--text-muted)] mb-3" />
+            <p className="text-[var(--text-secondary)] font-medium">
               No rated reviews found
             </p>
-            <p className="text-surface-500 text-sm mt-1">
+            <p className="text-[var(--text-muted)] text-sm mt-1">
               Complete reviews with overall ratings to populate the grid
             </p>
           </div>
@@ -456,7 +456,7 @@ export default function NineBoxPage() {
 
             {/* Selected Box Details */}
             {selectedBox && selectedBoxPoints && (
-              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
                 <div className="flex items-center gap-3">
                   <div
                     className={`px-3 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
@@ -467,10 +467,10 @@ export default function NineBoxPage() {
                       {BOX_CONFIG[selectedBox].label}
                     </span>
                   </div>
-                  <span className="text-sm text-surface-500">
+                  <span className="text-sm text-[var(--text-muted)]">
                     {BOX_CONFIG[selectedBox].sublabel}
                   </span>
-                  <span className="ml-auto text-sm font-semibold text-surface-700 dark:text-surface-300">
+                  <span className="ml-auto text-sm font-semibold text-[var(--text-secondary)]">
                     {selectedBoxPoints.length} employees
                   </span>
                 </div>
@@ -479,25 +479,25 @@ export default function NineBoxPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-surface-50 dark:bg-surface-700 border-b border-surface-200 dark:border-surface-700">
-                        <th className="px-4 py-2.5 text-left font-semibold text-surface-700 dark:text-surface-300">
+                      <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                        <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
                           Employee
                         </th>
-                        <th className="px-4 py-2.5 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           Performance
                         </th>
-                        <th className="px-4 py-2.5 text-center font-semibold text-surface-700 dark:text-surface-300">
+                        <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           Potential
                         </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-100 dark:divide-surface-700">
                       {selectedBoxPoints.map(p => (
-                        <tr key={p.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-surface-900 dark:text-white">
+                        <tr key={p.employeeId} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+                          <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
                             {p.employeeName}
                           </td>
-                          <td className="px-4 py-2.5 text-center text-surface-700 dark:text-surface-300">
+                          <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
                             {p.performance.toFixed(1)}
                           </td>
                           <td className="px-4 py-2.5 text-center">
@@ -516,7 +516,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                             />
                           </td>
                         </tr>
@@ -524,29 +524,29 @@ export default function NineBoxPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-xs text-surface-500">
+                <p className="text-xs text-[var(--text-muted)]">
                   Edit potential scores to re-plot employees in the grid dynamically
                 </p>
               </div>
             )}
 
             {/* All Employees Table */}
-            <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+            <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
               <div className="flex items-center gap-3">
-                <h3 className="text-sm font-bold text-surface-900 dark:text-white">
+                <h3 className="text-sm font-bold text-[var(--text-primary)]">
                   All Employees
                 </h3>
                 <div className="flex-1 relative">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"
                   />
                   <input
                     type="text"
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
               </div>
@@ -554,32 +554,32 @@ export default function NineBoxPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-surface-50 dark:bg-surface-700 border-b border-surface-200 dark:border-surface-700">
-                      <th className="px-4 py-2.5 text-left font-semibold text-surface-700 dark:text-surface-300">
+                    <tr className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
+                      <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
                         <button
                           onClick={() => setSortField(sortField === 'name' ? 'name' : 'name')}
-                          className="hover:text-surface-900 dark:hover:text-white transition-colors"
+                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                         >
                           Employee {sortField === 'name' ? '↑' : ''}
                         </button>
                       </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                         <button
                           onClick={() => setSortField(sortField === 'performance' ? 'performance' : 'performance')}
-                          className="hover:text-surface-900 dark:hover:text-white transition-colors"
+                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                         >
                           Performance {sortField === 'performance' ? '↑' : ''}
                         </button>
                       </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                         <button
                           onClick={() => setSortField(sortField === 'potential' ? 'potential' : 'potential')}
-                          className="hover:text-surface-900 dark:hover:text-white transition-colors"
+                          className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                         >
                           Potential {sortField === 'potential' ? '↑' : ''}
                         </button>
                       </th>
-                      <th className="px-4 py-2.5 text-center font-semibold text-surface-700 dark:text-surface-300">
+                      <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                         Category
                       </th>
                     </tr>
@@ -589,11 +589,11 @@ export default function NineBoxPage() {
                       const key = boxKey(p.performance, p.potential);
                       const meta = BOX_CONFIG[key];
                       return (
-                        <tr key={p.employeeId} className="hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors">
-                          <td className="px-4 py-2.5 font-medium text-surface-900 dark:text-white">
+                        <tr key={p.employeeId} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
+                          <td className="px-4 py-2.5 font-medium text-[var(--text-primary)]">
                             {p.employeeName}
                           </td>
-                          <td className="px-4 py-2.5 text-center text-surface-700 dark:text-surface-300">
+                          <td className="px-4 py-2.5 text-center text-[var(--text-secondary)]">
                             {p.performance.toFixed(1)}
                           </td>
                           <td className="px-4 py-2.5 text-center">
@@ -612,7 +612,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                             />
                           </td>
                           <td className="px-4 py-2.5 text-center">
