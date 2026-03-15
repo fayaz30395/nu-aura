@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import {
@@ -10,14 +9,16 @@ import {
   Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
   MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown, ChevronRight,
   RefreshCw, Linkedin, Lightbulb, ExternalLink, Send, MessageSquare,
-  MoreHorizontal, Trash2, Pencil, Calendar,
+  MoreHorizontal, Trash2, Pencil, Calendar, BarChart3, Check,
 } from 'lucide-react';
 import { feedService } from '@/lib/services/feed.service';
 import { wallService } from '@/lib/services/wall.service';
+import { PRAISE_CATEGORIES } from '@/components/dashboard/PostComposer';
 import type { CommentResponse } from '@/lib/services/wall.service';
 import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { cn } from '@/lib/utils';
 
 // ─── Config ──────────────────────────────────────────────────────────
 const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -469,6 +470,12 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
 
+  // Poll state
+  const [localPollOptions, setLocalPollOptions] = useState(item.pollOptions ?? []);
+  const [localHasVoted, setLocalHasVoted] = useState(item.hasVoted ?? false);
+  const [localVotedOptionId, setLocalVotedOptionId] = useState(item.userVotedOptionId ?? null);
+  const [isVoting, setIsVoting] = useState(false);
+
   // Edit post state
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(item.description || item.title || '');
@@ -522,6 +529,28 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
       console.error('Failed to update post:', error);
     } finally {
       setIsSavingEdit(false);
+    }
+  };
+
+  const handleVote = async (optionId: string) => {
+    if (!item.wallPostId || isVoting) return;
+    setIsVoting(true);
+    try {
+      const updated = await wallService.vote(item.wallPostId, optionId);
+      if (updated.pollOptions) {
+        setLocalPollOptions(updated.pollOptions.map((o) => ({
+          id: o.id,
+          text: o.text,
+          voteCount: o.voteCount,
+          votePercentage: o.votePercentage,
+        })));
+      }
+      setLocalHasVoted(true);
+      setLocalVotedOptionId(optionId);
+    } catch (error) {
+      console.error('Failed to vote:', error);
+    } finally {
+      setIsVoting(false);
     }
   };
 
@@ -644,7 +673,11 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
           <div className="flex-1 min-w-0">
             <p className="text-sm leading-snug">
               <span className="font-semibold text-[var(--text-primary)]">{item.wallPostAuthor}</span>
-              <span className="text-[var(--text-muted)] font-normal"> created a post</span>
+              <span className="text-[var(--text-muted)] font-normal">
+                {item.wallPostType === 'POLL' && ' created a poll'}
+                {item.wallPostType === 'PRAISE' && <> recognized <span className="font-semibold text-[var(--text-primary)]">{item.praiseRecipientName}</span></>}
+                {(!item.wallPostType || item.wallPostType === 'POST') && ' created a post'}
+              </span>
             </p>
             <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {formatFeedDate(item.timestamp)}
@@ -717,8 +750,104 @@ function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: 
           </div>
         )}
 
-        {/* Action bar: Like + Comment on left, counts on right */}
-        <div className="flex items-center justify-between px-4 py-2 border-t border-[var(--border-subtle)]">
+        {/* ── Poll voting UI ──────────────────────────────────── */}
+        {item.wallPostType === 'POLL' && localPollOptions.length > 0 && (
+          <div className="px-4 pb-2 space-y-1.5">
+            {localPollOptions.map((option) => {
+              const isSelected = localVotedOptionId === option.id;
+              const totalVotes = localPollOptions.reduce((sum, o) => sum + o.voteCount, 0);
+              const pct = totalVotes > 0 ? Math.round((option.voteCount / totalVotes) * 100) : 0;
+
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => !localHasVoted && handleVote(option.id)}
+                  disabled={isVoting || localHasVoted}
+                  className={cn(
+                    'relative w-full text-left rounded-lg border px-4 py-2.5 text-sm transition-all overflow-hidden',
+                    localHasVoted
+                      ? 'cursor-default border-[var(--border-main)]'
+                      : 'cursor-pointer border-[var(--border-main)] hover:border-primary-300 hover:bg-primary-50/50 dark:hover:border-primary-700 dark:hover:bg-primary-950/30'
+                  )}
+                >
+                  {/* Progress bar background */}
+                  {localHasVoted && (
+                    <div
+                      className={cn(
+                        'absolute inset-y-0 left-0 transition-all duration-500 rounded-lg',
+                        isSelected
+                          ? 'bg-primary-100 dark:bg-primary-900/40'
+                          : 'bg-[var(--bg-secondary)]'
+                      )}
+                      style={{ width: `${pct}%` }}
+                    />
+                  )}
+                  <div className="relative flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {isSelected && (
+                        <Check size={14} className="text-primary-600 dark:text-primary-400 shrink-0" />
+                      )}
+                      <span className={cn(
+                        'truncate',
+                        isSelected ? 'font-semibold text-primary-700 dark:text-primary-300' : 'text-[var(--text-primary)]'
+                      )}>
+                        {option.text}
+                      </span>
+                    </div>
+                    {localHasVoted && (
+                      <span className="text-xs font-medium text-[var(--text-muted)] shrink-0">{pct}%</span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+            <p className="text-xs text-[var(--text-muted)] pt-1 pl-1">
+              {localPollOptions.reduce((sum, o) => sum + o.voteCount, 0)} vote{localPollOptions.reduce((sum, o) => sum + o.voteCount, 0) !== 1 ? 's' : ''}
+              {localHasVoted && ' · You voted'}
+            </p>
+          </div>
+        )}
+
+        {/* ── Praise badge + recipient ────────────────────────── */}
+        {item.wallPostType === 'PRAISE' && item.praiseRecipientName && (
+          <div className="px-4 pb-2">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200/50 dark:border-amber-800/30">
+              {/* Recipient avatar */}
+              <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-lg font-bold text-amber-700 dark:text-amber-300 overflow-hidden shrink-0">
+                {item.praiseRecipientAvatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.praiseRecipientAvatar} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  item.praiseRecipientName.charAt(0)
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{item.praiseRecipientName}</p>
+                {(item.praiseRecipientDesignation || item.praiseRecipientDepartment) && (
+                  <p className="text-xs text-[var(--text-muted)] truncate">
+                    {[item.praiseRecipientDesignation, item.praiseRecipientDepartment].filter(Boolean).join(' · ')}
+                  </p>
+                )}
+                {/* Badge */}
+                {item.praiseCategory && (() => {
+                  const cat = PRAISE_CATEGORIES.find((c) => c.id === item.praiseCategory);
+                  return cat ? (
+                    <span className={cn('inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border', cat.color)}>
+                      <span>{cat.emoji}</span> {cat.label}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800">
+                      🏆 {item.praiseCategory}
+                    </span>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Action bar: Like + Comment on left, counts on right (hidden for polls) */}
+        <div className={`flex items-center justify-between px-4 py-2 border-t border-[var(--border-subtle)] ${item.wallPostType === 'POLL' ? 'hidden' : ''}`}>
           <div className="flex items-center gap-4">
             <button
               onClick={handleLike}

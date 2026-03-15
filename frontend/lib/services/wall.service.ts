@@ -46,6 +46,7 @@ export interface WallPostResponse {
   userReactionType?: string;
   hasVoted: boolean;
   userVotedOptionId?: string;
+  celebrationType?: string;
   recentReactors?: ReactorInfo[];
   totalReactorCount: number;
   createdAt: string;
@@ -69,6 +70,7 @@ export interface CreatePostRequest {
   type: PostType;
   content: string;
   praiseRecipientId?: string;
+  celebrationType?: string;
   imageUrl?: string;
   visibility?: PostVisibility;
   pollOptions?: string[];

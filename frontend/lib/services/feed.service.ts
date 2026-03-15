@@ -242,7 +242,7 @@ class FeedService {
         praiseRecipientDepartment: post.praiseRecipient?.department,
         praiseRecipientDesignation: post.praiseRecipient?.designation,
         praiseRecipientId: post.praiseRecipient?.employeeId,
-        praiseCategory: (post as Record<string, unknown>).celebrationType as string | undefined,
+        praiseCategory: post.celebrationType,
         recentReactors: post.recentReactors,
         totalReactorCount: post.totalReactorCount,
       }));

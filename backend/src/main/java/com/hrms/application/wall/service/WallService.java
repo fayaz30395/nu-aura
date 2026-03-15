@@ -76,6 +76,9 @@ public class WallService {
             Employee recipient = employeeRepository.findByIdAndTenantId(request.getPraiseRecipientId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Praise recipient not found"));
             post.setPraiseRecipient(recipient);
+            if (request.getCelebrationType() != null) {
+                post.setCelebrationType(request.getCelebrationType());
+            }
         }
 
         // Handle poll options
@@ -357,9 +360,12 @@ public class WallService {
         // Author info
         response.setAuthor(mapToAuthorInfo(post.getAuthor()));
 
-        // Praise recipient
+        // Praise recipient and category
         if (post.getPraiseRecipient() != null) {
             response.setPraiseRecipient(mapToAuthorInfo(post.getPraiseRecipient()));
+        }
+        if (post.getCelebrationType() != null) {
+            response.setCelebrationType(post.getCelebrationType());
         }
 
         // Counts - use stored counts for performance (updated when reactions/comments are added/removed)
