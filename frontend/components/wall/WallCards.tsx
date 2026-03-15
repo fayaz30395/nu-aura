@@ -7,20 +7,16 @@ import {
   Trash2,
   MoreHorizontal,
   Award,
-  BarChart3,
-  CheckCircle,
   Globe,
   Users,
   Building2,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import type {
   WallPostResponse,
   ReactionType,
-  PostType,
   CommentResponse,
   AuthorInfo,
   PollOptionResponse,
@@ -92,7 +88,7 @@ function CardHeader({
 
   return (
     <div className="flex items-start justify-between">
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         {/* Avatar */}
         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">
           {initials}
@@ -101,19 +97,19 @@ function CardHeader({
         {/* Author Info */}
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="font-medium text-surface-900 dark:text-surface-50">
+            <h4 className="font-medium text-[var(--text-primary)]">
               {author.fullName}
             </h4>
             {pinned && <Pin className="h-4 w-4 text-amber-600 dark:text-amber-400" />}
           </div>
 
-          <div className="mt-1 flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
+          <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
             {author.designation && <span>{author.designation}</span>}
-            {author.designation && author.department && <span>•</span>}
+            {author.designation && author.department && <span>·</span>}
             {author.department && <span>{author.department}</span>}
           </div>
 
-          <div className="mt-1 flex items-center gap-2 text-xs text-surface-500 dark:text-surface-400">
+          <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
             <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>
             <VisibilityIcon className="h-3.5 w-3.5" />
           </div>
@@ -125,9 +121,9 @@ function CardHeader({
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="rounded-lg p-1.5 hover:bg-surface-100 dark:hover:bg-surface-700"
+            className="rounded-lg p-1.5 hover:bg-[var(--bg-secondary)]"
           >
-            <MoreHorizontal className="h-4 w-4 text-surface-500" />
+            <MoreHorizontal className="h-4 w-4 text-[var(--text-muted)]" />
           </button>
 
           {showMenu && (
@@ -136,7 +132,7 @@ function CardHeader({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-1 rounded-lg border border-surface-200 bg-white shadow-lg dark:border-surface-700 dark:bg-surface-800"
+              className="absolute right-0 top-full z-50 mt-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg"
             >
               {onPin && (
                 <button
@@ -144,7 +140,7 @@ function CardHeader({
                     onPin(postId, !pinned);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 dark:text-surface-300 dark:hover:bg-surface-700"
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
                 >
                   <Pin className="h-4 w-4" />
                   {pinned ? 'Unpin' : 'Pin to top'}
@@ -157,7 +153,7 @@ function CardHeader({
                     onDelete(postId);
                     setShowMenu(false);
                   }}
-                  className="flex w-full items-center gap-2 border-t border-surface-200 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:border-surface-700 dark:text-danger-400 dark:hover:bg-danger-900 dark:hover:bg-opacity-20"
+                  className="flex w-full items-center gap-2 border-t border-[var(--border-subtle)] px-4 py-2 text-sm text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950"
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete
@@ -196,9 +192,9 @@ export function PostCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       <Card variant="default" className="overflow-hidden">
         <CardContent className="space-y-4">
@@ -215,14 +211,14 @@ export function PostCard({
           />
 
           {/* Content */}
-          <div className="space-y-3">
-            <p className="whitespace-pre-wrap text-sm text-surface-700 dark:text-surface-300">
+          <div className="space-y-4">
+            <p className="whitespace-pre-wrap text-sm text-[var(--text-secondary)]">
               {post.content}
             </p>
 
             {/* Image */}
             {post.imageUrl && (
-              <div className="overflow-hidden rounded-lg bg-surface-100 dark:bg-surface-700">
+              <div className="overflow-hidden rounded-lg bg-[var(--bg-secondary)]">
                 <img
                   src={post.imageUrl}
                   alt="Post content"
@@ -233,7 +229,7 @@ export function PostCard({
           </div>
 
           {/* Reaction Bar */}
-          <div className="border-t border-surface-200 pt-3 dark:border-surface-700">
+          <div className="border-t border-[var(--border-subtle)] pt-4">
             <ReactionBar
               reactionCounts={post.reactionCounts}
               totalReactions={totalReactions}
@@ -253,7 +249,7 @@ export function PostCard({
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="border-t border-surface-200 pt-4 dark:border-surface-700"
+              className="border-t border-[var(--border-subtle)] pt-4"
             >
               <CommentThread
                 comments={comments}
@@ -302,9 +298,9 @@ export function PollCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       <Card variant="default" className="overflow-hidden">
         <CardContent className="space-y-4">
@@ -322,7 +318,7 @@ export function PollCard({
 
           {/* Poll Question */}
           <div>
-            <p className="text-sm font-medium text-surface-900 dark:text-surface-50">
+            <p className="text-sm font-medium text-[var(--text-primary)]">
               {post.content}
             </p>
           </div>
@@ -343,13 +339,13 @@ export function PollCard({
 
           {/* Vote Count */}
           {totalVotes > 0 && (
-            <div className="text-xs text-surface-500 dark:text-surface-400">
+            <div className="text-xs text-[var(--text-muted)]">
               {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}
             </div>
           )}
 
           {/* Reaction Bar */}
-          <div className="border-t border-surface-200 pt-3 dark:border-surface-700">
+          <div className="border-t border-[var(--border-subtle)] pt-4">
             <ReactionBar
               reactionCounts={post.reactionCounts}
               totalReactions={totalReactions}
@@ -369,7 +365,7 @@ export function PollCard({
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="border-t border-surface-200 pt-4 dark:border-surface-700"
+              className="border-t border-[var(--border-subtle)] pt-4"
             >
               <CommentThread
                 comments={comments}
@@ -413,18 +409,18 @@ function PollOption({
     return (
       <div key={option.id} className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-surface-700 dark:text-surface-300">{option.text}</span>
+          <span className="text-sm text-[var(--text-secondary)]">{option.text}</span>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-surface-600 dark:text-surface-400">
+            <span className="text-xs font-medium text-[var(--text-secondary)]">
               {option.votePercentage}%
             </span>
-            <span className="text-xs text-surface-500 dark:text-surface-400">
+            <span className="text-xs text-[var(--text-muted)]">
               {option.voteCount}
             </span>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-full bg-surface-200 dark:bg-surface-700">
+        <div className="overflow-hidden rounded-full bg-[var(--bg-secondary)]">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${option.votePercentage}%` }}
@@ -433,7 +429,7 @@ function PollOption({
               'h-2 rounded-full transition-colors',
               isSelected
                 ? 'bg-primary-500 dark:bg-primary-400'
-                : 'bg-surface-400 dark:bg-surface-600'
+                : 'bg-[var(--text-muted)]'
             )}
           />
         </div>
@@ -445,10 +441,10 @@ function PollOption({
   return (
     <motion.button
       key={option.id}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       onClick={onVote}
-      className="w-full rounded-lg border-2 border-surface-300 bg-surface-50 px-4 py-3 text-left text-sm font-medium text-surface-700 transition-colors hover:border-primary-400 hover:bg-primary-50 dark:border-surface-600 dark:bg-surface-800 dark:text-surface-300 dark:hover:border-primary-400 dark:hover:bg-primary-900 dark:hover:bg-opacity-20"
+      className="w-full rounded-lg border-2 border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-4 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950"
     >
       {option.text}
     </motion.button>
@@ -492,15 +488,15 @@ export function PraiseCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       <Card
         variant="default"
         className={cn(
           'overflow-hidden border-l-4 border-l-amber-500 dark:border-l-amber-400',
-          'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950 dark:to-orange-950'
+          'bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/30 dark:to-orange-950/30'
         )}
       >
         <CardContent className="space-y-4">
@@ -517,7 +513,7 @@ export function PraiseCard({
           />
 
           {/* Praise Title */}
-          <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-3 dark:bg-surface-800">
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-card)] px-4 py-4">
             <Award className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             <span className="text-sm font-semibold text-amber-900 dark:text-amber-200">
               Praised <span className="text-primary-600 dark:text-primary-300">{recipient.fullName}</span>
@@ -526,26 +522,26 @@ export function PraiseCard({
 
           {/* Praise Message */}
           <div>
-            <p className="whitespace-pre-wrap text-sm text-surface-700 dark:text-surface-300">
+            <p className="whitespace-pre-wrap text-sm text-[var(--text-secondary)]">
               {post.content}
             </p>
           </div>
 
           {/* Recipient Info Box */}
-          <div className="rounded-lg border-2 border-amber-200 bg-white px-4 py-3 dark:border-amber-800 dark:bg-surface-800">
-            <div className="flex items-start gap-3">
+          <div className="rounded-lg border-2 border-amber-200 bg-[var(--bg-card)] px-4 py-4 dark:border-amber-800">
+            <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700 dark:bg-amber-900 dark:text-amber-300">
                 {recipientInitials}
               </div>
 
               <div className="flex-1">
-                <h4 className="font-medium text-surface-900 dark:text-surface-50">
+                <h4 className="font-medium text-[var(--text-primary)]">
                   {recipient.fullName}
                 </h4>
 
-                <div className="mt-1 flex items-center gap-2 text-xs text-surface-600 dark:text-surface-400">
+                <div className="mt-1 flex items-center gap-2 text-xs text-[var(--text-muted)]">
                   {recipient.designation && <span>{recipient.designation}</span>}
-                  {recipient.designation && recipient.department && <span>•</span>}
+                  {recipient.designation && recipient.department && <span>·</span>}
                   {recipient.department && <span>{recipient.department}</span>}
                 </div>
               </div>
@@ -553,7 +549,7 @@ export function PraiseCard({
           </div>
 
           {/* Reaction Bar */}
-          <div className="border-t border-amber-200 pt-3 dark:border-amber-800">
+          <div className="border-t border-amber-200 pt-4 dark:border-amber-800">
             <ReactionBar
               reactionCounts={post.reactionCounts}
               totalReactions={totalReactions}

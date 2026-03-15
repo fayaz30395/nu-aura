@@ -38,6 +38,7 @@ function formatElapsedTime(seconds: number): string {
 export default function MyDashboardPage() {
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
+  const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const [dashboard, setDashboard] = useState<SelfServiceDashboard | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
@@ -272,87 +273,78 @@ export default function MyDashboardPage() {
       activeMenuItem="my-dashboard"
       breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}
     >
-      <div className="space-y-4">
+      {/* Two independent columns — grid with items-start so each column flows from top independently */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-        {/* Welcome Banner */}
+        {/* ─── Left Column (5/12) ─── */}
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="lg:col-span-5 space-y-4"
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
         >
+          {/* Welcome Banner */}
           <WelcomeBanner
             employeeName={dashboard.employeeName || user?.fullName || 'Employee'}
             designation={dashboard.designation}
             department={dashboard.department}
           />
+
+          {/* Quick Access — Pending actions & inbox */}
+          <QuickAccessWidget
+            pendingApprovals={dashboard.pendingApprovals ?? 0}
+            pendingTimesheets={dashboard.pendingTimesheets ?? 0}
+            pendingProfileUpdates={dashboard.pendingProfileUpdates ?? 0}
+            inboxCount={0}
+          />
+
+          {/* Time Clock — Live clock + Check-in/out */}
+          <TimeClockWidget
+            isCheckedIn={isCheckedIn}
+            checkInTime={checkInTime}
+            onCheckIn={handleCheckIn}
+            onCheckOut={handleCheckOut}
+            isLoading={checkingIn}
+          />
+
+          {/* Holiday Carousel — Upcoming holidays */}
+          <HolidayCarousel />
+
+          {/* Team Presence — On leave + Remote workers */}
+          <TeamPresenceWidget />
+
+          {/* Leave Balance — Circular progress ring */}
+          <LeaveBalanceWidget
+            leaveBalances={
+              dashboard.leaveBalances
+                ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
+                    leaveTypeId: String(idx),
+                    leaveName: name,
+                    available: available as number,
+                    total: (available as number) + 2, // estimate; real API will provide totals
+                    used: 2,
+                  }))
+                : undefined
+            }
+          />
         </motion.div>
 
-        {/* Main Layout — Left Utility Sidebar + Right Social Feed */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* ─── Right Column (7/12) ─── */}
+        <motion.div
+          className="lg:col-span-7 space-y-4"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+        >
+          {/* Post Composer — Post / Poll / Praise */}
+          <PostComposer onPostCreated={() => setFeedRefreshKey((k) => k + 1)} />
 
-          {/* Left Sidebar (5/12) */}
-          <motion.div
-            className="lg:col-span-5 space-y-4"
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: 0.05 }}
-          >
-            {/* Quick Access — Pending actions & inbox */}
-            <QuickAccessWidget
-              pendingApprovals={dashboard.pendingApprovals ?? 0}
-              pendingTimesheets={dashboard.pendingTimesheets ?? 0}
-              pendingProfileUpdates={dashboard.pendingProfileUpdates ?? 0}
-              inboxCount={0}
-            />
+          {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
+          <CelebrationTabs />
 
-            {/* Time Clock — Live clock + Check-in/out */}
-            <TimeClockWidget
-              isCheckedIn={isCheckedIn}
-              checkInTime={checkInTime}
-              onCheckIn={handleCheckIn}
-              onCheckOut={handleCheckOut}
-              isLoading={checkingIn}
-            />
-
-            {/* Holiday Carousel — Upcoming holidays */}
-            <HolidayCarousel />
-
-            {/* Team Presence — On leave + Remote workers */}
-            <TeamPresenceWidget />
-
-            {/* Leave Balance — Circular progress ring */}
-            <LeaveBalanceWidget
-              leaveBalances={
-                dashboard.leaveBalances
-                  ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
-                      leaveTypeId: String(idx),
-                      leaveName: name,
-                      available: available as number,
-                      total: (available as number) + 2, // estimate; real API will provide totals
-                      used: 2,
-                    }))
-                  : undefined
-              }
-            />
-          </motion.div>
-
-          {/* Right Main Content (7/12) */}
-          <motion.div
-            className="lg:col-span-7 space-y-4"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: 0.08 }}
-          >
-            {/* Post Composer — Post / Poll / Praise */}
-            <PostComposer />
-
-            {/* Celebration Tabs — Birthdays / Anniversaries / New Joiners */}
-            <CelebrationTabs />
-
-            {/* Unified Social Feed — Announcements, Recognitions, LinkedIn */}
-            <CompanyFeed employeeId={user?.employeeId} />
-          </motion.div>
-        </div>
+          {/* Unified Social Feed — Announcements, Recognitions, LinkedIn, Wall Posts */}
+          <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey} />
+        </motion.div>
       </div>
     </AppLayout>
   );

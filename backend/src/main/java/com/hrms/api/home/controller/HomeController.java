@@ -86,6 +86,14 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getAttendanceToday(employeeId));
     }
 
+    @GetMapping("/remote-workers")
+    @Operation(summary = "Get employees working remotely today", description = "Returns employees who checked in remotely today")
+    @RequiresPermission(EMPLOYEE_VIEW_SELF)
+    public ResponseEntity<List<RemoteWorkerResponse>> getRemoteWorkersToday() {
+        log.debug("Getting employees working remotely today");
+        return ResponseEntity.ok(homeService.getRemoteWorkersToday());
+    }
+
     @GetMapping("/holidays")
     @Operation(summary = "Get upcoming holidays", description = "Returns holidays in the next N days")
     @RequiresPermission(EMPLOYEE_VIEW_SELF)

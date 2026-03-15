@@ -15,7 +15,8 @@ export type FeedItemType =
   | 'PROMOTION'
   | 'RECOGNITION'
   | 'LINKEDIN_POST'
-  | 'SPOTLIGHT';
+  | 'SPOTLIGHT'
+  | 'WALL_POST';
 
 export interface FeedItem {
   id: string;
@@ -62,8 +63,13 @@ export interface FeedItem {
   spotlightImageUrl?: string;
   spotlightCtaUrl?: string;
   spotlightCtaLabel?: string;
-  // Wall post reference (for reactions/comments via wall API)
-  wallPostId?: string;
+  // Wall post fields
+  wallPostId?: string; // Wall post reference (for reactions/comments via wall API)
+  wallPostAuthorId?: string; // Author employee UUID (for ownership checks)
+  wallPostAuthor?: string;
+  wallPostAuthorDepartment?: string;
+  wallPostImageUrl?: string;
+  wallPostType?: 'POST' | 'POLL' | 'PRAISE';
 }
 
 export interface CompanyFeedData {

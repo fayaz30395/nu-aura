@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { CheckCircle2, MapPin } from 'lucide-react';
-import { homeService, OnLeaveEmployeeResponse } from '@/lib/services/home.service';
+import { useEmployeesOnLeaveToday, useRemoteWorkersToday } from '@/lib/hooks/queries/useHome';
+import { OnLeaveEmployeeResponse, RemoteWorkerResponse } from '@/lib/services/home.service';
 
 interface EmployeePresence {
   employeeId: string;
@@ -17,18 +17,22 @@ interface TeamPresenceWidgetProps {
   isLoading?: boolean;
 }
 
-const DEMO_REMOTE_WORKERS: EmployeePresence[] = [
-  { employeeId: '1', employeeName: 'Ananya Sharma', initials: 'AS', avatarColor: 'bg-slate-500' },
-  { employeeId: '2', employeeName: 'Nikhil Kapoor', initials: 'NK', avatarColor: 'bg-slate-600' },
-  { employeeId: '3', employeeName: 'Priya Desai', initials: 'PD', avatarColor: 'bg-slate-500' },
-];
-
 function getInitials(name: string): string {
   return name.split(' ').map((p) => p[0]).join('').toUpperCase().slice(0, 2);
 }
 
 function mapLeaveToPresence(emp: OnLeaveEmployeeResponse): EmployeePresence {
-  const initials = emp.employeeName.split(' ').map((p) => p[0]).join('').toUpperCase().slice(0, 2);
+  const initials = getInitials(emp.employeeName);
+  return {
+    employeeId: emp.employeeId,
+    employeeName: emp.employeeName,
+    initials,
+    avatarColor: 'bg-slate-500',
+  };
+}
+
+function mapRemoteToPresence(emp: RemoteWorkerResponse): EmployeePresence {
+  const initials = getInitials(emp.employeeName);
   return {
     employeeId: emp.employeeId,
     employeeName: emp.employeeName,
@@ -49,38 +53,33 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
+function SkeletonChips() {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
+          <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+          <div className="h-3 w-12 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function TeamPresenceWidget({
   onLeaveEmployees: propOnLeave,
-  remoteWorkingEmployees = DEMO_REMOTE_WORKERS,
+  remoteWorkingEmployees: propRemote,
 }: TeamPresenceWidgetProps) {
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [apiOnLeave, setApiOnLeave] = useState<EmployeePresence[]>([]);
-  const [apiLoading, setApiLoading] = useState(!propOnLeave);
+  // Fetch on-leave data via React Query (skip if passed as prop)
+  const { data: apiOnLeave, isLoading: onLeaveLoading } = useEmployeesOnLeaveToday(!propOnLeave);
+  // Fetch remote workers data via React Query (skip if passed as prop)
+  const { data: apiRemote, isLoading: remoteLoading } = useRemoteWorkersToday(!propRemote);
 
-  useEffect(() => { setIsHydrated(true); }, []);
+  const onLeaveEmployees: EmployeePresence[] = propOnLeave
+    ?? (apiOnLeave ? apiOnLeave.map(mapLeaveToPresence) : []);
 
-  useEffect(() => {
-    if (propOnLeave) return;
-    const fetchLeaveData = async () => {
-      try {
-        setApiLoading(true);
-        const data = await homeService.getEmployeesOnLeaveToday();
-        if (data && data.length > 0) {
-          setApiOnLeave(data.map(mapLeaveToPresence));
-        }
-      } catch {
-        // Silently fall back to empty
-      } finally {
-        setApiLoading(false);
-      }
-    };
-    fetchLeaveData();
-  }, [propOnLeave]);
-
-  if (!isHydrated) return null;
-
-  const onLeaveEmployees = propOnLeave ?? apiOnLeave;
-  const remoteWorkers = remoteWorkingEmployees.length > 0 ? remoteWorkingEmployees : DEMO_REMOTE_WORKERS;
+  const remoteWorkers: EmployeePresence[] = propRemote
+    ?? (apiRemote ? apiRemote.map(mapRemoteToPresence) : []);
 
   return (
     <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
@@ -89,7 +88,9 @@ export function TeamPresenceWidget({
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2.5">
           On Leave Today
         </h3>
-        {onLeaveEmployees.length === 0 ? (
+        {onLeaveLoading && !propOnLeave ? (
+          <SkeletonChips />
+        ) : onLeaveEmployees.length === 0 ? (
           <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
             <p className="text-xs text-[var(--text-muted)]">Everyone is working today</p>
@@ -107,25 +108,36 @@ export function TeamPresenceWidget({
       </div>
 
       {/* Working Remotely */}
-      <div className="border-t border-[var(--border-subtle)] pt-3">
+      <div className="border-t border-[var(--border-subtle)] pt-4">
         <div className="flex items-center gap-1.5 mb-2.5">
           <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]" />
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">
             Working Remotely
           </h3>
-          <span className="ml-auto text-xs text-[var(--text-muted)]">{remoteWorkers.length}</span>
+          {!remoteLoading && (
+            <span className="ml-auto text-xs text-[var(--text-muted)]">{remoteWorkers.length}</span>
+          )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          {remoteWorkers.map((e) => (
-            <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
-              <div className="relative">
-                <Avatar name={e.employeeName} />
-                <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-gray-950" />
+        {remoteLoading && !propRemote ? (
+          <SkeletonChips />
+        ) : remoteWorkers.length === 0 ? (
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
+            <CheckCircle2 className="h-4 w-4 text-blue-500" />
+            <p className="text-xs text-[var(--text-muted)]">No one is working remotely today</p>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {remoteWorkers.map((e) => (
+              <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
+                <div className="relative">
+                  <Avatar name={e.employeeName} />
+                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-gray-950" />
+                </div>
+                <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
               </div>
-              <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

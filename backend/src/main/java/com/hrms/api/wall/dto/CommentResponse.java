@@ -13,6 +13,7 @@ public class CommentResponse {
     private UUID parentCommentId;
     private List<CommentResponse> replies;
     private int replyCount;
+    private int likesCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -71,6 +72,14 @@ public class CommentResponse {
 
     public void setReplyCount(int replyCount) {
         this.replyCount = replyCount;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 
     public LocalDateTime getCreatedAt() {
