@@ -1,14 +1,33 @@
 'use client';
 
-import { useState } from 'react';
-import { Edit3, BarChart3, Trophy, Image, Smile, Paperclip, Send, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import {
+  Edit3, BarChart3, Trophy, Image, Smile, Paperclip, Send, Loader2,
+  Plus, X, Search, Check,
+} from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import { wallService, CreatePostRequest } from '@/lib/services/wall.service';
 import { wallKeys } from '@/lib/hooks/queries/useWall';
+import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
 type TabType = 'post' | 'poll' | 'praise';
+
+// ─── Praise badge categories ────────────────────────────────────────
+const PRAISE_CATEGORIES = [
+  { id: 'team_player', label: 'Team Player', emoji: '🤝', color: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' },
+  { id: 'innovator', label: 'Innovator', emoji: '💡', color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800' },
+  { id: 'mentor', label: 'Mentor', emoji: '🎓', color: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800' },
+  { id: 'go_getter', label: 'Go-Getter', emoji: '🚀', color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800' },
+  { id: 'problem_solver', label: 'Problem Solver', emoji: '🧩', color: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-800' },
+  { id: 'customer_champion', label: 'Customer Champion', emoji: '⭐', color: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800' },
+  { id: 'culture_hero', label: 'Culture Hero', emoji: '🏆', color: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800' },
+  { id: 'rising_star', label: 'Rising Star', emoji: '🌟', color: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800' },
+] as const;
+
+export { PRAISE_CATEGORIES };
 
 interface PostComposerProps {
   onPostCreated?: () => void;
@@ -16,14 +35,67 @@ interface PostComposerProps {
 
 export function PostComposer({ onPostCreated }: PostComposerProps) {
   const [activeTab, setActiveTab] = useState<TabType>('post');
-  const [postContent, setPostContent] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
+  // ─── Post state ──────────────────────────────────────────────
+  const [postContent, setPostContent] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+
+  // ─── Poll state ──────────────────────────────────────────────
+  const [pollQuestion, setPollQuestion] = useState('');
+  const [pollOptions, setPollOptions] = useState(['', '']);
+
+  // ─── Praise state ────────────────────────────────────────────
+  const [praiseMessage, setPraiseMessage] = useState('');
+  const [praiseCategory, setPraiseCategory] = useState<string | null>(null);
+  const [selectedRecipient, setSelectedRecipient] = useState<{
+    id: string;
+    fullName: string;
+    avatarUrl?: string;
+    designation?: string;
+    department?: string;
+  } | null>(null);
+  const [recipientSearch, setRecipientSearch] = useState('');
+  const [showRecipientDropdown, setShowRecipientDropdown] = useState(false);
+  const recipientInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { user } = useAuth();
+  const { data: searchResults } = useEmployeeSearch(recipientSearch, 0, 8, recipientSearch.length >= 2);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
+          recipientInputRef.current && !recipientInputRef.current.contains(e.target as Node)) {
+        setShowRecipientDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const resetAll = () => {
+    setPostContent('');
+    setPollQuestion('');
+    setPollOptions(['', '']);
+    setPraiseMessage('');
+    setPraiseCategory(null);
+    setSelectedRecipient(null);
+    setRecipientSearch('');
+    setIsFocused(false);
+  };
+
+  const switchTab = (tab: TabType) => {
+    setActiveTab(tab);
+    resetAll();
+  };
+
+  // ─── Handlers ────────────────────────────────────────────────
+
   const handlePost = async () => {
     if (!postContent.trim() || isSubmitting) return;
-
     try {
       setIsSubmitting(true);
       const request: CreatePostRequest = {
@@ -32,24 +104,14 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
         visibility: 'ORGANIZATION',
       };
       await wallService.createPost(request);
-
-      // Invalidate wall post cache so feed updates
       queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
-
-      notifications.show({
-        title: 'Posted!',
-        message: 'Your post has been shared with the organization.',
-        color: 'green',
-      });
-      setPostContent('');
-      setIsFocused(false);
+      notifications.show({ title: 'Posted!', message: 'Your post has been shared.', color: 'green' });
+      resetAll();
       onPostCreated?.();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Something went wrong. Please try again.';
       notifications.show({
         title: 'Failed to post',
-        message: errorMessage,
+        message: error instanceof Error ? error.message : 'Something went wrong.',
         color: 'red',
       });
     } finally {
@@ -57,135 +119,341 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && e.ctrlKey) handlePost();
+  const handleCreatePoll = async () => {
+    const validOptions = pollOptions.filter((o) => o.trim());
+    if (!pollQuestion.trim() || validOptions.length < 2 || isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const request: CreatePostRequest = {
+        type: 'POLL',
+        content: pollQuestion.trim(),
+        visibility: 'ORGANIZATION',
+        pollOptions: validOptions.map((o) => o.trim()),
+      };
+      await wallService.createPost(request);
+      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      notifications.show({ title: 'Poll created!', message: 'Your poll is now live.', color: 'green' });
+      resetAll();
+      onPostCreated?.();
+    } catch (error) {
+      notifications.show({
+        title: 'Failed to create poll',
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+        color: 'red',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const handleSendPraise = async () => {
+    if (!selectedRecipient || !praiseCategory || isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      const categoryLabel = PRAISE_CATEGORIES.find((c) => c.id === praiseCategory)?.label ?? praiseCategory;
+      const content = praiseMessage.trim() || `Recognized as ${categoryLabel}!`;
+      const request: CreatePostRequest = {
+        type: 'PRAISE',
+        content,
+        praiseRecipientId: selectedRecipient.id,
+        celebrationType: praiseCategory,
+        visibility: 'ORGANIZATION',
+      };
+      await wallService.createPost(request);
+      queryClient.invalidateQueries({ queryKey: wallKeys.posts() });
+      notifications.show({
+        title: 'Praise sent!',
+        message: `${selectedRecipient.fullName} has been recognized.`,
+        color: 'green',
+      });
+      resetAll();
+      onPostCreated?.();
+    } catch (error) {
+      notifications.show({
+        title: 'Failed to send praise',
+        message: error instanceof Error ? error.message : 'Something went wrong.',
+        color: 'red',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Poll option helpers
+  const addPollOption = () => {
+    if (pollOptions.length < 10) setPollOptions([...pollOptions, '']);
+  };
+  const removePollOption = (index: number) => {
+    if (pollOptions.length > 2) setPollOptions(pollOptions.filter((_, i) => i !== index));
+  };
+  const updatePollOption = (index: number, value: string) => {
+    const updated = [...pollOptions];
+    updated[index] = value;
+    setPollOptions(updated);
+  };
+
+  const canSubmitPoll = pollQuestion.trim().length > 0 && pollOptions.filter((o) => o.trim()).length >= 2;
+  const canSubmitPraise = !!selectedRecipient && !!praiseCategory;
 
   return (
     <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)]">
       {/* Tabs */}
       <div className="flex items-center border-b border-[var(--border-main)]">
-        <button
-          onClick={() => { setActiveTab('post'); setPostContent(''); }}
-          className={cn(
-            'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
-            activeTab === 'post'
-              ? 'border-primary-600 text-[var(--text-primary)]'
-              : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          )}
-        >
-          <Edit3 size={14} />
-          Post
-        </button>
-        <button
-          onClick={() => setActiveTab('poll')}
-          className={cn(
-            'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
-            activeTab === 'poll'
-              ? 'border-primary-600 text-[var(--text-primary)]'
-              : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          )}
-        >
-          <BarChart3 size={14} />
-          Poll
-          <span className="rounded bg-[var(--bg-secondary)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] font-medium border border-[var(--border-subtle)]">
-            Soon
-          </span>
-        </button>
-        <button
-          onClick={() => setActiveTab('praise')}
-          className={cn(
-            'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
-            activeTab === 'praise'
-              ? 'border-primary-600 text-[var(--text-primary)]'
-              : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-          )}
-        >
-          <Trophy size={14} />
-          Praise
-          <span className="rounded bg-[var(--bg-secondary)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] font-medium border border-[var(--border-subtle)]">
-            Soon
-          </span>
-        </button>
+        {([
+          { key: 'post' as const, label: 'Post', icon: <Edit3 size={14} /> },
+          { key: 'poll' as const, label: 'Poll', icon: <BarChart3 size={14} /> },
+          { key: 'praise' as const, label: 'Praise', icon: <Trophy size={14} /> },
+        ]).map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => switchTab(tab.key)}
+            className={cn(
+              'flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors border-b-2',
+              activeTab === tab.key
+                ? 'border-primary-600 text-[var(--text-primary)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        {activeTab === 'post' && (
-          <div className="space-y-2">
-            <textarea
-              value={postContent}
-              onChange={(e) => setPostContent(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={(e) => {
-                // Don't collapse if focus moved to a sibling element (e.g. Post button, toolbar)
-                // relatedTarget is the element receiving focus next
-                const container = e.currentTarget.closest('.space-y-2');
-                if (container && e.relatedTarget && container.contains(e.relatedTarget as Node)) {
-                  return;
-                }
-                // Only collapse if content is empty
-                if (!postContent.trim()) {
-                  setIsFocused(false);
-                }
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Write something..."
-              className={cn(
-                'input-aura w-full resize-none transition-all',
-                isFocused ? 'h-20' : 'h-10'
-              )}
-            />
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
-                  title="Add image"
-                >
-                  <Image size={14} />
-                </button>
-                <button
-                  type="button"
-                  className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
-                  title="Add emoji"
-                >
-                  <Smile size={14} />
-                </button>
-                <button
-                  type="button"
-                  className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
-                  title="Attach file"
-                >
-                  <Paperclip size={14} />
-                </button>
-              </div>
-              <button
-                onClick={handlePost}
-                disabled={!postContent.trim() || isSubmitting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
-              >
-                {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                {isSubmitting ? 'Posting...' : 'Post'}
+      {/* ── Post Tab ─────────────────────────────────────────── */}
+      {activeTab === 'post' && (
+        <div className="p-4 space-y-2">
+          <textarea
+            value={postContent}
+            onChange={(e) => setPostContent(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={(e) => {
+              const container = e.currentTarget.closest('.space-y-2');
+              if (container && e.relatedTarget && container.contains(e.relatedTarget as Node)) return;
+              if (!postContent.trim()) setIsFocused(false);
+            }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && e.ctrlKey) handlePost(); }}
+            placeholder="Write something..."
+            className={cn('input-aura w-full resize-none transition-all', isFocused ? 'h-20' : 'h-10')}
+          />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add image">
+                <Image size={14} />
+              </button>
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Add emoji">
+                <Smile size={14} />
+              </button>
+              <button type="button" className="rounded p-1.5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors" title="Attach file">
+                <Paperclip size={14} />
               </button>
             </div>
+            <button
+              onClick={handlePost}
+              disabled={!postContent.trim() || isSubmitting}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+            >
+              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+              {isSubmitting ? 'Posting...' : 'Post'}
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {activeTab === 'poll' && (
-          <div className="flex flex-col items-center justify-center py-8">
-            <BarChart3 size={28} className="mb-2 text-[var(--text-muted)]" />
-            <p className="text-xs text-[var(--text-muted)]">Poll feature coming soon</p>
-          </div>
-        )}
+      {/* ── Poll Tab ─────────────────────────────────────────── */}
+      {activeTab === 'poll' && (
+        <div className="p-4 space-y-4">
+          {/* Question */}
+          <textarea
+            value={pollQuestion}
+            onChange={(e) => setPollQuestion(e.target.value)}
+            placeholder="Ask a question..."
+            className="input-aura w-full resize-none h-16"
+            maxLength={500}
+          />
 
-        {activeTab === 'praise' && (
-          <div className="flex flex-col items-center justify-center py-8">
-            <Trophy size={28} className="mb-2 text-[var(--text-muted)]" />
-            <p className="text-xs text-[var(--text-muted)]">Praise feature coming soon</p>
+          {/* Options */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-[var(--text-secondary)]">Options</p>
+            {pollOptions.map((option, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-5 h-5 rounded-full border-2 border-[var(--border-main)] text-[var(--text-muted)] text-xs shrink-0">
+                  {index + 1}
+                </div>
+                <input
+                  type="text"
+                  value={option}
+                  onChange={(e) => updatePollOption(index, e.target.value)}
+                  placeholder={`Option ${index + 1}`}
+                  className="input-aura flex-1"
+                  maxLength={255}
+                />
+                {pollOptions.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() => removePollOption(index)}
+                    className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            ))}
+            {pollOptions.length < 10 && (
+              <button
+                type="button"
+                onClick={addPollOption}
+                className="flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors pl-7"
+              >
+                <Plus size={12} />
+                Add option
+              </button>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Submit */}
+          <div className="flex justify-end">
+            <button
+              onClick={handleCreatePoll}
+              disabled={!canSubmitPoll || isSubmitting}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+            >
+              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <BarChart3 size={14} />}
+              {isSubmitting ? 'Creating...' : 'Create Poll'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Praise Tab ───────────────────────────────────────── */}
+      {activeTab === 'praise' && (
+        <div className="p-4 space-y-4">
+          {/* Recipient search */}
+          <div className="relative">
+            <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Who do you want to recognize?</p>
+            {selectedRecipient ? (
+              <div className="flex items-center gap-2 p-2 rounded-lg border border-primary-200 bg-primary-50 dark:bg-primary-950 dark:border-primary-800">
+                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-semibold text-primary-700 dark:text-primary-300 overflow-hidden shrink-0">
+                  {selectedRecipient.avatarUrl ? (
+                    <img src={selectedRecipient.avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    selectedRecipient.fullName.charAt(0)
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">{selectedRecipient.fullName}</p>
+                  {selectedRecipient.designation && (
+                    <p className="text-xs text-[var(--text-muted)] truncate">{selectedRecipient.designation}</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setSelectedRecipient(null); setRecipientSearch(''); }}
+                  className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                  <input
+                    ref={recipientInputRef}
+                    type="text"
+                    value={recipientSearch}
+                    onChange={(e) => { setRecipientSearch(e.target.value); setShowRecipientDropdown(true); }}
+                    onFocus={() => recipientSearch.length >= 2 && setShowRecipientDropdown(true)}
+                    placeholder="Search by name..."
+                    className="input-aura w-full pl-8"
+                  />
+                </div>
+                {showRecipientDropdown && searchResults && searchResults.content.length > 0 && (
+                  <div ref={dropdownRef} className="absolute z-30 left-4 right-4 mt-1 max-h-48 overflow-y-auto rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg">
+                    {searchResults.content
+                      .filter((emp) => emp.id !== user?.employeeId)
+                      .map((emp) => (
+                        <button
+                          key={emp.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedRecipient({
+                              id: emp.id,
+                              fullName: `${emp.firstName} ${emp.lastName}`,
+                              avatarUrl: emp.profilePhotoUrl,
+                              designation: emp.designation,
+                              department: emp.departmentName,
+                            });
+                            setRecipientSearch('');
+                            setShowRecipientDropdown(false);
+                          }}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-[var(--bg-secondary)] transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] overflow-hidden shrink-0">
+                            {emp.profilePhotoUrl ? (
+                              <img src={emp.profilePhotoUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              emp.firstName?.charAt(0)
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-[var(--text-primary)] truncate">{emp.firstName} {emp.lastName}</p>
+                            <p className="text-xs text-[var(--text-muted)] truncate">{emp.designation || emp.departmentName}</p>
+                          </div>
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Category badges */}
+          <div>
+            <p className="text-xs font-medium text-[var(--text-secondary)] mb-2">Recognition badge</p>
+            <div className="flex flex-wrap gap-2">
+              {PRAISE_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setPraiseCategory(praiseCategory === cat.id ? null : cat.id)}
+                  className={cn(
+                    'inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all',
+                    praiseCategory === cat.id
+                      ? `${cat.color} ring-2 ring-primary-400 ring-offset-1 dark:ring-offset-[var(--bg-card)]`
+                      : 'border-[var(--border-main)] text-[var(--text-secondary)] hover:border-[var(--border-subtle)] hover:bg-[var(--bg-secondary)]'
+                  )}
+                >
+                  <span>{cat.emoji}</span>
+                  {cat.label}
+                  {praiseCategory === cat.id && <Check size={10} className="ml-0.5" />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Message (optional) */}
+          <textarea
+            value={praiseMessage}
+            onChange={(e) => setPraiseMessage(e.target.value)}
+            placeholder="Add a message (optional)..."
+            className="input-aura w-full resize-none h-16"
+            maxLength={2000}
+          />
+
+          {/* Submit */}
+          <div className="flex justify-end">
+            <button
+              onClick={handleSendPraise}
+              disabled={!canSubmitPraise || isSubmitting}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+            >
+              {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Trophy size={14} />}
+              {isSubmitting ? 'Sending...' : 'Send Praise'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

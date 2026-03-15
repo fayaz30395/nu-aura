@@ -78,4 +78,12 @@ public class CreatePostRequest {
     public void setPollOptions(List<String> pollOptions) {
         this.pollOptions = pollOptions;
     }
+
+    public String getCelebrationType() {
+        return celebrationType;
+    }
+
+    public void setCelebrationType(String celebrationType) {
+        this.celebrationType = celebrationType;
+    }
 }

@@ -25,6 +25,7 @@ public class WallPostResponse {
     private String userReactionType;
     private boolean hasVoted;
     private UUID userVotedOptionId;
+    private String celebrationType;
     private List<ReactorInfo> recentReactors;
     private int totalReactorCount;
     private LocalDateTime createdAt;
@@ -295,6 +296,14 @@ public class WallPostResponse {
 
     public void setTotalReactorCount(int totalReactorCount) {
         this.totalReactorCount = totalReactorCount;
+    }
+
+    public String getCelebrationType() {
+        return celebrationType;
+    }
+
+    public void setCelebrationType(String celebrationType) {
+        this.celebrationType = celebrationType;
     }
 
     public LocalDateTime getCreatedAt() {
