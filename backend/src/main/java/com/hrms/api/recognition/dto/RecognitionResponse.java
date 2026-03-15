@@ -38,6 +38,8 @@ public class RecognitionResponse {
     private Boolean isApproved;
     private LocalDateTime recognizedAt;
     private LocalDateTime createdAt;
+    private UUID wallPostId;
+    private Boolean hasReacted;
 
     public static RecognitionResponse fromEntity(Recognition entity) {
         return RecognitionResponse.builder()
@@ -59,6 +61,7 @@ public class RecognitionResponse {
                 .isApproved(entity.getIsApproved())
                 .recognizedAt(entity.getRecognizedAt())
                 .createdAt(entity.getCreatedAt())
+                .wallPostId(entity.getWallPostId())
                 .build();
     }
 

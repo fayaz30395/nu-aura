@@ -20,6 +20,8 @@ export interface Announcement {
   isRead?: boolean;
   createdAt: string;
   updatedAt: string;
+  wallPostId?: string; // Reference to wall post for reactions/comments
+  hasReacted?: boolean; // Whether current user has reacted
 }
 
 export type AnnouncementCategory =

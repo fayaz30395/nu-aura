@@ -57,11 +57,11 @@ function AnimatedBackground() {
     <div className="fixed inset-0" style={{ zIndex: 0 }}>
       {/* Base */}
       <div className="absolute inset-0 bg-[var(--bg-main)]" />
-      {/* Light-mode: subtle brand gradient orbs */}
+      {/* Light-mode: subtle purple gradient orbs (Keka-inspired) */}
       <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-200/30 blur-[120px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-info-200/25 blur-[100px]" />
-        <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full bg-accent-100/20 blur-[80px]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-200/25 blur-[120px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary-300/20 blur-[100px]" />
+        <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full bg-primary-100/15 blur-[80px]" />
       </div>
       {/* Dark-mode: deep navy mesh with subtle grid */}
       <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
@@ -93,7 +93,7 @@ function FeaturePills() {
       {features.map(({ icon: Icon, label, delay }) => (
         <div
           key={label}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-secondary)] text-xs font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] text-xs font-medium"
           style={{
             animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
           }}
@@ -459,15 +459,15 @@ function LoginPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl font-bold text-[var(--text-primary)] leading-tight mb-6">
+            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] leading-tight mb-6 tracking-tight">
               Your People.
               <br />
-              <span className="bg-gradient-to-r from-primary-600 via-info-600 to-primary-500 dark:from-primary-400 dark:via-info-400 dark:to-primary-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-700 dark:from-primary-400 dark:via-primary-300 dark:to-primary-500 bg-clip-text text-transparent">
                 Amplified.
               </span>
             </h1>
 
-            <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
+            <p className="text-lg text-[var(--text-primary)] opacity-80 leading-relaxed mb-8">
               One platform for HR, Recruitment, Performance, and Knowledge
               Management. Built for teams that move fast.
             </p>
@@ -475,10 +475,10 @@ function LoginPage() {
             {/* App icons row */}
             <div className="flex gap-4 mb-8">
               {[
-                { name: 'HRMS', color: 'from-indigo-500 to-blue-600', icon: '👥' },
+                { name: 'HRMS', color: 'from-blue-400 to-blue-500', icon: '👥' },
                 { name: 'Hire', color: 'from-primary-500 to-primary-700', icon: '🎯' },
-                { name: 'Grow', color: 'from-amber-500 to-orange-600', icon: '📈' },
-                { name: 'Fluence', color: 'from-violet-500 to-purple-600', icon: '💡' },
+                { name: 'Grow', color: 'from-amber-400 to-amber-500', icon: '📈' },
+                { name: 'Fluence', color: 'from-yellow-400 to-amber-500', icon: '💡' },
               ].map((app, i) => (
                 <div
                   key={app.name}
@@ -491,7 +491,7 @@ function LoginPage() {
                   >
                     {app.icon}
                   </div>
-                  <span className="text-[var(--text-muted)] text-xs font-medium">
+                  <span className="text-[var(--text-secondary)] text-xs font-medium">
                     NU-{app.name}
                   </span>
                 </div>
@@ -529,9 +529,9 @@ function LoginPage() {
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
               <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
-                Welcome to <span className="text-primary-600 dark:text-primary-400">NU-AURA</span>
+                Welcome to <span className="text-primary-600 dark:text-primary-400 font-extrabold">NU-AURA</span>
               </h2>
-              <p className="text-[var(--text-muted)] text-sm">
+              <p className="text-[var(--text-secondary)] text-sm">
                 Your unified people platform
               </p>
             </div>
@@ -539,10 +539,10 @@ function LoginPage() {
             {/* Card */}
             <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-elevated">
               <div className="text-center mb-7">
-                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
+                <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
                   Sign In
                 </h3>
-                <p className="text-[var(--text-muted)] text-sm">
+                <p className="text-[var(--text-secondary)] text-sm">
                   Access your workspace with Google SSO
                 </p>
               </div>
@@ -568,7 +568,7 @@ function LoginPage() {
               {/* Google SSO Button */}
               <button
                 type="button"
-                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-medium text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
+                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
                 onClick={() => {
 
                   handleGoogleSSO();
@@ -602,10 +602,10 @@ function LoginPage() {
               </button>
 
               {/* Domain notice */}
-              <p className="text-center text-[var(--text-muted)] text-xs mt-4 leading-relaxed">
-                Restricted to <span className="text-primary-600 dark:text-primary-400">@{ALLOWED_DOMAIN}</span> accounts.
+              <p className="text-center text-[var(--text-secondary)] text-xs mt-4 leading-relaxed">
+                Restricted to <span className="text-primary-600 dark:text-primary-400 font-semibold">@{ALLOWED_DOMAIN}</span> accounts.
                 <br />
-                <span className="text-[var(--text-muted)] opacity-70">Includes NU-Drive and NU-Mail access.</span>
+                <span className="text-[var(--text-muted)]">Includes NU-Drive and NU-Mail access.</span>
               </p>
 
               {/* Divider */}
@@ -614,28 +614,28 @@ function LoginPage() {
                   <div className="w-full border-t border-[var(--border-subtle)]" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-3 bg-[var(--bg-card)] text-[var(--text-muted)]">
+                  <span className="px-3 bg-[var(--bg-card)] text-[var(--text-secondary)] font-medium uppercase tracking-wide">
                     secure enterprise SSO
                   </span>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="flex items-center justify-center gap-6 text-[var(--text-muted)] text-xs">
+              <div className="flex items-center justify-center gap-6 text-[var(--text-secondary)] text-xs font-medium">
                 <div className="flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
+                  <Shield className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                   <span>SOC 2</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   <span>Encrypted</span>
                 </div>
                 <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" />
+                  <Globe className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                   <span>GDPR</span>
                 </div>
               </div>
@@ -643,17 +643,17 @@ function LoginPage() {
 
             {/* Footer */}
             <div className="text-center mt-8 space-y-2">
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="text-xs text-[var(--text-secondary)]">
                 By signing in, you agree to our{' '}
-                <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors font-medium">
                   Terms
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors font-medium">
                   Privacy Policy
                 </Link>
               </p>
-              <p className="text-xs text-[var(--text-muted)] opacity-60">
+              <p className="text-xs text-[var(--text-muted)]">
                 NuLogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
               </p>
             </div>

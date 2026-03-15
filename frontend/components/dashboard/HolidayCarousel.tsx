@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
-import { homeService, UpcomingHolidayResponse } from '@/lib/services/home.service';
+import { UpcomingHolidayResponse } from '@/lib/services/home.service';
+import { useUpcomingHolidays } from '@/lib/hooks/queries/useHome';
 
 interface Holiday {
   id: string;
@@ -19,39 +20,6 @@ interface HolidayCarouselProps {
   holidays?: Holiday[];
   isLoading?: boolean;
 }
-
-const DEMO_HOLIDAYS: Holiday[] = [
-  {
-    id: '1',
-    name: 'Good Friday',
-    date: '2026-04-03',
-    type: 'FLOATER_LEAVE',
-    description: 'Christian holiday',
-    isOptional: false,
-    daysUntil: 21,
-    dayOfWeek: 'Friday',
-  },
-  {
-    id: '2',
-    name: 'Eid al-Fitr',
-    date: '2026-03-30',
-    type: 'RELIGIOUS_HOLIDAY',
-    description: 'Islamic holiday',
-    isOptional: false,
-    daysUntil: 17,
-    dayOfWeek: 'Monday',
-  },
-  {
-    id: '3',
-    name: 'May Day',
-    date: '2026-05-01',
-    type: 'PUBLIC_HOLIDAY',
-    description: 'Labour Day',
-    isOptional: false,
-    daysUntil: 49,
-    dayOfWeek: 'Friday',
-  },
-];
 
 function mapApiHoliday(h: UpcomingHolidayResponse): Holiday {
   return {
@@ -70,33 +38,19 @@ export function HolidayCarousel({
   holidays: propHolidays,
   isLoading: propLoading = false,
 }: HolidayCarouselProps) {
-  const [apiHolidays, setApiHolidays] = useState<Holiday[]>([]);
-  const [apiLoading, setApiLoading] = useState(!propHolidays);
+  const { data: apiData, isLoading: queryLoading } = useUpcomingHolidays(90, !propHolidays);
 
-  useEffect(() => {
-    if (propHolidays) return; // Use prop data if provided
-    const fetchHolidays = async () => {
-      try {
-        setApiLoading(true);
-        const data = await homeService.getUpcomingHolidays(90);
-        if (data && data.length > 0) {
-          setApiHolidays(data.map(mapApiHoliday));
-        }
-      } catch {
-        // Fall back to demo data silently
-      } finally {
-        setApiLoading(false);
-      }
-    };
-    fetchHolidays();
-  }, [propHolidays]);
-
-  const holidays = propHolidays ?? (apiHolidays.length > 0 ? apiHolidays : DEMO_HOLIDAYS);
-  const isLoading = propLoading || apiLoading;
+  const holidays = propHolidays ?? (apiData ? apiData.map(mapApiHoliday) : []);
+  const isLoading = propLoading || queryLoading;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
 
   const displayedHolidays = holidays;
+
+  // Reset index when holiday list changes (e.g. after API fetch)
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [displayedHolidays.length]);
 
   useEffect(() => {
     if (displayedHolidays.length <= 1 || isHovering) return;
@@ -106,15 +60,36 @@ export function HolidayCarousel({
     return () => clearInterval(timer);
   }, [isHovering, displayedHolidays.length]);
 
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
+        </div>
+        <div className="rounded-lg bg-[var(--bg-surface)] p-4 animate-pulse">
+          <div className="flex items-start gap-3">
+            <div className="w-12 h-12 rounded-lg bg-gray-200 dark:bg-gray-700" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (displayedHolidays.length === 0) {
     return (
       <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Upcoming Holidays</h3>
         </div>
-        <p className="text-sm text-[var(--text-muted)] text-center py-4">
-          No upcoming holidays
-        </p>
+        <div className="text-center py-4">
+          <CalendarDays className="w-6 h-6 text-gray-300 dark:text-gray-600 mx-auto mb-1" />
+          <p className="text-xs text-[var(--text-muted)]">No upcoming holidays</p>
+        </div>
       </div>
     );
   }
@@ -133,7 +108,7 @@ export function HolidayCarousel({
         </h3>
         <a
           href="/holidays"
-          className="text-xs text-[var(--text-muted)] hover:text-gray-700 dark:text-[var(--text-muted)] dark:hover:text-gray-300 transition-colors"
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
         >
           View All
         </a>
@@ -150,7 +125,12 @@ export function HolidayCarousel({
               {currentHoliday.name}
             </h4>
             <p className="text-xs text-[var(--text-muted)] mt-0.5">
-              {currentHoliday.dayOfWeek}, {currentHoliday.date}
+              {currentHoliday.dayOfWeek},{' '}
+              {new Date(currentHoliday.date + 'T00:00:00').toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
             </p>
             <div className="flex items-center gap-2 mt-1.5">
               <span className="text-xs text-[var(--text-muted)]">

@@ -2,7 +2,10 @@ package com.hrms.application.announcement.service;
 
 import com.hrms.api.announcement.dto.AnnouncementDto;
 import com.hrms.api.announcement.dto.CreateAnnouncementRequest;
+import com.hrms.api.wall.dto.CreatePostRequest;
+import com.hrms.api.wall.dto.WallPostResponse;
 import com.hrms.application.common.service.ContentViewService;
+import com.hrms.application.wall.service.WallService;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
@@ -10,9 +13,11 @@ import com.hrms.domain.announcement.Announcement;
 import com.hrms.domain.announcement.Announcement.*;
 import com.hrms.domain.announcement.AnnouncementRead;
 import com.hrms.domain.common.ContentView.ContentType;
+import com.hrms.domain.wall.model.WallPost;
 import com.hrms.infrastructure.announcement.repository.AnnouncementRepository;
 import com.hrms.infrastructure.announcement.repository.AnnouncementReadRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.wall.repository.PostReactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +42,8 @@ public class AnnouncementService {
     private final AnnouncementReadRepository announcementReadRepository;
     private final EmployeeRepository employeeRepository;
     private final ContentViewService contentViewService;
+    private final WallService wallService;
+    private final PostReactionRepository postReactionRepository;
 
     @Transactional
     public AnnouncementDto createAnnouncement(CreateAnnouncementRequest request) {
@@ -71,6 +78,23 @@ public class AnnouncementService {
         announcement.publish(userId, publisherName);
 
         announcement = announcementRepository.save(announcement);
+
+        // Create wall post for social features (reactions/comments)
+        try {
+            CreatePostRequest wallPostRequest = new CreatePostRequest();
+            wallPostRequest.setType(WallPost.PostType.POST);
+            wallPostRequest.setContent(announcement.getContent());
+            wallPostRequest.setVisibility(WallPost.PostVisibility.ORGANIZATION);
+
+            WallPostResponse wallPost = wallService.createPost(wallPostRequest, userId);
+            announcement.setWallPostId(wallPost.getId());
+            announcement = announcementRepository.save(announcement);
+            log.info("Created wall post {} for announcement {}", wallPost.getId(), announcement.getId());
+        } catch (Exception e) {
+            log.error("Failed to create wall post for announcement {}: {}", announcement.getId(), e.getMessage());
+            // Don't fail the announcement if wall post creation fails
+        }
+
         log.info("Created announcement: {} by {}", announcement.getTitle(), publisherName);
 
         return AnnouncementDto.fromEntity(announcement);
@@ -105,8 +129,9 @@ public class AnnouncementService {
     @Transactional(readOnly = true)
     public Page<AnnouncementDto> getAllAnnouncements(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUserId = SecurityContext.getCurrentEmployeeId();
         return announcementRepository.findActiveAnnouncements(tenantId, LocalDateTime.now(), pageable)
-                .map(AnnouncementDto::fromEntity);
+                .map(a -> enrichAnnouncementDto(AnnouncementDto.fromEntity(a), currentUserId));
     }
 
     @Transactional(readOnly = true)
@@ -153,7 +178,8 @@ public class AnnouncementService {
                         dto.setIsAccepted(readRecord.getIsAccepted());
                         dto.setAcceptedAt(readRecord.getAcceptedAt());
                     }
-                    return dto;
+                    // Enrich with reaction status
+                    return enrichAnnouncementDto(dto, employeeId);
                 })
                 .collect(Collectors.toList());
 
@@ -319,5 +345,18 @@ public class AnnouncementService {
 
         announcementRepository.delete(announcement);
         log.info("Deleted announcement: {}", announcementId);
+    }
+
+    /**
+     * Enrich announcement DTO with user-specific data (hasReacted status)
+     */
+    private AnnouncementDto enrichAnnouncementDto(AnnouncementDto dto, UUID currentUserId) {
+        if (dto.getWallPostId() != null && currentUserId != null) {
+            boolean hasReacted = postReactionRepository.findByPostIdAndEmployeeId(
+                    dto.getWallPostId(), currentUserId
+            ).isPresent();
+            dto.setHasReacted(hasReacted);
+        }
+        return dto;
     }
 }

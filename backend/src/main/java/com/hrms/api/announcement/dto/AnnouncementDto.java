@@ -37,6 +37,8 @@ public class AnnouncementDto {
     private Boolean isAccepted;
     private LocalDateTime acceptedAt;
     private Boolean requiresAcceptance;
+    private UUID wallPostId;
+    private Boolean hasReacted;
 
     public static AnnouncementDto fromEntity(Announcement entity) {
         return AnnouncementDto.builder()
@@ -61,6 +63,7 @@ public class AnnouncementDto {
                 .publishedByName(entity.getPublishedByName())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
+                .wallPostId(entity.getWallPostId())
                 .isRead(false)
                 .isAccepted(false)
                 .build();

@@ -13,7 +13,6 @@ import { TimeClockWidget } from '@/components/dashboard/TimeClockWidget';
 import { HolidayCarousel } from '@/components/dashboard/HolidayCarousel';
 import { TeamPresenceWidget } from '@/components/dashboard/TeamPresenceWidget';
 import { LeaveBalanceWidget } from '@/components/dashboard/LeaveBalanceWidget';
-import { CompanySpotlight } from '@/components/dashboard/CompanySpotlight';
 import { PostComposer } from '@/components/dashboard/PostComposer';
 import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
 import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
@@ -344,9 +343,6 @@ export default function MyDashboardPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.08 }}
           >
-            {/* Company Spotlight Carousel */}
-            <CompanySpotlight />
-
             {/* Post Composer — Post / Poll / Praise */}
             <PostComposer />
 

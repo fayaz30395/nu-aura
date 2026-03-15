@@ -48,6 +48,9 @@ public class Recognition extends TenantAware {
 
     private UUID badgeId;
 
+    // Reference to wall post for social features (reactions/comments)
+    private UUID wallPostId;
+
     @Builder.Default
     private Integer likesCount = 0;
 

@@ -31,6 +31,8 @@ public class AnnouncementResponse {
     private Boolean isRead; // For current user
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID wallPostId; // Reference to wall post for reactions/comments
+    private Boolean hasReacted; // Whether current user has reacted
 
     // Helper methods
     public boolean isExpired() {

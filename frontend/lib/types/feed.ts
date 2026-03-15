@@ -47,6 +47,7 @@ export interface FeedItem {
   pointsAwarded?: number;
   likesCount?: number;
   commentsCount?: number;
+  hasReacted?: boolean; // Whether current user has reacted to this item
   // LinkedIn post-specific
   linkedinPostUrl?: string;
   linkedinAuthor?: string;

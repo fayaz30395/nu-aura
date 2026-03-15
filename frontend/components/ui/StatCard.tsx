@@ -148,10 +148,10 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
                   {icon}
                 </div>
               )}
-              <span className="flex-1 min-w-0 text-xs font-medium text-surface-500 dark:text-surface-400 truncate">
+              <span className="flex-1 min-w-0 text-xs font-medium text-[var(--text-secondary)] truncate">
                 {title}
               </span>
-              <span className="text-lg font-bold text-surface-900 dark:text-surface-50 shrink-0">
+              <span className="text-lg font-bold text-[var(--text-primary)] shrink-0">
                 {value}
               </span>
               {trend && (
@@ -237,18 +237,18 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         {/* Title */}
-        <p className="text-sm font-medium text-surface-500 dark:text-surface-400 mb-1">
+        <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {title}
         </p>
 
         {/* Value */}
-        <p className="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-1 tracking-tight">
+        <p className="text-3xl font-bold text-[var(--text-primary)] mb-1 tracking-tight">
           {value}
         </p>
 
         {/* Description or Trend Label */}
         {(description || trend?.label) && (
-          <p className="text-xs text-surface-500 dark:text-surface-400">
+          <p className="text-xs text-[var(--text-muted)]">
             {description || trend?.label}
           </p>
         )}
