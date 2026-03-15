@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
   return (
     <AdminPageContent>
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="p-4 sm:p-6 space-y-6"
@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
       <SystemHealthCard isLoading={healthLoading} health={health} />
 
       {/* All employees table */}
-      <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800">
+      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-surface-200 dark:border-surface-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-surface-100 dark:border-surface-800">
           <div>
             <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Role Management Panel */}
-      <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+      <div className="bg-[var(--bg-card)] rounded-xl shadow-soft border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
         <div>
           <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
             Role Management
@@ -336,7 +336,7 @@ export default function AdminDashboardPage() {
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
+    <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
       <div className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">
         {title}
       </div>
@@ -387,10 +387,10 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
-      className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 shadow-soft"
+      className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 shadow-soft"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

@@ -22,10 +22,10 @@ interface CompOffRequest {
 }
 
 const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-  PENDING:  { color: 'text-yellow-600 bg-yellow-50',  icon: AlertCircle,   label: 'Pending' },
-  APPROVED: { color: 'text-blue-600 bg-blue-50',      icon: CheckCircle,   label: 'Approved' },
-  REJECTED: { color: 'text-red-600 bg-red-50',        icon: XCircle,       label: 'Rejected' },
-  CREDITED: { color: 'text-green-600 bg-green-50',    icon: CheckCircle,   label: 'Credited' },
+  PENDING:  { color: 'text-yellow-600 tint-warning',  icon: AlertCircle,   label: 'Pending' },
+  APPROVED: { color: 'text-blue-600 tint-info',       icon: CheckCircle,   label: 'Approved' },
+  REJECTED: { color: 'text-red-600 tint-danger',      icon: XCircle,       label: 'Rejected' },
+  CREDITED: { color: 'text-green-600 tint-success',   icon: CheckCircle,   label: 'Credited' },
 };
 
 export default function CompOffPage() {
@@ -81,7 +81,7 @@ export default function CompOffPage() {
         </div>
 
         {/* Info card */}
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-blue-200 tint-info">
           <CardContent className="pt-4">
             <div className="flex gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
@@ -158,7 +158,7 @@ export default function CompOffPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-green-700 border-green-200 hover:bg-green-50"
+                                className="text-green-700 border-green-200"
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'approve' })}
                               >
                                 Approve
@@ -166,7 +166,7 @@ export default function CompOffPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-red-700 border-red-200 hover:bg-red-50"
+                                className="text-red-700 border-red-200"
                                 onClick={() => approveMutation.mutate({ id: req.id, action: 'reject' })}
                               >
                                 Reject

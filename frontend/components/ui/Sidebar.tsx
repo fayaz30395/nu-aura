@@ -380,7 +380,7 @@ const SectionDivider: React.FC<{
       whileHover={{ x: 2 }}
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary group-hover:text-primary transition-colors duration-200 relative">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary group-hover:text-primary transition-colors duration-200 relative">
         {label}
         {/* Subtle left border highlight on hover */}
         <motion.div
@@ -631,7 +631,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                       onClick={() => handleToggleSection(section.id)}
                       className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-primary-500/5 rounded-md transition-all duration-200"
                     >
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary group-hover:text-primary transition-colors duration-200">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary group-hover:text-primary transition-colors duration-200">
                         {section.label}
                       </span>
                       <ChevronDown
@@ -690,7 +690,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <p className="text-xs font-medium text-primary truncate">
                     Pro Features
                   </p>
-                  <p className="text-[10px] text-secondary">
+                  <p className="text-[11px] text-secondary">
                     All modules active
                   </p>
                 </div>

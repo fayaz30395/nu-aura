@@ -13,6 +13,8 @@ import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/Button';
+import { SkeletonTable } from '@/components/ui/Loading';
 
 // Zod schema for create employee form
 const createEmployeeFormSchema = z.object({
@@ -198,47 +200,50 @@ export default function EmployeesPage() {
   return (
     <AppLayout activeMenuItem="employees">
       <motion.div
-        className="p-3 sm:p-6 space-y-4 sm:space-y-6"
-        initial={{ opacity: 0, y: 12 }}
+        className="space-y-6"
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Employee Management</h1>
-            <p className="text-sm sm:text-base text-surface-600 dark:text-surface-400 mt-1">Manage your organization&apos;s employees</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">Employee Management</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">Manage your organization&apos;s employees</p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => router.push('/employees/change-requests')}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
             >
               Change Requests
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => router.push('/employees/import')}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
             >
               Import
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
               onClick={() => setShowAddModal(true)}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-md shadow-primary-500/25 transition-all whitespace-nowrap"
             >
               + Add Employee
-            </button>
+            </Button>
           </div>
         </div>
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl">
+            <p className="text-sm text-danger-600 dark:text-danger-400">{error}</p>
           </div>
         )}
 
         {/* Search and Filters */}
-        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 flex gap-2">
             <input
               type="text"
@@ -246,19 +251,16 @@ export default function EmployeesPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+              className="flex-1 min-w-0 h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
             />
-            <button
-              onClick={handleSearch}
-              className="px-3 sm:px-4 py-2 text-sm bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 rounded-xl transition-colors whitespace-nowrap"
-            >
+            <Button variant="secondary" size="sm" onClick={handleSearch}>
               Search
-            </button>
+            </Button>
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 sm:px-4 py-2.5 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+            className="h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
           >
             <option value="">All Status</option>
             <option value="ACTIVE">Active</option>
@@ -268,11 +270,9 @@ export default function EmployeesPage() {
         </div>
 
         {/* Employee Table */}
-        <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="card-aura overflow-hidden">
           {loading ? (
-            <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
-              Loading employees...
-            </div>
+            <SkeletonTable rows={8} columns={7} />
           ) : employees.length === 0 ? (
             <EmptyState
               icon={<Users className="h-12 w-12" />}
@@ -283,93 +283,98 @@ export default function EmployeesPage() {
           ) : (
             <>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
-                <thead className="bg-surface-50 dark:bg-surface-800/50">
+              <table className="table-aura">
+                <thead>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Employee
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Code
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Designation
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Department
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Level
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Manager
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th>
                       Status
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="text-right">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-[var(--bg-card)] divide-y divide-surface-100 dark:divide-surface-800">
+                <tbody>
                   {employees.map((employee) => (
-                  <tr key={employee.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+                  <tr key={employee.id}>
+                    <td className="whitespace-nowrap">
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
                           <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
                             {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
                           </span>
                         </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{employee.fullName}</div>
-                          <div className="text-sm text-surface-500 dark:text-surface-400">{employee.workEmail}</div>
+                        <div>
+                          <div className="text-sm font-medium text-[var(--text-primary)]">{employee.fullName}</div>
+                          <div className="text-xs text-[var(--text-muted)]">{employee.workEmail}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-surface-900 dark:text-surface-50">{employee.employeeCode}</div>
+                    <td className="whitespace-nowrap">
+                      <span className="text-sm font-mono text-[var(--text-secondary)]">{employee.employeeCode}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-surface-900 dark:text-surface-50">{employee.designation}</div>
+                    <td className="whitespace-nowrap">
+                      <span className="text-sm text-[var(--text-primary)]">{employee.designation}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-surface-900 dark:text-surface-50">{employee.departmentName || '-'}</div>
+                    <td className="whitespace-nowrap">
+                      <span className="text-sm text-[var(--text-primary)]">{employee.departmentName || '-'}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="whitespace-nowrap">
                       {employee.level ? (
-                        <span className="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+                        <span className="px-2 py-0.5 inline-flex text-xs font-medium rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
                           {employee.level.replace('_', ' ')}
                         </span>
                       ) : (
-                        <span className="text-sm text-surface-400 dark:text-surface-500">-</span>
+                        <span className="text-sm text-[var(--text-muted)]">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-surface-900 dark:text-surface-50">{employee.managerName || '-'}</div>
+                    <td className="whitespace-nowrap">
+                      <span className="text-sm text-[var(--text-primary)]">{employee.managerName || '-'}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-lg ${getStatusBadgeColor(employee.status)}`}>
+                    <td className="whitespace-nowrap">
+                      <span className={`px-2 py-0.5 inline-flex text-xs font-medium rounded-md ${getStatusBadgeColor(employee.status)}`}>
                         {employee.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => router.push(`/employees/${employee.id}`)}
-                        className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mr-4 transition-colors"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEmployeeToDelete(employee);
-                          setShowDeleteModal(true);
-                        }}
-                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
-                      >
-                        Delete
-                      </button>
+                    <td className="whitespace-nowrap text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={() => router.push(`/employees/${employee.id}`)}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          className="text-danger-600 dark:text-danger-400 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/30"
+                          onClick={() => {
+                            setEmployeeToDelete(employee);
+                            setShowDeleteModal(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                   ))}
@@ -379,35 +384,37 @@ export default function EmployeesPage() {
 
             {/* BUG-006 FIX: Pagination controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between">
-                <p className="text-sm text-surface-600 dark:text-surface-400">
+              <div className="px-6 py-4 border-t border-[var(--border-subtle)] flex items-center justify-between">
+                <p className="text-sm text-[var(--text-secondary)]">
                   Showing{' '}
-                  <span className="font-medium">{currentPage * PAGE_SIZE + 1}</span>
+                  <span className="font-medium text-[var(--text-primary)]">{currentPage * PAGE_SIZE + 1}</span>
                   {' '}–{' '}
-                  <span className="font-medium">
+                  <span className="font-medium text-[var(--text-primary)]">
                     {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)}
                   </span>
                   {' '}of{' '}
-                  <span className="font-medium">{totalElements}</span> employees
+                  <span className="font-medium text-[var(--text-primary)]">{totalElements}</span> employees
                 </p>
-                <div className="flex gap-2">
-                  <button
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="xs"
                     onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
-                  </button>
-                  <span className="px-3 py-1.5 text-sm text-surface-600 dark:text-surface-400">
-                    Page {currentPage + 1} of {totalPages}
+                  </Button>
+                  <span className="px-2 text-sm text-[var(--text-muted)] tabular-nums">
+                    {currentPage + 1} / {totalPages}
                   </span>
-                  <button
+                  <Button
+                    variant="outline"
+                    size="xs"
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -417,11 +424,11 @@ export default function EmployeesPage() {
 
         {/* Add Employee Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-2 sm:p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-[calc(100vw-1rem)] sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
-              <div className="p-4 sm:p-6">
-                <div className="flex justify-between items-center mb-4 sm:mb-6">
-                  <h2 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Add New Employee</h2>
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-[var(--text-primary)]">Add New Employee</h2>
                   <button
                     onClick={() => {
                       setShowAddModal(false);
@@ -488,78 +495,78 @@ export default function EmployeesPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Employee Code *
                           </label>
                           <input
                             type="text"
                             {...register('employeeCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="EMP001"
                           />
-                          {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
+                          {errors.employeeCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employeeCode.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Work Email *
                           </label>
                           <input
                             type="email"
                             {...register('workEmail')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="employee@company.com"
                           />
-                          {errors.workEmail && <p className="text-red-500 text-sm mt-1">{errors.workEmail.message}</p>}
+                          {errors.workEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.workEmail.message}</p>}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             First Name *
                           </label>
                           <input
                             type="text"
                             {...register('firstName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
+                          {errors.firstName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.firstName.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Middle Name
                           </label>
                           <input
                             type="text"
                             {...register('middleName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
+                          {errors.middleName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.middleName.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Last Name
                           </label>
                           <input
                             type="text"
                             {...register('lastName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
+                          {errors.lastName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.lastName.message}</p>}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Initial Password *
                         </label>
                         <input
                           type="password"
                           {...register('password')}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                          className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           placeholder="Employee will change on first login"
                         />
-                        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                        {errors.password && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.password.message}</p>}
                       </div>
                     </div>
                   )}
@@ -569,59 +576,59 @@ export default function EmployeesPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Personal Email
                           </label>
                           <input
                             type="email"
                             {...register('personalEmail')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="personal@email.com"
                           />
-                          {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
+                          {errors.personalEmail && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.personalEmail.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Phone Number
                           </label>
                           <input
                             type="tel"
                             {...register('phoneNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="+1 234 567 8900"
                           />
-                          {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
+                          {errors.phoneNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.phoneNumber.message}</p>}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Emergency Contact
                           </label>
                           <input
                             type="tel"
                             {...register('emergencyContactNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="+1 234 567 8900"
                           />
-                          {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
+                          {errors.emergencyContactNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.emergencyContactNumber.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Date of Birth
                           </label>
                           <input
                             type="date"
                             {...register('dateOfBirth')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
+                          {errors.dateOfBirth && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Gender
                         </label>
                         <Controller
@@ -631,7 +638,7 @@ export default function EmployeesPage() {
                             <select
                               {...field}
                               value={field.value || ''}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             >
                               <option value="">Select Gender</option>
                               <option value="MALE">Male</option>
@@ -641,69 +648,69 @@ export default function EmployeesPage() {
                             </select>
                           )}
                         />
-                        {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
+                        {errors.gender && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.gender.message}</p>}
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Address
                         </label>
                         <textarea
                           rows={2}
                           {...register('address')}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                          className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           placeholder="Street address"
                         />
-                        {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
+                        {errors.address && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.address.message}</p>}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             City
                           </label>
                           <input
                             type="text"
                             {...register('city')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
+                          {errors.city && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.city.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             State/Province
                           </label>
                           <input
                             type="text"
                             {...register('state')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
+                          {errors.state && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.state.message}</p>}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Postal Code
                           </label>
                           <input
                             type="text"
                             {...register('postalCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
+                          {errors.postalCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.postalCode.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Country
                           </label>
                           <input
                             type="text"
                             {...register('country')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
+                          {errors.country && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.country.message}</p>}
                         </div>
                       </div>
                     </div>
@@ -714,19 +721,19 @@ export default function EmployeesPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Designation *
                           </label>
                           <input
                             type="text"
                             {...register('designation')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="Senior Software Engineer"
                           />
-                          {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
+                          {errors.designation && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.designation.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Employment Type *
                           </label>
                           <Controller
@@ -735,7 +742,7 @@ export default function EmployeesPage() {
                             render={({ field }) => (
                               <select
                                 {...field}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                               >
                                 <option value="FULL_TIME">Full Time</option>
                                 <option value="PART_TIME">Part Time</option>
@@ -744,12 +751,12 @@ export default function EmployeesPage() {
                               </select>
                             )}
                           />
-                          {errors.employmentType && <p className="text-red-500 text-sm mt-1">{errors.employmentType.message}</p>}
+                          {errors.employmentType && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.employmentType.message}</p>}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Department *
                         </label>
                         <Controller
@@ -758,7 +765,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             >
                               <option value="">Select Department</option>
                               {departments.map((dept) => (
@@ -769,12 +776,12 @@ export default function EmployeesPage() {
                             </select>
                           )}
                         />
-                        {errors.departmentId && <p className="text-red-500 text-sm mt-1">{errors.departmentId.message}</p>}
+                        {errors.departmentId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.departmentId.message}</p>}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Employee Level
                           </label>
                           <Controller
@@ -784,7 +791,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                               >
                                 <option value="">Select Level</option>
                                 <option value="JUNIOR">Junior</option>
@@ -797,10 +804,10 @@ export default function EmployeesPage() {
                               </select>
                             )}
                           />
-                          {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>}
+                          {errors.level && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.level.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Job Role
                           </label>
                           <Controller
@@ -810,7 +817,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                               >
                                 <option value="">Select Role</option>
                                 <option value="ENGINEER">Engineer</option>
@@ -827,37 +834,37 @@ export default function EmployeesPage() {
                               </select>
                             )}
                           />
-                          {errors.jobRole && <p className="text-red-500 text-sm mt-1">{errors.jobRole.message}</p>}
+                          {errors.jobRole && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.jobRole.message}</p>}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Joining Date *
                           </label>
                           <input
                             type="date"
                             {...register('joiningDate')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.joiningDate && <p className="text-red-500 text-sm mt-1">{errors.joiningDate.message}</p>}
+                          {errors.joiningDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.joiningDate.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Confirmation Date
                           </label>
                           <input
                             type="date"
                             {...register('confirmationDate')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                           />
-                          {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
+                          {errors.confirmationDate && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.confirmationDate.message}</p>}
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Reporting Manager
                         </label>
                         <Controller
@@ -866,7 +873,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             >
                               <option value="">Select Manager</option>
                               <option value="SELF">Self (No Reporting Manager)</option>
@@ -881,7 +888,7 @@ export default function EmployeesPage() {
                         <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
                           Select "Self" for top-level employees who don't report to anyone.
                         </p>
-                        {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
+                        {errors.managerId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}
                       </div>
                     </div>
                   )}
@@ -891,55 +898,55 @@ export default function EmployeesPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Bank Account Number
                           </label>
                           <input
                             type="text"
                             {...register('bankAccountNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="1234567890"
                           />
-                          {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
+                          {errors.bankAccountNumber && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankAccountNumber.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Bank Name
                           </label>
                           <input
                             type="text"
                             {...register('bankName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="Bank of America"
                           />
-                          {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
+                          {errors.bankName && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankName.message}</p>}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             IFSC Code / Routing Number
                           </label>
                           <input
                             type="text"
                             {...register('bankIfscCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="HDFC0001234"
                           />
-                          {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
+                          {errors.bankIfscCode && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.bankIfscCode.message}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Tax ID / SSN
                           </label>
                           <input
                             type="text"
                             {...register('taxId')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full h-10 px-4 text-sm border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--ring-primary)] focus:border-[var(--border-focus)] transition-all"
                             placeholder="XXX-XX-XXXX"
                           />
-                          {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
+                          {errors.taxId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.taxId.message}</p>}
                         </div>
                       </div>
 
@@ -951,25 +958,28 @@ export default function EmployeesPage() {
                     </div>
                   )}
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-                    <button
+                  <div className="flex gap-4 pt-6 border-t border-[var(--border-subtle)]">
+                    <Button
                       type="button"
+                      variant="outline"
+                      className="flex-1"
                       onClick={() => {
                         setShowAddModal(false);
                         reset();
                         setCurrentTab('basic');
                       }}
-                      className="flex-1 px-4 py-2.5 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
                     >
                       Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
+                      variant="primary"
+                      className="flex-1"
+                      isLoading={isSubmitting}
                       disabled={isSubmitting}
-                      className="flex-1 px-4 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 shadow-md shadow-primary-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? 'Adding...' : 'Add Employee'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -980,36 +990,39 @@ export default function EmployeesPage() {
         {/* Delete Confirmation Modal */}
         {showDeleteModal && employeeToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-[var(--bg-card)] rounded-xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                  <svg className="h-5 w-5 text-danger-600 dark:text-danger-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Delete Employee</h3>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">Delete Employee</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Are you sure you want to delete <strong className="text-surface-700 dark:text-surface-300">{employeeToDelete.fullName}</strong>? This action cannot be undone.
+              <p className="text-sm text-[var(--text-secondary)] mb-6">
+                Are you sure you want to delete <strong className="text-[var(--text-primary)]">{employeeToDelete.fullName}</strong>? This action cannot be undone.
               </p>
-              <div className="flex gap-3">
-                <button
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  className="flex-1"
                   onClick={() => {
                     setShowDeleteModal(false);
                     setEmployeeToDelete(null);
                   }}
                   disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2.5 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
+                  className="flex-1"
                   onClick={handleDelete}
+                  isLoading={deleteEmployeeMutation.isPending}
                   disabled={deleteEmployeeMutation.isPending}
-                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50 shadow-md shadow-red-500/25 transition-all"
                 >
                   {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

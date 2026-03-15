@@ -303,7 +303,7 @@ export default function AttendancePage() {
               <Clock className="h-5 w-5 text-white" />
             </div>
             <div>
-              <div className="text-[10px] font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Live Time</div>
+              <div className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Live Time</div>
               <div className="text-xl font-mono font-bold text-surface-900 dark:text-white tabular-nums">
                 {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </div>
@@ -312,7 +312,7 @@ export default function AttendancePage() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400 shadow-sm">
+          <div className="p-3 tint-danger border-l-4 border-red-500 rounded-lg flex items-start gap-2 text-red-700 dark:text-red-400 shadow-sm">
             <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-sm">Error</p>
@@ -336,7 +336,7 @@ export default function AttendancePage() {
                 {/* Compact Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[var(--bg-elevated)] rounded-full text-[10px] font-semibold uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[var(--bg-elevated)] rounded-full text-xs font-semibold uppercase tracking-wider">
                       <div className="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse" />
                       Today&apos;s Shift
                     </div>
@@ -414,12 +414,12 @@ export default function AttendancePage() {
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
                     <LogIn className="h-4 w-4 text-white" />
                   </div>
-                  <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Check In</p>
+                  <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Check In</p>
                 </div>
                 <p className="text-2xl font-bold text-surface-900 dark:text-white tabular-nums">
                   {todayRecord?.checkInTime ? new Date(todayRecord.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--'}
                 </p>
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 mt-1">
+                <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
                   {todayRecord?.checkInTime ? 'Checked in' : 'Not yet'}
                 </p>
               </CardContent>
@@ -432,12 +432,12 @@ export default function AttendancePage() {
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-sm">
                     <Timer className="h-4 w-4 text-white" />
                   </div>
-                  <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Duration</p>
+                  <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">Duration</p>
                 </div>
                 <p className="text-2xl font-bold text-surface-900 dark:text-white tabular-nums">
                   {formatDuration(currentWorkHours)}
                 </p>
-                <p className="text-[10px] text-surface-500 dark:text-surface-400 mt-1">
+                <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
                   {isCheckedIn ? 'Working' : 'Not started'}
                 </p>
               </CardContent>
@@ -452,7 +452,7 @@ export default function AttendancePage() {
                       <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-sm">
                         <Activity className="h-3.5 w-3.5 text-white" />
                       </div>
-                      <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg In</p>
+                      <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg In</p>
                     </div>
                     <p className="text-xl font-bold text-surface-900 dark:text-white tabular-nums">
                       {stats.avgCheckIn}
@@ -463,7 +463,7 @@ export default function AttendancePage() {
                       <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
                         <Target className="h-3.5 w-3.5 text-white" />
                       </div>
-                      <p className="text-[10px] font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg Hrs</p>
+                      <p className="text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase">Avg Hrs</p>
                     </div>
                     <p className="text-xl font-bold text-surface-900 dark:text-white tabular-nums">
                       {stats.avgHours}h
@@ -496,27 +496,29 @@ export default function AttendancePage() {
             <CardContent className="pt-4 h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" className="dark:stroke-surface-700" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" className="dark:stroke-surface-700" />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#9CA3AF', fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: 'var(--chart-muted)', fontSize: 11, fontWeight: 500 }}
                     dy={8}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#9CA3AF', fontSize: 11 }}
+                    tick={{ fill: 'var(--chart-muted)', fontSize: 11 }}
                   />
                   <Tooltip
-                    cursor={{ fill: '#F3F4F6', opacity: 0.5 }}
+                    cursor={{ fill: 'var(--chart-grid)', opacity: 0.5 }}
                     contentStyle={{
                       borderRadius: '8px',
-                      border: 'none',
+                      border: `1px solid var(--chart-tooltip-border)`,
+                      backgroundColor: 'var(--chart-tooltip-bg)',
                       boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
                       padding: '8px 12px',
-                      fontSize: '13px'
+                      fontSize: '13px',
+                      color: 'var(--chart-tooltip-text)'
                     }}
                   />
                   <Bar dataKey="hours" radius={[6, 6, 0, 0]} maxBarSize={50} aria-label="Daily working hours">
@@ -525,12 +527,12 @@ export default function AttendancePage() {
                         key={`cell-${index}`}
                         fill={
                           entry.hours >= STANDARD_WORK_HOURS
-                            ? '#10B981'
+                            ? 'var(--chart-success)'
                             : entry.isToday
-                            ? '#6366F1'
+                            ? 'var(--chart-primary)'
                             : entry.hours > 0
-                            ? '#F59E0B'
-                            : '#E5E7EB'
+                            ? 'var(--chart-warning)'
+                            : 'var(--chart-grid)'
                         }
                         aria-label={`${entry.name}: ${entry.hours} hours`}
                       />
@@ -540,7 +542,7 @@ export default function AttendancePage() {
               </ResponsiveContainer>
 
               {/* Legend */}
-              <div className="flex items-center justify-center gap-4 mt-3 text-[10px]">
+              <div className="flex items-center justify-center gap-4 mt-3 text-xs">
                 <div className="flex items-center gap-1.5">
                   <div className="h-2.5 w-2.5 rounded bg-emerald-500" aria-label="Full day indicator" />
                   <span className="text-surface-600 dark:text-surface-400">Full Day ({STANDARD_WORK_HOURS}h+)</span>

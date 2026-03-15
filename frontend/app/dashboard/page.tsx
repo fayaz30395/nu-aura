@@ -42,6 +42,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
+import { NuAuraLoader } from '@/components/ui/Loading';
 import { getGoogleToken } from '@/lib/utils/googleToken';
 import {
   useDashboardAnalytics,
@@ -474,14 +475,7 @@ export default function DashboardPage() {
 
   // Show loading state while hydrating or loading analytics
   if (!hasHydrated || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-100 dark:bg-surface-900">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-          <p className="text-surface-500 font-medium">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <NuAuraLoader message="Loading dashboard..." />;
   }
 
   if (error || !analytics) {
@@ -490,13 +484,13 @@ export default function DashboardPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-3 text-red-600">
+              <div className="flex items-center gap-3 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-surface-600 dark:text-surface-400 mb-4">{error || 'Unable to load analytics data'}</p>
+              <p className="text-[var(--text-secondary)] mb-4">{error || 'Unable to load analytics data'}</p>
               <Button variant="primary" onClick={() => window.location.reload()} className="w-full">Try Again</Button>
             </CardContent>
           </Card>
@@ -509,15 +503,15 @@ export default function DashboardPage() {
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
         {/* Header with greeting and time */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
                 Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
               </h1>
               {/* View Type Badge */}
@@ -530,19 +524,19 @@ export default function DashboardPage() {
                 {analytics.viewLabel}
               </span>
             </div>
-            <p className="text-sm sm:text-base text-surface-500 mt-1">
+            <p className="text-sm sm:text-base text-[var(--text-secondary)] mt-1">
               {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
               {analytics.viewType !== 'EMPLOYEE' && (
-                <span className="ml-2 text-surface-400">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
+                <span className="ml-2 text-[var(--text-muted)]">• {analytics.teamSize} {analytics.viewType === 'ADMIN' ? 'employees' : 'team members'}</span>
               )}
             </p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-left sm:text-right">
-              <p className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50">
+              <p className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">
                 {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
               </p>
-              <p className="text-xs sm:text-sm text-surface-500">Current Time</p>
+              <p className="text-xs sm:text-sm text-[var(--text-secondary)]">Current Time</p>
             </div>
           </div>
         </div>
@@ -550,20 +544,20 @@ export default function DashboardPage() {
         {/* Attendance Widget - Keka Style */}
         <Card className="border-l-4 border-l-primary-500">
           <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
                   <Clock className="h-6 w-6 sm:h-7 sm:w-7 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">Today&apos;s Attendance</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Today&apos;s Attendance</h3>
                   {timeEntries.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-4 mt-1">
                       {/* Show first check-in time */}
                       <div className="flex items-center gap-1.5 text-sm">
                         <LogIn className="h-4 w-4 text-green-600" />
-                        <span className="text-surface-600 dark:text-surface-400">First In:</span>
-                        <span className="font-medium text-surface-900 dark:text-surface-50">
+                        <span className="text-[var(--text-secondary)]">First In:</span>
+                        <span className="font-medium text-[var(--text-primary)]">
                           {new Date(timeEntries[0].checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -571,15 +565,15 @@ export default function DashboardPage() {
                       {timeEntries.filter(e => e.checkOutTime).length > 0 && (
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogOut className="h-4 w-4 text-blue-600" />
-                          <span className="text-surface-600 dark:text-surface-400">Last Out:</span>
-                          <span className="font-medium text-surface-900 dark:text-surface-50">
+                          <span className="text-[var(--text-secondary)]">Last Out:</span>
+                          <span className="font-medium text-[var(--text-primary)]">
                             {new Date(timeEntries.filter(e => e.checkOutTime).slice(-1)[0].checkOutTime!).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
                       )}
                       {/* Show session count if more than 1 */}
                       {timeEntries.length > 1 && (
-                        <span className="text-xs px-2 py-0.5 bg-surface-100 dark:bg-surface-800 rounded-full text-surface-600 dark:text-surface-400">
+                        <span className="text-xs px-2 py-0.5 bg-surface-100 dark:bg-surface-800 rounded-full text-[var(--text-secondary)]">
                           {timeEntries.length} sessions
                         </span>
                       )}
@@ -595,8 +589,8 @@ export default function DashboardPage() {
                       {todayAttendance.checkInTime && (
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogIn className="h-4 w-4 text-green-600" />
-                          <span className="text-surface-600 dark:text-surface-400">In:</span>
-                          <span className="font-medium text-surface-900 dark:text-surface-50">
+                          <span className="text-[var(--text-secondary)]">In:</span>
+                          <span className="font-medium text-[var(--text-primary)]">
                             {new Date(todayAttendance.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -604,20 +598,20 @@ export default function DashboardPage() {
                       {todayAttendance.checkOutTime && (
                         <div className="flex items-center gap-1.5 text-sm">
                           <LogOut className="h-4 w-4 text-blue-600" />
-                          <span className="text-surface-600 dark:text-surface-400">Out:</span>
-                          <span className="font-medium text-surface-900 dark:text-surface-50">
+                          <span className="text-[var(--text-secondary)]">Out:</span>
+                          <span className="font-medium text-[var(--text-primary)]">
                             {new Date(todayAttendance.checkOutTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <p className="text-surface-500 text-sm mt-1">You haven&apos;t checked in yet</p>
+                    <p className="text-[var(--text-secondary)] text-sm mt-1">You haven&apos;t checked in yet</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {clockError && <span className="text-sm text-red-600">{clockError}</span>}
+                {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
                 {canCheckIn && (
                   <Button variant="success" onClick={handleCheckIn} isLoading={isClockingIn} leftIcon={<LogIn className="h-4 w-4" />}>
                     Check In
@@ -639,7 +633,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Stats Grid - AURA Midnight Premium */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Employees / Team Members */}
           <PremiumMetricCard
             title={analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
@@ -684,16 +678,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Wider */}
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Quick Actions - Keka Style */}
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">Quick Actions</CardTitle>
+                <CardTitle className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
                     { label: 'Apply Leave', icon: Calendar, color: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400', href: '/leave/apply' },
                     { label: 'View Payslip', icon: FileText, color: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400', href: '/payroll' },
@@ -719,33 +713,33 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">Attendance Overview</CardTitle>
+                  <CardTitle className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">Attendance Overview</CardTitle>
                   <Button variant="ghost" size="sm" onClick={() => router.push('/attendance')} rightIcon={<ChevronRight className="h-4 w-4" />} className="text-xs sm:text-sm">
                     View All
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="text-center p-3 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
                     <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50 mt-2">{analytics.attendance.onTime}</p>
-                    <p className="text-[10px] sm:text-xs text-surface-500 dark:text-surface-400 mt-1">On Time</p>
+                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onTime}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">On Time</p>
                   </div>
                   <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
                     <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50 mt-2">{analytics.attendance.late}</p>
-                    <p className="text-[10px] sm:text-xs text-surface-500 dark:text-surface-400 mt-1">Late</p>
+                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.late}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">Late</p>
                   </div>
                   <div className="text-center p-3 sm:p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
                     <Coffee className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50 mt-2">{analytics.attendance.onLeave}</p>
-                    <p className="text-[10px] sm:text-xs text-surface-500 dark:text-surface-400 mt-1">On Leave</p>
+                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onLeave}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">On Leave</p>
                   </div>
-                  <div className="text-center p-3 sm:p-4 bg-red-50 dark:bg-red-950/30 rounded-xl">
-                    <UserX className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 dark:text-red-400 mx-auto" />
-                    <p className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50 mt-2">{analytics.attendance.absent}</p>
-                    <p className="text-[10px] sm:text-xs text-surface-500 dark:text-surface-400 mt-1">Absent</p>
+                  <div className="text-center p-3 sm:p-4 bg-danger-50 dark:bg-danger-950/20 rounded-xl">
+                    <UserX className="h-5 w-5 sm:h-6 sm:w-6 text-danger-600 dark:text-danger-400 mx-auto" />
+                    <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.absent}</p>
+                    <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1">Absent</p>
                   </div>
                 </div>
               </CardContent>
@@ -755,7 +749,7 @@ export default function DashboardPage() {
             {analytics.headcount.departmentDistribution && analytics.headcount.departmentDistribution.length > 0 && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
                     {analytics.viewType === 'ADMIN' ? 'Department Headcount' : 'Team Distribution'}
                   </CardTitle>
                 </CardHeader>
@@ -768,7 +762,7 @@ export default function DashboardPage() {
                         <div key={idx}>
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium text-surface-700 dark:text-surface-300">{dept.department}</span>
-                            <span className="text-sm text-surface-500 dark:text-surface-400">{dept.count} ({percentage}%)</span>
+                            <span className="text-sm text-[var(--text-secondary)]">{dept.count} ({percentage}%)</span>
                           </div>
                           <div className="w-full h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
                             <div className={`h-full ${colors[idx % colors.length]} rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }} />
@@ -783,27 +777,27 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-6">
             {/* Payroll Summary - Only visible to Admin */}
             {analytics.viewType === 'ADMIN' && analytics.payroll && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">Payroll Summary</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">Payroll Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-4">
                     <Briefcase className="h-10 w-10 text-primary-600 dark:text-primary-400 mx-auto" />
-                    <p className="text-3xl font-bold text-surface-900 dark:text-surface-50 mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
-                    <p className="text-sm text-surface-500 mt-1">Current Month</p>
+                    <p className="text-3xl font-bold text-[var(--text-primary)] mt-3">{formatCurrency(analytics.payroll.currentMonth.total)}</p>
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">Current Month</p>
                   </div>
                   <div className="border-t border-surface-100 dark:border-surface-800 pt-4 mt-4">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm text-surface-500">Processed</span>
-                      <span className="text-sm font-medium text-surface-900 dark:text-surface-50">{analytics.payroll.currentMonth.processed}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Processed</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.payroll.currentMonth.processed}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-500">Pending</span>
-                      <span className="text-sm font-medium text-surface-900 dark:text-surface-50">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Pending</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">{analytics.headcount.total - analytics.payroll.currentMonth.processed}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -814,8 +808,8 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">Upcoming</CardTitle>
-                  <CalendarDays className="h-5 w-5 text-surface-400" />
+                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">Upcoming</CardTitle>
+                  <CalendarDays className="h-5 w-5 text-[var(--text-muted)]" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -826,8 +820,8 @@ export default function DashboardPage() {
                         <Gift className="h-5 w-5 text-pink-600 dark:text-pink-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-50 dark:text-surface-100 truncate">{event.employeeName}</p>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-surface-100 truncate">{event.employeeName}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                       </div>
                     </div>
                   ))}
@@ -837,13 +831,13 @@ export default function DashboardPage() {
                         <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-50 dark:text-surface-100 truncate">{event.name}</p>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] dark:text-surface-100 truncate">{event.name}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                       </div>
                     </div>
                   ))}
                   {(!analytics.upcomingEvents?.birthdays?.length && !analytics.upcomingEvents?.holidays?.length) && (
-                    <p className="text-sm text-surface-400 text-center py-4">No upcoming events</p>
+                    <p className="text-sm text-[var(--text-muted)] text-center py-4">No upcoming events</p>
                   )}
                 </div>
               </CardContent>
@@ -853,7 +847,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
                     Notifications
                   </CardTitle>
                   <div className="flex items-center gap-2">
@@ -863,10 +857,10 @@ export default function DashboardPage() {
                         disabled={notificationsLoading}
                         className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                       >
-                        <RefreshCw className={`h-4 w-4 text-surface-400 ${notificationsLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`h-4 w-4 text-[var(--text-muted)] ${notificationsLoading ? 'animate-spin' : ''}`} />
                       </button>
                     )}
-                    <Bell className="h-5 w-5 text-surface-400" />
+                    <Bell className="h-5 w-5 text-[var(--text-muted)]" />
                   </div>
                 </div>
               </CardHeader>
@@ -874,9 +868,9 @@ export default function DashboardPage() {
                 {!hasGoogleToken ? (
                   <div className="text-center py-6">
                     <div className="w-12 h-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-3">
-                      <Bell className="h-6 w-6 text-surface-400" />
+                      <Bell className="h-6 w-6 text-[var(--text-muted)]" />
                     </div>
-                    <p className="text-sm text-surface-500 mb-3">Connect Google to see notifications</p>
+                    <p className="text-sm text-[var(--text-secondary)] mb-3">Connect Google to see notifications</p>
                     <Button
                       variant="outline"
                       size="sm"
@@ -892,7 +886,7 @@ export default function DashboardPage() {
                 ) : notifications.length === 0 ? (
                   <div className="text-center py-6">
                     <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                    <p className="text-sm text-surface-500">All caught up!</p>
+                    <p className="text-sm text-[var(--text-secondary)]">All caught up!</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -910,7 +904,7 @@ export default function DashboardPage() {
                             {notification.title}
                           </p>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <p className="text-xs text-surface-500 dark:text-surface-400 truncate">
+                            <p className="text-xs text-[var(--text-secondary)] truncate">
                               {notification.subtitle}
                             </p>
                             {notification.hasVideo && (
@@ -918,7 +912,7 @@ export default function DashboardPage() {
                             )}
                           </div>
                         </div>
-                        <span className="text-[10px] text-surface-400 flex-shrink-0">
+                        <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">
                           {notification.type === 'calendar'
                             ? notification.subtitle
                             : formatRelativeTime(notification.timestamp)}
@@ -963,7 +957,7 @@ export default function DashboardPage() {
             {analytics.viewType !== 'EMPLOYEE' && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                  <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
                     {analytics.viewType === 'ADMIN' ? 'New Joiners' : 'New Team Members'}
                   </CardTitle>
                 </CardHeader>
@@ -972,8 +966,8 @@ export default function DashboardPage() {
                     <div className="w-16 h-16 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center mx-auto">
                       <Users className="h-8 w-8 text-green-600 dark:text-green-400" />
                     </div>
-                    <p className="text-4xl font-bold text-surface-900 dark:text-surface-50 mt-4">{analytics.headcount.newJoinees}</p>
-                    <p className="text-sm text-surface-500 mt-1">This Month</p>
+                    <p className="text-4xl font-bold text-[var(--text-primary)] mt-4">{analytics.headcount.newJoinees}</p>
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">This Month</p>
                   </div>
                   {analytics.viewType === 'ADMIN' && (
                     <div className="space-y-2 mt-4">
@@ -1004,29 +998,29 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Event Details
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
                 className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
               >
-                <X className="h-5 w-5 text-surface-500" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
               <div>
-                <h4 className="text-xl font-semibold text-surface-900 dark:text-surface-50">
+                <h4 className="text-xl font-semibold text-[var(--text-primary)]">
                   {selectedEvent.calendarEvent.summary}
                 </h4>
                 {selectedEvent.calendarEvent.organizer && (
-                  <p className="text-sm text-surface-500 mt-1">
+                  <p className="text-sm text-[var(--text-secondary)] mt-1">
                     Organized by {selectedEvent.calendarEvent.organizer.displayName || selectedEvent.calendarEvent.organizer.email}
                   </p>
                 )}
               </div>
 
-              <div className="flex items-center gap-3 text-surface-600 dark:text-surface-400">
+              <div className="flex items-center gap-3 text-[var(--text-secondary)]">
                 <Clock className="h-5 w-5 flex-shrink-0" />
                 <div>
                   <p className="font-medium">
@@ -1063,7 +1057,7 @@ export default function DashboardPage() {
               </div>
 
               {selectedEvent.calendarEvent.location && (
-                <div className="flex items-center gap-3 text-surface-600 dark:text-surface-400">
+                <div className="flex items-center gap-3 text-[var(--text-secondary)]">
                   <MapPin className="h-5 w-5 flex-shrink-0" />
                   <p>{selectedEvent.calendarEvent.location}</p>
                 </div>
@@ -1085,18 +1079,18 @@ export default function DashboardPage() {
 
               {selectedEvent.calendarEvent.attendees && selectedEvent.calendarEvent.attendees.length > 0 && (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                  <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <UsersIcon className="h-5 w-5 flex-shrink-0" />
                     <span className="font-medium">{selectedEvent.calendarEvent.attendees.length} Attendees</span>
                   </div>
                   <div className="ml-7 space-y-1">
                     {selectedEvent.calendarEvent.attendees.slice(0, 5).map((attendee, idx) => (
-                      <p key={idx} className="text-sm text-surface-500">
+                      <p key={idx} className="text-sm text-[var(--text-secondary)]">
                         {attendee.displayName || attendee.email}
                         {attendee.responseStatus && (
                           <span className={`ml-2 text-xs ${
                             attendee.responseStatus === 'accepted' ? 'text-green-600' :
-                            attendee.responseStatus === 'declined' ? 'text-red-600' :
+                            attendee.responseStatus === 'declined' ? 'text-danger-600 dark:text-danger-400' :
                             'text-yellow-600'
                           }`}>
                             ({attendee.responseStatus})
@@ -1105,7 +1099,7 @@ export default function DashboardPage() {
                       </p>
                     ))}
                     {selectedEvent.calendarEvent.attendees.length > 5 && (
-                      <p className="text-sm text-surface-400">
+                      <p className="text-sm text-[var(--text-muted)]">
                         +{selectedEvent.calendarEvent.attendees.length - 5} more
                       </p>
                     )}
@@ -1115,7 +1109,7 @@ export default function DashboardPage() {
 
               {selectedEvent.calendarEvent.description && (
                 <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
-                  <p className="text-sm text-surface-600 dark:text-surface-400 whitespace-pre-wrap">
+                  <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
                     {selectedEvent.calendarEvent.description}
                   </p>
                 </div>
@@ -1150,7 +1144,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 truncate pr-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate pr-4">
                 {selectedEmail.title}
               </h3>
               <button
@@ -1160,19 +1154,19 @@ export default function DashboardPage() {
                 }}
                 className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors flex-shrink-0"
               >
-                <X className="h-5 w-5 text-surface-500" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <Mail className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <div className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-danger-600 dark:text-danger-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-surface-900 dark:text-surface-50">
+                  <p className="font-medium text-[var(--text-primary)]">
                     {selectedEmail.emailData?.from?.split('<')[0]?.trim() || 'Unknown Sender'}
                   </p>
-                  <p className="text-sm text-surface-500">
+                  <p className="text-sm text-[var(--text-secondary)]">
                     {formatRelativeTime(selectedEmail.timestamp)}
                   </p>
                 </div>
@@ -1215,17 +1209,17 @@ export default function DashboardPage() {
                   <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 truncate">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] truncate">
                     {selectedFile.driveFile.name}
                   </h3>
-                  <p className="text-sm text-surface-500">{selectedFile.subtitle}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">{selectedFile.subtitle}</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedFile(null)}
                 className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors flex-shrink-0"
               >
-                <X className="h-5 w-5 text-surface-500" />
+                <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
             <div className="h-[60vh] bg-surface-100 dark:bg-surface-800">

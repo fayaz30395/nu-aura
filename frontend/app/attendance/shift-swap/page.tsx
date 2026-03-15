@@ -21,13 +21,13 @@ interface ShiftSwapRequest {
 }
 
 const statusColors: Record<string, string> = {
-  PENDING:           'bg-yellow-50 text-yellow-700',
-  TARGET_ACCEPTED:   'bg-blue-50 text-blue-700',
-  TARGET_DECLINED:   'bg-red-50 text-red-700',
-  PENDING_APPROVAL:  'bg-orange-50 text-orange-700',
-  APPROVED:          'bg-green-50 text-green-700',
-  REJECTED:          'bg-red-50 text-red-700',
-  COMPLETED:         'bg-green-50 text-green-800',
+  PENDING:           'tint-warning text-yellow-700',
+  TARGET_ACCEPTED:   'tint-info text-blue-700',
+  TARGET_DECLINED:   'tint-danger text-red-700',
+  PENDING_APPROVAL:  'tint-orange text-orange-700',
+  APPROVED:          'tint-success text-green-700',
+  REJECTED:          'tint-danger text-red-700',
+  COMPLETED:         'tint-success text-green-800',
   CANCELLED:         'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
