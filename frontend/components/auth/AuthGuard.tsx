@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, ReactNode } from 'react';
+import { useEffect, useState, useRef, ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions } from '@/lib/hooks/usePermissions';
@@ -39,7 +39,7 @@ export function AuthGuard({
 }: AuthGuardProps): ReactNode {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated, restoreSession } = useAuth();
   const {
     hasPermission,
     hasAnyPermission,
@@ -59,6 +59,8 @@ export function AuthGuard({
   const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [isRestoringSession, setIsRestoringSession] = useState(false);
+  const restoreAttemptedRef = useRef(false);
 
   useEffect(() => {
     // Wait for auth to hydrate
@@ -72,13 +74,34 @@ export function AuthGuard({
       return;
     }
 
-    // Not authenticated - redirect to login
+    // Not authenticated — try restoring session from httpOnly cookie first.
+    // This prevents redirect loops when Zustand state is cleared but cookies
+    // are still valid (e.g. after the login page's "clear stale auth" logic runs).
     if (!isAuthenticated) {
-      const returnUrl = encodeURIComponent(pathname);
-      router.replace(`/auth/login?returnUrl=${returnUrl}`);
-      setIsAuthorized(false);
+      if (!restoreAttemptedRef.current && !isRestoringSession) {
+        restoreAttemptedRef.current = true;
+        setIsRestoringSession(true);
+        restoreSession().then((restored) => {
+          setIsRestoringSession(false);
+          if (!restored) {
+            // Cookie is truly expired/invalid — redirect to login
+            const returnUrl = encodeURIComponent(pathname);
+            router.replace(`/auth/login?returnUrl=${returnUrl}`);
+            setIsAuthorized(false);
+          }
+          // If restored, the isAuthenticated state change will re-trigger this effect
+        });
+      } else if (restoreAttemptedRef.current && !isRestoringSession) {
+        // Restore was already attempted and failed — redirect to login
+        const returnUrl = encodeURIComponent(pathname);
+        router.replace(`/auth/login?returnUrl=${returnUrl}`);
+        setIsAuthorized(false);
+      }
       return;
     }
+
+    // Reset restore flag on successful auth (for future navigations)
+    restoreAttemptedRef.current = false;
 
     // Find route config
     const routeConfig = findRouteConfig(pathname);
@@ -157,7 +180,7 @@ export function AuthGuard({
   }
 
   // Loading state
-  if (!hasHydrated || !isReady || isAuthorized === null) {
+  if (!hasHydrated || !isReady || isAuthorized === null || isRestoringSession) {
     if (loadingComponent) {
       return loadingComponent;
     }

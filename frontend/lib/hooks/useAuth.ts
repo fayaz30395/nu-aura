@@ -62,6 +62,12 @@ interface AuthState {
   googleLogin: (credentials: GoogleLoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
+  /**
+   * Attempt to restore a session using the httpOnly refresh cookie.
+   * Returns true if the session was restored, false otherwise.
+   * This prevents redirect loops when Zustand state is cleared but cookies are still valid.
+   */
+  restoreSession: () => Promise<boolean>;
 }
 
 export const useAuth = create<AuthState>()(
@@ -173,6 +179,42 @@ export const useAuth = create<AuthState>()(
 
       setUser: (user: User | null) => {
         set({ user, isAuthenticated: !!user });
+      },
+
+      restoreSession: async () => {
+        try {
+          set({ isLoading: true });
+          const response = await authApi.refresh();
+
+          apiClient.setTenantId(response.tenantId);
+          apiClient.resetRedirectFlag();
+
+          const { roles: roleStrings, permissions: permissionStrings } = decodeJwt(response.accessToken);
+          const roles = convertRolesToObjects(roleStrings, permissionStrings);
+
+          const user: User = {
+            id: response.userId,
+            employeeId: response.employeeId,
+            tenantId: response.tenantId,
+            email: response.email,
+            firstName: response.fullName.split(' ')[0] || '',
+            lastName: response.fullName.split(' ').slice(1).join(' ') || '',
+            fullName: response.fullName,
+            status: 'ACTIVE',
+            roles: roles,
+            profilePictureUrl: response.profilePictureUrl,
+          };
+
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+
+          set({ user, isAuthenticated: true, isLoading: false });
+          return true;
+        } catch {
+          set({ isLoading: false });
+          return false;
+        }
       },
     }),
     {
