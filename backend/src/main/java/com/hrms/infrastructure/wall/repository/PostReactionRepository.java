@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -64,4 +67,27 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, UUID
     @Query("SELECT r.post.id, r.reactionType FROM PostReaction r " +
            "WHERE r.post.id IN :postIds AND r.employee.id = :employeeId")
     List<Object[]> findUserReactionsForPosts(@Param("postIds") List<UUID> postIds, @Param("employeeId") UUID employeeId);
+
+    /**
+     * Get recent reactions for a post, ordered by most recent first.
+     * Eagerly fetches employee + user for avatar URL resolution.
+     */
+    @Query("SELECT r FROM PostReaction r " +
+           "JOIN FETCH r.employee e " +
+           "LEFT JOIN FETCH e.user u " +
+           "WHERE r.post.id = :postId " +
+           "ORDER BY r.createdAt DESC")
+    List<PostReaction> findRecentByPostId(@Param("postId") UUID postId, Pageable pageable);
+
+    /**
+     * Get paginated reactions for a post (for the full list endpoint).
+     * Uses separate countQuery to avoid Hibernate JOIN FETCH + count conflict.
+     */
+    @Query(value = "SELECT r FROM PostReaction r " +
+           "JOIN FETCH r.employee e " +
+           "LEFT JOIN FETCH e.user u " +
+           "WHERE r.post.id = :postId " +
+           "ORDER BY r.createdAt DESC",
+           countQuery = "SELECT COUNT(r) FROM PostReaction r WHERE r.post.id = :postId")
+    Page<PostReaction> findAllByPostIdWithDetails(@Param("postId") UUID postId, Pageable pageable);
 }

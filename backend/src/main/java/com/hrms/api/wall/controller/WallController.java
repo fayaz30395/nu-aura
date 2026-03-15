@@ -81,6 +81,17 @@ public class WallController {
         return ResponseEntity.ok(post);
     }
 
+    @PutMapping("/posts/{postId}")
+    @Operation(summary = "Update a post", description = "Update a post's content (author can edit own, admin with WALL_MANAGE can edit any)")
+    @RequiresPermission({WALL_POST, WALL_MANAGE})
+    public ResponseEntity<WallPostResponse> updatePost(
+            @PathVariable UUID postId,
+            @Valid @RequestBody UpdatePostRequest request) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        WallPostResponse response = wallService.updatePost(postId, request, employeeId);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/posts/{postId}")
     @Operation(summary = "Delete a post", description = "Delete a post (author can delete own, admin with WALL_MANAGE can delete any)")
     @RequiresPermission({WALL_POST, WALL_MANAGE})
@@ -111,6 +122,19 @@ public class WallController {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         wallService.addReaction(postId, employeeId, request.getReactionType());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/posts/{postId}/reactions/details")
+    @Operation(summary = "Get reactors for post", description = "Get paginated list of users who reacted to a post")
+    @RequiresPermission(WALL_VIEW)
+    public ResponseEntity<Page<WallPostResponse.ReactorInfo>> getPostReactions(
+            @PathVariable UUID postId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
+        Page<WallPostResponse.ReactorInfo> reactors = wallService.getPostReactions(postId, pageable);
+        return ResponseEntity.ok(reactors);
     }
 
     @DeleteMapping("/posts/{postId}/reactions")

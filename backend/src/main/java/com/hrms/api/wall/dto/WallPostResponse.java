@@ -25,6 +25,8 @@ public class WallPostResponse {
     private String userReactionType;
     private boolean hasVoted;
     private UUID userVotedOptionId;
+    private List<ReactorInfo> recentReactors;
+    private int totalReactorCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -124,6 +126,30 @@ public class WallPostResponse {
         public void setVotePercentage(double votePercentage) {
             this.votePercentage = votePercentage;
         }
+    }
+
+    public static class ReactorInfo {
+        private UUID employeeId;
+        private String fullName;
+        private String avatarUrl;
+        private String reactionType;
+        private LocalDateTime reactedAt;
+
+        // Getters and Setters
+        public UUID getEmployeeId() { return employeeId; }
+        public void setEmployeeId(UUID employeeId) { this.employeeId = employeeId; }
+
+        public String getFullName() { return fullName; }
+        public void setFullName(String fullName) { this.fullName = fullName; }
+
+        public String getAvatarUrl() { return avatarUrl; }
+        public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+
+        public String getReactionType() { return reactionType; }
+        public void setReactionType(String reactionType) { this.reactionType = reactionType; }
+
+        public LocalDateTime getReactedAt() { return reactedAt; }
+        public void setReactedAt(LocalDateTime reactedAt) { this.reactedAt = reactedAt; }
     }
 
     // Main class Getters and Setters
@@ -253,6 +279,22 @@ public class WallPostResponse {
 
     public void setUserVotedOptionId(UUID userVotedOptionId) {
         this.userVotedOptionId = userVotedOptionId;
+    }
+
+    public List<ReactorInfo> getRecentReactors() {
+        return recentReactors;
+    }
+
+    public void setRecentReactors(List<ReactorInfo> recentReactors) {
+        this.recentReactors = recentReactors;
+    }
+
+    public int getTotalReactorCount() {
+        return totalReactorCount;
+    }
+
+    public void setTotalReactorCount(int totalReactorCount) {
+        this.totalReactorCount = totalReactorCount;
     }
 
     public LocalDateTime getCreatedAt() {

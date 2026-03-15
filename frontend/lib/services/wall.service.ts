@@ -21,6 +21,14 @@ export type PostType = 'POST' | 'POLL' | 'PRAISE';
 export type PostVisibility = 'ORGANIZATION' | 'DEPARTMENT' | 'TEAM';
 export type ReactionType = 'LIKE' | 'LOVE' | 'CELEBRATE' | 'INSIGHTFUL' | 'CURIOUS';
 
+export interface ReactorInfo {
+  employeeId: string;
+  fullName: string;
+  avatarUrl?: string;
+  reactionType: string;
+  reactedAt: string;
+}
+
 export interface WallPostResponse {
   id: string;
   type: PostType;
@@ -38,6 +46,8 @@ export interface WallPostResponse {
   userReactionType?: string;
   hasVoted: boolean;
   userVotedOptionId?: string;
+  recentReactors?: ReactorInfo[];
+  totalReactorCount: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -62,6 +72,11 @@ export interface CreatePostRequest {
   imageUrl?: string;
   visibility?: PostVisibility;
   pollOptions?: string[];
+}
+
+export interface UpdatePostRequest {
+  content: string;
+  imageUrl?: string;
 }
 
 export interface CreateCommentRequest {
@@ -115,6 +130,11 @@ class WallService {
     return response.data;
   }
 
+  async updatePost(postId: string, request: UpdatePostRequest): Promise<WallPostResponse> {
+    const response = await api.put<WallPostResponse>(`/wall/posts/${postId}`, request);
+    return response.data;
+  }
+
   async deletePost(postId: string): Promise<void> {
     await api.delete(`/wall/posts/${postId}`);
   }
@@ -134,6 +154,13 @@ class WallService {
 
   async removeReaction(postId: string): Promise<void> {
     await api.delete(`/wall/posts/${postId}/reactions`);
+  }
+
+  async getPostReactions(postId: string, page = 0, size = 20): Promise<PageResponse<ReactorInfo>> {
+    const response = await api.get<PageResponse<ReactorInfo>>(`/wall/posts/${postId}/reactions/details`, {
+      params: { page, size },
+    });
+    return response.data;
   }
 
   // ==================== COMMENTS ====================

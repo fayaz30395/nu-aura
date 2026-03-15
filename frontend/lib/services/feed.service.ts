@@ -231,6 +231,8 @@ class FeedService {
         wallPostAuthorDepartment: post.author.department,
         wallPostImageUrl: post.imageUrl ?? undefined,
         wallPostType: post.type,
+        recentReactors: post.recentReactors,
+        totalReactorCount: post.totalReactorCount,
       }));
     } catch {
       return [];
