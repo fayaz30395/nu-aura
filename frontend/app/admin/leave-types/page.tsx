@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { LeaveType, LeaveTypeRequest, AccrualType, GenderSpecific } from '@/lib/types/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useLeaveTypes,
   useCreateLeaveType,
@@ -48,6 +49,8 @@ export default function LeaveTypesManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingLeaveType, setEditingLeaveType] = useState<LeaveType | null>(null);
   const [uiError, setUiError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [leaveTypeToDelete, setLeaveTypeToDelete] = useState<LeaveType | null>(null);
 
   // React Query hooks
   const { data: page, isLoading, error: queryError } = useLeaveTypes(0, 100);
@@ -199,11 +202,20 @@ export default function LeaveTypesManagementPage() {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Are you sure you want to delete this leave type? This action cannot be undone.')) return;
+  const handleDelete = (leaveType: LeaveType) => {
+    setLeaveTypeToDelete(leaveType);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = () => {
+    if (!leaveTypeToDelete) return;
 
     setUiError(null);
-    deleteMutation.mutate(id, {
+    deleteMutation.mutate(leaveTypeToDelete.id, {
+      onSuccess: () => {
+        setShowDeleteConfirm(false);
+        setLeaveTypeToDelete(null);
+      },
       onError: (err: unknown) => {
         setUiError(
           (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -377,7 +389,7 @@ export default function LeaveTypesManagementPage() {
                         {leaveType.isActive ? 'Deactivate' : 'Activate'}
                       </button>
                       <button
-                        onClick={() => handleDelete(leaveType.id)}
+                        onClick={() => handleDelete(leaveType)}
                         className="text-red-600 hover:text-red-900"
                       >
                         Delete
@@ -389,6 +401,21 @@ export default function LeaveTypesManagementPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setLeaveTypeToDelete(null);
+          }}
+          onConfirm={performDelete}
+          title="Delete Leave Type"
+          message={`Are you sure you want to delete "${leaveTypeToDelete?.leaveName}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
 
         {/* Add/Edit Leave Type Modal */}
         {showModal && (

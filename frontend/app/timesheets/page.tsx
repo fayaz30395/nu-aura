@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import {
   Clock,
   Plus,
@@ -174,7 +175,7 @@ export default function TimesheetsPage() {
 
       setShowCreateModal(false);
     } catch (err: unknown) {
-      console.error('Error creating timesheet:', err);
+      logger.error('Error creating timesheet:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create timesheet');
     } finally {
       setSaving(false);
@@ -195,7 +196,7 @@ export default function TimesheetsPage() {
       await submitTimesheetMutation.mutateAsync(selectedTimesheet.id);
       setShowDetailModal(false);
     } catch (err: unknown) {
-      console.error('Error submitting timesheet:', err);
+      logger.error('Error submitting timesheet:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit timesheet');
     } finally {
       setSubmitting(false);
@@ -229,7 +230,7 @@ export default function TimesheetsPage() {
       });
       setShowEntryModal(false);
     } catch (err: unknown) {
-      console.error('Error adding entry:', err);
+      logger.error('Error adding entry:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add time entry');
     } finally {
       setSaving(false);

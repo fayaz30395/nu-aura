@@ -463,9 +463,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 glass-midnight border-b border-white/10',
-        'shadow-[0_4px_20px_rgba(0,0,0,0.3)]',
-        'transition-all duration-300',
+        'sticky top-0 z-40 glass-aura border-b transition-all duration-300',
         className
       )}
     >
@@ -475,15 +473,27 @@ const Header: React.FC<HeaderProps> = ({
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
             </button>
           )}
 
+          {/* Logo Section */}
+          <div className="flex items-center gap-3">
+             <Image
+               src="/images/logo.png"
+               alt="NuLogic"
+               width={120}
+               height={32}
+               className="h-7 w-auto object-contain dark:brightness-0 dark:invert"
+               priority
+             />
+          </div>
+
           {/* App Switcher */}
-          <div className="hidden md:block">
+          <div className="block">
             <AppSwitcher />
           </div>
 
@@ -495,7 +505,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Search"
           >
             <Search className="h-5 w-5" />
@@ -506,7 +516,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
           <button
-            className="hidden sm:flex p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all"
             aria-label="Help"
           >
             <HelpCircle className="h-5 w-5" />
@@ -515,14 +525,14 @@ const Header: React.FC<HeaderProps> = ({
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleDarkMode}
-            className="p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            className="p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all"
             aria-label="Toggle dark mode"
           >
-            {isDark ? (
+            {mounted && (isDark ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />
-            )}
+            ))}
           </button>
 
           {/* Notifications */}

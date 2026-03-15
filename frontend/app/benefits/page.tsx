@@ -36,6 +36,7 @@ import {
   ModalBody,
   ModalFooter,
   EmptyState,
+  ConfirmDialog,
 } from '@/components/ui';
 import {
   BenefitPlan,
@@ -172,6 +173,8 @@ export default function BenefitsPage() {
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [submittingClaim, setSubmittingClaim] = useState(false);
+  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
+  const [selectedEnrollmentForTerminate, setSelectedEnrollmentForTerminate] = useState<string | null>(null);
 
   // Initialize React Query hooks
   const plansQuery = useActiveBenefitPlans();
@@ -300,12 +303,19 @@ export default function BenefitsPage() {
     }
   };
 
-  const handleTerminateEnrollment = async (enrollmentId: string) => {
-    if (!confirm('Are you sure you want to terminate this enrollment?')) return;
+  const handleTerminateStart = (enrollmentId: string) => {
+    setSelectedEnrollmentForTerminate(enrollmentId);
+    setShowTerminateConfirm(true);
+  };
+
+  const handleTerminateConfirm = async () => {
+    if (!selectedEnrollmentForTerminate) return;
 
     try {
-      await terminateMutation.mutateAsync({ enrollmentId, reason: 'Employee requested termination' });
+      await terminateMutation.mutateAsync({ enrollmentId: selectedEnrollmentForTerminate, reason: 'Employee requested termination' });
       showNotification('Enrollment terminated successfully', 'success');
+      setShowTerminateConfirm(false);
+      setSelectedEnrollmentForTerminate(null);
     } catch (err: unknown) {
       console.error('Error terminating:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
@@ -702,7 +712,7 @@ export default function BenefitsPage() {
                           size="sm"
                           variant="outline"
                           className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => handleTerminateEnrollment(enrollment.id)}
+                          onClick={() => handleTerminateStart(enrollment.id)}
                         >
                           <XCircle className="h-4 w-4 mr-1" />
                           Terminate
@@ -1038,6 +1048,22 @@ export default function BenefitsPage() {
             </form>
           </ModalBody>
         </Modal>
+
+        {/* Terminate Enrollment Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showTerminateConfirm}
+          onClose={() => {
+            setShowTerminateConfirm(false);
+            setSelectedEnrollmentForTerminate(null);
+          }}
+          onConfirm={handleTerminateConfirm}
+          title="Terminate Enrollment"
+          message="Are you sure you want to terminate this benefit enrollment? This action will end your coverage under this plan."
+          confirmText="Terminate"
+          cancelText="Cancel"
+          type="danger"
+          loading={terminateMutation.isPending}
+        />
       </div>
     </AppLayout>
   );

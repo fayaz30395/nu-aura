@@ -93,7 +93,7 @@ const ChildrenFlyover: React.FC<{
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/30 transition-opacity duration-200',
+          'fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-200',
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
@@ -103,8 +103,8 @@ const ChildrenFlyover: React.FC<{
       <div
         ref={panelRef}
         className={cn(
-          'fixed z-50 w-64 glass-midnight',
-          'rounded-lg shadow-xl shadow-black/20',
+          'fixed z-50 w-64 glass-aura',
+          'rounded-lg shadow-xl',
           'transform transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
@@ -114,14 +114,14 @@ const ChildrenFlyover: React.FC<{
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-main bg-surface/50">
           <div className="flex items-center gap-2">
             {item.icon && (
-              <span className="text-primary-400">
+              <span className="text-secondary">
                 {item.icon}
               </span>
             )}
-            <span className="font-semibold text-sm text-white">
+            <span className="font-semibold text-sm text-primary">
               {item.label}
             </span>
             {item.badge && (
@@ -132,7 +132,7 @@ const ChildrenFlyover: React.FC<{
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1 rounded-md text-secondary hover:text-primary hover:bg-primary-500/10 transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -145,8 +145,8 @@ const ChildrenFlyover: React.FC<{
             const childClasses = cn(
               'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
-                ? 'bg-primary-500/10 text-primary-300 font-medium shadow-[0_0_10px_rgba(139,92,246,0.15)]'
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
+                ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 font-medium'
+                : 'text-secondary hover:bg-primary-500/10 hover:text-primary'
             );
 
             const childContent = (
@@ -154,14 +154,14 @@ const ChildrenFlyover: React.FC<{
                 {child.icon && (
                   <span className={cn(
                     "w-5 h-5 flex items-center justify-center",
-                    activeId === child.id ? 'text-primary-400' : 'text-white/50'
+                    activeId === child.id ? 'text-primary-500' : 'text-secondary'
                   )}>
                     {child.icon}
                   </span>
                 )}
                 <span className="flex-1 text-left truncate">{child.label}</span>
                 {child.badge && (
-                  <span className="text-xs bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs bg-surface border border-main text-secondary px-1.5 py-0.5 rounded-full">
                     {child.badge}
                   </span>
                 )}
@@ -202,8 +202,8 @@ const ChildrenFlyover: React.FC<{
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 border-t border-white/5 bg-white/5">
-          <p className="text-xs text-white/40">
+        <div className="px-4 py-2 border-t border-main bg-surface/30">
+          <p className="text-xs text-secondary/50">
             {item.children?.length || 0} items
           </p>
         </div>
@@ -247,9 +247,9 @@ const SidebarMenuItem: React.FC<{
     'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
     'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     isActive || isFlyoverOpen
-      ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 shadow-[0_0_10px_rgba(139,92,246,0.1)] dark:shadow-[0_0_10px_rgba(139,92,246,0.2)]'
-      : 'text-gray-600 dark:text-white/70',
-    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white',
+      ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 shadow-sm'
+      : 'text-secondary',
+    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-primary-500/5 hover:text-primary',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
@@ -270,8 +270,8 @@ const SidebarMenuItem: React.FC<{
           className={cn(
             'flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200',
             isActive || isFlyoverOpen
-              ? 'text-primary-400'
-              : 'text-white/50 group-hover:text-white/90'
+              ? 'text-primary-500'
+              : 'text-secondary group-hover:text-primary'
           )}
         >
           {item.icon}
@@ -287,7 +287,7 @@ const SidebarMenuItem: React.FC<{
                 'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
                 isActive || isFlyoverOpen
                   ? 'bg-primary-500 text-white'
-                  : 'bg-white/10 text-white/70'
+                  : 'bg-surface border border-main text-secondary'
               )}>
                 {item.badge}
               </span>
@@ -295,8 +295,8 @@ const SidebarMenuItem: React.FC<{
             {hasChildren && (
               <ChevronRight
                 className={cn(
-                  'h-4 w-4 text-white/30 transition-all duration-200',
-                  isFlyoverOpen && 'translate-x-0.5 text-primary-400'
+                  'h-4 w-4 text-secondary/30 transition-all duration-200',
+                  isFlyoverOpen && 'translate-x-0.5 text-primary-500'
                 )}
               />
             )}
@@ -304,12 +304,12 @@ const SidebarMenuItem: React.FC<{
         </div>
       )}
 
-      {/* Tooltip for collapsed state (items without children) */}
-      {isCollapsed && !hasChildren && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-midnight-obsidian/90 backdrop-blur-lg border border-white/10 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl shadow-black/20 pointer-events-none transition-all duration-150">
+      {/* Tooltip for collapsed state (all items) */}
+      {isCollapsed && (
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface/90 backdrop-blur-lg border border-main text-primary text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
-            <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs">
+            <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs text-white">
               {item.badge}
             </span>
           )}
@@ -360,8 +360,8 @@ const SectionDivider: React.FC<{
 }> = ({ label, sectionId, isCollapsed, isSectionExpanded, onToggleSection }) => {
   if (isCollapsed) {
     return (
-      <div className="px-3 py-3">
-        <div className="w-full h-px bg-gradient-to-r from-white/20 via-white/10 to-transparent" />
+      <div className="px-3 py-3 text-center">
+        <div className="w-full h-px border-t border-main mx-auto" />
       </div>
     );
   }
@@ -369,11 +369,11 @@ const SectionDivider: React.FC<{
   return (
     <motion.button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-white/5 rounded-md transition-all duration-200"
+      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-primary-500/5 rounded-md transition-all duration-200"
       whileHover={{ x: 2 }}
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-white/40 group-hover:text-white/70 transition-colors duration-200 relative">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary group-hover:text-primary transition-colors duration-200 relative">
         {label}
         {/* Subtle left border highlight on hover */}
         <motion.div
@@ -385,7 +385,7 @@ const SectionDivider: React.FC<{
       </span>
       <ChevronDown
         className={cn(
-          'h-3 w-3 text-white/30 transition-transform duration-300 ease-out',
+          'h-3 w-3 text-secondary/30 transition-transform duration-300 ease-out',
           !isSectionExpanded && '-rotate-90'
         )}
       />
@@ -527,10 +527,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           ref={ref as React.Ref<HTMLDivElement>}
           data-sidebar
           className={cn(
-            'flex flex-col bg-white dark:bg-midnight-obsidian/80 border-r border-gray-200 dark:border-white/10 h-screen relative backdrop-blur-xl transition-all duration-300',
-            'hover:shadow-[0_0_20px_rgba(139,92,246,0.05)] dark:hover:shadow-[0_0_20px_rgba(139,92,246,0.1)]',
+            'flex flex-col border-r transition-all duration-300 relative',
             className
           )}
+          style={{ backgroundColor: 'var(--bg-sidebar)', borderColor: 'var(--border-main)' }}
           animate={{
             width: isCollapsed ? 72 : 256,
           }}
@@ -543,10 +543,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           onMouseLeave={() => setIsHovering(false)}
         >
           {/* Logo Header */}
-          <div className={cn(
-            'flex items-center border-b border-white/10 h-16 px-4 transition-all duration-300',
-            isCollapsed ? 'justify-center' : 'justify-between'
-          )}>
+          <div
+            className={cn(
+              'flex items-center h-16 px-4 transition-all duration-300',
+              isCollapsed ? 'justify-center' : 'justify-between'
+            )}
+            style={{ borderBottom: '1px solid var(--border-main)' }}
+          >
             {!isCollapsed ? (
               <div className="flex items-center gap-2">
                 <Image
@@ -554,18 +557,18 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   alt="NuLogic"
                   width={120}
                   height={32}
-                  className="h-8 w-auto object-contain dark:brightness-110"
+                  className="h-8 w-auto object-contain dark:brightness-0 dark:invert"
                   priority
                 />
               </div>
             ) : (
               <div className="flex items-center justify-center">
                 <Image
-                  src="/images/symbol.png"
+                  src="/images/logo.png"
                   alt="NuLogic"
                   width={32}
                   height={32}
-                  className="h-8 w-8 object-contain"
+                  className="h-8 w-8 object-contain dark:brightness-0 dark:invert"
                   priority
                 />
               </div>
@@ -574,17 +577,20 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
           {/* Collapse Toggle */}
           {collapsible && (
-            <div className={cn(
-              'px-3 py-2.5 border-b border-white/5 transition-all duration-300',
-              isCollapsed ? 'flex justify-center' : ''
-            )}>
+            <div
+              className={cn(
+                'px-3 py-2.5 transition-all duration-300',
+                isCollapsed ? 'flex justify-center' : ''
+              )}
+              style={{ borderBottom: '1px solid var(--border-subtle)' }}
+            >
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 p-2 rounded-lg text-white/60 transition-all duration-200 ease-out',
-                  'hover:text-white hover:bg-white/10',
+                  'flex items-center gap-2 p-2 rounded-lg text-secondary transition-all duration-200 ease-out',
+                  'hover:text-primary hover:bg-primary-500/10',
                   isCollapsed ? 'w-full justify-center' : 'w-full',
-                  isCollapsed && isHovering && 'bg-white/5'
+                  isCollapsed && isHovering && 'bg-surface'
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
@@ -595,7 +601,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <>
                     <PanelLeftClose className="h-5 w-5 transition-transform duration-300" />
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
-                    <kbd className="ml-auto text-[10px] font-mono text-white/40 bg-white/5 px-1.5 py-0.5 rounded transition-colors duration-200">
+                    <kbd className="ml-auto text-[10px] font-mono text-secondary-500/50 bg-surface border border-main px-1.5 py-0.5 rounded transition-colors duration-200">
                       ⌘B
                     </kbd>
                   </>
@@ -623,14 +629,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-white/5 rounded-md transition-all duration-200"
+                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-primary-500/5 rounded-md transition-all duration-200"
                     >
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-white/40 group-hover:text-white/70 transition-colors duration-200">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-secondary group-hover:text-primary transition-colors duration-200">
                         {section.label}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-3 w-3 text-white/30 transition-transform duration-300 ease-out',
+                          'h-3 w-3 text-secondary/30 transition-transform duration-300 ease-out',
                           !isSectionExpanded && '-rotate-90'
                         )}
                       />
@@ -668,28 +674,31 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           </nav>
 
           {/* Footer */}
-          <div className={cn(
-            'border-t border-white/10 p-3 transition-all duration-300',
-            isCollapsed && 'flex justify-center'
-          )}>
+          <div
+            className={cn(
+              'p-3 transition-all duration-300',
+              isCollapsed && 'flex justify-center'
+            )}
+            style={{ borderTop: '1px solid var(--border-main)' }}
+          >
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20 shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all duration-200">
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
-                  <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface border border-main shadow-sm transition-all duration-200">
+                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/10 transition-colors duration-200">
+                  <Sparkles className="h-4 w-4 text-primary-500 transition-transform duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-primary-300 truncate">
+                  <p className="text-xs font-medium text-primary truncate">
                     Pro Features
                   </p>
-                  <p className="text-[10px] text-primary-400/70">
+                  <p className="text-[10px] text-secondary">
                     All modules active
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-md bg-primary-500/20 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/30 shadow-[0_0_10px_rgba(139,92,246,0.1)]">
-                <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-midnight-obsidian/90 backdrop-blur-lg border border-white/10 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl shadow-black/20">
+              <div className="w-8 h-8 rounded-md bg-primary-500/10 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/20 shadow-sm">
+                <Sparkles className="h-4 w-4 text-primary-500 transition-transform duration-200" />
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface/90 backdrop-blur-lg border border-main text-primary text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
                   Pro Features Active
                 </div>
               </div>

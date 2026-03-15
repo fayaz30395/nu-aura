@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { Holiday, HolidayRequest, HolidayType } from '@/lib/types/attendance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui';
 import { useHolidaysByYear, useCreateHoliday, useUpdateHoliday, useDeleteHoliday } from '@/lib/hooks/queries/useAttendance';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
@@ -35,6 +36,8 @@ export default function HolidayCalendarManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
   const [uiError, setUiError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [holidayToDelete, setHolidayToDelete] = useState<Holiday | null>(null);
 
   // React Query hooks
   const { data: holidays = [], isLoading, error: queryError } = useHolidaysByYear(selectedYear);
@@ -147,11 +150,20 @@ export default function HolidayCalendarManagementPage() {
     setShowModal(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Are you sure you want to delete this holiday? This action cannot be undone.')) return;
+  const handleDelete = (holiday: Holiday) => {
+    setHolidayToDelete(holiday);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = () => {
+    if (!holidayToDelete) return;
 
     setUiError(null);
-    deleteMutation.mutate(id, {
+    deleteMutation.mutate(holidayToDelete.id, {
+      onSuccess: () => {
+        setShowDeleteConfirm(false);
+        setHolidayToDelete(null);
+      },
       onError: (err: unknown) => {
         setUiError(
           (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -346,7 +358,7 @@ export default function HolidayCalendarManagementPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(holiday.id)}
+                            onClick={() => handleDelete(holiday)}
                             className="text-red-600 hover:text-red-900 px-3 py-1"
                           >
                             Delete
@@ -360,6 +372,21 @@ export default function HolidayCalendarManagementPage() {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setHolidayToDelete(null);
+          }}
+          onConfirm={performDelete}
+          title="Delete Holiday"
+          message={`Are you sure you want to delete "${holidayToDelete?.holidayName}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
 
         {/* Add/Edit Holiday Modal */}
         {showModal && (

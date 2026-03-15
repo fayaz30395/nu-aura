@@ -16,6 +16,7 @@ import {
   BarChart3,
   FileText,
   Send,
+  AlertTriangle,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -30,6 +31,7 @@ import {
   ModalFooter,
   Badge,
   Textarea,
+  ConfirmDialog,
 } from '@/components/ui';
 import type { Survey, SurveyRequest } from '@/lib/types/survey';
 import { SurveyType, SurveyStatus } from '@/lib/types/survey';
@@ -107,6 +109,7 @@ export default function SurveysPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<string>('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -196,9 +199,7 @@ export default function SurveysPage() {
   };
 
   const handleDeleteSurvey = (surveyId: string) => {
-    if (confirm('Are you sure you want to delete this survey?')) {
-      deleteMutation.mutate(surveyId);
-    }
+    setDeleteConfirmId(surveyId);
   };
 
   const filteredSurveys = surveys.filter((survey) => {
@@ -469,6 +470,24 @@ export default function SurveysPage() {
             ))}
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={deleteConfirmId !== null}
+          onClose={() => setDeleteConfirmId(null)}
+          onConfirm={async () => {
+            if (deleteConfirmId) {
+              deleteMutation.mutate(deleteConfirmId);
+              setDeleteConfirmId(null);
+            }
+          }}
+          title="Delete Survey"
+          message="Are you sure you want to delete this survey? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={deleteMutation.isPending}
+        />
 
         {/* Create/Edit Survey Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">

@@ -34,7 +34,7 @@
 | PDF Export | jsPDF 3.0.4 + jsPDF AutoTable 5.0.2 |
 | Excel Export | ExcelJS 4.4.0 |
 | Backend | Java 17, Spring Boot 3.x (monolith at `/backend/`) |
-| Database | PostgreSQL 16 (Flyway migrations, 11 versions: V1–V11) |
+| Database | PostgreSQL 16 (Flyway migrations, 26 versions: V0–V26) |
 | Cache | Redis 7 (Lettuce client, 1hr TTL) |
 | File Storage | MinIO (S3-compatible, bucket: `hrms-files`) |
 | Events | Kafka (event streaming for async workflows) |
@@ -43,7 +43,7 @@
 | Metrics | Micrometer + Prometheus |
 | SMS | Twilio (optional, mock mode available) |
 | AI Features | OpenAI API (resume screening, JD generation) |
-| Testing | Vitest + Playwright (frontend), JUnit + JaCoCo 80% (backend), ArchUnit |
+| Testing | Vitest + Playwright (frontend), JUnit 5 + MockMvc + JaCoCo 80% (backend), ArchUnit |
 | Infrastructure | Docker Compose (root), Kubernetes-ready Dockerfiles |
 
 ---
@@ -350,7 +350,7 @@ Each agent writes only to its own `frontend/app/<module>/` directory.
 
 ## 10. Backend Module Status
 
-### Implemented (115+ Controllers, 135+ Services, 220+ Repositories)
+### Implemented (134 Controllers, 175 Services, 298 Entities, 250 Repositories)
 
 | Domain | Controllers | Key Features |
 |---|---|---|
@@ -541,11 +541,81 @@ When multiple AI agents work in parallel, stale context causes bugs: duplicate c
 ## 14. Known Issues & Tech Debt
 
 - Kafka consumers not yet implemented (using webhooks/async as interim)
-- Some modules may have placeholder pages that need backend integration
 - Payment gateway integration not started
-- Contract management not implemented
 - Mobile-specific API endpoints are limited
 - Document management is basic (MinIO file storage, no full workflow)
+- ~~Browser confirm()/prompt() used for destructive actions~~ — Fixed: all replaced with ConfirmDialog + Modal components
+- ~~Home page crashes on null dashboard data~~ — Fixed: added null safety with `?.` and `?? []`
+- ~~Mobile users cannot switch between sub-apps~~ — Fixed: AppSwitcher now visible on mobile
+- ~~MobileBottomNav hardcoded, not app-aware~~ — Fixed: now shows different items per active app (HRMS/Hire/Grow/Fluence)
+- ~~Performance page has no error states~~ — Fixed: added PageErrorFallback + SkeletonStatCard
+- ~~Admin page silent failure on role assignment~~ — Fixed: added toast + ConfirmDialog
+- ~~Sidebar collapsed items missing tooltips~~ — Fixed: parent items now show tooltips
+- ~~NU-Fluence menu items ungated by permissions~~ — Fixed: added 16 KNOWLEDGE permission constants + requiredPermission on all items
+- Backend unit test coverage still low: 13/134 controllers tested (9.7%) — needs continued expansion
+- ~37 console.error/log/warn remaining in production code (16 critical ones replaced with logger utility)
+- 7 eslint-disable-next-line comments for react-hooks/exhaustive-deps (all justified)
+
+---
+
+## 33. Session Log: 2026-03-15 — Wave 2 & 3 QA Fixes (continued)
+
+### Wave 2: Finance + Lifecycle Pages Fixed
+| File | Fixes |
+|---|---|
+| `app/expenses/page.tsx` | Replaced prompt() → Modal for rejection reason; replaced confirm() → ConfirmDialog for deletion; fixed hardcoded currency symbols |
+| `app/benefits/page.tsx` | Replaced confirm() → ConfirmDialog for enrollment termination |
+| `app/surveys/page.tsx` | Replaced confirm() → ConfirmDialog for survey deletion |
+| `app/training/page.tsx` | Replaced confirm() → ConfirmDialog for program deletion |
+| `app/learning/page.tsx` | Replaced "Loading..." text with proper Skeleton loaders; added aria-labels; improved dark mode |
+| `app/recognition/page.tsx` | Added 6 skeleton loaders; added aria-labels; improved responsive layout |
+
+### Wave 3: ALL Remaining Browser Dialogs Eliminated (26 instances → 0)
+
+**Admin pages (8 files):**
+- `admin/shifts`, `admin/custom-fields`, `admin/leave-types`, `admin/permissions`, `admin/roles`, `admin/holidays`, `admin/office-locations`, `helpdesk/sla` — All confirm() → ConfirmDialog (danger)
+
+**Performance pages (4 files):**
+- `performance/360-feedback` — 4x confirm() → ConfirmDialog (activate=warning, close=warning, delete=danger, share=info)
+- `performance/okr` — 2x confirm() → ConfirmDialog (delete objective=danger, delete key result=danger)
+- `performance/calibration` — confirm() → ConfirmDialog (publish ratings=warning)
+
+**Travel + Time Tracking (2 files):**
+- `travel/[id]` — 2x prompt() → Modal+Textarea (rejection/cancellation reasons); confirm() → ConfirmDialog (complete=info)
+- `time-tracking/[id]` — confirm() → ConfirmDialog (delete=danger)
+
+**Misc pages (5 files):**
+- `employees/change-requests` — confirm() → ConfirmDialog (approve=info)
+- `onboarding/templates/[id]` — confirm() → ConfirmDialog (delete task=danger)
+- `calendar/[id]`, `nu-calendar` — confirm() → ConfirmDialog (delete event=danger)
+- `nu-drive` — confirm() → ConfirmDialog (delete file=danger)
+- `attendance/regularization` — confirm() → ConfirmDialog (cancel=warning)
+- `contracts/templates` — confirm() → ConfirmDialog (delete=danger)
+
+**RichTextEditor component:**
+- `components/fluence/RichTextEditor.tsx` — 2x prompt() → Modal+TextInput (image URL, link URL)
+
+### Wave 3: Production Cleanup
+- **16 console.error statements** replaced with `logger.error()` across 11 files (app pages + components)
+- **Hardcoded localhost URL** in `preboarding/portal` now uses `apiConfig.baseUrl` from validated env config
+- **public-client.ts** confirmed already using proper config pattern
+
+### Backend Unit Tests — Batch 2 (5 more controllers, 101 tests)
+| Test File | Controller | Tests |
+|---|---|---|
+| `RecruitmentControllerTest.java` | RecruitmentController | 18 |
+| `PerformanceReviewControllerTest.java` | PerformanceReviewController | 16 |
+| `DepartmentControllerTest.java` | DepartmentController | 21 |
+| `OnboardingManagementControllerTest.java` | OnboardingManagementController | 24 |
+| `ExpenseClaimControllerTest.java` | ExpenseClaimController | 22 |
+
+**Total backend tests this session:** 223 tests across 10 controllers (was 3 → now 13 controllers covered)
+
+### Final Verification
+- **TypeScript:** `npx tsc --noEmit` → **0 errors** ✅
+- **Browser confirm/prompt:** **0 remaining** in entire frontend codebase ✅
+- **console.log in critical pages:** 16 replaced with logger utility ✅
+- **Hardcoded localhost:** Fixed in production-facing code ✅
 - ~~/workflow/inbox/count returns 500~~ — Fixed: `retry: false` on useApprovalInboxCount hook
 - ~~/admin page shows "System DOWN"~~ — Fixed: graceful DEGRADED state + UNAVAILABLE components
 - ~~Raw localStorage usage in leave pages~~ — Fixed: replaced with useAuth() hook in leave/apply, leave/calendar
@@ -1924,3 +1994,78 @@ Full adversarial QA audit found 18 bugs (4 CRITICAL, 4 HIGH, 8 MEDIUM, 2 LOW). A
 - **TypeScript:** `npx tsc --noEmit` → **0 errors**
 - **Flyway:** V25 (attendance index), V26 (leave_balances unique) added
 - **All 18 R2 bugs fixed**
+
+---
+
+## 32. Session Log: 2026-03-15 — FAANG-Level UI/UX Production Sprint + Backend Test Coverage
+
+### Overview
+Comprehensive UI/UX audit and fix sprint treating codebase as FAANG production standard. Fixed 30+ UX issues across 12 files. Added 122 backend unit tests for 5 critical controllers. All changes verified with `npx tsc --noEmit` (0 errors).
+
+### Frontend UI/UX Fixes (12 files modified)
+
+#### Critical: Replaced ALL browser `confirm()`/`prompt()` with custom modals
+| File | What Was Fixed |
+|---|---|
+| `app/leave/my-leaves/page.tsx` | Replaced `confirm()` → ConfirmDialog (type: warning); replaced `prompt()` → Modal+TextInput for cancel reason; added Skeleton loader; added pagination info text; added tooltip on truncated reason |
+| `app/leave/approvals/page.tsx` | Replaced `confirm()` → ConfirmDialog for approve (info) & reject (danger); replaced `prompt()` → Modal+TextInput for rejection reason; show employee NAME instead of UUID; added approved/rejected stats cards |
+| `app/departments/page.tsx` | Replaced `confirm()` → ConfirmDialog for delete (danger); added confirmation for active/inactive toggle; added aria-label to spinner; changed hardcoded pagination to dynamic state |
+
+#### Critical: Null Safety & Crash Prevention
+| File | What Was Fixed |
+|---|---|
+| `app/home/page.tsx` | Added null safety (`?.` + `?? []`) on `dashboardData.birthdays`, `.anniversaries`, `.holidays`, `.leaveBalances`, `.newJoinees`; added aria-label to pulsing dot; added `title` on truncated names; made "+N more" clickable with tooltip; added feed skeleton loaders; improved post image alt text |
+
+#### Error States & Skeleton Loaders
+| File | What Was Fixed |
+|---|---|
+| `app/performance/page.tsx` | Added PageErrorFallback for query errors; added SkeletonStatCard loaders; added aria-labels on module cards; renamed misleading "Performance Tips" → "Getting Started"; added dark mode classes to hardcoded bg-white |
+| `app/admin/page.tsx` | Added toast.error for user-not-found on role assignment; added ConfirmDialog before role changes (especially SuperAdmin); added SkeletonStatCard loaders; styled status badges (ACTIVE=green, INACTIVE=gray, SUSPENDED=red); fixed health component name capitalization |
+| `app/recruitment/page.tsx` | Replaced animate-pulse with SkeletonStatCard/SkeletonCard; added loading spinner for infinite scroll; added title tooltips on truncated names; added PageErrorFallback for query errors |
+
+#### Attendance UX Hardening
+| File | What Was Fixed |
+|---|---|
+| `app/attendance/page.tsx` | Added ConfirmDialog before checkout; added toast.info for location errors; extracted STANDARD_WORK_HOURS constant (was hardcoded 8); replaced "Location pending" → "Location unavailable"; added aria-labels to chart elements |
+
+#### Navigation & Mobile UX (Critical)
+| File | What Was Fixed |
+|---|---|
+| `components/ui/MobileBottomNav.tsx` | Fixed false active state matching (`pathname.startsWith(href)` → `pathname === href \|\| pathname.startsWith(href + '/')`); added optional `items` prop override |
+| `components/layout/AppLayout.tsx` | Added app-aware mobile nav items mapping: HRMS→[Home,Team,Leave,Approvals,Me], HIRE→[Home,Jobs,Candidates,Onboarding,Me], GROW→[Home,Performance,Learning,OKRs,Me], FLUENCE→[Home,Wiki,Blogs,Wall,Me] |
+| `components/layout/Header.tsx` | Made AppSwitcher visible on mobile (removed `hidden md:block` wrapper) |
+| `components/layout/Sidebar.tsx` | Added tooltip for collapsed parent items with children (was only showing for leaf items) |
+
+#### Permission & Security
+| File | What Was Fixed |
+|---|---|
+| `components/layout/menuSections.tsx` | Added `requiredPermission` to ALL 5 NU-Fluence menu items (was ungated) |
+| `lib/hooks/usePermissions.ts` | Added 16 new KNOWLEDGE-related permission constants: KNOWLEDGE_VIEW/CREATE/UPDATE/DELETE/MANAGE, WIKI_VIEW/CREATE/MANAGE, BLOG_VIEW/CREATE/MANAGE, WALL_FLUENCE_VIEW/POST/MANAGE |
+
+### Backend Unit Tests (5 new test files, 122 tests)
+
+| Test File | Controller | Tests | Coverage |
+|---|---|---|---|
+| `EmployeeControllerTest.java` | EmployeeController | 24 | CRUD, search, hierarchy, pagination, auth |
+| `LeaveRequestControllerTest.java` | LeaveRequestController | 24 | Create, approve, reject, cancel, scope |
+| `PayrollControllerTest.java` | PayrollController | 23 | Lifecycle, processing, payslips, PDF |
+| `AttendanceControllerTest.java` | AttendanceController | 23 | Check-in/out, breaks, regularization, bulk |
+| `RoleControllerTest.java` | RoleController | 28 | CRUD, permission assignment, RBAC scopes |
+
+**Test breakdown:** 42 happy path, 25 validation, 22 permission, 33 edge case tests.
+**Previous coverage:** 3 controllers tested (2.2%). **New coverage:** 8 controllers tested (6%).
+
+### Database Migrations
+- V1–V26 confirmed (no new migrations this session)
+
+### Flyway Migrations Updated
+- V1–V26 (26 versions total, not 11 as previously documented)
+
+### TypeScript: 0 errors (npx tsc --noEmit clean)
+
+### Key Architectural Observations from Audit
+- Frontend has 184 pages (previously documented as 59 modules — both are correct, modules contain multiple pages)
+- Backend has 134 controllers, 175 services, 298 entities, 250 repositories (larger than previously documented)
+- 73 existing test classes + 5 new = 78 total test classes
+- All pages use React Query properly (no mock data in production pages)
+- Component library (EmptyState, Loading, Skeleton, ConfirmDialog, Modal, Toast) is production-grade

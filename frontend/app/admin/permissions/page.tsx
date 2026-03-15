@@ -19,6 +19,7 @@ import {
 import { Permission, RoleWithDetails } from '@/lib/types/roles';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useRoles,
   usePermissions as useQueryPermissions,
@@ -53,6 +54,8 @@ export default function PermissionsPage() {
   const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false);
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Mutation hooks
   const createRoleMutation = useCreateRole();
@@ -107,9 +110,16 @@ export default function PermissionsPage() {
     setIsEditUserModalOpen(true);
   };
 
-  const handleDeleteRole = async (roleId: string, roleName: string) => {
-    if (!confirm(`Are you sure you want to delete the role "${roleName}"?`)) return;
-    deleteRoleMutation.mutate(roleId);
+  const handleDeleteRole = (roleId: string, roleName: string) => {
+    setRoleToDelete({ id: roleId, name: roleName });
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = () => {
+    if (!roleToDelete) return;
+    deleteRoleMutation.mutate(roleToDelete.id);
+    setShowDeleteConfirm(false);
+    setRoleToDelete(null);
   };
 
   const filteredRoles = roles.filter(r =>
@@ -137,6 +147,20 @@ export default function PermissionsPage() {
 
   return (
     <>
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setRoleToDelete(null);
+        }}
+        onConfirm={performDelete}
+        title="Delete Role"
+        message={`Are you sure you want to delete the role "${roleToDelete?.name}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

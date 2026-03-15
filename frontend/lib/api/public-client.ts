@@ -4,6 +4,7 @@ import { logger } from '@/lib/utils/logger';
 
 /**
  * Get the API base URL with proper handling
+ * Uses validated env config (apiConfig.baseUrl) from @/lib/config/env.ts
  * Throws an error in production if API URL is not properly configured
  */
 function getApiBaseUrl(): string {
@@ -14,7 +15,8 @@ function getApiBaseUrl(): string {
       logger.error('[PublicApiClient] API URL is not configured');
       throw new Error('API URL is not configured');
     }
-    // Development fallback
+    // Development fallback - intentional for dev mode only
+    // Production requires NEXT_PUBLIC_API_URL to be set
     return 'http://localhost:8080/api/v1';
   }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
 import {
   Calendar as CalendarIcon,
@@ -83,6 +84,8 @@ function CalendarContent() {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
   // Create event form state
   const [newEvent, setNewEvent] = useState({
@@ -275,11 +278,16 @@ function CalendarContent() {
   };
 
   const deleteEvent = async (eventId: string) => {
-    if (!accessToken) return;
+    setEventToDelete(eventId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteEvent = async () => {
+    if (!accessToken || !eventToDelete) return;
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventToDelete}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -288,9 +296,11 @@ function CalendarContent() {
 
       if (!response.ok) throw new Error('Failed to delete event');
 
-      setEvents(events.filter(e => e.id !== eventId));
+      setEvents(events.filter(e => e.id !== eventToDelete));
       setShowEventModal(false);
       setSelectedEvent(null);
+      setDeleteConfirmOpen(false);
+      setEventToDelete(null);
     } catch (err) {
       console.error('Error deleting event:', err);
       setError('Failed to delete event');
@@ -863,9 +873,7 @@ function CalendarContent() {
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    if (confirm('Are you sure you want to delete this event?')) {
-                      deleteEvent(selectedEvent.id);
-                    }
+                    deleteEvent(selectedEvent.id);
                   }}
                   className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                   leftIcon={<Trash2 className="h-4 w-4" />}
@@ -1017,6 +1025,20 @@ function CalendarContent() {
           </Card>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setEventToDelete(null);
+        }}
+        onConfirm={confirmDeleteEvent}
+        title="Delete Event"
+        message="Are you sure you want to delete this event? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </AppLayout>
   );
 }

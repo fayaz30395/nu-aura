@@ -41,6 +41,8 @@ import {
   Badge,
   Textarea,
   EmptyState,
+  ConfirmDialog,
+  Skeleton,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
 import type {
@@ -189,6 +191,7 @@ export default function TrainingPage() {
   const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
   const [selectedProgramId, setSelectedProgramId] = useState<string>('');
   const [enrolling, setEnrolling] = useState(false);
+  const [deleteProgramId, setDeleteProgramId] = useState<string | null>(null);
 
   // Fetch enrollments for the selected program via React Query (replaces imperative service call)
   const { data: enrollments = [] } = useEnrollmentsByProgram(selectedProgramId);
@@ -360,9 +363,7 @@ export default function TrainingPage() {
   };
 
   const handleDeleteProgram = (programId: string) => {
-    if (confirm('Are you sure you want to delete this training program?')) {
-      deleteProgramMutation.mutate(programId);
-    }
+    setDeleteProgramId(programId);
   };
 
   const filteredPrograms = programs.filter((program) => {
@@ -988,6 +989,24 @@ export default function TrainingPage() {
         {activeTab === 'growth-roadmap' && user?.employeeId && (
           <SkillGapAnalysis employeeId={user.employeeId} />
         )}
+
+        {/* Delete Program Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={deleteProgramId !== null}
+          onClose={() => setDeleteProgramId(null)}
+          onConfirm={async () => {
+            if (deleteProgramId) {
+              deleteProgramMutation.mutate(deleteProgramId);
+              setDeleteProgramId(null);
+            }
+          }}
+          title="Delete Training Program"
+          message="Are you sure you want to delete this training program? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={deleteProgramMutation.isPending}
+        />
 
         {/* Create/Edit Program Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">

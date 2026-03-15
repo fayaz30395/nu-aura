@@ -32,6 +32,7 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { useQueryClient } from '@tanstack/react-query';
 import { feedback360Service } from '@/lib/services/feedback360.service';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 const CYCLE_STATUSES = ['DRAFT', 'ACTIVE', 'NOMINATION', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'] as const;
 const REVIEWER_TYPES = ['SELF', 'MANAGER', 'PEER', 'DIRECT_REPORT', 'EXTERNAL'] as const;
@@ -114,6 +115,10 @@ export default function Feedback360Page() {
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [editingCycle, setEditingCycle] = useState<Feedback360Cycle | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<Feedback360Request | null>(null);
+  const [activateConfirm, setActivateConfirm] = useState<string | null>(null);
+  const [closeConfirm, setCloseConfirm] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [shareConfirm, setShareConfirm] = useState<string | null>(null);
 
   const [cycleForm, setCycleForm] = useState<CycleRequest>({
     name: '',
@@ -157,7 +162,6 @@ export default function Feedback360Page() {
   };
 
   const handleActivateCycle = async (id: string) => {
-    if (!confirm('Are you sure you want to activate this cycle?')) return;
     try {
       await feedback360Service.activateCycle(id);
       fetchData();
@@ -168,7 +172,6 @@ export default function Feedback360Page() {
   };
 
   const handleCloseCycle = async (id: string) => {
-    if (!confirm('Are you sure you want to close this cycle?')) return;
     try {
       await feedback360Service.closeCycle(id);
       fetchData();
@@ -179,7 +182,6 @@ export default function Feedback360Page() {
   };
 
   const handleDeleteCycle = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this cycle?')) return;
     try {
       await feedback360Service.deleteCycle(id);
       fetchData();
@@ -206,7 +208,6 @@ export default function Feedback360Page() {
   };
 
   const handleShareSummary = async (summaryId: string) => {
-    if (!confirm('Share this summary with the employee?')) return;
     try {
       await feedback360Service.shareWithEmployee(summaryId);
       fetchData();
@@ -413,14 +414,14 @@ export default function Feedback360Page() {
                     {cycle.status === 'DRAFT' && (
                       <>
                         <button
-                          onClick={() => handleActivateCycle(cycle.id)}
+                          onClick={() => setActivateConfirm(cycle.id)}
                           className="p-2 text-green-600 hover:bg-green-50 rounded"
                           title="Activate"
                         >
                           <Play className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteCycle(cycle.id)}
+                          onClick={() => setDeleteConfirm(cycle.id)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded"
                           title="Delete"
                         >
@@ -430,7 +431,7 @@ export default function Feedback360Page() {
                     )}
                     {(cycle.status === 'ACTIVE' || cycle.status === 'IN_PROGRESS') && (
                       <button
-                        onClick={() => handleCloseCycle(cycle.id)}
+                        onClick={() => setCloseConfirm(cycle.id)}
                         className="p-2 text-gray-600 hover:bg-gray-50 rounded"
                         title="Close"
                       >
@@ -680,7 +681,7 @@ export default function Feedback360Page() {
                     </button>
                     {!summary.sharedWithEmployee && (
                       <button
-                        onClick={() => handleShareSummary(summary.id)}
+                        onClick={() => setShareConfirm(summary.id)}
                         className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
                       >
                         <Share2 className="h-4 w-4 mr-1" />
@@ -1068,6 +1069,70 @@ export default function Feedback360Page() {
           </div>
         </div>
       )}
+
+      {/* Activate Cycle Confirmation */}
+      <ConfirmDialog
+        isOpen={!!activateConfirm}
+        onClose={() => setActivateConfirm(null)}
+        onConfirm={async () => {
+          if (activateConfirm) {
+            await handleActivateCycle(activateConfirm);
+            setActivateConfirm(null);
+          }
+        }}
+        title="Activate Cycle"
+        message="Are you sure you want to activate this feedback cycle? This will notify all reviewers to start providing feedback."
+        confirmText="Activate"
+        type="warning"
+      />
+
+      {/* Close Cycle Confirmation */}
+      <ConfirmDialog
+        isOpen={!!closeConfirm}
+        onClose={() => setCloseConfirm(null)}
+        onConfirm={async () => {
+          if (closeConfirm) {
+            await handleCloseCycle(closeConfirm);
+            setCloseConfirm(null);
+          }
+        }}
+        title="Close Cycle"
+        message="Are you sure you want to close this feedback cycle? Feedback submission will be disabled."
+        confirmText="Close"
+        type="warning"
+      />
+
+      {/* Delete Cycle Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        onConfirm={async () => {
+          if (deleteConfirm) {
+            await handleDeleteCycle(deleteConfirm);
+            setDeleteConfirm(null);
+          }
+        }}
+        title="Delete Cycle"
+        message="Are you sure you want to delete this feedback cycle? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+      />
+
+      {/* Share Summary Confirmation */}
+      <ConfirmDialog
+        isOpen={!!shareConfirm}
+        onClose={() => setShareConfirm(null)}
+        onConfirm={async () => {
+          if (shareConfirm) {
+            await handleShareSummary(shareConfirm);
+            setShareConfirm(null);
+          }
+        }}
+        title="Share Summary"
+        message="Share this feedback summary with the employee? They will be able to view all compiled feedback."
+        confirmText="Share"
+        type="info"
+      />
     </div>
     </AppLayout>
   );

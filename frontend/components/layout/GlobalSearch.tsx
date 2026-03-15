@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import {
   Search,
   Command,
@@ -146,7 +147,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           const results = await searchService.unifiedSearch(query, 5);
           setApiResults(results);
         } catch (error) {
-          console.error('Search error:', error);
+          logger.error('Search error:', error);
           setApiResults(null);
         } finally {
           setIsSearching(false);

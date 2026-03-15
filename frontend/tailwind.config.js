@@ -19,11 +19,18 @@ module.exports = {
         sans: ['Outfit', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // AURA Midnight - Premium Palette
+        // AURA Midnight - Premium Palette (matches login page)
         midnight: {
-          deep: '#020617',        // Background
-          obsidian: '#0f172a',    // Surfaces
-          card: 'rgba(15, 23, 42, 0.6)', // Glass surface
+          deep: '#0a0e27',        // Background
+          obsidian: '#0f1330',    // Surfaces
+          card: 'rgba(255, 255, 255, 0.04)', // Glass surface
+          elevated: '#161b3d',    // Elevated surface
+        },
+        // Semantic Tokens for Stable Theming
+        brand: {
+          main: '#8B5CF6',
+          secondary: '#06B6D4',
+          accent: '#F43F5E',
         },
         // Primary - Electric Violet (Vibrant accent)
         primary: {
@@ -96,6 +103,34 @@ module.exports = {
           900: '#0b4a6f',
           950: '#062c41',
         },
+        // Warning - Amber (matching Mantine theme)
+        warning: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+          950: '#451a03',
+        },
+        // Danger - Red (matching Mantine theme)
+        danger: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+          950: '#450a0a',
+        },
       },
       boxShadow: {
         'theme-xs': '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
@@ -103,12 +138,17 @@ module.exports = {
         'theme-md': '0px 4px 8px -2px rgba(16, 24, 40, 0.1), 0px 2px 4px -2px rgba(16, 24, 40, 0.06)',
         'theme-lg': '0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)',
         'theme-xl': '0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03)',
-        // Dark mode shadows - subtle glow on dark backgrounds
-        'dark-xs': '0px 1px 2px 0px rgba(0, 0, 0, 0.3)',
-        'dark-sm': '0px 1px 3px 0px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.3)',
-        'dark-md': '0px 4px 8px -2px rgba(0, 0, 0, 0.4), 0px 2px 4px -2px rgba(0, 0, 0, 0.3)',
-        'dark-lg': '0px 12px 16px -4px rgba(0, 0, 0, 0.4), 0px 4px 6px -2px rgba(0, 0, 0, 0.2)',
-        'dark-xl': '0px 20px 24px -4px rgba(0, 0, 0, 0.4), 0px 8px 8px -4px rgba(0, 0, 0, 0.2)',
+        // Dark mode shadows - stronger, deeper glow on dark backgrounds
+        'dark-xs': '0px 1px 2px 0px rgba(0, 0, 0, 0.6)',
+        'dark-sm': '0px 1px 3px 0px rgba(0, 0, 0, 0.7), 0px 1px 2px 0px rgba(0, 0, 0, 0.6)',
+        'dark-md': '0px 4px 12px -2px rgba(0, 0, 0, 0.8), 0px 2px 6px -2px rgba(0, 0, 0, 0.7)',
+        'dark-lg': '0px 16px 24px -4px rgba(0, 0, 0, 0.9), 0px 6px 10px -2px rgba(0, 0, 0, 0.5)',
+        'dark-xl': '0px 24px 32px -4px rgba(0, 0, 0, 1), 0px 12px 14px -4px rgba(0, 0, 0, 0.6)',
+        // Semantic shadows (auto-adapt via CSS vars)
+        'card': 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
+        'elevated': 'var(--shadow-elevated)',
+        'dropdown': 'var(--shadow-dropdown)',
       },
       // Enhanced Animation Configuration
       animation: {

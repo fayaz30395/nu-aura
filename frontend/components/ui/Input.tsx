@@ -86,18 +86,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
           <input
             type={inputType}
+            style={{
+              backgroundColor: disabled ? undefined : 'var(--bg-input)',
+              borderColor: error ? undefined : success ? undefined : 'var(--border-main)',
+            }}
             className={cn(
               // Base styles
-              'w-full rounded-lg border bg-white transition-all duration-150',
-              'text-surface-900 placeholder:text-surface-400',
-              'dark:bg-surface-800 dark:text-surface-50 dark:placeholder:text-surface-500',
+              'w-full rounded-lg border transition-all duration-150',
+              'placeholder:text-surface-400 dark:placeholder:text-surface-500',
               // Size
               sizeStyles[inputSize],
               // Icon padding
               icon && 'pl-10',
               (rightIcon || type === 'password' || error || success) && 'pr-10',
-              // Default border
-              !error && !success && 'border-surface-300 dark:border-surface-600',
               // Hover state
               !error && !success && !disabled && 'hover:border-surface-400 dark:hover:border-surface-500',
               // Focus state

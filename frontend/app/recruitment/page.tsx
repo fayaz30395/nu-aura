@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { SkeletonStatCard, SkeletonCard } from '@/components/ui/Skeleton';
+import { PageErrorFallback } from '@/components/errors/PageErrorFallback';
 import {
   useJobOpenings,
   useCandidates,
@@ -26,6 +28,7 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/recruitment';
 
@@ -218,17 +221,37 @@ export default function RecruitmentDashboard() {
   const isLoading =
     jobOpeningsQuery.isLoading || candidatesQuery.isLoading || openJobsQuery.isLoading || interviewsQuery.isLoading;
 
+  const hasError =
+    jobOpeningsQuery.isError || candidatesQuery.isError || openJobsQuery.isError || interviewsQuery.isError;
+
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="animate-pulse space-y-6">
-          <div className="h-32 bg-surface-200 dark:bg-surface-700 rounded" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
-            <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
-            <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
+        <div className="space-y-6">
+          <div className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <SkeletonStatCard />
+            <SkeletonStatCard />
+            <SkeletonStatCard />
+            <SkeletonStatCard />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SkeletonCard />
+            <SkeletonCard />
           </div>
         </div>
+      </AppLayout>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <AppLayout>
+        <PageErrorFallback
+          title="Failed to Load Recruitment Data"
+          error={new Error('There was an error loading the recruitment dashboard. Please try refreshing the page.')}
+          onReset={() => window.location.reload()}
+        />
       </AppLayout>
     );
   }
@@ -473,10 +496,13 @@ export default function RecruitmentDashboard() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-surface-900 dark:text-surface-50 truncate">
+                          <h3
+                            className="font-semibold text-surface-900 dark:text-surface-50 truncate"
+                            title={candidate.fullName}
+                          >
                             {candidate.fullName}
                           </h3>
-                          <p className="text-sm text-surface-500 dark:text-surface-400 truncate">
+                          <p className="text-sm text-surface-500 dark:text-surface-400 truncate" title={candidate.jobTitle || 'Position not specified'}>
                             {candidate.jobTitle || 'Position not specified'}
                           </p>
                           <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">
@@ -489,11 +515,12 @@ export default function RecruitmentDashboard() {
                       </div>
                     </motion.div>
                   ))}
-                  {/* Lazy-load sentinel */}
+                  {/* Lazy-load sentinel with spinner */}
                   {hasMore && (
-                    <div ref={loadMoreRef} className="flex justify-center py-2">
+                    <div ref={loadMoreRef} className="flex justify-center items-center py-4">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-600 dark:text-primary-400 mr-2" />
                       <span className="text-xs text-surface-400 dark:text-surface-500">
-                        Loading more...
+                        Loading more candidates...
                       </span>
                     </div>
                   )}

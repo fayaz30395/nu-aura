@@ -16,6 +16,7 @@ import {
   Crown,
   Medal,
   Sparkles,
+  AlertCircle,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -30,6 +31,7 @@ import {
   ModalFooter,
   Badge,
   Textarea,
+  Skeleton,
 } from '@/components/ui';
 import type { Recognition, RecognitionRequest } from '@/lib/types/recognition';
 import { RecognitionType, RecognitionCategory } from '@/lib/types/recognition';
@@ -283,8 +285,21 @@ export default function RecognitionPage() {
 
             {/* Recognition Feed */}
             {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-5 w-1/3" />
+                          <Skeleton className="h-4 w-2/3" />
+                          <Skeleton className="h-4 w-1/2" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             ) : recognitions.length === 0 ? (
               <Card>
@@ -308,28 +323,28 @@ export default function RecognitionPage() {
                   <Card key={recognition.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
-                        <div className={`rounded-full p-3 ${getTypeColor(recognition.type)}`}>
+                        <div className={`rounded-full p-3 flex-shrink-0 ${getTypeColor(recognition.type)}`} aria-label={`Recognition type: ${recognition.type}`}>
                           {getTypeIcon(recognition.type)}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h3 className="font-semibold text-surface-900 dark:text-white">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-surface-900 dark:text-white break-words">
                                 {recognition.title}
                               </h3>
-                              <p className="text-sm text-surface-600 dark:text-surface-400">
+                              <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
                                 {recognition.isAnonymous ? 'Someone' : recognition.giverName || 'A colleague'} recognized{' '}
                                 <span className="font-medium text-primary-600 dark:text-primary-400">
                                   {recognition.receiverName || 'a team member'}
                                 </span>
                               </p>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(recognition.type)}`}>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getTypeColor(recognition.type)}`}>
                                 {recognition.type.replace('_', ' ')}
                               </span>
                               {recognition.pointsAwarded > 0 && (
-                                <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 whitespace-nowrap">
                                   <Star className="h-3 w-3" />
                                   {recognition.pointsAwarded}
                                 </span>
@@ -338,7 +353,7 @@ export default function RecognitionPage() {
                           </div>
 
                           {recognition.message && (
-                            <p className="mt-2 text-surface-700 dark:text-surface-300">
+                            <p className="mt-2 text-surface-700 dark:text-surface-300 break-words">
                               {recognition.message}
                             </p>
                           )}
@@ -351,12 +366,12 @@ export default function RecognitionPage() {
                             </div>
                           )}
 
-                          <div className="mt-3 flex items-center gap-4 text-sm text-surface-500">
-                            <button className="flex items-center gap-1 hover:text-red-500 transition-colors">
+                          <div className="mt-3 flex items-center gap-4 text-sm text-surface-500 flex-wrap">
+                            <button className="flex items-center gap-1 hover:text-red-500 dark:hover:text-red-400 transition-colors" aria-label={`Like recognition (${recognition.likesCount} likes)`}>
                               <Heart className="h-4 w-4" />
                               {recognition.likesCount}
                             </button>
-                            <button className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+                            <button className="flex items-center gap-1 hover:text-blue-500 dark:hover:text-blue-400 transition-colors" aria-label={`Comment on recognition (${recognition.commentsCount} comments)`}>
                               <MessageCircle className="h-4 w-4" />
                               {recognition.commentsCount}
                             </button>
@@ -381,16 +396,25 @@ export default function RecognitionPage() {
                   <Crown className="h-5 w-5 text-yellow-500" />
                   Top Contributors
                 </h3>
-                {leaderboard.length === 0 ? (
-                  <p className="text-sm text-surface-500">No data yet</p>
+                {leaderboardQuery.isLoading ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="h-12 w-full rounded-lg" />
+                    ))}
+                  </div>
+                ) : leaderboard.length === 0 ? (
+                  <div className="text-center py-6">
+                    <AlertCircle className="h-8 w-8 text-surface-400 mx-auto mb-2" />
+                    <p className="text-sm text-surface-500">No data yet</p>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {leaderboard.map((employee, index) => (
                       <div
                         key={employee.id}
-                        className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800"
+                        className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
                       >
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${index === 0 ? 'bg-yellow-500 text-white' :
                             index === 1 ? 'bg-gray-400 text-white' :
                               index === 2 ? 'bg-amber-600 text-white' :
                                 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
@@ -400,15 +424,15 @@ export default function RecognitionPage() {
                               index === 2 ? <Medal className="h-4 w-4" /> :
                                 <span className="text-sm font-medium">{index + 1}</span>}
                         </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-surface-900 dark:text-white text-sm">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-surface-900 dark:text-white text-sm truncate">
                             {employee.employeeName || `Employee ${index + 1}`}
                           </p>
                           <p className="text-xs text-surface-500">
                             {employee.recognitionsReceived} recognitions
                           </p>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right flex-shrink-0">
                           <p className="font-bold text-yellow-600 dark:text-yellow-400">
                             {employee.totalPointsEarned}
                           </p>

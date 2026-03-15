@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from 'next';
-import { Outfit } from 'next/font/google';
+import { Space_Grotesk, Fraunces } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import './globals.css';
 import { Providers } from './providers';
 
-const outfit = Outfit({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-outfit',
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -30,7 +36,7 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={`${outfit.variable} font-outfit bg-midnight-deep dark:bg-midnight-deep`}>
+      <body className={`${spaceGrotesk.variable} ${fraunces.variable} font-sans`}>
         <Providers>{children}</Providers>
       </body>
     </html>

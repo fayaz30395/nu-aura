@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/logger';
 import {
   Shield,
   Lock,
@@ -79,7 +80,7 @@ export default function SecuritySettingsPage() {
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
       successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to disable MFA:', err);
+      logger.error('Failed to disable MFA:', err);
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to disable MFA. Please try again.');
     }

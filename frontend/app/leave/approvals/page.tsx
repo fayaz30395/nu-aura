@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
@@ -8,6 +8,11 @@ import { AppLayout } from '@/components/layout';
 import { useLeaveRequestsByStatus, useActiveLeaveTypes, useApproveLeaveRequest, useRejectLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 
 export default function LeaveApprovalsPage() {
   const toast = useToast();
@@ -15,39 +20,74 @@ export default function LeaveApprovalsPage() {
   const { user } = useAuth();
   const { data: pendingData } = useLeaveRequestsByStatus('PENDING', 0, 50);
   const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const { data: employeeData } = useEmployees(0, 500);
   const approveLeaveRequest = useApproveLeaveRequest();
   const rejectLeaveRequest = useRejectLeaveRequest();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<string | null>(null);
+  const [showApproveConfirm, setShowApproveConfirm] = useState(false);
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const requests = pendingData?.content ?? [];
+  const employees = employeeData?.content ?? [];
 
-  const handleApprove = async (id: string) => {
-    if (!confirm('Are you sure you want to approve this leave request?')) return;
+  // Build employee name map
+  const employeeMap = useMemo(() => {
+    return employees.reduce((acc, emp) => {
+      acc[emp.id] = emp.fullName || emp.id;
+      return acc;
+    }, {} as Record<string, string>);
+  }, [employees]);
+
+  const handleApproveClick = (id: string) => {
+    setSelectedRequestId(id);
+    setShowApproveConfirm(true);
+  };
+
+  const handleApproveConfirm = async () => {
+    if (!selectedRequestId) return;
+    setShowApproveConfirm(false);
 
     try {
-      setProcessing(id);
-      await approveLeaveRequest.mutateAsync({ id, approverId: user?.employeeId || '' });
+      setIsProcessing(true);
+      await approveLeaveRequest.mutateAsync({ id: selectedRequestId, approverId: user?.employeeId || '' });
       toast.success('Leave request approved successfully');
+      setSelectedRequestId(null);
     } catch (error: unknown) {
       toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
     } finally {
-      setProcessing(null);
+      setIsProcessing(false);
     }
   };
 
-  const handleReject = async (id: string) => {
-    const reason = prompt('Please provide a reason for rejection:');
-    if (!reason) return;
+  const handleRejectClick = (id: string) => {
+    setSelectedRequestId(id);
+    setShowRejectConfirm(true);
+  };
+
+  const handleRejectConfirm = () => {
+    setShowRejectConfirm(false);
+    setShowRejectReasonModal(true);
+  };
+
+  const handleRejectSubmit = async () => {
+    if (!rejectReason.trim() || !selectedRequestId) return;
 
     try {
-      setProcessing(id);
-      await rejectLeaveRequest.mutateAsync({ id, approverId: user?.employeeId || '', reason });
+      setIsProcessing(true);
+      await rejectLeaveRequest.mutateAsync({ id: selectedRequestId, approverId: user?.employeeId || '', reason: rejectReason });
       toast.success('Leave request rejected');
+      setShowRejectReasonModal(false);
+      setRejectReason('');
+      setSelectedRequestId(null);
     } catch (error: unknown) {
       toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
     } finally {
-      setProcessing(null);
+      setIsProcessing(false);
     }
   };
 
@@ -96,12 +136,27 @@ export default function LeaveApprovalsPage() {
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Pending Requests</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
           </div>
+          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Approved (This Month)</div>
+            <div className="text-3xl font-bold text-green-600 dark:text-green-500">0</div>
+            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
+          </div>
+          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Rejected (This Month)</div>
+            <div className="text-3xl font-bold text-red-600 dark:text-red-500">0</div>
+            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
+          </div>
         </div>
 
         {/* Requests Table */}
         <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
           {!pendingData ? (
-            <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <span className="text-gray-600 dark:text-gray-400">Loading leave requests...</span>
+              </div>
+            </div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
@@ -134,7 +189,7 @@ export default function LeaveApprovalsPage() {
                         {request.requestNumber}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                        {request.employeeId.substring(0, 8)}...
+                        {employeeMap[request.employeeId] || request.employeeId.substring(0, 8) + '...'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {getLeaveTypeName(request.leaveTypeId)}
@@ -156,15 +211,15 @@ export default function LeaveApprovalsPage() {
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleApprove(request.id)}
-                            disabled={processing === request.id}
+                            onClick={() => handleApproveClick(request.id)}
+                            disabled={isProcessing}
                             className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-xs font-medium"
                           >
-                            {processing === request.id ? 'Processing...' : 'Approve'}
+                            {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
                           </button>
                           <button
-                            onClick={() => handleReject(request.id)}
-                            disabled={processing === request.id}
+                            onClick={() => handleRejectClick(request.id)}
+                            disabled={isProcessing}
                             className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-xs font-medium"
                           >
                             Reject
@@ -178,6 +233,73 @@ export default function LeaveApprovalsPage() {
             </div>
           )}
         </div>
+
+        {/* Approve Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showApproveConfirm}
+          onClose={() => setShowApproveConfirm(false)}
+          onConfirm={handleApproveConfirm}
+          title="Approve Leave Request?"
+          message="Are you sure you want to approve this leave request?"
+          confirmText="Approve"
+          cancelText="Cancel"
+          type="info"
+          loading={isProcessing}
+        />
+
+        {/* Reject Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showRejectConfirm}
+          onClose={() => setShowRejectConfirm(false)}
+          onConfirm={handleRejectConfirm}
+          title="Reject Leave Request?"
+          message="Are you sure you want to reject this leave request? You will need to provide a reason."
+          confirmText="Continue"
+          cancelText="Cancel"
+          type="danger"
+        />
+
+        {/* Reject Reason Modal */}
+        <Modal
+          isOpen={showRejectReasonModal}
+          onClose={() => {
+            setShowRejectReasonModal(false);
+            setRejectReason('');
+          }}
+          size="sm"
+        >
+          <ModalHeader onClose={() => setShowRejectReasonModal(false)}>
+            Reason for Rejection
+          </ModalHeader>
+          <ModalBody>
+            <Input
+              label="Please provide a reason for rejecting this leave request"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Enter rejection reason..."
+              disabled={isProcessing}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowRejectReasonModal(false);
+                setRejectReason('');
+              }}
+              disabled={isProcessing}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleRejectSubmit}
+              disabled={!rejectReason.trim() || isProcessing}
+            >
+              {isProcessing ? 'Rejecting...' : 'Reject'}
+            </Button>
+          </ModalFooter>
+        </Modal>
       </motion.div>
     </AppLayout>
   );

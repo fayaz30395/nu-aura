@@ -76,7 +76,8 @@ const Modal: React.FC<ModalProps> = ({
         >
           {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 backdrop-blur-sm"
+            style={{ backgroundColor: 'var(--bg-overlay)' }}
             onClick={closeOnBackdrop ? onClose : undefined}
             initial="initial"
             animate="animate"
@@ -87,11 +88,16 @@ const Modal: React.FC<ModalProps> = ({
           {/* Modal */}
           <motion.div
             className={cn(
-              'relative w-full bg-white dark:bg-surface-800 rounded-xl shadow-xl',
+              'relative w-full rounded-2xl border',
               'max-h-[90vh] overflow-hidden flex flex-col',
               sizeClasses[size],
               className
             )}
+            style={{
+              backgroundColor: 'var(--bg-elevated)',
+              borderColor: 'var(--border-main)',
+              boxShadow: 'var(--shadow-dropdown)',
+            }}
             onClick={(e) => e.stopPropagation()}
             initial="initial"
             animate="animate"
@@ -115,9 +121,10 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700',
+        'flex items-center justify-between px-6 py-4',
         className
       )}
+      style={{ borderBottom: '1px solid var(--border-main)' }}
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
@@ -154,10 +161,12 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ children, className }) => {
     <div
       className={cn(
         'flex items-center justify-end gap-3 px-6 py-4',
-        'border-t border-surface-200 dark:border-surface-700',
-        'bg-surface-50 dark:bg-surface-800/50',
         className
       )}
+      style={{
+        borderTop: '1px solid var(--border-main)',
+        backgroundColor: 'var(--bg-surface)',
+      }}
     >
       {children}
     </div>

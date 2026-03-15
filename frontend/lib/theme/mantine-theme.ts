@@ -2,18 +2,18 @@
 
 import { createTheme, MantineColorsTuple } from '@mantine/core';
 
-// Primary - Modern Blue (matching Tailwind config)
+// Primary - Electric Violet (matching Tailwind AURA Midnight config)
 const primary: MantineColorsTuple = [
-  '#eff6ff', // 50
-  '#dbeafe', // 100
-  '#bfdbfe', // 200
-  '#93c5fd', // 300
-  '#60a5fa', // 400
-  '#3b82f6', // 500 - Main primary
-  '#2563eb', // 600
-  '#1d4ed8', // 700
-  '#1e40af', // 800
-  '#1e3a8a', // 900
+  '#f5f3ff', // 50
+  '#ede9fe', // 100
+  '#ddd6fe', // 200
+  '#c4b5fd', // 300
+  '#a78bfa', // 400
+  '#8B5CF6', // 500 - Main primary
+  '#7c3aed', // 600
+  '#6d28d9', // 700
+  '#5b21b6', // 800
+  '#4c1d95', // 900
 ];
 
 // Success - Clean Green
@@ -116,13 +116,13 @@ export const theme = createTheme({
   primaryColor: 'primary',
   primaryShade: { light: 5, dark: 4 },
 
-  // Font family matching Tailwind config
-  fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+  // Font family matching Tailwind config (Outfit — locked in)
+  fontFamily: 'Outfit, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
   fontFamilyMonospace: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
 
   // Heading font weights
   headings: {
-    fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+    fontFamily: 'Outfit, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
     fontWeight: '600',
     sizes: {
       h1: { fontSize: '2.25rem', lineHeight: '2.5rem' },
@@ -134,15 +134,15 @@ export const theme = createTheme({
     },
   },
 
-  // Border radius matching Tailwind
+  // Border radius — aligned with Tailwind for consistency
   radius: {
-    xs: '0.25rem',  // 4px
-    sm: '0.375rem', // 6px - default
-    md: '0.5rem',   // 8px
-    lg: '0.625rem', // 10px
-    xl: '0.75rem',  // 12px
+    xs: '0.25rem',  // 4px  — badges, small pills
+    sm: '0.375rem', // 6px  — inputs, small elements
+    md: '0.5rem',   // 8px  — buttons, dropdowns
+    lg: '0.75rem',  // 12px — cards, panels
+    xl: '1rem',     // 16px — modals, large cards
   },
-  defaultRadius: 'sm',
+  defaultRadius: 'md',
 
   // Spacing
   spacing: {
@@ -168,54 +168,55 @@ export const theme = createTheme({
   // Focus ring style
   focusRing: 'auto',
 
-  // Component specific defaults
+  // Component specific defaults — aligned with SaaS-grade standards
   components: {
     Button: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
       },
       styles: {
         root: {
           fontWeight: 500,
+          transition: 'all 150ms ease-out',
         },
       },
     },
     Input: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
       },
     },
     TextInput: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
       },
     },
     Select: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
       },
     },
     Card: {
       defaultProps: {
-        radius: 'md',
+        radius: 'lg',
         shadow: 'sm',
       },
     },
     Modal: {
       defaultProps: {
-        radius: 'md',
+        radius: 'xl',
         shadow: 'xl',
       },
     },
     Paper: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
         shadow: 'sm',
       },
     },
     Notification: {
       defaultProps: {
-        radius: 'sm',
+        radius: 'md',
       },
     },
   },

@@ -8,9 +8,10 @@ import { AppLayout } from '@/components/layout';
 import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search, Calendar } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { ExpenseClaim, ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
-import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, EmptyState } from '@/components/ui';
+import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, EmptyState, ConfirmDialog } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { formatCurrency } from '@/lib/utils';
 import {
   useMyExpenseClaims,
   usePendingExpenseClaims,
@@ -67,6 +68,12 @@ export default function ExpenseClaims() {
   const [bulkProcessing, setBulkProcessing] = useState(false);
   const [showBulkRejectModal, setShowBulkRejectModal] = useState(false);
   const [bulkRejectReason, setBulkRejectReason] = useState('');
+
+  // Confirm dialogs
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const [selectedClaimForAction, setSelectedClaimForAction] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   // Filters
   const [showFilters, setShowFilters] = useState(false);
@@ -288,27 +295,40 @@ export default function ExpenseClaims() {
     }
   };
 
-  const handleReject = async (claimId: string) => {
-    if (!user?.employeeId) return;
+  const handleRejectStart = (claimId: string) => {
+    setSelectedClaimForAction(claimId);
+    setRejectReason('');
+    setShowRejectConfirm(true);
+  };
 
-    const reason = prompt('Please provide a rejection reason:');
-    if (!reason) return;
+  const handleRejectConfirm = async () => {
+    if (!user?.employeeId || !selectedClaimForAction || !rejectReason.trim()) return;
 
     try {
-      await rejectMutation.mutateAsync({ claimId, reason });
+      await rejectMutation.mutateAsync({ claimId: selectedClaimForAction, reason: rejectReason });
       showNotification('Expense claim rejected', 'success');
+      setShowRejectConfirm(false);
+      setSelectedClaimForAction(null);
+      setRejectReason('');
     } catch (err) {
       console.error('Error rejecting claim:', err);
       showNotification('Failed to reject expense claim', 'error');
     }
   };
 
-  const handleDelete = async (claimId: string) => {
-    if (!confirm('Are you sure you want to delete this claim?')) return;
+  const handleDeleteStart = (claimId: string) => {
+    setSelectedClaimForAction(claimId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedClaimForAction) return;
 
     try {
-      await deleteMutation.mutateAsync(claimId);
+      await deleteMutation.mutateAsync(selectedClaimForAction);
       showNotification('Expense claim deleted', 'success');
+      setShowDeleteConfirm(false);
+      setSelectedClaimForAction(null);
     } catch (err) {
       console.error('Error deleting claim:', err);
       showNotification('Failed to delete expense claim', 'error');
@@ -414,7 +434,7 @@ export default function ExpenseClaims() {
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">${statistics.totalPendingAmount.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{formatCurrency(statistics.totalPendingAmount, 'USD')}</p>
                 <p className="text-sm text-surface-500">Pending Amount</p>
               </div>
             </div>
@@ -816,7 +836,7 @@ export default function ExpenseClaims() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-                        {claim.currency} {claim.amount.toFixed(2)}
+                        {formatCurrency(claim.amount, claim.currency)}
                       </div>
                       <div className="text-sm text-surface-600 dark:text-surface-400">{claim.category.replace('_', ' ')}</div>
                     </div>
@@ -858,7 +878,7 @@ export default function ExpenseClaims() {
                           Submit for Approval
                         </button>
                         <button
-                          onClick={() => handleDelete(claim.id)}
+                          onClick={() => handleDeleteStart(claim.id)}
                           className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
                         >
                           <XCircle className="w-4 h-4" />
@@ -876,7 +896,7 @@ export default function ExpenseClaims() {
                           Approve
                         </button>
                         <button
-                          onClick={() => handleReject(claim.id)}
+                          onClick={() => handleRejectStart(claim.id)}
                           className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm transition-colors flex items-center gap-2"
                         >
                           <XCircle className="w-4 h-4" />
@@ -938,6 +958,78 @@ export default function ExpenseClaims() {
             >
               <XCircle className="w-4 h-4" />
               {bulkProcessing ? 'Rejecting...' : `Reject ${selectedClaims.size} Claims`}
+            </button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setSelectedClaimForAction(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Expense Claim"
+          message="Are you sure you want to delete this expense claim? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+          loading={deleteMutation.isPending}
+        />
+
+        {/* Reject Confirmation Dialog */}
+        <Modal
+          isOpen={showRejectConfirm}
+          onClose={() => {
+            setShowRejectConfirm(false);
+            setSelectedClaimForAction(null);
+            setRejectReason('');
+          }}
+          size="md"
+        >
+          <ModalHeader onClose={() => {
+            setShowRejectConfirm(false);
+            setSelectedClaimForAction(null);
+            setRejectReason('');
+          }}>
+            Reject Expense Claim
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-surface-600 dark:text-surface-400 mb-4">
+              Please provide a reason for rejecting this expense claim.
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                Rejection Reason <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                placeholder="Enter reason for rejection..."
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setShowRejectConfirm(false);
+                setSelectedClaimForAction(null);
+                setRejectReason('');
+              }}
+              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleRejectConfirm}
+              disabled={!rejectReason.trim() || rejectMutation.isPending}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <XCircle className="w-4 h-4" />
+              {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
             </button>
           </ModalFooter>
         </Modal>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { logger } from '@/lib/utils/logger';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -82,7 +83,7 @@ export default function CertificateGalleryPage() {
       link.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Failed to download certificate:', err);
+      logger.error('Failed to download certificate:', err);
       toast.error('Failed to download certificate');
     }
   };

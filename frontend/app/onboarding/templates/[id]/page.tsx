@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
     Layout,
     ArrowLeft,
@@ -54,6 +55,8 @@ export default function TemplateEditorPage() {
 
     const [localTemplate, setLocalTemplate] = useState<OnboardingChecklistTemplate | null>(null);
     const [tasks, setTasks] = useState<OnboardingTemplateTask[]>([]);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
     // Form and Task state
     const [editingTask, setEditingTask] = useState<string | null>(null); // Task ID or 'new'
@@ -121,12 +124,19 @@ export default function TemplateEditorPage() {
     };
 
     const handleDeleteTask = async (taskId: string) => {
-        if (!confirm('Are you sure you want to delete this task?')) return;
+        setTaskToDelete(taskId);
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!taskToDelete) return;
         try {
             await deleteTaskMutation.mutateAsync({
                 templateId,
-                taskId,
+                taskId: taskToDelete,
             });
+            setDeleteConfirmOpen(false);
+            setTaskToDelete(null);
         } catch (error) {
             console.error('Failed to delete task:', error);
         }
@@ -466,6 +476,21 @@ export default function TemplateEditorPage() {
                     </motion.div>
                 </div>
             )}
+
+            <ConfirmDialog
+                isOpen={deleteConfirmOpen}
+                onClose={() => {
+                    setDeleteConfirmOpen(false);
+                    setTaskToDelete(null);
+                }}
+                onConfirm={confirmDelete}
+                title="Delete Task"
+                message="Are you sure you want to delete this task? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+                type="danger"
+                loading={deleteTaskMutation.isPending}
+            />
         </AppLayout>
     );
 }

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/Input';
 import { Department, DepartmentRequest, Employee, DepartmentType } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   useAllDepartments,
   useCreateDepartment,
@@ -69,9 +70,15 @@ export default function DepartmentsPage() {
   const [editingDepartment, setEditingDepartment] = React.useState<Department | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [error, setError] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [deleteTarget, setDeleteTarget] = React.useState<string | null>(null);
+  const [showToggleConfirm, setShowToggleConfirm] = React.useState(false);
+  const [toggleTarget, setToggleTarget] = React.useState<Department | null>(null);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const [pageSize] = React.useState(10);
 
   // React Query hooks
-  const { data: deptData, isLoading } = useAllDepartments(0, 100);
+  const { data: deptData, isLoading } = useAllDepartments(currentPage, pageSize);
   const { data: empData } = useEmployees(0, 500);
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
@@ -141,13 +148,20 @@ export default function DepartmentsPage() {
     setShowAddModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this department?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteTarget(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    setShowDeleteConfirm(false);
 
     try {
       setError(null);
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(deleteTarget);
       toast.success('Department Deleted', 'The department has been deleted successfully.');
+      setDeleteTarget(null);
     } catch (err: unknown) {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department';
       setError(errorMsg);
@@ -156,16 +170,25 @@ export default function DepartmentsPage() {
     }
   };
 
-  const handleToggleActive = async (department: Department) => {
+  const handleToggleClick = (department: Department) => {
+    setToggleTarget(department);
+    setShowToggleConfirm(true);
+  };
+
+  const handleToggleConfirm = async () => {
+    if (!toggleTarget) return;
+    setShowToggleConfirm(false);
+
     try {
       setError(null);
-      if (department.isActive) {
-        await deactivateMutation.mutateAsync(department.id);
+      if (toggleTarget.isActive) {
+        await deactivateMutation.mutateAsync(toggleTarget.id);
         toast.success('Department Deactivated', 'The department has been deactivated.');
       } else {
-        await activateMutation.mutateAsync(department.id);
+        await activateMutation.mutateAsync(toggleTarget.id);
         toast.success('Department Activated', 'The department has been activated.');
       }
+      setToggleTarget(null);
     } catch (err: unknown) {
       const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status';
       setError(errorMsg);
@@ -318,7 +341,7 @@ export default function DepartmentsPage() {
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
-                          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
+                          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" aria-label="Loading departments" />
                           <span className="text-surface-500 dark:text-surface-400">Loading departments...</span>
                         </div>
                       </td>
@@ -393,14 +416,14 @@ export default function DepartmentsPage() {
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => handleToggleActive(dept)}
+                              onClick={() => handleToggleClick(dept)}
                               className="p-2 rounded-lg text-surface-500 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors"
                               title={dept.isActive ? 'Deactivate' : 'Activate'}
                             >
                               {dept.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                             </button>
                             <button
-                              onClick={() => handleDelete(dept.id)}
+                              onClick={() => handleDeleteClick(dept.id)}
                               className="p-2 rounded-lg text-surface-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                               title="Delete"
                             >
@@ -628,6 +651,38 @@ export default function DepartmentsPage() {
             </div>
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setDeleteTarget(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Department?"
+          message="Are you sure you want to delete this department? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
+
+        {/* Toggle Status Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showToggleConfirm}
+          onClose={() => {
+            setShowToggleConfirm(false);
+            setToggleTarget(null);
+          }}
+          onConfirm={handleToggleConfirm}
+          title={toggleTarget?.isActive ? 'Deactivate Department?' : 'Activate Department?'}
+          message={toggleTarget?.isActive
+            ? 'Are you sure you want to deactivate this department? Employees may be affected.'
+            : 'Are you sure you want to activate this department?'}
+          confirmText={toggleTarget?.isActive ? 'Deactivate' : 'Activate'}
+          cancelText="Cancel"
+          type="warning"
+        />
       </div>
     </AppLayout>
   );
