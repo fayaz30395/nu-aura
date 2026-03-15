@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
-import { format, formatDistanceToNow, isToday, parseISO } from 'date-fns';
+import {
+  format, formatDistanceToNow, isToday, isYesterday, parseISO,
+  startOfWeek, endOfWeek, subWeeks, isWithinInterval, startOfDay,
+} from 'date-fns';
 import {
   Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
-  MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown,
+  MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown, ChevronRight,
   RefreshCw, Linkedin, Lightbulb, ExternalLink, Send, MessageSquare,
-  MoreHorizontal, Trash2, Pencil,
+  MoreHorizontal, Trash2, Pencil, Calendar,
 } from 'lucide-react';
 import { feedService } from '@/lib/services/feed.service';
 import { wallService } from '@/lib/services/wall.service';
@@ -98,7 +101,135 @@ const FEED_LABELS: Record<FeedItemType, string> = {
   WALL_POST: 'Post',
 };
 
-const ITEMS_PER_PAGE = 8;
+// ─── Date Grouping ──────────────────────────────────────────────────
+type DateBucket = 'today' | 'yesterday' | 'this_week' | 'last_week' | 'earlier';
+
+interface DateGroup {
+  key: DateBucket;
+  label: string;
+  items: FeedItem[];
+}
+
+const DATE_BUCKET_LABELS: Record<DateBucket, string> = {
+  today: 'Today',
+  yesterday: 'Yesterday',
+  this_week: 'This Week',
+  last_week: 'Last Week',
+  earlier: 'Earlier',
+};
+
+function getDateBucket(dateStr: string): DateBucket {
+  try {
+    const date = startOfDay(parseISO(dateStr));
+    const now = new Date();
+
+    if (isToday(date)) return 'today';
+    if (isYesterday(date)) return 'yesterday';
+
+    const thisWeekStart = startOfWeek(now, { weekStartsOn: 1 });
+    const thisWeekEnd = endOfWeek(now, { weekStartsOn: 1 });
+    if (isWithinInterval(date, { start: thisWeekStart, end: thisWeekEnd })) return 'this_week';
+
+    const lastWeekStart = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
+    const lastWeekEnd = endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
+    if (isWithinInterval(date, { start: lastWeekStart, end: lastWeekEnd })) return 'last_week';
+
+    return 'earlier';
+  } catch {
+    return 'earlier';
+  }
+}
+
+function groupByDate(items: FeedItem[]): DateGroup[] {
+  const bucketOrder: DateBucket[] = ['today', 'yesterday', 'this_week', 'last_week', 'earlier'];
+  const groups: Record<DateBucket, FeedItem[]> = {
+    today: [], yesterday: [], this_week: [], last_week: [], earlier: [],
+  };
+
+  for (const item of items) {
+    const bucket = getDateBucket(item.timestamp);
+    groups[bucket].push(item);
+  }
+
+  return bucketOrder
+    .filter(key => groups[key].length > 0)
+    .map(key => ({ key, label: DATE_BUCKET_LABELS[key], items: groups[key] }));
+}
+
+// ─── Collapsible Date Section ───────────────────────────────────────
+function DateSection({
+  group,
+  defaultExpanded,
+  isLazy = false,
+  onLoadMore,
+  children,
+}: {
+  group: DateGroup;
+  defaultExpanded: boolean;
+  /** If true, section fetches data on first expand instead of rendering immediately */
+  isLazy?: boolean;
+  /** Called on first expand for lazy sections */
+  onLoadMore?: () => Promise<void>;
+  children: (items: FeedItem[]) => React.ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasFetched, setHasFetched] = useState(!isLazy);
+
+  const handleToggle = async () => {
+    const willExpand = !expanded;
+    setExpanded(willExpand);
+
+    // Lazy load: fetch data on first expand
+    if (willExpand && isLazy && !hasFetched && onLoadMore) {
+      setIsLoading(true);
+      try {
+        await onLoadMore();
+        setHasFetched(true);
+      } catch (error) {
+        console.error('Failed to load section:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <button
+        onClick={handleToggle}
+        className="w-full flex items-center gap-2 py-2 px-1 group transition-colors"
+      >
+        <span className="text-[var(--text-muted)] transition-transform duration-200">
+          {expanded
+            ? <ChevronDown className="h-3.5 w-3.5" />
+            : <ChevronRight className="h-3.5 w-3.5" />
+          }
+        </span>
+        <Calendar className="h-3 w-3 text-[var(--text-muted)]" />
+        <span className="text-xs font-semibold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+          {group.label}
+        </span>
+        <span className="text-[10px] font-medium text-[var(--text-muted)] bg-[var(--bg-surface)] px-1.5 py-0.5 rounded-full">
+          {group.items.length}
+        </span>
+        <div className="flex-1 border-b border-[var(--border-subtle)] ml-1" />
+      </button>
+      {expanded && (
+        <div className="space-y-2 pb-2">
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 py-4">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-primary-500" />
+              <span className="text-xs text-[var(--text-muted)]">Loading {group.label.toLowerCase()} items...</span>
+            </div>
+          ) : (
+            children(group.items)
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 type FeedFilter = 'ALL' | FeedItemType;
 
@@ -119,12 +250,16 @@ interface CompanyFeedProps {
   refreshKey?: number;
 }
 
+/** Buckets that are "recent" — loaded eagerly on mount */
+const EAGER_BUCKETS: Set<DateBucket> = new Set(['today', 'yesterday']);
+
 export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FeedFilter>('ALL');
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  // Track whether older items have been fetched (lazy-loaded on section expand)
+  const [olderLoaded, setOlderLoaded] = useState(false);
 
   const loadFeed = async (showRefresh = false) => {
     try {
@@ -132,19 +267,51 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
       else setIsLoading(true);
       const data = await feedService.getCompanyFeed(employeeId);
       setItems(data);
+      // After full fetch, mark older as loaded too
+      setOlderLoaded(true);
     } catch {
       setItems(getDemoFeed());
+      setOlderLoaded(true);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
   };
 
+  /**
+   * Lazy-load handler for older date sections.
+   * Fetches additional items from backend when user expands "This Week" / "Last Week" / "Earlier".
+   * If the initial fetch already returned those items, this is a no-op.
+   */
+  const loadOlderItems = useCallback(async () => {
+    if (olderLoaded) return;
+    try {
+      const olderData = await feedService.getCompanyFeedOlder(employeeId, 1, 20);
+      setItems(prev => {
+        // Merge: add new items that don't already exist
+        const existingIds = new Set(prev.map(i => i.id));
+        const newItems = olderData.filter(i => !existingIds.has(i.id));
+        if (newItems.length === 0) return prev;
+        const merged = [...prev, ...newItems];
+        merged.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        });
+        return merged;
+      });
+      setOlderLoaded(true);
+    } catch (error) {
+      console.error('Failed to load older feed items:', error);
+    }
+  }, [employeeId, olderLoaded]);
+
   useEffect(() => { loadFeed(); }, [employeeId, refreshKey]);
 
   const filteredItems = activeFilter === 'ALL' ? items : items.filter(item => item.type === activeFilter);
-  const visibleItems = filteredItems.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredItems.length;
+
+  // Group items by date buckets for collapsible sections
+  const dateGroups = useMemo(() => groupByDate(filteredItems), [filteredItems]);
 
   if (isLoading) {
     return (
@@ -190,7 +357,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         {FILTER_OPTIONS.map(option => (
           <button
             key={option.value}
-            onClick={() => { setActiveFilter(option.value); setVisibleCount(ITEMS_PER_PAGE); }}
+            onClick={() => setActiveFilter(option.value)}
             className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${
               activeFilter === option.value
                 ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
@@ -202,12 +369,31 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
         ))}
       </div>
 
-      {/* Feed Items */}
-      {visibleItems.length > 0 ? (
-        <div className="space-y-2">
-          {visibleItems.map(item => (
-            <FeedCard key={item.id} item={item} onDeleted={(id) => setItems((prev) => prev.filter((i) => i.id !== id))} />
-          ))}
+      {/* Feed Items — grouped by date, older sections lazy-loaded */}
+      {dateGroups.length > 0 ? (
+        <div className="space-y-1">
+          {dateGroups.map((group) => {
+            const isEager = EAGER_BUCKETS.has(group.key);
+            return (
+              <DateSection
+                key={group.key}
+                group={group}
+                defaultExpanded={isEager}
+                isLazy={!isEager && !olderLoaded}
+                onLoadMore={!isEager && !olderLoaded ? loadOlderItems : undefined}
+              >
+                {(groupItems) =>
+                  groupItems.map((item) => (
+                    <FeedCard
+                      key={item.id}
+                      item={item}
+                      onDeleted={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
+                    />
+                  ))
+                }
+              </DateSection>
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-6">
@@ -215,16 +401,6 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
             {activeFilter === 'ALL' ? 'No feed items yet.' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items.`}
           </p>
         </div>
-      )}
-
-      {/* Show More */}
-      {hasMore && (
-        <button
-          onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
-          className="w-full mt-3 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 rounded-lg transition-colors flex items-center justify-center gap-1"
-        >
-          Show more <ChevronDown className="h-3.5 w-3.5" />
-        </button>
       )}
     </div>
   );
@@ -506,7 +682,7 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
             {!isLoadingComments && comments.length > 0 && (
               <div className="space-y-2">
                 {comments.map((comment) => (
-                  <FeedCommentItem key={comment.id} comment={comment} postId={item.wallPostId!} depth={0} onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)} />
+                  <FeedCommentItem key={comment.id} comment={comment} postId={item.wallPostId!} depth={0} onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)} currentUser={user ? { employeeId: user.employeeId, profilePictureUrl: user.profilePictureUrl } : undefined} />
                 ))}
               </div>
             )}
@@ -722,6 +898,7 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
                       postId={item.wallPostId!}
                       depth={0}
                       onReplyAdded={() => setLocalCommentCount((prev) => prev + 1)}
+                      currentUser={user ? { employeeId: user.employeeId, profilePictureUrl: user.profilePictureUrl } : undefined}
                     />
                   ))}
                 </div>
@@ -751,11 +928,13 @@ function FeedCommentItem({
   postId,
   depth,
   onReplyAdded,
+  currentUser,
 }: {
   comment: CommentResponse;
   postId: string;
   depth: number;
   onReplyAdded: () => void;
+  currentUser?: { employeeId?: string; profilePictureUrl?: string };
 }) {
   const [liked, setLiked] = useState(false);
   const [localLikes, setLocalLikes] = useState(comment.likesCount ?? 0);
@@ -767,7 +946,11 @@ function FeedCommentItem({
   const [isLoadingReplies, setIsLoadingReplies] = useState(false);
   const [repliesFetched, setRepliesFetched] = useState(false);
 
-  const commentAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.author.fullName)}&background=6366f1&color=fff&size=48&bold=true&format=svg`;
+  // Resolve avatar: backend avatarUrl → current user's Google pic → generated fallback
+  const isOwnComment = currentUser?.employeeId && comment.author.id === currentUser.employeeId;
+  const commentAvatarUrl = comment.author.avatarUrl
+    || (isOwnComment && currentUser?.profilePictureUrl ? currentUser.profilePictureUrl : null)
+    || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.author.fullName)}&background=6366f1&color=fff&size=48&bold=true&format=svg`;
 
   const handleLikeComment = () => {
     // Optimistic toggle — backend comment-like endpoint not yet implemented
@@ -914,6 +1097,7 @@ function FeedCommentItem({
                   postId={postId}
                   depth={depth + 1}
                   onReplyAdded={onReplyAdded}
+                  currentUser={currentUser}
                 />
               ))}
             </div>

@@ -2,6 +2,7 @@ package com.hrms.application.wall.service;
 
 import com.hrms.api.wall.dto.*;
 import com.hrms.application.common.service.ContentViewService;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.common.ContentView.ContentType;
 import com.hrms.domain.employee.Employee;

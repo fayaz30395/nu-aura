@@ -17,6 +17,19 @@ export APP_CORS_ALLOWED_ORIGINS="http://localhost:3000,http://localhost:3001,htt
 # Encryption key for sensitive data (32 bytes)
 export APP_SECURITY_ENCRYPTION_KEY="0123456789ABCDEF0123456789ABCDEF"
 
+echo "Checking for existing processes on port 8080..."
+# Kill any process running on port 8080
+PORT_PID=$(lsof -ti:8080)
+if [ -n "$PORT_PID" ]; then
+  echo "Found process $PORT_PID on port 8080. Killing it..."
+  kill -9 $PORT_PID
+  sleep 2
+  echo "Process killed."
+else
+  echo "No process found on port 8080."
+fi
+
+echo ""
 echo "Starting HRMS Backend..."
 echo "Profile: $SPRING_PROFILES_ACTIVE"
 echo "Database: $SPRING_DATASOURCE_URL"

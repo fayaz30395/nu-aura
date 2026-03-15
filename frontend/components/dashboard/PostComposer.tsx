@@ -117,7 +117,18 @@ export function PostComposer({ onPostCreated }: PostComposerProps) {
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
               onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onBlur={(e) => {
+                // Don't collapse if focus moved to a sibling element (e.g. Post button, toolbar)
+                // relatedTarget is the element receiving focus next
+                const container = e.currentTarget.closest('.space-y-2');
+                if (container && e.relatedTarget && container.contains(e.relatedTarget as Node)) {
+                  return;
+                }
+                // Only collapse if content is empty
+                if (!postContent.trim()) {
+                  setIsFocused(false);
+                }
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Write something..."
               className={cn(
