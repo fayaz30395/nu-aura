@@ -390,13 +390,17 @@ public class WallService {
             }
         }
 
-        // Recent reactors (top 5 most recent)
-        List<PostReaction> recentReactions = postReactionRepository.findRecentByPostId(
-                post.getId(), PageRequest.of(0, 5));
-        List<WallPostResponse.ReactorInfo> recentReactors = recentReactions.stream()
-                .map(this::mapToReactorInfo)
-                .collect(Collectors.toList());
-        response.setRecentReactors(recentReactors);
+        // Recent reactors (top 5 most recent) — wrapped in try-catch to not break the feed
+        try {
+            List<PostReaction> recentReactions = postReactionRepository.findRecentByPostId(
+                    post.getId(), PageRequest.of(0, 5));
+            List<WallPostResponse.ReactorInfo> recentReactors = recentReactions.stream()
+                    .map(this::mapToReactorInfo)
+                    .collect(Collectors.toList());
+            response.setRecentReactors(recentReactors);
+        } catch (Exception e) {
+            response.setRecentReactors(Collections.emptyList());
+        }
         response.setTotalReactorCount(post.getLikesCount());
 
         // Poll options
