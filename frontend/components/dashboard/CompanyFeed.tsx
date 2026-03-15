@@ -388,6 +388,7 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
                       key={item.id}
                       item={item}
                       onDeleted={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
+                      onUpdated={(id, newContent) => setItems((prev) => prev.map((i) => i.id === id ? { ...i, description: newContent, title: newContent.length > 120 ? newContent.substring(0, 120) + '...' : newContent } : i))}
                     />
                   ))
                 }
@@ -407,9 +408,10 @@ export function CompanyFeed({ employeeId, refreshKey = 0 }: CompanyFeedProps) {
 }
 
 // ─── Action Menu (shared) ─────────────────────────────────────────────
-function ActionMenu({ showMenu, setShowMenu, onDelete, isDeleting }: {
+function ActionMenu({ showMenu, setShowMenu, onEdit, onDelete, isDeleting }: {
   showMenu: boolean;
   setShowMenu: (v: boolean) => void;
+  onEdit?: () => void;
   onDelete: () => void;
   isDeleting: boolean;
 }) {
@@ -425,6 +427,15 @@ function ActionMenu({ showMenu, setShowMenu, onDelete, isDeleting }: {
         <>
           <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
           <div className="absolute right-0 top-full mt-1 z-20 min-w-[120px] rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg py-1">
+            {onEdit && (
+              <button
+                onClick={() => { onEdit(); setShowMenu(false); }}
+                className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 transition-colors"
+              >
+                <Pencil className="h-3 w-3" />
+                Edit post
+              </button>
+            )}
             <button
               onClick={onDelete}
               disabled={isDeleting}
@@ -441,7 +452,7 @@ function ActionMenu({ showMenu, setShowMenu, onDelete, isDeleting }: {
 }
 
 // ─── Feed Card ───────────────────────────────────────────────────────
-function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string) => void }) {
+function FeedCard({ item, onDeleted, onUpdated }: { item: FeedItem; onDeleted?: (id: string) => void; onUpdated?: (id: string, newContent: string) => void }) {
   const colors = FEED_COLORS[item.type];
   const icon = FEED_ICONS[item.type];
   const { user } = useAuth();
@@ -457,6 +468,18 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+
+  // Edit post state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(item.description || item.title || '');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const [localContent, setLocalContent] = useState(item.description || item.title || '');
+
+  // Reactor details state
+  const [localReactors, setLocalReactors] = useState(item.recentReactors ?? []);
+  const [showReactorsPopover, setShowReactorsPopover] = useState(false);
+  const [allReactors, setAllReactors] = useState<Array<{ employeeId: string; fullName: string; avatarUrl?: string; reactionType: string; reactedAt: string }>>([]);
+  const [isLoadingAllReactors, setIsLoadingAllReactors] = useState(false);
 
   // Determine if current user can manage this post
   const isPostAuthor = item.wallPostId && item.wallPostAuthorId && user?.employeeId === item.wallPostAuthorId;
@@ -474,6 +497,31 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
     } finally {
       setIsDeleting(false);
       setShowActionMenu(false);
+    }
+  };
+
+  const handleStartEdit = () => {
+    setEditContent(localContent);
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditContent(localContent);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!item.wallPostId || !editContent.trim() || isSavingEdit) return;
+    setIsSavingEdit(true);
+    try {
+      await wallService.updatePost(item.wallPostId, { content: editContent.trim() });
+      setLocalContent(editContent.trim());
+      setIsEditing(false);
+      onUpdated?.(item.id, editContent.trim());
+    } catch (error) {
+      console.error('Failed to update post:', error);
+    } finally {
+      setIsSavingEdit(false);
     }
   };
 
@@ -509,8 +557,19 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
     }
 
     const wasLiked = liked;
+    const prevReactors = [...localReactors];
     setLiked(!wasLiked);
     setLocalLikeCount((prev) => wasLiked ? Math.max(0, prev - 1) : prev + 1);
+
+    // Optimistically update reactor list
+    if (wasLiked) {
+      setLocalReactors((prev) => prev.filter((r) => r.employeeId !== user?.employeeId));
+    } else if (user) {
+      setLocalReactors((prev) => [
+        { employeeId: user.employeeId || '', fullName: user.fullName || 'You', avatarUrl: user.profilePictureUrl, reactionType: 'LIKE', reactedAt: new Date().toISOString() },
+        ...prev,
+      ].slice(0, 5));
+    }
 
     try {
       if (wasLiked) {
@@ -523,6 +582,23 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
       // Revert on error
       setLiked(wasLiked);
       setLocalLikeCount(item.likesCount ?? 0);
+      setLocalReactors(prevReactors);
+    }
+  };
+
+  const handleShowAllReactors = async () => {
+    if (!item.wallPostId) return;
+    setShowReactorsPopover(true);
+    if (allReactors.length === 0) {
+      setIsLoadingAllReactors(true);
+      try {
+        const data = await wallService.getPostReactions(item.wallPostId, 0, 50);
+        setAllReactors(data.content);
+      } catch (error) {
+        console.error('Failed to load reactors:', error);
+      } finally {
+        setIsLoadingAllReactors(false);
+      }
     }
   };
 
@@ -587,6 +663,7 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
               <ActionMenu
                 showMenu={showActionMenu}
                 setShowMenu={setShowActionMenu}
+                onEdit={item.wallPostId ? handleStartEdit : undefined}
                 onDelete={handleDeletePost}
                 isDeleting={isDeleting}
               />
@@ -594,11 +671,43 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
           </div>
         </div>
 
-        {/* Post content */}
+        {/* Post content — inline edit mode */}
         <div className="px-4 pb-3">
-          <p className="text-sm text-[var(--text-primary)] leading-relaxed whitespace-pre-wrap">
-            {item.description || item.title}
-          </p>
+          {isEditing ? (
+            <div className="space-y-2">
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.ctrlKey) handleSaveEdit();
+                  if (e.key === 'Escape') handleCancelEdit();
+                }}
+                className="input-aura w-full resize-none text-sm min-h-[60px]"
+                autoFocus
+                disabled={isSavingEdit}
+              />
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={isSavingEdit}
+                  className="px-3 py-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={!editContent.trim() || isSavingEdit}
+                  className="px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSavingEdit ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--text-primary)] leading-relaxed whitespace-pre-wrap">
+              {localContent}
+            </p>
+          )}
         </div>
 
         {/* Post image */}
@@ -633,10 +742,73 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
           {(localLikeCount > 0 || localCommentCount > 0) && (
             <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
               {localLikeCount > 0 && (
-                <span className="inline-flex items-center gap-1">
-                  <span className="text-sm leading-none">👍</span>
-                  {localLikeCount} {localLikeCount === 1 ? 'reaction' : 'reactions'}
-                </span>
+                <div className="relative">
+                  <button
+                    onClick={handleShowAllReactors}
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--text-secondary)] transition-colors"
+                  >
+                    {/* Stacked reactor avatars */}
+                    {localReactors.length > 0 && (
+                      <div className="flex -space-x-1.5">
+                        {localReactors.slice(0, 3).map((reactor) => (
+                          <img
+                            key={reactor.employeeId}
+                            src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=20&bold=true&format=svg`}
+                            alt={reactor.fullName}
+                            className="h-5 w-5 rounded-full border border-white dark:border-gray-800 object-cover"
+                            title={reactor.fullName}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    {localReactors.length === 0 && <span className="text-sm leading-none">👍</span>}
+                    <span>
+                      {localReactors.length > 0
+                        ? localLikeCount <= 2
+                          ? localReactors.slice(0, 2).map((r) => r.fullName.split(' ')[0]).join(' and ')
+                          : `${localReactors[0].fullName.split(' ')[0]} and ${localLikeCount - 1} other${localLikeCount - 1 === 1 ? '' : 's'}`
+                        : `${localLikeCount} ${localLikeCount === 1 ? 'reaction' : 'reactions'}`
+                      }
+                    </span>
+                  </button>
+
+                  {/* Reactors popover */}
+                  {showReactorsPopover && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowReactorsPopover(false)} />
+                      <div className="absolute right-0 bottom-full mb-2 z-50 w-64 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl shadow-lg overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-subtle)]">
+                          <span className="text-xs font-semibold text-[var(--text-primary)]">Reactions ({localLikeCount})</span>
+                          <button onClick={() => setShowReactorsPopover(false)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs">✕</button>
+                        </div>
+                        <div className="max-h-48 overflow-y-auto">
+                          {isLoadingAllReactors ? (
+                            <div className="flex items-center justify-center py-4">
+                              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-primary-500" />
+                            </div>
+                          ) : (
+                            (allReactors.length > 0 ? allReactors : localReactors).map((reactor) => (
+                              <div key={reactor.employeeId} className="flex items-center gap-2 px-4 py-2 hover:bg-[var(--bg-surface)] transition-colors">
+                                <img
+                                  src={reactor.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(reactor.fullName)}&background=6366f1&color=fff&size=28&bold=true&format=svg`}
+                                  alt={reactor.fullName}
+                                  className="h-7 w-7 rounded-full object-cover flex-shrink-0"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-medium text-[var(--text-primary)] truncate">{reactor.fullName}</p>
+                                </div>
+                                <span className="text-sm">👍</span>
+                              </div>
+                            ))
+                          )}
+                          {!isLoadingAllReactors && allReactors.length === 0 && localReactors.length === 0 && (
+                            <p className="text-xs text-[var(--text-muted)] text-center py-4">No reactions yet</p>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
               {localLikeCount > 0 && localCommentCount > 0 && (
                 <span className="mx-0.5">·</span>

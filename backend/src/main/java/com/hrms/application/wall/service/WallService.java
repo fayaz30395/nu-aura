@@ -10,6 +10,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.domain.wall.model.*;
 import com.hrms.infrastructure.wall.repository.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,6 +119,29 @@ public class WallService {
     }
 
     @Transactional
+    public WallPostResponse updatePost(UUID postId, UpdatePostRequest request, UUID userId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // Allow update by: post author, or admins with WALL_MANAGE / SYSTEM_ADMIN permission
+        boolean isAuthor = post.getAuthor().getId().equals(userId);
+        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
+        if (!isAuthor && !isAdmin) {
+            throw new IllegalArgumentException("You can only edit your own posts");
+        }
+
+        // Only allow editing content and image — type, visibility, poll options are immutable after creation
+        post.setContent(request.getContent());
+        if (request.getImageUrl() != null) {
+            post.setImageUrl(request.getImageUrl());
+        }
+
+        wallPostRepository.save(post);
+        return mapToResponse(post, userId);
+    }
+
+    @Transactional
     public void deletePost(UUID postId, UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
@@ -191,6 +215,16 @@ public class WallService {
                 wallPostRepository.save(post);
             }
         }
+    }
+
+    /**
+     * Get paginated list of all users who reacted to a post.
+     */
+    @Transactional(readOnly = true)
+    public Page<WallPostResponse.ReactorInfo> getPostReactions(UUID postId, Pageable pageable) {
+        TenantContext.requireCurrentTenant();
+        Page<PostReaction> reactions = postReactionRepository.findAllByPostIdWithDetails(postId, pageable);
+        return reactions.map(this::mapToReactorInfo);
     }
 
     // ==================== COMMENTS ====================
@@ -356,6 +390,15 @@ public class WallService {
             }
         }
 
+        // Recent reactors (top 5 most recent)
+        List<PostReaction> recentReactions = postReactionRepository.findRecentByPostId(
+                post.getId(), PageRequest.of(0, 5));
+        List<WallPostResponse.ReactorInfo> recentReactors = recentReactions.stream()
+                .map(this::mapToReactorInfo)
+                .collect(Collectors.toList());
+        response.setRecentReactors(recentReactors);
+        response.setTotalReactorCount(post.getLikesCount());
+
         // Poll options
         if (post.getType() == WallPost.PostType.POLL) {
             List<PollOption> options = pollOptionRepository.findByPostIdOrderByDisplayOrder(post.getId());
@@ -392,6 +435,20 @@ public class WallService {
             authorInfo.setAvatarUrl(employee.getUser().getProfilePictureUrl());
         }
         return authorInfo;
+    }
+
+    private WallPostResponse.ReactorInfo mapToReactorInfo(PostReaction reaction) {
+        WallPostResponse.ReactorInfo info = new WallPostResponse.ReactorInfo();
+        Employee employee = reaction.getEmployee();
+        info.setEmployeeId(employee.getId());
+        info.setFullName(employee.getFullName());
+        info.setReactionType(reaction.getReactionType().name());
+        info.setReactedAt(reaction.getCreatedAt());
+        // Pull avatar from linked User entity (Google OAuth picture)
+        if (employee.getUser() != null && employee.getUser().getProfilePictureUrl() != null) {
+            info.setAvatarUrl(employee.getUser().getProfilePictureUrl());
+        }
+        return info;
     }
 
     private CommentResponse mapCommentToResponse(PostComment comment) {

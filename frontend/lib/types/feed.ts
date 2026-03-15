@@ -70,6 +70,15 @@ export interface FeedItem {
   wallPostAuthorDepartment?: string;
   wallPostImageUrl?: string;
   wallPostType?: 'POST' | 'POLL' | 'PRAISE';
+  // Reactor details
+  recentReactors?: Array<{
+    employeeId: string;
+    fullName: string;
+    avatarUrl?: string;
+    reactionType: string;
+    reactedAt: string;
+  }>;
+  totalReactorCount?: number;
 }
 
 export interface CompanyFeedData {
