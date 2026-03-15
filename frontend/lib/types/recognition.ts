@@ -56,6 +56,8 @@ export interface Recognition {
   approvedAt?: string;
   recognizedAt: string;
   createdAt: string;
+  wallPostId?: string; // Reference to wall post for reactions/comments
+  hasReacted?: boolean; // Whether current user has reacted
 }
 
 export interface RecognitionRequest {

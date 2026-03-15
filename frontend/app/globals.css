@@ -3,15 +3,16 @@
 @tailwind utilities;
 
 /* ================================================================
-   NU-AURA THEME — Production HR SaaS Palette
-   Reference: Linear, Vercel, Stripe, Notion
-   Brand: Indigo primary — vibrant, modern SaaS
-   Neutrals: Cool gray (no warm sand, no opacity abuse)
+   NU-AURA THEME — Keka-Inspired HR SaaS Palette
+   Reference: Keka HRMS design system (actual interface colors)
+   Brand: Deep Purple primary (#6358A8) — professional, modern
+   Accent: Vibrant Purple (#8577D3), Teal (#5AC8C5)
+   Neutrals: Dark navy backgrounds, clean slate grays
    ================================================================ */
 
 @layer base {
   :root {
-    /* ── Surface Hierarchy (Solid, clean) ─────────── */
+    /* ── Surface Hierarchy (Keka light theme - white/light backgrounds) ─────────── */
     --bg-main: #f8f9fc;
     --bg-surface: #eef1f6;
     --bg-elevated: #ffffff;
@@ -19,15 +20,15 @@
     --bg-card-hover: #f3f5f9;
     --bg-page: #f8f9fc;
     --bg-input: #ffffff;
-    --bg-sidebar: #1e1b4b;
+    --bg-sidebar: #1E2838;
     --bg-overlay: rgba(0, 0, 0, 0.5);
 
-    /* ── Ambient Background (very subtle) ────────── */
-    --bg-radial-1: radial-gradient(1000px circle at 10% -8%, rgba(62, 99, 221, 0.04), transparent 50%);
-    --bg-radial-2: radial-gradient(700px circle at 92% 5%, rgba(59, 130, 246, 0.03), transparent 45%);
+    /* ── Ambient Background (very subtle purple glow) ────────── */
+    --bg-radial-1: radial-gradient(1000px circle at 10% -8%, rgba(99, 88, 168, 0.02), transparent 50%);
+    --bg-radial-2: radial-gradient(700px circle at 92% 5%, rgba(133, 119, 211, 0.015), transparent 45%);
     --bg-linear: none;
 
-    /* ── Text Hierarchy ───────────────────────────── */
+    /* ── Text Hierarchy (dark text for light bg - Keka style) ───────────────────────────── */
     --text-primary: #111827;
     --text-secondary: #4b5563;
     --text-muted: #9ca3af;
@@ -37,12 +38,12 @@
     --border-main: #e5e7eb;
     --border-subtle: #f3f4f6;
     --border-strong: #d1d5db;
-    --border-focus: #3e63dd;
+    --border-focus: #6358A8;
 
     /* ── Sidebar Active State ──────────────────────── */
-    --sidebar-active-bg: rgba(255, 255, 255, 0.15);
-    --sidebar-active-border: #818cf8;
-    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-active-bg: rgba(133, 119, 211, 0.15);
+    --sidebar-active-border: #8577D3;
+    --sidebar-hover-bg: rgba(133, 119, 211, 0.08);
 
     /* ── Sidebar Text (dark sidebar in light mode) ── */
     --sidebar-text: rgba(255, 255, 255, 0.7);
@@ -58,18 +59,18 @@
     --shadow-dropdown: 0 16px 36px -8px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.06);
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(62, 99, 221, 0.3);
+    --ring-primary: rgba(99, 88, 168, 0.3);
     --ring-danger: rgba(239, 68, 68, 0.3);
     --ring-success: rgba(16, 185, 129, 0.3);
 
     /* ── Chart Colors (for Recharts/d3 — must be solid hex) ── */
-    --chart-primary: #3e63dd;
-    --chart-secondary: #8b5cf6;
+    --chart-primary: #6358A8;
+    --chart-secondary: #8577D3;
     --chart-success: #10b981;
     --chart-warning: #f59e0b;
     --chart-danger: #ef4444;
-    --chart-info: #3b82f6;
-    --chart-accent: #f97316;
+    --chart-info: #5AC8C5;
+    --chart-accent: #D0B8F0;
     --chart-muted: #9ca3af;
     --chart-grid: #e5e7eb;
     --chart-tooltip-bg: #ffffff;
@@ -102,9 +103,9 @@
     --status-orange-text: #9a3412;
     --status-orange-border: #fed7aa;
 
-    /* ── Header/Dropdown (adaptive solid colors) ─── */
-    --header-bg: #ffffff;
-    --header-border: #e5e7eb;
+    /* ── Header/Dropdown (Keka style - purple header, white dropdowns) ─── */
+    --header-bg: #6358A8;
+    --header-border: #534A8C;
     --dropdown-bg: #ffffff;
     --dropdown-border: #e5e7eb;
     --dropdown-hover: #f3f4f6;
@@ -126,8 +127,8 @@
     --bg-overlay: rgba(0, 0, 0, 0.75);
 
     /* ── Ambient Background (dark, minimal) ──────── */
-    --bg-radial-1: radial-gradient(900px circle at 8% -10%, rgba(62, 99, 221, 0.06), transparent 50%);
-    --bg-radial-2: radial-gradient(600px circle at 92% 8%, rgba(59, 130, 246, 0.04), transparent 45%);
+    --bg-radial-1: radial-gradient(900px circle at 8% -10%, rgba(99, 88, 168, 0.06), transparent 50%);
+    --bg-radial-2: radial-gradient(600px circle at 92% 8%, rgba(133, 119, 211, 0.04), transparent 45%);
     --bg-linear: none;
 
     /* ── Text Hierarchy (solid, no rgba) ──────────── */
@@ -140,12 +141,12 @@
     --border-main: #27272a;
     --border-subtle: #1c1c1f;
     --border-strong: #3f3f46;
-    --border-focus: #818cf8;
+    --border-focus: #8577D3;
 
     /* ── Sidebar Active State (dark — blended, not contrasting) ── */
-    --sidebar-active-bg: rgba(129, 140, 248, 0.15);
-    --sidebar-active-border: #818cf8;
-    --sidebar-hover-bg: rgba(129, 140, 248, 0.08);
+    --sidebar-active-bg: rgba(133, 119, 211, 0.15);
+    --sidebar-active-border: #8577D3;
+    --sidebar-hover-bg: rgba(133, 119, 211, 0.08);
 
     /* ── Sidebar Text (dark mode — blended with bg) ── */
     --sidebar-text: #a1a1aa;
@@ -161,18 +162,18 @@
     --shadow-dropdown: 0 20px 44px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px #3f3f46;
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(129, 140, 248, 0.35);
+    --ring-primary: rgba(133, 119, 211, 0.35);
     --ring-danger: rgba(248, 113, 113, 0.3);
     --ring-success: rgba(52, 211, 153, 0.3);
 
     /* ── Chart Colors (dark — adjusted for dark backgrounds) ── */
-    --chart-primary: #818cf8;
+    --chart-primary: #8577D3;
     --chart-secondary: #a78bfa;
     --chart-success: #34d399;
     --chart-warning: #fbbf24;
     --chart-danger: #f87171;
-    --chart-info: #60a5fa;
-    --chart-accent: #fb923c;
+    --chart-info: #5AC8C5;
+    --chart-accent: #D0B8F0;
     --chart-muted: #71717a;
     --chart-grid: #27272a;
     --chart-tooltip-bg: #18181b;
@@ -206,8 +207,8 @@
     --status-orange-border: #6b3010;
 
     /* ── Header/Dropdown (dark solid) ─────────────── */
-    --header-bg: #111113;
-    --header-border: #27272a;
+    --header-bg: #534A8C;
+    --header-border: #423B70;
     --dropdown-bg: #18181b;
     --dropdown-border: #27272a;
     --dropdown-hover: #27272a;
@@ -245,14 +246,14 @@
     background-image: var(--bg-radial-1), var(--bg-radial-2);
     background-attachment: fixed;
     color: var(--text-primary);
-    font-family: var(--font-sans), 'Space Grotesk', 'Manrope', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
     color: var(--text-primary);
-    font-family: var(--font-display), 'Fraunces', 'DM Serif Display', serif;
-    letter-spacing: -0.01em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   @media (prefers-reduced-motion: no-preference) {

@@ -54,10 +54,10 @@ export function PostComposer() {
       <div className="flex items-center border-b border-[var(--border-main)]">
         <button
           onClick={() => { setActiveTab('post'); setPostContent(''); }}
-          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors ${
             activeTab === 'post'
-              ? 'border-b-2 border-[var(--text-primary)] text-[var(--text-primary)]'
-              : 'border-b-2 border-transparent text-[var(--text-muted)] hover:text-gray-700 dark:text-[var(--text-muted)]'
+              ? 'border-b-2 border-primary-600 text-[var(--text-primary)]'
+              : 'border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
           <Edit3 size={14} />
@@ -65,27 +65,27 @@ export function PostComposer() {
         </button>
         <button
           onClick={() => setActiveTab('poll')}
-          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors ${
             activeTab === 'poll'
-              ? 'border-b-2 border-[var(--text-primary)] text-[var(--text-primary)]'
-              : 'border-b-2 border-transparent text-[var(--text-muted)] hover:text-gray-700 dark:text-[var(--text-muted)]'
+              ? 'border-b-2 border-primary-600 text-[var(--text-primary)]'
+              : 'border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
           <BarChart3 size={14} />
           Poll
-          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
+          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)] font-medium border border-[var(--border-main)]">Soon</span>
         </button>
         <button
           onClick={() => setActiveTab('praise')}
-          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold transition-colors ${
             activeTab === 'praise'
-              ? 'border-b-2 border-[var(--text-primary)] text-[var(--text-primary)]'
-              : 'border-b-2 border-transparent text-[var(--text-muted)] hover:text-gray-700 dark:text-[var(--text-muted)]'
+              ? 'border-b-2 border-primary-600 text-[var(--text-primary)]'
+              : 'border-b-2 border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}
         >
           <Trophy size={14} />
           Praise
-          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
+          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[10px] text-[var(--text-secondary)] font-medium border border-[var(--border-main)]">Soon</span>
         </button>
       </div>
 
@@ -119,9 +119,9 @@ export function PostComposer() {
               <button
                 onClick={handlePost}
                 disabled={!postContent.trim() || isSubmitting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-xs font-semibold text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
               >
-                {isSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                 {isSubmitting ? 'Posting...' : 'Post'}
               </button>
             </div>

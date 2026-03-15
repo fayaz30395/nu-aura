@@ -1,0 +1,23 @@
+package com.hrms.api.home.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RemoteWorkerResponse {
+    private UUID employeeId;
+    private String employeeName;
+    private String avatarUrl;
+    private String department;
+    private String designation;
+    private LocalDateTime checkInTime;
+    private String checkInLocation;
+}

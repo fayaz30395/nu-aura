@@ -69,6 +69,8 @@ class FeedService {
         isPinned: a.isPinned,
         publishedByName: a.publishedByName,
         readCount: a.readCount,
+        wallPostId: a.wallPostId, // Enable reactions/comments through wall API
+        hasReacted: a.hasReacted, // User's reaction status
       }));
     } catch {
       return [];
@@ -157,6 +159,8 @@ class FeedService {
         pointsAwarded: r.pointsAwarded,
         likesCount: r.likesCount,
         commentsCount: r.commentsCount,
+        wallPostId: r.wallPostId, // Enable reactions/comments through wall API
+        hasReacted: r.hasReacted, // User's reaction status
       }));
     } catch {
       return [];

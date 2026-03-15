@@ -462,7 +462,7 @@ const Header: React.FC<HeaderProps> = ({
     <header
       className={cn(
         'sticky top-0 z-40 flex-shrink-0 glass-aura border-b transition-all duration-300',
-        'h-16', // Fixed height — matches sidebar header (64px)
+        'h-16 text-white', // Fixed height — matches sidebar header (64px), white text for purple background
         className
       )}
     >
@@ -473,7 +473,7 @@ const Header: React.FC<HeaderProps> = ({
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
+              className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
@@ -505,7 +505,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Search"
           >
             <Search className="h-5 w-5" />
@@ -516,7 +516,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
           <button
-            className="hidden sm:flex p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
             aria-label="Help"
           >
             <HelpCircle className="h-5 w-5" />
@@ -530,7 +530,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-all"
+              className="notification-btn relative p-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-all"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />

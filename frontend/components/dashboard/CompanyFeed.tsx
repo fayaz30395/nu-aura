@@ -6,7 +6,7 @@ import { format, formatDistanceToNow, isToday, parseISO } from 'date-fns';
 import {
   Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
   MessageCircle, ThumbsUp, Heart, Star, Pin, ChevronDown,
-  RefreshCw, Linkedin, Lightbulb, ExternalLink,
+  RefreshCw, Linkedin, Lightbulb, ExternalLink, Send,
 } from 'lucide-react';
 import { feedService } from '@/lib/services/feed.service';
 import { wallService } from '@/lib/services/wall.service';
@@ -138,11 +138,14 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Company Feed</h3>
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse flex items-start gap-2.5 p-3 rounded-lg bg-[var(--bg-surface)]">
-              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+            <div key={i} className="flex items-start gap-2.5 p-3 rounded-lg bg-[var(--bg-surface)] relative overflow-hidden">
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+              <div className="w-8 h-8 rounded-full bg-gray-200/50 dark:bg-gray-700/50 animate-pulse" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
+                <div className="h-3.5 bg-gray-200/50 dark:bg-gray-700/50 rounded w-1/3 animate-pulse" style={{ animationDelay: '0.1s' }} />
+                <div className="h-3 bg-gray-200/50 dark:bg-gray-700/50 rounded w-2/3 animate-pulse" style={{ animationDelay: '0.2s' }} />
               </div>
             </div>
           ))}
@@ -217,25 +220,50 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
 function FeedCard({ item }: { item: FeedItem }) {
   const colors = FEED_COLORS[item.type];
   const icon = FEED_ICONS[item.type];
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(item.hasReacted ?? false); // Initialize from server data
   const [localLikeCount, setLocalLikeCount] = useState(item.likesCount ?? 0);
+  const [localCommentCount, setLocalCommentCount] = useState(item.commentsCount ?? 0);
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const handleLike = async () => {
+    // If no wallPostId, this item doesn't support likes yet
+    if (!item.wallPostId) {
+      console.warn('This feed item does not support likes yet');
+      return;
+    }
+
     const wasLiked = liked;
     setLiked(!wasLiked);
     setLocalLikeCount((prev) => wasLiked ? Math.max(0, prev - 1) : prev + 1);
+
     try {
-      if (item.wallPostId) {
-        if (wasLiked) {
-          await wallService.removeReaction(item.wallPostId);
-        } else {
-          await wallService.addReaction(item.wallPostId, 'LIKE');
-        }
+      if (wasLiked) {
+        await wallService.removeReaction(item.wallPostId);
+      } else {
+        await wallService.addReaction(item.wallPostId, 'LIKE');
       }
-    } catch {
+    } catch (error) {
+      console.error('Failed to update reaction:', error);
       // Revert on error
       setLiked(wasLiked);
       setLocalLikeCount(item.likesCount ?? 0);
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    if (!commentText.trim() || !item.wallPostId || isSubmittingComment) return;
+
+    setIsSubmittingComment(true);
+    try {
+      await wallService.addComment(item.wallPostId, { content: commentText.trim() });
+      setCommentText('');
+      setLocalCommentCount((prev) => prev + 1);
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+    } finally {
+      setIsSubmittingComment(false);
     }
   };
 
@@ -374,22 +402,67 @@ function FeedCard({ item }: { item: FeedItem }) {
             </div>
           )}
 
-          {/* Reaction Bar */}
-          <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
-            <button
-              onClick={handleLike}
-              className={`inline-flex items-center gap-1 text-xs transition-colors ${
-                liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
-              }`}
-            >
-              <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
-              {localLikeCount > 0 ? localLikeCount : 'Like'}
-            </button>
-            <button className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300 transition-colors">
-              <MessageCircle className="h-3 w-3" />
-              {(item.commentsCount ?? 0) > 0 ? item.commentsCount : 'Comment'}
-            </button>
-          </div>
+          {/* Reaction Bar - Only show if item supports social features */}
+          {item.wallPostId && (
+            <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
+              <button
+                onClick={handleLike}
+                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
+                  liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
+                }`}
+              >
+                <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
+                {localLikeCount > 0 ? localLikeCount : 'Like'}
+              </button>
+              <button
+                onClick={() => setShowComments(!showComments)}
+                className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${
+                  showComments ? 'text-[var(--text-primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
+                }`}
+              >
+                <MessageCircle className="h-3 w-3" />
+                {localCommentCount > 0 ? localCommentCount : 'Comment'}
+              </button>
+            </div>
+          )}
+
+          {/* Comment Section */}
+          {showComments && item.wallPostId && (
+            <div className="mt-2 pt-2 border-t border-[var(--border-subtle)] space-y-2">
+              {/* Comment Input */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmitComment();
+                    }
+                  }}
+                  placeholder="Write a comment..."
+                  className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  disabled={isSubmittingComment}
+                />
+                <button
+                  onClick={handleSubmitComment}
+                  disabled={!commentText.trim() || isSubmittingComment}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Send className="h-3 w-3" />
+                  {isSubmittingComment ? 'Posting...' : 'Post'}
+                </button>
+              </div>
+
+              {/* Comments List Placeholder */}
+              {localCommentCount > 0 && (
+                <div className="text-xs text-[var(--text-muted)] italic">
+                  {localCommentCount} comment{localCommentCount !== 1 ? 's' : ''} (refresh feed to view all)
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Timestamp */}
           <div className="flex items-center gap-1.5 mt-1 text-xs text-[var(--text-muted)]">

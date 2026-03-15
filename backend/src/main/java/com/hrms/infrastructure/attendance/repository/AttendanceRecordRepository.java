@@ -88,4 +88,23 @@ public interface AttendanceRecordRepository
                         @Param("employeeId") UUID employeeId,
                         @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
+
+        // Find remote check-ins for a specific date
+        @Query("SELECT a FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
+        List<AttendanceRecord> findRemoteCheckinsByTenantIdAndDate(
+                        @Param("tenantId") UUID tenantId,
+                        @Param("date") LocalDate date);
+
+        // Count remote check-ins for a specific date
+        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true")
+        Long countRemoteCheckinsByTenantIdAndDate(
+                        @Param("tenantId") UUID tenantId,
+                        @Param("date") LocalDate date);
+
+        // Count remote check-ins for a specific date within a team
+        @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.tenantId = :tenantId AND a.attendanceDate = :date AND a.isRemoteCheckin = true AND a.employeeId IN :employeeIds")
+        Long countRemoteCheckinsByTenantIdAndDateAndEmployeeIdIn(
+                        @Param("tenantId") UUID tenantId,
+                        @Param("date") LocalDate date,
+                        @Param("employeeIds") List<UUID> employeeIds);
 }

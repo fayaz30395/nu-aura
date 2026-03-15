@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /**
- * NU-AURA Theme - Tailwind CSS Configuration
- * Palette: Radix Indigo primary + Slate neutrals with Blue/Orange accents
+ * NU-AURA Theme - Tailwind CSS Configuration (Keka-Inspired)
+ * Palette: Coral Orange primary + Slate neutrals with Blue accents
  */
 
 const {
@@ -42,10 +42,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'Space Grotesk', 'Manrope', 'sans-serif'],
-        display: ['var(--font-display)', 'Fraunces', 'DM Serif Display', 'serif'],
-        mono: ['var(--font-mono)', 'JetBrains Mono', 'IBM Plex Mono', 'monospace'],
-        outfit: ['var(--font-sans)', 'Space Grotesk', 'Manrope', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        mono: ['SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
+        outfit: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
       colors: {
         // ── Design Token Bridge (CSS Variables → Tailwind) ──────
@@ -108,12 +108,24 @@ module.exports = {
         },
         // Semantic Tokens for Stable Theming
         brand: {
-          main: indigo.indigo9,
-          secondary: blue.blue9,
-          accent: orange.orange9,
+          main: '#6358A8',
+          secondary: '#5AC8C5',
+          accent: '#8577D3',
         },
-        // Primary - Indigo (Radix) — vibrant, modern SaaS
-        primary: toScale(indigo, 'indigo'),
+        // Primary - Purple (Keka actual brand color) — professional, modern
+        primary: {
+          50: '#F3F2F9',
+          100: '#E8E6F3',
+          200: '#D0B8F0',
+          300: '#B89EE8',
+          400: '#9A86DB',
+          500: '#8577D3',
+          600: '#6358A8',
+          700: '#534A8C',
+          800: '#423B70',
+          900: '#322D54',
+          950: '#221F38',
+        },
         // Secondary - Slate (Radix)
         secondary: toScale(slate, 'slate'),
         // Accent - Orange (Radix)
@@ -179,6 +191,9 @@ module.exports = {
         // Slide animations
         'slide-in-up': 'slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         'slide-in-down': 'slideInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+
+        // Loading animations
+        'shimmer': 'shimmer 2s infinite',
         'slide-in-left': 'slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         'slide-in-right': 'slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
 
@@ -212,6 +227,11 @@ module.exports = {
         'page-exit': 'pageExit 0.2s ease-in',
       },
       keyframes: {
+        // Loading keyframes
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
         // Fade keyframes
         fadeIn: {
           '0%': { opacity: '0' },
@@ -277,11 +297,11 @@ module.exports = {
         // Pulse & Glow
         pulseGlow: {
           '0%, 100%': {
-            boxShadow: '0 0 0 0 rgba(62, 99, 221, 0.7)',
+            boxShadow: '0 0 0 0 rgba(99, 88, 168, 0.7)',
             opacity: '1',
           },
           '50%': {
-            boxShadow: '0 0 0 10px rgba(62, 99, 221, 0)',
+            boxShadow: '0 0 0 10px rgba(99, 88, 168, 0)',
             opacity: '0.8',
           },
         },
@@ -381,7 +401,7 @@ module.exports = {
       // Gradient utilities
       addUtilities({
         '.gradient-primary': {
-          background: `linear-gradient(135deg, ${indigo.indigo8} 0%, ${blue.blue9} 100%)`,
+          background: `linear-gradient(135deg, #6358A8 0%, #8577D3 100%)`,
         },
         '.gradient-secondary': {
           background: `linear-gradient(135deg, ${slate.slate7} 0%, ${slate.slate10} 100%)`,
@@ -390,14 +410,14 @@ module.exports = {
           background: `linear-gradient(135deg, ${grass.grass8} 0%, ${grass.grass10} 100%)`,
         },
         '.gradient-mesh': {
-          background: `radial-gradient(at 0% 0%, rgba(62, 99, 221, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(247, 107, 21, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 116, 217, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(62, 99, 221, 0.12) 0px, transparent 50%)`,
+          background: `radial-gradient(at 0% 0%, rgba(99, 88, 168, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(133, 119, 211, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(90, 200, 197, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(99, 88, 168, 0.12) 0px, transparent 50%)`,
         },
       });
 
       // Shadow utilities
       addUtilities({
         '.shadow-glow-primary': {
-          boxShadow: '0 0 20px rgba(62, 99, 221, 0.3)',
+          boxShadow: '0 0 20px rgba(99, 88, 168, 0.3)',
         },
         '.shadow-glow-success': {
           boxShadow: '0 0 20px rgba(70, 167, 88, 0.3)',

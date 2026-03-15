@@ -1,12 +1,18 @@
 package com.hrms.application.recognition.service;
 
 import com.hrms.api.recognition.dto.*;
+import com.hrms.api.wall.dto.CreatePostRequest;
+import com.hrms.api.wall.dto.WallPostResponse;
+import com.hrms.application.wall.service.WallService;
 import com.hrms.common.security.TenantContext;
+import com.hrms.common.security.SecurityContext;
 import com.hrms.common.exception.BusinessException;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.domain.recognition.*;
+import com.hrms.domain.wall.model.WallPost;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.recognition.repository.*;
+import com.hrms.infrastructure.wall.repository.PostReactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +41,8 @@ public class RecognitionService {
     // private final RecognitionSurveyResponseRepository responseRepository;
     private final RecognitionReactionRepository reactionRepository;
     private final EmployeeRepository employeeRepository;
+    private final WallService wallService;
+    private final PostReactionRepository postReactionRepository;
 
     // ==================== Recognition Operations ====================
 
@@ -63,6 +71,26 @@ public class RecognitionService {
 
         Recognition saved = recognitionRepository.save(entity);
 
+        // Create wall post for social features (reactions/comments)
+        // Only create if public recognition
+        if (saved.getIsPublic()) {
+            try {
+                CreatePostRequest wallPostRequest = new CreatePostRequest();
+                wallPostRequest.setType(WallPost.PostType.PRAISE);
+                wallPostRequest.setContent(saved.getMessage() != null ? saved.getMessage() : saved.getTitle());
+                wallPostRequest.setPraiseRecipientId(request.getReceiverId());
+                wallPostRequest.setVisibility(WallPost.PostVisibility.ORGANIZATION);
+
+                WallPostResponse wallPost = wallService.createPost(wallPostRequest, giverId);
+                saved.setWallPostId(wallPost.getId());
+                saved = recognitionRepository.save(saved);
+                log.info("Created wall post {} for recognition {}", wallPost.getId(), saved.getId());
+            } catch (Exception e) {
+                log.error("Failed to create wall post for recognition {}: {}", saved.getId(), e.getMessage());
+                // Don't fail the recognition if wall post creation fails
+            }
+        }
+
         // Update points for receiver
         if (saved.getPointsAwarded() > 0) {
             EmployeePoints receiverPoints = getOrCreateEmployeePoints(request.getReceiverId(), tenantId);
@@ -78,36 +106,40 @@ public class RecognitionService {
 
         log.info("Recognition given from {} to {}", giverId, request.getReceiverId());
 
-        return enrichRecognitionResponse(RecognitionResponse.fromEntity(saved), tenantId);
+        return enrichRecognitionResponse(RecognitionResponse.fromEntity(saved), tenantId, giverId);
     }
 
     @Transactional(readOnly = true)
     public RecognitionResponse getRecognitionById(UUID recognitionId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUserId = SecurityContext.getCurrentEmployeeId();
         Recognition entity = recognitionRepository.findByIdAndTenantId(recognitionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recognition not found: " + recognitionId));
-        return enrichRecognitionResponse(RecognitionResponse.fromEntity(entity), tenantId);
+        return enrichRecognitionResponse(RecognitionResponse.fromEntity(entity), tenantId, currentUserId);
     }
 
     @Transactional(readOnly = true)
     public Page<RecognitionResponse> getPublicFeed(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUserId = SecurityContext.getCurrentEmployeeId();
         return recognitionRepository.findByTenantIdAndIsPublicTrueAndIsApprovedTrue(tenantId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId));
+                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
     }
 
     @Transactional(readOnly = true)
     public Page<RecognitionResponse> getMyReceivedRecognitions(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUserId = SecurityContext.getCurrentEmployeeId();
         return recognitionRepository.findByReceiver(tenantId, employeeId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId));
+                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
     }
 
     @Transactional(readOnly = true)
     public Page<RecognitionResponse> getMyGivenRecognitions(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUserId = SecurityContext.getCurrentEmployeeId();
         return recognitionRepository.findByGiver(tenantId, employeeId, pageable)
-                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId));
+                .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId, currentUserId));
     }
 
     @Transactional
@@ -254,7 +286,7 @@ public class RecognitionService {
                 });
     }
 
-    private RecognitionResponse enrichRecognitionResponse(RecognitionResponse response, UUID tenantId) {
+    private RecognitionResponse enrichRecognitionResponse(RecognitionResponse response, UUID tenantId, UUID currentUserId) {
         if (!response.getIsAnonymous()) {
             employeeRepository.findByIdAndTenantId(response.getGiverId(), tenantId)
                     .ifPresent(emp -> {
@@ -275,6 +307,14 @@ public class RecognitionService {
                         response.setBadgeName(badge.getBadgeName());
                         response.setBadgeIconUrl(badge.getIconUrl());
                     });
+        }
+
+        // Check if current user has reacted to this recognition's wall post
+        if (response.getWallPostId() != null && currentUserId != null) {
+            boolean hasReacted = postReactionRepository.findByPostIdAndEmployeeId(
+                    response.getWallPostId(), currentUserId
+            ).isPresent();
+            response.setHasReacted(hasReacted);
         }
 
         return response;

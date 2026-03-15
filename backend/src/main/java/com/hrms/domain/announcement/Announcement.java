@@ -99,6 +99,10 @@ public class Announcement extends TenantAware {
     @Column(name = "published_by_name", length = 200)
     private String publishedByName;
 
+    // Reference to wall post for social features (reactions/comments)
+    @Column(name = "wall_post_id")
+    private UUID wallPostId;
+
     public enum AnnouncementCategory {
         GENERAL, POLICY_UPDATE, EVENT, HOLIDAY, ACHIEVEMENT, URGENT,
         BENEFIT, TRAINING, SOCIAL, IT_MAINTENANCE, HEALTH_SAFETY, OTHER

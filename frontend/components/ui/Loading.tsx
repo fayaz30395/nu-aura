@@ -2,42 +2,40 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { PremiumSpinner } from './PremiumSpinner';
 
 interface LoadingProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
   fullScreen?: boolean;
+  variant?: 'orbit' | 'pulse' | 'dots' | 'bars' | 'ring' | 'gradient';
 }
 
-export function Loading({ size = 'md', text, fullScreen = false }: LoadingProps) {
-  const sizeClasses = {
-    sm: 'w-6 h-6',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
-  };
-
+export function Loading({ size = 'md', text, fullScreen = false, variant = 'orbit' }: LoadingProps) {
   const spinner = (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div
-        className={cn(
-          sizeClasses[size],
-          'border-4 rounded-full animate-spin',
-          'border-[var(--border-main)] border-t-[var(--border-focus)]'
-        )}
-      />
-      {text && <p className="text-[var(--text-secondary)] text-sm">{text}</p>}
+    <div className="flex flex-col items-center justify-center gap-6">
+      <PremiumSpinner size={size} variant={variant} />
+      {text && (
+        <p className="text-[var(--text-secondary)] text-sm font-medium animate-pulse">
+          {text}
+        </p>
+      )}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
-        {spinner}
+      <div className="fixed inset-0 bg-[var(--bg-overlay)] backdrop-blur-md flex items-center justify-center z-50">
+        <div className="relative">
+          {/* Glow effect behind spinner */}
+          <div className="absolute inset-0 blur-3xl bg-primary-500/20 rounded-full scale-150" />
+          {spinner}
+        </div>
       </div>
     );
   }
 
-  return <div className="flex items-center justify-center py-8">{spinner}</div>;
+  return <div className="flex items-center justify-center py-12">{spinner}</div>;
 }
 
 /* ── Skeleton Components ──────────────────────────────── */
