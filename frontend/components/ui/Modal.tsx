@@ -76,7 +76,7 @@ const Modal: React.FC<ModalProps> = ({
         >
           {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 backdrop-blur-sm"
+            className="absolute inset-0"
             style={{ backgroundColor: 'var(--bg-overlay)' }}
             onClick={closeOnBackdrop ? onClose : undefined}
             initial="initial"

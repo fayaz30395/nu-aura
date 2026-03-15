@@ -364,11 +364,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         className={cn(
           'relative flex items-center rounded-xl border transition-all duration-200 cursor-pointer',
           isOpen
-            ? 'w-full sm:w-80 lg:w-96 border-primary-500/50 bg-white shadow-lg shadow-primary-500/10 dark:bg-surface-900 dark:border-primary-500/30'
-            : 'w-full sm:w-64 lg:w-72 border-surface-200 bg-surface-50 hover:bg-surface-100 dark:border-surface-700 dark:bg-surface-900 dark:hover:bg-surface-800'
+            ? 'w-full sm:w-80 lg:w-96 border-[var(--border-focus)] bg-[var(--bg-elevated)] shadow-lg shadow-primary-500/10 dark:shadow-primary-500/5'
+            : 'w-full sm:w-64 lg:w-72 border-[var(--border-main)] bg-[var(--bg-input)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-strong)]'
         )}
       >
-        <Search className="absolute left-3 h-4 w-4 text-surface-400" />
+        <Search className={cn(
+          'absolute left-3 h-4 w-4 transition-colors',
+          isOpen ? 'text-primary-500 dark:text-primary-400' : 'text-[var(--text-muted)]'
+        )} />
         <input
           ref={inputRef}
           type="text"
@@ -380,11 +383,11 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm outline-none text-surface-900 dark:text-surface-50 placeholder-surface-400"
+          className="w-full bg-transparent pl-10 pr-20 py-2.5 text-sm outline-none text-[var(--text-primary)] placeholder-[var(--text-muted)]"
         />
-        <div className="absolute right-3 flex items-center gap-1 text-surface-400">
-          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-surface-100 dark:bg-surface-800 rounded border border-surface-200 dark:border-surface-700">
+        <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
+          {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-500" />}
+          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
             <Command className="h-2.5 w-2.5" />
             <span>K</span>
           </kbd>
@@ -393,7 +396,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
 
       {/* Search Results Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-700 shadow-2xl shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
+        <div className="absolute top-full left-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-w-[calc(100vw-2rem)] max-h-[60vh] sm:max-h-[70vh] overflow-y-auto bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 shadow-2xl shadow-surface-900/10 dark:shadow-surface-950/50 z-50">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-surface-100 dark:border-surface-800">
             <span className="text-xs font-medium text-surface-500 uppercase tracking-wider">

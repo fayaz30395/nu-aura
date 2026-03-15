@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import Link from 'next/link';
@@ -51,102 +51,32 @@ const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const IS_DEMO_MODE = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
-// ─── Animated Mesh Background ────────────────────────────────────────
+// ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animFrame: number;
-    let time = 0;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Floating orbs
-    const orbs = Array.from({ length: 5 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: 150 + Math.random() * 250,
-      speedX: (Math.random() - 0.5) * 0.3,
-      speedY: (Math.random() - 0.5) * 0.3,
-      hue: 220 + Math.random() * 40, // Blue-purple spectrum
-    }));
-
-    const animate = () => {
-      time += 0.005;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Dark base
-      ctx.fillStyle = '#0a0e27';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw orbs with gradient glow
-      orbs.forEach((orb) => {
-        orb.x += orb.speedX + Math.sin(time + orb.hue) * 0.2;
-        orb.y += orb.speedY + Math.cos(time + orb.hue) * 0.2;
-
-        // Wrap around
-        if (orb.x < -orb.radius) orb.x = canvas.width + orb.radius;
-        if (orb.x > canvas.width + orb.radius) orb.x = -orb.radius;
-        if (orb.y < -orb.radius) orb.y = canvas.height + orb.radius;
-        if (orb.y > canvas.height + orb.radius) orb.y = -orb.radius;
-
-        const gradient = ctx.createRadialGradient(
-          orb.x, orb.y, 0,
-          orb.x, orb.y, orb.radius
-        );
-        gradient.addColorStop(0, `hsla(${orb.hue}, 80%, 60%, 0.15)`);
-        gradient.addColorStop(0.5, `hsla(${orb.hue}, 70%, 40%, 0.06)`);
-        gradient.addColorStop(1, 'transparent');
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      });
-
-      // Subtle grid lines
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.04)';
-      ctx.lineWidth = 1;
-      const gridSize = 60;
-      for (let x = 0; x < canvas.width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      animFrame = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animFrame);
-      window.removeEventListener('resize', resize);
-    };
-  }, []);
-
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full"
-      style={{ zIndex: 0 }}
-    />
+    <div className="fixed inset-0" style={{ zIndex: 0 }}>
+      {/* Base */}
+      <div className="absolute inset-0 bg-[var(--bg-main)]" />
+      {/* Light-mode: subtle brand gradient orbs */}
+      <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500">
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-200/30 blur-[120px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-info-200/25 blur-[100px]" />
+        <div className="absolute top-[40%] right-[20%] w-[400px] h-[400px] rounded-full bg-accent-100/20 blur-[80px]" />
+      </div>
+      {/* Dark-mode: deep navy mesh with subtle grid */}
+      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-[#0a0e1a]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary-800/20 blur-[120px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-info-800/15 blur-[100px]" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(var(--border-main) 1px, transparent 1px), linear-gradient(90deg, var(--border-main) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -163,12 +93,12 @@ function FeaturePills() {
       {features.map(({ icon: Icon, label, delay }) => (
         <div
           key={label}
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-white/70 text-xs font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-secondary)] text-xs font-medium"
           style={{
             animation: `fadeSlideUp 0.6s ease-out ${delay} both`,
           }}
         >
-          <Icon className="w-3.5 h-3.5 text-indigo-400" />
+          <Icon className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
           {label}
         </div>
       ))}
@@ -179,10 +109,10 @@ function FeaturePills() {
 // ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0e27]">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin" />
-        <p className="text-white/40 text-sm">Loading NU-AURA...</p>
+        <div className="w-12 h-12 border-2 border-primary-300/30 border-t-primary-500 rounded-full animate-spin" />
+        <p className="text-[var(--text-muted)] text-sm">Loading NU-AURA...</p>
       </div>
     </div>
   );
@@ -460,7 +390,7 @@ function LoginPage() {
   // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0e27] py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] py-12 px-4">
         <AnimatedBackground />
         <div className="relative z-10 max-w-md w-full">
           <MfaVerification
@@ -521,23 +451,23 @@ function LoginPage() {
             style={{ animation: 'fadeSlideUp 0.8s ease-out 0.1s both' }}
           >
             {/* Platform badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-8">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-indigo-300 text-xs font-medium tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-100/60 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800/40 mb-8">
+              <div className="w-2 h-2 rounded-full bg-success-600 dark:bg-success-400 animate-pulse" />
+              <span className="text-primary-700 dark:text-primary-300 text-xs font-medium tracking-wider uppercase">
                 NU-AURA Platform v1.0
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
+            <h1 className="text-5xl font-bold text-[var(--text-primary)] leading-tight mb-6">
               Your People.
               <br />
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 via-info-600 to-primary-500 dark:from-primary-400 dark:via-info-400 dark:to-primary-300 bg-clip-text text-transparent">
                 Amplified.
               </span>
             </h1>
 
-            <p className="text-lg text-gray-600 dark:text-white/50 leading-relaxed mb-8">
+            <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8">
               One platform for HR, Recruitment, Performance, and Knowledge
               Management. Built for teams that move fast.
             </p>
@@ -561,7 +491,7 @@ function LoginPage() {
                   >
                     {app.icon}
                   </div>
-                  <span className="text-gray-500 dark:text-white/40 text-xs font-medium">
+                  <span className="text-[var(--text-muted)] text-xs font-medium">
                     NU-{app.name}
                   </span>
                 </div>
@@ -582,7 +512,7 @@ function LoginPage() {
             <div className="flex justify-center mb-10 lg:mb-8">
               <div className="relative">
                 <div
-                  className="absolute -inset-4 rounded-full bg-indigo-500/10 blur-xl"
+                  className="absolute -inset-4 rounded-full bg-primary-500/10 blur-xl"
                   style={{ animation: 'pulse-ring 4s ease-in-out infinite' }}
                 />
                 <Image
@@ -598,21 +528,21 @@ function LoginPage() {
 
             {/* Mobile-only tagline */}
             <div className="lg:hidden text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Welcome to <span className="text-indigo-400">NU-AURA</span>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
+                Welcome to <span className="text-primary-600 dark:text-primary-400">NU-AURA</span>
               </h2>
-              <p className="text-gray-500 dark:text-white/40 text-sm">
+              <p className="text-[var(--text-muted)] text-sm">
                 Your unified people platform
               </p>
             </div>
 
             {/* Card */}
-            <div className="rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-2xl p-8 shadow-2xl">
+            <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] p-8 shadow-elevated">
               <div className="text-center mb-7">
-                <h3 className="text-xl font-semibold text-white mb-1">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                   Sign In
                 </h3>
-                <p className="text-gray-500 dark:text-white/40 text-sm">
+                <p className="text-[var(--text-muted)] text-sm">
                   Access your workspace with Google SSO
                 </p>
               </div>
@@ -620,15 +550,15 @@ function LoginPage() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-red-500/10 border border-red-500/20"
+                  className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
                   style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
                 >
-                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-red-300">
+                    <p className="text-sm font-medium text-danger-700 dark:text-danger-300">
                       Authentication Failed
                     </p>
-                    <p className="text-sm text-red-300/70 mt-0.5">
+                    <p className="text-sm text-danger-600 dark:text-danger-400 mt-0.5">
                       {error}
                     </p>
                   </div>
@@ -638,7 +568,7 @@ function LoginPage() {
               {/* Google SSO Button */}
               <button
                 type="button"
-                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-white hover:bg-gray-50 text-gray-800 font-medium text-sm transition-all duration-300 hover:shadow-lg hover:shadow-white/10 active:scale-[0.98]"
+                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-medium text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
                 onClick={() => {
 
                   handleGoogleSSO();
@@ -646,7 +576,7 @@ function LoginPage() {
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (
-                  <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-500 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[var(--border-main)] border-t-primary-600 rounded-full animate-spin" />
                 ) : (
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -672,38 +602,38 @@ function LoginPage() {
               </button>
 
               {/* Domain notice */}
-              <p className="text-center text-white/30 text-xs mt-4 leading-relaxed">
-                Restricted to <span className="text-indigo-400/80">@{ALLOWED_DOMAIN}</span> accounts.
+              <p className="text-center text-[var(--text-muted)] text-xs mt-4 leading-relaxed">
+                Restricted to <span className="text-primary-600 dark:text-primary-400">@{ALLOWED_DOMAIN}</span> accounts.
                 <br />
-                <span className="text-white/20">Includes NU-Drive and NU-Mail access.</span>
+                <span className="text-[var(--text-muted)] opacity-70">Includes NU-Drive and NU-Mail access.</span>
               </p>
 
               {/* Divider */}
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/[0.06]" />
+                  <div className="w-full border-t border-[var(--border-subtle)]" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-3 bg-[#0f1330] text-white/20">
+                  <span className="px-3 bg-[var(--bg-card)] text-[var(--text-muted)]">
                     secure enterprise SSO
                   </span>
                 </div>
               </div>
 
               {/* Trust badges */}
-              <div className="flex items-center justify-center gap-6 text-white/20 text-xs">
+              <div className="flex items-center justify-center gap-6 text-[var(--text-muted)] text-xs">
                 <div className="flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5" />
                   <span>SOC 2</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-white/10" />
+                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
                   <span>Encrypted</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-white/10" />
+                <div className="w-1 h-1 rounded-full bg-[var(--border-main)]" />
                 <div className="flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5" />
                   <span>GDPR</span>
@@ -713,17 +643,17 @@ function LoginPage() {
 
             {/* Footer */}
             <div className="text-center mt-8 space-y-2">
-              <p className="text-xs text-white/20">
+              <p className="text-xs text-[var(--text-muted)]">
                 By signing in, you agree to our{' '}
-                <Link href="/terms" className="text-indigo-400/60 hover:text-indigo-400 transition-colors">
+                <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                   Terms
                 </Link>{' '}
                 and{' '}
-                <Link href="/privacy" className="text-indigo-400/60 hover:text-indigo-400 transition-colors">
+                <Link href="/privacy" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                   Privacy Policy
                 </Link>
               </p>
-              <p className="text-xs text-white/10">
+              <p className="text-xs text-[var(--text-muted)] opacity-60">
                 NuLogic &copy; {new Date().getFullYear()} &middot; NU-AURA Platform
               </p>
             </div>

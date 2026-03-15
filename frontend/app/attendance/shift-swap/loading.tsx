@@ -5,7 +5,7 @@ export default function Loading() {
       <div className="flex gap-4 border-b pb-2">
         {[1, 2, 3].map(i => <div key={i} className="h-6 w-28 bg-gray-200 rounded" />)}
       </div>
-      <div className="h-72 bg-gray-100 rounded-lg" />
+      <div className="h-72 bg-[var(--bg-surface)] rounded-lg" />
     </div>
   );
 }

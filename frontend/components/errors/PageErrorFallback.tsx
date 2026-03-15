@@ -24,14 +24,14 @@ export function PageErrorFallback({
         </svg>
       </div>
       <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">{title}</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+      <p className="text-sm text-[var(--text-muted)] mb-6 max-w-md">
         {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
       </p>
       <div className="flex gap-3">
         {onReset && (
           <button
             onClick={onReset}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             Try again
           </button>

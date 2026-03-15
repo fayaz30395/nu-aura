@@ -61,7 +61,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
+      <div className="bg-[var(--bg-input)] p-3 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
         {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
@@ -168,7 +168,7 @@ export default function AnalyticsPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-1">
+            <div className="flex items-center bg-[var(--bg-input)] rounded-lg border border-slate-200 dark:border-slate-700 p-1">
               {(['7d', '30d', '90d'] as const).map((range) => (
                 <button
                   key={range}

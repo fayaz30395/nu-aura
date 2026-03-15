@@ -60,7 +60,7 @@ export default function NewTemplatePage() {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-2xl h-12 w-12 p-0 border-white/20 bg-white/20 backdrop-blur-xl group"
+                        className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                         onClick={() => router.back()}
                     >
                         <ArrowLeft className="h-5 w-5 text-surface-500 group-hover:text-primary-600 transition-colors" />
@@ -77,7 +77,7 @@ export default function NewTemplatePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
-                    <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
                         <CardContent className="p-10">
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                                 <div className="space-y-4">
@@ -87,7 +87,7 @@ export default function NewTemplatePage() {
                                     </label>
                                     <Input
                                         placeholder="e.g., Engineering Onboarding - Standard"
-                                        className="rounded-2xl bg-white/50 dark:bg-black/20 border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-primary-500"
+                                        className="rounded-2xl bg-[var(--bg-input)] border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-primary-500"
                                         {...register('name')}
                                     />
                                     {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
@@ -101,7 +101,7 @@ export default function NewTemplatePage() {
                                     <textarea
                                         rows={4}
                                         placeholder="Briefly describe what this template is for and which departments should use it."
-                                        className="w-full rounded-2xl bg-white/50 dark:bg-black/20 border-0 p-6 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-6 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
                                         {...register('description')}
                                     />
                                     {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}

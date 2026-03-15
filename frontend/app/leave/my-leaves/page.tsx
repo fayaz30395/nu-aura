@@ -69,7 +69,7 @@ export default function MyLeavesPage() {
       case 'APPROVED': return 'bg-green-100 text-green-800';
       case 'PENDING': return 'bg-yellow-100 text-yellow-800';
       case 'REJECTED': return 'bg-red-100 text-red-800';
-      case 'CANCELLED': return 'bg-gray-100 text-gray-800';
+      case 'CANCELLED': return 'bg-[var(--bg-surface)] text-gray-800';
       default: return 'bg-blue-100 text-blue-800';
     }
   };
@@ -96,7 +96,7 @@ export default function MyLeavesPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Leaves</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">My Leaves</h1>
           <button
             onClick={() => router.push('/leave/apply')}
             className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-semibold"
@@ -106,13 +106,13 @@ export default function MyLeavesPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
           <div className="flex gap-4 items-center">
             <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Filter by Status:</label>
             <select
               value={filterStatus}
               onChange={(e) => { setFilterStatus(e.target.value as LeaveRequestStatus | ''); setCurrentPage(0); }}
-              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
+              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -140,23 +140,23 @@ export default function MyLeavesPage() {
         )}
 
         {/* Leave Requests Table */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
           {!requestsData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
-                <span className="text-gray-600 dark:text-gray-400">Loading leave requests...</span>
+                <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-surface-800 flex items-center justify-center">
-                  <CalendarOff className="w-8 h-8 text-gray-400 dark:text-gray-600" />
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-surface)] dark:bg-surface-800 flex items-center justify-center">
+                  <CalendarOff className="w-8 h-8 text-gray-400 dark:text-[var(--text-secondary)]" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No leave requests found</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Get started by applying for your first leave</p>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>
+              <p className="text-sm text-[var(--text-secondary)] mb-6">Get started by applying for your first leave</p>
               <button
                 onClick={() => router.push('/leave/apply')}
                 className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium"
@@ -170,23 +170,23 @@ export default function MyLeavesPage() {
                 <table className="w-full">
                   <thead className="bg-surface-50 dark:bg-surface-800/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Request #</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Leave Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Duration</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Days</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Reason</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Applied On</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {requests.map((request: LeaveRequest) => (
                       <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                           {request.requestNumber}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                        <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                           {getLeaveTypeName(request.leaveTypeId)}
                         </td>
                         <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
@@ -236,7 +236,7 @@ export default function MyLeavesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
-                    className="px-4 py-2 bg-white dark:bg-surface-900 border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-gray-900 dark:text-white"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-[var(--text-primary)]"
                   >
                     Previous
                   </button>
@@ -248,7 +248,7 @@ export default function MyLeavesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-4 py-2 bg-white dark:bg-surface-900 border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-gray-900 dark:text-white"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-[var(--text-primary)]"
                   >
                     Next
                   </button>

@@ -72,8 +72,8 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-surface-800 rounded-xl p-6 w-full max-w-md">
+    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
+      <div className="bg-[var(--bg-input)] rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold mb-4">Invite Candidate</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
@@ -232,7 +232,7 @@ export default function PreboardingPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800"
+            className="px-4 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)]"
           >
             <option value="ALL">All Status</option>
             <option value="INVITED">Invited</option>

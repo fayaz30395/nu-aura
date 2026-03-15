@@ -274,7 +274,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="text"
                     {...register('name')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                   />
                   {errors.name && (
                     <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -284,7 +284,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Priority</label>
                   <select
                     {...register('priority')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                   >
                     <option value="">All Priorities</option>
                     <option value="LOW">Low</option>
@@ -299,7 +299,7 @@ export default function HelpdeskSLAPage() {
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
                   {...register('description')}
-                  className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                  className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                   rows={2}
                 />
               </div>
@@ -310,7 +310,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('firstResponseMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                   {errors.firstResponseMinutes && (
@@ -322,7 +322,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('resolutionMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                   {errors.resolutionMinutes && (
@@ -334,7 +334,7 @@ export default function HelpdeskSLAPage() {
                   <input
                     type="number"
                     {...register('escalationAfterMinutes')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                     min="1"
                   />
                 </div>
@@ -345,7 +345,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours Start</label>
                   <select
                     {...register('businessStartHour')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -356,7 +356,7 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">Business Hours End</label>
                   <select
                     {...register('businessEndHour')}
-                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
+                    className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
                       <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
@@ -479,7 +479,7 @@ export default function HelpdeskSLAPage() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-200 dark:divide-surface-700">
+                  <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
                     {slas.map((sla) => (
                       <tr key={sla.id}>
                         <td className="px-6 py-4">
@@ -506,7 +506,7 @@ export default function HelpdeskSLAPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            sla.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                            sla.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-surface)] text-gray-800'
                           }`}>
                             {sla.isActive ? 'Active' : 'Inactive'}
                           </span>

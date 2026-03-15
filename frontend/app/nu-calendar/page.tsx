@@ -772,7 +772,7 @@ function CalendarContent() {
 
       {/* Event Details Modal */}
       {showEventModal && selectedEvent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
               <h3 className="font-semibold text-surface-900 dark:text-surface-50">Event Details</h3>
@@ -888,7 +888,7 @@ function CalendarContent() {
 
       {/* Create Event Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-lg">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
               <h3 className="font-semibold text-surface-900 dark:text-surface-50">Create Event</h3>
@@ -977,7 +977,7 @@ function CalendarContent() {
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
                   placeholder="Add description"
                   rows={3}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
 

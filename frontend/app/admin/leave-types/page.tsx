@@ -288,46 +288,46 @@ export default function LeaveTypesManagementPage() {
         )}
 
         {/* Leave Types Table */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[var(--bg-surface)]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Code & Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Annual Quota
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Properties
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-surface-900 divide-y divide-gray-200">
+            <tbody className="bg-[var(--bg-card)] divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
                     Loading leave types...
                   </td>
                 </tr>
               ) : leaveTypes.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-[var(--text-muted)]">
                     <div className="flex flex-col items-center">
-                      <svg className="h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                       <p className="text-surface-600 dark:text-surface-400">No leave types configured</p>
-                      <p className="text-sm text-gray-500 mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
+                      <p className="text-sm text-[var(--text-muted)] mt-1">Click &quot;Add Leave Type&quot; to create your first leave type</p>
                     </div>
                   </td>
                 </tr>
@@ -342,7 +342,7 @@ export default function LeaveTypesManagementPage() {
                         />
                         <div>
                           <div className="text-sm font-medium text-surface-900 dark:text-surface-100">{leaveType.leaveName}</div>
-                          <div className="text-sm text-gray-500">{leaveType.leaveCode}</div>
+                          <div className="text-sm text-[var(--text-muted)]">{leaveType.leaveCode}</div>
                         </div>
                       </div>
                     </td>
@@ -420,7 +420,7 @@ export default function LeaveTypesManagementPage() {
         {/* Add/Edit Leave Type Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
@@ -432,7 +432,7 @@ export default function LeaveTypesManagementPage() {
                       setEditingLeaveType(null);
                       resetForm();
                     }}
-                    className="text-gray-400 hover:text-gray-500"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-muted)]"
                   >
                     <span className="text-2xl">&times;</span>
                   </button>

@@ -75,7 +75,7 @@ function NineBoxGrid({
   ];
 
   return (
-    <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-6 overflow-x-auto">
+    <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-6 overflow-x-auto">
       <div className="flex gap-4 min-w-max">
         {/* Y-axis */}
         <div className="flex flex-col items-center justify-start w-6 flex-shrink-0">
@@ -331,7 +331,7 @@ export default function NineBoxPage() {
           <button
             onClick={exportCsv}
             disabled={points.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
           >
             <Download size={16} />
             Export CSV
@@ -339,7 +339,7 @@ export default function NineBoxPage() {
         </div>
 
         {/* Cycle Selector */}
-        <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+        <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -351,7 +351,7 @@ export default function NineBoxPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-white dark:bg-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -380,7 +380,7 @@ export default function NineBoxPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Users className="text-purple-600 dark:text-purple-400" size={20} />
@@ -392,7 +392,7 @@ export default function NineBoxPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
                 <TrendingUp className="text-emerald-600 dark:text-emerald-400" size={20} />
@@ -404,7 +404,7 @@ export default function NineBoxPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <Target className="text-blue-600 dark:text-blue-400" size={20} />
@@ -416,7 +416,7 @@ export default function NineBoxPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+          <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <Grid3x3 className="text-green-600 dark:text-green-400" size={20} />
@@ -435,7 +435,7 @@ export default function NineBoxPage() {
             <span className="text-surface-500">Loading reviews...</span>
           </div>
         ) : points.length === 0 && selectedCycleId ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700">
+          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
             <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
             <p className="text-surface-600 dark:text-surface-400 font-medium">
               No rated reviews found
@@ -456,7 +456,7 @@ export default function NineBoxPage() {
 
             {/* Selected Box Details */}
             {selectedBox && selectedBoxPoints && (
-              <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
                 <div className="flex items-center gap-3">
                   <div
                     className={`px-3 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
@@ -516,7 +516,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                             />
                           </td>
                         </tr>
@@ -531,7 +531,7 @@ export default function NineBoxPage() {
             )}
 
             {/* All Employees Table */}
-            <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+            <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
               <div className="flex items-center gap-3">
                 <h3 className="text-sm font-bold text-surface-900 dark:text-white">
                   All Employees
@@ -546,7 +546,7 @@ export default function NineBoxPage() {
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="ml-auto w-full md:w-64 pl-10 pr-3 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
               </div>
@@ -612,7 +612,7 @@ export default function NineBoxPage() {
                                   }));
                                 }
                               }}
-                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                              className="w-20 text-center px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                             />
                           </td>
                           <td className="px-4 py-2.5 text-center">

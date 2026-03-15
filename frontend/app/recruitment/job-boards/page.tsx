@@ -43,7 +43,7 @@ const statusIcon: Record<string, { icon: typeof Clock; color: string }> = {
   PENDING: { icon: Clock,         color: 'text-yellow-500' },
   ACTIVE:  { icon: CheckCircle,   color: 'text-green-600' },
   PAUSED:  { icon: AlertCircle,   color: 'text-orange-500' },
-  EXPIRED: { icon: XCircle,       color: 'text-gray-400' },
+  EXPIRED: { icon: XCircle,       color: 'text-[var(--text-muted)]' },
   FAILED:  { icon: XCircle,       color: 'text-red-500' },
 };
 
@@ -108,8 +108,8 @@ export default function JobBoardsPage() {
       <div className="p-6 max-w-6xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Job Board Management</h1>
-            <p className="text-gray-500 mt-1">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Job Board Management</h1>
+            <p className="text-[var(--text-muted)] mt-1">Post jobs to Naukri, Indeed, LinkedIn and track applications</p>
           </div>
           <Button onClick={() => setShowPostModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -127,7 +127,7 @@ export default function JobBoardsPage() {
           ].map((stat: { label: string; value: number; color: string }) => (
             <Card key={stat.label}>
               <CardContent className="pt-4">
-                <p className="text-sm text-gray-500">{stat.label}</p>
+                <p className="text-sm text-[var(--text-muted)]">{stat.label}</p>
                 <p className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
               </CardContent>
             </Card>
@@ -143,7 +143,7 @@ export default function JobBoardsPage() {
               className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
                 filterStatus === s
                   ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
+                  : 'bg-white text-[var(--text-secondary)] border-[var(--border-strong)] hover:border-blue-400'
               }`}
             >
               {s}
@@ -153,10 +153,10 @@ export default function JobBoardsPage() {
 
         {/* Postings grid */}
         {isLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading...</div>
+          <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
         ) : postings.length === 0 ? (
           <Card>
-            <CardContent className="p-8 text-center text-gray-500">
+            <CardContent className="p-8 text-center text-[var(--text-muted)]">
               <Globe className="w-10 h-10 mx-auto mb-2 text-gray-300" />
               <p>No job board postings found. Post a job to get started!</p>
             </CardContent>
@@ -178,7 +178,7 @@ export default function JobBoardsPage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <StatusIcon className={`w-4 h-4 ${sc.color}`} />
-                            <span className="font-medium text-gray-900">{posting.status}</span>
+                            <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
                               <a href={posting.externalUrl} target="_blank" rel="noopener noreferrer"
                                 className="text-blue-500 hover:underline">
@@ -186,7 +186,7 @@ export default function JobBoardsPage() {
                               </a>
                             )}
                           </div>
-                          <p className="text-sm text-gray-500 mt-0.5">
+                          <p className="text-sm text-[var(--text-muted)] mt-0.5">
                             Job ID: <span className="font-mono">{posting.jobOpeningId.slice(0, 8)}…</span>
                             {posting.externalJobId && ` · External: ${posting.externalJobId}`}
                           </p>
@@ -195,14 +195,14 @@ export default function JobBoardsPage() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-6 text-sm text-gray-600">
+                      <div className="flex items-center gap-6 text-sm text-[var(--text-secondary)]">
                         <div className="text-center">
                           <p className="text-lg font-bold text-blue-700">{posting.applicationsCount}</p>
-                          <p className="text-xs text-gray-500">Applications</p>
+                          <p className="text-xs text-[var(--text-muted)]">Applications</p>
                         </div>
                         <div className="text-center">
                           <p className="text-lg font-bold text-purple-700">{posting.viewsCount}</p>
-                          <p className="text-xs text-gray-500">Views</p>
+                          <p className="text-xs text-[var(--text-muted)]">Views</p>
                         </div>
                         {posting.status === 'ACTIVE' && (
                           <Button size="sm" variant="outline" onClick={() => pauseMutation.mutate(posting.id)}>
@@ -213,7 +213,7 @@ export default function JobBoardsPage() {
                       </div>
                     </div>
                     {(posting.postedAt || posting.expiresAt) && (
-                      <p className="text-xs text-gray-400 mt-2">
+                      <p className="text-xs text-[var(--text-muted)] mt-2">
                         {posting.postedAt && `Posted: ${new Date(posting.postedAt).toLocaleDateString()}`}
                         {posting.expiresAt && ` · Expires: ${new Date(posting.expiresAt).toLocaleDateString()}`}
                         {posting.lastSyncedAt && ` · Synced: ${new Date(posting.lastSyncedAt).toLocaleDateString()}`}
@@ -229,18 +229,18 @@ export default function JobBoardsPage() {
 
       {/* Post modal */}
       {showPostModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
           <Card className="w-full max-w-md mx-4">
             <CardHeader>
               <CardTitle>Post Job to Boards</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Job Opening *</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening *</label>
                 <select
                   value={selectedJobId}
                   onChange={e => setSelectedJobId(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm"
                 >
                   <option value="">— Select a job —</option>
                   {openJobs?.content?.map((job: JobOpening) => (
@@ -251,7 +251,7 @@ export default function JobBoardsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Select Boards *</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</label>
                 <div className="grid grid-cols-2 gap-2">
                   {ALL_BOARDS.map((board: JobBoardPosting['boardName']) => {
                     const bc = boardConfig[board];
@@ -261,7 +261,7 @@ export default function JobBoardsPage() {
                         key={board}
                         onClick={() => toggleBoard(board)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm font-medium transition-all ${
-                          isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                          isSelected ? `${bc.color} text-white border-transparent` : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:border-gray-400'
                         }`}
                       >
                         <Globe className="w-4 h-4" />
@@ -275,7 +275,7 @@ export default function JobBoardsPage() {
                   <p className="text-xs text-red-500 mt-1">Select at least one board</p>
                 )}
               </div>
-              <p className="text-xs text-gray-500 bg-gray-50 p-3 rounded-md">
+              <p className="text-xs text-[var(--text-muted)] bg-[var(--bg-surface)] p-3 rounded-md">
                 <strong>Note:</strong> Naukri requires API credentials configured in settings.
                 Jobs will be posted immediately and expire after 30 days.
               </p>

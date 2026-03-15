@@ -102,10 +102,10 @@ export default function LearningPathsPage() {
 
   const getStatusColor = (status?: string) => {
     switch (status) {
-      case 'NOT_STARTED': return 'bg-gray-100 text-gray-700';
+      case 'NOT_STARTED': return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-700';
       case 'COMPLETED': return 'bg-green-100 text-green-700';
-      default: return 'bg-gray-100 text-gray-700';
+      default: return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
     }
   };
 
@@ -117,16 +117,16 @@ export default function LearningPathsPage() {
           <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Learning Paths</h1>
-          <p className="text-gray-600 dark:text-gray-400">Structured learning journeys to develop specific skills and competencies</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">Learning Paths</h1>
+          <p className="text-[var(--text-secondary)]">Structured learning journeys to develop specific skills and competencies</p>
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search learning paths..."
@@ -138,7 +138,7 @@ export default function LearningPathsPage() {
 
             {/* Difficulty Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <Filter className="h-5 w-5 text-[var(--text-secondary)]" />
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
@@ -158,13 +158,13 @@ export default function LearningPathsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
-              <p className="text-gray-500 dark:text-gray-400">Loading learning paths...</p>
+              <p className="text-[var(--text-muted)]">Loading learning paths...</p>
             </div>
           </div>
         ) : filteredPaths.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPaths.map((path) => (
-              <div key={path.id} className="bg-white dark:bg-surface-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={path.id} className="bg-[var(--bg-input)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 {/* Thumbnail */}
                 {path.thumbnailUrl ? (
                   <img
@@ -182,7 +182,7 @@ export default function LearningPathsPage() {
                 <div className="p-6">
                   {/* Title and Status */}
                   <div className="flex items-start justify-between gap-2 mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex-1">{path.title}</h3>
+                    <h3 className="text-lg font-semibold text-[var(--text-primary)] flex-1">{path.title}</h3>
                     {path.status && (
                       <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(path.status)}`}>
                         {path.status.replace('_', ' ')}
@@ -192,11 +192,11 @@ export default function LearningPathsPage() {
 
                   {/* Description */}
                   {path.description && (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{path.description}</p>
+                    <p className="text-[var(--text-secondary)] text-sm mb-4 line-clamp-2">{path.description}</p>
                   )}
 
                   {/* Meta Info */}
-                  <div className="flex flex-wrap gap-3 mb-4 text-xs text-gray-600 dark:text-gray-400">
+                  <div className="flex flex-wrap gap-3 mb-4 text-xs text-[var(--text-secondary)]">
                     <div className="flex items-center gap-1">
                       <BookOpen className="h-4 w-4" />
                       {path.courseCount} {path.courseCount === 1 ? 'course' : 'courses'}
@@ -226,8 +226,8 @@ export default function LearningPathsPage() {
                   {path.isEnrolled && typeof path.progressPercentage === 'number' && (
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Progress</span>
-                        <span className="text-xs font-bold text-gray-900 dark:text-white">{path.progressPercentage}%</span>
+                        <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
+                        <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                       </div>
                       <div className="w-full h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
                         <div
@@ -277,12 +277,12 @@ export default function LearningPathsPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-12 text-center">
-            <Zap className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
+            <Zap className="h-16 w-16 text-gray-300 dark:text-[var(--text-primary)] mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || selectedDifficulty !== 'ALL' ? 'No matching learning paths' : 'No learning paths available'}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               {searchQuery || selectedDifficulty !== 'ALL' 
                 ? 'Try adjusting your search or filter criteria'
                 : 'Learning paths will be available soon'}

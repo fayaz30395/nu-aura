@@ -71,7 +71,7 @@ export function CompanySpotlight() {
   }, [isAutoPlaying, spotlights.length, isLoading]);
 
   if (isLoading) {
-    return <div className="w-full h-28 rounded-xl bg-gray-100 dark:bg-gray-800 animate-pulse" />;
+    return <div className="w-full h-28 rounded-xl bg-[var(--bg-surface)] animate-pulse" />;
   }
 
   if (!spotlights || spotlights.length === 0) return null;

@@ -276,7 +276,7 @@ export default function UtilizationReportsPage() {
               <select
                 value={selectedDateRange}
                 onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-                className="appearance-none pl-4 pr-10 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="thisWeek">This Week</option>
                 <option value="lastWeek">Last Week</option>
@@ -295,14 +295,14 @@ export default function UtilizationReportsPage() {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <span className="text-surface-400">to</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </>
             )}
@@ -310,7 +310,7 @@ export default function UtilizationReportsPage() {
             <button
               onClick={() => refetch()}
               disabled={loading}
-              className="p-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+              className="p-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -532,7 +532,7 @@ export default function UtilizationReportsPage() {
                       placeholder="Search employees..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                 </div>

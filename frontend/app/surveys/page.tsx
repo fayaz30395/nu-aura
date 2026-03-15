@@ -92,7 +92,7 @@ const getTypeColor = (type: SurveyType) => {
     case SurveyType.FEEDBACK:
       return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-surface-950 dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-950 dark:text-gray-200';
   }
 };
 
@@ -275,8 +275,8 @@ export default function SurveysPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-gray-100 p-3 dark:bg-surface-800">
-                  <FileText className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                <div className="rounded-lg bg-[var(--bg-surface)] p-3 dark:bg-surface-800">
+                  <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
                   <p className="text-sm text-surface-600 dark:text-surface-400">Drafts</p>
@@ -398,7 +398,7 @@ export default function SurveysPage() {
                         {survey.surveyType}
                       </span>
                       {survey.isAnonymous && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-surface-800 dark:text-gray-200">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-200">
                           Anonymous
                         </span>
                       )}

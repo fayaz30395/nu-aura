@@ -121,7 +121,7 @@ export default function PaymentsPage() {
       case 'INITIATED':
         return <Clock className="w-5 h-5 text-yellow-600" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-600" />;
+        return <AlertCircle className="w-5 h-5 text-[var(--text-secondary)]" />;
     }
   };
 
@@ -154,7 +154,7 @@ export default function PaymentsPage() {
         {/* Statistics */}
         {statsData && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                   <CreditCard className="w-5 h-5" />
@@ -168,7 +168,7 @@ export default function PaymentsPage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                   <CheckCircle className="w-5 h-5" />
@@ -182,7 +182,7 @@ export default function PaymentsPage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                   <Clock className="w-5 h-5" />
@@ -196,7 +196,7 @@ export default function PaymentsPage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
                   <XCircle className="w-5 h-5" />
@@ -213,7 +213,7 @@ export default function PaymentsPage() {
         )}
 
         {/* Filters Bar */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 mb-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-surface-200 dark:border-surface-700">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
@@ -223,7 +223,7 @@ export default function PaymentsPage() {
                 placeholder="Search transactions..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
               />
             </div>
 
@@ -266,7 +266,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.status}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value as PaymentStatus | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="INITIATED">Initiated</option>
@@ -286,7 +286,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters({ ...filters, type: e.target.value as PaymentType | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 >
                   <option value="ALL">All Types</option>
                   <option value="PAYROLL">Payroll</option>
@@ -303,7 +303,7 @@ export default function PaymentsPage() {
                 <select
                   value={filters.provider}
                   onChange={(e) => setFilters({ ...filters, provider: e.target.value as PaymentProvider | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 >
                   <option value="ALL">All Providers</option>
                   <option value="RAZORPAY">Razorpay</option>
@@ -321,7 +321,7 @@ export default function PaymentsPage() {
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 />
               </div>
 
@@ -333,7 +333,7 @@ export default function PaymentsPage() {
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 />
               </div>
 
@@ -347,7 +347,7 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMin}
                     onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                   />
                 </div>
                 <div className="flex-1">
@@ -359,7 +359,7 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMax}
                     onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                   />
                 </div>
               </div>

@@ -263,12 +263,12 @@ export default function CustomFieldsPage() {
               placeholder="Search fields..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={filterEntityType}
               onChange={(e) => setFilterEntityType(e.target.value as EntityType | 'ALL')}
-              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="ALL">All Entity Types</option>
               {ENTITY_TYPES.map((type) => (
@@ -290,34 +290,34 @@ export default function CustomFieldsPage() {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-surface-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-surface-900">
+        <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-[var(--border-main)]">
+            <thead className="bg-[var(--bg-surface)] dark:bg-surface-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Entity Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Group
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-surface-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
               {filteredDefinitions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-muted)]">
                     No custom fields found. Create your first custom field to get started.
                   </td>
                 </tr>
@@ -331,7 +331,7 @@ export default function CustomFieldsPage() {
                           <span className="ml-1 text-red-500">*</span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-[var(--text-muted)]">
                         {definition.fieldCode}
                       </div>
                     </td>
@@ -340,10 +340,10 @@ export default function CustomFieldsPage() {
                         {ENTITY_TYPE_INFO[definition.entityType].label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                       {FIELD_TYPE_INFO[definition.fieldType].label}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                       {definition.fieldGroup || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -352,7 +352,7 @@ export default function CustomFieldsPage() {
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           definition.isActive
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-gray-100 text-gray-800 dark:bg-surface-700 dark:text-gray-300'
+                            : 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-700 dark:text-gray-300'
                         }`}
                       >
                         {definition.isActive ? 'Active' : 'Inactive'}
@@ -397,7 +397,7 @@ export default function CustomFieldsPage() {
         {/* Create/Edit Modal */}
         {(showCreateModal || showEditModal) && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-surface-900 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">
                 {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
               </h2>
@@ -410,7 +410,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldCode')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., blood_group"
                       disabled={showEditModal}
                     />
@@ -423,7 +423,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Blood Group"
                     />
                     {errors.fieldName && <p className="text-red-500 text-sm mt-1">{errors.fieldName.message}</p>}
@@ -436,7 +436,7 @@ export default function CustomFieldsPage() {
                   </label>
                   <textarea
                     {...register('description')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
                     placeholder="Optional description..."
                   />
@@ -454,7 +454,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           disabled={showEditModal}
                         >
                           {ENTITY_TYPES.map((type) => (
@@ -477,7 +477,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           disabled={showEditModal}
                         >
                           {FIELD_TYPES.map((type) => (
@@ -500,7 +500,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('fieldGroup')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
                     {errors.fieldGroup && <p className="text-red-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
@@ -512,7 +512,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="number"
                       {...register('displayOrder')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {errors.displayOrder && <p className="text-red-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
@@ -525,7 +525,7 @@ export default function CustomFieldsPage() {
                     </label>
                     <textarea
                       {...register('optionsText')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
@@ -541,7 +541,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('placeholder')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Placeholder text..."
                     />
                     {errors.placeholder && <p className="text-red-500 text-sm mt-1">{errors.placeholder.message}</p>}
@@ -553,7 +553,7 @@ export default function CustomFieldsPage() {
                     <input
                       type="text"
                       {...register('defaultValue')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {errors.defaultValue && <p className="text-red-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
@@ -570,7 +570,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>
@@ -592,7 +592,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>

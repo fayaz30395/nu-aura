@@ -185,7 +185,7 @@ export const NotificationBell: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+        className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:text-gray-300 dark:hover:text-white transition-colors"
       >
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
@@ -196,7 +196,7 @@ export const NotificationBell: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-surface-800 rounded-lg shadow-2xl border border-gray-200 dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-96 bg-[var(--bg-input)] rounded-lg shadow-2xl border border-[var(--border-main)] dark:border-surface-700 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between p-4 border-b">
             <h3 className="text-lg font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
@@ -225,24 +225,24 @@ export const NotificationBell: React.FC = () => {
                     className={`p-4 border-b dark:border-surface-700 transition-colors ${
                       !notification.isRead
                         ? 'bg-blue-50 dark:bg-blue-900/20'
-                        : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                        : 'hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50'
                     } ${hasRoute ? 'cursor-pointer' : ''}`}
                     onClick={() => hasRoute && handleNotificationClick(notification)}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                             {notification.title}
                           </p>
                           {hasRoute && (
-                            <ExternalLink className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                            <ExternalLink className="h-3 w-3 text-[var(--text-muted)] flex-shrink-0" />
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                           {notification.message}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                        <p className="text-xs text-[var(--text-muted)] mt-1">
                           {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                         </p>
                       </div>

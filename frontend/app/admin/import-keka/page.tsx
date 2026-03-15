@@ -17,7 +17,7 @@ import {
   MapPin,
   Eye,
 } from 'lucide-react';
-import { AppLayout } from '@/components/layout';
+import { AdminPageContent } from '@/components/layout';
 import {
   KekaImportMapping,
   KekaImportPreview,
@@ -309,7 +309,7 @@ export default function KekaImportPage() {
   const unmappedColumns = columnMappings.filter((m) => !m.targetField);
 
   return (
-    <AppLayout activeMenuItem="admin">
+    <AdminPageContent>
       <div className="min-h-screen bg-surface-50 dark:bg-surface-900">
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}
@@ -938,6 +938,6 @@ export default function KekaImportPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </AdminPageContent>
   );
 }

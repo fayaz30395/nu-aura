@@ -129,38 +129,38 @@ export default function CertificateGalleryPage() {
           <Link href="/learning" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4" /> Back to Learning
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">My Certificates</h1>
-          <p className="text-gray-600 dark:text-gray-400">Collection of all earned certificates and credentials</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">My Certificates</h1>
+          <p className="text-[var(--text-secondary)]">Collection of all earned certificates and credentials</p>
         </div>
 
         {/* Summary Stats */}
         {!isLoading && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6">
+            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{certificates.length}</div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">Total Certificates</div>
+              <div className="text-[var(--text-secondary)] text-sm">Total Certificates</div>
             </div>
-            <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6">
+            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {certificates.filter(c => c.isActive).length}
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">Active Credentials</div>
+              <div className="text-[var(--text-secondary)] text-sm">Active Credentials</div>
             </div>
-            <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6">
+            <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                 {certificates.reduce((sum, c) => sum + (c.scoreAchieved || 0), 0) / Math.max(certificates.length, 1) | 0}%
               </div>
-              <div className="text-gray-600 dark:text-gray-400 text-sm">Average Score</div>
+              <div className="text-[var(--text-secondary)] text-sm">Average Score</div>
             </div>
           </div>
         )}
 
         {/* Search and Filter */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search by course name or certificate number..."
@@ -172,7 +172,7 @@ export default function CertificateGalleryPage() {
 
             {/* Date Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <Filter className="h-5 w-5 text-[var(--text-secondary)]" />
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
@@ -192,7 +192,7 @@ export default function CertificateGalleryPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
-              <p className="text-gray-500 dark:text-gray-400">Loading certificates...</p>
+              <p className="text-[var(--text-muted)]">Loading certificates...</p>
             </div>
           </div>
         ) : filteredCerts.length > 0 ? (
@@ -210,18 +210,18 @@ export default function CertificateGalleryPage() {
                         <Award className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2">{cert.courseTitle}</h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Certificate</p>
+                        <h3 className="font-semibold text-[var(--text-primary)] text-sm line-clamp-2">{cert.courseTitle}</h3>
+                        <p className="text-xs text-[var(--text-secondary)] mt-0.5">Certificate</p>
                       </div>
                     </div>
                     {getStatusBadge(cert.isActive)}
                   </div>
 
                   {/* Certificate Number */}
-                  <div className="bg-white dark:bg-surface-900 rounded-lg p-3 mb-4">
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Certificate ID</div>
+                  <div className="bg-[var(--bg-card)] rounded-lg p-3 mb-4">
+                    <div className="text-xs text-[var(--text-secondary)] mb-1">Certificate ID</div>
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm font-semibold text-gray-900 dark:text-white">{cert.certificateNumber}</span>
+                      <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
                       <button
                         onClick={() => handleCopyCertificateNumber(cert.certificateNumber)}
                         className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded transition-colors"
@@ -230,7 +230,7 @@ export default function CertificateGalleryPage() {
                         {copiedId === cert.certificateNumber ? (
                           <Check className="h-4 w-4 text-green-600" />
                         ) : (
-                          <Copy className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <Copy className="h-4 w-4 text-[var(--text-secondary)]" />
                         )}
                       </button>
                     </div>
@@ -238,8 +238,8 @@ export default function CertificateGalleryPage() {
 
                   {/* Details */}
                   <div className="space-y-3 mb-4 text-sm">
-                    <div className="flex items-center justify-between text-gray-700 dark:text-gray-300">
-                      <span className="text-gray-600 dark:text-gray-400">Issued</span>
+                    <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                      <span className="text-[var(--text-secondary)]">Issued</span>
                       <span className="font-medium flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
                         {formatDate(cert.issuedAt)}
@@ -247,15 +247,15 @@ export default function CertificateGalleryPage() {
                     </div>
 
                     {cert.expiryDate && (
-                      <div className="flex items-center justify-between text-gray-700 dark:text-gray-300">
-                        <span className="text-gray-600 dark:text-gray-400">Expires</span>
+                      <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                        <span className="text-[var(--text-secondary)]">Expires</span>
                         <span className="font-medium">{formatDate(cert.expiryDate)}</span>
                       </div>
                     )}
 
                     {cert.scoreAchieved && (
-                      <div className="flex items-center justify-between text-gray-700 dark:text-gray-300">
-                        <span className="text-gray-600 dark:text-gray-400">Score</span>
+                      <div className="flex items-center justify-between text-[var(--text-primary)] dark:text-gray-300">
+                        <span className="text-[var(--text-secondary)]">Score</span>
                         <span className="font-bold text-blue-600 dark:text-blue-400">{cert.scoreAchieved}%</span>
                       </div>
                     )}
@@ -291,7 +291,7 @@ export default function CertificateGalleryPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20 border-t border-gray-200 dark:border-surface-700">
+                <div className="px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20 border-t border-[var(--border-main)] dark:border-surface-700">
                   <a
                     href={`/learning/certificates/${cert.id}/verify`}
                     className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 w-fit"
@@ -304,12 +304,12 @@ export default function CertificateGalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-12 text-center">
-            <Award className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="bg-[var(--bg-input)] rounded-lg shadow-md p-12 text-center">
+            <Award className="h-16 w-16 text-gray-300 dark:text-[var(--text-primary)] mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               {searchQuery || dateFilter !== 'ALL' ? 'No matching certificates' : 'No certificates earned yet'}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               {searchQuery || dateFilter !== 'ALL'
                 ? 'Try adjusting your search or filter criteria'
                 : 'Complete courses to earn certificates and showcase your achievements'}

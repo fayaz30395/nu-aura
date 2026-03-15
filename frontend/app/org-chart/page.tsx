@@ -69,7 +69,7 @@ export default function OrgChartPage() {
       'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300',
       'MANAGER': 'bg-green-50 text-green-700 border-green-200',
       'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'SENIOR': 'bg-gray-100 text-gray-800 border-gray-300',
+      'SENIOR': 'bg-[var(--bg-surface)] text-gray-800 border-[var(--border-strong)]',
       'MID': 'bg-surface-50 dark:bg-surface-800/50 text-surface-700 dark:text-surface-300 border-surface-200 dark:border-surface-700',
       'ENTRY': 'bg-surface-50 dark:bg-surface-800/50 text-surface-600 dark:text-surface-400 border-surface-200 dark:border-surface-700',
     };
@@ -170,7 +170,7 @@ export default function OrgChartPage() {
         {Object.entries(deptGroups).map(([deptName, emps]) => (
           <div key={deptName} className="bg-white rounded-lg border border-surface-200 dark:border-surface-700 shadow-sm">
             <div className="bg-surface-50 dark:bg-surface-800/50 px-4 py-3 border-b border-surface-200 dark:border-surface-700">
-              <h3 className="font-semibold text-gray-900">{deptName}</h3>
+              <h3 className="font-semibold text-[var(--text-primary)]">{deptName}</h3>
               <p className="text-sm text-surface-600 dark:text-surface-400">{emps.length} employees</p>
             </div>
             <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
@@ -182,7 +182,7 @@ export default function OrgChartPage() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{emp.fullName}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{emp.fullName}</p>
                     <p className="text-xs text-surface-600 dark:text-surface-400 truncate">{emp.designation}</p>
                   </div>
                   {emp.level && (
@@ -246,7 +246,7 @@ export default function OrgChartPage() {
             <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">Executive</span>
             <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Director/VP</span>
             <span className="px-2 py-1 bg-green-100 text-green-800 rounded">Manager</span>
-            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded">Individual Contributor</span>
+            <span className="px-2 py-1 bg-[var(--bg-surface)] text-gray-800 rounded">Individual Contributor</span>
           </div>
         </div>
 

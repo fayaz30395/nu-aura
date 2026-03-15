@@ -145,7 +145,7 @@ export default function NewOnboardingPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-6"
                         >
-                            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20">
+                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-3">
                                         <User className="h-6 w-6 text-primary-500" />
@@ -168,7 +168,7 @@ export default function NewOnboardingPage() {
                                     </div>
 
                                     {selectedEmployee && (
-                                        <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/60 dark:bg-black/20 border border-primary-500/10 animate-in fade-in slide-in-from-bottom-2">
+                                        <div className="flex items-center gap-6 p-6 rounded-3xl bg-[var(--bg-elevated)] border border-primary-500/10 animate-in fade-in slide-in-from-bottom-2">
                                             <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary-500 to-indigo-600 text-white flex items-center justify-center font-black text-3xl shadow-xl">
                                                 {selectedEmployee.name.charAt(0)}
                                             </div>
@@ -191,7 +191,7 @@ export default function NewOnboardingPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                         >
-                            <Card className="lg:col-span-2 border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20">
+                            <Card className="lg:col-span-2 border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-3">
                                         <ClipboardList className="h-6 w-6 text-indigo-500" />
@@ -206,7 +206,7 @@ export default function NewOnboardingPage() {
                                                 onClick={() => setSelectedTemplate(temp)}
                                                 className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${selectedTemplate?.id === temp.id
                                                         ? 'bg-primary-500/10 border-primary-500 shadow-lg'
-                                                        : 'bg-white/40 dark:bg-white/5 border-transparent hover:border-surface-200'
+                                                        : 'bg-[var(--bg-card)] border-transparent hover:border-surface-200'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-4">
@@ -228,7 +228,7 @@ export default function NewOnboardingPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20">
+                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-3">
                                         <Calendar className="h-6 w-6 text-emerald-500" />
@@ -284,13 +284,13 @@ export default function NewOnboardingPage() {
                                 </div>
                             </div>
 
-                            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20">
+                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardHeader>
                                     <CardTitle>Final Notes</CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-8">
                                     <textarea
-                                        className="w-full px-6 py-4 rounded-3xl bg-surface-100 dark:bg-surface-900 border-0 focus:ring-2 focus:ring-primary-500 outline-none text-surface-900 dark:text-white font-medium"
+                                        className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-primary-500 outline-none text-surface-900 dark:text-white font-medium"
                                         rows={4}
                                         placeholder="Specific instructions for the onboarding buddy or HR team..."
                                         value={formData.notes}

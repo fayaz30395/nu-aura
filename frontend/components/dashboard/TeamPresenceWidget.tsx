@@ -83,23 +83,23 @@ export function TeamPresenceWidget({
   const remoteWorkers = remoteWorkingEmployees.length > 0 ? remoteWorkingEmployees : DEMO_REMOTE_WORKERS;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
       {/* On Leave Today */}
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2.5">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2.5">
           On Leave Today
         </h3>
         {onLeaveEmployees.length === 0 ? (
-          <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-900">
+          <div className="flex items-center gap-2 rounded-lg bg-[var(--bg-surface)] px-3 py-2.5">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <p className="text-xs text-gray-500 dark:text-gray-400">Everyone is working today</p>
+            <p className="text-xs text-[var(--text-muted)]">Everyone is working today</p>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
             {onLeaveEmployees.map((e) => (
-              <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-gray-900">
+              <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
                 <Avatar name={e.employeeName} />
-                <span className="text-xs text-gray-600 dark:text-gray-400 max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
+                <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
               </div>
             ))}
           </div>
@@ -107,22 +107,22 @@ export function TeamPresenceWidget({
       </div>
 
       {/* Working Remotely */}
-      <div className="border-t border-gray-100 dark:border-gray-800 pt-3">
+      <div className="border-t border-[var(--border-subtle)] pt-3">
         <div className="flex items-center gap-1.5 mb-2.5">
-          <MapPin className="h-3.5 w-3.5 text-gray-400" />
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          <MapPin className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">
             Working Remotely
           </h3>
-          <span className="ml-auto text-xs text-gray-400">{remoteWorkers.length}</span>
+          <span className="ml-auto text-xs text-[var(--text-muted)]">{remoteWorkers.length}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {remoteWorkers.map((e) => (
-            <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-gray-900">
+            <div key={e.employeeId} className="flex items-center gap-1.5 rounded-lg bg-[var(--bg-surface)] px-2 py-1.5">
               <div className="relative">
                 <Avatar name={e.employeeName} />
                 <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500 dark:border-gray-950" />
               </div>
-              <span className="text-xs text-gray-600 dark:text-gray-400 max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
+              <span className="text-xs text-[var(--text-secondary)] max-w-[80px] truncate">{e.employeeName.split(' ')[0]}</span>
             </div>
           ))}
         </div>

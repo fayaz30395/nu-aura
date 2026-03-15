@@ -1368,7 +1368,7 @@ function MailContent() {
 
         {/* Compose Modal */}
         {showCompose && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
             <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
               <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
                 <h3 className="font-semibold text-surface-900 dark:text-surface-50">
@@ -1422,7 +1422,7 @@ function MailContent() {
                   {showSuggestions && activeField === 'to' && filteredContacts.length > 0 && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
                       {filteredContacts.map((contact, index) => (
                         <button
@@ -1472,7 +1472,7 @@ function MailContent() {
                   {showSuggestions && activeField === 'cc' && filteredContacts.length > 0 && (
                     <div
                       ref={suggestionsRef}
-                      className="absolute z-50 w-full mt-1 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                      className="absolute z-50 w-full mt-1 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
                     >
                       {filteredContacts.map((contact, index) => (
                         <button
@@ -1519,7 +1519,7 @@ function MailContent() {
                     onChange={(e) => setComposeEmail({ ...composeEmail, body: e.target.value })}
                     placeholder="Write your message..."
                     rows={8}
-                    className="w-full px-3 py-2 border border-surface-200 dark:border-surface-600 rounded-t-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 placeholder-surface-400 dark:placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 border border-surface-200 dark:border-surface-600 rounded-t-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 placeholder-surface-400 dark:placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                   />
                   {/* Signature Preview */}
                   {emailSignatureHtml && (

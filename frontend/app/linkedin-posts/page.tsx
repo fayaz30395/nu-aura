@@ -96,11 +96,11 @@ export default function LinkedInPostsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
                   <Linkedin className="w-8 h-8 text-blue-600" />
                   LinkedIn Posts
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                <p className="text-[var(--text-secondary)] mt-2">
                   Curate and manage LinkedIn posts for your company feed
                 </p>
               </div>
@@ -124,10 +124,10 @@ export default function LinkedInPostsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-4 mb-6"
+            className="bg-[var(--bg-card)] rounded-xl shadow-sm p-4 mb-6"
           >
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by content or author..."
@@ -166,26 +166,26 @@ export default function LinkedInPostsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
+                    className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
                   >
                     {/* Card Header */}
                     <div className="p-5 border-b border-surface-200 dark:border-surface-700">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
-                            <User className="w-4 h-4 text-gray-400" />
-                            <span className="font-semibold text-gray-900 dark:text-white truncate">
+                            <User className="w-4 h-4 text-[var(--text-muted)]" />
+                            <span className="font-semibold text-[var(--text-primary)] truncate">
                               {post.authorName}
                             </span>
                           </div>
                           {post.authorTitle && (
-                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                            <p className="text-sm text-[var(--text-muted)] truncate">
                               {post.authorTitle}
                             </p>
                           )}
                         </div>
                         {!post.isActive && (
-                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300">
                             Inactive
                           </span>
                         )}
@@ -211,7 +211,7 @@ export default function LinkedInPostsPage() {
                             </span>
                           ))}
                           {post.tags.length > 3 && (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-[var(--text-muted)]">
                               +{post.tags.length - 3}
                             </span>
                           )}
@@ -222,19 +222,19 @@ export default function LinkedInPostsPage() {
                       <div className="grid grid-cols-3 gap-3 pt-3 border-t border-surface-200 dark:border-surface-700">
                         <div className="flex items-center gap-2 text-sm">
                           <Heart className="w-4 h-4 text-red-500" />
-                          <span className="text-gray-600 dark:text-gray-400">
+                          <span className="text-[var(--text-secondary)]">
                             {post.engagement.likes}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <MessageCircle className="w-4 h-4 text-blue-500" />
-                          <span className="text-gray-600 dark:text-gray-400">
+                          <span className="text-[var(--text-secondary)]">
                             {post.engagement.comments}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <Share2 className="w-4 h-4 text-green-500" />
-                          <span className="text-gray-600 dark:text-gray-400">
+                          <span className="text-[var(--text-secondary)]">
                             {post.engagement.shares}
                           </span>
                         </div>
@@ -245,7 +245,7 @@ export default function LinkedInPostsPage() {
                     <div className="px-5 py-4 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(post.postedAt)}
                           </span>
@@ -260,7 +260,7 @@ export default function LinkedInPostsPage() {
                           href={post.postUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                          className="p-1.5 text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                           title="View on LinkedIn"
                         >
                           <ExternalLink className="w-4 h-4" />
@@ -270,7 +270,7 @@ export default function LinkedInPostsPage() {
 
                     {/* Actions */}
                     {isAdmin(user?.roles) && (
-                      <div className="px-5 py-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-50 dark:bg-gray-900/30 border-t border-surface-200 dark:border-surface-700">
+                      <div className="px-5 py-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--bg-surface)]/30 border-t border-surface-200 dark:border-surface-700">
                         <button
                           onClick={() => handleEditPost(post)}
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
@@ -425,26 +425,26 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit LinkedIn Post' : 'Add LinkedIn Post'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
         </div>
 
@@ -545,7 +545,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
               className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="tag1, tag2, tag3"
             />
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-xs text-[var(--text-muted)]">
               Separate tags with commas
             </p>
           </div>
@@ -629,7 +629,7 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

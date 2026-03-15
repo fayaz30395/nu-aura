@@ -111,7 +111,7 @@ export default function EmploymentChangeRequestsPage() {
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800/30 dark:text-slate-400">
             <AlertCircle className="h-3 w-3" />
             Cancelled
           </span>
@@ -199,7 +199,7 @@ export default function EmploymentChangeRequestsPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-input)] rounded-lg shadow-sm p-6">
             <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
               {filter === 'pending' ? 'Pending Requests' : 'Total Requests'}
             </div>
@@ -214,7 +214,7 @@ export default function EmploymentChangeRequestsPage() {
           {loading ? (
             <div className="text-center py-12 text-slate-600 dark:text-slate-400">Loading...</div>
           ) : requests.length === 0 ? (
-            <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-12 text-center">
+            <div className="bg-[var(--bg-input)] rounded-lg shadow-sm p-12 text-center">
               <User className="h-12 w-12 mx-auto text-slate-400 mb-4" />
               <p className="text-slate-600 dark:text-slate-400">
                 {filter === 'pending' ? 'No pending change requests' : 'No change requests found'}
@@ -224,7 +224,7 @@ export default function EmploymentChangeRequestsPage() {
             requests.map((request) => (
               <div
                 key={request.id}
-                className="bg-white dark:bg-slate-800 rounded-lg shadow-sm overflow-hidden"
+                className="bg-[var(--bg-input)] rounded-lg shadow-sm overflow-hidden"
               >
                 {/* Header */}
                 <div
@@ -268,7 +268,7 @@ export default function EmploymentChangeRequestsPage() {
                         <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
                           Proposed Changes
                         </h4>
-                        <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4">
+                        <div className="bg-slate-50/50 rounded-lg p-4">
                           {renderChangeDetail(
                             'Designation',
                             request.currentDesignation,
@@ -399,8 +399,8 @@ export default function EmploymentChangeRequestsPage() {
 
       {/* Reject Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)]">
+          <div className="bg-[var(--bg-input)] rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
               Reject Change Request
             </h3>
@@ -412,7 +412,7 @@ export default function EmploymentChangeRequestsPage() {
               onChange={(e) => setRejectionReason(e.target.value)}
               placeholder="Enter rejection reason..."
               rows={4}
-              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-900 text-slate-900 dark:text-white"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 text-slate-900 dark:text-white"
             />
             <div className="flex gap-3 mt-4">
               <button

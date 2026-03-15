@@ -135,7 +135,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
 
             {/* QR Code */}
             {qrCodeUrl && (
-              <div className="flex justify-center p-4 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
+              <div className="flex justify-center p-4 bg-[var(--bg-surface)] rounded-lg border border-slate-200 dark:border-slate-600">
                 {/* unoptimized because qrCodeUrl is a data: URI — next/image optimization doesn't apply */}
                 <Image src={qrCodeUrl} alt="QR Code for MFA" width={192} height={192} unoptimized />
               </div>
@@ -198,7 +198,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
                   setVerificationCode(value);
                 }}
                 disabled={isVerifying}
-                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-surface)] text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                 autoComplete="off"
               />
             </div>

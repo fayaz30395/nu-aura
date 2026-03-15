@@ -108,11 +108,11 @@ export function HolidayCarousel({
 
   if (displayedHolidays.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Holidays</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Holidays</h3>
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+        <p className="text-sm text-[var(--text-muted)] text-center py-4">
           No upcoming holidays
         </p>
       </div>
@@ -123,40 +123,40 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950"
+      className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
           Upcoming Holidays
         </h3>
         <a
           href="/holidays"
-          className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          className="text-xs text-[var(--text-muted)] hover:text-gray-700 dark:text-[var(--text-muted)] dark:hover:text-gray-300 transition-colors"
         >
           View All
         </a>
       </div>
 
       {/* Holiday Card — clean flat style */}
-      <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+      <div className="rounded-lg bg-[var(--bg-surface)] p-4">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <CalendarDays className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700">
+            <CalendarDays className="h-4 w-4 text-[var(--text-muted)]" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            <h4 className="text-sm font-semibold text-[var(--text-primary)] truncate">
               {currentHoliday.name}
             </h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {currentHoliday.dayOfWeek}, {currentHoliday.date}
             </p>
             <div className="flex items-center gap-2 mt-1.5">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-[var(--text-muted)]">
                 {currentHoliday.daysUntil > 0 ? `In ${currentHoliday.daysUntil} days` : 'Today'}
               </span>
-              <span className="inline-block rounded bg-gray-200 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 uppercase dark:bg-gray-700 dark:text-gray-400">
+              <span className="inline-block rounded bg-gray-200 px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] uppercase dark:bg-gray-700 dark:text-[var(--text-muted)]">
                 {currentHoliday.type.replace(/_/g, ' ')}
               </span>
             </div>
@@ -169,7 +169,7 @@ export function HolidayCarousel({
         <div className="flex items-center justify-between mt-3">
           <button
             onClick={() => setCurrentIndex((prev) => (prev - 1 + displayedHolidays.length) % displayedHolidays.length)}
-            className="rounded p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -186,7 +186,7 @@ export function HolidayCarousel({
           </div>
           <button
             onClick={() => setCurrentIndex((prev) => (prev + 1) % displayedHolidays.length)}
-            className="rounded p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
+            className="rounded p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

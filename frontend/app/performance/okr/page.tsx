@@ -51,7 +51,7 @@ const getLevelIcon = (level: string) => {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-[var(--bg-surface)] text-gray-800';
     case 'ACTIVE':
       return 'bg-blue-100 text-blue-800';
     case 'ON_TRACK':
@@ -63,9 +63,9 @@ const getStatusColor = (status: string) => {
     case 'COMPLETED':
       return 'bg-emerald-100 text-emerald-800';
     case 'CANCELLED':
-      return 'bg-gray-100 text-gray-500';
+      return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-[var(--bg-surface)] text-gray-800';
   }
 };
 
@@ -87,7 +87,7 @@ const getKeyResultStatusIcon = (status: string) => {
     case 'BEHIND':
       return <AlertTriangle className="h-4 w-4 text-red-500" />;
     default:
-      return <Clock className="h-4 w-4 text-gray-500" />;
+      return <Clock className="h-4 w-4 text-[var(--text-muted)]" />;
   }
 };
 
@@ -250,8 +250,8 @@ export default function OKRPage() {
       <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">OKR Management</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">OKR Management</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1">
             Objectives and Key Results tracking
           </p>
         </div>
@@ -269,14 +269,14 @@ export default function OKRPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-[var(--border-main)] mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('my')}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'my'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             My Objectives ({objectives.length})
@@ -286,7 +286,7 @@ export default function OKRPage() {
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'company'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             Company Objectives ({companyObjectives.length})
@@ -299,7 +299,7 @@ export default function OKRPage() {
         <select
           value={filterLevel}
           onChange={(e) => setFilterLevel(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm"
         >
           <option value="ALL">All Levels</option>
           {OBJECTIVE_LEVELS.map((level) => (
@@ -311,7 +311,7 @@ export default function OKRPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm"
         >
           <option value="ALL">All Statuses</option>
           {OBJECTIVE_STATUSES.map((status) => (
@@ -325,10 +325,10 @@ export default function OKRPage() {
       {/* Objectives List */}
       <div className="space-y-4">
         {filteredObjectives.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <Flag className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No objectives</h3>
-            <p className="mt-1 text-sm text-gray-500">
+          <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+            <Flag className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
+            <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No objectives</h3>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               Get started by creating a new objective.
             </p>
           </div>
@@ -336,7 +336,7 @@ export default function OKRPage() {
           filteredObjectives.map((objective: Objective) => (
             <div
               key={objective.id}
-              className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+              className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm overflow-hidden"
             >
               {/* Objective Header */}
               <div className="p-4">
@@ -344,7 +344,7 @@ export default function OKRPage() {
                   <div className="flex items-start gap-3 flex-1">
                     <button
                       onClick={() => toggleExpanded(objective.id)}
-                      className="mt-1 text-gray-400 hover:text-gray-600"
+                      className="mt-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                     >
                       {expandedObjectives.has(objective.id) ? (
                         <ChevronDown className="h-5 w-5" />
@@ -352,10 +352,10 @@ export default function OKRPage() {
                         <ChevronRight className="h-5 w-5" />
                       )}
                     </button>
-                    <div className="text-gray-400">{getLevelIcon(objective.objectiveLevel)}</div>
+                    <div className="text-[var(--text-muted)]">{getLevelIcon(objective.objectiveLevel)}</div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-medium text-gray-900">{objective.title}</h3>
+                        <h3 className="text-lg font-medium text-[var(--text-primary)]">{objective.title}</h3>
                         {objective.isStretchGoal && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
                             Stretch
@@ -363,9 +363,9 @@ export default function OKRPage() {
                         )}
                       </div>
                       {objective.description && (
-                        <p className="text-sm text-gray-500 mb-2">{objective.description}</p>
+                        <p className="text-sm text-[var(--text-muted)] mb-2">{objective.description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
                         <span>{objective.objectiveLevel}</span>
                         <span>
                           {new Date(objective.startDate).toLocaleDateString()} -{' '}
@@ -383,7 +383,7 @@ export default function OKRPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="text-right mr-4">
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className="text-2xl font-bold text-[var(--text-primary)]">
                         {objective.progressPercentage}%
                       </div>
                       <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -397,13 +397,13 @@ export default function OKRPage() {
                       <>
                         <button
                           onClick={() => openEditObjective(objective)}
-                          className="p-2 text-gray-400 hover:text-blue-600"
+                          className="p-2 text-[var(--text-muted)] hover:text-blue-600"
                         >
                           <Pencil className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => setDeleteObjectiveConfirm(objective.id)}
-                          className="p-2 text-gray-400 hover:text-red-600"
+                          className="p-2 text-[var(--text-muted)] hover:text-red-600"
                         >
                           <Trash2 className="h-5 w-5" />
                         </button>
@@ -415,9 +415,9 @@ export default function OKRPage() {
 
               {/* Key Results */}
               {expandedObjectives.has(objective.id) && (
-                <div className="border-t border-gray-200 bg-gray-50 px-4 py-3">
+                <div className="border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-4 py-3">
                   <div className="flex justify-between items-center mb-3">
-                    <h4 className="text-sm font-medium text-gray-700">
+                    <h4 className="text-sm font-medium text-[var(--text-primary)]">
                       Key Results ({objective.keyResults?.length || 0})
                     </h4>
                     {activeTab === 'my' && (
@@ -435,21 +435,21 @@ export default function OKRPage() {
                       {objective.keyResults.map((kr: KeyResult) => (
                         <div
                           key={kr.id}
-                          className="bg-white rounded-md border border-gray-200 p-3"
+                          className="bg-white rounded-md border border-[var(--border-main)] p-3"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-2 flex-1">
                               {getKeyResultStatusIcon(kr.status)}
                               <div className="flex-1">
-                                <div className="font-medium text-gray-900 text-sm">
+                                <div className="font-medium text-[var(--text-primary)] text-sm">
                                   {kr.title}
                                 </div>
                                 {kr.description && (
-                                  <p className="text-xs text-gray-500 mt-1">{kr.description}</p>
+                                  <p className="text-xs text-[var(--text-muted)] mt-1">{kr.description}</p>
                                 )}
                                 <div className="flex items-center gap-4 mt-2">
                                   <div className="flex-1">
-                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
                                       <span>
                                         {kr.currentValue} / {kr.targetValue}{' '}
                                         {kr.measurementUnit}
@@ -478,11 +478,11 @@ export default function OKRPage() {
                                             parseFloat(e.target.value)
                                           )
                                         }
-                                        className="w-16 px-2 py-1 text-xs border border-gray-300 rounded"
+                                        className="w-16 px-2 py-1 text-xs border border-[var(--border-strong)] rounded"
                                       />
                                       <button
                                         onClick={() => setDeleteKeyResultConfirm(kr.id)}
-                                        className="p-1 text-gray-400 hover:text-red-600"
+                                        className="p-1 text-[var(--text-muted)] hover:text-red-600"
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </button>
@@ -496,7 +496,7 @@ export default function OKRPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 text-center py-4">
+                    <p className="text-sm text-[var(--text-muted)] text-center py-4">
                       No key results yet. Add some to track progress.
                     </p>
                   )}
@@ -511,14 +511,14 @@ export default function OKRPage() {
       {showObjectiveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
+            <div className="px-6 py-4 border-b border-[var(--border-main)]">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 {editingObjective ? 'Edit Objective' : 'Create Objective'}
               </h2>
             </div>
             <div className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Title *
                 </label>
                 <input
@@ -527,12 +527,12 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setObjectiveForm({ ...objectiveForm, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What do you want to achieve?"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Description
                 </label>
                 <textarea
@@ -540,14 +540,14 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setObjectiveForm({ ...objectiveForm, description: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="Why is this important?"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Start Date *
                   </label>
                   <input
@@ -556,11 +556,11 @@ export default function OKRPage() {
                     onChange={(e) =>
                       setObjectiveForm({ ...objectiveForm, startDate: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     End Date *
                   </label>
                   <input
@@ -569,13 +569,13 @@ export default function OKRPage() {
                     onChange={(e) =>
                       setObjectiveForm({ ...objectiveForm, endDate: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Level
                   </label>
                   <select
@@ -583,7 +583,7 @@ export default function OKRPage() {
                     onChange={(e) =>
                       setObjectiveForm({ ...objectiveForm, objectiveLevel: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {OBJECTIVE_LEVELS.map((level) => (
                       <option key={level} value={level}>
@@ -593,7 +593,7 @@ export default function OKRPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Weight
                   </label>
                   <input
@@ -608,7 +608,7 @@ export default function OKRPage() {
                         weight: parseFloat(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
@@ -620,21 +620,21 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setObjectiveForm({ ...objectiveForm, isStretchGoal: e.target.checked })
                   }
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                 />
-                <label htmlFor="isStretchGoal" className="ml-2 text-sm text-gray-700">
+                <label htmlFor="isStretchGoal" className="ml-2 text-sm text-[var(--text-primary)]">
                   This is a stretch goal (ambitious target)
                 </label>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowObjectiveModal(false);
                   setEditingObjective(null);
                   resetObjectiveForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
@@ -654,12 +654,12 @@ export default function OKRPage() {
       {showKeyResultModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Add Key Result</h2>
+            <div className="px-6 py-4 border-b border-[var(--border-main)]">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Add Key Result</h2>
             </div>
             <div className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Title *
                 </label>
                 <input
@@ -668,12 +668,12 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setKeyResultForm({ ...keyResultForm, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="What measurable outcome will you achieve?"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Description
                 </label>
                 <textarea
@@ -681,13 +681,13 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setKeyResultForm({ ...keyResultForm, description: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={2}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Measurement Type
                   </label>
                   <select
@@ -695,7 +695,7 @@ export default function OKRPage() {
                     onChange={(e) =>
                       setKeyResultForm({ ...keyResultForm, measurementType: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   >
                     {MEASUREMENT_TYPES.map((type) => (
                       <option key={type} value={type}>
@@ -705,7 +705,7 @@ export default function OKRPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Unit
                   </label>
                   <input
@@ -714,14 +714,14 @@ export default function OKRPage() {
                     onChange={(e) =>
                       setKeyResultForm({ ...keyResultForm, measurementUnit: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                     placeholder="%"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Start Value
                   </label>
                   <input
@@ -733,11 +733,11 @@ export default function OKRPage() {
                         startValue: parseFloat(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Target Value *
                   </label>
                   <input
@@ -749,11 +749,11 @@ export default function OKRPage() {
                         targetValue: parseFloat(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Weight
                   </label>
                   <input
@@ -768,12 +768,12 @@ export default function OKRPage() {
                         weight: parseFloat(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Due Date
                 </label>
                 <input
@@ -782,18 +782,18 @@ export default function OKRPage() {
                   onChange={(e) =>
                     setKeyResultForm({ ...keyResultForm, dueDate: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                 />
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowKeyResultModal(false);
                   setSelectedObjectiveId(null);
                   resetKeyResultForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>

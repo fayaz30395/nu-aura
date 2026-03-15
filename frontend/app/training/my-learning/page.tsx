@@ -145,8 +145,8 @@ export default function MyLearningPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Learning</h1>
-            <p className="text-gray-500 mt-1 text-sm">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">My Learning</h1>
+            <p className="text-[var(--text-muted)] mt-1 text-sm">
               Track your enrolled courses and progress
             </p>
           </div>
@@ -201,14 +201,14 @@ export default function MyLearningPage() {
 
         {/* Course list */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-[var(--text-muted)]">
             <Loader2 className="h-8 w-8 animate-spin mr-3" />
             <span>Loading your courses…</span>
           </div>
         ) : enrollments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400 space-y-3">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-3">
             <BookOpen className="h-12 w-12 text-gray-300" />
-            <p className="text-lg font-medium text-gray-500">No courses yet</p>
+            <p className="text-lg font-medium text-[var(--text-muted)]">No courses yet</p>
             <p className="text-sm">
               Browse the{' '}
               <button
@@ -228,13 +228,13 @@ export default function MyLearningPage() {
               const isUpdating = updatingId === enrollment.id;
 
               return (
-                <Card key={enrollment.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                <Card key={enrollment.id} className="border border-[var(--border-main)] hover:shadow-md transition-shadow">
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="font-semibold text-gray-900 truncate">
+                          <span className="font-semibold text-[var(--text-primary)] truncate">
                             Course ID: {enrollment.courseId}
                           </span>
                           <Badge variant={statusBadgeVariant(enrollment.status)}>
@@ -242,7 +242,7 @@ export default function MyLearningPage() {
                           </Badge>
                         </div>
 
-                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                        <div className="flex items-center gap-4 text-xs text-[var(--text-muted)] mb-3">
                           <span>
                             Enrolled{' '}
                             {enrollment.enrolledAt
@@ -265,7 +265,7 @@ export default function MyLearningPage() {
 
                         {/* Progress bar */}
                         <div className="space-y-1">
-                          <div className="flex justify-between text-xs text-gray-500">
+                          <div className="flex justify-between text-xs text-[var(--text-muted)]">
                             <span>Progress</span>
                             <span>{Math.round(progress)}%</span>
                           </div>

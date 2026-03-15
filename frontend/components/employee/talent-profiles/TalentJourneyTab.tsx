@@ -95,7 +95,7 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
                                 viewport={{ once: true }}
                                 className="relative"
                             >
-                                <div className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-white dark:bg-surface-900 z-10 ${milestone.status === 'COMPLETED' ? 'border-green-500' : 'border-primary-500 border-dashed animate-pulse'
+                                <div className={`absolute -left-[30px] p-1.5 rounded-full border-2 bg-[var(--bg-card)] z-10 ${milestone.status === 'COMPLETED' ? 'border-green-500' : 'border-primary-500 border-dashed animate-pulse'
                                     }`}>
                                     {getMilestoneIcon(milestone.type)}
                                 </div>

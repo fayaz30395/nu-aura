@@ -58,8 +58,8 @@ export default function ResourceConflictsPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Resource Conflicts</h1>
-            <p className="text-gray-500 mt-1">Detect and resolve over-allocated employees across projects</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Resource Conflicts</h1>
+            <p className="text-[var(--text-muted)] mt-1">Detect and resolve over-allocated employees across projects</p>
           </div>
           <Button onClick={() => scanMutation.mutate()} disabled={scanMutation.isPending}>
             <RefreshCw className={`w-4 h-4 mr-2 ${scanMutation.isPending ? 'animate-spin' : ''}`} />
@@ -102,16 +102,16 @@ export default function ResourceConflictsPage() {
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-8 text-center text-gray-500">Loading...</div>
+              <div className="p-8 text-center text-[var(--text-muted)]">Loading...</div>
             ) : (openConflicts?.length ?? 0) === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-[var(--text-muted)]">
                 <CheckCircle className="w-10 h-10 mx-auto mb-2 text-green-400" />
                 <p>No open conflicts. All allocations are within bounds.</p>
               </div>
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50 text-gray-600">
+                  <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
                     <th className="px-4 py-3 text-left font-medium">Employee</th>
                     <th className="px-4 py-3 text-left font-medium">Project A</th>
                     <th className="px-4 py-3 text-left font-medium">Project B</th>
@@ -123,10 +123,10 @@ export default function ResourceConflictsPage() {
                 </thead>
                 <tbody>
                   {openConflicts?.map((c: ConflictLog) => (
-                    <tr key={c.id} className="border-b hover:bg-gray-50">
+                    <tr key={c.id} className="border-b hover:bg-[var(--bg-surface)]">
                       <td className="px-4 py-3">
                         <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-gray-400" />
+                          <Users className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                           <span className="font-mono text-xs">{c.employee_id.slice(0, 8)}…</span>
                         </span>
                       </td>
@@ -142,7 +142,7 @@ export default function ResourceConflictsPage() {
                           {c.total_allocation_pct}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-gray-500">
+                      <td className="px-4 py-3 text-xs text-[var(--text-muted)]">
                         {new Date(c.detected_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">

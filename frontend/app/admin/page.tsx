@@ -6,7 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
 import { Roles } from '@/lib/hooks/usePermissions';
 import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/admin';
-import { AppLayout } from '@/components/layout';
+import { AdminPageContent } from '@/components/layout';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { SkeletonStatCard } from '@/components/ui/Skeleton';
 
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
   const canNext = usersPage ? page < usersPage.totalPages - 1 : false;
 
   return (
-    <AppLayout activeMenuItem="admin">
+    <AdminPageContent>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
       <SystemHealthCard isLoading={healthLoading} health={health} />
 
       {/* All employees table */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800">
+      <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-surface-100 dark:border-surface-800">
           <div>
             <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
@@ -154,7 +154,7 @@ export default function AdminDashboardPage() {
               value={pendingSearch}
               onChange={(e) => setPendingSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearchApply()}
-              className="flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="flex-1 sm:flex-none min-w-0 px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
             <button
               type="button"
@@ -178,7 +178,7 @@ export default function AdminDashboardPage() {
                 <Th>Roles</Th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-100 dark:divide-surface-800">
+            <tbody className="bg-[var(--bg-card)] divide-y divide-surface-100 dark:divide-surface-800">
               {usersLoading ? (
                 <tr>
                   <td
@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
                         user.status === 'ACTIVE'
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
                           : user.status === 'INACTIVE'
-                          ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                          ? 'bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300'
                           : user.status === 'SUSPENDED'
                           ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
                           : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200'
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Role Management Panel */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
+      <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-4">
         <div>
           <h2 className="text-base sm:text-lg font-semibold text-surface-900 dark:text-surface-50">
             Role Management
@@ -284,7 +284,7 @@ export default function AdminDashboardPage() {
               placeholder="user@example.com"
               value={roleEmail}
               onChange={(e) => setRoleEmail(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
           </div>
           <div>
@@ -294,7 +294,7 @@ export default function AdminDashboardPage() {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               {ROLE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -329,14 +329,14 @@ export default function AdminDashboardPage() {
         loading={updateRoleMutation.isPending}
       />
     </motion.div>
-    </AppLayout>
+    </AdminPageContent>
   );
 }
 
 function StatCard(props: { title: string; value: number | string; description?: string }) {
   const { title, value, description } = props;
   return (
-    <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
+    <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 px-4 py-4 sm:px-5 sm:py-5 shadow-soft">
       <div className="text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wide">
         {title}
       </div>
@@ -390,7 +390,7 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
-      className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 shadow-soft"
+      className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 shadow-soft"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

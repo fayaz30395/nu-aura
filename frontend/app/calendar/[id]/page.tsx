@@ -93,8 +93,8 @@ export default function EventDetailPage() {
         icon: XCircle,
       },
       COMPLETED: {
-        bg: 'bg-gray-100 dark:bg-surface-800',
-        text: 'text-gray-700 dark:text-gray-400',
+        bg: 'bg-[var(--bg-surface)] dark:bg-surface-800',
+        text: 'text-gray-700 dark:text-[var(--text-muted)]',
         icon: CheckCircle,
       },
     };
@@ -202,7 +202,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
           {/* Location */}
           {event.location && (
             <div className="flex items-start gap-4">
@@ -315,7 +315,7 @@ export default function EventDetailPage() {
 
         {/* Description */}
         {event.description && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
               Description
             </h3>
@@ -327,7 +327,7 @@ export default function EventDetailPage() {
 
         {/* Notes */}
         {event.notes && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
               Notes
             </h3>
@@ -337,7 +337,7 @@ export default function EventDetailPage() {
 
         {/* Sync Status */}
         {event.syncProvider && event.syncProvider !== 'NONE' && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">

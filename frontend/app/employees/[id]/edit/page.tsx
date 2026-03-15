@@ -373,7 +373,7 @@ export default function EditEmployeePage() {
                   <button
                     type="button"
                     onClick={() => router.push('/employees/change-requests')}
-                    className="px-3 py-1.5 bg-white dark:bg-green-800 text-green-700 dark:text-green-200 text-sm rounded border border-green-300 dark:border-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors"
+                    className="px-3 py-1.5 bg-success-100 dark:bg-success-900/30 text-green-700 dark:text-green-200 text-sm rounded border border-green-300 dark:border-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors"
                   >
                     View All Requests
                   </button>

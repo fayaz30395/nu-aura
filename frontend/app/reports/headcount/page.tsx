@@ -98,14 +98,14 @@ export default function HeadcountReportPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Headcount Report</h1>
-            <p className="text-sm text-gray-500 mt-1">Organization headcount by department, type, and trend</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Headcount Report</h1>
+            <p className="text-sm text-[var(--text-muted)] mt-1">Organization headcount by department, type, and trend</p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={load}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -133,41 +133,41 @@ export default function HeadcountReportPage() {
           <>
             {/* KPI Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Employees</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{metrics?.totalEmployees ?? '—'}</p>
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+                <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Total Employees</p>
+                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.totalEmployees ?? '—'}</p>
                 {orgHealth?.healthScore && (
-                  <span className={`inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[orgHealth.healthScore.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_COLOR[orgHealth.healthScore.status] ?? 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'}`}>
                     Org Health: {orgHealth.healthScore.score}/100
                   </span>
                 )}
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Active Employees</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{metrics?.activeEmployees ?? '—'}</p>
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+                <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Active Employees</p>
+                <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{metrics?.activeEmployees ?? '—'}</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingUp className="h-3.5 w-3.5 text-green-500" />
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">New Hires (Month)</p>
+                  <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">New Hires (Month)</p>
                 </div>
                 <p className="text-3xl font-bold text-green-600 mt-1">{metrics?.newHiresThisMonth ?? orgHealth?.turnover?.monthlyJoiners ?? '—'}</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
                 <div className="flex items-center gap-1 mb-1">
                   <TrendingDown className="h-3.5 w-3.5 text-red-500" />
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Exits (Month)</p>
+                  <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Exits (Month)</p>
                 </div>
                 <p className="text-3xl font-bold text-red-600 mt-1">{metrics?.exitedThisMonth ?? orgHealth?.turnover?.monthlyExits ?? '—'}</p>
                 {orgHealth?.turnover?.annualTurnoverRate != null && (
-                  <p className="text-xs text-gray-400 mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">Annual rate: {orgHealth.turnover.annualTurnoverRate.toFixed(1)}%</p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* By Department */}
-              <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Building2 className="h-4 w-4 text-blue-600" />
                   <h2 className="text-sm font-semibold text-gray-800">Headcount by Department</h2>
@@ -179,10 +179,10 @@ export default function HeadcountReportPage() {
                       .map(dept => (
                         <div key={dept.department}>
                           <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-600 truncate pr-2">{dept.department}</span>
+                            <span className="text-[var(--text-secondary)] truncate pr-2">{dept.department}</span>
                             <span className="font-semibold text-gray-800 shrink-0">{dept.count}</span>
                           </div>
-                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
                               className="h-full bg-blue-500 rounded-full"
                               style={{ width: `${(dept.count / maxDeptCount) * 100}%` }}
@@ -198,10 +198,10 @@ export default function HeadcountReportPage() {
                       .map(([dept, count]) => (
                         <div key={dept}>
                           <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-600 truncate pr-2">{dept}</span>
+                            <span className="text-[var(--text-secondary)] truncate pr-2">{dept}</span>
                             <span className="font-semibold text-gray-800 shrink-0">{count}</span>
                           </div>
-                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                             <div
                               className="h-full bg-blue-500 rounded-full"
                               style={{ width: `${(count / maxDeptCount) * 100}%` }}
@@ -211,12 +211,12 @@ export default function HeadcountReportPage() {
                       ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 text-center py-8">No department data available</p>
+                  <p className="text-sm text-[var(--text-muted)] text-center py-8">No department data available</p>
                 )}
               </div>
 
               {/* Headcount Trend */}
-              <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="h-4 w-4 text-indigo-600" />
                   <h2 className="text-sm font-semibold text-gray-800">12-Month Headcount Trend</h2>
@@ -225,32 +225,32 @@ export default function HeadcountReportPage() {
                   <div className="space-y-1.5">
                     {trend.map((t, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 w-16 shrink-0">{t.month}</span>
-                        <div className="flex-1 h-5 bg-gray-100 rounded overflow-hidden relative">
+                        <span className="text-xs text-[var(--text-muted)] w-16 shrink-0">{t.month}</span>
+                        <div className="flex-1 h-5 bg-[var(--bg-surface)] rounded overflow-hidden relative">
                           <div
                             className="h-full bg-indigo-500 rounded"
                             style={{ width: `${(t.headcount / maxTrendCount) * 100}%` }}
                           />
                         </div>
-                        <span className="text-xs font-semibold text-gray-700 w-10 text-right shrink-0">{t.headcount}</span>
+                        <span className="text-xs font-semibold text-[var(--text-primary)] w-10 text-right shrink-0">{t.headcount}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 text-center py-8">No trend data available</p>
+                  <p className="text-sm text-[var(--text-muted)] text-center py-8">No trend data available</p>
                 )}
               </div>
             </div>
 
             {/* By Employment Type */}
             {metrics?.byEmploymentType && Object.keys(metrics.byEmploymentType).length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-lg p-5">
+              <div className="bg-white border border-[var(--border-main)] rounded-lg p-5">
                 <h2 className="text-sm font-semibold text-gray-800 mb-4">By Employment Type</h2>
                 <div className="flex flex-wrap gap-3">
                   {Object.entries(metrics.byEmploymentType).map(([type, count]) => (
-                    <div key={type} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
-                      <span className="text-xs text-gray-600">{type}</span>
-                      <span className="text-sm font-bold text-gray-900">{count}</span>
+                    <div key={type} className="flex items-center gap-2 px-3 py-2 bg-[var(--bg-surface)] rounded-lg">
+                      <span className="text-xs text-[var(--text-secondary)]">{type}</span>
+                      <span className="text-sm font-bold text-[var(--text-primary)]">{count}</span>
                     </div>
                   ))}
                 </div>

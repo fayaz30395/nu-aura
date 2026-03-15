@@ -276,7 +276,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search employees..."
-                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                    className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
                 <Button
@@ -380,7 +380,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     value={runName}
                     onChange={(e) => setRunName(e.target.value)}
                     placeholder="e.g., December 2024 Payroll"
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 
@@ -393,7 +393,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodStart}
                       onChange={(e) => setPayrollPeriodStart(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
 
@@ -405,7 +405,7 @@ export const BulkProcessingWizard: React.FC = () => {
                       type="date"
                       value={payrollPeriodEnd}
                       onChange={(e) => setPayrollPeriodEnd(e.target.value)}
-                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                      className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                     />
                   </div>
                 </div>
@@ -418,7 +418,7 @@ export const BulkProcessingWizard: React.FC = () => {
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
-                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                    className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                   />
                 </div>
 

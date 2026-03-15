@@ -223,7 +223,7 @@ export default function ManagerDashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className={`px-4 py-2 rounded-2xl flex items-center gap-2 border backdrop-blur-md shadow-sm transition-all duration-300 ${teamOverview.teamHealthStatus === 'EXCELLENT'
+            <div className={`px-4 py-2 rounded-2xl flex items-center gap-2 border shadow-sm transition-all duration-300 ${teamOverview.teamHealthStatus === 'EXCELLENT'
               ? 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400'
               : 'bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400'
               }`}>
@@ -236,7 +236,7 @@ export default function ManagerDashboardPage() {
         {/* Global Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Users className="h-16 w-16 text-primary-500" />
               </div>
@@ -257,7 +257,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <UserCheck className="h-16 w-16 text-emerald-500" />
               </div>
@@ -278,7 +278,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Calendar className="h-16 w-16 text-amber-500" />
               </div>
@@ -299,7 +299,7 @@ export default function ManagerDashboardPage() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="group border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:shadow-2xl transition-all duration-500 overflow-hidden relative border-t border-white/20">
+            <Card className="group border-0 shadow-xl bg-[var(--bg-card)] hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Zap className="h-16 w-16 text-indigo-500" />
               </div>
@@ -324,7 +324,7 @@ export default function ManagerDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Team Attendance Analytics */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -384,7 +384,7 @@ export default function ManagerDashboardPage() {
 
           {/* Team Pulse Radar & Performance */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden h-full">
+            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden h-full">
               <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
                 <CardTitle className="flex items-center gap-3">
                   <Star className="h-6 w-6 text-amber-500" />
@@ -445,7 +445,7 @@ export default function ManagerDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Pending Approvals */}
           <motion.div variants={itemVariants} className="lg:col-span-2">
-            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
               <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -462,7 +462,7 @@ export default function ManagerDashboardPage() {
                   {teamLeave.pendingLeaveRequests.slice(0, 5).map((leave) => (
                     <div
                       key={leave.requestId}
-                      className="p-6 hover:bg-white/60 dark:hover:bg-white/5 transition-all duration-300 group cursor-pointer"
+                      className="p-6 hover:bg-[var(--bg-card-hover)] transition-all duration-300 group cursor-pointer"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -505,7 +505,7 @@ export default function ManagerDashboardPage() {
 
           {/* Action Items Summary */}
           <motion.div variants={itemVariants}>
-            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 h-full">
+            <Card className="border-0 shadow-2xl bg-[var(--bg-card)] h-full">
               <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
                 <CardTitle className="flex items-center gap-3">
                   <ClipboardList className="h-6 w-6 text-indigo-500" />
@@ -554,7 +554,7 @@ export default function ManagerDashboardPage() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
             >
-              <Card className="border-0 shadow-2xl bg-red-500/5 dark:bg-red-500/10 backdrop-blur-xl border-t border-red-500/20 overflow-hidden">
+              <Card className="border-0 shadow-2xl bg-danger-50 dark:bg-danger-950 overflow-hidden">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">

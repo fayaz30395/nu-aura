@@ -100,7 +100,7 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -109,7 +109,7 @@ export function ConfirmDialog({
     >
       <div
         ref={dialogRef}
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
+        className="bg-[var(--bg-card)] rounded-xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex gap-4">
@@ -119,13 +119,13 @@ export function ConfirmDialog({
           <div className="flex-1">
             <h3
               id="confirm-dialog-title"
-              className="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+              className="text-lg font-semibold text-[var(--text-primary)] mb-2"
             >
               {title}
             </h3>
             <p
               id="confirm-dialog-description"
-              className="text-sm text-gray-600 dark:text-gray-300 mb-6"
+              className="text-sm text-[var(--text-secondary)] mb-6"
             >
               {message}
             </p>
@@ -134,7 +134,7 @@ export function ConfirmDialog({
                 ref={cancelButtonRef}
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-surface-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700 dark:text-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-surface-600 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700 dark:text-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
                 {cancelText}
               </button>

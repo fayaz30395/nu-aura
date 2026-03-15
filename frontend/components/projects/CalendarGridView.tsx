@@ -63,7 +63,7 @@ export function CalendarGridView({
         return (
           <div
             key={day.toISOString()}
-            className={`min-h-[120px] p-2 bg-white dark:bg-surface-900 ${
+            className={`min-h-[120px] p-2 bg-[var(--bg-card)] ${
               !isCurrentMonth ? 'bg-surface-50/50 dark:bg-surface-900/50 text-surface-400' : ''
             } ${isToday(day) ? 'bg-primary-50/30 dark:bg-primary-900/10' : ''}`}
             onClick={() => onDateChange(day)}

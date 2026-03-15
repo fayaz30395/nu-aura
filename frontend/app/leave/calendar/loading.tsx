@@ -19,7 +19,7 @@ export default function Loading() {
       </div>
 
       {/* Calendar grid skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-surface-200 dark:border-surface-800">
           {Array.from({ length: 7 }).map((_, index) => (

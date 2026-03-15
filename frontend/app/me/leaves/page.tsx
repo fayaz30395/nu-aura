@@ -404,7 +404,7 @@ export default function MyLeavesPage() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value as LeaveRequestStatus | 'ALL')}
-                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="PENDING">Pending</option>
@@ -416,7 +416,7 @@ export default function MyLeavesPage() {
                 <select
                   value={leaveTypeFilter}
                   onChange={(e) => setLeaveTypeFilter(e.target.value)}
-                  className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-input)] focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="ALL">All Leave Types</option>
                   {leaveTypes.map((type) => (
@@ -578,8 +578,8 @@ export default function MyLeavesPage() {
 
         {/* Apply/Edit Leave Modal */}
         {showApplyModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-            <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
+            <div className="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
                     {editingRequest ? 'Edit Leave Request' : 'Apply for Leave'}
@@ -711,8 +711,8 @@ export default function MyLeavesPage() {
 
         {/* Cancel Leave Modal */}
         {showCancelModal && cancellingRequest && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-            <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--bg-overlay)]">
+            <div className="w-full max-w-md bg-[var(--bg-card)] rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50">
                   Cancel Leave Request

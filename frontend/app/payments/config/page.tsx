@@ -225,7 +225,7 @@ export default function PaymentConfigPage() {
         </div>
 
         {/* Configuration Form */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-6">
+        <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-6">
           <h2 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-50">
             Configure {paymentService.getProviderLabel(selectedProvider)}
           </h2>
@@ -253,7 +253,7 @@ export default function PaymentConfigPage() {
               <textarea
                 {...register('credentialsJson')}
                 rows={6}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 font-mono text-sm"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 font-mono text-sm"
                 placeholder='{&#10;  "api_key": "your_api_key",&#10;  "api_secret": "your_api_secret"&#10;}'
               />
               {errors.credentialsJson && (
@@ -272,7 +272,7 @@ export default function PaymentConfigPage() {
               <input
                 type="password"
                 {...register('webhookSecret')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 placeholder="Your webhook secret"
               />
               <p className="mt-1 text-xs text-surface-600 dark:text-surface-400">
@@ -288,7 +288,7 @@ export default function PaymentConfigPage() {
               <input
                 type="url"
                 {...register('webhookUrl')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 placeholder="https://your-domain.com/webhooks/payments"
               />
               <p className="mt-1 text-xs text-surface-600 dark:text-surface-400">
@@ -370,7 +370,7 @@ export default function PaymentConfigPage() {
               {configs.map((config) => (
                 <div
                   key={config.id}
-                  className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-4 flex items-center justify-between"
+                  className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4 flex items-center justify-between"
                 >
                   <div>
                     <h3 className="font-semibold text-surface-900 dark:text-surface-50">

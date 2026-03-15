@@ -208,10 +208,10 @@ export default function OnboardingDetailPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <Card className="border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl overflow-hidden border-t border-white/20">
+                                <Card className="border-0 shadow-xl bg-[var(--bg-card)] overflow-hidden">
                                     <div
                                         onClick={() => toggleCategory(category)}
-                                        className="p-6 flex items-center justify-between cursor-pointer hover:bg-white/20 transition-colors"
+                                        className="p-6 flex items-center justify-between cursor-pointer hover:bg-[var(--bg-card-hover)] transition-colors"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center font-bold">
@@ -315,7 +315,7 @@ export default function OnboardingDetailPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl">
+                        <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <HardDrive className="h-5 w-5 text-surface-500" />
@@ -349,7 +349,7 @@ export default function OnboardingDetailPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-0 shadow-xl bg-white/40 dark:bg-white/5 backdrop-blur-xl">
+                        <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <ClipboardList className="h-5 w-5 text-surface-500" />

@@ -224,7 +224,7 @@ export default function HolidayCalendarManagementPage() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map((year) => (
                 <option key={year} value={year}>
@@ -261,23 +261,23 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Statistics */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-surface-900 p-4 rounded-lg shadow">
+          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
             <div className="text-sm text-surface-600 dark:text-surface-400">Total Holidays</div>
             <div className="text-2xl font-bold text-surface-900 dark:text-surface-100">{holidays.length}</div>
           </div>
-          <div className="bg-white dark:bg-surface-900 p-4 rounded-lg shadow">
+          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
             <div className="text-sm text-surface-600 dark:text-surface-400">National</div>
             <div className="text-2xl font-bold text-red-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-900 p-4 rounded-lg shadow">
+          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
             <div className="text-sm text-surface-600 dark:text-surface-400">Optional</div>
             <div className="text-2xl font-bold text-yellow-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-900 p-4 rounded-lg shadow">
+          <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
             <div className="text-sm text-surface-600 dark:text-surface-400">Restricted</div>
             <div className="text-2xl font-bold text-orange-600">
               {holidays.filter((h) => h.isRestricted).length}
@@ -286,7 +286,7 @@ export default function HolidayCalendarManagementPage() {
         </div>
 
         {/* Holidays List */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow dark:shadow-surface-950/50">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow dark:shadow-surface-950/50">
           {loading ? (
             <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
               Loading holidays for {selectedYear}...
@@ -390,8 +390,8 @@ export default function HolidayCalendarManagementPage() {
 
         {/* Add/Edit Holiday Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] dark:bg-black/70 flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
@@ -421,7 +421,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('holidayName')}
-                          className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="New Year's Day, Independence Day"
                         />
                         {form.formState.errors.holidayName && (
@@ -437,7 +437,7 @@ export default function HolidayCalendarManagementPage() {
                           <input
                             type="date"
                             {...form.register('holidayDate')}
-                            className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                           {form.formState.errors.holidayDate && (
                             <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
@@ -449,7 +449,7 @@ export default function HolidayCalendarManagementPage() {
                           </label>
                           <select
                             {...form.register('holidayType')}
-                            className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           >
                             {holidayTypes.map((type) => (
                               <option key={type} value={type}>
@@ -467,7 +467,7 @@ export default function HolidayCalendarManagementPage() {
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="Brief description of the holiday..."
                         />
                       </div>
@@ -511,7 +511,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('applicableLocations')}
-                          className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., New York, California (comma-separated)"
                         />
                         <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Leave empty for all locations</p>
@@ -524,7 +524,7 @@ export default function HolidayCalendarManagementPage() {
                         <input
                           type="text"
                           {...form.register('applicableDepartments')}
-                          className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., Engineering, Sales (comma-separated)"
                         />
                         <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Leave empty for all departments</p>

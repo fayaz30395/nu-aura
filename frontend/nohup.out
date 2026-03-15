@@ -8,20 +8,142 @@
 
  ✓ Starting...
  ✓ Ready in 2.3s
- ✓ Compiled /middleware in 215ms (72 modules)
+ ✓ Compiled /middleware in 303ms (72 modules)
  ○ Compiling / ...
- ✓ Compiled / in 13.1s (5599 modules)
-(node:48345) Warning: `--localstorage-file` was provided without a valid path
+ ✓ Compiled / in 13.9s (5620 modules)
+(node:65414) Warning: `--localstorage-file` was provided without a valid path
 (Use `node --trace-warnings ...` to show where the warning was created)
- GET / 200 in 13795ms
- ✓ Compiled in 793ms (2510 modules)
- ✓ Compiled in 336ms (2496 modules)
+ GET / 200 in 14657ms
+ ✓ Compiled in 875ms (2516 modules)
+ ✓ Compiled in 352ms (2502 modules)
  ○ Compiling /auth/login ...
- ✓ Compiled /auth/login in 6.7s (5603 modules)
- GET /auth/login 200 in 5419ms
- GET /auth/login 200 in 117ms
+ ✓ Compiled /auth/login in 6.6s (5615 modules)
+ GET /auth/login 200 in 5329ms
+ GET /auth/login 200 in 124ms
  GET /auth/login 200 in 111ms
- GET / 200 in 158ms
+ GET / 200 in 168ms
+ GET /auth/login 200 in 101ms
  ○ Compiling /me/dashboard ...
- ✓ Compiled /me/dashboard in 1652ms (5978 modules)
- ✓ Compiled in 3.6s (6005 modules)
+ ✓ Compiled /me/dashboard in 1537ms (5990 modules)
+ GET /me/dashboard 200 in 412ms
+ ○ Compiling /employees ...
+ ✓ Compiled /employees in 2.7s (6002 modules)
+ GET /employees 200 in 3028ms
+ ○ Compiling /leave/calendar ...
+ ✓ Compiled /leave/calendar in 1241ms (6032 modules)
+ GET /leave/calendar 200 in 1643ms
+ GET /me/dashboard 200 in 235ms
+ GET /employees 200 in 201ms
+ ○ Compiling /attendance ...
+ ✓ Compiled /attendance in 6.4s (7002 modules)
+ GET /attendance 200 in 6958ms
+ ○ Compiling /performance ...
+ ✓ Compiled /performance in 1528ms (7025 modules)
+ GET /performance 200 in 1818ms
+ ○ Compiling /admin/roles ...
+ ✓ Compiled /admin/roles in 4.2s (7051 modules)
+ GET /admin/roles 200 in 4657ms
+ ○ Compiling /recruitment/jobs ...
+ ✓ Compiled /recruitment/jobs in 1399ms (7072 modules)
+ GET /recruitment/jobs 200 in 1672ms
+ ✓ Compiled in 11.6s (7068 modules)
+ ✓ Compiled in 1962ms (3264 modules)
+ ✓ Compiled in 10.8s (7070 modules)
+ ✓ Compiled in 23.5s (7070 modules)
+ ✓ Compiled in 4.2s (7070 modules)
+ ✓ Compiled in 5.1s (7070 modules)
+ ✓ Compiled in 2.5s (7070 modules)
+ ✓ Compiled in 931ms (3265 modules)
+ ✓ Compiled in 1461ms (7070 modules)
+ ✓ Compiled in 6.7s (7070 modules)
+ GET /me/dashboard 200 in 472ms
+ ✓ Compiled in 4.9s (7070 modules)
+ ✓ Compiled in 7.6s (7070 modules)
+ ✓ Compiled in 3.9s (7070 modules)
+ ✓ Compiled in 7.5s (7070 modules)
+ ✓ Compiled in 16s (7070 modules)
+ ✓ Compiled in 3.3s (7070 modules)
+ ✓ Compiled in 3.9s (7070 modules)
+ ✓ Compiled in 6.1s (7070 modules)
+ ✓ Compiled in 6.1s (7070 modules)
+ ✓ Compiled in 2.1s (3265 modules)
+ ✓ Compiled in 3.1s (3265 modules)
+ ✓ Compiled in 10.1s (7070 modules)
+ GET /me/dashboard 200 in 443ms
+ GET /me/dashboard 200 in 159ms
+ GET /me/dashboard 200 in 186ms
+ GET /me/dashboard 200 in 490ms
+ GET /me/dashboard 200 in 1461ms
+ GET /me/dashboard 200 in 219ms
+ GET /me/dashboard 200 in 166ms
+ ✓ Compiled in 10.7s (7070 modules)
+ ✓ Compiled in 1243ms (3265 modules)
+ ✓ Compiled in 1825ms (3265 modules)
+ ✓ Compiled in 1617ms (3265 modules)
+ ✓ Compiled in 1217ms (3265 modules)
+ ✓ Compiled in 986ms (3265 modules)
+ ✓ Compiled in 1119ms (3265 modules)
+ ✓ Compiled in 882ms (3265 modules)
+ ✓ Compiled in 1175ms (3265 modules)
+ ✓ Compiled in 1952ms (3265 modules)
+ ✓ Compiled in 3s (3265 modules)
+ ✓ Compiled in 1338ms (3265 modules)
+ ✓ Compiled in 14.9s (7070 modules)
+ GET /me/dashboard 200 in 13248ms
+ ✓ Compiled in 6.2s (7070 modules)
+ ✓ Compiled in 1661ms (3265 modules)
+ ✓ Compiled in 1528ms (3265 modules)
+ ✓ Compiled in 10.9s (7070 modules)
+ ✓ Compiled in 1602ms (3265 modules)
+ ✓ Compiled in 6.4s (7070 modules)
+ ✓ Compiled in 15.5s (7070 modules)
+ ✓ Compiled in 2.1s (3265 modules)
+ ✓ Compiled in 1323ms (3265 modules)
+ GET /me/dashboard 200 in 665ms
+ GET /recruitment/jobs 200 in 227ms
+ GET /me/dashboard 200 in 149ms
+ ○ Compiling /employees ...
+ ✓ Compiled /employees in 4.5s (3817 modules)
+ GET /employees 200 in 5017ms
+ GET /attendance 200 in 501ms
+ ○ Compiling /onboarding ...
+ ✓ Compiled /onboarding in 6.9s (7094 modules)
+ GET /onboarding 200 in 7190ms
+ ○ Compiling /dashboards/manager ...
+ ✓ Compiled /dashboards/manager in 5s (7140 modules)
+ GET /dashboards/manager 200 in 5513ms
+ GET /attendance 200 in 214ms
+ GET /me/dashboard 200 in 312ms
+ ✓ Compiled in 18.1s (7135 modules)
+ ✓ Compiled in 9.7s (7135 modules)
+ ✓ Compiled in 4s (3316 modules)
+ ✓ Compiled in 1135ms (3316 modules)
+ ✓ Compiled in 1675ms (3316 modules)
+ ✓ Compiled in 3.1s (3316 modules)
+ ✓ Compiled in 1009ms (3316 modules)
+ ✓ Compiled in 7.6s (7135 modules)
+ GET /me/dashboard 200 in 617ms
+ GET /attendance 200 in 399ms
+ GET /attendance 200 in 182ms
+ GET /onboarding 200 in 236ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.1s (3827 modules)
+ GET / 200 in 3377ms
+ GET /me/dashboard 200 in 315ms
+ GET /me/dashboard 200 in 122ms
+ ✓ Compiled in 5.4s (7135 modules)
+ ✓ Compiled in 3.5s (7135 modules)
+ ✓ Compiled in 3.6s (7135 modules)
+ ✓ Compiled in 4.2s (7135 modules)
+ GET /onboarding 200 in 371ms
+ ✓ Compiled in 6.2s (7135 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /onboarding 200 in 717ms
+ GET /me/dashboard 200 in 719ms
+ GET /me/dashboard 200 in 211ms
+ ✓ Compiled in 3.8s (7135 modules)
+ ✓ Compiled in 5.3s (7135 modules)
+ GET /onboarding 200 in 808ms
+ GET /me/dashboard 200 in 218ms
+ GET /onboarding 200 in 116ms

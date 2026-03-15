@@ -253,7 +253,7 @@ export default function MyAttendancePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -269,7 +269,7 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
@@ -285,7 +285,7 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
@@ -301,7 +301,7 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -317,7 +317,7 @@ export default function MyAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -337,7 +337,7 @@ export default function MyAttendancePage() {
         {viewMode === 'calendar' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Calendar View */}
-            <Card className="bg-white dark:bg-surface-900 lg:col-span-2">
+            <Card className="bg-[var(--bg-card)] lg:col-span-2">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <button
@@ -461,7 +461,7 @@ export default function MyAttendancePage() {
             </Card>
 
             {/* Selected Date Details */}
-            <Card className="bg-white dark:bg-surface-900">
+            <Card className="bg-[var(--bg-card)]">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
                   {selectedDate
@@ -563,7 +563,7 @@ export default function MyAttendancePage() {
           /* List View */
           <>
             {/* Month Selector */}
-            <Card className="bg-white dark:bg-surface-900">
+            <Card className="bg-[var(--bg-card)]">
               <CardContent className="p-6">
                 <div className="flex flex-wrap gap-4 items-center">
                   <Calendar className="h-5 w-5 text-surface-500 dark:text-surface-400" />
@@ -573,7 +573,7 @@ export default function MyAttendancePage() {
                   <select
                     value={month}
                     onChange={(e) => setMonth(Number(e.target.value))}
-                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     {months.map((m, i) => (
                       <option key={i} value={i}>
@@ -584,7 +584,7 @@ export default function MyAttendancePage() {
                   <select
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     {[2024, 2025, 2026].map((y) => (
                       <option key={y} value={y}>
@@ -597,7 +597,7 @@ export default function MyAttendancePage() {
             </Card>
 
             {/* Attendance Records Table */}
-            <Card className="bg-white dark:bg-surface-900">
+            <Card className="bg-[var(--bg-card)]">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
                   Attendance Records

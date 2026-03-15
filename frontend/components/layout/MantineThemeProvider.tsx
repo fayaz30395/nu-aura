@@ -9,15 +9,16 @@ interface MantineThemeProviderProps {
 }
 
 /**
- * Mantine Theme Provider - Synced with Tailwind's DarkModeProvider.
+ * Mantine Theme Provider - Synced with DarkModeProvider.
+ * Uses forceColorScheme to keep Mantine in sync with the resolved theme.
  */
 export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
-  const { isDark } = useDarkMode();
+  const { resolvedTheme } = useDarkMode();
 
   return (
     <MantineProvider
       theme={theme}
-      forceColorScheme={isDark ? 'dark' : 'light'}
+      forceColorScheme={resolvedTheme}
     >
       {children}
     </MantineProvider>
@@ -25,9 +26,11 @@ export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
 }
 
 /**
- * Color scheme script component - forces light mode.
- * Add this to your root layout's <head>.
+ * Color scheme script component.
+ * We no longer force a specific scheme — the FOUC prevention script
+ * in layout.tsx handles the initial class before React hydrates.
+ * This Mantine script is kept for Mantine's internal SSR hydration.
  */
 export function MantineColorSchemeScript() {
-  return <ColorSchemeScript forceColorScheme="light" />;
+  return <ColorSchemeScript defaultColorScheme="auto" />;
 }

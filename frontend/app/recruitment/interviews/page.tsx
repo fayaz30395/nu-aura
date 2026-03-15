@@ -87,12 +87,12 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-3 py-2.5 pr-8 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+          className="w-full px-3 py-2.5 pr-8 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
         />
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400 pointer-events-none" />
       </div>
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl shadow-lg">
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-xl shadow-lg">
           {filtered.length === 0 ? (
             <div className="px-3 py-2 text-sm text-surface-400">No results found</div>
           ) : (
@@ -550,7 +550,7 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -563,7 +563,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -576,7 +576,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -589,7 +589,7 @@ const formatDateTime = (dateString?: string): string => {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
@@ -605,7 +605,7 @@ const formatDateTime = (dateString?: string): string => {
         </div>
 
         {/* Search and Filters */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -615,13 +615,13 @@ const formatDateTime = (dateString?: string): string => {
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
@@ -635,7 +635,7 @@ const formatDateTime = (dateString?: string): string => {
         </Card>
 
         {/* Interviews List */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             {filteredInterviews.length === 0 ? (
               <div className="text-center py-12">
@@ -760,8 +760,8 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* Add/Edit Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
@@ -807,7 +807,7 @@ const formatDateTime = (dateString?: string): string => {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Round</label>
                       <select
                         {...registerCreate('interviewRound')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="SCREENING">Screening</option>
                         <option value="TECHNICAL_1">Technical 1</option>
@@ -821,7 +821,7 @@ const formatDateTime = (dateString?: string): string => {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Type</label>
                       <select
                         {...registerCreate('interviewType')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="VIDEO">Video Call</option>
                         <option value="PHONE">Phone</option>
@@ -836,7 +836,7 @@ const formatDateTime = (dateString?: string): string => {
                       <input
                         type="datetime-local"
                         {...registerCreate('scheduledAt')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errorsCreate.scheduledAt && <p className="text-red-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
@@ -847,7 +847,7 @@ const formatDateTime = (dateString?: string): string => {
                         min="15"
                         step="15"
                         {...registerCreate('durationMinutes')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errorsCreate.durationMinutes && <p className="text-red-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
@@ -934,7 +934,7 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                        className={`w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
@@ -946,7 +946,7 @@ const formatDateTime = (dateString?: string): string => {
                         type="text"
                         {...registerCreate('location')}
                         placeholder="Conference Room A"
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
@@ -968,7 +968,7 @@ const formatDateTime = (dateString?: string): string => {
                       rows={3}
                       {...registerCreate('notes')}
                       placeholder="Additional notes..."
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
@@ -988,8 +988,8 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* Feedback Modal */}
         {showFeedbackModal && selectedInterview && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interview Feedback</h2>
@@ -1029,7 +1029,7 @@ const formatDateTime = (dateString?: string): string => {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Result</label>
                     <select
                       {...registerFeedback('result')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="SELECTED">Selected</option>
@@ -1044,7 +1044,7 @@ const formatDateTime = (dateString?: string): string => {
                       rows={4}
                       {...registerFeedback('feedback')}
                       placeholder="Provide detailed feedback about the candidate's performance..."
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
@@ -1065,8 +1065,8 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* Delete Modal */}
         {showDeleteModal && interviewToDelete && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -1090,8 +1090,8 @@ const formatDateTime = (dateString?: string): string => {
 
         {/* AI Interview Questions Modal */}
         {showQuestionsModal && generatedQuestions && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">

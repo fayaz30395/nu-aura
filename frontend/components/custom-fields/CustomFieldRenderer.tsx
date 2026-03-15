@@ -30,7 +30,7 @@ export default function CustomFieldRenderer({
 }: CustomFieldRendererProps) {
   const currentValue = value?.value || definition.defaultValue || '';
 
-  const baseInputClass = `w-full px-3 py-2 border border-gray-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed ${className}`;
+  const baseInputClass = `w-full px-3 py-2 border border-gray-300 dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[var(--bg-surface)] dark:disabled:bg-gray-800 disabled:cursor-not-allowed ${className}`;
 
   const renderField = () => {
     switch (definition.fieldType) {
@@ -80,7 +80,7 @@ export default function CustomFieldRenderer({
               className={baseInputClass}
             />
             {definition.fieldType === 'PERCENTAGE' && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
                 %
               </span>
             )}
@@ -94,7 +94,7 @@ export default function CustomFieldRenderer({
               value={value?.currencyCode || 'INR'}
               onChange={(e) => onChange(currentValue, { currencyCode: e.target.value })}
               disabled={disabled}
-              className="px-3 py-2 border border-gray-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-gray-300 dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="INR">INR</option>
               <option value="USD">USD</option>
@@ -200,7 +200,7 @@ export default function CustomFieldRenderer({
         return (
           <div className="space-y-2">
             {value?.fileName && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <span>Current file: {value.fileName}</span>
                 {value.fileSize && (
                   <span className="text-xs">({formatFileSize(value.fileSize)})</span>
@@ -222,10 +222,10 @@ export default function CustomFieldRenderer({
               }}
               disabled={disabled}
               accept={definition.allowedFileTypes?.map((t) => `.${t}`).join(',')}
-              className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-300 hover:file:bg-blue-100"
+              className="w-full text-sm text-[var(--text-muted)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-300 hover:file:bg-blue-100"
             />
             {definition.allowedFileTypes && definition.allowedFileTypes.length > 0 && (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-[var(--text-muted)]">
                 Allowed: {definition.allowedFileTypes.join(', ')}
               </p>
             )}
@@ -254,7 +254,7 @@ export default function CustomFieldRenderer({
       </label>
       {renderField()}
       {definition.description && definition.fieldType !== 'CHECKBOX' && (
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{definition.description}</p>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">{definition.description}</p>
       )}
     </div>
   );

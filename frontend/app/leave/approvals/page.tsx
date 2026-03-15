@@ -112,7 +112,7 @@ export default function LeaveApprovalsPage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Leave Approvals</h1>
+        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)]">Leave Approvals</h1>
 
         {/* Error State */}
         {error && (
@@ -132,16 +132,16 @@ export default function LeaveApprovalsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Pending Requests</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{requests.length}</div>
           </div>
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Approved (This Month)</div>
             <div className="text-3xl font-bold text-green-600 dark:text-green-500">0</div>
             <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
           </div>
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Rejected (This Month)</div>
             <div className="text-3xl font-bold text-red-600 dark:text-red-500">0</div>
             <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Updated when filters applied</p>
@@ -149,12 +149,12 @@ export default function LeaveApprovalsPage() {
         </div>
 
         {/* Requests Table */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
           {!pendingData ? (
             <div className="px-6 py-12 text-center">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
-                <span className="text-gray-600 dark:text-gray-400">Loading leave requests...</span>
+                <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
               </div>
             </div>
           ) : requests.length === 0 ? (
@@ -164,34 +164,34 @@ export default function LeaveApprovalsPage() {
                   <CheckCircle className="w-8 h-8 text-green-500 dark:text-green-400" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">All caught up!</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">No pending leave requests to review</p>
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
+              <p className="text-sm text-[var(--text-secondary)]">No pending leave requests to review</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-surface-50 dark:bg-surface-800/50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Request #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Employee</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Leave Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Duration</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Days</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Reason</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Applied On</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied On</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                   {requests.map((request) => (
                     <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                         {request.requestNumber}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                         {employeeMap[request.employeeId] || request.employeeId.substring(0, 8) + '...'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                         {getLeaveTypeName(request.leaveTypeId)}
                       </td>
                       <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">

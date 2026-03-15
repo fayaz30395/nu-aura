@@ -212,13 +212,13 @@ export default function EmployeesPage() {
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => router.push('/employees/change-requests')}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
+              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
             >
               Change Requests
             </button>
             <button
               onClick={() => router.push('/employees/import')}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
+              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-surface-700 dark:text-surface-300 bg-[var(--bg-input)] border border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-700 rounded-xl transition-colors"
             >
               Import
             </button>
@@ -246,7 +246,7 @@ export default function EmployeesPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 text-sm border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
             />
             <button
               onClick={handleSearch}
@@ -258,7 +258,7 @@ export default function EmployeesPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 sm:px-4 py-2.5 text-sm border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+            className="px-3 sm:px-4 py-2.5 text-sm border border-surface-200 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
           >
             <option value="">All Status</option>
             <option value="ACTIVE">Active</option>
@@ -268,7 +268,7 @@ export default function EmployeesPage() {
         </div>
 
         {/* Employee Table */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl shadow-soft border border-surface-200 dark:border-surface-800 overflow-hidden">
           {loading ? (
             <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
               Loading employees...
@@ -312,7 +312,7 @@ export default function EmployeesPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-100 dark:divide-surface-800">
+                <tbody className="bg-[var(--bg-card)] divide-y divide-surface-100 dark:divide-surface-800">
                   {employees.map((employee) => (
                   <tr key={employee.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -394,7 +394,7 @@ export default function EmployeesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
-                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
@@ -404,7 +404,7 @@ export default function EmployeesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>
@@ -417,8 +417,8 @@ export default function EmployeesPage() {
 
         {/* Add Employee Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl w-full max-w-[calc(100vw-1rem)] sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-2 sm:p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl w-full max-w-[calc(100vw-1rem)] sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-4 sm:p-6">
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                   <h2 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Add New Employee</h2>
@@ -494,7 +494,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('employeeCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="EMP001"
                           />
                           {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
@@ -506,7 +506,7 @@ export default function EmployeesPage() {
                           <input
                             type="email"
                             {...register('workEmail')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="employee@company.com"
                           />
                           {errors.workEmail && <p className="text-red-500 text-sm mt-1">{errors.workEmail.message}</p>}
@@ -521,7 +521,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('firstName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                         </div>
@@ -532,7 +532,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('middleName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
                         </div>
@@ -543,7 +543,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('lastName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                         </div>
@@ -556,7 +556,7 @@ export default function EmployeesPage() {
                         <input
                           type="password"
                           {...register('password')}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           placeholder="Employee will change on first login"
                         />
                         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
@@ -575,7 +575,7 @@ export default function EmployeesPage() {
                           <input
                             type="email"
                             {...register('personalEmail')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="personal@email.com"
                           />
                           {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
@@ -587,7 +587,7 @@ export default function EmployeesPage() {
                           <input
                             type="tel"
                             {...register('phoneNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="+1 234 567 8900"
                           />
                           {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
@@ -602,7 +602,7 @@ export default function EmployeesPage() {
                           <input
                             type="tel"
                             {...register('emergencyContactNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="+1 234 567 8900"
                           />
                           {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
@@ -614,7 +614,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('dateOfBirth')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
@@ -631,7 +631,7 @@ export default function EmployeesPage() {
                             <select
                               {...field}
                               value={field.value || ''}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             >
                               <option value="">Select Gender</option>
                               <option value="MALE">Male</option>
@@ -651,7 +651,7 @@ export default function EmployeesPage() {
                         <textarea
                           rows={2}
                           {...register('address')}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           placeholder="Street address"
                         />
                         {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
@@ -665,7 +665,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('city')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
                         </div>
@@ -676,7 +676,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('state')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
                         </div>
@@ -690,7 +690,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('postalCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
                         </div>
@@ -701,7 +701,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('country')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
                         </div>
@@ -720,7 +720,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('designation')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="Senior Software Engineer"
                           />
                           {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
@@ -735,7 +735,7 @@ export default function EmployeesPage() {
                             render={({ field }) => (
                               <select
                                 {...field}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                               >
                                 <option value="FULL_TIME">Full Time</option>
                                 <option value="PART_TIME">Part Time</option>
@@ -758,7 +758,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             >
                               <option value="">Select Department</option>
                               {departments.map((dept) => (
@@ -784,7 +784,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                               >
                                 <option value="">Select Level</option>
                                 <option value="JUNIOR">Junior</option>
@@ -810,7 +810,7 @@ export default function EmployeesPage() {
                               <select
                                 {...field}
                                 value={field.value || ''}
-                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                               >
                                 <option value="">Select Role</option>
                                 <option value="ENGINEER">Engineer</option>
@@ -839,7 +839,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('joiningDate')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.joiningDate && <p className="text-red-500 text-sm mt-1">{errors.joiningDate.message}</p>}
                         </div>
@@ -850,7 +850,7 @@ export default function EmployeesPage() {
                           <input
                             type="date"
                             {...register('confirmationDate')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
                           {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                         </div>
@@ -866,7 +866,7 @@ export default function EmployeesPage() {
                           render={({ field }) => (
                             <select
                               {...field}
-                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             >
                               <option value="">Select Manager</option>
                               <option value="SELF">Self (No Reporting Manager)</option>
@@ -897,7 +897,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankAccountNumber')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="1234567890"
                           />
                           {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
@@ -909,7 +909,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankName')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="Bank of America"
                           />
                           {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
@@ -924,7 +924,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('bankIfscCode')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="HDFC0001234"
                           />
                           {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
@@ -936,7 +936,7 @@ export default function EmployeesPage() {
                           <input
                             type="text"
                             {...register('taxId')}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="XXX-XX-XXXX"
                           />
                           {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
@@ -979,8 +979,8 @@ export default function EmployeesPage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && employeeToDelete && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <svg className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

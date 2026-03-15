@@ -1,8 +1,33 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Final theme: Material Dashboard 2 navy-tinted palette
+ * Palette: Radix Jade + Slate (cool neutrals) with Sky/Orange accents
  */
+
+const {
+  amber,
+  grass,
+  jade,
+  orange,
+  sand,
+  sky,
+  slate,
+  tomato,
+} = require('@radix-ui/colors');
+
+const toScale = (scale, prefix) => ({
+  50: scale[`${prefix}1`],
+  100: scale[`${prefix}2`],
+  200: scale[`${prefix}3`],
+  300: scale[`${prefix}4`],
+  400: scale[`${prefix}5`],
+  500: scale[`${prefix}6`],
+  600: scale[`${prefix}7`],
+  700: scale[`${prefix}8`],
+  800: scale[`${prefix}9`],
+  900: scale[`${prefix}10`],
+  950: scale[`${prefix}12`],
+});
 
 module.exports = {
   darkMode: 'class',
@@ -15,122 +40,110 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        outfit: ['Outfit', 'system-ui', 'sans-serif'],
-        sans: ['Outfit', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'Space Grotesk', 'Manrope', 'sans-serif'],
+        display: ['var(--font-display)', 'Fraunces', 'DM Serif Display', 'serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'IBM Plex Mono', 'monospace'],
+        outfit: ['var(--font-sans)', 'Space Grotesk', 'Manrope', 'sans-serif'],
       },
       colors: {
-        // AURA Midnight - Premium Palette (matches login page)
+        // ── Design Token Bridge (CSS Variables → Tailwind) ──────
+        // Usage: bg-background, text-foreground, border-border, bg-card, etc.
+        background: 'var(--bg-main)',
+        foreground: 'var(--text-primary)',
+        card: {
+          DEFAULT: 'var(--bg-card)',
+          hover: 'var(--bg-card-hover)',
+          foreground: 'var(--text-primary)',
+        },
+        'surface-bg': {
+          DEFAULT: 'var(--bg-surface)',
+          elevated: 'var(--bg-elevated)',
+          sidebar: 'var(--bg-sidebar)',
+          input: 'var(--bg-input)',
+          overlay: 'var(--bg-overlay)',
+        },
+        muted: {
+          DEFAULT: 'var(--text-muted)',
+          foreground: 'var(--text-secondary)',
+        },
+        border: {
+          DEFAULT: 'var(--border-main)',
+          subtle: 'var(--border-subtle)',
+          strong: 'var(--border-strong)',
+          focus: 'var(--border-focus)',
+        },
+        ring: {
+          DEFAULT: 'var(--ring-primary)',
+          danger: 'var(--ring-danger)',
+          success: 'var(--ring-success)',
+        },
+        'text-theme': {
+          DEFAULT: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
+          inverse: 'var(--text-inverse)',
+        },
+        // Header & Dropdown tokens (adaptive light/dark via CSS vars)
+        'header': {
+          DEFAULT: 'var(--header-bg)',
+          border: 'var(--header-border)',
+        },
+        'dropdown': {
+          DEFAULT: 'var(--dropdown-bg)',
+          border: 'var(--dropdown-border)',
+          hover: 'var(--dropdown-hover)',
+          text: 'var(--dropdown-text)',
+          'text-secondary': 'var(--dropdown-text-secondary)',
+          divider: 'var(--dropdown-divider)',
+        },
+
+        // AURA Midnight - Deep neutral palette (Zinc-based)
         midnight: {
-          deep: '#0a0e27',        // Background
-          obsidian: '#0f1330',    // Surfaces
-          card: 'rgba(255, 255, 255, 0.04)', // Glass surface
-          elevated: '#161b3d',    // Elevated surface
+          deep: '#09090b',
+          obsidian: '#111113',
+          card: '#141416',
+          elevated: '#1a1a1d',
         },
         // Semantic Tokens for Stable Theming
         brand: {
-          main: '#8B5CF6',
-          secondary: '#06B6D4',
-          accent: '#F43F5E',
+          main: jade.jade9,
+          secondary: sky.sky9,
+          accent: orange.orange9,
         },
-        // Primary - Electric Violet (Vibrant accent)
-        primary: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8B5CF6', // Main primary
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-          950: '#2e1065',
-        },
-        // Secondary - Neon Cyan
-        secondary: {
-          50: '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06B6D4', // Main secondary
-          600: '#0891b2',
-          700: '#0e7490',
-          800: '#155e75',
-          900: '#164e63',
-          950: '#083344',
-        },
-        // Accent - Sunset Rose
-        accent: {
-          50: '#fff1f2',
-          100: '#ffe4e6',
-          200: '#fecdd3',
-          300: '#fda4af',
-          400: '#fb7185',
-          500: '#F43F5E', // Main accent
-          600: '#e11d48',
-          700: '#be123c',
-          800: '#9f1239',
-          900: '#881337',
-          950: '#4c0519',
-        },
-        // Success - Emerald Glow
-        success: {
-          50: '#ecfdf5',
-          100: '#d1fae5',
-          200: '#a7f3d0',
-          300: '#6ee7b7',
-          400: '#34d399',
-          500: '#10B981', // Main success
-          600: '#059669',
-          700: '#047857',
-          800: '#065f46',
-          900: '#064e3b',
-          950: '#022c22',
-        },
-        // Info - Blue Light
-        'blue-light': {
-          25: '#f5fbff',
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#b9e6fe',
-          300: '#7cd4fd',
-          400: '#36bffa',
-          500: '#0ba5ec',
-          600: '#0086c9',
-          700: '#026aa2',
-          800: '#065986',
-          900: '#0b4a6f',
-          950: '#062c41',
-        },
-        // Warning - Amber (matching Mantine theme)
-        warning: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
-          950: '#451a03',
-        },
-        // Danger - Red (matching Mantine theme)
-        danger: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: '#7f1d1d',
-          950: '#450a0a',
-        },
+        // Primary - Jade (Radix)
+        primary: toScale(jade, 'jade'),
+        // Secondary - Slate (Radix)
+        secondary: toScale(slate, 'slate'),
+        // Accent - Orange (Radix)
+        accent: toScale(orange, 'orange'),
+        // Success - Grass (Radix)
+        success: toScale(grass, 'grass'),
+        // Info - Sky (Radix)
+        info: toScale(sky, 'sky'),
+        'blue-light': toScale(sky, 'sky'),
+        // Warning - Amber (Radix)
+        warning: toScale(amber, 'amber'),
+        // Danger - Tomato (Radix)
+        danger: toScale(tomato, 'tomato'),
+        // Surface - Slate (Radix) — cool neutral, not warm sand
+        surface: toScale(slate, 'slate'),
+        // Legacy aliases -> new palette (keeps existing classnames consistent)
+        purple: toScale(jade, 'jade'),
+        violet: toScale(orange, 'orange'),
+        indigo: toScale(sky, 'sky'),
+        blue: toScale(sky, 'sky'),
+        teal: toScale(jade, 'jade'),
+        pink: toScale(orange, 'orange'),
+        rose: toScale(tomato, 'tomato'),
+        cyan: toScale(sky, 'sky'),
+        green: toScale(grass, 'grass'),
+        emerald: toScale(grass, 'grass'),
+        red: toScale(tomato, 'tomato'),
+        yellow: toScale(amber, 'amber'),
+        orange: toScale(orange, 'orange'),
+        amber: toScale(amber, 'amber'),
+        slate: toScale(slate, 'slate'),
+        sand: toScale(sand, 'sand'),
       },
       boxShadow: {
         'theme-xs': '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
@@ -260,11 +273,11 @@ module.exports = {
         // Pulse & Glow
         pulseGlow: {
           '0%, 100%': {
-            boxShadow: '0 0 0 0 rgba(139, 92, 246, 0.7)',
+            boxShadow: '0 0 0 0 rgba(41, 163, 131, 0.7)',
             opacity: '1',
           },
           '50%': {
-            boxShadow: '0 0 0 10px rgba(139, 92, 246, 0)',
+            boxShadow: '0 0 0 10px rgba(41, 163, 131, 0)',
             opacity: '0.8',
           },
         },
@@ -364,29 +377,29 @@ module.exports = {
       // Gradient utilities
       addUtilities({
         '.gradient-primary': {
-          background: 'linear-gradient(135deg, #465fff 0%, #8b5cf6 100%)',
+          background: `linear-gradient(135deg, ${jade.jade8} 0%, ${sky.sky9} 100%)`,
         },
         '.gradient-secondary': {
-          background: 'linear-gradient(135deg, #667085 0%, #344767 100%)',
+          background: `linear-gradient(135deg, ${slate.slate7} 0%, ${slate.slate10} 100%)`,
         },
         '.gradient-success': {
-          background: 'linear-gradient(135deg, #12b76a 0%, #039855 100%)',
+          background: `linear-gradient(135deg, ${grass.grass8} 0%, ${grass.grass10} 100%)`,
         },
         '.gradient-mesh': {
-          background: 'radial-gradient(at 0% 0%, rgba(70, 95, 255, 0.1) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(70, 95, 255, 0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%)',
+          background: `radial-gradient(at 0% 0%, rgba(41, 163, 131, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(247, 107, 21, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 116, 158, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(41, 163, 131, 0.12) 0px, transparent 50%)`,
         },
       });
 
       // Shadow utilities
       addUtilities({
         '.shadow-glow-primary': {
-          boxShadow: '0 0 20px rgba(70, 95, 255, 0.3)',
+          boxShadow: '0 0 20px rgba(41, 163, 131, 0.3)',
         },
         '.shadow-glow-success': {
-          boxShadow: '0 0 20px rgba(18, 183, 106, 0.3)',
+          boxShadow: '0 0 20px rgba(70, 167, 88, 0.3)',
         },
         '.shadow-glow-error': {
-          boxShadow: '0 0 20px rgba(240, 68, 56, 0.3)',
+          boxShadow: '0 0 20px rgba(229, 77, 46, 0.3)',
         },
       });
     },

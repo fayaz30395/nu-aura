@@ -125,7 +125,7 @@ export default function PerformanceRevolutionPage() {
                     </Card>
 
                     {/* 360 Insight Spider */}
-                    <Card className="lg:col-span-4 bg-white dark:bg-surface-900">
+                    <Card className="lg:col-span-4 bg-[var(--bg-card)]">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Users className="h-5 w-5 text-indigo-500" /> 360° Competency Radar
@@ -175,7 +175,7 @@ export default function PerformanceRevolutionPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Recognition Feed */}
-                    <Card className="md:col-span-1 bg-white dark:bg-surface-900 border-t-4 border-yellow-400">
+                    <Card className="md:col-span-1 bg-[var(--bg-card)] border-t-4 border-yellow-400">
                         <CardHeader className="pb-2">
                             <CardTitle className="text-sm flex items-center gap-2">
                                 <Zap className="h-4 w-4 text-yellow-500" /> Recognition Pulse
@@ -215,7 +215,7 @@ export default function PerformanceRevolutionPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-white dark:bg-surface-800 rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+                                <div className="p-4 bg-[var(--bg-input)] rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                                     <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">Growth Opportunity</h4>
                                     <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
                                     <p className="text-xs text-surface-500">Based on your &quot;System Design&quot; skill Gap</p>
@@ -224,7 +224,7 @@ export default function PerformanceRevolutionPage() {
                                         <ChevronRight className="h-4 w-4 text-indigo-400" />
                                     </div>
                                 </div>
-                                <div className="p-4 bg-white dark:bg-surface-800 rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
+                                <div className="p-4 bg-[var(--bg-input)] rounded-2xl shadow-sm border border-indigo-100 dark:border-indigo-900/50">
                                     <h4 className="text-xs font-bold text-green-600 uppercase tracking-wider mb-2">Peak Performance</h4>
                                     <p className="text-sm font-semibold mb-1">Consistency King</p>
                                     <p className="text-xs text-surface-500">9 weeks of meeting all Weekly Commitments</p>

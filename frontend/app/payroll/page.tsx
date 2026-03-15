@@ -531,7 +531,7 @@ export default function PayrollPage() {
                 iconColor="blue"
               />
             ) : (
-              <div className="overflow-x-auto bg-white dark:bg-surface-900 rounded-lg shadow-md">
+              <div className="overflow-x-auto bg-[var(--bg-card)] rounded-lg shadow-md">
                 <table className="w-full">
                   <thead className="bg-surface-50 dark:bg-surface-800/50 border-b">
                     <tr>
@@ -672,7 +672,7 @@ export default function PayrollPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPayslips.map((payslip) => (
-                  <div key={payslip.id} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                  <div key={payslip.id} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-semibold">{payslip.employeeName}</h3>
@@ -789,7 +789,7 @@ export default function PayrollPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filteredStructures.map((structure) => (
-                  <div key={structure.id} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                  <div key={structure.id} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-semibold">{structure.employeeName}</h3>
@@ -883,7 +883,7 @@ export default function PayrollPage() {
       {/* ============ PAYROLL RUN MODAL ============ */}
       {payrollRunModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-6">
                 {payrollRunModal.mode === 'create' ? 'Create Payroll Run' : 'Edit Payroll Run'}
@@ -984,7 +984,7 @@ export default function PayrollPage() {
       {/* ============ PAYSLIP MODAL ============ */}
       {payslipModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-6">
                 {payslipModal.mode === 'create' ? 'Create Payslip' : 'Edit Payslip'}
@@ -1128,7 +1128,7 @@ export default function PayrollPage() {
       {/* ============ SALARY STRUCTURE MODAL ============ */}
       {structureModal.isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-6">
                 {structureModal.mode === 'create'
@@ -1295,7 +1295,7 @@ export default function PayrollPage() {
       {/* ============ DELETE CONFIRMATION MODALS ============ */}
       {showRunDeleteConfirm && selectedPayrollRun && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-md w-full p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Payroll Run</h2>
             <p className="text-surface-600 dark:text-surface-400 mb-6">
               Are you sure you want to delete &quot;{selectedPayrollRun.runName}&quot;? This action cannot
@@ -1325,7 +1325,7 @@ export default function PayrollPage() {
 
       {showPayslipDeleteConfirm && selectedPayslip && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-md w-full p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Payslip</h2>
             <p className="text-surface-600 dark:text-surface-400 mb-6">
               Are you sure you want to delete the payslip for {selectedPayslip.employeeName}?
@@ -1355,7 +1355,7 @@ export default function PayrollPage() {
 
       {showStructureDeleteConfirm && selectedStructure && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg max-w-md w-full p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Salary Structure</h2>
             <p className="text-surface-600 dark:text-surface-400 mb-6">
               Are you sure you want to delete the salary structure for {selectedStructure.employeeName}?

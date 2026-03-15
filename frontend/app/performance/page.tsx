@@ -145,11 +145,11 @@ const StatCard = ({
   icon: React.ElementType;
   color: string;
 }) => (
-  <div className="bg-white dark:bg-surface-900 rounded-lg border border-gray-200 dark:border-surface-700 p-4 shadow-sm">
+  <div className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-4 shadow-sm">
     <div className="flex items-start justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500 dark:text-surface-400">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 dark:text-surface-50 mt-1">{value}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)] dark:text-surface-50 mt-1">{value}</p>
         {subtitle && <p className="text-xs text-gray-500 dark:text-surface-400 mt-1">{subtitle}</p>}
       </div>
       <div className={`p-2 rounded-lg ${color}`}>
@@ -208,7 +208,7 @@ export default function PerformancePage() {
     <AppLayout activeMenuItem="performance">
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-surface-50">Performance Management</h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] dark:text-surface-50">Performance Management</h1>
         <p className="text-sm text-gray-500 dark:text-surface-400 mt-1">
           Track goals, conduct reviews, and manage employee performance
         </p>
@@ -291,7 +291,7 @@ export default function PerformancePage() {
             key={module.id}
             href={module.href}
             aria-label={`Go to ${module.title} management`}
-            className="group bg-white dark:bg-surface-900 rounded-lg border border-gray-200 dark:border-surface-700 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+            className="group bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
           >
             <div className="p-6">
               <div className="flex items-start gap-4">
@@ -299,7 +299,7 @@ export default function PerformancePage() {
                   <module.icon className={`h-6 w-6 ${module.textColor}`} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-surface-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] dark:text-surface-50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {module.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-surface-400 mt-1">{module.description}</p>
@@ -312,26 +312,26 @@ export default function PerformancePage() {
       </div>
 
       {/* Getting Started Section */}
-      <div className="mt-8 bg-white dark:bg-surface-900 rounded-lg border border-gray-200 dark:border-surface-700 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-surface-50 mb-4">Getting Started</h2>
+      <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-6">
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-surface-50 mb-4">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
-            <h3 className="font-medium text-gray-900 dark:text-surface-50">Set SMART Goals</h3>
+            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Set SMART Goals</h3>
             <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
               Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
             </p>
           </div>
           <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
             <MessageSquare className="h-6 w-6 text-green-600 dark:text-green-400 mb-2" />
-            <h3 className="font-medium text-gray-900 dark:text-surface-50">Give Regular Feedback</h3>
+            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Give Regular Feedback</h3>
             <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
               Continuous feedback helps improve performance year-round
             </p>
           </div>
           <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
             <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400 mb-2" />
-            <h3 className="font-medium text-gray-900 dark:text-surface-50">Track Progress</h3>
+            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Track Progress</h3>
             <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
               Update your goals and OKRs regularly to stay on track
             </p>

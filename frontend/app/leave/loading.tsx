@@ -33,7 +33,7 @@ export default function Loading() {
       </div>
 
       {/* Recent leave requests table skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-800">
           <Skeleton height={20} width="25%" />
           <Skeleton height={16} width={80} />

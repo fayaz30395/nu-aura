@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import { cn } from '@/lib/utils';
-import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav } from '@/components/ui';
+import { Sidebar, SidebarItem, SidebarSection, MobileBottomNav, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '@/components/ui';
 import { Header } from './Header';
 import type { HeaderProps } from './Header';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
@@ -246,8 +246,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className={cn('flex h-screen overflow-hidden bg-main text-primary transition-colors duration-300', className)}>
-      {/* Sidebar */}
-      <aside className="hidden md:block">
+      {/* Sidebar — fixed width, never flexes, prevents content shift */}
+      <aside
+        className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={{
+          width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+          minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+        }}
+      >
         <Sidebar
           items={menuItems}
           sections={filteredSections}
@@ -265,7 +271,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <>
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden transition-opacity duration-300"
+            className="fixed inset-0 z-30 bg-[var(--bg-overlay)] md:hidden transition-opacity duration-300"
           />
           <aside
             className="fixed inset-y-0 left-0 z-40 w-72 md:hidden transform transition-transform duration-300 ease-out animate-slide-in-left"
@@ -286,9 +292,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </>
       )}
 
-      {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Header */}
+      {/* Main Content — fills remaining space, never overflows sidebar */}
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        {/* Header — fixed height */}
         <Header
           onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           showMenuButton={true}
@@ -304,7 +310,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Breadcrumbs */}
         {showBreadcrumbs && breadcrumbs.length > 0 && (
           <div
-            className="backdrop-blur-md px-4 py-2 sm:px-6"
+            className="flex-shrink-0 px-4 py-2 sm:px-6"
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderBottom: '1px solid var(--border-subtle)',
@@ -314,7 +320,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         )}
 
-        {/* Content Area - Wrapped in AuthGuard for route-level permission enforcement */}
+        {/* Content Area — scrollable, fills remaining vertical space */}
         <main
           className="flex-1 overflow-auto transition-colors duration-300"
           style={{ backgroundColor: 'var(--bg-main)' }}
@@ -329,8 +335,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 transition={{ duration: 0.15, ease: 'easeOut' }}
                 className={cn(
                   'p-4 sm:p-6 lg:p-8',
-                  // Add bottom padding for mobile bottom nav
-                  'pb-24 md:pb-4 lg:pb-8'
+                  // Bottom padding: mobile needs space for fixed bottom nav
+                  'pb-24 md:pb-6 lg:pb-8'
                 )}
               >
                 {children}

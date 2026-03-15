@@ -228,11 +228,11 @@ export default function ShiftsManagementPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
                 <Clock className="h-8 w-8 text-primary-600" />
                 Shift Management
               </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 Configure and manage work shifts for your organization
               </p>
             </div>
@@ -269,8 +269,8 @@ export default function ShiftsManagementPage() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
               </div>
             ) : shifts.length === 0 ? (
-              <div className="col-span-full flex flex-col items-center py-12 text-gray-500 dark:text-gray-400">
-                <Clock className="h-16 w-16 text-gray-400 dark:text-gray-600 mb-4" />
+              <div className="col-span-full flex flex-col items-center py-12 text-[var(--text-muted)]">
+                <Clock className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
                 <p className="text-lg font-medium">No shifts configured</p>
                 <p className="text-sm mt-1">Click &quot;Add Shift&quot; to create your first shift</p>
               </div>
@@ -278,14 +278,14 @@ export default function ShiftsManagementPage() {
               shifts.map((shift) => (
                 <div
                   key={shift.id}
-                  className="bg-white dark:bg-surface-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="bg-[var(--bg-input)] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
                   style={{ borderTop: `4px solid ${shift.colorCode || '#3B82F6'}` }}
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{shift.shiftName}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{shift.shiftCode}</p>
+                        <h3 className="text-xl font-bold text-[var(--text-primary)]">{shift.shiftName}</h3>
+                        <p className="text-sm text-[var(--text-muted)]">{shift.shiftCode}</p>
                       </div>
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full ${
@@ -299,7 +299,7 @@ export default function ShiftsManagementPage() {
                     </div>
 
                     {shift.description && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{shift.description}</p>
+                      <p className="text-sm text-[var(--text-secondary)] mb-4">{shift.description}</p>
                     )}
 
                     <div className="space-y-2 mb-4">
@@ -384,10 +384,10 @@ export default function ShiftsManagementPage() {
           {/* Add/Edit Shift Modal */}
           {showModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-[var(--bg-input)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                       {editingShift ? 'Edit Shift' : 'Add New Shift'}
                     </h2>
                     <button
@@ -396,7 +396,7 @@ export default function ShiftsManagementPage() {
                         setEditingShift(null);
                         resetForm();
                       }}
-                      className="text-gray-400 hover:text-gray-500"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-muted)]"
                     >
                       <span className="text-2xl">&times;</span>
                     </button>

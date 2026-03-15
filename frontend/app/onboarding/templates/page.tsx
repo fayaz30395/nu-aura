@@ -70,13 +70,13 @@ export default function TemplatesPage() {
 
                 {/* Templates Grid */}
                 <div className="space-y-6">
-                    <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
-                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center bg-white/20">
+                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
                                 <Input
                                     placeholder="Search templates..."
-                                    className="pl-12 rounded-2xl bg-white/50 dark:bg-black/20 border-0 font-bold focus:ring-2 focus:ring-primary-500"
+                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -107,7 +107,7 @@ export default function TemplatesPage() {
                                             className="group"
                                         >
                                             <Card
-                                                className="h-full border border-white/20 bg-white/40 dark:bg-white/5 backdrop-blur-sm hover:shadow-2xl transition-all cursor-pointer rounded-3xl group overflow-hidden"
+                                                className="h-full border border-[var(--border-main)] bg-[var(--bg-card)] hover:shadow-2xl transition-all cursor-pointer rounded-3xl group overflow-hidden"
                                                 onClick={() => router.push(`/onboarding/templates/${template.id}`)}
                                             >
                                                 <CardContent className="p-6 h-full flex flex-col">

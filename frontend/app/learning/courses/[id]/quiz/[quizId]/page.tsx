@@ -206,7 +206,7 @@ export default function QuizPage() {
       <div className="min-h-screen bg-surface-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-gray-500">Loading quiz...</p>
+          <p className="text-[var(--text-muted)]">Loading quiz...</p>
         </div>
       </div>
     );
@@ -244,7 +244,7 @@ export default function QuizPage() {
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
         <div className="max-w-2xl mx-auto">
-          <Link href={`/learning/courses/${courseId}`} className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-8 w-fit">
+          <Link href={`/learning/courses/${courseId}`} className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-8 w-fit">
             <ArrowLeft className="h-4 w-4" /> Back to Course
           </Link>
 
@@ -262,7 +262,7 @@ export default function QuizPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                   <div className="text-2xl font-bold text-blue-700">{quiz.totalQuestions}</div>
-                  <div className="text-sm text-gray-600">Total Questions</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Total Questions</div>
                 </div>
                 {quiz.timeLimit && (
                   <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
@@ -270,20 +270,20 @@ export default function QuizPage() {
                       <Clock className="h-5 w-5 text-yellow-600" />
                       <div>
                         <div className="text-lg font-bold text-yellow-700">{quiz.timeLimit}</div>
-                        <div className="text-xs text-gray-600">Minutes</div>
+                        <div className="text-xs text-[var(--text-secondary)]">Minutes</div>
                       </div>
                     </div>
                   </div>
                 )}
                 <div className="bg-green-50 rounded-lg p-4 border border-green-200">
                   <div className="text-2xl font-bold text-green-700">{quiz.passingScore}%</div>
-                  <div className="text-sm text-gray-600">Passing Score</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Passing Score</div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-3">Instructions:</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+              <div className="bg-[var(--bg-surface)] rounded-lg p-4 border border-[var(--border-main)]">
+                <h3 className="font-semibold text-[var(--text-primary)] mb-3">Instructions:</h3>
+                <ul className="space-y-2 text-sm text-[var(--text-primary)]">
                   <li className="flex gap-2">
                     <span className="text-blue-600 font-bold">•</span>
                     <span>Answer all questions before submitting</span>
@@ -337,15 +337,15 @@ export default function QuizPage() {
       <AppLayout>
       <div className="min-h-screen bg-surface-50 flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="bg-white border-b border-[var(--border-main)] sticky top-0 z-40">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <div>
-              <h2 className="font-semibold text-gray-900">{quiz.title}</h2>
-              <p className="text-xs text-gray-500">Question {currentQuestionIdx + 1} of {quiz.questions.length}</p>
+              <h2 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h2>
+              <p className="text-xs text-[var(--text-muted)]">Question {currentQuestionIdx + 1} of {quiz.questions.length}</p>
             </div>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Progress:</span>
+                <span className="text-sm text-[var(--text-secondary)]">Progress:</span>
                 <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-600 transition-all duration-300"
@@ -355,10 +355,10 @@ export default function QuizPage() {
               </div>
               {quiz.timeLimit && (
                 <div className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
-                  showTimeWarning ? 'bg-red-50 border border-red-200' : 'bg-gray-100'
+                  showTimeWarning ? 'bg-red-50 border border-red-200' : 'bg-[var(--bg-surface)]'
                 }`}>
-                  <Clock className={`h-4 w-4 ${showTimeWarning ? 'text-red-600' : 'text-gray-600'}`} />
-                  <span className={`text-sm font-medium ${showTimeWarning ? 'text-red-600' : 'text-gray-600'}`}>
+                  <Clock className={`h-4 w-4 ${showTimeWarning ? 'text-red-600' : 'text-[var(--text-secondary)]'}`} />
+                  <span className={`text-sm font-medium ${showTimeWarning ? 'text-red-600' : 'text-[var(--text-secondary)]'}`}>
                     {formatTime(timeRemaining)}
                   </span>
                 </div>
@@ -373,9 +373,9 @@ export default function QuizPage() {
             {/* Question */}
             <div className="bg-white rounded-lg shadow p-8 mb-6">
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{currentQuestion.title}</h3>
+                <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{currentQuestion.title}</h3>
                 {currentQuestion.description && (
-                  <p className="text-gray-600">{currentQuestion.description}</p>
+                  <p className="text-[var(--text-secondary)]">{currentQuestion.description}</p>
                 )}
               </div>
 
@@ -396,7 +396,7 @@ export default function QuizPage() {
                           onChange={e => handleAnswer(currentQuestion.id, e.target.value)}
                           className="mt-1"
                         />
-                        <span className="text-gray-700">{option.text}</span>
+                        <span className="text-[var(--text-primary)]">{option.text}</span>
                       </label>
                     ))}
                   </div>
@@ -425,7 +425,7 @@ export default function QuizPage() {
                             }}
                             className="mt-1"
                           />
-                          <span className="text-gray-700">{option.text}</span>
+                          <span className="text-[var(--text-primary)]">{option.text}</span>
                         </label>
                       );
                     })}
@@ -447,7 +447,7 @@ export default function QuizPage() {
                           onChange={e => handleAnswer(currentQuestion.id, e.target.value)}
                           className="mt-1"
                         />
-                        <span className="text-gray-700 font-medium">{option}</span>
+                        <span className="text-[var(--text-primary)] font-medium">{option}</span>
                       </label>
                     ))}
                   </div>
@@ -459,7 +459,7 @@ export default function QuizPage() {
                     value={answerValue}
                     onChange={e => handleAnswer(currentQuestion.id, e.target.value)}
                     placeholder="Type your answer here..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-lg focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   />
                 )}
               </div>
@@ -467,7 +467,7 @@ export default function QuizPage() {
 
             {/* Question navigator */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h4 className="font-semibold text-gray-900 mb-3">Questions ({questionsAnswered}/{quiz.questions.length} answered)</h4>
+              <h4 className="font-semibold text-[var(--text-primary)] mb-3">Questions ({questionsAnswered}/{quiz.questions.length} answered)</h4>
               <div className="grid grid-cols-6 sm:grid-cols-10 md:grid-cols-12 gap-2">
                 {quiz.questions.map((q, idx) => {
                   const qAnswered = answers.has(q.id) && answers.get(q.id) !== '';
@@ -480,7 +480,7 @@ export default function QuizPage() {
                           ? 'bg-blue-600 text-white'
                           : qAnswered
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-gray-200'
                       }`}
                     >
                       {idx + 1}
@@ -493,12 +493,12 @@ export default function QuizPage() {
         </div>
 
         {/* Navigation footer */}
-        <div className="bg-white border-t border-gray-200 sticky bottom-0 z-40">
+        <div className="bg-white border-t border-[var(--border-main)] sticky bottom-0 z-40">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <button
               onClick={() => setCurrentQuestionIdx(Math.max(0, currentQuestionIdx - 1))}
               disabled={currentQuestionIdx === 0}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 text-[var(--text-primary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="h-4 w-4" /> Previous
             </button>
@@ -506,7 +506,7 @@ export default function QuizPage() {
             <button
               onClick={() => setCurrentQuestionIdx(Math.min(quiz.questions.length - 1, currentQuestionIdx + 1))}
               disabled={isLastQuestion}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 text-[var(--text-primary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Next <ChevronRight className="h-4 w-4" />
             </button>
@@ -567,19 +567,19 @@ export default function QuizPage() {
             <div className="p-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <div className="text-sm text-gray-600">Total Questions</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Total Questions</div>
                   <div className="text-2xl font-bold text-blue-700">{quiz.totalQuestions}</div>
                 </div>
                 <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <div className="text-sm text-gray-600">Correct</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Correct</div>
                   <div className="text-2xl font-bold text-green-700">{result.correctAnswers || 0}</div>
                 </div>
                 <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-                  <div className="text-sm text-gray-600">Incorrect</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Incorrect</div>
                   <div className="text-2xl font-bold text-red-700">{quiz.totalQuestions - (result.correctAnswers || 0)}</div>
                 </div>
                 <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                  <div className="text-sm text-gray-600">Time Taken</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Time Taken</div>
                   <div className="text-2xl font-bold text-yellow-700">{result.timeTaken || '-'}</div>
                 </div>
               </div>
@@ -587,7 +587,7 @@ export default function QuizPage() {
               {/* Detailed feedback */}
               {result.details && result.details.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="font-semibold text-gray-900 mb-4">Detailed Feedback</h3>
+                  <h3 className="font-semibold text-[var(--text-primary)] mb-4">Detailed Feedback</h3>
                   <div className="space-y-4">
                     {result.details.map((detail: QuizResultDetail, idx: number) => (
                       <div key={idx} className={`border rounded-lg p-4 ${detail.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
@@ -598,13 +598,13 @@ export default function QuizPage() {
                             <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">Q{idx + 1}: {detail.questionId}</p>
-                            <p className="text-sm text-gray-600 mt-1">Your answer: <span className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
+                            <p className="font-medium text-[var(--text-primary)]">Q{idx + 1}: {detail.questionId}</p>
+                            <p className="text-sm text-[var(--text-secondary)] mt-1">Your answer: <span className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
                             {!detail.isCorrect && detail.correctAnswer && (
-                              <p className="text-sm text-gray-600">Correct answer: <span className="font-medium text-green-700">{detail.correctAnswer}</span></p>
+                              <p className="text-sm text-[var(--text-secondary)]">Correct answer: <span className="font-medium text-green-700">{detail.correctAnswer}</span></p>
                             )}
                             {detail.explanation && (
-                              <p className="text-sm text-gray-700 mt-2 italic">{detail.explanation}</p>
+                              <p className="text-sm text-[var(--text-primary)] mt-2 italic">{detail.explanation}</p>
                             )}
                           </div>
                         </div>
@@ -633,7 +633,7 @@ export default function QuizPage() {
                 )}
                 <Link
                   href={`/learning/courses/${courseId}`}
-                  className="flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50"
+                  className="flex items-center justify-center gap-2 px-6 py-3 border border-[var(--border-strong)] text-[var(--text-primary)] rounded-lg font-medium hover:bg-[var(--bg-surface)]"
                 >
                   <Home className="h-4 w-4" /> Back to Course
                 </Link>

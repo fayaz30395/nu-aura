@@ -150,7 +150,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -176,7 +176,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -200,7 +200,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -224,7 +224,7 @@ export default function SystemDashboard() {
         <Paper
           p="lg"
           radius="md"
-          className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+          className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
         >
           <Group justify="space-between" mb="md">
             <Text size="sm" fw={500} className="text-slate-600 dark:text-slate-400">
@@ -249,7 +249,7 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+        className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export default function SystemDashboard() {
       <Paper
         p="lg"
         radius="md"
-        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+        className="bg-[var(--bg-input)] border border-slate-200 dark:border-slate-700"
       >
         <Group mb="lg" justify="space-between">
           <div className="flex items-center gap-2">

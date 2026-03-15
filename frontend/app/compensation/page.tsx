@@ -1107,7 +1107,7 @@ export default function CompensationPage() {
                   Description
                 </label>
                 <textarea
-                  className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-4 py-2 text-surface-900 dark:text-white"
+                  className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-surface-900 dark:text-white"
                   rows={3}
                   placeholder="Describe this review cycle..."
                 />

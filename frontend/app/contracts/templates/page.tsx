@@ -45,8 +45,8 @@ export default function ContractTemplatesPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Contract Templates</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Manage reusable contract templates</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Contract Templates</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Manage reusable contract templates</p>
           </div>
           <Button
             onClick={() => router.push('/contracts/templates/new')}
@@ -67,9 +67,9 @@ export default function ContractTemplatesPage() {
 
         {/* Templates Grid */}
         {isLoading ? (
-          <div className="text-center p-8 text-gray-500">Loading templates...</div>
+          <div className="text-center p-8 text-[var(--text-muted)]">Loading templates...</div>
         ) : templates.length === 0 ? (
-          <div className="text-center p-8 text-gray-500">
+          <div className="text-center p-8 text-[var(--text-muted)]">
             <p>No templates found</p>
           </div>
         ) : (
@@ -84,7 +84,7 @@ export default function ContractTemplatesPage() {
                   <h3 className="font-semibold text-lg">{template.name}</h3>
                   {template.isActive && <Badge>Active</Badge>}
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
                   {contractService.getTypeLabel(template.type)}
                 </p>
                 <div className="flex gap-2">

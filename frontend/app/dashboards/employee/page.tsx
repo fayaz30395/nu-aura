@@ -369,7 +369,7 @@ export default function EmployeeDashboardPage() {
                         className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-800 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-white dark:bg-surface-900 flex items-center justify-center shadow-sm">
+                          <div className="w-10 h-10 rounded-lg bg-[var(--bg-card)] flex items-center justify-center shadow-sm">
                             <span className="text-sm font-semibold text-surface-900 dark:text-surface-50">
                               {new Date(record.date).getDate()}
                             </span>
@@ -595,7 +595,7 @@ export default function EmployeeDashboardPage() {
                       key={event.id}
                       className={`flex items-start gap-3 p-3 rounded-lg ${getEventColor(event.type)}`}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-white dark:bg-surface-800 flex items-center justify-center shadow-sm">
+                      <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center shadow-sm">
                         {getEventIcon(event.type)}
                       </div>
                       <div className="flex-1 min-w-0">

@@ -757,7 +757,7 @@ function DriveContent() {
     if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return <FileSpreadsheet className="h-8 w-8 text-green-600" />;
     if (mimeType.includes('presentation') || mimeType.includes('powerpoint')) return <Presentation className="h-8 w-8 text-orange-500" />;
     if (mimeType.includes('document') || mimeType.includes('word')) return <FileText className="h-8 w-8 text-blue-500" />;
-    return <File className="h-8 w-8 text-gray-500" />;
+    return <File className="h-8 w-8 text-[var(--text-muted)]" />;
   };
 
   const filteredFiles = files.filter(file =>
@@ -1106,7 +1106,7 @@ function DriveContent() {
                     key={file.id}
                     onClick={() => handleFileClick(file)}
                     onContextMenu={(e) => handleContextMenu(e, file)}
-                    className="group p-4 bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer relative"
+                    className="group p-4 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer relative"
                   >
                     <button
                       onClick={(e) => handleContextMenu(e, file)}
@@ -1208,7 +1208,7 @@ function DriveContent() {
         <div
           ref={contextMenuRef}
           style={{ left: contextMenuPos.x, top: contextMenuPos.y }}
-          className="fixed z-50 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg py-1 min-w-[180px]"
+          className="fixed z-50 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg py-1 min-w-[180px]"
         >
           {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && (
             <button
@@ -1279,7 +1279,7 @@ function DriveContent() {
 
       {/* New Folder Modal */}
       {showNewFolderModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
               <h3 className="font-semibold text-surface-900 dark:text-surface-50">Create New Folder</h3>
@@ -1331,7 +1331,7 @@ function DriveContent() {
 
       {/* Share Modal */}
       {showShareModal && selectedFile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
               <h3 className="font-semibold text-surface-900 dark:text-surface-50">Share &quot;{selectedFile.name}&quot;</h3>
@@ -1369,7 +1369,7 @@ function DriveContent() {
                 <select
                   value={shareRole}
                   onChange={(e) => setShareRole(e.target.value as 'reader' | 'writer' | 'commenter')}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50"
+                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-50"
                 >
                   <option value="reader">Viewer</option>
                   <option value="commenter">Commenter</option>
@@ -1426,7 +1426,7 @@ function DriveContent() {
 
       {/* Rename Modal */}
       {showRenameModal && contextMenuFile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
               <h3 className="font-semibold text-surface-900 dark:text-surface-50">Rename</h3>

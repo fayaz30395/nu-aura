@@ -212,14 +212,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               <FileIcon className="h-8 w-8 text-blue-500" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                <p className="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
+                <p className="text-xs text-[var(--text-muted)]">{formatFileSize(selectedFile.size)}</p>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   cancelUpload();
                 }}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                className="p-1 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700 rounded"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -230,18 +230,18 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex items-center justify-center mt-2 text-sm text-gray-500">
+            <div className="flex items-center justify-center mt-2 text-sm text-[var(--text-muted)]">
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Uploading... {progress}%
             </div>
           </div>
         ) : (
           <>
-            <Upload className="h-12 w-12 text-gray-400 mb-4" />
+            <Upload className="h-12 w-12 text-[var(--text-muted)] mb-4" />
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {isDragging ? 'Drop files here' : 'Click to upload or drag and drop'}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[var(--text-muted)]">
               {accept === '*/*' ? 'Any file type' : accept.replace(/,/g, ', ')} up to {formatFileSize(maxSize)}
             </p>
           </>

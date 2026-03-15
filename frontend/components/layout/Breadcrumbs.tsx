@@ -25,22 +25,32 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   return (
     <nav
       className={cn(
-        'flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400',
+        'flex items-center gap-2 text-sm',
         className
       )}
       aria-label="breadcrumb"
+      style={{ color: 'var(--text-secondary)' }}
     >
       <div className="flex items-center gap-2">
         {items.length > 0 && (
           <>
             <Link
               href="/"
-              className="flex items-center gap-1 rounded-md hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 px-2 py-1 transition-colors"
+              className="flex items-center gap-1 rounded-md px-2 py-1 transition-colors"
+              style={{
+                color: 'var(--text-secondary)',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
+              }}
             >
               <Home className="h-4 w-4" />
               <span className="hidden sm:inline">Home</span>
             </Link>
-            {separator}
+            <span style={{ color: 'var(--text-muted)' }}>{separator}</span>
           </>
         )}
       </div>
@@ -51,18 +61,32 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
             key={`${item.label}-${index}`}
             className="flex items-center gap-2"
           >
-            {index > 0 && separator}
+            {index > 0 && (
+              <span style={{ color: 'var(--text-muted)' }}>{separator}</span>
+            )}
 
             {item.href ? (
               <Link
                 href={item.href}
-                className="flex items-center gap-1.5 rounded-md hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 px-2 py-1 transition-colors"
+                className="flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors"
+                style={{
+                  color: 'var(--text-secondary)',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-primary)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-secondary)';
+                }}
               >
                 {item.icon && <span className="flex items-center">{item.icon}</span>}
                 <span>{item.label}</span>
               </Link>
             ) : (
-              <span className="flex items-center gap-1.5 px-2 py-1 font-medium text-slate-900 dark:text-slate-50">
+              <span
+                className="flex items-center gap-1.5 px-2 py-1 font-medium"
+                style={{ color: 'var(--text-primary)' }}
+              >
                 {item.icon && <span className="flex items-center">{item.icon}</span>}
                 {item.label}
               </span>

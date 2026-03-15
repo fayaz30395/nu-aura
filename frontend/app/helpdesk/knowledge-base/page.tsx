@@ -336,7 +336,7 @@ export default function KnowledgeBasePage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 sticky top-6">
+            <div className="bg-[var(--bg-input)] rounded-lg p-6 sticky top-6">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-6">
                 Categories
               </h3>
@@ -401,7 +401,7 @@ export default function KnowledgeBasePage() {
                   placeholder="Search articles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>
             </div>
@@ -486,7 +486,7 @@ export default function KnowledgeBasePage() {
                 <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
                   Category
                 </label>
-                <select className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg">
+                <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg">
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -502,7 +502,7 @@ export default function KnowledgeBasePage() {
                 <textarea
                   placeholder="Write the article content here..."
                   rows={8}
-                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 />
               </div>
             </div>
@@ -555,7 +555,7 @@ export default function KnowledgeBasePage() {
               <textarea
                 placeholder="Provide more details about your issue..."
                 rows={6}
-                className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
               />
             </div>
 
@@ -563,7 +563,7 @@ export default function KnowledgeBasePage() {
               <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
                 Priority
               </label>
-              <select className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg">
+              <select className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg">
                 <option>Low</option>
                 <option>Medium</option>
                 <option>High</option>

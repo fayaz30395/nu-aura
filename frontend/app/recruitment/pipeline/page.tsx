@@ -79,7 +79,7 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
   [ApplicationStatus.OFFERED]:        { col: 'border-t-green-500',   header: 'bg-green-50',   badge: 'bg-green-100 text-green-700',     bg: 'bg-green-50/50' },
   [ApplicationStatus.ACCEPTED]:       { col: 'border-t-emerald-500', header: 'bg-emerald-50', badge: 'bg-emerald-100 text-emerald-700', bg: 'bg-emerald-50/50' },
   [ApplicationStatus.REJECTED]:       { col: 'border-t-red-500',     header: 'bg-red-50',     badge: 'bg-red-100 text-red-700',         bg: 'bg-red-50/50' },
-  [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-gray-400',    header: 'bg-gray-50',    badge: 'bg-gray-100 text-gray-600',       bg: 'bg-gray-50/50' },
+  [ApplicationStatus.WITHDRAWN]:      { col: 'border-t-gray-400',    header: 'bg-[var(--bg-surface)]',    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',       bg: 'bg-[var(--bg-surface)]/50' },
 };
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
@@ -89,7 +89,7 @@ const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
   [ApplicationSource.LINKEDIN]: 'bg-sky-50 text-sky-600',
   [ApplicationSource.CAMPUS]:   'bg-purple-50 text-purple-600',
   [ApplicationSource.AGENCY]:   'bg-orange-50 text-orange-600',
-  [ApplicationSource.OTHER]:    'bg-gray-50 text-gray-500',
+  [ApplicationSource.OTHER]:    'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
 // All valid transition targets from each stage
@@ -343,7 +343,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
         {sourceBreakdown.length > 0 ? (
           <div className="flex flex-wrap gap-1.5 mt-1">
             {sourceBreakdown.map(([src, count]) => (
-              <span key={src} className={`text-xs px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[src as ApplicationSource] || 'bg-gray-50 text-gray-500'}`}>
+              <span key={src} className={`text-xs px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[src as ApplicationSource] || 'bg-[var(--bg-surface)] text-[var(--text-muted)]'}`}>
                 {formatLabel(src)} ({count})
               </span>
             ))}
@@ -1059,7 +1059,7 @@ export default function ApplicantPipelinePage() {
                                                 {formatLabel(applicant.source)}
                                               </span>
                                             ) : (
-                                              <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-gray-50 text-gray-500">
+                                              <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
                                                 Other
                                               </span>
                                             )}

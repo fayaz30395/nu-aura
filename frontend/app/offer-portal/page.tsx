@@ -383,7 +383,7 @@ function OfferPortalPage() {
 
       {/* Accept Modal */}
       {showAcceptModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
           <Card className="max-w-md w-full">
             <CardContent className="p-6">
               <div className="text-center mb-6">
@@ -406,7 +406,7 @@ function OfferPortalPage() {
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 <p className="text-xs text-surface-500 mt-1">
                   Please confirm your expected joining date
@@ -444,7 +444,7 @@ function OfferPortalPage() {
 
       {/* Decline Modal */}
       {showDeclineModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
           <Card className="max-w-md w-full">
             <CardContent className="p-6">
               <div className="text-center mb-6">
@@ -468,7 +468,7 @@ function OfferPortalPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Please share your reason..."
-                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-4 py-3 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
 

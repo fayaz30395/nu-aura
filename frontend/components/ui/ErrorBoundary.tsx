@@ -59,7 +59,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950">
-          <div className="max-w-md w-full bg-white dark:bg-surface-800 rounded-lg shadow-lg p-8">
+          <div className="max-w-md w-full bg-[var(--bg-input)] rounded-lg shadow-lg p-8">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 mx-auto mb-4">
               <svg
                 className="w-6 h-6 text-red-600 dark:text-red-400"
@@ -78,7 +78,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">
               Something went wrong
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
+            <p className="text-[var(--text-secondary)] text-center mb-6">
               We encountered an unexpected error. Please try refreshing the page.
             </p>
 
@@ -96,8 +96,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* Production: Show only error ID for support reference */}
             {!isDevelopment && this.state.errorId && (
-              <div className="bg-gray-100 dark:bg-surface-700 rounded p-3 mb-6 text-center">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              <div className="bg-[var(--bg-surface)] dark:bg-surface-700 rounded p-3 mb-6 text-center">
+                <p className="text-xs text-[var(--text-muted)] mb-1">
                   Error Reference
                 </p>
                 <p className="text-sm font-mono text-gray-700 dark:text-gray-300 select-all">

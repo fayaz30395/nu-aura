@@ -143,7 +143,7 @@ const getBenefitColor = (type: string) => {
     case 'VISION':
       return 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-400';
     default:
-      return 'bg-gray-100 text-gray-600 dark:bg-surface-950 dark:text-gray-400';
+      return 'bg-[var(--bg-surface)] text-gray-600 dark:bg-surface-950 dark:text-[var(--text-muted)]';
   }
 };
 
@@ -862,7 +862,7 @@ export default function BenefitsPage() {
                         Coverage Level
                       </label>
                       <select
-                        className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                        className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                         {...registerEnrollment('coverageLevel')}
                       >
                         <option value="EMPLOYEE_ONLY">Employee Only</option>
@@ -880,7 +880,7 @@ export default function BenefitsPage() {
                       </label>
                       <input
                         type="date"
-                        className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                        className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                         {...registerEnrollment('effectiveDate')}
                       />
                       {enrollmentErrors.effectiveDate && <span className="text-red-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
@@ -935,7 +935,7 @@ export default function BenefitsPage() {
                   Benefit Plan
                 </label>
                 <select
-                  className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   {...registerClaim('enrollmentId')}
                 >
                   <option value="">Select a plan</option>
@@ -953,7 +953,7 @@ export default function BenefitsPage() {
                   Claim Type
                 </label>
                 <select
-                  className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   {...registerClaim('claimType')}
                 >
                   <option value="MEDICAL">Medical</option>
@@ -972,7 +972,7 @@ export default function BenefitsPage() {
                   </label>
                   <input
                     type="date"
-                    className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                    className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                     {...registerClaim('serviceDate')}
                   />
                   {claimErrors.serviceDate && <span className="text-red-500 text-sm">{claimErrors.serviceDate.message}</span>}
@@ -985,7 +985,7 @@ export default function BenefitsPage() {
                     type="number"
                     step="0.01"
                     min="0"
-                    className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                    className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                     placeholder="0.00"
                     {...registerClaim('claimAmount')}
                   />
@@ -999,7 +999,7 @@ export default function BenefitsPage() {
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   placeholder="Doctor/Hospital name"
                   {...registerClaim('serviceProvider')}
                 />
@@ -1011,7 +1011,7 @@ export default function BenefitsPage() {
                   Description
                 </label>
                 <textarea
-                  className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   rows={3}
                   placeholder="Describe the service/treatment..."
                   {...registerClaim('description')}
@@ -1024,7 +1024,7 @@ export default function BenefitsPage() {
                 </label>
                 <input
                   type="url"
-                  className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   placeholder="https://..."
                   {...registerClaim('receiptUrl')}
                 />

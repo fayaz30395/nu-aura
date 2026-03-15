@@ -359,7 +359,7 @@ export function CreateAllocationModal({
                 onClick={() => setUseExistingProject(false)}
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   !useExistingProject
-                    ? 'bg-white dark:bg-surface-700 shadow text-primary-600'
+                    ? 'bg-[var(--bg-surface)] shadow text-primary-600'
                     : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
                 }`}
               >
@@ -371,7 +371,7 @@ export function CreateAllocationModal({
                 onClick={() => setUseExistingProject(true)}
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
                   useExistingProject
-                    ? 'bg-white dark:bg-surface-700 shadow text-primary-600'
+                    ? 'bg-[var(--bg-surface)] shadow text-primary-600'
                     : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
                 }`}
               >
@@ -390,7 +390,7 @@ export function CreateAllocationModal({
                   <select
                     value={selectedProjectId}
                     onChange={(e) => setSelectedProjectId(e.target.value)}
-                    className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-4 py-2.5"
+                    className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
                   >
                     <option value="">Choose a project...</option>
                     {projects.map((proj) => (
@@ -504,7 +504,7 @@ export function CreateAllocationModal({
                     <select
                       value={projectData.projectManagerId}
                       onChange={(e) => setProjectData({ ...projectData, projectManagerId: e.target.value })}
-                      className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-4 py-2.5"
+                      className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2.5"
                     >
                       <option value="">Select Manager</option>
                       {employees.map((emp) => (
@@ -534,7 +534,7 @@ export function CreateAllocationModal({
                       <select
                         value={projectData.currency}
                         onChange={(e) => setProjectData({ ...projectData, currency: e.target.value })}
-                        className="w-24 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-2"
+                        className="w-24 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-2"
                       >
                         <option value="USD">USD</option>
                         <option value="INR">INR</option>
@@ -583,7 +583,7 @@ export function CreateAllocationModal({
                       placeholder="Any additional notes about the client or project requirements..."
                       value={projectData.clientNotes}
                       onChange={(e) => setProjectData({ ...projectData, clientNotes: e.target.value })}
-                      className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 px-4 py-2 text-sm min-h-[80px]"
+                      className="w-full rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] px-4 py-2 text-sm min-h-[80px]"
                     />
                   </div>
                 </div>
@@ -716,7 +716,7 @@ export function CreateAllocationModal({
                 onFocus={() => setShowEmployeeDropdown(true)}
               />
               {showEmployeeDropdown && employeeSearch && (
-                <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
+                <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg">
                   {filteredEmployees.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-surface-500">No employees found</div>
                   ) : (

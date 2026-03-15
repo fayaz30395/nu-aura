@@ -2,11 +2,19 @@ import { cn } from "@/lib/utils"
 
 function Skeleton({
     className,
+    width,
+    height,
     ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement> & { width?: string | number; height?: string | number }) {
+    const style = {
+        ...(props.style as React.CSSProperties),
+        ...(width && { width: typeof width === 'number' ? `${width}px` : width }),
+        ...(height && { height: typeof height === 'number' ? `${height}px` : height }),
+    }
     return (
         <div
-            className={cn("animate-pulse rounded-md bg-surface-200 dark:bg-surface-700", className)}
+            className={cn("skeleton-aura", className)}
+            style={style}
             {...props}
         />
     )
@@ -23,8 +31,8 @@ function SkeletonText({
             {Array.from({ length: lines }).map((_, i) => (
                 <Skeleton
                     key={i}
+                    height={16}
                     className={cn(
-                        "h-4",
                         i === lines - 1 && lines > 1 ? "w-3/4" : "w-full"
                     )}
                 />
@@ -39,15 +47,18 @@ function SkeletonAvatar({
     size = "md",
     ...props
 }: React.HTMLAttributes<HTMLDivElement> & { size?: "sm" | "md" | "lg" | "xl" }) {
-    const sizeClasses = {
-        sm: "h-8 w-8",
-        md: "h-10 w-10",
-        lg: "h-12 w-12",
-        xl: "h-16 w-16",
+    const sizes = {
+        sm: 32,
+        md: 40,
+        lg: 48,
+        xl: 64,
     }
+    const dimension = sizes[size]
     return (
         <Skeleton
-            className={cn("rounded-full", sizeClasses[size], className)}
+            className={cn("rounded-full", className)}
+            width={dimension}
+            height={dimension}
             {...props}
         />
     )
@@ -61,16 +72,20 @@ function SkeletonCard({
     return (
         <div
             className={cn(
-                "rounded-lg border border-surface-200 dark:border-surface-700 p-4 space-y-4",
+                "rounded-xl border p-4 space-y-4",
                 className
             )}
+            style={{
+                backgroundColor: 'var(--bg-card)',
+                borderColor: 'var(--border-main)',
+            }}
             {...props}
         >
             <div className="flex items-center space-x-4">
                 <SkeletonAvatar />
                 <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-1/3" />
-                    <Skeleton className="h-3 w-1/2" />
+                    <Skeleton height={16} width="33%" />
+                    <Skeleton height={12} width="50%" />
                 </div>
             </div>
             <SkeletonText lines={3} />
@@ -85,10 +100,10 @@ function SkeletonTableRow({
     ...props
 }: React.HTMLAttributes<HTMLTableRowElement> & { columns?: number }) {
     return (
-        <tr className={cn("animate-pulse", className)} {...props}>
+        <tr className={cn(className)} {...props}>
             {Array.from({ length: columns }).map((_, i) => (
                 <td key={i} className="px-4 py-3">
-                    <Skeleton className={cn("h-4", i === 0 ? "w-24" : "w-full")} />
+                    <Skeleton height={16} width={i === 0 ? 96 : "100%"} />
                 </td>
             ))}
         </tr>
@@ -104,20 +119,24 @@ function SkeletonTable({
 }: React.HTMLAttributes<HTMLDivElement> & { rows?: number; columns?: number }) {
     return (
         <div
-            className={cn("overflow-hidden rounded-lg border border-surface-200 dark:border-surface-700", className)}
+            className={cn("overflow-hidden rounded-xl border", className)}
+            style={{
+                backgroundColor: 'var(--bg-card)',
+                borderColor: 'var(--border-main)',
+            }}
             {...props}
         >
             <table className="w-full">
-                <thead className="bg-surface-50 dark:bg-surface-800">
-                    <tr>
+                <thead style={{ backgroundColor: 'var(--bg-surface)' }}>
+                    <tr style={{ borderBottom: '1px solid var(--border-main)' }}>
                         {Array.from({ length: columns }).map((_, i) => (
                             <th key={i} className="px-4 py-3 text-left">
-                                <Skeleton className="h-4 w-20" />
+                                <Skeleton height={16} width={80} />
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
+                <tbody>
                     {Array.from({ length: rows }).map((_, i) => (
                         <SkeletonTableRow key={i} columns={columns} />
                     ))}
@@ -134,18 +153,19 @@ function SkeletonStatCard({
 }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className={cn(
-                "rounded-lg border border-surface-200 dark:border-surface-700 p-4",
-                className
-            )}
+            className={cn("rounded-xl border p-4", className)}
+            style={{
+                backgroundColor: 'var(--bg-card)',
+                borderColor: 'var(--border-main)',
+            }}
             {...props}
         >
             <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton height={16} width={96} />
+                <Skeleton height={32} width={32} className="rounded-lg" />
             </div>
-            <Skeleton className="h-8 w-20 mt-2" />
-            <Skeleton className="h-3 w-32 mt-2" />
+            <Skeleton height={32} width={80} className="mt-2" />
+            <Skeleton height={12} width={128} className="mt-2" />
         </div>
     )
 }
@@ -163,10 +183,10 @@ function SkeletonListItem({
         >
             {hasAvatar && <SkeletonAvatar />}
             <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-3 w-1/3" />
+                <Skeleton height={16} width="66%" />
+                <Skeleton height={12} width="33%" />
             </div>
-            <Skeleton className="h-8 w-20 rounded-md" />
+            <Skeleton height={32} width={80} className="rounded-md" />
         </div>
     )
 }
@@ -181,13 +201,13 @@ function SkeletonForm({
         <div className={cn("space-y-6", className)} {...props}>
             {Array.from({ length: fields }).map((_, i) => (
                 <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-10 w-full rounded-md" />
+                    <Skeleton height={16} width={96} />
+                    <Skeleton height={40} width="100%" className="rounded-md" />
                 </div>
             ))}
             <div className="flex justify-end space-x-3 pt-4">
-                <Skeleton className="h-10 w-24 rounded-md" />
-                <Skeleton className="h-10 w-24 rounded-md" />
+                <Skeleton height={40} width={96} className="rounded-md" />
+                <Skeleton height={40} width={96} className="rounded-md" />
             </div>
         </div>
     )
@@ -200,27 +220,28 @@ function SkeletonEmployeeCard({
 }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
-            className={cn(
-                "rounded-lg border border-surface-200 dark:border-surface-700 p-4",
-                className
-            )}
+            className={cn("rounded-xl border p-4", className)}
+            style={{
+                backgroundColor: 'var(--bg-card)',
+                borderColor: 'var(--border-main)',
+            }}
             {...props}
         >
             <div className="flex items-center space-x-4">
                 <SkeletonAvatar size="lg" />
                 <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-32" />
-                    <Skeleton className="h-3 w-24" />
+                    <Skeleton height={20} width={128} />
+                    <Skeleton height={12} width={96} />
                 </div>
             </div>
             <div className="mt-4 space-y-2">
                 <div className="flex items-center space-x-2">
-                    <Skeleton className="h-4 w-4" />
-                    <Skeleton className="h-3 w-28" />
+                    <Skeleton height={16} width={16} />
+                    <Skeleton height={12} width={112} />
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Skeleton className="h-4 w-4" />
-                    <Skeleton className="h-3 w-36" />
+                    <Skeleton height={16} width={16} />
+                    <Skeleton height={12} width={144} />
                 </div>
             </div>
         </div>
@@ -242,12 +263,24 @@ function SkeletonDashboard({
             </div>
             {/* Charts/content row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-4">
-                    <Skeleton className="h-5 w-32 mb-4" />
-                    <Skeleton className="h-64 w-full" />
+                <div
+                    className="rounded-xl border p-4"
+                    style={{
+                        backgroundColor: 'var(--bg-card)',
+                        borderColor: 'var(--border-main)',
+                    }}
+                >
+                    <Skeleton height={20} width={128} className="mb-4" />
+                    <Skeleton height={256} width="100%" />
                 </div>
-                <div className="rounded-lg border border-surface-200 dark:border-surface-700 p-4">
-                    <Skeleton className="h-5 w-32 mb-4" />
+                <div
+                    className="rounded-xl border p-4"
+                    style={{
+                        backgroundColor: 'var(--bg-card)',
+                        borderColor: 'var(--border-main)',
+                    }}
+                >
+                    <Skeleton height={20} width={128} className="mb-4" />
                     <div className="space-y-3">
                         {Array.from({ length: 5 }).map((_, i) => (
                             <SkeletonListItem key={i} />

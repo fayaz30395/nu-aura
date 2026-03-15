@@ -312,7 +312,7 @@ export default function ReviewCyclesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCycles.map((cycle) => (
-              <div key={cycle.id} className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div key={cycle.id} className="card-interactive p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold mb-2">{cycle.name}</h3>

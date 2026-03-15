@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Sidebar, SidebarItem } from '@/components/ui/Sidebar';
+import { Sidebar, SidebarItem, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED } from '@/components/ui/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
 import { usePermissions, Roles, Permissions } from '@/lib/hooks/usePermissions';
@@ -250,52 +250,76 @@ export default function AdminLayout({
     router.push('/login');
   };
 
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('admin-sidebar-collapsed');
+      return saved === 'true';
+    }
+    return false;
+  });
+
+  const handleCollapsedChange = (collapsed: boolean) => {
+    setIsCollapsed(collapsed);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin-sidebar-collapsed', String(collapsed));
+    }
+  };
+
   return (
     <DarkModeProvider>
-      <div className="min-h-screen bg-surface-50 dark:bg-slate-900">
-        {/* Header */}
-        <Header
-          onMenuClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          showMenuButton={true}
-          userName="Admin User"
-          notificationCount={3}
-          onLogout={handleLogout}
-          onProfile={() => router.push('/admin/profile')}
-          onSettings={() => router.push('/admin/settings')}
-        />
+      <div className="flex h-screen overflow-hidden bg-surface-50">
+        {/* Sidebar — fixed width, stable layout */}
+        <aside
+          className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{
+            width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+            minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+          }}
+        >
+          <Sidebar
+            items={filteredSidebarItems}
+            activeId={getActiveId()}
+            onItemClick={handleItemClick}
+            collapsed={isCollapsed}
+            onCollapsedChange={handleCollapsedChange}
+            collapsible={true}
+            className="h-full"
+          />
+        </aside>
 
-        <div className="flex h-[calc(100vh-4rem)]">
-          {/* Sidebar - Desktop */}
-          <div className="hidden md:block">
-            <Sidebar
-              items={filteredSidebarItems}
-              activeId={getActiveId()}
-              onItemClick={handleItemClick}
-              collapsible={true}
-              className="h-full"
+        {/* Mobile Sidebar Overlay */}
+        {isMobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div
+              className="absolute inset-0 bg-[var(--bg-overlay)]"
+              onClick={() => setIsMobileSidebarOpen(false)}
             />
-          </div>
-
-          {/* Sidebar - Mobile */}
-          {isMobileSidebarOpen && (
-            <div className="fixed inset-0 z-50 md:hidden">
-              <div
-                className="absolute inset-0 bg-black/50"
-                onClick={() => setIsMobileSidebarOpen(false)}
+            <div className="absolute left-0 top-0 bottom-0 w-72">
+              <Sidebar
+                items={filteredSidebarItems}
+                activeId={getActiveId()}
+                onItemClick={handleItemClick}
+                collapsible={false}
+                className="h-full"
               />
-              <div className="absolute left-0 top-0 bottom-0">
-                <Sidebar
-                  items={filteredSidebarItems}
-                  activeId={getActiveId()}
-                  onItemClick={handleItemClick}
-                  collapsible={false}
-                  className="h-full"
-                />
-              </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Main Content */}
+        {/* Main Content — fills remaining space */}
+        <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+          {/* Header — fixed height */}
+          <Header
+            onMenuClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            showMenuButton={true}
+            userName="Admin User"
+            notificationCount={3}
+            onLogout={handleLogout}
+            onProfile={() => router.push('/admin/profile')}
+            onSettings={() => router.push('/admin/settings')}
+          />
+
+          {/* Scrollable content area */}
           <main className="flex-1 overflow-auto">
             {children}
           </main>

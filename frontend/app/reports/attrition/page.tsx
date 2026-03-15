@@ -108,11 +108,11 @@ export default function AttritionReportPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Attrition Analysis</h1>
-            <p className="text-sm text-gray-500 mt-1">AI-powered attrition risk predictions and retention recommendations</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Attrition Analysis</h1>
+            <p className="text-sm text-[var(--text-muted)] mt-1">AI-powered attrition risk predictions and retention recommendations</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={load} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50">
+            <button onClick={load} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-[var(--border-main)] rounded-md hover:bg-[var(--bg-surface)] disabled:opacity-50">
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
             </button>
             <button onClick={exportCSV} disabled={filtered.length === 0} className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50">
@@ -156,18 +156,18 @@ export default function AttritionReportPage() {
         {/* Filters */}
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500">Min risk score:</label>
+            <label className="text-xs text-[var(--text-muted)]">Min risk score:</label>
             <input
               type="number"
               min={0}
               max={100}
               value={minScore}
               onChange={e => setMinScore(Number(e.target.value))}
-              className="w-16 text-sm border border-gray-200 rounded px-2 py-1"
+              className="w-16 text-sm border border-[var(--border-main)] rounded px-2 py-1"
             />
-            <button onClick={load} className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded">Apply</button>
+            <button onClick={load} className="text-xs px-2 py-1 bg-[var(--bg-surface)] hover:bg-gray-200 rounded">Apply</button>
           </div>
-          <span className="text-xs text-gray-400">{filtered.length} employees shown</span>
+          <span className="text-xs text-[var(--text-muted)]">{filtered.length} employees shown</span>
           {selectedRisk !== 'ALL' && (
             <button onClick={() => setSelectedRisk('ALL')} className="text-xs text-blue-600 hover:underline">Clear filter</button>
           )}
@@ -179,10 +179,10 @@ export default function AttritionReportPage() {
             <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-gray-200 rounded-lg">
+          <div className="text-center py-16 bg-white border border-[var(--border-main)] rounded-lg">
             <Shield className="h-12 w-12 text-green-400 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">No high-risk employees found</p>
-            <p className="text-sm text-gray-400 mt-1">Lower the minimum risk score to see more results</p>
+            <p className="text-[var(--text-muted)] font-medium">No high-risk employees found</p>
+            <p className="text-sm text-[var(--text-muted)] mt-1">Lower the minimum risk score to see more results</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -195,11 +195,11 @@ export default function AttritionReportPage() {
                   <div key={pred.id} className={`bg-white border rounded-lg overflow-hidden transition-all ${expanded ? 'shadow-md' : ''}`}>
                     <button
                       onClick={() => setExpandedId(expanded ? null : pred.id)}
-                      className="w-full flex items-center gap-4 px-5 py-3 text-left hover:bg-gray-50"
+                      className="w-full flex items-center gap-4 px-5 py-3 text-left hover:bg-[var(--bg-surface)]"
                     >
                       {/* Risk score bar */}
                       <div className="shrink-0 w-16 text-center">
-                        <div className="text-lg font-bold text-gray-900">{Math.round(pred.riskScore)}</div>
+                        <div className="text-lg font-bold text-[var(--text-primary)]">{Math.round(pred.riskScore)}</div>
                         <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden mt-1">
                           <div className={`h-full ${colors.bar} rounded-full`} style={{ width: `${pred.riskScore}%` }} />
                         </div>
@@ -207,7 +207,7 @@ export default function AttritionReportPage() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-gray-900 truncate">
+                          <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                             {pred.employeeName ?? `Employee ${pred.employeeId.slice(0, 8)}…`}
                           </p>
                           <span className={`shrink-0 text-xs font-medium px-1.5 py-0.5 rounded ${colors.text} ${colors.bg} border ${colors.bg.replace('bg-', 'border-').replace('-50', '-200')}`}>
@@ -219,7 +219,7 @@ export default function AttritionReportPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="text-xs text-[var(--text-muted)] mt-0.5">
                           {pred.department} {pred.jobTitle ? `· ${pred.jobTitle}` : ''}
                           {pred.tenureMonths ? ` · ${Math.round(pred.tenureMonths / 12 * 10) / 10}y tenure` : ''}
                         </p>
@@ -227,38 +227,38 @@ export default function AttritionReportPage() {
 
                       {pred.predictedLeaveDate && (
                         <div className="shrink-0 text-right hidden md:block">
-                          <p className="text-xs text-gray-400">Predicted leave</p>
-                          <p className="text-sm font-medium text-gray-700">
+                          <p className="text-xs text-[var(--text-muted)]">Predicted leave</p>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">
                             {new Date(pred.predictedLeaveDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
                           </p>
                         </div>
                       )}
 
                       <div className={`shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}>
-                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-4 w-4 text-[var(--text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
                     </button>
 
                     {expanded && (
-                      <div className="px-5 pb-4 border-t border-gray-100 bg-gray-50">
+                      <div className="px-5 pb-4 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                           {/* Risk factors */}
                           {pred.riskFactors && pred.riskFactors.length > 0 && (
                             <div>
-                              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Risk Factors</p>
+                              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Risk Factors</p>
                               <div className="space-y-1.5">
                                 {pred.riskFactors.map((f, i) => (
                                   <div key={i} className="flex items-center gap-2">
-                                    <span className="text-xs text-gray-600 w-28 shrink-0">{f.name}</span>
+                                    <span className="text-xs text-[var(--text-secondary)] w-28 shrink-0">{f.name}</span>
                                     <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                                       <div
                                         className={`h-full rounded-full ${f.impact === 'HIGH' ? 'bg-red-500' : f.impact === 'MEDIUM' ? 'bg-yellow-400' : 'bg-green-400'}`}
                                         style={{ width: `${f.score}%` }}
                                       />
                                     </div>
-                                    <span className="text-xs font-medium text-gray-700 w-8 text-right">{Math.round(f.score)}</span>
+                                    <span className="text-xs font-medium text-[var(--text-primary)] w-8 text-right">{Math.round(f.score)}</span>
                                   </div>
                                 ))}
                               </div>
@@ -268,10 +268,10 @@ export default function AttritionReportPage() {
                           {/* Recommendations */}
                           {pred.recommendations && pred.recommendations.length > 0 && (
                             <div>
-                              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Recommendations</p>
+                              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-2">Recommendations</p>
                               <ul className="space-y-1">
                                 {pred.recommendations.map((r, i) => (
-                                  <li key={i} className="text-xs text-gray-600 flex items-start gap-1.5">
+                                  <li key={i} className="text-xs text-[var(--text-secondary)] flex items-start gap-1.5">
                                     <span className="text-blue-500 mt-0.5">•</span>
                                     {r}
                                   </li>

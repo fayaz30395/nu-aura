@@ -202,7 +202,7 @@ export default function LeavePage() {
               return (
                 <div
                   key={balance.id}
-                  className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5 hover:shadow-lg transition-all duration-200"
+                  className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5 hover:shadow-lg transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient}`}>
@@ -251,7 +251,7 @@ export default function LeavePage() {
         </div>
 
         {/* Recent Leave Requests */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
             <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
               Recent Leave Requests
@@ -369,7 +369,7 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -387,7 +387,7 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
@@ -405,7 +405,7 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">

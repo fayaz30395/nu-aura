@@ -72,22 +72,22 @@ export default function ContentViewer({
 
   if (!editor) {
     return (
-      <div className={`rounded-lg border border-gray-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
-        <div className="text-gray-400">Loading content...</div>
+      <div className={`rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+        <div className="text-[var(--text-muted)]">Loading content...</div>
       </div>
     );
   }
 
   if (!content) {
     return (
-      <div className={`rounded-lg border border-gray-200 bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
-        <div className="text-gray-400">No content to display</div>
+      <div className={`rounded-lg border border-[var(--border-main)] bg-white p-4 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+        <div className="text-[var(--text-muted)]">No content to display</div>
       </div>
     );
   }
 
   return (
-    <div className={`tiptap-content prose prose-invert dark:prose-invert rounded-lg border border-gray-200 bg-white p-6 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
+    <div className={`tiptap-content prose prose-invert dark:prose-invert rounded-lg border border-[var(--border-main)] bg-white p-6 dark:border-surface-700 dark:bg-surface-800 ${className}`}>
       <EditorContent editor={editor} />
     </div>
   );
