@@ -231,6 +231,18 @@ class FeedService {
         wallPostAuthorDepartment: post.author.department,
         wallPostImageUrl: post.imageUrl ?? undefined,
         wallPostType: post.type,
+        // Poll data
+        pollOptions: post.pollOptions,
+        hasVoted: post.hasVoted,
+        userVotedOptionId: post.userVotedOptionId,
+        totalVotes: post.pollOptions?.reduce((sum, opt) => sum + opt.voteCount, 0) ?? 0,
+        // Praise data
+        praiseRecipientName: post.praiseRecipient?.fullName,
+        praiseRecipientAvatar: post.praiseRecipient?.avatarUrl,
+        praiseRecipientDepartment: post.praiseRecipient?.department,
+        praiseRecipientDesignation: post.praiseRecipient?.designation,
+        praiseRecipientId: post.praiseRecipient?.employeeId,
+        praiseCategory: (post as Record<string, unknown>).celebrationType as string | undefined,
         recentReactors: post.recentReactors,
         totalReactorCount: post.totalReactorCount,
       }));

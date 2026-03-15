@@ -70,6 +70,23 @@ export interface FeedItem {
   wallPostAuthorDepartment?: string;
   wallPostImageUrl?: string;
   wallPostType?: 'POST' | 'POLL' | 'PRAISE';
+  // Poll fields
+  pollOptions?: Array<{
+    id: string;
+    text: string;
+    voteCount: number;
+    votePercentage: number;
+  }>;
+  hasVoted?: boolean;
+  userVotedOptionId?: string;
+  totalVotes?: number;
+  // Praise fields
+  praiseRecipientName?: string;
+  praiseRecipientAvatar?: string;
+  praiseRecipientDepartment?: string;
+  praiseRecipientDesignation?: string;
+  praiseRecipientId?: string;
+  praiseCategory?: string; // celebrationType from backend
   // Reactor details
   recentReactors?: Array<{
     employeeId: string;
