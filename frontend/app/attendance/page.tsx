@@ -411,7 +411,7 @@ export default function AttendancePage() {
             <Card className="border-0 shadow-md bg-[var(--bg-card)] border border-[var(--border-main)] hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-sm">
                     <LogIn className="h-4 w-4 text-white" />
                   </div>
                   <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Check In</p>

@@ -106,7 +106,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-primary-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -146,7 +146,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-primary-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">

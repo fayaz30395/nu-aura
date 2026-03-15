@@ -48,7 +48,7 @@ const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   TRANSPORTATION: '#10b981',
   OFFICE_SUPPLIES: '#6366f1',
   EQUIPMENT: '#ec4899',
-  TRAINING: '#14b8a6',
+  TRAINING: '#3e63dd',
   COMMUNICATION: '#f97316',
   ENTERTAINMENT: '#a855f7',
   MEDICAL: '#ef4444',

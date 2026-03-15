@@ -25,9 +25,9 @@ export function WelcomeBanner({
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 px-6 py-5 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-primary-800 via-primary-700 to-primary-900 px-6 py-5 dark:from-primary-950 dark:via-primary-900 dark:to-primary-950">
       {/* Subtle texture overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.04),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.06),transparent_60%)]" />
 
       <div className="relative z-10 flex items-center justify-between">
         <div>

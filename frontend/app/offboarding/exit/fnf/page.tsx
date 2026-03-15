@@ -70,7 +70,7 @@ interface FnFAdjustments {
 const STATUS_COLORS: Record<string, string> = {
   DRAFT: 'gray',
   PENDING_APPROVAL: 'yellow',
-  APPROVED: 'teal',
+  APPROVED: 'primary',
   PROCESSING: 'blue',
   PAID: 'green',
   CANCELLED: 'red',
@@ -158,7 +158,7 @@ export default function FnFPage() {
           </Badge>
           {canApprove && (
             <Button
-              color="teal"
+              color="primary"
               loading={approveMutation.isPending}
               onClick={() => approveMutation.mutate()}
             >
@@ -236,10 +236,10 @@ export default function FnFPage() {
       </SimpleGrid>
 
       {/* Net Payable */}
-      <Paper withBorder p="md" bg="teal.0">
+      <Paper withBorder p="md" bg="primary.0">
         <Group justify="space-between">
           <Title order={3}>Net Payable</Title>
-          <Title order={3} c="teal.7">{fmt(data.netPayable)}</Title>
+          <Title order={3} c="primary.7">{fmt(data.netPayable)}</Title>
         </Group>
       </Paper>
 
