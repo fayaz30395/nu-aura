@@ -19,6 +19,7 @@ import { ScopeSelector } from '@/components/admin/ScopeSelector';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useRoles,
   usePermissions as useQueryPermissions,
@@ -63,6 +64,8 @@ export default function RolesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [permissionSearch, setPermissionSearch] = useState('');
   const [showPermissionDropdown, setShowPermissionDropdown] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
 
   // Create form (for new role)
   const createForm = useForm<CreateRoleFormData>({
@@ -132,10 +135,17 @@ export default function RolesPage() {
     }
   };
 
-  const handleDeleteRole = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this role?')) return;
+  const handleDeleteRole = (role: Role) => {
+    setRoleToDelete(role);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = async () => {
+    if (!roleToDelete) return;
     try {
-      await deleteRoleMutation.mutateAsync(id);
+      await deleteRoleMutation.mutateAsync(roleToDelete.id);
+      setShowDeleteConfirm(false);
+      setRoleToDelete(null);
     } catch (error) {
       console.error('Failed to delete role:', error);
     }
@@ -258,6 +268,20 @@ export default function RolesPage() {
 
   return (
     <AppLayout activeMenuItem="admin-roles">
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setRoleToDelete(null);
+        }}
+        onConfirm={performDelete}
+        title="Delete Role"
+        message={`Are you sure you want to delete the role "${roleToDelete?.name}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Role Management</h1>
@@ -346,7 +370,7 @@ export default function RolesPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteRole(role.id)}
+                        onClick={() => handleDeleteRole(role)}
                         className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                       >
                         Delete

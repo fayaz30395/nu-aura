@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
@@ -23,12 +24,14 @@ import {
   DollarSign,
   Send,
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function TimeEntryDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { isAuthenticated, hasHydrated } = useAuth();
   const entryId = params.id as string;
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const { data: entry, isLoading, error } = useTimeEntry(entryId);
   const submitMutation = useSubmitTimeEntry();
@@ -46,8 +49,6 @@ export default function TimeEntryDetailPage() {
 
   const handleDelete = async () => {
     if (!entry || entry.status !== 'DRAFT') return;
-
-    if (!confirm('Are you sure you want to delete this time entry?')) return;
 
     try {
       await deleteMutation.mutateAsync(entry.id);
@@ -317,7 +318,7 @@ export default function TimeEntryDetailPage() {
           {entry.status === 'DRAFT' && (
             <>
               <button
-                onClick={handleDelete}
+                onClick={() => setDeleteConfirm(true)}
                 disabled={deleteMutation.isPending}
                 className="px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50"
               >
@@ -344,6 +345,18 @@ export default function TimeEntryDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Delete Time Entry Confirmation */}
+      <ConfirmDialog
+        isOpen={deleteConfirm}
+        onClose={() => setDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete Time Entry"
+        message="Are you sure you want to delete this time entry? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+        loading={deleteMutation.isPending}
+      />
     </AppLayout>
   );
 }

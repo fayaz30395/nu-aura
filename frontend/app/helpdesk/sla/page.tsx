@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { TicketSLA } from '@/lib/services/helpdesk-sla.service';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -40,6 +41,8 @@ export default function HelpdeskSLAPage() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'slas' | 'escalations'>('dashboard');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [slaToDelete, setSlaToDelete] = useState<TicketSLA | null>(null);
 
   const {
     register,
@@ -118,10 +121,17 @@ export default function HelpdeskSLAPage() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this SLA?')) return;
+  const handleDelete = (sla: TicketSLA) => {
+    setSlaToDelete(sla);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = async () => {
+    if (!slaToDelete) return;
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(slaToDelete.id);
+      setShowDeleteConfirm(false);
+      setSlaToDelete(null);
     } catch (error: unknown) {
       toast.error(
         (error as { response?: { data?: { message?: string } } })?.response?.data
@@ -174,6 +184,20 @@ export default function HelpdeskSLAPage() {
 
   return (
     <AppLayout activeMenuItem="helpdesk">
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setSlaToDelete(null);
+        }}
+        onConfirm={performDelete}
+        title="Delete SLA Policy"
+        message={`Are you sure you want to delete "${slaToDelete?.name}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">SLA Management</h1>
@@ -495,7 +519,7 @@ export default function HelpdeskSLAPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(sla.id)}
+                            onClick={() => handleDelete(sla)}
                             className="text-red-600 hover:text-red-800"
                           >
                             Delete

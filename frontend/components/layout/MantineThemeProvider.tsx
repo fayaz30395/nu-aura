@@ -2,20 +2,22 @@
 
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { theme } from '@/lib/theme/mantine-theme';
+import { useDarkMode } from './DarkModeProvider';
 
 interface MantineThemeProviderProps {
   children: React.ReactNode;
 }
 
 /**
- * Mantine Theme Provider - Light mode only.
+ * Mantine Theme Provider - Synced with Tailwind's DarkModeProvider.
  */
 export function MantineThemeProvider({ children }: MantineThemeProviderProps) {
+  const { isDark } = useDarkMode();
+
   return (
     <MantineProvider
       theme={theme}
-      defaultColorScheme="light"
-      forceColorScheme="light"
+      forceColorScheme={isDark ? 'dark' : 'light'}
     >
       {children}
     </MantineProvider>

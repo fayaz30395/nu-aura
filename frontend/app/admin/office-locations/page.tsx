@@ -9,6 +9,7 @@ import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-loc
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useOfficeLocations,
   useCreateOfficeLocation,
@@ -67,6 +68,8 @@ export default function OfficeLocationsPage() {
   // Local UI state
   const [showForm, setShowForm] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [locationToDelete, setLocationToDelete] = React.useState<OfficeLocation | null>(null);
 
   // React Query hooks
   const { data: locations = [], isLoading } = useOfficeLocations();
@@ -143,9 +146,18 @@ export default function OfficeLocationsPage() {
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (!confirm('Are you sure you want to delete this location?')) return;
-    deleteMutation.mutate(id, {
+  const handleDelete = (location: OfficeLocation) => {
+    setLocationToDelete(location);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = () => {
+    if (!locationToDelete) return;
+    deleteMutation.mutate(locationToDelete.id, {
+      onSuccess: () => {
+        setShowDeleteConfirm(false);
+        setLocationToDelete(null);
+      },
       onError: (error: unknown) => {
         toast.error(
           (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -170,6 +182,20 @@ export default function OfficeLocationsPage() {
   return (
     <>
       <div className="max-w-7xl mx-auto">
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setLocationToDelete(null);
+          }}
+          onConfirm={performDelete}
+          title="Delete Location"
+          message={`Are you sure you want to delete "${locationToDelete?.name}"?`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
+
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Office Locations & Geofencing</h1>
           <button
@@ -359,7 +385,7 @@ export default function OfficeLocationsPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(location.id)}
+                        onClick={() => handleDelete(location)}
                         className="text-red-600 hover:text-red-800"
                       >
                         Delete

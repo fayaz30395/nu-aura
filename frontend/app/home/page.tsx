@@ -105,12 +105,12 @@ export default function HomePage() {
 
   const greeting = useMemo(() => getGreeting(), []);
   const clockStatus = getClockStatus();
-  const todayBirthdays = dashboardData.birthdays.filter((b) => b.isToday);
-  const upcomingBirthdays = dashboardData.birthdays.filter((b) => !b.isToday);
-  const todayAnniversaries = dashboardData.anniversaries.filter((a) => a.isToday);
-  const nextHoliday = dashboardData.holidays[0];
-  const totalLeave = dashboardData.leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0);
-  const newJoinees = dashboardData.newJoinees;
+  const todayBirthdays = (dashboardData?.birthdays ?? []).filter((b) => b.isToday);
+  const upcomingBirthdays = (dashboardData?.birthdays ?? []).filter((b) => !b.isToday);
+  const todayAnniversaries = (dashboardData?.anniversaries ?? []).filter((a) => a.isToday);
+  const nextHoliday = (dashboardData?.holidays ?? [])[0];
+  const totalLeave = (dashboardData?.leaveBalances ?? []).reduce((sum, b) => sum + (b.available || 0), 0);
+  const newJoinees = dashboardData?.newJoinees ?? [];
 
   if (isLoading) {
     return (
@@ -165,7 +165,7 @@ export default function HomePage() {
             <p className="text-xs text-gray-400 mt-0.5">{formatDate(currentTime)}</p>
           </div>
           <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur rounded-lg px-4 py-2.5 self-start sm:self-auto border border-white/5">
-            <div className="w-2 h-2 rounded-full bg-success-400 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-success-400 animate-pulse" aria-label="Online status indicator" />
             <span className="text-lg font-mono font-medium text-white tracking-wider">
               {formatTime(currentTime)}
             </span>
@@ -288,12 +288,17 @@ export default function HomePage() {
                       {getInitials(emp.employeeName)}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200 truncate">{emp.employeeName}</p>
+                      <p className="text-[11px] font-medium text-gray-800 dark:text-gray-200 truncate" title={emp.employeeName}>{emp.employeeName}</p>
                     </div>
                   </div>
                 ))}
                 {dashboardData.onLeaveToday.length > 3 && (
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500">+{dashboardData.onLeaveToday.length - 3} more</p>
+                  <button
+                    className="text-[11px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400 hover:underline transition-colors"
+                    title={dashboardData.onLeaveToday.slice(3).map((e) => e.employeeName).join(', ')}
+                  >
+                    +{dashboardData.onLeaveToday.length - 3} more
+                  </button>
                 )}
               </div>
             )}
@@ -366,14 +371,18 @@ export default function HomePage() {
                   <Plus className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                 </button>
               </div>
-              <div className="text-center py-4">
-                <Megaphone className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-500 dark:text-gray-500">No announcements</p>
-              </div>
+              <Skeleton className="h-16 rounded-lg mb-2" />
+              <Skeleton className="h-16 rounded-lg" />
             </div>
 
             {/* Posts */}
-            {dashboardData.wallPosts.length === 0 ? (
+            {!dashboardData?.wallPosts ? (
+              <>
+                <Skeleton className="h-48 rounded-xl" />
+                <Skeleton className="h-48 rounded-xl" />
+                <Skeleton className="h-48 rounded-xl" />
+              </>
+            ) : dashboardData.wallPosts.length === 0 ? (
               <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
                 <MessageSquare className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600 dark:text-gray-400">No posts yet</p>
@@ -401,7 +410,7 @@ export default function HomePage() {
                       <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{post.content}</p>
                       {post.imageUrl && (
                         <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-surface-700 relative w-full h-48">
-                          <Image src={post.imageUrl} alt="Post" fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+                          <Image src={post.imageUrl} alt={`${post.author?.fullName || 'User'}'s post`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                         </div>
                       )}
                       <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-200 dark:border-surface-700">

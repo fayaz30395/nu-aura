@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
@@ -341,7 +342,7 @@ function LoginPage() {
       const returnUrl = searchParams.get('returnUrl');
       router.push(returnUrl || '/me/dashboard');
     } catch (err: unknown) {
-      console.error('[LoginPage] Login error:', err);
+      logger.error('[LoginPage] Login error:', err);
       incrementLoginAttempts();
       const attemptsRemaining = RATE_LIMIT_MAX_ATTEMPTS - (loginAttempts + 1);
       let errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Invalid email or password. Please try again.';

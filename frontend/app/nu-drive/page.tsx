@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useRouter } from 'next/navigation';
 import {
   HardDrive,
@@ -124,6 +125,9 @@ function DriveContent() {
   const [previewFile, setPreviewFile] = useState<DriveFile | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewContent, setPreviewContent] = useState<string | null>(null);
+
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
@@ -352,11 +356,16 @@ function DriveContent() {
 
   // Delete file
   const deleteFile = async (fileId: string) => {
-    if (!accessToken) return;
+    setFileToDelete(fileId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteFile = async () => {
+    if (!accessToken || !fileToDelete) return;
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}`,
+        `https://www.googleapis.com/drive/v3/files/${fileToDelete}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -366,8 +375,10 @@ function DriveContent() {
       if (!response.ok) throw new Error('Failed to delete file');
 
       // Remove from local state
-      setFiles(files.filter(f => f.id !== fileId));
+      setFiles(files.filter(f => f.id !== fileToDelete));
       setShowContextMenu(false);
+      setDeleteConfirmOpen(false);
+      setFileToDelete(null);
 
     } catch (error) {
       console.error('Delete error:', error);
@@ -1256,11 +1267,7 @@ function DriveContent() {
           <div className="border-t border-surface-100 dark:border-surface-700 my-1" />
           <button
             onClick={() => {
-              if (confirm('Are you sure you want to delete this file?')) {
-                deleteFile(contextMenuFile.id);
-              } else {
-                setShowContextMenu(false);
-              }
+              deleteFile(contextMenuFile.id);
             }}
             className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-3"
           >
@@ -1578,6 +1585,20 @@ function DriveContent() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setFileToDelete(null);
+        }}
+        onConfirm={confirmDeleteFile}
+        title="Delete File"
+        message="Are you sure you want to delete this file? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </AppLayout>
   );
 }

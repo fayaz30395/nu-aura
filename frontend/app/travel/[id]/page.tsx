@@ -6,6 +6,10 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { TravelStatus } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Textarea } from '@/components/ui/Textarea';
+import { Button } from '@/components/ui/Button';
 import {
   useTravelRequest,
   useTravelExpensesByRequest,
@@ -44,6 +48,11 @@ export default function TravelRequestDetailsPage() {
   const params = useParams();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
 
   const travelId = params?.id as string;
 
@@ -81,15 +90,21 @@ export default function TravelRequestDetailsPage() {
   const handleReject = () => {
     if (!user?.employeeId || !travelRequest) return;
 
-    const reason = prompt('Please enter rejection reason:');
-    if (!reason) return;
+    if (!rejectReason.trim()) {
+      toast.error('Please enter a rejection reason');
+      return;
+    }
 
     rejectMutation.mutate(
-      { id: travelRequest.id, approverId: user.employeeId, reason },
+      { id: travelRequest.id, approverId: user.employeeId, reason: rejectReason },
       {
         onError: (error: unknown) => {
           console.error('Error rejecting travel request:', error);
           toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject travel request');
+        },
+        onSuccess: () => {
+          setShowRejectReasonModal(false);
+          setRejectReason('');
         },
       }
     );
@@ -98,15 +113,21 @@ export default function TravelRequestDetailsPage() {
   const handleCancel = () => {
     if (!travelRequest) return;
 
-    const reason = prompt('Please enter cancellation reason:');
-    if (!reason) return;
+    if (!cancelReason.trim()) {
+      toast.error('Please enter a cancellation reason');
+      return;
+    }
 
     cancelMutation.mutate(
-      { id: travelRequest.id, reason },
+      { id: travelRequest.id, reason: cancelReason },
       {
         onError: (error: unknown) => {
           console.error('Error cancelling travel request:', error);
           toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel travel request');
+        },
+        onSuccess: () => {
+          setShowCancelReasonModal(false);
+          setCancelReason('');
         },
       }
     );
@@ -114,13 +135,19 @@ export default function TravelRequestDetailsPage() {
 
   const handleComplete = () => {
     if (!travelRequest) return;
+    setShowCompleteConfirm(true);
+  };
 
-    if (!confirm('Mark this travel request as completed?')) return;
+  const handleConfirmComplete = async () => {
+    if (!travelRequest) return;
 
     completeMutation.mutate(travelRequest.id, {
       onError: (error: unknown) => {
         console.error('Error completing travel request:', error);
         toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete travel request');
+      },
+      onSuccess: () => {
+        setShowCompleteConfirm(false);
       },
     });
   };
@@ -279,7 +306,7 @@ export default function TravelRequestDetailsPage() {
             )}
             {canCancel && (
               <button
-                onClick={handleCancel}
+                onClick={() => setShowCancelReasonModal(true)}
                 disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-900 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
               >
@@ -707,6 +734,92 @@ export default function TravelRequestDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Reject Reason Modal */}
+      <Modal isOpen={showRejectReasonModal} onClose={() => setShowRejectReasonModal(false)} size="sm">
+        <ModalHeader onClose={() => setShowRejectReasonModal(false)}>
+          Reject Travel Request
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <p className="text-sm text-surface-600 dark:text-surface-400">
+              Please provide a reason for rejecting this travel request.
+            </p>
+            <Textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Enter rejection reason..."
+              rows={4}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowRejectReasonModal(false);
+              setRejectReason('');
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleReject}
+            disabled={!rejectReason.trim() || rejectMutation.isPending}
+          >
+            {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* Cancel Reason Modal */}
+      <Modal isOpen={showCancelReasonModal} onClose={() => setShowCancelReasonModal(false)} size="sm">
+        <ModalHeader onClose={() => setShowCancelReasonModal(false)}>
+          Cancel Travel Request
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <p className="text-sm text-surface-600 dark:text-surface-400">
+              Please provide a reason for cancelling this travel request.
+            </p>
+            <Textarea
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Enter cancellation reason..."
+              rows={4}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowCancelReasonModal(false);
+              setCancelReason('');
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleCancel}
+            disabled={!cancelReason.trim() || cancelMutation.isPending}
+          >
+            {cancelMutation.isPending ? 'Cancelling...' : 'Confirm Cancel'}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* Complete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showCompleteConfirm}
+        onClose={() => setShowCompleteConfirm(false)}
+        onConfirm={handleConfirmComplete}
+        title="Mark Completed"
+        message="Are you sure you want to mark this travel request as completed?"
+        confirmText="Mark Completed"
+        type="info"
+        loading={completeMutation.isPending}
+      />
     </AppLayout>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { CreateLoanRequest, LoanType, RepaymentFrequency } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -92,7 +93,7 @@ export default function NewLoanPage() {
       // For now, just redirect
       router.push('/loans');
     } catch (err) {
-      console.error('Error creating loan:', err);
+      logger.error('Error creating loan:', err);
       setError('Failed to create loan application');
     }
   };

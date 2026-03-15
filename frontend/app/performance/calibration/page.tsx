@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { usePerformanceAllCycles, useAllReviews, useUpdateReview } from '@/lib/hooks/queries/usePerformance';
 import type { ReviewCycle, PerformanceReview, ReviewRequest } from '@/lib/types/performance';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -146,6 +147,7 @@ export default function CalibrationPage() {
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [finalOverrides, setFinalOverrides] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState<string | null>(null);
+  const [publishConfirm, setPublishConfirm] = useState(false);
 
   // Initialize selected cycle
   if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
@@ -320,10 +322,12 @@ export default function CalibrationPage() {
 
   // Publish ratings (would be a real API call)
   const publishRatings = async () => {
-    if (confirm('Publish calibrated ratings? This will be sent to employees.')) {
-      // API call would go here
+    setPublishConfirm(true);
+  };
 
-    }
+  const handleConfirmPublish = async () => {
+    // API call would go here
+    setPublishConfirm(false);
   };
 
   const cycles = cyclesQuery.data?.content || [];
@@ -684,6 +688,17 @@ export default function CalibrationPage() {
         ) : null}
         </div>
       </div>
+
+      {/* Publish Ratings Confirmation */}
+      <ConfirmDialog
+        isOpen={publishConfirm}
+        onClose={() => setPublishConfirm(false)}
+        onConfirm={handleConfirmPublish}
+        title="Publish Ratings"
+        message="Publish calibrated ratings? This will notify all employees of their final performance ratings."
+        confirmText="Publish"
+        type="warning"
+      />
     </AppLayout>
   );
 }

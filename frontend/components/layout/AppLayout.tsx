@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import { motion } from 'framer-motion';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
@@ -17,6 +18,8 @@ import { useActiveApp } from '@/lib/hooks/useActiveApp';
 import { APP_SIDEBAR_SECTIONS } from '@/lib/config/apps';
 import { buildMenuSections } from './menuSections';
 import { ErrorBoundary } from '@/components/errors';
+import { Home, Users, Calendar, CheckSquare, User, Briefcase, UserPlus, ClipboardList, TrendingUp, BookOpen, Target, FileText, Edit, MessageCircle } from 'lucide-react';
+import type { NavItem } from '@/components/ui/MobileBottomNav';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -126,7 +129,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
     }
     router.push('/auth/login');
   };
@@ -205,8 +208,44 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     [filteredSections]
   );
 
+  // Mobile bottom nav items based on active app
+  const mobileNavItems: NavItem[] = useMemo(() => {
+    // Approval count for badge
+    const appNavConfig: Record<string, NavItem[]> = {
+      HRMS: [
+        { label: 'Home', href: '/me/dashboard', icon: Home },
+        { label: 'Team', href: '/employees', icon: Users },
+        { label: 'Leave', href: '/leave', icon: Calendar },
+        { label: 'Approvals', href: '/approvals', icon: CheckSquare, badge: pendingApprovalCount || undefined },
+        { label: 'Me', href: '/me/profile', icon: User },
+      ],
+      HIRE: [
+        { label: 'Home', href: '/recruitment', icon: Home },
+        { label: 'Jobs', href: '/recruitment/jobs', icon: Briefcase },
+        { label: 'Candidates', href: '/recruitment/candidates', icon: Users },
+        { label: 'Onboarding', href: '/onboarding', icon: UserPlus },
+        { label: 'Me', href: '/me/profile', icon: User },
+      ],
+      GROW: [
+        { label: 'Home', href: '/performance', icon: Home },
+        { label: 'Performance', href: '/performance/reviews', icon: ClipboardList },
+        { label: 'Learning', href: '/learning', icon: BookOpen },
+        { label: 'OKRs', href: '/okr', icon: Target },
+        { label: 'Me', href: '/me/profile', icon: User },
+      ],
+      FLUENCE: [
+        { label: 'Home', href: '/fluence/wiki', icon: Home },
+        { label: 'Wiki', href: '/fluence/wiki', icon: FileText },
+        { label: 'Blogs', href: '/fluence/blogs', icon: Edit },
+        { label: 'Wall', href: '/fluence/wall', icon: MessageCircle },
+        { label: 'Me', href: '/me/profile', icon: User },
+      ],
+    };
+    return appNavConfig[appCode] || appNavConfig.HRMS;
+  }, [appCode, pendingApprovalCount]);
+
   return (
-    <div className={cn('flex h-screen overflow-hidden bg-white dark:bg-midnight-deep transition-colors duration-300', className)}>
+    <div className={cn('flex h-screen overflow-hidden bg-main text-primary transition-colors duration-300', className)}>
       {/* Sidebar */}
       <aside className="hidden md:block">
         <Sidebar
@@ -226,7 +265,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <>
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 z-30 bg-black/70 backdrop-blur-md md:hidden transition-opacity duration-300"
+            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden transition-opacity duration-300"
           />
           <aside
             className="fixed inset-y-0 left-0 z-40 w-72 md:hidden transform transition-transform duration-300 ease-out animate-slide-in-left"
@@ -236,7 +275,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               sections={filteredSections}
               activeId={activeMenuItem}
               collapsed={false}
-              onItemClick={(item) => {
+              onItemClick={(item: SidebarItem) => {
                 setIsMobileMenuOpen(false);
                 handleMenuItemClick(item);
               }}
@@ -264,13 +303,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Breadcrumbs */}
         {showBreadcrumbs && breadcrumbs.length > 0 && (
-          <div className="border-b border-white/10 bg-midnight-obsidian/60 backdrop-blur-xl px-4 py-3 sm:px-6">
+          <div
+            className="backdrop-blur-md px-4 py-2 sm:px-6"
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderBottom: '1px solid var(--border-subtle)',
+            }}
+          >
             <Breadcrumbs items={breadcrumbs} />
           </div>
         )}
 
         {/* Content Area - Wrapped in AuthGuard for route-level permission enforcement */}
-        <main className="flex-1 overflow-auto bg-gray-50/50 dark:bg-midnight-deep transition-colors duration-300">
+        <main
+          className="flex-1 overflow-auto transition-colors duration-300"
+          style={{ backgroundColor: 'var(--bg-main)' }}
+        >
           <AuthGuard>
             <ErrorBoundary>
               <motion.div
@@ -293,6 +341,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Mobile Bottom Navigation */}
         <MobileBottomNav
+          items={mobileNavItems}
           onMoreClick={() => setIsMobileMenuOpen(true)}
         />
       </div>

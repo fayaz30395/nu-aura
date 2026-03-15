@@ -2,10 +2,13 @@
 
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { notifications } from '@mantine/notifications';
 import { useAdminStats, useAdminUsers, useUpdateUserRole, useSystemHealth } from '@/lib/hooks/queries/useAdmin';
 import { Roles } from '@/lib/hooks/usePermissions';
 import { AdminUserSummary, HealthResponse, HealthComponent } from '@/lib/types/admin';
 import { AppLayout } from '@/components/layout';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { SkeletonStatCard } from '@/components/ui/Skeleton';
 
 const PAGE_SIZE = 10;
 
@@ -22,6 +25,11 @@ export default function AdminDashboardPage() {
   const [pendingSearch, setPendingSearch] = useState('');
   const [roleEmail, setRoleEmail] = useState('');
   const [selectedRole, setSelectedRole] = useState(ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN);
+  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; email: string; role: string }>({
+    isOpen: false,
+    email: '',
+    role: '',
+  });
 
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: usersPage, isLoading: usersLoading } = useAdminUsers(page, PAGE_SIZE, search);
@@ -47,10 +55,33 @@ export default function AdminDashboardPage() {
     if (!roleEmail.trim() || !selectedRole) return;
     const target = users.find((u) => u.email.toLowerCase() === roleEmail.trim().toLowerCase());
     if (!target) {
-      // In a fuller implementation we might show a toast; for now we silently ignore.
+      notifications.show({
+        title: 'User not found',
+        message: `User not found with that email: ${roleEmail}`,
+        color: 'red',
+        autoClose: 5000,
+      });
       return;
     }
-    await updateRoleMutation.mutateAsync({ userId: target.id, role: selectedRole });
+    // Show confirmation dialog for role assignment
+    setConfirmDialog({
+      isOpen: true,
+      email: target.email,
+      role: selectedRole,
+    });
+  };
+
+  const handleConfirmRoleAssignment = async () => {
+    const target = users.find((u) => u.email.toLowerCase() === roleEmail.trim().toLowerCase());
+    if (!target) return;
+    try {
+      await updateRoleMutation.mutateAsync({ userId: target.id, role: selectedRole });
+      setRoleEmail('');
+      setSelectedRole(ROLE_OPTIONS[0]?.value ?? Roles.SUPER_ADMIN);
+      setConfirmDialog({ isOpen: false, email: '', role: '' });
+    } catch (error) {
+      // Error is handled by React Query
+    }
   };
 
   const canPrevious = page > 0;
@@ -75,21 +106,31 @@ export default function AdminDashboardPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard
-          title="Total Tenants"
-          value={statsLoading ? '—' : stats?.totalTenants ?? 0}
-          description="Licensed organizations on the platform"
-        />
-        <StatCard
-          title="Total Employees"
-          value={statsLoading ? '—' : stats?.totalEmployees ?? 0}
-          description="Employees across all tenants"
-        />
-        <StatCard
-          title="Pending Approvals"
-          value={statsLoading ? '—' : stats?.pendingApprovals ?? 0}
-          description="Workflows awaiting action"
-        />
+        {statsLoading ? (
+          <>
+            <SkeletonStatCard />
+            <SkeletonStatCard />
+            <SkeletonStatCard />
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total Tenants"
+              value={stats?.totalTenants ?? 0}
+              description="Licensed organizations on the platform"
+            />
+            <StatCard
+              title="Total Employees"
+              value={stats?.totalEmployees ?? 0}
+              description="Employees across all tenants"
+            />
+            <StatCard
+              title="Pending Approvals"
+              value={stats?.pendingApprovals ?? 0}
+              description="Workflows awaiting action"
+            />
+          </>
+        )}
       </div>
 
       {/* System Health Card */}
@@ -175,7 +216,15 @@ export default function AdminDashboardPage() {
                       {user.departmentName ?? '—'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        user.status === 'ACTIVE'
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                          : user.status === 'INACTIVE'
+                          ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                          : user.status === 'SUSPENDED'
+                          ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                          : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-200'
+                      }`}>
                         {user.status}
                       </span>
                     </td>
@@ -266,6 +315,19 @@ export default function AdminDashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Role Assignment Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, email: '', role: '' })}
+        onConfirm={handleConfirmRoleAssignment}
+        title="Confirm Role Assignment"
+        message={`You are about to assign ${ROLE_OPTIONS.find((opt) => opt.value === confirmDialog.role)?.label || confirmDialog.role} role to ${confirmDialog.email}. This grants elevated permissions.`}
+        confirmText="Assign Role"
+        cancelText="Cancel"
+        type="warning"
+        loading={updateRoleMutation.isPending}
+      />
     </motion.div>
     </AppLayout>
   );
@@ -408,8 +470,13 @@ function SystemHealthCard(props: { isLoading: boolean; health: HealthResponse | 
                 <div className="flex items-start gap-2">
                   <div className={`${dotColor} w-2 h-2 rounded-full mt-1 flex-shrink-0`} />
                   <div className="min-w-0">
-                    <div className={`text-xs font-medium ${textColor} truncate capitalize`}>
-                      {componentName.replace(/([A-Z])/g, ' $1').trim()}
+                    <div className={`text-xs font-medium ${textColor} truncate`}>
+                      {componentName
+                        .replace(/([A-Z])/g, ' $1')
+                        .trim()
+                        .split(' ')
+                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ')}
                     </div>
                     <div className="text-xs text-surface-500 dark:text-surface-400 mt-1">
                       {statusLabel}

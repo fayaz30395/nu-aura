@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useTemplates, useDeleteTemplate } from '@/lib/hooks/queries/useContracts';
 import { contractService } from '@/lib/services/contract.service';
@@ -12,6 +13,8 @@ export default function ContractTemplatesPage() {
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [templateToDelete, setTemplateToDelete] = useState<string | null>(null);
   const { data: templatesData, isLoading } = useTemplates({ page, size: 20 });
   const deleteMutation = useDeleteTemplate();
 
@@ -24,8 +27,15 @@ export default function ContractTemplatesPage() {
   ];
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this template?')) {
-      deleteMutation.mutate(id);
+    setTemplateToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (templateToDelete) {
+      deleteMutation.mutate(templateToDelete);
+      setDeleteConfirmOpen(false);
+      setTemplateToDelete(null);
     }
   };
 
@@ -130,6 +140,21 @@ export default function ContractTemplatesPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setTemplateToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Template"
+        message="Are you sure you want to delete this template? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleteMutation.isPending}
+      />
     </AppLayout>
   );
 }

@@ -48,11 +48,19 @@ import {
   useCheckOut,
   useHolidaysByYear,
 } from '@/lib/hooks/queries/useAttendance';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { useToast } from '@/components/ui/Toast';
+
+// Standard working hours per day
+// TODO: Make configurable per tenant shift settings
+const STANDARD_WORK_HOURS = 8;
 
 export default function AttendancePage() {
   const { user, isAuthenticated, hasHydrated } = useAuth();
+  const toast = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
+  const [showCheckOutConfirm, setShowCheckOutConfirm] = useState(false);
 
   // Use local date strings
   const todayStr = getLocalDateString();
@@ -106,7 +114,8 @@ export default function AttendancePage() {
           location = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
         }
       } catch (e) {
-        // Location not available
+        // Location services unavailable
+        toast.info('Location services unavailable. Attendance will be recorded without location.');
       }
 
       // Use local date-time string to ensure correct timezone handling
@@ -124,7 +133,7 @@ export default function AttendancePage() {
     }
   };
 
-  const handleCheckOut = async () => {
+  const performCheckOut = async () => {
     try {
       setError(null);
 
@@ -142,7 +151,8 @@ export default function AttendancePage() {
           location = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
         }
       } catch (e) {
-        // Location not available
+        // Location services unavailable
+        toast.info('Location services unavailable. Attendance will be recorded without location.');
       }
 
       // Use local date-time string to ensure correct timezone handling
@@ -154,10 +164,15 @@ export default function AttendancePage() {
         source: 'WEB',
         location,
       });
+      setShowCheckOutConfirm(false);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to check out. Please try again.');
     }
+  };
+
+  const handleCheckOut = () => {
+    setShowCheckOutConfirm(true);
   };
 
   const calculateHours = (checkInStr?: string, checkOutStr?: string) => {
@@ -335,7 +350,7 @@ export default function AttendancePage() {
                     </div>
                     <div className="flex items-center gap-2 text-indigo-100 justify-end mt-1">
                       <MapPin className="h-3.5 w-3.5" />
-                      <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location pending'}</span>
+                      <span className="text-xs font-medium">{todayRecord?.checkInLocation || 'Location unavailable'}</span>
                     </div>
                   </div>
                 </div>
@@ -504,12 +519,12 @@ export default function AttendancePage() {
                       fontSize: '13px'
                     }}
                   />
-                  <Bar dataKey="hours" radius={[6, 6, 0, 0]} maxBarSize={50}>
+                  <Bar dataKey="hours" radius={[6, 6, 0, 0]} maxBarSize={50} aria-label="Daily working hours">
                     {chartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={
-                          entry.hours >= 8
+                          entry.hours >= STANDARD_WORK_HOURS
                             ? '#10B981'
                             : entry.isToday
                             ? '#6366F1'
@@ -517,6 +532,7 @@ export default function AttendancePage() {
                             ? '#F59E0B'
                             : '#E5E7EB'
                         }
+                        aria-label={`${entry.name}: ${entry.hours} hours`}
                       />
                     ))}
                   </Bar>
@@ -526,15 +542,15 @@ export default function AttendancePage() {
               {/* Legend */}
               <div className="flex items-center justify-center gap-4 mt-3 text-[10px]">
                 <div className="flex items-center gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded bg-emerald-500" />
-                  <span className="text-surface-600 dark:text-surface-400">Full Day (8h+)</span>
+                  <div className="h-2.5 w-2.5 rounded bg-emerald-500" aria-label="Full day indicator" />
+                  <span className="text-surface-600 dark:text-surface-400">Full Day ({STANDARD_WORK_HOURS}h+)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded bg-indigo-500" />
+                  <div className="h-2.5 w-2.5 rounded bg-indigo-500" aria-label="Today indicator" />
                   <span className="text-surface-600 dark:text-surface-400">Today</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded bg-amber-500" />
+                  <div className="h-2.5 w-2.5 rounded bg-amber-500" aria-label="Partial day indicator" />
                   <span className="text-surface-600 dark:text-surface-400">Partial</span>
                 </div>
               </div>
@@ -596,6 +612,19 @@ export default function AttendancePage() {
             </Card>
           </div>
         </div>
+
+        {/* Checkout Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showCheckOutConfirm}
+          onClose={() => setShowCheckOutConfirm(false)}
+          onConfirm={performCheckOut}
+          title="Confirm Check Out"
+          message="Are you sure you want to check out? Your working hours will be recorded."
+          confirmText="Check Out"
+          cancelText="Cancel"
+          type="warning"
+          loading={checkOutMutation.isPending}
+        />
       </motion.div>
     </AppLayout>
   );

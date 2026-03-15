@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import {
   Settings as SettingsIcon,
   Bell,
@@ -108,7 +109,7 @@ export default function SettingsPage() {
         setSystemAlertNotifications(prefs.systemAlertNotifications ?? true);
         setPreferencesLoaded(true);
       } catch (err) {
-        console.error('Failed to load notification preferences:', err);
+        logger.error('Failed to load notification preferences:', err);
         setPreferencesLoaded(true);
       }
     };
@@ -149,7 +150,7 @@ export default function SettingsPage() {
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
       successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to change password:', err);
+      logger.error('Failed to change password:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to change password');
     } finally {
       setIsSaving(false);
@@ -182,7 +183,7 @@ export default function SettingsPage() {
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
       successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('Failed to save notification preferences:', err);
+      logger.error('Failed to save notification preferences:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save preferences');
     } finally {
       setIsSavingNotifications(false);

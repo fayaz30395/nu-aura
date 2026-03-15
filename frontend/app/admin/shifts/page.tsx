@@ -9,6 +9,7 @@ import { Shift, CreateShiftRequest } from '@/lib/types/shifts';
 import { Clock, Plus, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useShiftsList,
   useCreateNewShift,
@@ -47,6 +48,8 @@ export default function ShiftsManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [shiftToDelete, setShiftToDelete] = useState<Shift | null>(null);
 
   // Query hook
   const shiftsQuery = useShiftsList(0, 100);
@@ -183,12 +186,19 @@ export default function ShiftsManagementPage() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this shift? This action cannot be undone.')) return;
+  const handleDelete = (shift: Shift) => {
+    setShiftToDelete(shift);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = async () => {
+    if (!shiftToDelete) return;
 
     try {
       setError(null);
-      await deleteShiftMutation.mutateAsync(id);
+      await deleteShiftMutation.mutateAsync(shiftToDelete.id);
+      setShowDeleteConfirm(false);
+      setShiftToDelete(null);
     } catch (err: unknown) {
       const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete shift';
       setError(message);
@@ -343,7 +353,7 @@ export default function ShiftsManagementPage() {
                         {shift.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                       </button>
                       <button
-                        onClick={() => handleDelete(shift.id)}
+                        onClick={() => handleDelete(shift)}
                         className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
                         title="Delete"
                       >
@@ -355,6 +365,21 @@ export default function ShiftsManagementPage() {
               ))
             )}
           </div>
+
+          {/* Delete Confirmation Dialog */}
+          <ConfirmDialog
+            isOpen={showDeleteConfirm}
+            onClose={() => {
+              setShowDeleteConfirm(false);
+              setShiftToDelete(null);
+            }}
+            onConfirm={performDelete}
+            title="Delete Shift"
+            message={`Are you sure you want to delete the shift "${shiftToDelete?.shiftName}"? This action cannot be undone.`}
+            confirmText="Delete"
+            cancelText="Cancel"
+            type="danger"
+          />
 
           {/* Add/Edit Shift Modal */}
           {showModal && (

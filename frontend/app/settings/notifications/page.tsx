@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Bell, Mail, MessageSquare, Loader2 } from 'lucide-react';
@@ -110,7 +111,7 @@ export default function NotificationSettingsPage() {
       });
       await updatePreferencesMutation.mutateAsync(prefsToSave);
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      logger.error('Error saving preferences:', error);
       // Revert on error
       setPreferences(preferences);
     } finally {

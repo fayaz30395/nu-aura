@@ -9,6 +9,10 @@ import { useLeaveRequestsByStatus, useEmployeeLeaveRequests, useActiveLeaveTypes
 import { useAuth } from '@/lib/hooks/useAuth';
 import { LeaveRequestStatus, LeaveRequest } from '@/lib/types/leave';
 import { useToast } from '@/components/notifications/ToastProvider';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export default function MyLeavesPage() {
   const toast = useToast();
@@ -17,6 +21,11 @@ export default function MyLeavesPage() {
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');
   const [currentPage, setCurrentPage] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [selectedLeaveId, setSelectedLeaveId] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const cancelLeaveRequest = useCancelLeaveRequest();
 
   const employeeRequests = useEmployeeLeaveRequests(user?.employeeId || '', currentPage, 10, Boolean(user?.employeeId && !filterStatus));
@@ -28,17 +37,30 @@ export default function MyLeavesPage() {
   const totalPages = requestsData?.totalPages ?? 0;
   const loading = !requestsData;
 
-  const handleCancel = async (id: string) => {
-    if (!confirm('Are you sure you want to cancel this leave request?')) return;
+  const handleCancelClick = (id: string) => {
+    setSelectedLeaveId(id);
+    setShowCancelConfirm(true);
+  };
 
-    const reason = prompt('Please provide a reason for cancellation:');
-    if (!reason) return;
+  const handleCancelConfirm = () => {
+    setShowCancelConfirm(false);
+    setShowReasonModal(true);
+  };
+
+  const handleReasonSubmit = async () => {
+    if (!cancelReason.trim() || !selectedLeaveId) return;
 
     try {
-      await cancelLeaveRequest.mutateAsync({ id, reason });
+      setIsProcessing(true);
+      await cancelLeaveRequest.mutateAsync({ id: selectedLeaveId, reason: cancelReason });
       toast.success('Leave request cancelled successfully');
+      setShowReasonModal(false);
+      setCancelReason('');
+      setSelectedLeaveId(null);
     } catch (error: unknown) {
       toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -120,7 +142,12 @@ export default function MyLeavesPage() {
         {/* Leave Requests Table */}
         <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
           {!requestsData ? (
-            <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-4 border-primary-200 dark:border-primary-900/30 border-t-primary-500 rounded-full animate-spin" aria-label="Loading leave requests" />
+                <span className="text-gray-600 dark:text-gray-400">Loading leave requests...</span>
+              </div>
+            </div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
@@ -168,7 +195,7 @@ export default function MyLeavesPage() {
                         <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
                           {request.totalDays} {request.isHalfDay && '(Half)'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs truncate">
+                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs truncate" title={request.reason}>
                           {request.reason}
                         </td>
                         <td className="px-6 py-4">
@@ -182,7 +209,7 @@ export default function MyLeavesPage() {
                         <td className="px-6 py-4 text-sm">
                           {request.status === 'PENDING' && (
                             <button
-                              onClick={() => handleCancel(request.id)}
+                              onClick={() => handleCancelClick(request.id)}
                               className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 font-medium"
                             >
                               Cancel
@@ -213,9 +240,11 @@ export default function MyLeavesPage() {
                   >
                     Previous
                   </button>
-                  <span className="text-sm text-surface-700 dark:text-surface-300">
-                    Page {currentPage + 1} of {totalPages}
-                  </span>
+                  <div className="text-sm text-surface-700 dark:text-surface-300">
+                    <span>Showing {currentPage * 10 + 1}–{Math.min((currentPage + 1) * 10, requests.length + currentPage * 10)} of ~{totalPages * 10} results</span>
+                    <br />
+                    <span>Page {currentPage + 1} of {totalPages}</span>
+                  </div>
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
@@ -228,6 +257,60 @@ export default function MyLeavesPage() {
             </>
           )}
         </div>
+
+        {/* Cancel Leave Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showCancelConfirm}
+          onClose={() => setShowCancelConfirm(false)}
+          onConfirm={handleCancelConfirm}
+          title="Cancel Leave Request?"
+          message="Are you sure you want to cancel this leave request? This action cannot be undone."
+          confirmText="Cancel Request"
+          cancelText="Keep Request"
+          type="warning"
+        />
+
+        {/* Cancel Reason Modal */}
+        <Modal
+          isOpen={showReasonModal}
+          onClose={() => {
+            setShowReasonModal(false);
+            setCancelReason('');
+          }}
+          size="sm"
+        >
+          <ModalHeader onClose={() => setShowReasonModal(false)}>
+            Reason for Cancellation
+          </ModalHeader>
+          <ModalBody>
+            <Input
+              label="Please provide a reason for cancelling this leave request"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Enter cancellation reason..."
+              disabled={isProcessing}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowReasonModal(false);
+                setCancelReason('');
+              }}
+              disabled={isProcessing}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleReasonSubmit}
+              disabled={!cancelReason.trim() || isProcessing}
+            >
+              {isProcessing ? 'Cancelling...' : 'Submit'}
+            </Button>
+          </ModalFooter>
+        </Modal>
       </motion.div>
     </AppLayout>);
 }

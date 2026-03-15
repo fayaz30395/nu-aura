@@ -9,6 +9,7 @@ import {
   User, Building2, CreditCard, FileText, CheckCircle2,
   Upload, ChevronRight, AlertCircle
 } from 'lucide-react';
+import { apiConfig } from '@/lib/config';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -74,7 +75,9 @@ export default function PreboardingPortalPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [saving, setSaving] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  // API_URL is derived from validated env config
+  // Removes the /api/v1 suffix from the base URL for fetch() calls
+  const API_URL = apiConfig.baseUrl.replace('/api/v1', '');
 
   useEffect(() => {
     loadData();

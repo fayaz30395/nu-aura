@@ -1,0 +1,433 @@
+package com.hrms.api.leave.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrms.api.leave.dto.LeaveRequestRequest;
+import com.hrms.api.leave.dto.LeaveRequestResponse;
+import com.hrms.application.employee.service.EmployeeService;
+import com.hrms.application.leave.service.LeaveRequestService;
+import com.hrms.common.security.DataScopeService;
+import com.hrms.common.security.JwtAuthenticationFilter;
+import com.hrms.common.security.TenantFilter;
+import com.hrms.domain.leave.LeaveRequest;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(LeaveRequestController.class)
+@ContextConfiguration(classes = {LeaveRequestController.class, LeaveRequestControllerTest.TestConfig.class})
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
+@DisplayName("LeaveRequestController Unit Tests")
+class LeaveRequestControllerTest {
+
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public JpaMetamodelMappingContext jpaMetamodelMappingContext() {
+            return new JpaMetamodelMappingContext();
+        }
+    }
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private LeaveRequestService leaveRequestService;
+
+    @MockBean
+    private EmployeeService employeeService;
+
+    @MockBean
+    private DataScopeService dataScopeService;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private TenantFilter tenantFilter;
+
+    private UUID leaveRequestId;
+    private UUID employeeId;
+    private UUID leaveTypeId;
+    private LeaveRequestRequest leaveRequest;
+    private LeaveRequestResponse leaveResponse;
+
+    @BeforeEach
+    void setUp() {
+        leaveRequestId = UUID.randomUUID();
+        employeeId = UUID.randomUUID();
+        leaveTypeId = UUID.randomUUID();
+
+        leaveRequest = new LeaveRequestRequest();
+        leaveRequest.setEmployeeId(employeeId);
+        leaveRequest.setLeaveTypeId(leaveTypeId);
+        leaveRequest.setStartDate(LocalDate.of(2024, 3, 20));
+        leaveRequest.setEndDate(LocalDate.of(2024, 3, 25));
+        leaveRequest.setTotalDays(new BigDecimal("5"));
+        leaveRequest.setReason("Planned vacation");
+
+        leaveResponse = new LeaveRequestResponse();
+        leaveResponse.setId(leaveRequestId);
+        leaveResponse.setEmployeeId(employeeId);
+        leaveResponse.setLeaveTypeId(leaveTypeId);
+        leaveResponse.setStartDate(LocalDate.of(2024, 3, 20));
+        leaveResponse.setEndDate(LocalDate.of(2024, 3, 25));
+        leaveResponse.setTotalDays(new BigDecimal("5"));
+        leaveResponse.setStatus("PENDING");
+        leaveResponse.setReason("Planned vacation");
+    }
+
+    @Nested
+    @DisplayName("Create Leave Request Tests")
+    class CreateLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should create leave request successfully")
+        void shouldCreateLeaveRequestSuccessfully() throws Exception {
+            when(leaveRequestService.createLeaveRequest(any(LeaveRequest.class)))
+                    .thenReturn(mapToLeaveRequest(leaveResponse));
+
+            mockMvc.perform(post("/api/v1/leave-requests")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(leaveRequest)))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(leaveRequestId.toString()))
+                    .andExpect(jsonPath("$.status").value("PENDING"))
+                    .andExpect(jsonPath("$.totalDays").value(5));
+
+            verify(leaveRequestService).createLeaveRequest(any(LeaveRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should return 400 for missing required fields")
+        void shouldReturn400ForMissingFields() throws Exception {
+            LeaveRequestRequest invalidRequest = new LeaveRequestRequest();
+            invalidRequest.setEmployeeId(employeeId);
+            // Missing leaveTypeId, startDate, etc.
+
+            mockMvc.perform(post("/api/v1/leave-requests")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+
+            verify(leaveRequestService, never()).createLeaveRequest(any());
+        }
+
+        @Test
+        @DisplayName("Should return 400 for invalid date range (endDate before startDate)")
+        void shouldReturn400ForInvalidDateRange() throws Exception {
+            LeaveRequestRequest invalidRequest = new LeaveRequestRequest();
+            invalidRequest.setEmployeeId(employeeId);
+            invalidRequest.setLeaveTypeId(leaveTypeId);
+            invalidRequest.setStartDate(LocalDate.of(2024, 3, 25));
+            invalidRequest.setEndDate(LocalDate.of(2024, 3, 20)); // Invalid range
+            invalidRequest.setTotalDays(new BigDecimal("5"));
+            invalidRequest.setReason("Invalid dates");
+
+            when(leaveRequestService.createLeaveRequest(any(LeaveRequest.class)))
+                    .thenThrow(new IllegalArgumentException("End date must be after start date"));
+
+            mockMvc.perform(post("/api/v1/leave-requests")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(invalidRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Approve Leave Request Tests")
+    class ApproveLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should approve leave request successfully")
+        void shouldApproveLeaveRequestSuccessfully() throws Exception {
+            LeaveRequestResponse approvedResponse = new LeaveRequestResponse();
+            approvedResponse.setId(leaveRequestId);
+            approvedResponse.setStatus("APPROVED");
+            approvedResponse.setEmployeeId(employeeId);
+
+            when(leaveRequestService.approveLeaveRequest(eq(leaveRequestId), any(UUID.class)))
+                    .thenReturn(mapToLeaveRequest(approvedResponse));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/approve", leaveRequestId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("APPROVED"));
+
+            verify(leaveRequestService).approveLeaveRequest(eq(leaveRequestId), any(UUID.class));
+        }
+
+        @Test
+        @DisplayName("Should return 404 for non-existent leave request during approval")
+        void shouldReturn404ForNonExistentLeaveRequest() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            when(leaveRequestService.approveLeaveRequest(eq(nonExistentId), any(UUID.class)))
+                    .thenThrow(new IllegalArgumentException("Leave request not found"));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/approve", nonExistentId))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when approver is not manager")
+        void shouldReturn400WhenApproverIsNotManager() throws Exception {
+            when(leaveRequestService.approveLeaveRequest(eq(leaveRequestId), any(UUID.class)))
+                    .thenThrow(new IllegalArgumentException("Only manager can approve leave requests"));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/approve", leaveRequestId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Reject Leave Request Tests")
+    class RejectLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should reject leave request successfully")
+        void shouldRejectLeaveRequestSuccessfully() throws Exception {
+            LeaveRequestResponse rejectedResponse = new LeaveRequestResponse();
+            rejectedResponse.setId(leaveRequestId);
+            rejectedResponse.setStatus("REJECTED");
+            rejectedResponse.setEmployeeId(employeeId);
+
+            when(leaveRequestService.rejectLeaveRequest(eq(leaveRequestId), any(UUID.class), anyString()))
+                    .thenReturn(mapToLeaveRequest(rejectedResponse));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/reject", leaveRequestId)
+                            .param("reason", "Insufficient balance"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("REJECTED"));
+
+            verify(leaveRequestService).rejectLeaveRequest(eq(leaveRequestId), any(UUID.class), eq("Insufficient balance"));
+        }
+
+        @Test
+        @DisplayName("Should require rejection reason")
+        void shouldRequireRejectionReason() throws Exception {
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/reject", leaveRequestId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Cancel Leave Request Tests")
+    class CancelLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should cancel leave request successfully")
+        void shouldCancelLeaveRequestSuccessfully() throws Exception {
+            LeaveRequestResponse cancelledResponse = new LeaveRequestResponse();
+            cancelledResponse.setId(leaveRequestId);
+            cancelledResponse.setStatus("CANCELLED");
+            cancelledResponse.setEmployeeId(employeeId);
+
+            when(leaveRequestService.cancelLeaveRequest(eq(leaveRequestId), anyString()))
+                    .thenReturn(mapToLeaveRequest(cancelledResponse));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/cancel", leaveRequestId)
+                            .param("reason", "Personal reasons"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value("CANCELLED"));
+
+            verify(leaveRequestService).cancelLeaveRequest(eq(leaveRequestId), eq("Personal reasons"));
+        }
+
+        @Test
+        @DisplayName("Should not allow cancellation of approved leave in past")
+        void shouldNotAllowCancellationOfPastApprovedLeave() throws Exception {
+            when(leaveRequestService.cancelLeaveRequest(eq(leaveRequestId), anyString()))
+                    .thenThrow(new IllegalArgumentException("Cannot cancel leave in the past"));
+
+            mockMvc.perform(post("/api/v1/leave-requests/{id}/cancel", leaveRequestId)
+                            .param("reason", "Changed plans"))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Leave Request Tests")
+    class GetLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should get leave request by ID")
+        void shouldGetLeaveRequestById() throws Exception {
+            when(leaveRequestService.getLeaveRequestById(eq(leaveRequestId)))
+                    .thenReturn(mapToLeaveRequest(leaveResponse));
+
+            mockMvc.perform(get("/api/v1/leave-requests/{id}", leaveRequestId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(leaveRequestId.toString()))
+                    .andExpect(jsonPath("$.status").value("PENDING"));
+
+            verify(leaveRequestService).getLeaveRequestById(eq(leaveRequestId));
+        }
+
+        @Test
+        @DisplayName("Should return 404 for non-existent leave request")
+        void shouldReturn404ForNonExistent() throws Exception {
+            UUID nonExistentId = UUID.randomUUID();
+            when(leaveRequestService.getLeaveRequestById(eq(nonExistentId)))
+                    .thenThrow(new IllegalArgumentException("Leave request not found"));
+
+            mockMvc.perform(get("/api/v1/leave-requests/{id}", nonExistentId))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("Get All Leave Requests Tests")
+    class GetAllLeaveRequestsTests {
+
+        @Test
+        @DisplayName("Should get all leave requests with pagination")
+        void shouldGetAllLeaveRequests() throws Exception {
+            List<LeaveRequest> requests = new ArrayList<>();
+            requests.add(mapToLeaveRequest(leaveResponse));
+
+            Page<LeaveRequest> page = new PageImpl<>(requests, PageRequest.of(0, 20), 1);
+            when(leaveRequestService.getAllLeaveRequests(any(), any(Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get("/api/v1/leave-requests")
+                            .param("page", "0")
+                            .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(1));
+
+            verify(leaveRequestService).getAllLeaveRequests(any(), any(Pageable.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Employee Leave Requests Tests")
+    class GetEmployeeLeaveRequestsTests {
+
+        @Test
+        @DisplayName("Should get leave requests for specific employee")
+        void shouldGetEmployeeLeaveRequests() throws Exception {
+            List<LeaveRequest> requests = new ArrayList<>();
+            requests.add(mapToLeaveRequest(leaveResponse));
+
+            Page<LeaveRequest> page = new PageImpl<>(requests, PageRequest.of(0, 20), 1);
+            when(leaveRequestService.getLeaveRequestsByEmployee(eq(employeeId), any(Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get("/api/v1/leave-requests/employee/{employeeId}", employeeId)
+                            .param("page", "0")
+                            .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(1));
+
+            verify(leaveRequestService).getLeaveRequestsByEmployee(eq(employeeId), any(Pageable.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Get Leave Requests by Status Tests")
+    class GetLeaveRequestsByStatusTests {
+
+        @Test
+        @DisplayName("Should get leave requests filtered by status")
+        void shouldGetLeaveRequestsByStatus() throws Exception {
+            List<LeaveRequest> requests = new ArrayList<>();
+            requests.add(mapToLeaveRequest(leaveResponse));
+
+            Page<LeaveRequest> page = new PageImpl<>(requests, PageRequest.of(0, 20), 1);
+            when(leaveRequestService.getAllLeaveRequests(any(), any(Pageable.class)))
+                    .thenReturn(page);
+
+            mockMvc.perform(get("/api/v1/leave-requests/status/PENDING")
+                            .param("page", "0")
+                            .param("size", "20"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(1));
+        }
+    }
+
+    @Nested
+    @DisplayName("Update Leave Request Tests")
+    class UpdateLeaveRequestTests {
+
+        @Test
+        @DisplayName("Should update leave request successfully")
+        void shouldUpdateLeaveRequest() throws Exception {
+            LeaveRequestRequest updateRequest = new LeaveRequestRequest();
+            updateRequest.setEmployeeId(employeeId);
+            updateRequest.setLeaveTypeId(leaveTypeId);
+            updateRequest.setStartDate(LocalDate.of(2024, 3, 20));
+            updateRequest.setEndDate(LocalDate.of(2024, 3, 27));
+            updateRequest.setTotalDays(new BigDecimal("6"));
+            updateRequest.setReason("Extended vacation");
+
+            LeaveRequestResponse updatedResponse = new LeaveRequestResponse();
+            updatedResponse.setId(leaveRequestId);
+            updatedResponse.setTotalDays(new BigDecimal("6"));
+            updatedResponse.setReason("Extended vacation");
+            updatedResponse.setStatus("PENDING");
+
+            when(leaveRequestService.updateLeaveRequest(eq(leaveRequestId), any(LeaveRequest.class)))
+                    .thenReturn(mapToLeaveRequest(updatedResponse));
+
+            mockMvc.perform(put("/api/v1/leave-requests/{id}", leaveRequestId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(updateRequest)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalDays").value(6));
+
+            verify(leaveRequestService).updateLeaveRequest(eq(leaveRequestId), any(LeaveRequest.class));
+        }
+
+        @Test
+        @DisplayName("Should not allow update of already approved leave")
+        void shouldNotAllowUpdateOfApprovedLeave() throws Exception {
+            when(leaveRequestService.updateLeaveRequest(eq(leaveRequestId), any(LeaveRequest.class)))
+                    .thenThrow(new IllegalArgumentException("Cannot update approved leave requests"));
+
+            mockMvc.perform(put("/api/v1/leave-requests/{id}", leaveRequestId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(leaveRequest)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    // Helper method to convert response to domain object
+    private LeaveRequest mapToLeaveRequest(LeaveRequestResponse response) {
+        LeaveRequest request = new LeaveRequest();
+        request.setId(response.getId());
+        request.setEmployeeId(response.getEmployeeId());
+        request.setLeaveTypeId(response.getLeaveTypeId());
+        request.setStartDate(response.getStartDate());
+        request.setEndDate(response.getEndDate());
+        request.setTotalDays(response.getTotalDays());
+        request.setReason(response.getReason());
+        request.setStatus(LeaveRequest.LeaveRequestStatus.valueOf(response.getStatus()));
+        return request;
+    }
+}

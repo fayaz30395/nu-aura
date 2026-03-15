@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -26,6 +26,9 @@ import {
   Menu,
   ColorPicker,
 } from '@mantine/core';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import {
   IconBold,
   IconItalic,
@@ -81,6 +84,10 @@ export default function RichTextEditor({
   maxHeight = '600px',
   className = '',
 }: RichTextEditorProps) {
+  const [urlModalOpen, setUrlModalOpen] = useState(false);
+  const [urlModalType, setUrlModalType] = useState<'image' | 'link'>('image');
+  const [urlInput, setUrlInput] = useState('');
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -129,15 +136,23 @@ export default function RichTextEditor({
   });
 
   const addImage = useCallback(() => {
-    const url = window.prompt('Enter image URL:');
-    if (url && editor) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  }, [editor]);
+    setUrlModalType('image');
+    setUrlInput('');
+    setUrlModalOpen(true);
+  }, []);
 
   const addLink = useCallback(() => {
-    const url = window.prompt('Enter URL:');
-    if (url && editor) {
+    setUrlModalType('link');
+    setUrlInput('');
+    setUrlModalOpen(true);
+  }, []);
+
+  const handleUrlConfirm = () => {
+    if (!urlInput.trim() || !editor) return;
+
+    if (urlModalType === 'image') {
+      editor.chain().focus().setImage({ src: urlInput }).run();
+    } else {
       if (editor.isActive('link')) {
         editor.chain().focus().extendMarkRange('link').unsetLink().run();
       } else {
@@ -145,11 +160,14 @@ export default function RichTextEditor({
           .chain()
           .focus()
           .extendMarkRange('link')
-          .setLink({ href: url })
+          .setLink({ href: urlInput })
           .run();
       }
     }
-  }, [editor]);
+
+    setUrlModalOpen(false);
+    setUrlInput('');
+  };
 
   const insertTable = useCallback(() => {
     if (!editor) return;
@@ -587,6 +605,53 @@ export default function RichTextEditor({
       >
         <EditorContent editor={editor} />
       </div>
+
+      {/* URL Input Modal */}
+      <Modal
+        isOpen={urlModalOpen}
+        onClose={() => setUrlModalOpen(false)}
+        size="sm"
+      >
+        <ModalHeader onClose={() => setUrlModalOpen(false)}>
+          {urlModalType === 'image' ? 'Insert Image' : 'Insert Link'}
+        </ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                {urlModalType === 'image' ? 'Image URL' : 'URL'}
+              </label>
+              <Input
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder={urlModalType === 'image' ? 'https://example.com/image.jpg' : 'https://example.com'}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleUrlConfirm();
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="ghost"
+            onClick={() => setUrlModalOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleUrlConfirm}
+            disabled={!urlInput.trim()}
+          >
+            {urlModalType === 'image' ? 'Insert Image' : 'Insert Link'}
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

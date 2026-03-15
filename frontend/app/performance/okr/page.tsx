@@ -16,6 +16,7 @@ import {
   User,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import {
   useMyObjectives,
   useCompanyObjectives,
@@ -110,6 +111,8 @@ export default function OKRPage() {
   const [activeTab, setActiveTab] = useState<'my' | 'company'>('my');
   const [filterLevel, setFilterLevel] = useState<string>('ALL');
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [deleteObjectiveConfirm, setDeleteObjectiveConfirm] = useState<string | null>(null);
+  const [deleteKeyResultConfirm, setDeleteKeyResultConfirm] = useState<string | null>(null);
 
   const [objectiveForm, setObjectiveForm] = useState<ObjectiveRequest>({
     title: '',
@@ -158,7 +161,6 @@ export default function OKRPage() {
   };
 
   const handleDeleteObjective = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this objective?')) return;
     await deleteObjectiveMutation.mutateAsync(id);
   };
 
@@ -175,7 +177,6 @@ export default function OKRPage() {
   };
 
   const handleDeleteKeyResult = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this key result?')) return;
     await deleteKeyResultMutation.mutateAsync(id);
   };
 
@@ -401,7 +402,7 @@ export default function OKRPage() {
                           <Pencil className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteObjective(objective.id)}
+                          onClick={() => setDeleteObjectiveConfirm(objective.id)}
                           className="p-2 text-gray-400 hover:text-red-600"
                         >
                           <Trash2 className="h-5 w-5" />
@@ -480,7 +481,7 @@ export default function OKRPage() {
                                         className="w-16 px-2 py-1 text-xs border border-gray-300 rounded"
                                       />
                                       <button
-                                        onClick={() => handleDeleteKeyResult(kr.id)}
+                                        onClick={() => setDeleteKeyResultConfirm(kr.id)}
                                         className="p-1 text-gray-400 hover:text-red-600"
                                       >
                                         <Trash2 className="h-4 w-4" />
@@ -808,6 +809,38 @@ export default function OKRPage() {
         </div>
       )}
     </div>
+
+      {/* Delete Objective Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteObjectiveConfirm}
+        onClose={() => setDeleteObjectiveConfirm(null)}
+        onConfirm={async () => {
+          if (deleteObjectiveConfirm) {
+            await handleDeleteObjective(deleteObjectiveConfirm);
+            setDeleteObjectiveConfirm(null);
+          }
+        }}
+        title="Delete Objective"
+        message="Are you sure you want to delete this objective? This action cannot be undone and all associated key results will be deleted."
+        confirmText="Delete"
+        type="danger"
+      />
+
+      {/* Delete Key Result Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteKeyResultConfirm}
+        onClose={() => setDeleteKeyResultConfirm(null)}
+        onConfirm={async () => {
+          if (deleteKeyResultConfirm) {
+            await handleDeleteKeyResult(deleteKeyResultConfirm);
+            setDeleteKeyResultConfirm(null);
+          }
+        }}
+        title="Delete Key Result"
+        message="Are you sure you want to delete this key result? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+      />
     </AppLayout>
   );
 }

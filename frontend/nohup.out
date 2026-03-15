@@ -1,0 +1,27 @@
+
+> hrms-frontend@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ✓ Compiled /middleware in 215ms (72 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 13.1s (5599 modules)
+(node:48345) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ GET / 200 in 13795ms
+ ✓ Compiled in 793ms (2510 modules)
+ ✓ Compiled in 336ms (2496 modules)
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 6.7s (5603 modules)
+ GET /auth/login 200 in 5419ms
+ GET /auth/login 200 in 117ms
+ GET /auth/login 200 in 111ms
+ GET / 200 in 158ms
+ ○ Compiling /me/dashboard ...
+ ✓ Compiled /me/dashboard in 1652ms (5978 modules)
+ ✓ Compiled in 3.6s (6005 modules)

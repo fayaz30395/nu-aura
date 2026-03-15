@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { logger } from '@/lib/utils/logger';
 import { X, Copy, Check, AlertCircle, Loader2, Shield, Key } from 'lucide-react';
 import { mfaApi } from '@/lib/api/mfa';
 import { Button } from '@/components/ui/Button';
@@ -39,7 +40,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
         setSecret(data.secret);
         setStep('scan');
       } catch (err: any) {
-        console.error('Failed to load MFA setup:', err);
+        logger.error('Failed to load MFA setup:', err);
         setError(err.response?.data?.message || 'Failed to load MFA setup. Please try again.');
         setStep('scan');
       }
@@ -68,7 +69,7 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
       setBackupCodes(result.backupCodes);
       setStep('backup');
     } catch (err: any) {
-      console.error('Failed to verify MFA code:', err);
+      logger.error('Failed to verify MFA code:', err);
       setError(err.response?.data?.message || 'Invalid code. Please try again.');
       setVerificationCode('');
     } finally {

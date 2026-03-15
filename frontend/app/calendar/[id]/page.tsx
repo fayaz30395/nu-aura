@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { calendarService } from '@/lib/services/calendar.service';
 import { EventStatus } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -34,6 +35,7 @@ export default function EventDetailPage() {
   const params = useParams();
   const { isAuthenticated, hasHydrated } = useAuth();
   const eventId = params.id as string;
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   // React Query hooks
   const { data: event, isLoading, error } = useCalendarEvent(eventId);
@@ -55,9 +57,11 @@ export default function EventDetailPage() {
   };
 
   const handleDelete = () => {
-    if (!event) return;
+    setDeleteConfirmOpen(true);
+  };
 
-    if (!confirm('Are you sure you want to delete this event?')) return;
+  const confirmDelete = () => {
+    if (!event) return;
 
     deleteEventMutation.mutate(event.id, {
       onSuccess: () => {
@@ -396,6 +400,18 @@ export default function EventDetailPage() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Event"
+        message="Are you sure you want to delete this event? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleteEventMutation.isPending}
+      />
     </AppLayout>
   );
 }

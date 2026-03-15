@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { logger } from '@/lib/utils/logger';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -43,6 +45,8 @@ type RegularizationFormData = z.infer<typeof regularizationFormSchema>;
 export default function RegularizationPage() {
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
+  const [requestToCancel, setRequestToCancel] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<RegularizationFormData>({
     resolver: zodResolver(regularizationFormSchema),
@@ -87,7 +91,7 @@ export default function RegularizationPage() {
       reset();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      console.error('Failed to submit request:', err);
+      logger.error('Failed to submit request:', err);
     }
   };
 
@@ -269,9 +273,8 @@ export default function RegularizationPage() {
                             <button
                               className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium"
                               onClick={() => {
-                                if (confirm('Cancel this request?')) {
-                                  // Handle cancel
-                                }
+                                setRequestToCancel(request.id);
+                                setCancelConfirmOpen(true);
                               }}
                             >
                               Cancel
@@ -376,6 +379,24 @@ export default function RegularizationPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={cancelConfirmOpen}
+        onClose={() => {
+          setCancelConfirmOpen(false);
+          setRequestToCancel(null);
+        }}
+        onConfirm={() => {
+          // Handle cancel logic here
+          setCancelConfirmOpen(false);
+          setRequestToCancel(null);
+        }}
+        title="Cancel Request"
+        message="Are you sure you want to cancel this regularization request? This action cannot be undone."
+        confirmText="Cancel Request"
+        cancelText="Keep Request"
+        type="warning"
+      />
     </AppLayout>
   );
 }

@@ -21,6 +21,7 @@ import {
   User,
   ArrowRight,
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
@@ -30,6 +31,7 @@ export default function EmploymentChangeRequestsPage() {
   const [filter, setFilter] = useState<'all' | 'pending'>('pending');
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState<string | null>(null);
+  const [approveConfirm, setApproveConfirm] = useState<string | null>(null);
 
   // React Query hooks
   const { data: requestsData, isLoading } = useQuery({
@@ -59,11 +61,10 @@ export default function EmploymentChangeRequestsPage() {
   const loading = isLoading;
 
   const handleApprove = async (id: string) => {
-    if (!confirm('Are you sure you want to approve this change request? The employee details will be updated.')) return;
-
     try {
       await approveMutation.mutateAsync(id);
       toast.success('Change request approved successfully. Employee details have been updated.');
+      setApproveConfirm(null);
     } catch (error: unknown) {
       toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve change request');
     }
@@ -373,7 +374,7 @@ export default function EmploymentChangeRequestsPage() {
                     {request.status === 'PENDING' && (
                       <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <button
-                          onClick={() => handleApprove(request.id)}
+                          onClick={() => setApproveConfirm(request.id)}
                           disabled={approveMutation.isPending || rejectMutation.isPending}
                           className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
                         >
@@ -434,6 +435,22 @@ export default function EmploymentChangeRequestsPage() {
           </div>
         </div>
       )}
+
+      {/* Approve Change Request Confirmation */}
+      <ConfirmDialog
+        isOpen={!!approveConfirm}
+        onClose={() => setApproveConfirm(null)}
+        onConfirm={async () => {
+          if (approveConfirm) {
+            await handleApprove(approveConfirm);
+          }
+        }}
+        title="Approve Change Request"
+        message="Are you sure you want to approve this change request? The employee details will be updated accordingly."
+        confirmText="Approve"
+        type="info"
+        loading={approveMutation.isPending}
+      />
     </AppLayout>
   );
 }

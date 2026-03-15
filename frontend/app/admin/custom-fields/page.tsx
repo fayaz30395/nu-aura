@@ -17,6 +17,7 @@ import {
 } from '@/lib/types/custom-fields';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { ConfirmDialog } from '@/components/ui';
 import {
   useCustomFieldDefinitions,
   useCreateCustomFieldDefinition,
@@ -103,6 +104,8 @@ export default function CustomFieldsPage() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterEntityType, setFilterEntityType] = React.useState<EntityType | 'ALL'>('ALL');
   const [error, setError] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [fieldToDelete, setFieldToDelete] = React.useState<CustomFieldDefinition | null>(null);
 
   const fieldType = watch('fieldType');
   const optionsText = watch('optionsText');
@@ -163,10 +166,17 @@ export default function CustomFieldsPage() {
     }
   };
 
-  const handleDeleteField = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this custom field? All associated values will be deleted.')) return;
+  const handleDeleteField = (field: CustomFieldDefinition) => {
+    setFieldToDelete(field);
+    setShowDeleteConfirm(true);
+  };
+
+  const performDelete = async () => {
+    if (!fieldToDelete) return;
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(fieldToDelete.id);
+      setShowDeleteConfirm(false);
+      setFieldToDelete(null);
     } catch (err) {
       console.error('Failed to delete custom field:', err);
       setError('Failed to delete custom field');
@@ -356,7 +366,7 @@ export default function CustomFieldsPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteField(definition.id)}
+                        onClick={() => handleDeleteField(definition)}
                         className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                       >
                         Delete
@@ -368,6 +378,21 @@ export default function CustomFieldsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => {
+            setShowDeleteConfirm(false);
+            setFieldToDelete(null);
+          }}
+          onConfirm={performDelete}
+          title="Delete Custom Field"
+          message={`Are you sure you want to delete "${fieldToDelete?.fieldName}"? All associated values will be deleted.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          type="danger"
+        />
 
         {/* Create/Edit Modal */}
         {(showCreateModal || showEditModal) && (

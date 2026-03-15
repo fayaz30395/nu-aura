@@ -54,12 +54,6 @@ export default function MyDashboardPage() {
   );
 
   useEffect(() => {
-    if (hasHydrated && !user) {
-      router.push('/auth/login');
-    }
-  }, [hasHydrated, user, router]);
-
-  useEffect(() => {
     if (!hasHydrated || !user) return;
     if (user?.employeeId) {
       // Dashboard data will be handled by React Query hook
