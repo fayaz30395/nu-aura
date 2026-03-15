@@ -68,6 +68,32 @@
     --chart-tooltip-border: #e5e7eb;
     --chart-tooltip-text: #111827;
 
+    /* ── Status Colors (for badges, indicators, tinted backgrounds) ── */
+    --status-success-bg: #ecfdf5;
+    --status-success-text: #065f46;
+    --status-success-border: #a7f3d0;
+    --status-danger-bg: #fef2f2;
+    --status-danger-text: #991b1b;
+    --status-danger-border: #fecaca;
+    --status-warning-bg: #fffbeb;
+    --status-warning-text: #92400e;
+    --status-warning-border: #fde68a;
+    --status-info-bg: #eff6ff;
+    --status-info-text: #1e40af;
+    --status-info-border: #bfdbfe;
+    --status-neutral-bg: #f3f4f6;
+    --status-neutral-text: #374151;
+    --status-neutral-border: #d1d5db;
+    --status-purple-bg: #f5f3ff;
+    --status-purple-text: #5b21b6;
+    --status-purple-border: #c4b5fd;
+    --status-pink-bg: #fdf2f8;
+    --status-pink-text: #9d174d;
+    --status-pink-border: #f9a8d4;
+    --status-orange-bg: #fff7ed;
+    --status-orange-text: #9a3412;
+    --status-orange-border: #fed7aa;
+
     /* ── Header/Dropdown (adaptive solid colors) ─── */
     --header-bg: #ffffff;
     --header-border: #e5e7eb;
@@ -136,6 +162,32 @@
     --chart-tooltip-bg: #18181b;
     --chart-tooltip-border: #3f3f46;
     --chart-tooltip-text: #f4f4f5;
+
+    /* ── Status Colors (dark mode — inverted, high contrast) ── */
+    --status-success-bg: #052e16;
+    --status-success-text: #6ee7b7;
+    --status-success-border: #064e3b;
+    --status-danger-bg: #450a0a;
+    --status-danger-text: #fca5a5;
+    --status-danger-border: #7f1d1d;
+    --status-warning-bg: #451a03;
+    --status-warning-text: #fcd34d;
+    --status-warning-border: #78350f;
+    --status-info-bg: #0c1a33;
+    --status-info-text: #93c5fd;
+    --status-info-border: #1e3a5f;
+    --status-neutral-bg: #1f1f23;
+    --status-neutral-text: #d4d4d8;
+    --status-neutral-border: #3f3f46;
+    --status-purple-bg: #1e1033;
+    --status-purple-text: #c4b5fd;
+    --status-purple-border: #3b2668;
+    --status-pink-bg: #31081f;
+    --status-pink-text: #f9a8d4;
+    --status-pink-border: #6b1544;
+    --status-orange-bg: #331a05;
+    --status-orange-text: #fdba74;
+    --status-orange-border: #6b3010;
 
     /* ── Header/Dropdown (dark solid) ─────────────── */
     --header-bg: #111113;
@@ -331,6 +383,133 @@
   textarea:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--bg-main), 0 0 0 4px var(--border-focus);
+  }
+
+  /* ── Status Badge System (theme-aware via CSS vars) ── */
+  .status-success {
+    background-color: var(--status-success-bg);
+    color: var(--status-success-text);
+    border: 1px solid var(--status-success-border);
+  }
+  .status-danger {
+    background-color: var(--status-danger-bg);
+    color: var(--status-danger-text);
+    border: 1px solid var(--status-danger-border);
+  }
+  .status-warning {
+    background-color: var(--status-warning-bg);
+    color: var(--status-warning-text);
+    border: 1px solid var(--status-warning-border);
+  }
+  .status-info {
+    background-color: var(--status-info-bg);
+    color: var(--status-info-text);
+    border: 1px solid var(--status-info-border);
+  }
+  .status-neutral {
+    background-color: var(--status-neutral-bg);
+    color: var(--status-neutral-text);
+    border: 1px solid var(--status-neutral-border);
+  }
+  .status-purple {
+    background-color: var(--status-purple-bg);
+    color: var(--status-purple-text);
+    border: 1px solid var(--status-purple-border);
+  }
+  .status-pink {
+    background-color: var(--status-pink-bg);
+    color: var(--status-pink-text);
+    border: 1px solid var(--status-pink-border);
+  }
+  .status-orange {
+    background-color: var(--status-orange-bg);
+    color: var(--status-orange-text);
+    border: 1px solid var(--status-orange-border);
+  }
+
+  /* Status badge base class */
+  .badge-status {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md;
+  }
+
+  /* ── Typography Scale (enforced hierarchy) ─────── */
+  .text-page-title {
+    @apply text-2xl font-bold tracking-tight;
+    color: var(--text-primary);
+  }
+  .text-section-title {
+    @apply text-lg font-semibold;
+    color: var(--text-primary);
+  }
+  .text-card-title {
+    @apply text-base font-semibold;
+    color: var(--text-primary);
+  }
+  .text-body {
+    @apply text-sm;
+    color: var(--text-primary);
+  }
+  .text-body-secondary {
+    @apply text-sm;
+    color: var(--text-secondary);
+  }
+  .text-caption {
+    @apply text-xs;
+    color: var(--text-muted);
+  }
+  .text-micro {
+    @apply text-xs font-medium uppercase tracking-wider;
+    color: var(--text-muted);
+  }
+  .text-stat-large {
+    @apply text-2xl font-bold tabular-nums;
+    color: var(--text-primary);
+  }
+  .text-stat-medium {
+    @apply text-xl font-bold tabular-nums;
+    color: var(--text-primary);
+  }
+
+  /* ── Tinted Backgrounds (auto dark mode via CSS vars) ── */
+  .tint-success {
+    background-color: var(--status-success-bg);
+  }
+  .tint-danger {
+    background-color: var(--status-danger-bg);
+  }
+  .tint-warning {
+    background-color: var(--status-warning-bg);
+  }
+  .tint-info {
+    background-color: var(--status-info-bg);
+  }
+  .tint-neutral {
+    background-color: var(--status-neutral-bg);
+  }
+  .tint-purple {
+    background-color: var(--status-purple-bg);
+  }
+  .tint-pink {
+    background-color: var(--status-pink-bg);
+  }
+  .tint-orange {
+    background-color: var(--status-orange-bg);
+  }
+
+  /* ── Form Input Standard ──────────────────────── */
+  .input-aura {
+    @apply w-full h-10 px-4 text-sm rounded-lg;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-primary);
+  }
+  .input-aura:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px var(--bg-main), 0 0 0 4px var(--border-focus);
+    outline: none;
+  }
+  .input-aura::placeholder {
+    color: var(--text-muted);
   }
 
   /* ── Stat Gradients ─────────────────────────────── */

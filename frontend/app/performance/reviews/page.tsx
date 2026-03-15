@@ -343,13 +343,13 @@ export default function PerformanceReviewsPage() {
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => openEditModal(review)}
-                    className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
                   >
                     View/Edit
                   </button>
                   <button
                     onClick={() => openDeleteConfirm(review)}
-                    className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
                   >
                     Delete
                   </button>

@@ -163,17 +163,17 @@ export default function LeavePage() {
     <AppLayout activeMenuItem="leave">
       <motion.div
         className="space-y-6"
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Leave Management
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Track your leave balance and requests
             </p>
           </div>
@@ -188,7 +188,7 @@ export default function LeavePage() {
 
         {/* Leave Balance Cards */}
         <div>
-          <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
             Leave Balance ({new Date().getFullYear()})
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -202,7 +202,7 @@ export default function LeavePage() {
               return (
                 <div
                   key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5 hover:shadow-lg transition-all duration-200"
+                  className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-4 hover:shadow-lg transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient}`}>
@@ -213,15 +213,15 @@ export default function LeavePage() {
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">
+                  <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
                     {leaveType?.leaveName || 'Leave'}
                   </h3>
 
                   <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+                    <span className="text-3xl font-bold text-[var(--text-primary)]">
                       {balance.available.toFixed(1)}
                     </span>
-                    <span className="text-sm text-surface-500 dark:text-surface-400">
+                    <span className="text-sm text-[var(--text-muted)]">
                       / {total.toFixed(1)} days
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export default function LeavePage() {
                     />
                   </div>
 
-                  <div className="flex justify-between text-xs text-surface-500 dark:text-surface-400">
+                  <div className="flex justify-between text-xs text-[var(--text-muted)]">
                     <span>Used: {balance.used.toFixed(1)}</span>
                     <span>Pending: {balance.pending.toFixed(1)}</span>
                   </div>
@@ -251,9 +251,9 @@ export default function LeavePage() {
         </div>
 
         {/* Recent Leave Requests */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               Recent Leave Requests
             </h2>
             <button
@@ -276,22 +276,22 @@ export default function LeavePage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-surface-50 dark:bg-surface-800/50">
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Request #
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Leave Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Duration
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Days
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Applied On
                     </th>
                   </tr>
@@ -308,17 +308,17 @@ export default function LeavePage() {
                         className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
                       >
                         <td className="px-5 py-4">
-                          <span className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                          <span className="text-sm font-medium text-[var(--text-primary)]">
                             {request.requestNumber}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-700 dark:text-surface-300">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {leaveType?.leaveName || 'N/A'}
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {new Date(request.startDate).toLocaleDateString('en-IN', {
                               day: '2-digit',
                               month: 'short',
@@ -332,10 +332,10 @@ export default function LeavePage() {
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-700 dark:text-surface-300">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {request.totalDays}
                             {request.isHalfDay && (
-                              <span className="ml-1 text-xs text-surface-500">(Half Day)</span>
+                              <span className="ml-1 text-xs text-[var(--text-muted)]">(Half Day)</span>
                             )}
                           </span>
                         </td>
@@ -348,7 +348,7 @@ export default function LeavePage() {
                           </span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="text-sm text-surface-600 dark:text-surface-400">
+                          <span className="text-sm text-[var(--text-secondary)]">
                             {new Date(request.appliedOn).toLocaleDateString('en-IN', {
                               day: '2-digit',
                               month: 'short',
@@ -369,7 +369,7 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -377,17 +377,17 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Submit a new leave request
             </p>
           </button>
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
@@ -395,17 +395,17 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               View all your leave history
             </p>
           </button>
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">
@@ -413,10 +413,10 @@ export default function LeavePage() {
               </div>
               <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               View team leave calendar
             </p>
           </button>

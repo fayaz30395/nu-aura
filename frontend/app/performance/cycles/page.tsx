@@ -364,7 +364,7 @@ export default function ReviewCyclesPage() {
                   {cycle.status === 'PLANNING' && (
                     <button
                       onClick={() => openActivateModal(cycle)}
-                      className="flex-1 px-3 py-2 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-sm font-medium flex items-center justify-center gap-1"
+                      className="flex-1 px-3 py-2 tint-success text-green-600 dark:text-green-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
                     >
                       <Play className="h-4 w-4" />
                       Activate
@@ -372,13 +372,13 @@ export default function ReviewCyclesPage() {
                   )}
                   <button
                     onClick={() => openEditModal(cycle)}
-                    className="flex-1 px-3 py-2 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400 rounded hover:bg-primary-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 tint-info text-primary-600 dark:text-primary-400 rounded hover:opacity-80 text-sm font-medium"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => openDeleteConfirm(cycle)}
-                    className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                    className="flex-1 px-3 py-2 tint-danger text-red-600 rounded hover:opacity-80 text-sm font-medium"
                   >
                     Delete
                   </button>
@@ -592,8 +592,8 @@ export default function ReviewCyclesPage() {
                     <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Activate Review Cycle</h2>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">{selectedCycle.name}</p>
+                    <h2 className="text-xl font-bold">Activate Review Cycle</h2>
+                    <p className="text-xs text-[var(--text-secondary)]">{selectedCycle.name}</p>
                   </div>
                 </div>
 
@@ -609,7 +609,7 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'ALL', departmentIds: [], locationIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'ALL'
-                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            ? 'border-green-500 tint-success'
                             : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
                         }`}
                       >
@@ -623,7 +623,7 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'DEPARTMENT', locationIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'DEPARTMENT'
-                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            ? 'border-green-500 tint-success'
                             : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
                         }`}
                       >
@@ -637,7 +637,7 @@ export default function ReviewCyclesPage() {
                         onClick={() => setActivateFormData({ ...activateFormData, scopeType: 'LOCATION', departmentIds: [] })}
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'LOCATION'
-                            ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
+                            ? 'border-green-500 tint-success'
                             : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
                         }`}
                       >
@@ -797,8 +797,8 @@ export default function ReviewCyclesPage() {
                 <div className="p-4 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
                   <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Cycle Activated!</h2>
-                <p className="text-surface-600 dark:text-surface-400 mb-6">
+                <h2 className="text-xl font-bold mb-2">Cycle Activated!</h2>
+                <p className="text-[var(--text-secondary)] mb-6">
                   Review cycle has been successfully activated
                 </p>
 

@@ -259,24 +259,24 @@ export default function PerformancePage() {
 
       {/* Quick Actions */}
       {stats.pending360Reviews > 0 && (
-        <div className="mb-8 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+        <div className="mb-8 p-4 tint-orange border border-[var(--status-orange-border)] rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="h-5 w-5 text-orange-600" />
+              <div className="p-2 bg-orange-100 dark:bg-orange-900/40 rounded-lg">
+                <Clock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="font-medium text-orange-800">
+                <p className="font-medium text-orange-800 dark:text-orange-300">
                   You have {stats.pending360Reviews} pending 360 feedback request(s)
                 </p>
-                <p className="text-sm text-orange-600">
+                <p className="text-sm text-orange-600 dark:text-orange-400">
                   Complete your feedback to help your colleagues grow
                 </p>
               </div>
             </div>
             <Link
               href="/performance/360-feedback"
-              className="px-4 py-2 bg-orange-600 text-white rounded-md text-sm font-medium hover:bg-orange-700"
+              className="px-4 py-2 bg-orange-600 hover:bg-orange-700 dark:bg-orange-700 dark:hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors"
             >
               Review Now
             </Link>
@@ -315,24 +315,24 @@ export default function PerformancePage() {
       <div className="mt-8 bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-6">
         <h2 className="text-lg font-semibold text-[var(--text-primary)] dark:text-surface-50 mb-4">Getting Started</h2>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+          <div className="p-4 tint-info rounded-lg border border-[var(--status-info-border)]">
             <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Set SMART Goals</h3>
-            <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
+            <h3 className="font-medium text-[var(--text-primary)]">Set SMART Goals</h3>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               Make goals Specific, Measurable, Achievable, Relevant, and Time-bound
             </p>
           </div>
-          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+          <div className="p-4 tint-success rounded-lg border border-[var(--status-success-border)]">
             <MessageSquare className="h-6 w-6 text-green-600 dark:text-green-400 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Give Regular Feedback</h3>
-            <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
+            <h3 className="font-medium text-[var(--text-primary)]">Give Regular Feedback</h3>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               Continuous feedback helps improve performance year-round
             </p>
           </div>
-          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+          <div className="p-4 tint-purple rounded-lg border border-[var(--status-purple-border)]">
             <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400 mb-2" />
-            <h3 className="font-medium text-[var(--text-primary)] dark:text-surface-50">Track Progress</h3>
-            <p className="text-sm text-gray-600 dark:text-surface-300 mt-1">
+            <h3 className="font-medium text-[var(--text-primary)]">Track Progress</h3>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               Update your goals and OKRs regularly to stay on track
             </p>
           </div>

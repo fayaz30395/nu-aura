@@ -83,12 +83,12 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
 };
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
-  [ApplicationSource.WEBSITE]:  'bg-blue-50 text-blue-600',
-  [ApplicationSource.REFERRAL]: 'bg-teal-50 text-teal-600',
-  [ApplicationSource.JOB_BOARD]:'bg-indigo-50 text-indigo-600',
-  [ApplicationSource.LINKEDIN]: 'bg-sky-50 text-sky-600',
-  [ApplicationSource.CAMPUS]:   'bg-purple-50 text-purple-600',
-  [ApplicationSource.AGENCY]:   'bg-orange-50 text-orange-600',
+  [ApplicationSource.WEBSITE]:  'tint-info text-blue-600',
+  [ApplicationSource.REFERRAL]: 'tint-success text-teal-600',
+  [ApplicationSource.JOB_BOARD]:'tint-info text-indigo-600',
+  [ApplicationSource.LINKEDIN]: 'tint-info text-sky-600',
+  [ApplicationSource.CAMPUS]:   'tint-purple text-purple-600',
+  [ApplicationSource.AGENCY]:   'tint-orange text-orange-600',
   [ApplicationSource.OTHER]:    'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
@@ -386,7 +386,7 @@ const FunnelBar: React.FC<{ pipelineData: PipelineData }> = ({ pipelineData }) =
           const colors = STAGE_COLORS[stage];
           return (
             <div key={stage} className="flex-1 flex flex-col items-center gap-1" title={`${STAGE_LABELS[stage]}: ${count}`}>
-              <span className="text-[10px] font-semibold text-surface-600">{count}</span>
+              <span className="text-xs font-semibold text-surface-600">{count}</span>
               <div
                 className={`w-full rounded-t-sm ${colors.badge.split(' ')[0]}`}
                 style={{ height: `${height}%`, minHeight: '2px' }}
@@ -907,7 +907,7 @@ export default function ApplicantPipelinePage() {
                 <Filter size={14} />
                 Filters
                 {hasActiveFilters && (
-                  <span className="bg-primary-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="bg-primary-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {(sourceFilter ? 1 : 0) + (minRating > 0 ? 1 : 0)}
                   </span>
                 )}
@@ -1055,16 +1055,16 @@ export default function ApplicantPipelinePage() {
                                           {/* Source + Days Applied */}
                                           <div className="flex items-center justify-between mb-1.5">
                                             {applicant.source ? (
-                                              <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[applicant.source]}`}>
+                                              <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${SOURCE_BADGE_CLASS[applicant.source]}`}>
                                                 {formatLabel(applicant.source)}
                                               </span>
                                             ) : (
-                                              <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
+                                              <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-[var(--bg-surface)] text-[var(--text-muted)]">
                                                 Other
                                               </span>
                                             )}
                                             {days !== null && (
-                                              <span className="text-[10px] text-surface-400">
+                                              <span className="text-xs text-surface-400">
                                                 {days === 0 ? 'Today' : `${days}d ago`}
                                               </span>
                                             )}
@@ -1074,14 +1074,14 @@ export default function ApplicantPipelinePage() {
                                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                             {/* Time in stage */}
                                             {stageTime !== '—' && (
-                                              <span className="flex items-center gap-0.5 text-[10px] text-surface-400">
+                                              <span className="flex items-center gap-0.5 text-xs text-surface-400">
                                                 <Clock size={9} />
                                                 {stageTime}
                                               </span>
                                             )}
                                             {/* Expected salary */}
                                             {applicant.expectedSalary && (
-                                              <span className="flex items-center gap-0.5 text-[10px] text-surface-400">
+                                              <span className="flex items-center gap-0.5 text-xs text-surface-400">
                                                 <DollarSign size={9} />
                                                 {(applicant.expectedSalary / 100000).toFixed(1)}L
                                               </span>
@@ -1101,7 +1101,7 @@ export default function ApplicantPipelinePage() {
                                               type="button"
                                               disabled={isMoving}
                                               onClick={e => { e.stopPropagation(); handleMoveToNextStage(applicant); }}
-                                              className="w-full mt-1 flex items-center justify-center gap-1 text-[10px] py-1.5 px-2 rounded-md bg-surface-50 hover:bg-primary-50 text-surface-500 hover:text-primary-600 border border-surface-200 hover:border-primary-200 transition-all"
+                                              className="w-full mt-1 flex items-center justify-center gap-1 text-xs py-1.5 px-2 rounded-md bg-surface-50 hover:bg-primary-50 text-surface-500 hover:text-primary-600 border border-surface-200 hover:border-primary-200 transition-all"
                                             >
                                               {isMoving ? (
                                                 <Loader2 size={10} className="animate-spin" />
