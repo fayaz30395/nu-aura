@@ -236,7 +236,15 @@ export default function MyDashboardPage() {
     );
   }
 
-  if (!dashboard) {
+  // Check if user is a SuperAdmin or admin (no employee profile needed for dashboard access)
+  const isSuperAdminOrAdmin = user?.roles?.some(
+    r => typeof r === 'string'
+      ? (r === 'SUPER_ADMIN' || r === 'ADMIN')
+      : (r?.code === 'SUPER_ADMIN' || r?.code === 'ADMIN')
+  );
+
+  // Non-admin users without employee profile → show fallback
+  if (!dashboard && !isSuperAdminOrAdmin) {
     return (
       <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{ label: 'My Dashboard', href: '/me/dashboard' }]}>
         <div className="text-center py-12">
@@ -245,24 +253,8 @@ export default function MyDashboardPage() {
             No Employee Profile Linked
           </h2>
           <p className="text-[var(--text-muted)] max-w-md mx-auto">
-            {user?.roles?.some(r => typeof r === 'string' ? r === 'SUPER_ADMIN' : r?.code === 'SUPER_ADMIN')
-              ? 'You are signed in as a Super Admin. Self-service features require an employee profile. Use the admin panels to manage employees.'
-              : 'Your account is not linked to an employee profile. Please contact your HR administrator.'}
+            Your account is not linked to an employee profile. Please contact your HR administrator.
           </p>
-          <div className="flex justify-center gap-3 mt-6">
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              Go to Admin Dashboard
-            </button>
-            <button
-              onClick={() => router.push('/employees')}
-              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
-            >
-              Manage Employees
-            </button>
-          </div>
         </div>
       </AppLayout>
     );
@@ -285,27 +277,29 @@ export default function MyDashboardPage() {
         >
           {/* Welcome Banner */}
           <WelcomeBanner
-            employeeName={dashboard.employeeName || user?.fullName || 'Employee'}
-            designation={dashboard.designation}
-            department={dashboard.department}
+            employeeName={dashboard?.employeeName || user?.fullName || 'Employee'}
+            designation={dashboard?.designation || (isSuperAdminOrAdmin ? 'Super Admin' : undefined)}
+            department={dashboard?.department || (isSuperAdminOrAdmin ? 'Administration' : undefined)}
           />
 
           {/* Quick Access — Pending actions & inbox */}
           <QuickAccessWidget
-            pendingApprovals={dashboard.pendingApprovals ?? 0}
-            pendingTimesheets={dashboard.pendingTimesheets ?? 0}
-            pendingProfileUpdates={dashboard.pendingProfileUpdates ?? 0}
+            pendingApprovals={dashboard?.pendingApprovals ?? 0}
+            pendingTimesheets={dashboard?.pendingTimesheets ?? 0}
+            pendingProfileUpdates={dashboard?.pendingProfileUpdates ?? 0}
             inboxCount={0}
           />
 
-          {/* Time Clock — Live clock + Check-in/out */}
-          <TimeClockWidget
-            isCheckedIn={isCheckedIn}
-            checkInTime={checkInTime}
-            onCheckIn={handleCheckIn}
-            onCheckOut={handleCheckOut}
-            isLoading={checkingIn}
-          />
+          {/* Time Clock — Live clock + Check-in/out (only for employees) */}
+          {user?.employeeId && (
+            <TimeClockWidget
+              isCheckedIn={isCheckedIn}
+              checkInTime={checkInTime}
+              onCheckIn={handleCheckIn}
+              onCheckOut={handleCheckOut}
+              isLoading={checkingIn}
+            />
+          )}
 
           {/* Holiday Carousel — Upcoming holidays */}
           <HolidayCarousel />
@@ -313,20 +307,22 @@ export default function MyDashboardPage() {
           {/* Team Presence — On leave + Remote workers */}
           <TeamPresenceWidget />
 
-          {/* Leave Balance — Circular progress ring */}
-          <LeaveBalanceWidget
-            leaveBalances={
-              dashboard.leaveBalances
-                ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
-                    leaveTypeId: String(idx),
-                    leaveName: name,
-                    available: available as number,
-                    total: (available as number) + 2, // estimate; real API will provide totals
-                    used: 2,
-                  }))
-                : undefined
-            }
-          />
+          {/* Leave Balance — Circular progress ring (only for employees) */}
+          {user?.employeeId && (
+            <LeaveBalanceWidget
+              leaveBalances={
+                dashboard?.leaveBalances
+                  ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => ({
+                      leaveTypeId: String(idx),
+                      leaveName: name,
+                      available: available as number,
+                      total: (available as number) + 2, // estimate; real API will provide totals
+                      used: 2,
+                    }))
+                  : undefined
+              }
+            />
+          )}
         </motion.div>
 
         {/* ─── Right Column (7/12) ─── */}

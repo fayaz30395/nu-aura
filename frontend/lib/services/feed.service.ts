@@ -45,6 +45,42 @@ class FeedService {
       }
     }
 
+    return this.sortFeedItems(items);
+  }
+
+  /**
+   * Get feed items filtered to a specific date range.
+   * Used for lazy-loading older date sections without re-fetching everything.
+   * For "recent" (today/yesterday): fetches from all sources.
+   * For "older": fetches only wall posts and announcements (celebrations are always recent).
+   */
+  async getCompanyFeedRecent(employeeId?: string): Promise<FeedItem[]> {
+    // Fetch all sources — celebrations are inherently "recent" items
+    return this.getCompanyFeed(employeeId);
+  }
+
+  async getCompanyFeedOlder(employeeId?: string, page = 0, size = 20): Promise<FeedItem[]> {
+    // For older content, only wall posts and announcements have historical data worth fetching.
+    // Celebrations (birthdays, anniversaries, new joiners) are always near-current-date.
+    const results = await Promise.allSettled([
+      this.fetchAnnouncements(employeeId, page, size),
+      this.fetchWallPosts(page, size),
+      this.fetchLinkedInPosts(page, size),
+    ]);
+
+    const items: FeedItem[] = [];
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        items.push(...result.value);
+      } else {
+        console.warn('[FeedService] Older feed source failed:', result.reason);
+      }
+    }
+
+    return this.sortFeedItems(items);
+  }
+
+  private sortFeedItems(items: FeedItem[]): FeedItem[] {
     // Sort: pinned announcements first, then by timestamp descending
     items.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
@@ -55,11 +91,11 @@ class FeedService {
     return items;
   }
 
-  private async fetchAnnouncements(employeeId?: string): Promise<FeedItem[]> {
+  private async fetchAnnouncements(employeeId?: string, page = 0, size = 10): Promise<FeedItem[]> {
     try {
       const data = employeeId
-        ? await announcementService.getActiveAnnouncements(employeeId, 0, 10)
-        : await announcementService.getAllAnnouncements(0, 10);
+        ? await announcementService.getActiveAnnouncements(employeeId, page, size)
+        : await announcementService.getAllAnnouncements(page, size);
 
       return data.content.map((a: Announcement): FeedItem => ({
         id: `announcement-${a.id}`,
@@ -170,9 +206,9 @@ class FeedService {
     }
   }
 
-  private async fetchWallPosts(): Promise<FeedItem[]> {
+  private async fetchWallPosts(page = 0, size = 20): Promise<FeedItem[]> {
     try {
-      const data = await wallService.getPosts(0, 10);
+      const data = await wallService.getPosts(page, size);
       return data.content.map((post: WallPostResponse): FeedItem => ({
         id: `wallpost-${post.id}`,
         type: 'WALL_POST',
@@ -201,9 +237,9 @@ class FeedService {
     }
   }
 
-  private async fetchLinkedInPosts(): Promise<FeedItem[]> {
+  private async fetchLinkedInPosts(page = 0, size = 10): Promise<FeedItem[]> {
     try {
-      const data = await linkedinService.getActiveLinkedInPosts(0, 10);
+      const data = await linkedinService.getActiveLinkedInPosts(page, size);
       return data.content.map((post: LinkedInPost): FeedItem => ({
         id: `linkedin-${post.id}`,
         type: 'LINKEDIN_POST',
