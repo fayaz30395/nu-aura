@@ -5,7 +5,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BarChart3, Award, X, Plus, ChevronDown } from 'lucide-react';
+import { Send, BarChart3, Award, X, Plus, Image, Smile, Paperclip } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -44,6 +44,20 @@ const praiseSchema = z.object({
 type PostFormData = z.infer<typeof postSchema>;
 type PollFormData = z.infer<typeof pollSchema>;
 type PraiseFormData = z.infer<typeof praiseSchema>;
+
+// ==================== Tab Config ====================
+
+interface TabConfig {
+  id: PostType;
+  label: string;
+  icon: React.ReactNode;
+}
+
+const tabs: TabConfig[] = [
+  { id: 'POST', label: 'Post', icon: <Send className="w-4 h-4" /> },
+  { id: 'POLL', label: 'Poll', icon: <BarChart3 className="w-4 h-4" /> },
+  { id: 'PRAISE', label: 'Praise', icon: <Award className="w-4 h-4" /> },
+];
 
 // ==================== Props ====================
 
@@ -129,85 +143,33 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
     praiseForm.reset();
   };
 
-  // Get user initials for avatar
-  const getUserInitials = (): string => {
-    if (!user) return 'U';
-    const names = user.fullName.split(' ');
-    return names.map((n) => n.charAt(0).toUpperCase()).join('').slice(0, 2);
-  };
-
   return (
-    <Card className="mb-6 bg-[var(--bg-input)]" variant="default" padding="md">
+    <Card className="bg-[var(--bg-card)]" variant="default" padding="md">
       <CardContent className="p-0">
-        {/* Header with user info */}
-        <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-700">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900">
-            <span className="text-sm font-semibold text-primary-700 dark:text-primary-300">{getUserInitials()}</span>
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-surface-900 dark:text-surface-50">{user?.fullName || 'User'}</p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">{user?.employeeId || 'Employee'}</p>
-          </div>
-        </div>
-
         {/* Tabs */}
-        <div className="flex gap-1 mt-4 mb-4 border-b border-surface-200 dark:border-surface-700">
-          <button
-            onClick={() => setActiveTab('POST')}
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors relative',
-              activeTab === 'POST'
-                ? 'text-primary-600 dark:text-primary-400'
-                : 'text-surface-600 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300'
-            )}
-          >
-            Post
-            {activeTab === 'POST' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              />
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('POLL')}
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors relative',
-              activeTab === 'POLL'
-                ? 'text-primary-600 dark:text-primary-400'
-                : 'text-surface-600 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300'
-            )}
-          >
-            Poll
-            {activeTab === 'POLL' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              />
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab('PRAISE')}
-            className={cn(
-              'px-4 py-2 text-sm font-medium transition-colors relative',
-              activeTab === 'PRAISE'
-                ? 'text-primary-600 dark:text-primary-400'
-                : 'text-surface-600 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300'
-            )}
-          >
-            Praise
-            {activeTab === 'PRAISE' && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              />
-            )}
-          </button>
+        <div className="flex gap-1 border-b border-[var(--border-subtle)]">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors relative',
+                activeTab === tab.id
+                  ? 'text-primary-600 dark:text-primary-400'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+              )}
+            >
+              {tab.icon}
+              {tab.label}
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="composerActiveTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+              )}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content with Animation */}
@@ -216,23 +178,19 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'POST' && (
             <motion.div
               key="post"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <form onSubmit={postForm.handleSubmit(handlePostSubmit)} className="space-y-4">
+              <form onSubmit={postForm.handleSubmit(handlePostSubmit)} className="space-y-4 pt-4">
                 <div>
                   <textarea
-                    placeholder="What's on your mind?"
+                    placeholder="Write something..."
                     {...postForm.register('content')}
                     rows={4}
                     className={cn(
-                      'w-full px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
-                      'border-surface-200 dark:border-surface-700',
-                      'placeholder-surface-400 dark:placeholder-surface-500',
-                      'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
-                      'resize-none',
+                      'input-aura w-full resize-none',
                       postForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
                     )}
                   />
@@ -241,31 +199,32 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   )}
                 </div>
 
-                {/* Visibility Selector */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Visible to:</label>
-                  <Controller
-                    control={postForm.control}
-                    name="visibility"
-                    render={({ field }) => (
-                      <select
-                        {...field}
-                        className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
-                          'border-surface-200 dark:border-surface-700',
-                          'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
-                        )}
-                      >
-                        <option value="ORGANIZATION">Organization</option>
-                        <option value="DEPARTMENT">Department</option>
-                        <option value="TEAM">Team</option>
-                      </select>
-                    )}
-                  />
-                </div>
+                {/* Footer: media buttons + submit */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                      title="Add image"
+                    >
+                      <Image className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                      title="Add emoji"
+                    >
+                      <Smile className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                      title="Attach file"
+                    >
+                      <Paperclip className="w-4 h-4" />
+                    </button>
+                  </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-end">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
@@ -286,26 +245,22 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'POLL' && (
             <motion.div
               key="poll"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <form onSubmit={pollForm.handleSubmit(handlePollSubmit)} className="space-y-4">
+              <form onSubmit={pollForm.handleSubmit(handlePollSubmit)} className="space-y-4 pt-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Poll Question
                   </label>
                   <textarea
                     placeholder="Ask a question..."
                     {...pollForm.register('content')}
-                    rows={3}
+                    rows={2}
                     className={cn(
-                      'w-full px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
-                      'border-surface-200 dark:border-surface-700',
-                      'placeholder-surface-400 dark:placeholder-surface-500',
-                      'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
-                      'resize-none',
+                      'input-aura w-full resize-none',
                       pollForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
                     )}
                   />
@@ -316,21 +271,18 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
 
                 {/* Poll Options */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Options
                   </label>
                   <div className="space-y-2">
                     {fields.map((field, index) => (
                       <div key={field.id} className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-surface-500 dark:text-surface-400 w-6">{index + 1}.</span>
+                        <span className="text-xs font-medium text-[var(--text-muted)] w-6">{index + 1}.</span>
                         <input
                           {...pollForm.register(`pollOptions.${index}.value`)}
                           placeholder={`Option ${index + 1}`}
                           className={cn(
-                            'flex-1 px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
-                            'border-surface-200 dark:border-surface-700',
-                            'placeholder-surface-400 dark:placeholder-surface-500',
-                            'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
+                            'input-aura flex-1',
                             pollForm.formState.errors.pollOptions?.[index]?.value && 'border-danger-500 focus:ring-danger-500/50'
                           )}
                         />
@@ -338,7 +290,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                           <button
                             type="button"
                             onClick={() => remove(index)}
-                            className="p-1.5 text-surface-500 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950 rounded-lg transition-colors"
+                            className="p-1.5 text-[var(--text-muted)] hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950 rounded-lg transition-colors"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -355,7 +307,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     <button
                       type="button"
                       onClick={() => append({ value: '' })}
-                      className="mt-2 flex items-center gap-2 px-3 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950 rounded-lg transition-colors"
+                      className="mt-2 flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950 rounded-lg transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                       Add Option
@@ -363,31 +315,25 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   )}
                 </div>
 
-                {/* Visibility Selector */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Visible to:</label>
-                  <Controller
-                    control={pollForm.control}
-                    name="visibility"
-                    render={({ field }) => (
-                      <select
-                        {...field}
-                        className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
-                          'border-surface-200 dark:border-surface-700',
-                          'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
-                        )}
-                      >
-                        <option value="ORGANIZATION">Organization</option>
-                        <option value="DEPARTMENT">Department</option>
-                        <option value="TEAM">Team</option>
-                      </select>
-                    )}
-                  />
-                </div>
+                {/* Footer */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Controller
+                      control={pollForm.control}
+                      name="visibility"
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="input-aura text-sm py-1.5"
+                        >
+                          <option value="ORGANIZATION">Organization</option>
+                          <option value="DEPARTMENT">Department</option>
+                          <option value="TEAM">Team</option>
+                        </select>
+                      )}
+                    />
+                  </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-end">
                   <Button
                     type="submit"
                     disabled={isSubmitting}
@@ -408,25 +354,22 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
           {activeTab === 'PRAISE' && (
             <motion.div
               key="praise"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
             >
-              <form onSubmit={praiseForm.handleSubmit(handlePraiseSubmit)} className="space-y-4">
+              <form onSubmit={praiseForm.handleSubmit(handlePraiseSubmit)} className="space-y-4 pt-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Praise for
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter employee ID"
+                    placeholder="Search employee..."
                     {...praiseForm.register('praiseRecipientId')}
                     className={cn(
-                      'w-full px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
-                      'border-surface-200 dark:border-surface-700',
-                      'placeholder-surface-400 dark:placeholder-surface-500',
-                      'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
+                      'input-aura w-full',
                       praiseForm.formState.errors.praiseRecipientId && 'border-danger-500 focus:ring-danger-500/50'
                     )}
                   />
@@ -436,7 +379,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Your Message
                   </label>
                   <textarea
@@ -444,11 +387,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                     {...praiseForm.register('content')}
                     rows={4}
                     className={cn(
-                      'w-full px-3 py-2 text-sm border rounded-lg bg-surface-50 dark:bg-surface-900 dark:text-surface-50',
-                      'border-surface-200 dark:border-surface-700',
-                      'placeholder-surface-400 dark:placeholder-surface-500',
-                      'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500',
-                      'resize-none',
+                      'input-aura w-full resize-none',
                       praiseForm.formState.errors.content && 'border-danger-500 focus:ring-danger-500/50'
                     )}
                   />
@@ -457,31 +396,25 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                   )}
                 </div>
 
-                {/* Visibility Selector */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Visible to:</label>
-                  <Controller
-                    control={praiseForm.control}
-                    name="visibility"
-                    render={({ field }) => (
-                      <select
-                        {...field}
-                        className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
-                          'border-surface-200 dark:border-surface-700',
-                          'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
-                        )}
-                      >
-                        <option value="ORGANIZATION">Organization</option>
-                        <option value="DEPARTMENT">Department</option>
-                        <option value="TEAM">Team</option>
-                      </select>
-                    )}
-                  />
-                </div>
+                {/* Footer */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Controller
+                      control={praiseForm.control}
+                      name="visibility"
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="input-aura text-sm py-1.5"
+                        >
+                          <option value="ORGANIZATION">Organization</option>
+                          <option value="DEPARTMENT">Department</option>
+                          <option value="TEAM">Team</option>
+                        </select>
+                      )}
+                    />
+                  </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-end">
                   <Button
                     type="submit"
                     disabled={isSubmitting}

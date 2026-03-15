@@ -445,7 +445,8 @@ public class AdvancedAnalyticsService {
                                 .absentToday((int) absentToday)
                                 .onLeaveToday((int) onLeaveToday)
                                 .lateToday((int) lateToday)
-                                .workFromHomeToday(0)
+                                .workFromHomeToday(attendanceRecordRepository
+                                        .countRemoteCheckinsByTenantIdAndDate(tenantId, today).intValue())
                                 .totalLeavesTaken((int) leaveCount)
                                 .averageLeavesPerEmployee(avgLeavesPerEmployee)
                                 .leavesByType(leavesByType)

@@ -122,7 +122,10 @@ public class WallService {
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        if (!post.getAuthor().getId().equals(userId)) {
+        // Allow deletion by: post author, or admins with WALL_MANAGE / SYSTEM_ADMIN permission
+        boolean isAuthor = post.getAuthor().getId().equals(userId);
+        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
+        if (!isAuthor && !isAdmin) {
             throw new IllegalArgumentException("You can only delete your own posts");
         }
 
@@ -223,12 +226,20 @@ public class WallService {
         return comments.map(this::mapCommentToResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<CommentResponse> getReplies(UUID parentCommentId, Pageable pageable) {
+        Page<PostComment> replies = postCommentRepository.findRepliesWithAuthors(parentCommentId, pageable);
+        return replies.map(this::mapCommentToResponse);
+    }
+
     @Transactional
     public void deleteComment(UUID commentId, UUID userId) {
         PostComment comment = postCommentRepository.findByIdAndActiveTrue(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
-        if (!comment.getAuthor().getId().equals(userId)) {
+        boolean isAuthor = comment.getAuthor().getId().equals(userId);
+        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
+        if (!isAuthor && !isAdmin) {
             throw new IllegalArgumentException("You can only delete your own comments");
         }
 
@@ -390,6 +401,7 @@ public class WallService {
         // Count replies from database instead of using lazy-loaded collection
         int replyCount = postCommentRepository.countByParentCommentIdAndActiveTrue(comment.getId());
         response.setReplyCount(replyCount);
+        response.setLikesCount(comment.getLikesCount());
 
         response.setCreatedAt(comment.getCreatedAt());
         response.setUpdatedAt(comment.getUpdatedAt());

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Filter, Loader2, MessageSquare } from 'lucide-react';
+import { MessageCircle, Loader2, MessageSquare } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -213,8 +213,8 @@ export default function WallPage(): React.ReactElement {
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
               Social Wall
@@ -235,8 +235,8 @@ export default function WallPage(): React.ReactElement {
               onClick={() => setActiveFilter(tab.value)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 activeFilter === tab.value
-                  ? 'bg-violet-600 text-white'
-                  : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
               }`}
             >
               {tab.label}
@@ -264,14 +264,14 @@ export default function WallPage(): React.ReactElement {
         ) : posts.length === 0 ? (
           <Card className="border-dashed border-2">
             <CardContent className="py-16 text-center">
-              <MessageSquare className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
-              <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
+              <MessageSquare className="w-12 h-12 mx-auto mb-4 text-[var(--text-muted)]" />
+              <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-2">
                 {activeFilter ? `No ${activeFilter.toLowerCase()}s yet` : 'No posts yet'}
               </h3>
               <p className="text-[var(--text-muted)] mb-4">
                 Be the first to share something with your team
               </p>
-              <Button className="gap-2 bg-violet-600 hover:bg-violet-700">
+              <Button variant="primary" className="gap-2">
                 <MessageCircle className="w-4 h-4" />
                 Start a Post
               </Button>

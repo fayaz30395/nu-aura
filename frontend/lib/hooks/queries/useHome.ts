@@ -7,6 +7,7 @@ import {
   WorkAnniversaryResponse,
   NewJoineeResponse,
   OnLeaveEmployeeResponse,
+  RemoteWorkerResponse,
   UpcomingHolidayResponse,
   AttendanceTodayResponse,
 } from '@/lib/services/home.service';
@@ -32,6 +33,8 @@ export const homeKeys = {
   holidaysList: (days: number) => [...homeKeys.holidays(), { days }] as const,
   // Employees on leave
   onLeave: () => [...homeKeys.all, 'onLeave'] as const,
+  // Remote workers
+  remoteWorkers: () => [...homeKeys.all, 'remoteWorkers'] as const,
   // My attendance
   myAttendance: () => [...homeKeys.all, 'myAttendance'] as const,
   // Wall posts
@@ -96,6 +99,16 @@ export function useEmployeesOnLeaveToday(enabled: boolean = true) {
   });
 }
 
+export function useRemoteWorkersToday(enabled: boolean = true) {
+  return useQuery({
+    queryKey: homeKeys.remoteWorkers(),
+    queryFn: () => homeService.getRemoteWorkersToday(),
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000,
+  });
+}
+
 export function useMyAttendanceToday(enabled: boolean = true) {
   return useQuery({
     queryKey: homeKeys.myAttendance(),
@@ -134,6 +147,7 @@ export interface HomeDashboardData {
   newJoinees: NewJoineeResponse[];
   holidays: UpcomingHolidayResponse[];
   onLeaveToday: OnLeaveEmployeeResponse[];
+  remoteWorkers: RemoteWorkerResponse[];
   attendanceToday: AttendanceTodayResponse | null;
   wallPosts: WallPostResponse[];
   leaveBalances: LeaveBalance[];
@@ -149,6 +163,7 @@ export function useHomeDashboard(enabled: boolean = true) {
   const newJoinees = useNewJoinees(30, enabled);
   const holidays = useUpcomingHolidays(90, enabled);
   const onLeaveToday = useEmployeesOnLeaveToday(enabled);
+  const remoteWorkers = useRemoteWorkersToday(enabled);
   const attendanceToday = useMyAttendanceToday(enabled);
   const wallPosts = useWallPostsHome(0, 10, enabled);
   const leaveBalances = useLeaveBalances(
@@ -162,6 +177,7 @@ export function useHomeDashboard(enabled: boolean = true) {
     newJoinees.isLoading ||
     holidays.isLoading ||
     onLeaveToday.isLoading ||
+    remoteWorkers.isLoading ||
     attendanceToday.isLoading ||
     wallPosts.isLoading;
 
@@ -171,6 +187,7 @@ export function useHomeDashboard(enabled: boolean = true) {
     newJoinees.isError ||
     holidays.isError ||
     onLeaveToday.isError ||
+    remoteWorkers.isError ||
     attendanceToday.isError ||
     wallPosts.isError;
 
@@ -180,6 +197,7 @@ export function useHomeDashboard(enabled: boolean = true) {
     newJoinees: newJoinees.data || [],
     holidays: holidays.data || [],
     onLeaveToday: onLeaveToday.data || [],
+    remoteWorkers: remoteWorkers.data || [],
     attendanceToday: attendanceToday.data || null,
     wallPosts: (wallPosts.data as PageResponse<WallPostResponse>)?.content || [],
     leaveBalances: leaveBalances.data || [],

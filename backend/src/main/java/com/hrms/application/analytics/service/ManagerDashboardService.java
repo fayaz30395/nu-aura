@@ -206,6 +206,7 @@ public class ManagerDashboardService {
         Long onLeaveToday = leaveRequestRepository.countByTenantIdAndDateAndStatusAndEmployeeIdIn(
                 tenantId, today, LeaveRequest.LeaveRequestStatus.APPROVED, teamMemberIds);
         Long lateToday = attendanceRepository.countByTenantIdAndDateAndOnTimeAndEmployeeIdIn(tenantId, today, teamMemberIds);
+        Long wfhToday = attendanceRepository.countRemoteCheckinsByTenantIdAndDateAndEmployeeIdIn(tenantId, today, teamMemberIds);
         Long absentToday = Math.max(0, teamMemberIds.size() - presentToday - onLeaveToday);
 
         // Weekly attendance rate
@@ -240,7 +241,7 @@ public class ManagerDashboardService {
         return TeamAttendance.builder()
                 .presentToday(presentToday.intValue())
                 .absentToday(absentToday.intValue())
-                .workFromHomeToday(0) // Would need WFH tracking
+                .workFromHomeToday(wfhToday.intValue())
                 .onLeaveToday(onLeaveToday.intValue())
                 .lateToday((int) (presentToday - lateToday))
                 .totalLateArrivals(0)

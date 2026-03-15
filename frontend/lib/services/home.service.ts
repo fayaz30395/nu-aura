@@ -71,6 +71,16 @@ export interface UpcomingHolidayResponse {
   dayOfWeek: string;
 }
 
+export interface RemoteWorkerResponse {
+  employeeId: string;
+  employeeName: string;
+  avatarUrl?: string;
+  department?: string;
+  designation?: string;
+  checkInTime?: string;
+  checkInLocation?: string;
+}
+
 class HomeService {
   /**
    * Get upcoming birthdays for the next N days
@@ -107,6 +117,14 @@ class HomeService {
    */
   async getEmployeesOnLeaveToday(): Promise<OnLeaveEmployeeResponse[]> {
     const response = await apiClient.get<OnLeaveEmployeeResponse[]>('/home/on-leave');
+    return response.data;
+  }
+
+  /**
+   * Get employees working remotely today
+   */
+  async getRemoteWorkersToday(): Promise<RemoteWorkerResponse[]> {
+    const response = await apiClient.get<RemoteWorkerResponse[]>('/home/remote-workers');
     return response.data;
   }
 

@@ -95,8 +95,8 @@ export function ReactionBar({
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
             hasReacted
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
-              : 'bg-surface-2 text-text-secondary hover:bg-surface-3 dark:bg-surface-2 dark:text-text-secondary'
+              ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200'
+              : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
           }`}
         >
           <span className="text-lg">{currentUserReaction.emoji}</span>
@@ -114,7 +114,7 @@ export function ReactionBar({
               transition={{ duration: 0.15 }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              className="absolute bottom-full left-0 mb-2 bg-surface-2 dark:bg-surface-3 rounded-lg shadow-lg p-2 flex gap-1 z-50 border border-surface-border dark:border-surface-border"
+              className="absolute bottom-full left-0 mb-2 bg-[var(--bg-card)] rounded-lg shadow-lg p-2 flex gap-1 z-50 border border-[var(--border-main)]"
             >
               {reactionTypes.map((type) => (
                 <motion.button
@@ -124,8 +124,8 @@ export function ReactionBar({
                   onClick={() => handleReactionClick(type)}
                   className={`flex items-center justify-center w-8 h-8 rounded-md transition-colors ${
                     userReactionType === type
-                      ? 'bg-blue-100 dark:bg-blue-900'
-                      : 'hover:bg-surface-3 dark:hover:bg-surface-2'
+                      ? 'bg-primary-100 dark:bg-primary-900'
+                      : 'hover:bg-[var(--bg-secondary)]'
                   }`}
                   title={reactionEmojis[type].label}
                 >
@@ -141,7 +141,7 @@ export function ReactionBar({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onToggleComments}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-2 text-text-secondary hover:bg-surface-3 dark:bg-surface-2 dark:text-text-secondary dark:hover:bg-surface-3 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
       >
         <MessageCircle size={16} />
         {commentCount > 0 && (

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, CornerDownRight, Trash2, MoreHorizontal } from 'lucide-react';
+import { Send, CornerDownRight, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/Button';
 import { CommentResponse, AuthorInfo } from '@/lib/services/wall.service';
@@ -59,14 +59,14 @@ function CommentItem({
 
   return (
     <motion.div
-      initial={{ x: -10, opacity: 0 }}
+      initial={{ x: -8, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className={cn('flex gap-3', isReply && 'ml-12')}
+      className={cn('flex gap-4', isReply && 'ml-12')}
     >
       {/* Left border for replies */}
       {isReply && (
-        <div className="absolute left-4 top-0 h-full w-0.5 bg-surface-200 dark:bg-surface-700" />
+        <div className="absolute left-4 top-0 h-full w-0.5 bg-[var(--border-subtle)]" />
       )}
 
       {/* Avatar */}
@@ -74,31 +74,31 @@ function CommentItem({
 
       {/* Comment content */}
       <div className="flex-1">
-        <div className="rounded-lg bg-surface-100 p-3 dark:bg-surface-800">
+        <div className="rounded-lg bg-[var(--bg-secondary)] p-4">
           {/* Header: Name and details */}
           <div className="flex items-baseline gap-2">
-            <span className="font-medium text-surface-900 dark:text-surface-50">
+            <span className="font-medium text-[var(--text-primary)]">
               {comment.author.fullName}
             </span>
             {comment.author.department && (
-              <span className="text-xs text-surface-500 dark:text-surface-400">
+              <span className="text-xs text-[var(--text-muted)]">
                 {comment.author.department}
               </span>
             )}
-            <span className="text-xs text-surface-500 dark:text-surface-400">
+            <span className="text-xs text-[var(--text-muted)]">
               {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
             </span>
           </div>
 
           {/* Comment text */}
-          <p className="mt-1 text-sm text-surface-700 dark:text-surface-200">{comment.content}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{comment.content}</p>
         </div>
 
         {/* Actions: Reply and Delete */}
         <div className="mt-2 flex items-center gap-4">
           <button
             onClick={() => onReply(comment.id, comment.author.fullName)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-surface-600 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--text-muted)] hover:text-primary-600 dark:hover:text-primary-400"
           >
             <CornerDownRight className="h-3.5 w-3.5" />
             Reply
@@ -117,7 +117,7 @@ function CommentItem({
 
         {/* Nested replies */}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-3 space-y-3">
+          <div className="mt-4 space-y-4">
             {comment.replies.map((reply) => (
               <CommentItem
                 key={reply.id}
@@ -160,7 +160,7 @@ export function CommentThread({
     setReplyingTo(null);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === 'Enter' && e.ctrlKey) {
       handleAddComment();
     }
@@ -183,7 +183,7 @@ export function CommentThread({
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-surface-300 border-t-primary-500 dark:border-surface-600 dark:border-t-primary-400" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--border-main)] border-t-primary-500 dark:border-t-primary-400" />
         </div>
       )}
 
@@ -205,16 +205,16 @@ export function CommentThread({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="rounded-lg border border-surface-200 bg-surface-50 p-6 text-center dark:border-surface-700 dark:bg-surface-900"
+          className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 text-center"
         >
-          <p className="text-sm text-surface-500 dark:text-surface-400">
+          <p className="text-sm text-[var(--text-muted)]">
             No comments yet. Be the first to comment!
           </p>
         </motion.div>
       )}
 
       {/* Input section */}
-      <div className="space-y-2 border-t border-surface-200 pt-4 dark:border-surface-700">
+      <div className="space-y-2 border-t border-[var(--border-subtle)] pt-4">
         {/* Reply indicator */}
         {replyingTo && (
           <motion.div
@@ -242,16 +242,15 @@ export function CommentThread({
           <textarea
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             placeholder={
               replyingTo ? `Reply to ${replyingTo.authorName}...` : 'Add a comment...'
             }
             disabled={isSubmitting}
             className={cn(
-              'flex-1 resize-none rounded-lg border border-surface-300 bg-white p-2.5 text-sm text-surface-900 placeholder-surface-400 transition-colors dark:border-surface-600 dark:bg-surface-800 dark:text-surface-50 dark:placeholder-surface-500',
-              'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 dark:focus:ring-primary-400',
-              'disabled:cursor-not-allowed disabled:opacity-50',
-              'min-h-[40px] max-h-[120px]'
+              'input-aura flex-1 resize-none',
+              'min-h-[40px] max-h-[120px]',
+              'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           />
           <Button
@@ -268,7 +267,7 @@ export function CommentThread({
         </div>
 
         {/* Helper text */}
-        <p className="text-xs text-surface-500 dark:text-surface-400">
+        <p className="text-xs text-[var(--text-muted)]">
           Press Ctrl+Enter to submit
         </p>
       </div>

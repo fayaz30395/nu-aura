@@ -50,6 +50,7 @@ export interface CommentResponse {
   parentCommentId?: string;
   replies?: CommentResponse[];
   replyCount: number;
+  likesCount: number;
   createdAt: string;
   updatedAt?: string;
 }
@@ -144,6 +145,13 @@ class WallService {
 
   async getComments(postId: string, page = 0, size = 20): Promise<PageResponse<CommentResponse>> {
     const response = await api.get<PageResponse<CommentResponse>>(`/wall/posts/${postId}/comments`, {
+      params: { page, size },
+    });
+    return response.data;
+  }
+
+  async getReplies(commentId: string, page = 0, size = 20): Promise<PageResponse<CommentResponse>> {
+    const response = await api.get<PageResponse<CommentResponse>>(`/wall/comments/${commentId}/replies`, {
       params: { page, size },
     });
     return response.data;

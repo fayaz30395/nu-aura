@@ -3,6 +3,8 @@ import { homeService } from './home.service';
 import { announcementService } from './announcement.service';
 import { recognitionService } from './recognition.service';
 import { linkedinService } from './linkedin.service';
+import { wallService } from './wall.service';
+import type { WallPostResponse } from './wall.service';
 import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 import type { Announcement } from './announcement.service';
 import type { Recognition } from '@/lib/types/recognition';
@@ -30,6 +32,7 @@ class FeedService {
       this.fetchNewJoiners(),
       this.fetchRecognitions(),
       this.fetchLinkedInPosts(),
+      this.fetchWallPosts(),
     ]);
 
     const items: FeedItem[] = [];
@@ -161,6 +164,37 @@ class FeedService {
         commentsCount: r.commentsCount,
         wallPostId: r.wallPostId, // Enable reactions/comments through wall API
         hasReacted: r.hasReacted, // User's reaction status
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  private async fetchWallPosts(): Promise<FeedItem[]> {
+    try {
+      const data = await wallService.getPosts(0, 10);
+      return data.content.map((post: WallPostResponse): FeedItem => ({
+        id: `wallpost-${post.id}`,
+        type: 'WALL_POST',
+        timestamp: post.createdAt,
+        title: post.content.length > 120
+          ? post.content.substring(0, 120) + '...'
+          : post.content,
+        description: post.content,
+        personName: post.author.fullName,
+        personDepartment: post.author.department,
+        personDesignation: post.author.designation,
+        personAvatarUrl: post.author.avatarUrl,
+        isPinned: post.pinned,
+        likesCount: Object.values(post.reactionCounts).reduce((a, b) => a + b, 0),
+        commentsCount: post.commentCount,
+        hasReacted: post.hasReacted,
+        wallPostId: post.id,
+        wallPostAuthorId: post.author.id,
+        wallPostAuthor: post.author.fullName,
+        wallPostAuthorDepartment: post.author.department,
+        wallPostImageUrl: post.imageUrl ?? undefined,
+        wallPostType: post.type,
       }));
     } catch {
       return [];

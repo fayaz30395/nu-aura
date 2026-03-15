@@ -149,6 +149,19 @@ public class WallController {
         return ResponseEntity.ok(comments);
     }
 
+    @GetMapping("/comments/{commentId}/replies")
+    @Operation(summary = "Get replies for a comment", description = "Get paginated list of replies for a specific comment")
+    @RequiresPermission(WALL_VIEW)
+    public ResponseEntity<Page<CommentResponse>> getReplies(
+            @PathVariable UUID commentId,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
+        Page<CommentResponse> replies = wallService.getReplies(commentId, pageable);
+        return ResponseEntity.ok(replies);
+    }
+
     @DeleteMapping("/comments/{commentId}")
     @Operation(summary = "Delete a comment", description = "Delete a comment (only the author can delete)")
     @RequiresPermission(WALL_COMMENT)
