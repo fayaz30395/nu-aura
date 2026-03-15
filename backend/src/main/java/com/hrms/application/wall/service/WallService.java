@@ -386,7 +386,10 @@ public class WallService {
         authorInfo.setDesignation(employee.getDesignation());
         // Department would need to be fetched from department service if needed
         authorInfo.setDepartment(null);
-        // Avatar URL would come from employee profile picture if available
+        // Pull profile picture from linked User entity (Google OAuth picture)
+        if (employee.getUser() != null && employee.getUser().getProfilePictureUrl() != null) {
+            authorInfo.setAvatarUrl(employee.getUser().getProfilePictureUrl());
+        }
         return authorInfo;
     }
 
