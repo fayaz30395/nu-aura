@@ -110,7 +110,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.PHONE:
       return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
     case AssetCategory.TABLET:
-      return 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300';
+      return 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300';
     case AssetCategory.FURNITURE:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case AssetCategory.VEHICLE:

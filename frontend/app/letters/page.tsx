@@ -680,9 +680,9 @@ export default function LettersPage() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
-                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-teal-100 dark:bg-teal-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
+                                <div className={`rounded-full p-1.5 ${letter.candidateId ? 'bg-primary-100 dark:bg-primary-900' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]'}`}>
                                   {letter.candidateId ? (
-                                    <UserPlus className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+                                    <UserPlus className="h-4 w-4 text-primary-600 dark:text-primary-400" />
                                   ) : (
                                     <User className="h-4 w-4 text-[var(--text-secondary)]" />
                                   )}
@@ -692,7 +692,7 @@ export default function LettersPage() {
                                     {letter.candidateName || letter.employeeName || 'N/A'}
                                   </span>
                                   {letter.candidateId && (
-                                    <p className="text-xs text-teal-600 dark:text-teal-400">Candidate</p>
+                                    <p className="text-xs text-primary-600 dark:text-primary-400">Candidate</p>
                                   )}
                                 </div>
                               </div>
@@ -755,7 +755,7 @@ export default function LettersPage() {
                                       {letter.candidateId && letter.category === LetterCategory.OFFER && (
                                         <button
                                           onClick={() => handleIssueWithESign(letter)}
-                                          className="w-full px-3 py-2 text-left text-sm text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 flex items-center gap-2"
+                                          className="w-full px-3 py-2 text-left text-sm text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 flex items-center gap-2"
                                         >
                                           <PenTool className="h-4 w-4" />
                                           Issue with E-Sign

@@ -70,7 +70,7 @@ const STAGE_LABELS: Record<ApplicationStatus, string> = {
 
 const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string; bg: string }> = {
   [ApplicationStatus.APPLIED]:        { col: 'border-t-blue-500',    header: 'bg-blue-50',    badge: 'bg-blue-100 text-blue-700',       bg: 'bg-blue-50/50' },
-  [ApplicationStatus.SCREENING]:      { col: 'border-t-teal-500',    header: 'bg-teal-50',    badge: 'bg-teal-100 text-teal-700',       bg: 'bg-teal-50/50' },
+  [ApplicationStatus.SCREENING]:      { col: 'border-t-primary-500',    header: 'bg-primary-50',    badge: 'bg-primary-100 text-primary-700',       bg: 'bg-primary-50/50' },
   [ApplicationStatus.PHONE_SCREEN]:   { col: 'border-t-cyan-500',    header: 'bg-cyan-50',    badge: 'bg-cyan-100 text-cyan-700',       bg: 'bg-cyan-50/50' },
   [ApplicationStatus.INTERVIEW]:      { col: 'border-t-purple-500',  header: 'bg-purple-50',  badge: 'bg-purple-100 text-purple-700',   bg: 'bg-purple-50/50' },
   [ApplicationStatus.TECHNICAL_ROUND]:{ col: 'border-t-indigo-500',  header: 'bg-indigo-50',  badge: 'bg-indigo-100 text-indigo-700',   bg: 'bg-indigo-50/50' },
@@ -84,7 +84,7 @@ const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; bad
 
 const SOURCE_BADGE_CLASS: Record<ApplicationSource, string> = {
   [ApplicationSource.WEBSITE]:  'tint-info text-blue-600',
-  [ApplicationSource.REFERRAL]: 'tint-success text-teal-600',
+  [ApplicationSource.REFERRAL]: 'tint-success text-primary-600',
   [ApplicationSource.JOB_BOARD]:'tint-info text-indigo-600',
   [ApplicationSource.LINKEDIN]: 'tint-info text-sky-600',
   [ApplicationSource.CAMPUS]:   'tint-purple text-purple-600',

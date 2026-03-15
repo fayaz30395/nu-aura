@@ -511,7 +511,7 @@ function CandidatesPage() {
       SCREENING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300',
       INTERVIEW: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300',
       SELECTED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-      OFFER_EXTENDED: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
+      OFFER_EXTENDED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
       OFFER_ACCEPTED: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
       OFFER_DECLINED: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300',
       REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
@@ -532,7 +532,7 @@ function CandidatesPage() {
       MANAGEMENT_INTERVIEW_COMPLETED: 'bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300',
       CLIENT_INTERVIEW_SCHEDULED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
       CLIENT_INTERVIEW_COMPLETED: 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300',
-      HR_FINAL_INTERVIEW_COMPLETED: 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300',
+      HR_FINAL_INTERVIEW_COMPLETED: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300',
       CANDIDATE_REJECTED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300',
       OFFER_NDA_TO_BE_RELEASED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
     };

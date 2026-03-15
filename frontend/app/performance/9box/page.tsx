@@ -34,7 +34,7 @@ const BOX_CONFIG: Record<string, { label: string; sublabel: string; bg: string; 
   '1-2': { label: 'Inconsistent Player', sublabel: 'Low Performance • Medium Potential', bg: 'bg-amber-50 dark:bg-amber-900/10', border: 'border-amber-200 dark:border-amber-800', text: 'text-amber-700 dark:text-amber-400' },
   '2-2': { label: 'Core Player', sublabel: 'Medium Performance • Medium Potential', bg: 'bg-blue-50 dark:bg-blue-900/10', border: 'border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
   '3-2': { label: 'High Performer', sublabel: 'High Performance • Medium Potential', bg: 'bg-indigo-50 dark:bg-indigo-900/10', border: 'border-indigo-200 dark:border-indigo-800', text: 'text-indigo-700 dark:text-indigo-400' },
-  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-teal-50 dark:bg-teal-900/10', border: 'border-teal-200 dark:border-teal-800', text: 'text-teal-700 dark:text-teal-400' },
+  '1-3': { label: 'Growth Employee', sublabel: 'Low Performance • High Potential', bg: 'bg-primary-50 dark:bg-primary-900/10', border: 'border-primary-200 dark:border-primary-800', text: 'text-primary-700 dark:text-primary-400' },
   '2-3': { label: 'Future Star', sublabel: 'Medium Performance • High Potential', bg: 'bg-green-50 dark:bg-green-900/10', border: 'border-green-200 dark:border-green-800', text: 'text-green-700 dark:text-green-400' },
   '3-3': { label: 'Star', sublabel: 'High Performance • High Potential', bg: 'bg-emerald-50 dark:bg-emerald-900/10', border: 'border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
 };

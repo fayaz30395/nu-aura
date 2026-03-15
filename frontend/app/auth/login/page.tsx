@@ -476,7 +476,7 @@ function LoginPage() {
             <div className="flex gap-4 mb-8">
               {[
                 { name: 'HRMS', color: 'from-indigo-500 to-blue-600', icon: '👥' },
-                { name: 'Hire', color: 'from-emerald-500 to-teal-600', icon: '🎯' },
+                { name: 'Hire', color: 'from-primary-500 to-primary-700', icon: '🎯' },
                 { name: 'Grow', color: 'from-amber-500 to-orange-600', icon: '📈' },
                 { name: 'Fluence', color: 'from-violet-500 to-purple-600', icon: '💡' },
               ].map((app, i) => (

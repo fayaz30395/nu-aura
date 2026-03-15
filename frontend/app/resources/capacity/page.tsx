@@ -22,7 +22,7 @@ interface ProjectBand {
 // Deterministic pastel color from project id string
 const PROJECT_COLORS = [
   '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
-  '#3b82f6', '#14b8a6', '#f97316', '#a855f7', '#06b6d4',
+  '#3b82f6', '#3e63dd', '#f97316', '#a855f7', '#06b6d4',
 ];
 function projectColor(id: string): string {
   let hash = 0;

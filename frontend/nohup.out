@@ -511,3 +511,27 @@
  ✓ Compiled in 3s (7141 modules)
  ✓ Compiled in 4.1s (7141 modules)
  ✓ Compiled in 3.2s (7141 modules)
+ ✓ Compiled in 6s (7141 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /me/dashboard 200 in 2197ms
+ ✓ Compiled in 27.5s (7141 modules)
+ ✓ Compiled in 1469ms (3316 modules)
+ ✓ Compiled in 1206ms (3316 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 20.6s (7141 modules)
+ GET /me/dashboard 200 in 9996ms
+ GET /me/dashboard 200 in 175ms
+ GET /me/dashboard 200 in 248ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.7s (3833 modules)
+ GET / 200 in 3345ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 2.1s (7136 modules)
+ GET /apple-touch-icon-precomposed.png 404 in 2168ms
+ GET /apple-touch-icon.png 404 in 2167ms
+ ✓ Compiled in 18.4s (7153 modules)
+ ✓ Compiled in 3.4s (7203 modules)
+ ✓ Compiled in 13.3s (7203 modules)
+ ✓ Compiled in 3.8s (7203 modules)
+ ✓ Compiled in 2.4s (7203 modules)
+ ✓ Compiled in 5.6s (7217 modules)

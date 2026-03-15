@@ -162,7 +162,7 @@ class CalendarService {
       HOLIDAY: 'bg-green-500',
       TRAINING: 'bg-indigo-500',
       INTERVIEW: 'bg-pink-500',
-      REVIEW: 'bg-teal-500',
+      REVIEW: 'bg-primary-500',
       OTHER: 'bg-slate-500',
     };
     return colors[eventType] || colors.OTHER;

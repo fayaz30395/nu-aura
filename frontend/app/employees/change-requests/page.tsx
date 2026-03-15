@@ -127,7 +127,7 @@ export default function EmploymentChangeRequestsPage() {
       ROLE_CHANGE: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
       MANAGER_CHANGE: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
       STATUS_CHANGE: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
-      CONFIRMATION: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400',
+      CONFIRMATION: 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400',
       MULTIPLE: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
     };
 

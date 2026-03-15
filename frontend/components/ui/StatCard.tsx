@@ -54,11 +54,11 @@ const variantConfig = {
     accent: 'bg-green-500',
   },
   teal: {
-    bg: 'stat-gradient-teal',
-    border: 'border-teal-200/50 dark:border-teal-800/50',
-    iconBg: 'bg-teal-500/10 dark:bg-teal-500/20',
-    iconColor: 'text-teal-600 dark:text-teal-400',
-    accent: 'bg-teal-500',
+    bg: 'stat-gradient-primary',
+    border: 'border-primary-200/50 dark:border-primary-800/50',
+    iconBg: 'bg-primary-500/10 dark:bg-primary-500/20',
+    iconColor: 'text-primary-600 dark:text-primary-400',
+    accent: 'bg-primary-500',
   },
   warning: {
     bg: 'bg-gradient-to-br from-amber-50 to-orange-100/50 dark:from-amber-950/50 dark:to-orange-900/30',

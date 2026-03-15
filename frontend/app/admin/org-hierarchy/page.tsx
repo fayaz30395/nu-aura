@@ -98,7 +98,7 @@ export default function OrgHierarchyPage() {
       'SVP': { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700' },
       'VP': { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700' },
       'DIRECTOR': { bg: 'bg-cyan-50', border: 'border-cyan-300', text: 'text-cyan-700' },
-      'SENIOR_MANAGER': { bg: 'bg-teal-50', border: 'border-teal-300', text: 'text-teal-700' },
+      'SENIOR_MANAGER': { bg: 'bg-primary-50', border: 'border-primary-300', text: 'text-primary-700' },
       'MANAGER': { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-700' },
       'LEAD': { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-700' },
       'SENIOR': { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700' },
