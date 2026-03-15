@@ -537,7 +537,7 @@ const Header: React.FC<HeaderProps> = ({
               {totalUnreadCount > 0 && (
                 <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-400 opacity-75"></span>
-                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-[10px] font-bold text-white">
+                  <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-xs font-bold text-white">
                     {totalUnreadCount > 9 ? '9+' : totalUnreadCount}
                   </span>
                 </span>
@@ -640,7 +640,7 @@ const Header: React.FC<HeaderProps> = ({
                                   )}
                                 </div>
                               </div>
-                              <span className="text-[10px] text-surface-400 flex-shrink-0">
+                              <span className="text-xs text-surface-400 flex-shrink-0">
                                 {notification.type === 'calendar' ? notification.subtitle : formatRelativeTime(notification.timestamp)}
                               </span>
                             </div>
@@ -1013,7 +1013,7 @@ const Header: React.FC<HeaderProps> = ({
                           {attendee.displayName || attendee.email}
                         </span>
                         <span className={cn(
-                          "px-2 py-0.5 rounded-full text-[10px]",
+                          "px-2 py-0.5 rounded-full text-xs",
                           attendee.responseStatus === 'accepted' && "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
                           attendee.responseStatus === 'declined' && "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
                           attendee.responseStatus === 'tentative' && "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",

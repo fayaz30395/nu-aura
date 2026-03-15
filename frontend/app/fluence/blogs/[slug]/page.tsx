@@ -44,7 +44,7 @@ export default function BlogPostDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className="w-8 h-8 text-surface-400 animate-spin" />
+          <RefreshCw className="w-8 h-8 text-[var(--text-muted)] animate-spin" />
         </div>
       </AppLayout>
     );
@@ -54,11 +54,11 @@ export default function BlogPostDetailPage() {
     return (
       <AppLayout>
         <div className="text-center py-16">
-          <Pen className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-          <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+          <Pen className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+          <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
             Post not found
           </h3>
-          <p className="text-surface-500 dark:text-surface-400 mb-4">
+          <p className="text-[var(--text-muted)] mb-4">
             The post you're looking for doesn't exist
           </p>
           <Button
@@ -120,11 +120,11 @@ export default function BlogPostDetailPage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl font-bold text-surface-900 dark:text-surface-100 mb-4">
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-surface-600 dark:text-surface-400">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               {post.authorName || 'Unknown Author'}
@@ -140,7 +140,7 @@ export default function BlogPostDetailPage() {
           </div>
 
           {/* Excerpt */}
-          <p className="text-lg text-surface-600 dark:text-surface-400 mt-4 italic">
+          <p className="text-lg text-[var(--text-secondary)] mt-4 italic">
             {post.excerpt}
           </p>
         </motion.div>
@@ -167,15 +167,15 @@ export default function BlogPostDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Views</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Views</span>
                   <span className="font-semibold">{post.viewCount || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Likes</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Likes</span>
                   <span className="font-semibold">{post.likeCount || 0}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Comments</span>
+                  <span className="text-sm text-[var(--text-secondary)]">Comments</span>
                   <span className="font-semibold">{post.commentCount || 0}</span>
                 </div>
               </CardContent>
@@ -219,7 +219,7 @@ export default function BlogPostDetailPage() {
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 px-3 py-1 rounded-full text-sm"
+                        className="inline-flex items-center gap-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] px-3 py-1 rounded-full text-sm"
                       >
                         <Tag className="w-3 h-3" />
                         {tag}
@@ -242,7 +242,7 @@ export default function BlogPostDetailPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {comments.length === 0 ? (
-              <p className="text-center text-surface-500 dark:text-surface-400 py-8">
+              <p className="text-center text-[var(--text-muted)] py-8">
                 No comments yet. Be the first to share your thoughts!
               </p>
             ) : (
@@ -250,15 +250,15 @@ export default function BlogPostDetailPage() {
                 {comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="flex gap-3 pb-4 border-b border-surface-200 dark:border-surface-700 last:border-b-0"
+                    className="flex gap-3 pb-4 border-b border-[var(--border-main)] last:border-b-0"
                   >
                     <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{comment.authorName || 'Anonymous'}</p>
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                      <p className="text-sm text-[var(--text-secondary)] mt-1">
                         {comment.body}
                       </p>
-                      <p className="text-xs text-surface-500 dark:text-surface-500 mt-2">
+                      <p className="text-xs text-[var(--text-muted)] mt-2">
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </p>
                     </div>

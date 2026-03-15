@@ -273,7 +273,7 @@ export default function CreateBlogPost() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 justify-end pt-6 border-t border-[var(--border-main)] dark:border-surface-700">
+          <div className="flex gap-3 justify-end pt-6 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
             <Button
               onClick={() => router.back()}
               variant="secondary"

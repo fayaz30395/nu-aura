@@ -141,11 +141,11 @@ export default function PaymentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8" />
               Payment Gateway
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Monitor and manage payment transactions
             </p>
           </div>
@@ -154,58 +154,58 @@ export default function PaymentsPage() {
         {/* Statistics */}
         {statsData && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.totalTransactions}
                   </p>
-                  <p className="text-sm text-surface-500">Total Transactions</p>
+                  <p className="text-sm text-[var(--text-muted)]">Total Transactions</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                   <CheckCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.completedTransactions}
                   </p>
-                  <p className="text-sm text-surface-500">Completed</p>
+                  <p className="text-sm text-[var(--text-muted)]">Completed</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.processingTransactions}
                   </p>
-                  <p className="text-sm text-surface-500">Processing</p>
+                  <p className="text-sm text-[var(--text-muted)]">Processing</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+            <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
                   <XCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {statsData.failedTransactions}
                   </p>
-                  <p className="text-sm text-surface-500">Failed</p>
+                  <p className="text-sm text-[var(--text-muted)]">Failed</p>
                 </div>
               </div>
             </div>
@@ -213,17 +213,17 @@ export default function PaymentsPage() {
         )}
 
         {/* Filters Bar */}
-        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-[var(--border-main)]">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search transactions..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -233,7 +233,7 @@ export default function PaymentsPage() {
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
                 showFilters
                   ? 'border-primary-500 text-primary-600 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-800'
+                  : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -249,7 +249,7 @@ export default function PaymentsPage() {
               filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
               >
                 Clear filters
               </button>
@@ -258,15 +258,15 @@ export default function PaymentsPage() {
 
           {/* Expanded Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Status
                 </label>
                 <select
                   value={filters.status}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value as PaymentStatus | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Statuses</option>
                   <option value="INITIATED">Initiated</option>
@@ -280,13 +280,13 @@ export default function PaymentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Type
                 </label>
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters({ ...filters, type: e.target.value as PaymentType | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Types</option>
                   <option value="PAYROLL">Payroll</option>
@@ -297,13 +297,13 @@ export default function PaymentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Provider
                 </label>
                 <select
                   value={filters.provider}
                   onChange={(e) => setFilters({ ...filters, provider: e.target.value as PaymentProvider | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="ALL">All Providers</option>
                   <option value="RAZORPAY">Razorpay</option>
@@ -314,32 +314,32 @@ export default function PaymentsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date From
                 </label>
                 <input
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date To
                 </label>
                 <input
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 />
               </div>
 
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Amount
                   </label>
                   <input
@@ -347,11 +347,11 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMin}
                     onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Amount
                   </label>
                   <input
@@ -359,7 +359,7 @@ export default function PaymentsPage() {
                     placeholder="0"
                     value={filters.amountMax}
                     onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                   />
                 </div>
               </div>
@@ -368,14 +368,14 @@ export default function PaymentsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-t-lg shadow-sm">
+        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-sm">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('all')}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               All Transactions
@@ -385,7 +385,7 @@ export default function PaymentsPage() {
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'completed'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               Completed
@@ -395,7 +395,7 @@ export default function PaymentsPage() {
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'pending'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               Pending
@@ -405,7 +405,7 @@ export default function PaymentsPage() {
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'failed'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               Failed
@@ -414,7 +414,7 @@ export default function PaymentsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
           {paymentsLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
@@ -430,7 +430,7 @@ export default function PaymentsPage() {
               {filteredPayments.map((payment) => (
                 <div
                   key={payment.id}
-                  className="border border-surface-200 dark:border-surface-700 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-start gap-3">
@@ -445,20 +445,20 @@ export default function PaymentsPage() {
                           </span>
                         </div>
                         {payment.description && (
-                          <p className="text-surface-600 dark:text-surface-400">{payment.description}</p>
+                          <p className="text-[var(--text-secondary)]">{payment.description}</p>
                         )}
                         {payment.payeeName && (
-                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                          <p className="text-sm text-[var(--text-secondary)] mt-1">
                             Payee: {payment.payeeName}
                           </p>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                      <div className="text-2xl font-bold text-[var(--text-primary)]">
                         {payment.currency} {payment.amount.toFixed(2)}
                       </div>
-                      <div className="text-sm text-surface-600 dark:text-surface-400">
+                      <div className="text-sm text-[var(--text-secondary)]">
                         {paymentService.getTypeLabel(payment.paymentType)}
                       </div>
                     </div>
@@ -466,20 +466,20 @@ export default function PaymentsPage() {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-surface-600 dark:text-surface-400">Provider:</span>
+                      <span className="text-[var(--text-secondary)]">Provider:</span>
                       <p className="font-medium">{paymentService.getProviderLabel(payment.provider)}</p>
                     </div>
                     <div>
-                      <span className="text-surface-600 dark:text-surface-400">Payment Date:</span>
+                      <span className="text-[var(--text-secondary)]">Payment Date:</span>
                       <p className="font-medium">{paymentService.formatDate(payment.paymentDate)}</p>
                     </div>
                     <div>
-                      <span className="text-surface-600 dark:text-surface-400">Created:</span>
+                      <span className="text-[var(--text-secondary)]">Created:</span>
                       <p className="font-medium">{paymentService.formatDateTime(payment.createdAt)}</p>
                     </div>
                     {payment.completedAt && (
                       <div>
-                        <span className="text-surface-600 dark:text-surface-400">Completed:</span>
+                        <span className="text-[var(--text-secondary)]">Completed:</span>
                         <p className="font-medium">{paymentService.formatDateTime(payment.completedAt)}</p>
                       </div>
                     )}

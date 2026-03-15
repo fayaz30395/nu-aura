@@ -5,7 +5,7 @@
  * Import these constants instead of hardcoding Tailwind classes.
  *
  * STRICT 8px GRID: 4, 8, 16, 24, 32, 48, 64px
- * BANNED: gap-3, p-3, p-5, gap-5, space-y-3, space-y-5, text-[10px]
+ * BANNED: gap-3, p-3, p-5, gap-5, space-y-3, space-y-5, text-[10px], text-[11px]
  */
 
 // ── Page Layout ────────────────────────────────────────
@@ -36,8 +36,8 @@ export const typography = {
   bodySecondary: 'text-sm text-[var(--text-secondary)]',
   /** 12px — Metadata, captions */
   caption: 'text-xs text-[var(--text-muted)]',
-  /** 11px — Micro labels (section dividers, status tags) */
-  microLabel: 'text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)]',
+  /** 11px → 12px — Micro labels (section dividers, status tags) */
+  microLabel: 'text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]',
   /** Stat number — large */
   statLarge: 'text-2xl font-bold tabular-nums text-[var(--text-primary)]',
   /** Stat number — medium */

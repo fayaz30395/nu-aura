@@ -48,7 +48,7 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="text-2xl font-semibold text-[var(--text-primary)]">{total - used}</div>
-        <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Days Left</div>
+        <div className="text-xs text-[var(--text-muted)] uppercase tracking-wider">Days Left</div>
       </div>
     </div>
   );

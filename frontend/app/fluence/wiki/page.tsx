@@ -47,13 +47,13 @@ export default function WikiPage() {
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-white" />
               </div>
               Wiki Pages
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Create and manage knowledge base documentation
             </p>
           </div>
@@ -79,10 +79,10 @@ export default function WikiPage() {
               <CardContent className="space-y-2">
                 {spacesLoading ? (
                   <div className="h-40 flex items-center justify-center">
-                    <RefreshCw className="w-5 h-5 text-surface-400 animate-spin" />
+                    <RefreshCw className="w-5 h-5 text-[var(--text-muted)] animate-spin" />
                   </div>
                 ) : spaces.length === 0 ? (
-                  <div className="py-8 text-center text-surface-500 dark:text-surface-400">
+                  <div className="py-8 text-center text-[var(--text-muted)]">
                     <Folder className="w-8 h-8 mx-auto mb-2 opacity-50" />
                     <p className="text-sm">No spaces yet</p>
                   </div>
@@ -93,7 +93,7 @@ export default function WikiPage() {
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                         selectedSpaceId === undefined
                           ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300'
-                          : 'hover:bg-surface-100 dark:hover:bg-surface-800'
+                          : 'hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                       }`}
                     >
                       <p className="font-medium text-sm">All Spaces</p>
@@ -105,11 +105,11 @@ export default function WikiPage() {
                         className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                           selectedSpaceId === space.id
                             ? 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300'
-                            : 'hover:bg-surface-100 dark:hover:bg-surface-800'
+                            : 'hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                       >
                         <p className="font-medium text-sm truncate">{space.name}</p>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {space.pageCount || 0} pages
                         </p>
                       </button>
@@ -124,13 +124,13 @@ export default function WikiPage() {
           <div className="lg:col-span-3 space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search pages..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500"
               />
             </div>
 
@@ -146,11 +146,11 @@ export default function WikiPage() {
             ) : pages.length === 0 ? (
               <Card className="border-dashed border-2">
                 <CardContent className="py-16 text-center">
-                  <BookOpen className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-                  <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <BookOpen className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+                  <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
                     No pages yet
                   </h3>
-                  <p className="text-surface-500 dark:text-surface-400 mb-4">
+                  <p className="text-[var(--text-muted)] mb-4">
                     Start by creating your first wiki page
                   </p>
                   <Button
@@ -185,15 +185,15 @@ export default function WikiPage() {
                             <CardTitle className="text-base line-clamp-2">
                               {page.title}
                             </CardTitle>
-                            <VisibilityIcon className="w-4 h-4 flex-shrink-0 text-surface-400" />
+                            <VisibilityIcon className="w-4 h-4 flex-shrink-0 text-[var(--text-muted)]" />
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                          <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
+                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                             <Clock className="w-4 h-4" />
                             {new Date(page.updatedAt).toLocaleDateString()}
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
+                          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                             <Eye className="w-4 h-4" />
                             {page.viewCount || 0} views
                           </div>

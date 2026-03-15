@@ -17,7 +17,7 @@ interface TabState {
 function AvatarInitials({ name }: { name: string }) {
   const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-[10px] font-semibold text-[var(--text-secondary)] dark:bg-gray-700 dark:text-gray-300">
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-semibold text-[var(--text-secondary)] dark:bg-gray-700 dark:text-gray-300">
       {initials}
     </div>
   );
@@ -99,7 +99,7 @@ export function CelebrationTabs() {
             >
               {tab.label}
               {tab.count > 0 && (
-                <span className="ml-1.5 text-[10px] text-[var(--text-muted)]">{tab.count}</span>
+                <span className="ml-1.5 text-xs text-[var(--text-muted)]">{tab.count}</span>
               )}
             </button>
           ))}
@@ -130,7 +130,7 @@ export function CelebrationTabs() {
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
                         <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
                       </div>
-                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
+                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
                         {person.isToday ? 'Today' : `In ${person.daysUntil}d`}
                       </span>
                     </div>
@@ -147,7 +147,7 @@ export function CelebrationTabs() {
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
                         <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
                       </div>
-                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
+                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
                         {person.isToday ? 'Today' : `In ${person.daysUntil}d`}
                       </span>
                     </div>
@@ -164,7 +164,7 @@ export function CelebrationTabs() {
                         <p className="text-sm text-[var(--text-primary)] truncate">{person.employeeName}</p>
                         <p className="text-xs text-[var(--text-muted)] truncate">{person.department}</p>
                       </div>
-                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
+                      <span className="whitespace-nowrap rounded bg-[var(--bg-surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)] dark:bg-gray-800 dark:text-[var(--text-muted)]">
                         {person.daysSinceJoining}d ago
                       </span>
                     </div>

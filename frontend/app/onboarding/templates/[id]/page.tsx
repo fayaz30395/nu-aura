@@ -177,22 +177,22 @@ export default function TemplateEditorPage() {
                             className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                             onClick={() => router.back()}
                         >
-                            <ArrowLeft className="h-5 w-5 text-surface-500 group-hover:text-primary-600 transition-colors" />
+                            <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-600 transition-colors" />
                         </Button>
                         <div>
-                            <h1 className="text-3xl font-black tracking-tight text-surface-900 dark:text-white flex items-center gap-3">
+                            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-3">
                                 Blueprint <span className="text-primary-600">Editor</span>
-                                <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-[10px] uppercase tracking-widest border-indigo-500/20 text-indigo-600">
+                                <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
                                     V1.0
                                 </Badge>
                             </h1>
-                            <p className="text-surface-500 font-bold">Orchestrate tasks and customize the onboarding journey.</p>
+                            <p className="text-[var(--text-muted)] font-bold">Orchestrate tasks and customize the onboarding journey.</p>
                         </div>
                     </div>
 
                     <Button
                         variant="primary"
-                        className="font-black tracking-widest uppercase text-[10px] bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
+                        className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
                         leftIcon={<Save className="h-4 w-4" />}
                         isLoading={updateTemplateMutation.isPending && !editingTask}
                         onClick={handleSaveTemplate}
@@ -206,14 +206,14 @@ export default function TemplateEditorPage() {
                     <div className="space-y-6">
                         <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
                             <CardHeader className="p-8 pb-0">
-                                <CardTitle className="text-sm font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                     <Type className="h-4 w-4" />
                                     General Info
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-8 space-y-8">
                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Template Title</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Template Title</label>
                                     <Input
                                         className="rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
                                         value={localTemplate?.name || ''}
@@ -221,10 +221,10 @@ export default function TemplateEditorPage() {
                                     />
                                 </div>
                                 <div className="space-y-3">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Mission Description</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Mission Description</label>
                                     <textarea
                                         rows={5}
-                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-4 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-4 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={localTemplate?.description || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, description: e.target.value } : null)}
                                     />
@@ -234,7 +234,7 @@ export default function TemplateEditorPage() {
 
                         <Card className="border-0 bg-indigo-600/5 dark:bg-indigo-600/10 border-l-4 border-indigo-600 rounded-2xl shadow-xl shadow-indigo-500/10">
                             <CardContent className="p-8 space-y-4">
-                                <div className="flex items-center gap-2 text-indigo-600 font-black uppercase tracking-widest text-[10px]">
+                                <div className="flex items-center gap-2 text-indigo-600 font-black uppercase tracking-widest text-xs">
                                     <AlertCircle className="h-4 w-4" />
                                     Orchestration Sync
                                 </div>
@@ -249,14 +249,14 @@ export default function TemplateEditorPage() {
                     <div className="lg:col-span-2 space-y-6">
                         <Card className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden min-h-[600px]">
                             <CardHeader className="p-8 flex flex-row items-center justify-between border-b border-white/20">
-                                <CardTitle className="text-sm font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                     <ListChecks className="h-4 w-4" />
                                     Task Sequence ({tasks.length})
                                 </CardTitle>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="rounded-xl font-black tracking-widest uppercase text-[10px] border-primary-500/20 text-primary-600 hover:bg-primary-500 hover:text-white transition-all transform hover:scale-105"
+                                    className="rounded-xl font-black tracking-widest uppercase text-xs border-primary-500/20 text-primary-600 hover:bg-primary-500 hover:text-white transition-all transform hover:scale-105"
                                     leftIcon={<Plus className="h-3.5 w-3.5" />}
                                     onClick={handleAddTask}
                                 >
@@ -275,28 +275,28 @@ export default function TemplateEditorPage() {
                                             >
                                                 <div className="flex items-start justify-between gap-6">
                                                     <div className="flex items-start gap-4 flex-1">
-                                                        <div className="p-2 mt-1 bg-surface-100 dark:bg-surface-800 rounded-xl cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-all">
-                                                            <GripVertical className="h-4 w-4 text-surface-400" />
+                                                        <div className="p-2 mt-1 bg-[var(--bg-secondary)] rounded-xl cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-all">
+                                                            <GripVertical className="h-4 w-4 text-[var(--text-muted)]" />
                                                         </div>
                                                         <div className="space-y-2 flex-1">
                                                             <div className="flex items-center gap-3">
-                                                                <h4 className="font-black text-surface-900 dark:text-white text-lg">{task.taskName}</h4>
+                                                                <h4 className="font-black text-[var(--text-primary)] text-lg">{task.taskName}</h4>
                                                                 {task.isMandatory && (
                                                                     <Badge variant="danger" className="rounded-lg px-2 py-0.5 font-black text-[8px] tracking-widest uppercase bg-danger-500 text-white">
                                                                         Required
                                                                     </Badge>
                                                                 )}
                                                             </div>
-                                                            <p className="text-sm text-surface-500 font-bold line-clamp-1">{task.description}</p>
+                                                            <p className="text-sm text-[var(--text-muted)] font-bold line-clamp-1">{task.description}</p>
                                                             <div className="flex items-center gap-4 pt-1">
-                                                                <Badge variant="outline" className="rounded-xl px-2 py-0.5 border-white/40 text-surface-500 font-black text-[9px] uppercase tracking-widest">
+                                                                <Badge variant="outline" className="rounded-xl px-2 py-0.5 border-white/40 text-[var(--text-muted)] font-black text-[9px] uppercase tracking-widest">
                                                                     {task.category?.replace('_', ' ')}
                                                                 </Badge>
-                                                                <div className="flex items-center gap-1.5 text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                                                                <div className="flex items-center gap-1.5 text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">
                                                                     <Clock className="h-3 w-3" />
                                                                     Due Day {task.estimatedDaysFromStart || 7}
                                                                 </div>
-                                                                <div className="flex items-center gap-1.5 text-[10px] font-black text-primary-500 uppercase tracking-widest">
+                                                                <div className="flex items-center gap-1.5 text-xs font-black text-primary-500 uppercase tracking-widest">
                                                                     <Zap className="h-3 w-3" />
                                                                     {task.priority || 'MEDIUM'}
                                                                 </div>
@@ -330,11 +330,11 @@ export default function TemplateEditorPage() {
 
                                 {tasks.length === 0 && (
                                     <div className="p-32 text-center">
-                                        <div className="h-20 w-20 bg-surface-100 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <ShieldCheck className="h-10 w-10 text-surface-300" />
+                                        <div className="h-20 w-20 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <ShieldCheck className="h-10 w-10 text-[var(--text-muted)]" />
                                         </div>
-                                        <h3 className="text-xl font-black text-surface-900 dark:text-white">Empty Blueprint</h3>
-                                        <p className="text-surface-500 font-bold mt-2">Every masterpiece starts with a single task.</p>
+                                        <h3 className="text-xl font-black text-[var(--text-primary)]">Empty Blueprint</h3>
+                                        <p className="text-[var(--text-muted)] font-bold mt-2">Every masterpiece starts with a single task.</p>
                                     </div>
                                 )}
                             </CardContent>
@@ -359,7 +359,7 @@ export default function TemplateEditorPage() {
                     >
                         <div className="p-12 space-y-10">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-3xl font-black tracking-tight text-surface-900 dark:text-white">
+                                <h2 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
                                     {editingTask === 'new' ? 'New Task' : 'Edit Task'}
                                 </h2>
                                 <Button
@@ -373,9 +373,9 @@ export default function TemplateEditorPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="col-span-full space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Task Objective</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Task Objective</label>
                                     <Input
-                                        className="rounded-2xl bg-surface-100 dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-primary-500"
+                                        className="rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 py-6 px-6 font-black text-lg focus:ring-2 focus:ring-primary-500"
                                         placeholder="e.g., Set up workstation and systems"
                                         value={taskForm.taskName}
                                         onChange={(e) => setTaskForm({ ...taskForm, taskName: e.target.value })}
@@ -383,10 +383,10 @@ export default function TemplateEditorPage() {
                                 </div>
 
                                 <div className="col-span-full space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Tactical Description</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Tactical Description</label>
                                     <textarea
                                         rows={3}
-                                        className="w-full rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-6 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-bold text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200 focus:ring-2 focus:ring-primary-500 outline-none"
                                         placeholder="Detailed instructions for this specific step..."
                                         value={taskForm.description || ''}
                                         onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
@@ -394,12 +394,12 @@ export default function TemplateEditorPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                         <Layers className="h-3.5 w-3.5" />
                                         Category
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={taskForm.category}
                                         onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value as OnboardingTaskCategory })}
                                     >
@@ -413,12 +413,12 @@ export default function TemplateEditorPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                         <Zap className="h-3.5 w-3.5" />
                                         Priority
                                     </label>
                                     <select
-                                        className="w-full rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-5 font-black uppercase tracking-widest text-xs focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={taskForm.priority}
                                         onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as OnboardingTaskPriority })}
                                     >
@@ -429,19 +429,19 @@ export default function TemplateEditorPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
+                                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                                         <Clock className="h-3.5 w-3.5" />
                                         Estimated Days
                                     </label>
                                     <Input
                                         type="number"
-                                        className="rounded-2xl bg-surface-100 dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-primary-500"
+                                        className="rounded-2xl bg-[var(--bg-secondary)] dark:bg-black/20 border-0 p-6 font-black focus:ring-2 focus:ring-primary-500"
                                         value={taskForm.estimatedDaysFromStart || 0}
                                         onChange={(e) => setTaskForm({ ...taskForm, estimatedDaysFromStart: parseInt(e.target.value) || 0 })}
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-4 bg-surface-100 dark:bg-black/20 p-5 rounded-2xl border border-dashed border-surface-200 dark:border-surface-700">
+                                <div className="flex items-center gap-4 bg-[var(--bg-secondary)] dark:bg-black/20 p-5 rounded-2xl border border-dashed border-[var(--border-main)]">
                                     <input
                                         type="checkbox"
                                         id="mandatory"
@@ -449,7 +449,7 @@ export default function TemplateEditorPage() {
                                         checked={taskForm.isMandatory}
                                         onChange={(e) => setTaskForm({ ...taskForm, isMandatory: e.target.checked })}
                                     />
-                                    <label htmlFor="mandatory" className="text-sm font-black uppercase tracking-widest text-surface-600 dark:text-surface-300">
+                                    <label htmlFor="mandatory" className="text-sm font-black uppercase tracking-widest text-[var(--text-secondary)] dark:text-[var(--text-muted)]">
                                         Mandatory Task
                                     </label>
                                 </div>

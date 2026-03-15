@@ -133,7 +133,7 @@ export default function LeaveCalendarPage() {
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'my'
                   ? 'bg-primary-500 text-white'
-                  : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50'
+                  : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
               My Leaves
@@ -143,7 +143,7 @@ export default function LeaveCalendarPage() {
               className={`px-4 py-2 rounded-lg font-medium ${
                 viewMode === 'team'
                   ? 'bg-primary-500 text-white'
-                  : 'bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50'
+                  : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50'
               }`}
             >
               Team Leaves
@@ -160,7 +160,7 @@ export default function LeaveCalendarPage() {
               </h2>
               <button
                 onClick={goToToday}
-                className="px-3 py-1 text-sm bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg text-[var(--text-primary)]"
+                className="px-3 py-1 text-sm bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg text-[var(--text-primary)]"
               >
                 Today
               </button>
@@ -168,13 +168,13 @@ export default function LeaveCalendarPage() {
             <div className="flex gap-2">
               <button
                 onClick={previousMonth}
-                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-[var(--text-primary)]"
+                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)]"
               >
                 ← Previous
               </button>
               <button
                 onClick={nextMonth}
-                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-[var(--text-primary)]"
+                className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 rounded-lg font-medium text-[var(--text-primary)]"
               >
                 Next →
               </button>
@@ -185,7 +185,7 @@ export default function LeaveCalendarPage() {
         {/* Legend */}
         <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-4 mb-6">
           <div className="flex flex-wrap gap-4">
-            <div className="text-sm text-surface-600 dark:text-surface-400 font-medium">Legend:</div>
+            <div className="text-sm text-[var(--text-secondary)] font-medium">Legend:</div>
             {leaveTypes.map(type => (
               <div key={type.id} className="flex items-center gap-2">
                 <div
@@ -213,7 +213,7 @@ export default function LeaveCalendarPage() {
                 {weekDays.map(day => (
                   <div
                     key={day}
-                    className="text-center text-sm font-semibold text-surface-600 dark:text-surface-400 py-2"
+                    className="text-center text-sm font-semibold text-[var(--text-secondary)] py-2"
                   >
                     {day}
                   </div>
@@ -229,8 +229,8 @@ export default function LeaveCalendarPage() {
                       day.isToday
                         ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
                         : day.isCurrentMonth
-                        ? 'border-surface-200 dark:border-surface-700 bg-[var(--bg-card)]'
-                        : 'border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50'
+                        ? 'border-[var(--border-main)] bg-[var(--bg-card)]'
+                        : 'border-[var(--border-main)] bg-[var(--bg-secondary)]/50'
                     } ${day.holiday ? 'bg-red-50 dark:bg-red-900/20' : ''}`}
                   >
                     <div
@@ -284,7 +284,7 @@ export default function LeaveCalendarPage() {
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Total Leaves This Month</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Total Leaves This Month</div>
             <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">
               {leaves.filter(l => {
                 const leaveStart = new Date(l.startDate);
@@ -294,13 +294,13 @@ export default function LeaveCalendarPage() {
             </div>
           </div>
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Pending Approvals</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Pending Approvals</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
               {leaves.filter(l => l.status === 'PENDING').length}
             </div>
           </div>
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
-            <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Upcoming Leaves</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Upcoming Leaves</div>
             <div className="text-3xl font-bold text-purple-600 dark:text-purple-500">
               {leaves.filter(l => new Date(l.startDate) > new Date()).length}
             </div>
@@ -319,7 +319,7 @@ export default function LeaveCalendarPage() {
               </svg>
             </div>
             <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Apply for Leave</h3>
-            <p className="text-surface-600 dark:text-surface-400 text-sm">Submit a new leave request</p>
+            <p className="text-[var(--text-secondary)] text-sm">Submit a new leave request</p>
           </button>
 
           <button
@@ -332,7 +332,7 @@ export default function LeaveCalendarPage() {
               </svg>
             </div>
             <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">My Leave History</h3>
-            <p className="text-surface-600 dark:text-surface-400 text-sm">View all your leave requests</p>
+            <p className="text-[var(--text-secondary)] text-sm">View all your leave requests</p>
           </button>
         </div>
       </div>

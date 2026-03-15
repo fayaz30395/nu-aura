@@ -184,7 +184,7 @@ export default function CompanySpotlightPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
+                      className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-main)] overflow-hidden group"
                     >
                       <div className="flex gap-6 p-5">
                         {/* Preview */}
@@ -401,7 +401,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Spotlight Slide' : 'Create Spotlight Slide'}
           </h2>
@@ -420,42 +420,42 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
             <div className="col-span-2 space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   placeholder="Enter slide title"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
                   value={formData.description || ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
                   placeholder="Optional description"
                 />
               </div>
 
               {/* Image URL */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Image URL
                 </label>
                 <input
                   type="url"
                   value={formData.imageUrl || ''}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   placeholder="https://..."
                 />
               </div>
@@ -463,26 +463,26 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
               {/* CTA Fields */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     CTA URL
                   </label>
                   <input
                     type="url"
                     value={formData.ctaUrl || ''}
                     onChange={(e) => setFormData({ ...formData, ctaUrl: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                     placeholder="https://..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     CTA Label
                   </label>
                   <input
                     type="text"
                     value={formData.ctaLabel || ''}
                     onChange={(e) => setFormData({ ...formData, ctaLabel: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                     placeholder="Learn More"
                   />
                 </div>
@@ -490,13 +490,13 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
               {/* Background Gradient */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Background Gradient
                 </label>
                 <select
                   value={formData.bgGradient || 'indigo-purple'}
                   onChange={(e) => setFormData({ ...formData, bgGradient: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 >
                   {Object.entries(GRADIENT_PRESETS).map(([key, { name }]) => (
                     <option key={key} value={key}>
@@ -508,7 +508,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
               {/* Display Order */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Display Order
                 </label>
                 <input
@@ -516,7 +516,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   min="0"
                   value={formData.displayOrder || 0}
                   onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                  className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                  className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
                 <p className="mt-1 text-xs text-[var(--text-muted)]">
                   Lower numbers appear first
@@ -526,25 +526,25 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
               {/* Date Fields */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Start Date
                   </label>
                   <input
                     type="date"
                     value={formData.startDate || ''}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     End Date
                   </label>
                   <input
                     type="date"
                     value={formData.endDate || ''}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -559,7 +559,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
 
             {/* Right: Preview */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                 Live Preview
               </label>
               <div
@@ -586,10 +586,10 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

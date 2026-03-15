@@ -393,18 +393,18 @@ export default function PayrollPage() {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      DRAFT: 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200',
+      DRAFT: 'bg-[var(--bg-secondary)] text-[var(--text-primary)]',
       PROCESSING: 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400',
       PROCESSED: 'bg-cyan-100 text-cyan-800',
       APPROVED: 'bg-green-100 text-green-800',
       LOCKED: 'bg-red-100 text-red-800',
       ACTIVE: 'bg-green-100 text-green-800',
-      INACTIVE: 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200',
+      INACTIVE: 'bg-[var(--bg-secondary)] text-[var(--text-primary)]',
       PENDING: 'bg-yellow-100 text-yellow-800',
       FINALIZED: 'bg-cyan-100 text-cyan-800',
       PAID: 'bg-green-100 text-green-800',
     };
-    return colors[status] || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+    return colors[status] || 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
   };
 
   const filteredPayrollRuns = payrollRuns.filter(
@@ -435,13 +435,13 @@ export default function PayrollPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">Payroll Management</h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-2">Manage payroll runs, payslips, and salary structures</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Payroll Management</h1>
+          <p className="text-[var(--text-secondary)] mt-2">Manage payroll runs, payslips, and salary structures</p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 rounded-lg">
             {error}
             <button
               onClick={() => setError(null)}
@@ -453,13 +453,13 @@ export default function PayrollPage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-6 border-b border-surface-200 dark:border-surface-700">
+        <div className="flex gap-4 mb-6 border-b border-[var(--border-main)]">
           <button
             onClick={() => setActiveTab('runs')}
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'runs'
                 ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                : 'border-transparent text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]'
             }`}
           >
             Payroll Runs
@@ -469,7 +469,7 @@ export default function PayrollPage() {
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'payslips'
                 ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                : 'border-transparent text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]'
             }`}
           >
             Payslips
@@ -479,7 +479,7 @@ export default function PayrollPage() {
             className={`px-4 py-3 font-medium border-b-2 transition-colors ${
               activeTab === 'structures'
                 ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                : 'border-transparent text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]'
             }`}
           >
             Salary Structures
@@ -492,13 +492,13 @@ export default function PayrollPage() {
             <div className="flex justify-between items-center mb-6">
               <div className="flex gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Filter by Status
                   </label>
                   <select
                     value={payrollRunFilter}
                     onChange={(e) => setPayrollRunFilter(e.target.value as PayrollRunStatus | 'ALL')}
-                    className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="DRAFT">Draft</option>
@@ -518,7 +518,7 @@ export default function PayrollPage() {
             </div>
 
             {loading ? (
-              <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading payroll runs...</div>
+              <div className="text-center py-12 text-[var(--text-secondary)]">Loading payroll runs...</div>
             ) : filteredPayrollRuns.length === 0 ? (
               <EmptyState
                 icon={<Banknote className="h-8 w-8" />}
@@ -533,33 +533,33 @@ export default function PayrollPage() {
             ) : (
               <div className="overflow-x-auto bg-[var(--bg-card)] rounded-lg shadow-md">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50 border-b">
+                  <thead className="bg-[var(--bg-secondary)]/50 border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Run Name
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Period
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Employees
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Gross Amount
                       </th>
-                      <th className="px-6 py-3 text-left text-sm font-semibold text-surface-800 dark:text-surface-200">
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-[var(--text-primary)]">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredPayrollRuns.map((run) => (
-                      <tr key={run.id} className="border-b hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                      <tr key={run.id} className="border-b hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-6 py-4 text-sm font-medium">{run.runName}</td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {formatDate(run.payrollPeriodStart)} - {formatDate(run.payrollPeriodEnd)}
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -590,7 +590,7 @@ export default function PayrollPage() {
                               <button
                                 onClick={() => handleApprovePayrollRun(run)}
                                 disabled={loading}
-                                className="px-2 py-1 bg-green-50 text-green-600 rounded text-xs hover:bg-green-100 disabled:opacity-50"
+                                className="px-2 py-1 bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded text-xs hover:bg-green-100 dark:hover:bg-green-900/60 disabled:opacity-50"
                               >
                                 Approve
                               </button>
@@ -606,7 +606,7 @@ export default function PayrollPage() {
                                 setSelectedPayrollRun(run);
                                 setShowRunDeleteConfirm(true);
                               }}
-                              className="px-2 py-1 bg-red-50 text-red-600 rounded text-xs hover:bg-red-100"
+                              className="px-2 py-1 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded text-xs hover:bg-red-100 dark:hover:bg-red-900/60"
                             >
                               Delete
                             </button>
@@ -627,16 +627,16 @@ export default function PayrollPage() {
             <div className="flex justify-between items-center mb-6">
               <div className="flex gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Month</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Month</label>
                   <input
                     type="month"
                     value={payslipSearchMonth}
                     onChange={(e) => setPayslipSearchMonth(e.target.value)}
-                    className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Employee Name
                   </label>
                   <input
@@ -644,7 +644,7 @@ export default function PayrollPage() {
                     placeholder="Search by employee..."
                     value={payslipSearchEmployee}
                     onChange={(e) => setPayslipSearchEmployee(e.target.value)}
-                    className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -657,7 +657,7 @@ export default function PayrollPage() {
             </div>
 
             {loading ? (
-              <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading payslips...</div>
+              <div className="text-center py-12 text-[var(--text-secondary)]">Loading payslips...</div>
             ) : filteredPayslips.length === 0 ? (
               <EmptyState
                 icon={<FileText className="h-8 w-8" />}
@@ -676,7 +676,7 @@ export default function PayrollPage() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-semibold">{payslip.employeeName}</h3>
-                        <p className="text-sm text-surface-600 dark:text-surface-400">{payslip.payrollRunName}</p>
+                        <p className="text-sm text-[var(--text-secondary)]">{payslip.payrollRunName}</p>
                       </div>
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
@@ -689,7 +689,7 @@ export default function PayrollPage() {
 
                     <div className="mb-4 pb-4 border-b">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-surface-600 dark:text-surface-400">Period</span>
+                        <span className="text-[var(--text-secondary)]">Period</span>
                         <span className="font-medium">
                           {formatDate(payslip.payrollPeriodStart)} -{' '}
                           {formatDate(payslip.payrollPeriodEnd)}
@@ -699,23 +699,23 @@ export default function PayrollPage() {
 
                     <div className="space-y-3 mb-4">
                       <div className="flex justify-between text-sm">
-                        <span className="text-surface-600 dark:text-surface-400">Base Salary</span>
+                        <span className="text-[var(--text-secondary)]">Base Salary</span>
                         <span className="font-medium">{formatCurrency(payslip.baseSalary)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-surface-600 dark:text-surface-400">Allowances</span>
+                        <span className="text-[var(--text-secondary)]">Allowances</span>
                         <span className="text-green-600 font-medium">
                           {formatCurrency(payslip.allowances)}
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-surface-600 dark:text-surface-400">Deductions</span>
+                        <span className="text-[var(--text-secondary)]">Deductions</span>
                         <span className="text-red-600 font-medium">
                           {formatCurrency(payslip.deductions)}
                         </span>
                       </div>
                       <div className="border-t pt-3 flex justify-between text-sm font-semibold">
-                        <span className="text-surface-800 dark:text-surface-200">Net Amount</span>
+                        <span className="text-[var(--text-primary)]">Net Amount</span>
                         <span className="text-primary-600 dark:text-primary-400">{formatCurrency(payslip.netAmount)}</span>
                       </div>
                     </div>
@@ -732,7 +732,7 @@ export default function PayrollPage() {
                           setSelectedPayslip(payslip);
                           setShowPayslipDeleteConfirm(true);
                         }}
-                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -750,13 +750,13 @@ export default function PayrollPage() {
             <div className="flex justify-between items-center mb-6">
               <div className="flex gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Filter by Status
                   </label>
                   <select
                     value={structureFilter}
                     onChange={(e) => setStructureFilter(e.target.value as 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL')}
-                    className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="ALL">All Status</option>
                     <option value="ACTIVE">Active</option>
@@ -774,7 +774,7 @@ export default function PayrollPage() {
             </div>
 
             {loading ? (
-              <div className="text-center py-12 text-surface-600 dark:text-surface-400">Loading salary structures...</div>
+              <div className="text-center py-12 text-[var(--text-secondary)]">Loading salary structures...</div>
             ) : filteredStructures.length === 0 ? (
               <EmptyState
                 icon={<Layers className="h-8 w-8" />}
@@ -793,7 +793,7 @@ export default function PayrollPage() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-semibold">{structure.employeeName}</h3>
-                        <p className="text-sm text-surface-600 dark:text-surface-400">
+                        <p className="text-sm text-[var(--text-secondary)]">
                           Effective: {formatDate(structure.effectiveDate)}
                         </p>
                       </div>
@@ -809,13 +809,13 @@ export default function PayrollPage() {
                     <div className="mb-6 pb-6 border-b">
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-surface-600 dark:text-surface-400">Base Salary</span>
+                          <span className="text-[var(--text-secondary)]">Base Salary</span>
                           <p className="font-semibold text-lg">
                             {formatCurrency(structure.baseSalary)}
                           </p>
                         </div>
                         <div>
-                          <span className="text-surface-600 dark:text-surface-400">Total CTC</span>
+                          <span className="text-[var(--text-secondary)]">Total CTC</span>
                           <p className="font-semibold text-lg">
                             {formatCurrency(structure.totalCTC)}
                           </p>
@@ -829,7 +829,7 @@ export default function PayrollPage() {
                         <div className="space-y-1">
                           {structure.allowances.map((allow, idx) => (
                             <div key={idx} className="flex justify-between text-sm">
-                              <span className="text-surface-600 dark:text-surface-400">{allow.name}</span>
+                              <span className="text-[var(--text-secondary)]">{allow.name}</span>
                               <span className="text-green-600 font-medium">
                                 {formatCurrency(allow.amount)}
                               </span>
@@ -845,7 +845,7 @@ export default function PayrollPage() {
                         <div className="space-y-1">
                           {structure.deductions.map((ded, idx) => (
                             <div key={idx} className="flex justify-between text-sm">
-                              <span className="text-surface-600 dark:text-surface-400">{ded.name}</span>
+                              <span className="text-[var(--text-secondary)]">{ded.name}</span>
                               <span className="text-red-600 font-medium">
                                 {formatCurrency(ded.amount)}
                               </span>
@@ -867,7 +867,7 @@ export default function PayrollPage() {
                           setSelectedStructure(structure);
                           setShowStructureDeleteConfirm(true);
                         }}
-                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium"
+                        className="flex-1 px-3 py-2 bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/60 text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -891,13 +891,13 @@ export default function PayrollPage() {
               <form onSubmit={runFormHook.handleSubmit(onSubmitPayrollRun)}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Run Name *
                     </label>
                     <input
                       type="text"
                       {...runFormHook.register('runName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="e.g., November 2024 Payroll"
                     />
                     {runFormHook.formState.errors.runName && (
@@ -907,26 +907,26 @@ export default function PayrollPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Period Start *
                       </label>
                       <input
                         type="date"
                         {...runFormHook.register('payrollPeriodStart')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {runFormHook.formState.errors.payrollPeriodStart && (
                         <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.payrollPeriodStart.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Period End *
                       </label>
                       <input
                         type="date"
                         {...runFormHook.register('payrollPeriodEnd')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {runFormHook.formState.errors.payrollPeriodEnd && (
                         <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -935,13 +935,13 @@ export default function PayrollPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Payment Date *
                     </label>
                     <input
                       type="date"
                       {...runFormHook.register('paymentDate')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {runFormHook.formState.errors.paymentDate && (
                       <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.paymentDate.message}</p>
@@ -949,11 +949,11 @@ export default function PayrollPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Notes</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
                     <textarea
                       {...runFormHook.register('notes')}
                       rows={3}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Additional notes..."
                     />
                   </div>
@@ -963,7 +963,7 @@ export default function PayrollPage() {
                   <button
                     type="button"
                     onClick={() => setPayrollRunModal({ isOpen: false, mode: 'create' })}
-                    className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                    className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                   >
                     Cancel
                   </button>
@@ -993,26 +993,26 @@ export default function PayrollPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Employee ID *
                       </label>
                       <input
                         type="text"
                         {...payslipFormHook.register('employeeId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {payslipFormHook.formState.errors.employeeId && (
                         <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.employeeId.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Payroll Run ID *
                       </label>
                       <input
                         type="text"
                         {...payslipFormHook.register('payrollRunId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {payslipFormHook.formState.errors.payrollRunId && (
                         <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollRunId.message}</p>
@@ -1022,26 +1022,26 @@ export default function PayrollPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Period Start *
                       </label>
                       <input
                         type="date"
                         {...payslipFormHook.register('payrollPeriodStart')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {payslipFormHook.formState.errors.payrollPeriodStart && (
                         <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollPeriodStart.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Period End *
                       </label>
                       <input
                         type="date"
                         {...payslipFormHook.register('payrollPeriodEnd')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {payslipFormHook.formState.errors.payrollPeriodEnd && (
                         <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollPeriodEnd.message}</p>
@@ -1050,13 +1050,13 @@ export default function PayrollPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Payment Date *
                     </label>
                     <input
                       type="date"
                       {...payslipFormHook.register('paymentDate')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {payslipFormHook.formState.errors.paymentDate && (
                       <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.paymentDate.message}</p>
@@ -1065,39 +1065,39 @@ export default function PayrollPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Base Salary *
                       </label>
                       <input
                         type="number"
                         step="0.01"
                         {...payslipFormHook.register('baseSalary', { valueAsNumber: true })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {payslipFormHook.formState.errors.baseSalary && (
                         <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.baseSalary.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Allowances
                       </label>
                       <input
                         type="number"
                         step="0.01"
                         {...payslipFormHook.register('allowances', { valueAsNumber: true })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Deductions
                       </label>
                       <input
                         type="number"
                         step="0.01"
                         {...payslipFormHook.register('deductions', { valueAsNumber: true })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                     </div>
                   </div>
@@ -1107,7 +1107,7 @@ export default function PayrollPage() {
                   <button
                     type="button"
                     onClick={() => setPayslipModal({ isOpen: false, mode: 'create' })}
-                    className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                    className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                   >
                     Cancel
                   </button>
@@ -1139,26 +1139,26 @@ export default function PayrollPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Employee ID *
                       </label>
                       <input
                         type="text"
                         {...structureFormHook.register('employeeId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {structureFormHook.formState.errors.employeeId && (
                         <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.employeeId.message}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Effective Date *
                       </label>
                       <input
                         type="date"
                         {...structureFormHook.register('effectiveDate')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {structureFormHook.formState.errors.effectiveDate && (
                         <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.effectiveDate.message}</p>
@@ -1167,14 +1167,14 @@ export default function PayrollPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Base Salary *
                     </label>
                     <input
                       type="number"
                       step="0.01"
                       {...structureFormHook.register('baseSalary', { valueAsNumber: true })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     {structureFormHook.formState.errors.baseSalary && (
                       <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.baseSalary.message}</p>
@@ -1201,7 +1201,7 @@ export default function PayrollPage() {
                               type="text"
                               placeholder="Name"
                               {...structureFormHook.register(`allowances.${idx}.name`)}
-                              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <div className="w-24">
@@ -1210,7 +1210,7 @@ export default function PayrollPage() {
                               step="0.01"
                               placeholder="Amount"
                               {...structureFormHook.register(`allowances.${idx}.amount`, { valueAsNumber: true })}
-                              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <button
@@ -1245,7 +1245,7 @@ export default function PayrollPage() {
                               type="text"
                               placeholder="Name"
                               {...structureFormHook.register(`deductions.${idx}.name`)}
-                              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <div className="w-24">
@@ -1254,7 +1254,7 @@ export default function PayrollPage() {
                               step="0.01"
                               placeholder="Amount"
                               {...structureFormHook.register(`deductions.${idx}.amount`, { valueAsNumber: true })}
-                              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                              className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <button
@@ -1274,7 +1274,7 @@ export default function PayrollPage() {
                   <button
                     type="button"
                     onClick={() => setStructureModal({ isOpen: false, mode: 'create' })}
-                    className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                    className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                   >
                     Cancel
                   </button>
@@ -1297,7 +1297,7 @@ export default function PayrollPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Payroll Run</h2>
-            <p className="text-surface-600 dark:text-surface-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               Are you sure you want to delete &quot;{selectedPayrollRun.runName}&quot;? This action cannot
               be undone.
             </p>
@@ -1307,7 +1307,7 @@ export default function PayrollPage() {
                   setShowRunDeleteConfirm(false);
                   setSelectedPayrollRun(null);
                 }}
-                className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
               >
                 Cancel
               </button>
@@ -1327,7 +1327,7 @@ export default function PayrollPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Payslip</h2>
-            <p className="text-surface-600 dark:text-surface-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               Are you sure you want to delete the payslip for {selectedPayslip.employeeName}?
               This action cannot be undone.
             </p>
@@ -1337,7 +1337,7 @@ export default function PayrollPage() {
                   setShowPayslipDeleteConfirm(false);
                   setSelectedPayslip(null);
                 }}
-                className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
               >
                 Cancel
               </button>
@@ -1357,7 +1357,7 @@ export default function PayrollPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-[var(--bg-card)] rounded-lg max-w-md w-full p-6">
             <h2 className="text-xl font-bold mb-4">Delete Salary Structure</h2>
-            <p className="text-surface-600 dark:text-surface-400 mb-6">
+            <p className="text-[var(--text-secondary)] mb-6">
               Are you sure you want to delete the salary structure for {selectedStructure.employeeName}?
               This action cannot be undone.
             </p>
@@ -1367,7 +1367,7 @@ export default function PayrollPage() {
                   setShowStructureDeleteConfirm(false);
                   setSelectedStructure(null);
                 }}
-                className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
               >
                 Cancel
               </button>

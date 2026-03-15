@@ -337,13 +337,13 @@ export default function ExpenseClaims() {
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      DRAFT: 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-300',
+      DRAFT: 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300',
       SUBMITTED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
       APPROVED: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
       REJECTED: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
       PAID: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300'
     };
-    return styles[status] || 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-300';
+    return styles[status] || 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300';
   };
 
   // Show loading state while hydrating
@@ -389,11 +389,11 @@ export default function ExpenseClaims() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] flex items-center gap-2">
               <DollarSign className="w-7 h-7 sm:w-8 sm:h-8" />
               Expense Claims
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">Submit and manage your expense claims</p>
+            <p className="text-[var(--text-secondary)] mt-1">Submit and manage your expense claims</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
@@ -406,64 +406,64 @@ export default function ExpenseClaims() {
 
         {/* Statistics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                 <AlertCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{statistics.pendingCount}</p>
-                <p className="text-sm text-surface-500">Pending</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.pendingCount}</p>
+                <p className="text-sm text-[var(--text-muted)]">Pending</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                 <CheckCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{statistics.approvedCount}</p>
-                <p className="text-sm text-surface-500">Approved</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.approvedCount}</p>
+                <p className="text-sm text-[var(--text-muted)]">Approved</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{formatCurrency(statistics.totalPendingAmount, 'USD')}</p>
-                <p className="text-sm text-surface-500">Pending Amount</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{formatCurrency(statistics.totalPendingAmount, 'USD')}</p>
+                <p className="text-sm text-[var(--text-muted)]">Pending Amount</p>
               </div>
             </div>
           </div>
-          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+          <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{statistics.totalClaims}</p>
-                <p className="text-sm text-surface-500">Total Claims</p>
+                <p className="text-2xl font-bold text-[var(--text-primary)]">{statistics.totalClaims}</p>
+                <p className="text-sm text-[var(--text-muted)]">Total Claims</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters Bar */}
-        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 mb-6 border border-[var(--border-main)]">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search claims..."
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full pl-10 pr-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
             </div>
 
@@ -473,7 +473,7 @@ export default function ExpenseClaims() {
               className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
                 showFilters
                   ? 'border-primary-500 text-primary-600 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-surface-300 dark:border-surface-600 hover:bg-surface-50 dark:hover:bg-surface-800'
+                  : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -485,7 +485,7 @@ export default function ExpenseClaims() {
             {(filters.category !== 'ALL' || filters.amountMin || filters.amountMax) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100"
+                className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]"
               >
                 Clear filters
               </button>
@@ -494,13 +494,13 @@ export default function ExpenseClaims() {
 
           {/* Expanded Filters */}
           {showFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-surface-200 dark:border-surface-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 pt-4 border-t border-[var(--border-main)]">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Category</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Category</label>
                 <select
                   value={filters.category}
                   onChange={(e) => setFilters({ ...filters, category: e.target.value as ExpenseCategory | 'ALL' })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                 >
                   <option value="ALL">All Categories</option>
                   <option value="TRAVEL">Travel</option>
@@ -514,42 +514,42 @@ export default function ExpenseClaims() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date From</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date From</label>
                 <input
                   type="date"
                   value={filters.dateFrom}
                   onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date To</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Date To</label>
                 <input
                   type="date"
                   value={filters.dateTo}
                   onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                 />
               </div>
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Min $</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Min $</label>
                   <input
                     type="number"
                     placeholder="0"
                     value={filters.amountMin}
                     onChange={(e) => setFilters({ ...filters, amountMin: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max $</label>
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Max $</label>
                   <input
                     type="number"
                     placeholder="0"
                     value={filters.amountMax}
                     onChange={(e) => setFilters({ ...filters, amountMax: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)]"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)]"
                   />
                 </div>
               </div>
@@ -559,23 +559,23 @@ export default function ExpenseClaims() {
 
         {/* New Claim Form */}
         {showForm && (
-          <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Create New Expense Claim</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Claim Date</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim Date</label>
                 <input
                   type="date"
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   {...register('claimDate')}
                 />
                 {errors.claimDate && <span className="text-red-500 text-sm">{errors.claimDate.message}</span>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Category</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   {...register('category')}
                 >
                   <option value="">Select category</option>
@@ -595,9 +595,9 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Description</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
                 <textarea
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   rows={3}
                   placeholder="Describe your expense..."
                   {...register('description')}
@@ -606,12 +606,12 @@ export default function ExpenseClaims() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Amount</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   placeholder="0.00"
                   {...register('amount')}
                 />
@@ -619,9 +619,9 @@ export default function ExpenseClaims() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Currency</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
                 <select
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   {...register('currency')}
                 >
                   <option value="USD">USD</option>
@@ -632,10 +632,10 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Receipt URL (Optional)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL (Optional)</label>
                 <input
                   type="url"
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   placeholder="https://..."
                   {...register('receiptUrl')}
                 />
@@ -643,9 +643,9 @@ export default function ExpenseClaims() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Notes (Optional)</label>
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes (Optional)</label>
                 <textarea
-                  className="w-full bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                  className="w-full bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg p-2"
                   rows={2}
                   placeholder="Additional notes..."
                   {...register('notes')}
@@ -663,7 +663,7 @@ export default function ExpenseClaims() {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-6 py-3 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                  className="px-6 py-3 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                 >
                   Cancel
                 </button>
@@ -680,7 +680,7 @@ export default function ExpenseClaims() {
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length}
                 onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
               />
               <span className="font-medium text-primary-900 dark:text-primary-100">
                 {selectedClaims.size} claim{selectedClaims.size !== 1 ? 's' : ''} selected
@@ -705,7 +705,7 @@ export default function ExpenseClaims() {
               </button>
               <button
                 onClick={() => setSelectedClaims(new Set())}
-                className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 text-sm"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-sm"
               >
                 Cancel
               </button>
@@ -714,14 +714,14 @@ export default function ExpenseClaims() {
         )}
 
         {/* Tabs */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-t-lg shadow-sm">
+        <div className="bg-[var(--bg-secondary)] rounded-t-lg shadow-sm">
           <div className="flex border-b">
             <button
               onClick={() => { setActiveTab('my-claims'); setSelectedClaims(new Set()); }}
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'my-claims'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               My Claims
@@ -731,7 +731,7 @@ export default function ExpenseClaims() {
               className={`px-6 py-3 font-medium transition-colors relative ${
                 activeTab === 'pending'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               Pending Approval
@@ -746,7 +746,7 @@ export default function ExpenseClaims() {
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               All Claims
@@ -756,7 +756,7 @@ export default function ExpenseClaims() {
               className={`px-6 py-3 font-medium transition-colors ${
                 activeTab === 'analytics'
                   ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-500'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
               }`}
             >
               Analytics
@@ -766,21 +766,21 @@ export default function ExpenseClaims() {
 
         {/* Content Area */}
         {activeTab === 'analytics' ? (
-          <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
+          <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
             <ExpenseAnalytics claims={currentClaimsData} />
           </div>
         ) : (
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-b-lg shadow-sm p-6">
           {/* Select All Header for Pending Tab */}
           {activeTab === 'pending' && filteredClaims.filter(c => c.status === 'SUBMITTED').length > 0 && (
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[var(--border-main)]">
               <input
                 type="checkbox"
                 checked={selectedClaims.size === filteredClaims.filter(c => c.status === 'SUBMITTED').length && selectedClaims.size > 0}
                 onChange={handleSelectAll}
-                className="w-5 h-5 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                className="w-5 h-5 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-sm text-surface-600 dark:text-surface-400">
+              <span className="text-sm text-[var(--text-secondary)]">
                 Select all ({filteredClaims.filter(c => c.status === 'SUBMITTED').length} claims)
               </span>
             </div>
@@ -805,7 +805,7 @@ export default function ExpenseClaims() {
                   className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
                     selectedClaims.has(claim.id)
                       ? 'border-primary-400 bg-primary-50/50 dark:bg-primary-900/20'
-                      : 'border-surface-200 dark:border-surface-700'
+                      : 'border-[var(--border-main)]'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
@@ -816,7 +816,7 @@ export default function ExpenseClaims() {
                           type="checkbox"
                           checked={selectedClaims.has(claim.id)}
                           onChange={() => handleSelectClaim(claim.id)}
-                          className="w-5 h-5 mt-1 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                          className="w-5 h-5 mt-1 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                         />
                       )}
                       <div>
@@ -826,49 +826,49 @@ export default function ExpenseClaims() {
                             {claim.status}
                           </span>
                         </div>
-                        <p className="text-surface-600 dark:text-surface-400">{claim.description}</p>
+                        <p className="text-[var(--text-secondary)]">{claim.description}</p>
                         {claim.employeeName && (
-                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                          <p className="text-sm text-[var(--text-secondary)] mt-1">
                             By: {claim.employeeName} ({claim.employeeCode})
                           </p>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                      <div className="text-2xl font-bold text-[var(--text-primary)]">
                         {formatCurrency(claim.amount, claim.currency)}
                       </div>
-                      <div className="text-sm text-surface-600 dark:text-surface-400">{claim.category.replace('_', ' ')}</div>
+                      <div className="text-sm text-[var(--text-secondary)]">{claim.category.replace('_', ' ')}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-3">
                     <div>
-                      <span className="text-surface-600 dark:text-surface-400">Claim Date:</span>
+                      <span className="text-[var(--text-secondary)]">Claim Date:</span>
                       <p className="font-medium">{new Date(claim.claimDate).toLocaleDateString()}</p>
                     </div>
                     {claim.submittedAt && (
                       <div>
-                        <span className="text-surface-600 dark:text-surface-400">Submitted:</span>
+                        <span className="text-[var(--text-secondary)]">Submitted:</span>
                         <p className="font-medium">{new Date(claim.submittedAt).toLocaleDateString()}</p>
                       </div>
                     )}
                     {claim.approvedAt && (
                       <div>
-                        <span className="text-surface-600 dark:text-surface-400">Approved By:</span>
+                        <span className="text-[var(--text-secondary)]">Approved By:</span>
                         <p className="font-medium">{claim.approverName}</p>
                       </div>
                     )}
                     {claim.rejectionReason && (
                       <div className="col-span-2">
-                        <span className="text-surface-600 dark:text-surface-400">Rejection Reason:</span>
+                        <span className="text-[var(--text-secondary)]">Rejection Reason:</span>
                         <p className="font-medium text-red-600">{claim.rejectionReason}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-wrap gap-2 pt-3 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex flex-wrap gap-2 pt-3 border-t border-[var(--border-main)]">
                     {claim.status === 'DRAFT' && activeTab === 'my-claims' && (
                       <>
                         <button
@@ -907,7 +907,7 @@ export default function ExpenseClaims() {
                     {claim.receiptUrl && (
                       <button
                         onClick={() => window.open(claim.receiptUrl, '_blank')}
-                        className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 text-sm transition-colors flex items-center gap-2"
+                        className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-sm transition-colors flex items-center gap-2"
                       >
                         <Receipt className="w-4 h-4" />
                         View Receipt
@@ -927,19 +927,19 @@ export default function ExpenseClaims() {
             Reject {selectedClaims.size} Expense Claim{selectedClaims.size !== 1 ? 's' : ''}
           </ModalHeader>
           <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400 mb-4">
+            <p className="text-[var(--text-secondary)] mb-4">
               You are about to reject {selectedClaims.size} expense claim{selectedClaims.size !== 1 ? 's' : ''}.
               Please provide a reason for rejection.
             </p>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Rejection Reason <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={bulkRejectReason}
                 onChange={(e) => setBulkRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Enter reason for rejection..."
               />
             </div>
@@ -947,7 +947,7 @@ export default function ExpenseClaims() {
           <ModalFooter>
             <button
               onClick={() => setShowBulkRejectModal(false)}
-              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
             >
               Cancel
             </button>
@@ -996,18 +996,18 @@ export default function ExpenseClaims() {
             Reject Expense Claim
           </ModalHeader>
           <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400 mb-4">
+            <p className="text-[var(--text-secondary)] mb-4">
               Please provide a reason for rejecting this expense claim.
             </p>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Rejection Reason <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Enter reason for rejection..."
               />
             </div>
@@ -1019,7 +1019,7 @@ export default function ExpenseClaims() {
                 setSelectedClaimForAction(null);
                 setRejectReason('');
               }}
-              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
             >
               Cancel
             </button>

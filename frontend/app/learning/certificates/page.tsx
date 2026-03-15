@@ -166,7 +166,7 @@ export default function CertificateGalleryPage() {
                 placeholder="Search by course name or certificate number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -176,7 +176,7 @@ export default function CertificateGalleryPage() {
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL">All Time</option>
                 <option value="LAST_30">Last 30 Days</option>
@@ -224,7 +224,7 @@ export default function CertificateGalleryPage() {
                       <span className="font-mono text-sm font-semibold text-[var(--text-primary)]">{cert.certificateNumber}</span>
                       <button
                         onClick={() => handleCopyCertificateNumber(cert.certificateNumber)}
-                        className="p-1 hover:bg-gray-200 dark:hover:bg-surface-700 rounded transition-colors"
+                        className="p-1 hover:bg-gray-200 dark:hover:bg-[var(--bg-secondary)] rounded transition-colors"
                         title="Copy certificate number"
                       >
                         {copiedId === cert.certificateNumber ? (
@@ -273,7 +273,7 @@ export default function CertificateGalleryPage() {
                     </button>
                     <button
                       onClick={() => handlePrint(cert.id)}
-                      className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-200 dark:bg-surface-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-surface-600 text-xs font-medium transition-colors"
+                      className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-200 dark:bg-[var(--bg-secondary)] text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-[var(--bg-secondary)] text-xs font-medium transition-colors"
                       title="Print certificate"
                     >
                       <Printer className="h-4 w-4" />
@@ -291,7 +291,7 @@ export default function CertificateGalleryPage() {
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20 border-t border-[var(--border-main)] dark:border-surface-700">
+                <div className="px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-900/20 dark:to-purple-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                   <a
                     href={`/learning/certificates/${cert.id}/verify`}
                     className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1 w-fit"

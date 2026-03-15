@@ -196,12 +196,12 @@ export default function ReviewCyclesPage() {
 
   const getStatusColor = (status: CycleStatus) => {
     switch (status) {
-      case 'PLANNING': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      case 'PLANNING': return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
       case 'ACTIVE': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
       case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
       case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'CANCELLED': return 'bg-red-100 text-red-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -213,7 +213,7 @@ export default function ReviewCyclesPage() {
       case 'MONTHLY': return 'bg-green-100 text-green-800';
       case 'PROBATION': return 'bg-orange-100 text-orange-800';
       case 'PROJECT_END': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -252,16 +252,16 @@ export default function ReviewCyclesPage() {
           </button>
         </div>
 
-        <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="ANNUAL">Annual</option>
@@ -273,13 +273,13 @@ export default function ReviewCyclesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Status
               </label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="ALL">All Status</option>
                 <option value="PLANNING">Planning</option>
@@ -294,11 +294,11 @@ export default function ReviewCyclesPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="text-surface-600 dark:text-surface-400">Loading review cycles...</div>
+            <div className="text-[var(--text-secondary)]">Loading review cycles...</div>
           </div>
         ) : filteredCycles.length === 0 ? (
-          <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-12 text-center">
-            <div className="text-surface-600 dark:text-surface-400 mb-4">No review cycles found</div>
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+            <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
             <button
               onClick={() => {
                 resetFormHandler();
@@ -328,19 +328,19 @@ export default function ReviewCyclesPage() {
                 </div>
 
                 {cycle.description && (
-                  <p className="text-sm text-surface-600 dark:text-surface-400 mb-4 line-clamp-2">{cycle.description}</p>
+                  <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">{cycle.description}</p>
                 )}
 
                 <div className="space-y-2 mb-4">
                   <div className="text-sm">
-                    <span className="text-surface-600 dark:text-surface-400">Period:</span>
+                    <span className="text-[var(--text-secondary)]">Period:</span>
                     <div className="font-medium">
                       {cycle.startDate ? new Date(cycle.startDate).toLocaleDateString() : 'N/A'} - {cycle.endDate ? new Date(cycle.endDate).toLocaleDateString() : 'N/A'}
                     </div>
                   </div>
 
                   <div className="text-sm">
-                    <span className="text-surface-600 dark:text-surface-400">Review Deadline:</span>
+                    <span className="text-[var(--text-secondary)]">Review Deadline:</span>
                     <div className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-red-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-orange-600' : '')}>
                       {cycle.reviewDeadline ? new Date(cycle.reviewDeadline).toLocaleDateString() : 'N/A'}
                       {isDeadlinePassed(cycle.reviewDeadline) && ' (Passed)'}
@@ -350,7 +350,7 @@ export default function ReviewCyclesPage() {
 
                   {cycle.selfReviewDeadline && (
                     <div className="text-sm">
-                      <span className="text-surface-600 dark:text-surface-400">Self Review Deadline:</span>
+                      <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
                       <div className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-red-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-orange-600' : '')}>
                         {new Date(cycle.selfReviewDeadline).toLocaleDateString()}
                         {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
@@ -390,7 +390,7 @@ export default function ReviewCyclesPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
@@ -398,14 +398,14 @@ export default function ReviewCyclesPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Cycle Name *
                       </label>
                       <input
                         type="text"
                         placeholder="e.g., Annual Review 2024"
                         {...register('name')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.name && (
                         <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -413,13 +413,13 @@ export default function ReviewCyclesPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
                       <textarea
                         rows={3}
                         {...register('description')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.description && (
                         <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
@@ -428,12 +428,12 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Cycle Type *
                         </label>
                         <select
                           {...register('cycleType')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="ANNUAL">Annual</option>
                           <option value="SEMI_ANNUAL">Semi-Annual</option>
@@ -448,12 +448,12 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Status *
                         </label>
                         <select
                           {...register('status')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="PLANNING">Planning</option>
                           <option value="ACTIVE">Active</option>
@@ -469,13 +469,13 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Start Date *
                         </label>
                         <input
                           type="date"
                           {...register('startDate')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.startDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -483,13 +483,13 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           End Date *
                         </label>
                         <input
                           type="date"
                           {...register('endDate')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.endDate && (
                           <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -499,13 +499,13 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Deadline *
                         </label>
                         <input
                           type="date"
                           {...register('reviewDeadline')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.reviewDeadline && (
                           <p className="text-red-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
@@ -513,13 +513,13 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Self Review Deadline
                         </label>
                         <input
                           type="date"
                           {...register('selfReviewDeadline')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                         {errors.selfReviewDeadline && (
                           <p className="text-red-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
@@ -535,7 +535,7 @@ export default function ReviewCyclesPage() {
                         setShowModal(false);
                         resetFormHandler();
                       }}
-                      className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>
@@ -555,9 +555,9 @@ export default function ReviewCyclesPage() {
 
         {showDeleteConfirm && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Review Cycle</h2>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete &quot;{selectedCycle.name}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -566,7 +566,7 @@ export default function ReviewCyclesPage() {
                     setShowDeleteConfirm(false);
                     setSelectedCycle(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>
@@ -585,7 +585,7 @@ export default function ReviewCyclesPage() {
         {/* Activate Modal */}
         {showActivateModal && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
@@ -600,7 +600,7 @@ export default function ReviewCyclesPage() {
                 <div className="space-y-6">
                   {/* Scope Type Selection */}
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                       Activation Scope
                     </label>
                     <div className="grid grid-cols-3 gap-3">
@@ -610,10 +610,10 @@ export default function ReviewCyclesPage() {
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'ALL'
                             ? 'border-green-500 tint-success'
-                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <Users className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
                         <span className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-green-700 dark:text-green-400' : ''}`}>
                           All Employees
                         </span>
@@ -624,10 +624,10 @@ export default function ReviewCyclesPage() {
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'DEPARTMENT'
                             ? 'border-green-500 tint-success'
-                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <Building2 className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
                         <span className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-green-700 dark:text-green-400' : ''}`}>
                           By Department
                         </span>
@@ -638,10 +638,10 @@ export default function ReviewCyclesPage() {
                         className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
                           activateFormData.scopeType === 'LOCATION'
                             ? 'border-green-500 tint-success'
-                            : 'border-surface-300 dark:border-surface-600 hover:border-surface-400'
+                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
                         }`}
                       >
-                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-green-600' : 'text-surface-400'}`} />
+                        <MapPin className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-green-600' : 'text-[var(--text-muted)]'}`} />
                         <span className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-green-700 dark:text-green-400' : ''}`}>
                           By Location
                         </span>
@@ -652,23 +652,23 @@ export default function ReviewCyclesPage() {
                   {/* Department Selection */}
                   {activateFormData.scopeType === 'DEPARTMENT' && (
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                         Select Departments
                       </label>
-                      <div className="border border-surface-300 dark:border-surface-600 rounded-lg max-h-48 overflow-y-auto">
+                      <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {departments.length === 0 ? (
-                          <p className="p-4 text-sm text-surface-500">No departments available</p>
+                          <p className="p-4 text-sm text-[var(--text-muted)]">No departments available</p>
                         ) : (
                           departments.map((dept) => (
                             <label
                               key={dept.id}
-                              className="flex items-center gap-3 p-3 hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer border-b border-surface-200 dark:border-surface-700 last:border-b-0"
+                              className="flex items-center gap-3 p-3 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
                             >
                               <input
                                 type="checkbox"
                                 checked={activateFormData.departmentIds?.includes(dept.id) || false}
                                 onChange={() => handleDepartmentToggle(dept.id)}
-                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
                               />
                               <span className="text-sm">{dept.name}</span>
                             </label>
@@ -676,7 +676,7 @@ export default function ReviewCyclesPage() {
                         )}
                       </div>
                       {activateFormData.departmentIds && activateFormData.departmentIds.length > 0 && (
-                        <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                        <p className="mt-2 text-sm text-[var(--text-secondary)]">
                           {activateFormData.departmentIds.length} department(s) selected
                         </p>
                       )}
@@ -686,34 +686,34 @@ export default function ReviewCyclesPage() {
                   {/* Location Selection */}
                   {activateFormData.scopeType === 'LOCATION' && (
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                         Select Locations
                       </label>
-                      <div className="border border-surface-300 dark:border-surface-600 rounded-lg max-h-48 overflow-y-auto">
+                      <div className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {locations.length === 0 ? (
-                          <p className="p-4 text-sm text-surface-500">No locations available</p>
+                          <p className="p-4 text-sm text-[var(--text-muted)]">No locations available</p>
                         ) : (
                           locations.map((loc) => (
                             <label
                               key={loc.id}
-                              className="flex items-center gap-3 p-3 hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer border-b border-surface-200 dark:border-surface-700 last:border-b-0"
+                              className="flex items-center gap-3 p-3 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
                             >
                               <input
                                 type="checkbox"
                                 checked={activateFormData.locationIds?.includes(loc.id) || false}
                                 onChange={() => handleLocationToggle(loc.id)}
-                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                                className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
                               />
                               <div>
                                 <span className="text-sm font-medium">{loc.name}</span>
-                                <span className="text-xs text-surface-500 ml-2">{loc.city}, {loc.country}</span>
+                                <span className="text-xs text-[var(--text-muted)] ml-2">{loc.city}, {loc.country}</span>
                               </div>
                             </label>
                           ))
                         )}
                       </div>
                       {activateFormData.locationIds && activateFormData.locationIds.length > 0 && (
-                        <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                        <p className="mt-2 text-sm text-[var(--text-secondary)]">
                           {activateFormData.locationIds.length} location(s) selected
                         </p>
                       )}
@@ -722,7 +722,7 @@ export default function ReviewCyclesPage() {
 
                   {/* Review Options */}
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-3">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-3">
                       Review Types to Create
                     </label>
                     <div className="space-y-3">
@@ -731,11 +731,11 @@ export default function ReviewCyclesPage() {
                           type="checkbox"
                           checked={activateFormData.createSelfReviews}
                           onChange={(e) => setActivateFormData({ ...activateFormData, createSelfReviews: e.target.checked })}
-                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
                         />
                         <div>
                           <span className="text-sm font-medium">Self Reviews</span>
-                          <p className="text-xs text-surface-500">Each employee will receive a self-assessment form</p>
+                          <p className="text-xs text-[var(--text-muted)]">Each employee will receive a self-assessment form</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer">
@@ -743,11 +743,11 @@ export default function ReviewCyclesPage() {
                           type="checkbox"
                           checked={activateFormData.createManagerReviews}
                           onChange={(e) => setActivateFormData({ ...activateFormData, createManagerReviews: e.target.checked })}
-                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-surface-300 rounded"
+                          className="h-4 w-4 text-green-600 focus:ring-green-500 border-[var(--border-main)] rounded"
                         />
                         <div>
                           <span className="text-sm font-medium">Manager Reviews</span>
-                          <p className="text-xs text-surface-500">Managers will receive review forms for their direct reports</p>
+                          <p className="text-xs text-[var(--text-muted)]">Managers will receive review forms for their direct reports</p>
                         </div>
                       </label>
                     </div>
@@ -761,7 +761,7 @@ export default function ReviewCyclesPage() {
                       setShowActivateModal(false);
                       setSelectedCycle(null);
                     }}
-                    className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                    className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                   >
                     Cancel
                   </button>
@@ -792,7 +792,7 @@ export default function ReviewCyclesPage() {
         {/* Activation Result Modal */}
         {showActivationResult && activationResult && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
                   <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
@@ -802,15 +802,15 @@ export default function ReviewCyclesPage() {
                   Review cycle has been successfully activated
                 </p>
 
-                <div className="w-full bg-surface-100 dark:bg-surface-800 rounded-lg p-4 mb-6">
+                <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-primary-600">{activationResult.employeesInScope}</div>
-                      <div className="text-sm text-surface-600 dark:text-surface-400">Employees in Scope</div>
+                      <div className="text-sm text-[var(--text-secondary)]">Employees in Scope</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-600">{activationResult.reviewsCreated}</div>
-                      <div className="text-sm text-surface-600 dark:text-surface-400">Reviews Created</div>
+                      <div className="text-sm text-[var(--text-secondary)]">Reviews Created</div>
                     </div>
                   </div>
                 </div>

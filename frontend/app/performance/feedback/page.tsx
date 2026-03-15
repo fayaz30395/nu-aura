@@ -139,7 +139,7 @@ export default function FeedbackPage() {
       case 'CONSTRUCTIVE': return 'bg-yellow-100 text-yellow-800';
       case 'GENERAL': return 'bg-primary-50 dark:bg-primary-950/30 text-primary-800 dark:text-primary-400';
       case 'REQUEST': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -175,17 +175,17 @@ export default function FeedbackPage() {
           </button>
         </div>
 
-        <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md mb-6">
+        <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md mb-6">
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab('received')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Received Feedback ({receivedFeedback.length})
             </button>
             <button
               onClick={() => setActiveTab('given')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400 hover:text-surface-800 dark:hover:text-surface-200')}
+              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
             >
               Given Feedback ({givenFeedback.length})
             </button>
@@ -193,13 +193,13 @@ export default function FeedbackPage() {
 
           <div className="p-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
-                className="w-full md:w-1/2 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full md:w-1/2 px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="ALL">All Types</option>
                 <option value="PRAISE">Praise</option>
@@ -213,11 +213,11 @@ export default function FeedbackPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="text-surface-600 dark:text-surface-400">Loading feedback...</div>
+            <div className="text-[var(--text-secondary)]">Loading feedback...</div>
           </div>
         ) : filteredFeedback.length === 0 ? (
-          <div className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-12 text-center">
-            <div className="text-surface-600 dark:text-surface-400 mb-4">
+          <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-12 text-center">
+            <div className="text-[var(--text-secondary)] mb-4">
               No {activeTab === 'received' ? 'received' : 'given'} feedback found
             </div>
             {activeTab === 'given' && (
@@ -235,7 +235,7 @@ export default function FeedbackPage() {
         ) : (
           <div className="space-y-4">
             {filteredFeedback.map((feedback) => (
-              <div key={feedback.id} className="bg-surface-light dark:bg-surface-dark rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div key={feedback.id} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex gap-2 mb-3 flex-wrap">
@@ -243,7 +243,7 @@ export default function FeedbackPage() {
                         {feedback.feedbackType}
                       </span>
                       {feedback.category && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200">
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)]">
                           {feedback.category}
                         </span>
                       )}
@@ -258,7 +258,7 @@ export default function FeedbackPage() {
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-surface-600 dark:text-surface-400 mb-2">
+                    <div className="text-sm text-[var(--text-secondary)] mb-2">
                       {feedback.createdAt ? new Date(feedback.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -271,7 +271,7 @@ export default function FeedbackPage() {
                 </div>
 
                 <div className="mb-4">
-                  <p className="text-surface-800 dark:text-surface-200 whitespace-pre-wrap">{feedback.feedbackText}</p>
+                  <p className="text-[var(--text-primary)] whitespace-pre-wrap">{feedback.feedbackText}</p>
                 </div>
 
                 {activeTab === 'given' && (
@@ -297,7 +297,7 @@ export default function FeedbackPage() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedFeedback ? 'Edit Feedback' : 'Give Feedback'}
@@ -305,14 +305,14 @@ export default function FeedbackPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Recipient Employee ID *
                       </label>
                       <input
                         type="text"
                         placeholder="Enter employee ID"
                         {...register('recipientId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.recipientId && (
                         <p className="text-red-500 text-sm mt-1">{errors.recipientId.message}</p>
@@ -320,12 +320,12 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Feedback Type *
                       </label>
                       <select
                         {...register('feedbackType')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="PRAISE">Praise</option>
                         <option value="CONSTRUCTIVE">Constructive</option>
@@ -338,14 +338,14 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Category
                       </label>
                       <input
                         type="text"
                         placeholder="e.g., Communication, Leadership, Technical Skills"
                         {...register('category')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.category && (
                         <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
@@ -353,14 +353,14 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Feedback *
                       </label>
                       <textarea
                         rows={6}
                         placeholder="Provide detailed feedback..."
                         {...register('feedbackText')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       {errors.feedbackText && (
                         <p className="text-red-500 text-sm mt-1">{errors.feedbackText.message}</p>
@@ -372,9 +372,9 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isAnonymous')}
-                          className="w-4 h-4 text-primary-600 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                          className="w-4 h-4 text-primary-600 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">
                           Submit as anonymous
                         </span>
                       </label>
@@ -383,9 +383,9 @@ export default function FeedbackPage() {
                         <input
                           type="checkbox"
                           {...register('isPublic')}
-                          className="w-4 h-4 text-primary-600 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                          className="w-4 h-4 text-primary-600 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-primary-500"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">
                           Make this feedback public
                         </span>
                       </label>
@@ -399,7 +399,7 @@ export default function FeedbackPage() {
                         setShowModal(false);
                         resetFormHandler();
                       }}
-                      className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>
@@ -419,9 +419,9 @@ export default function FeedbackPage() {
 
         {showDeleteConfirm && selectedFeedback && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-surface-light dark:bg-surface-dark rounded-lg max-w-md w-full p-6">
+            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <h2 className="text-xl font-bold mb-4">Delete Feedback</h2>
-              <p className="text-surface-600 dark:text-surface-400 mb-6">
+              <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete this feedback? This action cannot be undone.
               </p>
               <div className="flex gap-4">
@@ -430,7 +430,7 @@ export default function FeedbackPage() {
                     setShowDeleteConfirm(false);
                     setSelectedFeedback(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>

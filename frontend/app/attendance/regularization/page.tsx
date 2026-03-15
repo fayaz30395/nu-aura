@@ -100,7 +100,7 @@ export default function RegularizationPage() {
       case 'APPROVED': return 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400';
       case 'PENDING': return 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400';
       case 'REJECTED': return 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-400';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
     }
   };
 
@@ -122,8 +122,8 @@ export default function RegularizationPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Attendance Regularization</h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Attendance Regularization</h1>
+            <p className="text-[var(--text-muted)] mt-1">
               Request corrections for your attendance records
             </p>
           </div>
@@ -162,8 +162,8 @@ export default function RegularizationPage() {
                   <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Pending</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-sm text-[var(--text-muted)]">Pending</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {requests.filter((r: RegularizationRequest) => r.status === 'PENDING').length}
                   </p>
                 </div>
@@ -178,8 +178,8 @@ export default function RegularizationPage() {
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Approved</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-sm text-[var(--text-muted)]">Approved</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {requests.filter((r: RegularizationRequest) => r.status === 'APPROVED').length}
                   </p>
                 </div>
@@ -194,8 +194,8 @@ export default function RegularizationPage() {
                   <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Rejected</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <p className="text-sm text-[var(--text-muted)]">Rejected</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">
                     {requests.filter((r: RegularizationRequest) => r.status === 'REJECTED').length}
                   </p>
                 </div>
@@ -207,19 +207,19 @@ export default function RegularizationPage() {
         {/* Requests Table */}
         <Card className="bg-[var(--bg-card)]">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
               Your Regularization Requests
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="text-center py-12 text-surface-500 dark:text-surface-400">
+              <div className="text-center py-12 text-[var(--text-muted)]">
                 Loading requests...
               </div>
             ) : requests.length === 0 ? (
               <div className="text-center py-12">
-                <ClipboardCheck className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                <p className="text-surface-500 dark:text-surface-400 mb-4">No regularization requests found</p>
+                <ClipboardCheck className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <p className="text-[var(--text-muted)] mb-4">No regularization requests found</p>
                 <Button
                   onClick={() => setShowCreateModal(true)}
                   className="bg-primary-500 hover:bg-primary-600 text-white"
@@ -230,24 +230,24 @@ export default function RegularizationPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Original Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Requested Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Reason</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Requested On</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Original Time</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Requested Time</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Reason</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Requested On</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {requests.map((request: RegularizationRequest) => (
-                      <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
+                      <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                           {new Date(request.attendanceDate).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           <div>In: {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'}</div>
                           <div>Out: {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}</div>
                         </td>
@@ -255,7 +255,7 @@ export default function RegularizationPage() {
                           <div>In: --:--</div>
                           <div>Out: --:--</div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs">
                           <div className="truncate" title={request.reason}>
                             {request.reason}
                           </div>
@@ -265,7 +265,7 @@ export default function RegularizationPage() {
                             {request.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {new Date(request.requestedOn).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -296,58 +296,58 @@ export default function RegularizationPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
           <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
             <div className="p-6">
-              <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-6">
+              <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">
                 Request Attendance Regularization
               </h2>
 
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Attendance Date *
                     </label>
                     <input
                       type="date"
                       {...register('attendanceDate')}
                       max={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {errors.attendanceDate && <p className="text-red-500 text-sm mt-1">{errors.attendanceDate.message}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Requested Check In Time *
                       </label>
                       <input
                         type="time"
                         {...register('requestedCheckIn')}
-                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.requestedCheckIn && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckIn.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Requested Check Out Time *
                       </label>
                       <input
                         type="time"
                         {...register('requestedCheckOut')}
-                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.requestedCheckOut && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckOut.message}</p>}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Reason for Regularization *
                     </label>
                     <textarea
                       {...register('reason')}
                       rows={4}
-                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Please explain why you need attendance regularization..."
                     />
                     {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}

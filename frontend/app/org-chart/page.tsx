@@ -62,19 +62,19 @@ export default function OrgChartPage() {
   const renderEmployeeCard = (employee: TreeNode, depth: number = 0) => {
     const hasChildren = employee.children && employee.children.length > 0;
     const levelColors: Record<string, string> = {
-      'CXO': 'bg-purple-100 text-purple-800 border-purple-300',
-      'SVP': 'bg-purple-50 text-purple-700 border-purple-200',
-      'VP': 'bg-blue-100 text-blue-800 border-blue-300',
-      'DIRECTOR': 'bg-blue-50 text-blue-700 border-blue-200',
-      'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300',
-      'MANAGER': 'bg-green-50 text-green-700 border-green-200',
-      'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'SENIOR': 'bg-[var(--bg-surface)] text-gray-800 border-[var(--border-strong)]',
-      'MID': 'bg-surface-50 dark:bg-surface-800/50 text-surface-700 dark:text-surface-300 border-surface-200 dark:border-surface-700',
-      'ENTRY': 'bg-surface-50 dark:bg-surface-800/50 text-surface-600 dark:text-surface-400 border-surface-200 dark:border-surface-700',
+      'CXO': 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-700',
+      'SVP': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-700/50',
+      'VP': 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700',
+      'DIRECTOR': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700/50',
+      'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700',
+      'MANAGER': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700/50',
+      'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700',
+      'SENIOR': 'bg-[var(--bg-surface)] text-gray-800 border-[var(--border-strong)] dark:bg-[var(--bg-surface)] dark:text-gray-300 dark:border-[var(--border-strong)]',
+      'MID': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
+      'ENTRY': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
     };
 
-    const cardColor = employee.level ? levelColors[employee.level] : 'bg-white border-surface-200 dark:border-surface-700';
+    const cardColor = employee.level ? levelColors[employee.level] : 'bg-white border-[var(--border-main)]';
 
     return (
       <div key={employee.id} className="flex flex-col items-center">
@@ -113,7 +113,7 @@ export default function OrgChartPage() {
 
           {hasChildren && (
             <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
-              <div className="bg-gray-300 rounded-full px-2 py-0.5 text-xs font-medium text-surface-700 dark:text-surface-300">
+              <div className="bg-gray-300 rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
                 {employee.children!.length}
               </div>
             </div>
@@ -168,14 +168,14 @@ export default function OrgChartPage() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.entries(deptGroups).map(([deptName, emps]) => (
-          <div key={deptName} className="bg-white rounded-lg border border-surface-200 dark:border-surface-700 shadow-sm">
-            <div className="bg-surface-50 dark:bg-surface-800/50 px-4 py-3 border-b border-surface-200 dark:border-surface-700">
+          <div key={deptName} className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm">
+            <div className="bg-[var(--bg-secondary)]/50 px-4 py-3 border-b border-[var(--border-main)]">
               <h3 className="font-semibold text-[var(--text-primary)]">{deptName}</h3>
-              <p className="text-sm text-surface-600 dark:text-surface-400">{emps.length} employees</p>
+              <p className="text-sm text-[var(--text-secondary)]">{emps.length} employees</p>
             </div>
             <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
               {emps.map(emp => (
-                <div key={emp.id} className="flex items-center space-x-3 p-2 hover:bg-surface-50 dark:bg-surface-800/50 rounded">
+                <div key={emp.id} className="flex items-center space-x-3 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
                   <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
                     <span className="text-xs font-medium text-primary-700">
                       {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) || ''}
@@ -183,7 +183,7 @@ export default function OrgChartPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[var(--text-primary)] truncate">{emp.fullName}</p>
-                    <p className="text-xs text-surface-600 dark:text-surface-400 truncate">{emp.designation}</p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate">{emp.designation}</p>
                   </div>
                   {emp.level && (
                     <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
@@ -204,20 +204,20 @@ export default function OrgChartPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">Organization Chart</h1>
-          <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Chart</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Visualize your company structure and reporting relationships
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-center">
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-center">
           <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">View:</label>
+            <label className="text-sm font-medium text-[var(--text-secondary)]">View:</label>
             <select
               value={viewMode}
               onChange={(e) => setViewMode(e.target.value as 'hierarchy' | 'department')}
-              className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="hierarchy">Hierarchy View</option>
               <option value="department">Department View</option>
@@ -226,11 +226,11 @@ export default function OrgChartPage() {
 
           {viewMode === 'hierarchy' && (
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Department:</label>
+              <label className="text-sm font-medium text-[var(--text-secondary)]">Department:</label>
               <select
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
-                className="px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">All Departments</option>
                 {departments.map((dept) => (
@@ -242,7 +242,7 @@ export default function OrgChartPage() {
             </div>
           )}
 
-          <div className="ml-auto flex items-center space-x-2 text-xs text-surface-600 dark:text-surface-400">
+          <div className="ml-auto flex items-center space-x-2 text-xs text-[var(--text-secondary)]">
             <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">Executive</span>
             <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Director/VP</span>
             <span className="px-2 py-1 bg-green-100 text-green-800 rounded">Manager</span>
@@ -251,12 +251,12 @@ export default function OrgChartPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm p-6">
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-                <p className="mt-4 text-surface-600 dark:text-surface-400">Loading organization chart...</p>
+                <p className="mt-4 text-[var(--text-secondary)]">Loading organization chart...</p>
               </div>
             </div>
           ) : error ? (
@@ -270,7 +270,7 @@ export default function OrgChartPage() {
             </div>
           ) : employees.length === 0 ? (
             <div className="flex items-center justify-center h-64">
-              <div className="text-center text-surface-600 dark:text-surface-400">
+              <div className="text-center text-[var(--text-secondary)]">
                 <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -287,7 +287,7 @@ export default function OrgChartPage() {
                     {orgTree.map(root => renderEmployeeCard(root))}
                   </div>
                 ) : (
-                  <div className="text-center text-surface-600 dark:text-surface-400 py-12">
+                  <div className="text-center text-[var(--text-secondary)] py-12">
                     <p>No organizational hierarchy found</p>
                     <p className="text-sm mt-2">Set up manager relationships in employee profiles</p>
                   </div>

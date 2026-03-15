@@ -96,7 +96,7 @@ export default function LearningPathsPage() {
       case 'BEGINNER': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
       case 'INTERMEDIATE': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
       case 'ADVANCED': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
-      default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200';
+      default: return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
     }
   };
 
@@ -132,7 +132,7 @@ export default function LearningPathsPage() {
                 placeholder="Search learning paths..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               />
             </div>
 
@@ -142,7 +142,7 @@ export default function LearningPathsPage() {
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-surface-700 rounded-lg focus:outline-none focus:border-blue-600 dark:bg-surface-700 dark:text-white"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:border-blue-600 dark:bg-[var(--bg-secondary)] dark:text-white"
               >
                 <option value="ALL">All Difficulty Levels</option>
                 <option value="BEGINNER">Beginner</option>
@@ -229,7 +229,7 @@ export default function LearningPathsPage() {
                         <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
                         <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                       </div>
-                      <div className="w-full h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-blue-600 transition-all duration-300"
                           style={{ width: `${path.progressPercentage}%` }}

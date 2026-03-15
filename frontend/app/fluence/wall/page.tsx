@@ -213,13 +213,13 @@ export default function WallPage(): React.ReactElement {
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
               Social Wall
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Connect, celebrate, and engage with your team
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function WallPage(): React.ReactElement {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 activeFilter === tab.value
                   ? 'bg-violet-600 text-white'
-                  : 'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-600'
+                  : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
               }`}
             >
               {tab.label}
@@ -264,11 +264,11 @@ export default function WallPage(): React.ReactElement {
         ) : posts.length === 0 ? (
           <Card className="border-dashed border-2">
             <CardContent className="py-16 text-center">
-              <MessageSquare className="w-12 h-12 mx-auto mb-3 text-surface-300 dark:text-surface-700" />
-              <h3 className="text-lg font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <MessageSquare className="w-12 h-12 mx-auto mb-3 text-[var(--text-muted)] dark:text-[var(--text-secondary)]" />
+              <h3 className="text-lg font-medium text-[var(--text-secondary)] mb-1">
                 {activeFilter ? `No ${activeFilter.toLowerCase()}s yet` : 'No posts yet'}
               </h3>
-              <p className="text-surface-500 dark:text-surface-400 mb-4">
+              <p className="text-[var(--text-muted)] mb-4">
                 Be the first to share something with your team
               </p>
               <Button className="gap-2 bg-violet-600 hover:bg-violet-700">

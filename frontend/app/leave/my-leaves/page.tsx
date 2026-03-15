@@ -108,11 +108,11 @@ export default function MyLeavesPage() {
         {/* Filters */}
         <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
           <div className="flex gap-4 items-center">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Filter by Status:</label>
+            <label className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
             <select
               value={filterStatus}
               onChange={(e) => { setFilterStatus(e.target.value as LeaveRequestStatus | ''); setCurrentPage(0); }}
-              className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
+              className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
             >
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -151,7 +151,7 @@ export default function MyLeavesPage() {
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-[var(--bg-surface)] dark:bg-surface-800 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center">
                   <CalendarOff className="w-8 h-8 text-gray-400 dark:text-[var(--text-secondary)]" />
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function MyLeavesPage() {
             <>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave Type</th>
@@ -182,20 +182,20 @@ export default function MyLeavesPage() {
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {requests.map((request: LeaveRequest) => (
-                      <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
+                      <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
                           {request.requestNumber}
                         </td>
                         <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
                           {getLeaveTypeName(request.leaveTypeId)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {new Date(request.startDate).toLocaleDateString()} - {new Date(request.endDate).toLocaleDateString()}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {request.totalDays} {request.isHalfDay && '(Half)'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs truncate" title={request.reason}>
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)] max-w-xs truncate" title={request.reason}>
                           {request.reason}
                         </td>
                         <td className="px-6 py-4">
@@ -203,7 +203,7 @@ export default function MyLeavesPage() {
                             {request.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {new Date(request.appliedOn).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -232,15 +232,15 @@ export default function MyLeavesPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-6 py-4 bg-surface-50 dark:bg-surface-800/50 flex justify-between items-center">
+                <div className="px-6 py-4 bg-[var(--bg-secondary)]/50 flex justify-between items-center">
                   <button
                     onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
                     disabled={currentPage === 0}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-[var(--text-primary)]"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)]"
                   >
                     Previous
                   </button>
-                  <div className="text-sm text-surface-700 dark:text-surface-300">
+                  <div className="text-sm text-[var(--text-secondary)]">
                     <span>Showing {currentPage * 10 + 1}–{Math.min((currentPage + 1) * 10, requests.length + currentPage * 10)} of ~{totalPages * 10} results</span>
                     <br />
                     <span>Page {currentPage + 1} of {totalPages}</span>
@@ -248,7 +248,7 @@ export default function MyLeavesPage() {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={currentPage >= totalPages - 1}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg disabled:opacity-50 hover:bg-surface-50 dark:hover:bg-surface-800/50 text-[var(--text-primary)]"
+                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)]"
                   >
                     Next
                   </button>

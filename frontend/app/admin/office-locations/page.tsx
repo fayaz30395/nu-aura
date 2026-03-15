@@ -305,7 +305,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="button"
                   onClick={getCurrentLocation}
-                  className="px-4 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="px-4 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Get Current Location
                 </button>
@@ -325,7 +325,7 @@ export default function OfficeLocationsPage() {
                     setEditingId(null);
                     reset();
                   }}
-                  className="px-6 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                  className="px-6 py-2 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 >
                   Cancel
                 </button>
@@ -339,14 +339,14 @@ export default function OfficeLocationsPage() {
         ) : (
           <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-              <thead className="bg-surface-50 dark:bg-surface-800/50">
+              <thead className="bg-[var(--bg-secondary)]/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Coordinates</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Radius</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Address</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Coordinates</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Radius</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
@@ -360,7 +360,7 @@ export default function OfficeLocationsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div>{location.address}</div>
-                      <div className="text-sm text-surface-600 dark:text-surface-400">
+                      <div className="text-sm text-[var(--text-secondary)]">
                         {location.city}, {location.state}, {location.country}
                       </div>
                     </td>
@@ -372,7 +372,7 @@ export default function OfficeLocationsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        location.isActive ? 'bg-green-100 text-green-800' : 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-200'
+                        location.isActive ? 'bg-green-100 text-green-800' : 'bg-[var(--bg-secondary)] text-[var(--text-primary)]'
                       }`}>
                         {location.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -395,7 +395,7 @@ export default function OfficeLocationsPage() {
                 ))}
                 {locations.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-surface-600 dark:text-surface-400">
+                    <td colSpan={6} className="px-6 py-8 text-center text-[var(--text-secondary)]">
                       No office locations found. Add your first location to enable geofencing.
                     </td>
                   </tr>

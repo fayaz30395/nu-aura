@@ -148,8 +148,8 @@ export default function AdminLeaveRequestsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100">Leave Request Management</h1>
-          <p className="mt-2 text-surface-600 dark:text-surface-400">Review and process employee leave requests</p>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Request Management</h1>
+          <p className="mt-2 text-[var(--text-secondary)]">Review and process employee leave requests</p>
         </div>
 
         {error && (
@@ -159,7 +159,7 @@ export default function AdminLeaveRequestsPage() {
         )}
 
         {/* Status Filter Tabs */}
-        <div className="mb-6 flex space-x-2 border-b border-surface-200 dark:border-surface-700">
+        <div className="mb-6 flex space-x-2 border-b border-[var(--border-main)]">
           {(['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const).map(status => (
             <button
               key={status}
@@ -167,7 +167,7 @@ export default function AdminLeaveRequestsPage() {
               className={`px-6 py-3 font-medium transition-colors ${
                 selectedStatus === status
                   ? 'border-b-2 border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-200'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-secondary)]'
               }`}
             >
               {status}
@@ -178,9 +178,9 @@ export default function AdminLeaveRequestsPage() {
         {/* Leave Requests Table */}
         <div className="bg-[var(--bg-card)] rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
-            <thead className="bg-surface-50 dark:bg-surface-800/50">
+            <thead className="bg-[var(--bg-secondary)]/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
                   Request #
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
@@ -209,26 +209,26 @@ export default function AdminLeaveRequestsPage() {
             <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
               {leaveRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-surface-600 dark:text-surface-400">
+                  <td colSpan={8} className="px-6 py-12 text-center text-[var(--text-secondary)]">
                     No leave requests found for {selectedStatus.toLowerCase()} status
                   </td>
                 </tr>
               ) : (
                 leaveRequests.map(request => (
-                  <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-surface-900 dark:text-surface-100">
+                  <tr key={request.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                       {request.requestNumber}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-600 dark:text-surface-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                       {request.employeeId.substring(0, 8)}...
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-900 dark:text-surface-100">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                       {getLeaveTypeName(request.leaveTypeId)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-600 dark:text-surface-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                       {formatDate(request.startDate)} - {formatDate(request.endDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-600 dark:text-surface-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                       {request.totalDays} {request.isHalfDay && '(Half Day)'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -236,7 +236,7 @@ export default function AdminLeaveRequestsPage() {
                         {request.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-600 dark:text-surface-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-secondary)]">
                       {formatDate(request.appliedOn)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -263,7 +263,7 @@ export default function AdminLeaveRequestsPage() {
                         </>
                       )}
                       {request.status !== 'PENDING' && (
-                        <span className="text-surface-600 dark:text-surface-400">No actions</span>
+                        <span className="text-[var(--text-secondary)]">No actions</span>
                       )}
                     </td>
                   </tr>
@@ -278,19 +278,19 @@ export default function AdminLeaveRequestsPage() {
       {showApproveModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">Approve Leave Request</h3>
-            <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+            <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
             </p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Comments (Optional)
               </label>
               <textarea
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-surface-800 dark:text-white"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-white"
                 placeholder="Add any comments..."
               />
             </div>
@@ -301,7 +301,7 @@ export default function AdminLeaveRequestsPage() {
                   setSelectedRequest(null);
                   setApprovalComments('');
                 }}
-                className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 disabled={approveMutation.isPending}
               >
                 Cancel
@@ -322,19 +322,19 @@ export default function AdminLeaveRequestsPage() {
       {showRejectModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">Reject Leave Request</h3>
-            <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
+            <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-4">
               Please provide a reason for rejecting this leave request.
             </p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Rejection Reason <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-surface-800 dark:text-white"
+                className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-[var(--bg-secondary)] dark:text-white"
                 placeholder="Explain why this request is being rejected..."
                 required
               />
@@ -346,7 +346,7 @@ export default function AdminLeaveRequestsPage() {
                   setSelectedRequest(null);
                   setRejectionReason('');
                 }}
-                className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                 disabled={rejectMutation.isPending}
               >
                 Cancel

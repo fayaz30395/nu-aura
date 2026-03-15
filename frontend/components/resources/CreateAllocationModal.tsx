@@ -838,14 +838,14 @@ export function CreateAllocationModal({
                                   />
                                 </div>
                               </div>
-                              <span className={`text-[10px] font-medium whitespace-nowrap ${
+                              <span className={`text-xs font-medium whitespace-nowrap ${
                                 isAtCapacity ? 'text-amber-600' : 'text-surface-500'
                               }`}>
                                 {totalWithThis}%
                               </span>
                             </div>
                             {allocation.existingAllocations > 0 && (
-                              <div className="text-[10px] text-surface-400 mt-0.5">
+                              <div className="text-xs text-surface-400 mt-0.5">
                                 {allocation.existingAllocations}% in other projects
                               </div>
                             )}
@@ -882,7 +882,7 @@ export function CreateAllocationModal({
                                 />
                                 <Percent className="h-4 w-4 text-surface-400" />
                               </div>
-                              <div className={`text-[10px] ${
+                              <div className={`text-xs ${
                                 isAtCapacity ? 'text-amber-600 font-medium' : 'text-surface-400'
                               }`}>
                                 max: {allocation.availableCapacity}%

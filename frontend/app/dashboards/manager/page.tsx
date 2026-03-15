@@ -203,7 +203,7 @@ export default function ManagerDashboardPage() {
   return (
     <AppLayout activeMenuItem="dashboard">
       <motion.div
-        className="p-6 space-y-8 bg-surface-50/30 dark:bg-surface-950/30 min-h-screen"
+        className="p-6 space-y-8 bg-[var(--bg-secondary)]/30 dark:bg-[var(--bg-primary)]/30 min-h-screen"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -215,10 +215,10 @@ export default function ManagerDashboardPage() {
               <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400">Live Insights</span>
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-surface-900 dark:text-white sm:text-5xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl">
               Team <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Pulse</span>
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-2 text-lg">
+            <p className="text-[var(--text-secondary)] mt-2 text-lg">
               Optimizing productivity for <span className="font-semibold">{dashboardData.departmentName}</span>
             </p>
           </div>
@@ -242,12 +242,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-8">
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Team Force</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)]">Team Force</p>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamOverview.totalTeamSize}</span>
+                    <span className="text-5xl font-black text-[var(--text-primary)]">{teamOverview.totalTeamSize}</span>
                     <div className="h-10 w-1 rounded-full bg-primary-500" />
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-surface-400">Reports</span>
+                      <span className="text-xs font-bold text-[var(--text-muted)]">Reports</span>
                       <span className="text-sm font-bold text-primary-600">{teamOverview.directReports} Direct</span>
                     </div>
                   </div>
@@ -263,12 +263,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-8">
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Availability Today</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)]">Availability Today</p>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamAttendance.presentToday}</span>
+                    <span className="text-5xl font-black text-[var(--text-primary)]">{teamAttendance.presentToday}</span>
                     <div className="h-10 w-1 rounded-full bg-emerald-500" />
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-surface-400">On-Site</span>
+                      <span className="text-xs font-bold text-[var(--text-muted)]">On-Site</span>
                       <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{teamAttendance.workFromHomeToday} WFH</span>
                     </div>
                   </div>
@@ -284,12 +284,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-8">
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Out of Office</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)]">Out of Office</p>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-surface-900 dark:text-white">{teamAttendance.onLeaveToday}</span>
+                    <span className="text-5xl font-black text-[var(--text-primary)]">{teamAttendance.onLeaveToday}</span>
                     <div className="h-10 w-1 rounded-full bg-amber-500" />
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-surface-400">Confirmed</span>
+                      <span className="text-xs font-bold text-[var(--text-muted)]">Confirmed</span>
                       <span className="text-sm font-bold text-amber-600 dark:text-amber-400">{teamLeave.pendingApprovals} Pending</span>
                     </div>
                   </div>
@@ -305,12 +305,12 @@ export default function ManagerDashboardPage() {
               </div>
               <CardContent className="p-8">
                 <div className="flex flex-col gap-4">
-                  <p className="text-sm font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400">Active Tasks</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-[var(--text-muted)]">Active Tasks</p>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-surface-900 dark:text-white">{actionItems.totalActionItems}</span>
+                    <span className="text-5xl font-black text-[var(--text-primary)]">{actionItems.totalActionItems}</span>
                     <div className="h-10 w-1 rounded-full bg-indigo-500" />
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-surface-400">Total</span>
+                      <span className="text-xs font-bold text-[var(--text-muted)]">Total</span>
                       <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{actionItems.overdueApprovals + actionItems.overdueReviews} Alert</span>
                     </div>
                   </div>
@@ -325,7 +325,7 @@ export default function ManagerDashboardPage() {
           {/* Team Attendance Analytics */}
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
-              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+              <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Activity className="h-6 w-6 text-indigo-500" />
@@ -338,13 +338,13 @@ export default function ManagerDashboardPage() {
                 <div className="space-y-8">
                   <div className="grid grid-cols-2 gap-6">
                     <div className="p-6 bg-indigo-500/5 rounded-3xl border border-indigo-500/10">
-                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Weekly Rate</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Weekly Rate</p>
                       <span className="text-3xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tighter">
                         {teamAttendance.weeklyAttendanceRate?.toFixed(1)}%
                       </span>
                     </div>
                     <div className="p-6 bg-emerald-500/5 rounded-3xl border border-emerald-500/10">
-                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Stability</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Stability</p>
                       <div className="flex items-center gap-3">
                         <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tighter">
                           {teamAttendance.monthlyAttendanceRate?.toFixed(1)}%
@@ -385,7 +385,7 @@ export default function ManagerDashboardPage() {
           {/* Team Pulse Radar & Performance */}
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden h-full">
-              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+              <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center gap-3">
                   <Star className="h-6 w-6 text-amber-500" />
                   <span>Performance DNA</span>
@@ -395,15 +395,15 @@ export default function ManagerDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
                   <div className="space-y-8">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Avg Rating</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Avg Rating</p>
                       <div className="flex items-baseline gap-3">
-                        <span className="text-5xl font-black text-surface-900 dark:text-white">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
-                        <span className="text-xl font-bold text-surface-400">/ 5.0</span>
+                        <span className="text-5xl font-black text-[var(--text-primary)]">{teamPerformance.avgPerformanceRating?.toFixed(1)}</span>
+                        <span className="text-xl font-bold text-[var(--text-muted)]">/ 5.0</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-2">Goal Execution</p>
-                      <div className="relative h-4 w-full bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Goal Execution</p>
+                      <div className="relative h-4 w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${teamPerformance.goalCompletionRate}%` }}
@@ -446,7 +446,7 @@ export default function ManagerDashboardPage() {
           {/* Pending Approvals */}
           <motion.div variants={itemVariants} className="lg:col-span-2">
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
-              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+              <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <FileText className="h-6 w-6 text-primary-500" />
@@ -471,19 +471,19 @@ export default function ManagerDashboardPage() {
                           </div>
                           <div>
                             <div className="flex items-center gap-3">
-                              <span className="font-extrabold text-surface-900 dark:text-white group-hover:text-primary-500 transition-colors">{leave.employeeName}</span>
+                              <span className="font-extrabold text-[var(--text-primary)] group-hover:text-primary-500 transition-colors">{leave.employeeName}</span>
                               {leave.urgency === 'HIGH' && (
                                 <span className="animate-pulse flex h-2 w-2 rounded-full bg-red-500" />
                               )}
                             </div>
-                            <p className="text-sm font-bold text-surface-500 mt-1">
+                            <p className="text-sm font-bold text-[var(--text-muted)] mt-1">
                               {leave.leaveType} • {formatDate(leave.startDate)} to {formatDate(leave.endDate)}
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="text-xs font-black uppercase tracking-tighter text-surface-400 block mb-1">Impact</span>
-                          <span className="text-sm font-extrabold text-surface-900 dark:text-white">{leave.days} Days</span>
+                          <span className="text-xs font-black uppercase tracking-tighter text-[var(--text-muted)] block mb-1">Impact</span>
+                          <span className="text-sm font-extrabold text-[var(--text-primary)]">{leave.days} Days</span>
                         </div>
                       </div>
                     </div>
@@ -494,8 +494,8 @@ export default function ManagerDashboardPage() {
                       <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
                         <CheckCircle className="h-10 w-10 text-emerald-500" />
                       </div>
-                      <p className="text-xl font-black text-surface-900 dark:text-white">Clear Pipeline</p>
-                      <p className="text-surface-500 mt-1 font-bold">All approvals are up to date.</p>
+                      <p className="text-xl font-black text-[var(--text-primary)]">Clear Pipeline</p>
+                      <p className="text-[var(--text-muted)] mt-1 font-bold">All approvals are up to date.</p>
                     </div>
                   )}
                 </div>
@@ -506,7 +506,7 @@ export default function ManagerDashboardPage() {
           {/* Action Items Summary */}
           <motion.div variants={itemVariants}>
             <Card className="border-0 shadow-2xl bg-[var(--bg-card)] h-full">
-              <CardHeader className="border-b border-surface-200/50 dark:border-surface-700/50">
+              <CardHeader className="border-b border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50">
                 <CardTitle className="flex items-center gap-3">
                   <ClipboardList className="h-6 w-6 text-indigo-500" />
                   <span>Immediate Acts</span>
@@ -520,14 +520,14 @@ export default function ManagerDashboardPage() {
                     { label: 'Performance', count: actionItems.performanceReviewsDue, icon: Target, color: 'text-purple-500', bg: 'bg-purple-500/10' },
                     { label: 'One-on-Ones', count: actionItems.oneOnOnesDue, icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10' }
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-surface-50/50 dark:bg-surface-800/50 border border-surface-200/20 hover:border-surface-300 dark:hover:border-surface-600 transition-all group">
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]/50 border border-[var(--border-main)]/20 hover:border-[var(--border-main)] dark:hover:border-[var(--border-main)] transition-all group">
                       <div className="flex items-center gap-4">
                         <div className={`p-3 rounded-2xl ${item.bg}`}>
                           <item.icon className={`h-6 w-6 ${item.color}`} />
                         </div>
-                        <span className="font-extrabold text-surface-900 dark:text-white">{item.label}</span>
+                        <span className="font-extrabold text-[var(--text-primary)]">{item.label}</span>
                       </div>
-                      <span className="text-2xl font-black text-surface-900 dark:text-white opacity-40 group-hover:opacity-100 transition-opacity">{item.count}</span>
+                      <span className="text-2xl font-black text-[var(--text-primary)] opacity-40 group-hover:opacity-100 transition-opacity">{item.count}</span>
                     </div>
                   ))}
 
@@ -561,7 +561,7 @@ export default function ManagerDashboardPage() {
                       <div className="h-12 w-12 rounded-2xl bg-red-500 text-white flex items-center justify-center shadow-lg">
                         <AlertTriangle className="h-7 w-7" />
                       </div>
-                      <h2 className="text-3xl font-black text-surface-900 dark:text-white tracking-tight">System Alerts</h2>
+                      <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">System Alerts</h2>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -569,11 +569,11 @@ export default function ManagerDashboardPage() {
                       <div key={alert.id} className="p-6 rounded-3xl bg-white/40 dark:bg-black/20 border border-red-500/10">
                         <div className="flex items-center gap-3 mb-4">
                           <Badge className="bg-red-500 text-white font-black px-3 py-1">CRITICAL</Badge>
-                          <span className="text-xs font-black text-surface-400 uppercase tracking-widest">{alert.type}</span>
+                          <span className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">{alert.type}</span>
                         </div>
-                        <h4 className="font-extrabold text-surface-900 dark:text-white mb-2">{alert.title}</h4>
-                        <p className="text-sm font-bold text-surface-500 leading-relaxed">{alert.description}</p>
-                        <div className="mt-6 pt-6 border-t border-surface-200/50 dark:border-surface-700/50 flex items-center justify-between">
+                        <h4 className="font-extrabold text-[var(--text-primary)] mb-2">{alert.title}</h4>
+                        <p className="text-sm font-bold text-[var(--text-muted)] leading-relaxed">{alert.description}</p>
+                        <div className="mt-6 pt-6 border-t border-[var(--border-main)]/50 dark:border-[var(--border-main)]/50 flex items-center justify-between">
                           <span className="text-xs font-black uppercase text-primary-500">Action: {alert.actionRequired}</span>
                           <Button variant="ghost" size="sm" className="font-black">RESOLVE</Button>
                         </div>
@@ -603,7 +603,7 @@ export default function ManagerDashboardPage() {
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {teamPerformance.goalsOnTrack}
                     </p>
-                    <p className="text-xs text-surface-600 dark:text-surface-400 mt-1">
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">
                       On Track
                     </p>
                   </div>
@@ -611,7 +611,7 @@ export default function ManagerDashboardPage() {
                     <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                       {teamPerformance.goalsAtRisk}
                     </p>
-                    <p className="text-xs text-surface-600 dark:text-surface-400 mt-1">
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">
                       At Risk
                     </p>
                   </div>
@@ -619,22 +619,22 @@ export default function ManagerDashboardPage() {
                     <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {teamPerformance.goalsCompleted}
                     </p>
-                    <p className="text-xs text-surface-600 dark:text-surface-400 mt-1">
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">
                       Completed
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-surface-200 dark:border-surface-700">
+                <div className="pt-4 border-t border-[var(--border-main)]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       Completion Rate
                     </span>
-                    <span className="text-sm font-semibold text-surface-900 dark:text-white">
+                    <span className="text-sm font-semibold text-[var(--text-primary)]">
                       {teamPerformance.goalCompletionRate?.toFixed(0)}%
                     </span>
                   </div>
-                  <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2">
+                  <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
                     <div
                       className="bg-indigo-600 h-2 rounded-full transition-all"
                       style={{ width: `${teamPerformance.goalCompletionRate}%` }}
@@ -655,18 +655,18 @@ export default function ManagerDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       One-on-Ones This Month
                     </span>
-                    <span className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <span className="text-2xl font-bold text-[var(--text-primary)]">
                       {teamPerformance.oneOnOnesCompletedThisMonth}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-surface-500">Scheduled:</span>
-                    <span className="font-semibold text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Scheduled:</span>
+                    <span className="font-semibold text-[var(--text-primary)]">
                       {teamPerformance.oneOnOnesScheduled}
                     </span>
                   </div>
@@ -680,12 +680,12 @@ export default function ManagerDashboardPage() {
                   )}
                 </div>
 
-                <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       Average Feedback Score
                     </span>
-                    <span className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <span className="text-2xl font-bold text-[var(--text-primary)]">
                       {teamPerformance.avgFeedbackScore?.toFixed(1)}
                     </span>
                   </div>
@@ -699,12 +699,12 @@ export default function ManagerDashboardPage() {
                   )}
                 </div>
 
-                <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-lg">
+                <div className="p-4 bg-[var(--bg-secondary)] rounded-lg">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-surface-600 dark:text-surface-400">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       Training Completion
                     </span>
-                    <span className="text-2xl font-bold text-surface-900 dark:text-white">
+                    <span className="text-2xl font-bold text-[var(--text-primary)]">
                       {teamPerformance.trainingCompletionRate?.toFixed(0)}%
                     </span>
                   </div>

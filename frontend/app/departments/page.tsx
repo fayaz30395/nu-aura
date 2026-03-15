@@ -217,8 +217,8 @@ export default function DepartmentsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Departments</h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Departments</h1>
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your organization&apos;s departments and structure
             </p>
           </div>
@@ -241,8 +241,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Total Departments</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{departments.length}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Departments</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{departments.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                   <Building2 className="h-6 w-6 text-primary-600 dark:text-primary-400" />
@@ -255,8 +255,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Active Departments</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{activeDepartments}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Active Departments</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{activeDepartments}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
                   <ToggleRight className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -269,8 +269,8 @@ export default function DepartmentsPage() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Total Employees</p>
-                  <p className="text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{totalEmployees}</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
+                  <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">{totalEmployees}</p>
                 </div>
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
                   <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -294,13 +294,13 @@ export default function DepartmentsPage() {
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search departments by name, code, or type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
           </CardContent>
@@ -312,26 +312,26 @@ export default function DepartmentsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-surface-200 dark:border-surface-700">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                  <tr className="border-b border-[var(--border-main)]">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Department
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Parent
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Manager
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Employees
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -342,7 +342,7 @@ export default function DepartmentsPage() {
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
                           <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" aria-label="Loading departments" />
-                          <span className="text-surface-500 dark:text-surface-400">Loading departments...</span>
+                          <span className="text-[var(--text-muted)]">Loading departments...</span>
                         </div>
                       </td>
                     </tr>
@@ -350,12 +350,12 @@ export default function DepartmentsPage() {
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-3">
-                          <div className="w-16 h-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-                            <Building2 className="h-8 w-8 text-surface-400" />
+                          <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                            <Building2 className="h-8 w-8 text-[var(--text-muted)]" />
                           </div>
                           <div>
-                            <p className="text-surface-900 dark:text-surface-50 font-medium">No departments found</p>
-                            <p className="text-surface-500 dark:text-surface-400 text-sm mt-1">
+                            <p className="text-[var(--text-primary)] font-medium">No departments found</p>
+                            <p className="text-[var(--text-muted)] text-sm mt-1">
                               {searchQuery ? 'Try a different search term' : 'Click "Add Department" to get started'}
                             </p>
                           </div>
@@ -364,15 +364,15 @@ export default function DepartmentsPage() {
                     </tr>
                   ) : (
                     filteredDepartments.map((dept) => (
-                      <tr key={dept.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                      <tr key={dept.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                               <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                             </div>
                             <div>
-                              <p className="font-medium text-surface-900 dark:text-surface-50">{dept.name}</p>
-                              <p className="text-sm text-surface-500 dark:text-surface-400">{dept.code}</p>
+                              <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
+                              <p className="text-sm text-[var(--text-muted)]">{dept.code}</p>
                             </div>
                           </div>
                         </td>
@@ -382,19 +382,19 @@ export default function DepartmentsPage() {
                               {dept.type}
                             </span>
                           ) : (
-                            <span className="text-surface-400">-</span>
+                            <span className="text-[var(--text-muted)]">-</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-surface-900 dark:text-surface-50">
+                        <td className="px-6 py-4 text-[var(--text-primary)]">
                           {dept.parentDepartmentName || '-'}
                         </td>
-                        <td className="px-6 py-4 text-surface-900 dark:text-surface-50">
+                        <td className="px-6 py-4 text-[var(--text-primary)]">
                           {dept.managerName || '-'}
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-surface-400" />
-                            <span className="text-surface-900 dark:text-surface-50">{dept.employeeCount || 0}</span>
+                            <Users className="h-4 w-4 text-[var(--text-muted)]" />
+                            <span className="text-[var(--text-primary)]">{dept.employeeCount || 0}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -410,21 +410,21 @@ export default function DepartmentsPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleEdit(dept)}
-                              className="p-2 rounded-lg text-surface-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleToggleClick(dept)}
-                              className="p-2 rounded-lg text-surface-500 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition-colors"
                               title={dept.isActive ? 'Deactivate' : 'Activate'}
                             >
                               {dept.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
                             </button>
                             <button
                               onClick={() => handleDeleteClick(dept.id)}
-                              className="p-2 rounded-lg text-surface-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                              className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -444,13 +444,13 @@ export default function DepartmentsPage() {
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
             <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="p-6 border-b border-surface-200 dark:border-surface-700">
+              <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
                       <Building2 className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                     </div>
-                    <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+                    <h2 className="text-xl font-bold text-[var(--text-primary)]">
                       {editingDepartment ? 'Edit Department' : 'Add New Department'}
                     </h2>
                   </div>
@@ -460,7 +460,7 @@ export default function DepartmentsPage() {
                       setEditingDepartment(null);
                       reset();
                     }}
-                    className="p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                    className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -470,25 +470,25 @@ export default function DepartmentsPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Code *
                     </label>
                     <input
                       type="text"
                       {...register('code')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
                     />
                     {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Name *
                     </label>
                     <input
                       type="text"
                       {...register('name')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Engineering"
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
@@ -496,13 +496,13 @@ export default function DepartmentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Description
                   </label>
                   <textarea
                     {...register('description')}
                     rows={3}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                     placeholder="Department description..."
                   />
                   {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
@@ -510,7 +510,7 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Type
                     </label>
                     <Controller
@@ -519,7 +519,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">Select Type</option>
                           {departmentTypes.map(type => (
@@ -531,7 +531,7 @@ export default function DepartmentsPage() {
                     {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Parent Department
                     </label>
                     <Controller
@@ -540,7 +540,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">None (Root Department)</option>
                           {departments
@@ -559,7 +559,7 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Manager
                     </label>
                     <Controller
@@ -568,7 +568,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">Select Manager</option>
                           {employees.map((emp) => (
@@ -582,13 +582,13 @@ export default function DepartmentsPage() {
                     {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Location
                     </label>
                     <input
                       type="text"
                       {...register('location')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
                     />
                     {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
@@ -597,13 +597,13 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Cost Center
                     </label>
                     <input
                       type="text"
                       {...register('costCenter')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="CC-1001"
                     />
                     {errors.costCenter && <p className="text-red-500 text-sm mt-1">{errors.costCenter.message}</p>}
@@ -613,21 +613,21 @@ export default function DepartmentsPage() {
                       name="isActive"
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <label className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors">
+                        <label className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors">
                           <input
                             type="checkbox"
                             checked={value}
                             onChange={(e) => onChange(e.target.checked)}
-                            className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                            className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                           />
-                          <span className="ml-3 text-sm font-medium text-surface-700 dark:text-surface-300">Active Department</span>
+                          <span className="ml-3 text-sm font-medium text-[var(--text-secondary)]">Active Department</span>
                         </label>
                       )}
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border-main)]">
                   <Button
                     type="button"
                     variant="outline"

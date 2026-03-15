@@ -49,18 +49,18 @@ export default function TemplatesPage() {
                             <div className="p-2 bg-primary-500/10 rounded-xl">
                                 <Layout className="h-6 w-6 text-primary-600" />
                             </div>
-                            <h1 className="text-4xl font-black tracking-tight text-surface-900 dark:text-white">
+                            <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                                 Checklist <span className="text-primary-600">Templates</span>
                             </h1>
                         </div>
-                        <p className="text-surface-500 font-bold max-w-md">
+                        <p className="text-[var(--text-muted)] font-bold max-w-md">
                             Standardize your onboarding experience with reusable blueprints for different roles and departments.
                         </p>
                     </div>
 
                     <Button
                         variant="primary"
-                        className="font-black tracking-widest uppercase text-[10px] bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
+                        className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-8"
                         leftIcon={<Plus className="h-4 w-4" />}
                         onClick={() => router.push('/onboarding/templates/new')}
                     >
@@ -71,9 +71,9 @@ export default function TemplatesPage() {
                 {/* Templates Grid */}
                 <div className="space-y-6">
                     <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
-                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center">
+                        <div className="p-6 border-b border-[var(--border-main)]/50 flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                                 <Input
                                     placeholder="Search templates..."
                                     className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
@@ -90,11 +90,11 @@ export default function TemplatesPage() {
                                 ))
                             ) : filteredTemplates.length === 0 ? (
                                 <div className="col-span-full p-20 text-center">
-                                    <div className="h-20 w-20 bg-surface-100 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <ClipboardList className="h-10 w-10 text-surface-300" />
+                                    <div className="h-20 w-20 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <ClipboardList className="h-10 w-10 text-[var(--text-muted)]" />
                                     </div>
-                                    <h3 className="text-xl font-black text-surface-900 dark:text-white">No templates found</h3>
-                                    <p className="text-surface-500 font-bold mt-2">Create your first onboarding blueprint to get started.</p>
+                                    <h3 className="text-xl font-black text-[var(--text-primary)]">No templates found</h3>
+                                    <p className="text-[var(--text-muted)] font-bold mt-2">Create your first onboarding blueprint to get started.</p>
                                 </div>
                             ) : (
                                 <AnimatePresence>
@@ -115,15 +115,15 @@ export default function TemplatesPage() {
                                                         <div className="p-3 bg-indigo-500/10 rounded-2xl">
                                                             <ClipboardList className="h-6 w-6 text-indigo-600" />
                                                         </div>
-                                                        <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-[10px] uppercase tracking-widest border-indigo-500/20 text-indigo-600">
+                                                        <Badge variant="outline" className="rounded-xl px-3 py-1 font-black text-xs uppercase tracking-widest border-indigo-500/20 text-indigo-600">
                                                             Blueprint
                                                         </Badge>
                                                     </div>
 
-                                                    <h3 className="text-xl font-black text-surface-900 dark:text-white mb-2 group-hover:text-primary-600 transition-colors">
+                                                    <h3 className="text-xl font-black text-[var(--text-primary)] mb-2 group-hover:text-primary-600 transition-colors">
                                                         {template.name}
                                                     </h3>
-                                                    <p className="text-sm text-surface-500 font-bold mb-6 flex-grow line-clamp-2">
+                                                    <p className="text-sm text-[var(--text-muted)] font-bold mb-6 flex-grow line-clamp-2">
                                                         {template.description || 'No description provided for this template.'}
                                                     </p>
 
@@ -131,10 +131,10 @@ export default function TemplatesPage() {
                                                         <div className="flex items-center gap-2">
                                                             <div className="flex -space-x-2">
                                                                 {[1, 2, 3].map(i => (
-                                                                    <div key={i} className="h-6 w-6 rounded-full bg-surface-200 dark:bg-surface-800 border-2 border-white/50 dark:border-white/10" />
+                                                                    <div key={i} className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-2 border-white/50 dark:border-white/10" />
                                                                 ))}
                                                             </div>
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-surface-400">Reusable</span>
+                                                            <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Reusable</span>
                                                         </div>
                                                         <div className="flex gap-2">
                                                             <Button size="sm" variant="outline" className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">

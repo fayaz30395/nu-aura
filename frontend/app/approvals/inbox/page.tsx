@@ -71,7 +71,7 @@ interface ModuleTab {
 }
 
 const MODULE_TABS: ModuleTab[] = [
-  { key: 'ALL', label: 'All', color: 'bg-surface-200 dark:bg-surface-700', textColor: 'text-surface-700 dark:text-surface-200' },
+  { key: 'ALL', label: 'All', color: 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]', textColor: 'text-[var(--text-secondary)] dark:text-[var(--text-secondary)]200' },
   { key: 'LEAVE', label: 'Leave', entityType: 'LEAVE_REQUEST', color: 'bg-blue-100 dark:bg-blue-900/40', textColor: 'text-blue-700 dark:text-blue-300' },
   { key: 'EXPENSE', label: 'Expense', entityType: 'EXPENSE_CLAIM', color: 'bg-orange-100 dark:bg-orange-900/40', textColor: 'text-orange-700 dark:text-orange-300' },
   { key: 'ASSET', label: 'Asset', entityType: 'ASSET_REQUEST', color: 'bg-slate-100 dark:bg-slate-800/50', textColor: 'text-slate-700 dark:text-slate-300' },
@@ -291,10 +291,10 @@ export default function ApprovalInboxPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Approval Inbox
             </h1>
-            <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               View and act on all pending approval requests.
             </p>
           </div>
@@ -342,17 +342,17 @@ export default function ApprovalInboxPage() {
         </div>
 
         {/* Filters Row */}
-        <div className="flex flex-col gap-3 rounded-xl border border-surface-200 bg-surface-50 p-4 dark:border-surface-700 dark:bg-surface-900/40 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)] p-4 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900/40 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             {/* Status toggle */}
-            <div className="inline-flex rounded-full bg-surface-100 p-1 text-xs dark:bg-surface-800">
+            <div className="inline-flex rounded-full bg-[var(--bg-secondary)] p-1 text-xs dark:bg-[var(--bg-secondary)]">
               <button
                 type="button"
                 onClick={() => handleStatusChange('PENDING')}
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'PENDING'
                     ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-200 dark:text-surface-300'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
                 Pending
@@ -363,7 +363,7 @@ export default function ApprovalInboxPage() {
                 className={`rounded-full px-3 py-1 font-medium transition-colors ${
                   statusFilter === 'ALL'
                     ? 'bg-primary-600 text-white'
-                    : 'text-surface-600 hover:bg-surface-200 dark:text-surface-300'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                 }`}
               >
                 All
@@ -379,7 +379,7 @@ export default function ApprovalInboxPage() {
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     activeTab === tab.key
                       ? `${tab.color} ${tab.textColor} ring-2 ring-primary-400/50`
-                      : 'bg-surface-100 text-surface-500 hover:bg-surface-200 dark:bg-surface-800 dark:text-surface-400'
+                      : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)]'
                   }`}
                 >
                   {tab.label}
@@ -390,7 +390,7 @@ export default function ApprovalInboxPage() {
 
           {/* Search */}
           <div className="relative w-full md:w-64">
-            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-surface-400" />
+            <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-muted)]" />
             <input
               type="text"
               placeholder="Search by title, requester…"
@@ -399,7 +399,7 @@ export default function ApprovalInboxPage() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              className="w-full rounded-lg border border-surface-200 bg-white py-2 pl-9 pr-3 text-sm text-surface-900 shadow-sm placeholder:text-surface-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100"
+              className="w-full rounded-lg border border-[var(--border-main)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] shadow-sm placeholder:text-[var(--text-muted)] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]900 dark:text-[var(--text-primary)]"
             />
           </div>
         </div>
@@ -494,7 +494,7 @@ export default function ApprovalInboxPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="flex items-center justify-center rounded-xl border border-dashed border-surface-200 p-8 text-sm text-surface-500 dark:border-surface-700 dark:text-surface-400">
+                <div className="flex items-center justify-center rounded-xl border border-dashed border-[var(--border-main)] p-8 text-sm text-[var(--text-muted)] dark:border-[var(--border-main)] dark:text-[var(--text-muted)]">
                   Select a task from the left to view details.
                 </div>
               )}
@@ -502,8 +502,8 @@ export default function ApprovalInboxPage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-surface-200 pt-4 dark:border-surface-700">
-                <p className="text-sm text-surface-500 dark:text-surface-400">
+              <div className="flex items-center justify-between border-t border-[var(--border-main)] pt-4 dark:border-[var(--border-main)]">
+                <p className="text-sm text-[var(--text-muted)]">
                   Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of{' '}
                   {totalElements}
                 </p>
@@ -542,19 +542,19 @@ export default function ApprovalInboxPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-surface-600 dark:text-surface-400">
+          <p className="text-sm text-[var(--text-secondary)]">
             Are you sure you want to approve this request from{' '}
             <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>?
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Comment (optional)
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
-              className="mt-1 w-full rounded-lg border border-surface-200 bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -586,19 +586,19 @@ export default function ApprovalInboxPage() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <p className="text-sm text-surface-600 dark:text-surface-400">
+          <p className="text-sm text-[var(--text-secondary)]">
             Please provide a reason for rejecting this request from{' '}
             <strong>{selectedItem?.requesterName ?? 'Unknown'}</strong>.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label className="block text-sm font-medium text-[var(--text-secondary)]">
               Reason <span className="text-red-500">*</span>
             </label>
             <textarea
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being rejected…"
-              className="mt-1 w-full rounded-lg border border-surface-200 bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+              className="mt-1 w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               rows={3}
             />
           </div>
@@ -659,13 +659,13 @@ export default function ApprovalInboxPage() {
 
             {/* Start date */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Start date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('startDate')}
-                className="w-full rounded-lg border border-surface-200 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               />
               {delegationForm.formState.errors.startDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -676,13 +676,13 @@ export default function ApprovalInboxPage() {
 
             {/* End date */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 End date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
                 {...delegationForm.register('endDate')}
-                className="w-full rounded-lg border border-surface-200 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
               />
               {delegationForm.formState.errors.endDate && (
                 <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
@@ -693,13 +693,13 @@ export default function ApprovalInboxPage() {
 
             {/* Reason */}
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Reason (optional)
               </label>
               <textarea
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
-                className="w-full rounded-lg border border-surface-200 bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-surface-700 dark:bg-surface-800"
+                className="w-full rounded-lg border border-[var(--border-main)] bg-white p-3 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]"
                 rows={3}
               />
             </div>
@@ -750,7 +750,7 @@ function SummaryCard({
         {icon}
       </div>
       <div>
-        <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{value}</p>
+        <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
         <p className={`text-xs font-medium ${textColor}`}>{label}</p>
       </div>
     </div>
@@ -785,13 +785,13 @@ function InboxListItem({
               {item.module}
             </span>
             {item.referenceNumber && (
-              <span className="text-xs font-mono text-surface-400">#{item.referenceNumber}</span>
+              <span className="text-xs font-mono text-[var(--text-muted)]">#{item.referenceNumber}</span>
             )}
           </div>
-          <h3 className="mt-1 truncate text-sm font-semibold text-surface-900 dark:text-surface-50">
+          <h3 className="mt-1 truncate text-sm font-semibold text-[var(--text-primary)]">
             {item.title}
           </h3>
-          <p className="mt-0.5 text-xs text-surface-500 dark:text-surface-400">
+          <p className="mt-0.5 text-xs text-[var(--text-muted)]">
             {item.requesterName ?? 'Unknown'}
           </p>
         </div>
@@ -803,7 +803,7 @@ function InboxListItem({
               {format(new Date(item.deadline), 'MMM d')}
             </span>
           )}
-          <span className="text-[11px] text-surface-400">
+          <span className="text-xs text-[var(--text-muted)]">
             {item.submittedAt ? format(new Date(item.submittedAt), 'MMM d, HH:mm') : ''}
           </span>
         </div>
@@ -815,8 +815,8 @@ function InboxListItem({
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase text-surface-500">{label}</p>
-      <p className="mt-1 text-sm text-surface-900 dark:text-surface-50">{value}</p>
+      <p className="text-xs font-medium uppercase text-[var(--text-muted)]">{label}</p>
+      <p className="mt-1 text-sm text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }

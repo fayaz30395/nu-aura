@@ -174,7 +174,7 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
           <button
             key={option.value}
             onClick={() => { setActiveFilter(option.value); setVisibleCount(ITEMS_PER_PAGE); }}
-            className={`px-2.5 py-1 text-[11px] font-medium rounded-full transition-colors ${
+            className={`px-2.5 py-1 text-xs font-medium rounded-full transition-colors ${
               activeFilter === option.value
                 ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
                 : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-gray-200 dark:bg-gray-800 dark:text-[var(--text-muted)] dark:hover:bg-gray-700'
@@ -253,19 +253,19 @@ function FeedCard({ item }: { item: FeedItem }) {
         <div className="flex-1 min-w-0">
           {/* Badge row */}
           <div className="flex items-center gap-1.5 mb-0.5">
-            <span className={`inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded ${colors.badge}`}>
+            <span className={`inline-flex items-center px-1.5 py-0.5 text-xs font-medium rounded ${colors.badge}`}>
               {FEED_LABELS[item.type]}
             </span>
             {item.isPinned && (
-              <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+              <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                 <Pin className="h-2.5 w-2.5" /> Pinned
               </span>
             )}
             {item.isToday && (
-              <span className="text-[10px] font-medium text-green-600 dark:text-green-400">Today</span>
+              <span className="text-xs font-medium text-green-600 dark:text-green-400">Today</span>
             )}
             {item.priority === 'CRITICAL' && (
-              <span className="text-[10px] font-medium text-red-600 dark:text-red-400">Urgent</span>
+              <span className="text-xs font-medium text-red-600 dark:text-red-400">Urgent</span>
             )}
           </div>
 
@@ -293,17 +293,17 @@ function FeedCard({ item }: { item: FeedItem }) {
               )}
               <div className="flex items-center gap-2.5 mt-1">
                 {item.pointsAwarded && item.pointsAwarded > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                     <Star className="h-2.5 w-2.5" /> {item.pointsAwarded} pts
                   </span>
                 )}
                 {(item.likesCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                     <ThumbsUp className="h-2.5 w-2.5" /> {item.likesCount}
                   </span>
                 )}
                 {(item.commentsCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                     <MessageCircle className="h-2.5 w-2.5" /> {item.commentsCount}
                   </span>
                 )}
@@ -349,12 +349,12 @@ function FeedCard({ item }: { item: FeedItem }) {
                 {item.linkedinEngagement && (
                   <>
                     {item.linkedinEngagement.likes > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+                      <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                         <ThumbsUp className="h-2.5 w-2.5" /> {item.linkedinEngagement.likes}
                       </span>
                     )}
                     {item.linkedinEngagement.comments > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
+                      <span className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)]">
                         <MessageCircle className="h-2.5 w-2.5" /> {item.linkedinEngagement.comments}
                       </span>
                     )}
@@ -365,7 +365,7 @@ function FeedCard({ item }: { item: FeedItem }) {
                     href={item.linkedinPostUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-0.5 text-[10px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 ml-auto"
+                    className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 ml-auto"
                   >
                     View on LinkedIn <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -378,21 +378,21 @@ function FeedCard({ item }: { item: FeedItem }) {
           <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
             <button
               onClick={handleLike}
-              className={`inline-flex items-center gap-1 text-[11px] transition-colors ${
+              className={`inline-flex items-center gap-1 text-xs transition-colors ${
                 liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
               }`}
             >
               <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
               {localLikeCount > 0 ? localLikeCount : 'Like'}
             </button>
-            <button className="inline-flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300 transition-colors">
+            <button className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300 transition-colors">
               <MessageCircle className="h-3 w-3" />
               {(item.commentsCount ?? 0) > 0 ? item.commentsCount : 'Comment'}
             </button>
           </div>
 
           {/* Timestamp */}
-          <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[var(--text-muted)]">
+          <div className="flex items-center gap-1.5 mt-1 text-xs text-[var(--text-muted)]">
             <span>{formatFeedDate(item.timestamp)}</span>
             {item.publishedByName && <span>· {item.publishedByName}</span>}
             {item.readCount !== undefined && item.readCount > 0 && (

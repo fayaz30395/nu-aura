@@ -93,8 +93,8 @@ export default function LeavePage() {
         };
       case 'CANCELLED':
         return {
-          bg: 'bg-surface-100 dark:bg-surface-800',
-          text: 'text-surface-600 dark:text-surface-400',
+          bg: 'bg-[var(--bg-secondary)]',
+          text: 'text-[var(--text-secondary)]',
           icon: AlertCircle,
         };
       default:
@@ -133,7 +133,7 @@ export default function LeavePage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading leave data...</p>
+            <p className="text-[var(--text-secondary)]">Loading leave data...</p>
           </div>
         </div>
       </AppLayout>
@@ -146,7 +146,7 @@ export default function LeavePage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error}</p>
+            <p className="text-[var(--text-secondary)]">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
@@ -202,13 +202,13 @@ export default function LeavePage() {
               return (
                 <div
                   key={balance.id}
-                  className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-4 hover:shadow-lg transition-all duration-200"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient}`}>
                       <Icon className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-xs font-medium px-2 py-1 bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 rounded-lg">
+                    <span className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
                       {leaveType?.leaveCode || 'N/A'}
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export default function LeavePage() {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden mb-3">
+                  <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden mb-3">
                     <div
                       className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-300`}
                       style={{ width: `${Math.min(usedPercentage, 100)}%` }}
@@ -243,7 +243,7 @@ export default function LeavePage() {
             })}
 
             {balances.length === 0 && (
-              <div className="col-span-full text-center py-8 text-surface-500 dark:text-surface-400">
+              <div className="col-span-full text-center py-8 text-[var(--text-muted)]">
                 No leave balances found
               </div>
             )}
@@ -251,8 +251,8 @@ export default function LeavePage() {
         </div>
 
         {/* Recent Leave Requests */}
-        <div className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
+        <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-hidden">
+          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               Recent Leave Requests
             </h2>
@@ -275,7 +275,7 @@ export default function LeavePage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-surface-50 dark:bg-surface-800/50">
+                  <tr className="bg-[var(--bg-secondary)]/50">
                     <th className="px-5 py-3 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                       Request #
                     </th>
@@ -305,7 +305,7 @@ export default function LeavePage() {
                     return (
                       <tr
                         key={request.id}
-                        className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                        className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
                       >
                         <td className="px-5 py-4">
                           <span className="text-sm font-medium text-[var(--text-primary)]">
@@ -369,13 +369,13 @@ export default function LeavePage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Apply for Leave
@@ -387,13 +387,13 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               My Leaves
@@ -405,13 +405,13 @@ export default function LeavePage() {
 
           <button
             onClick={() => router.push('/leave/calendar')}
-            className="group bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />
             </div>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Leave Calendar

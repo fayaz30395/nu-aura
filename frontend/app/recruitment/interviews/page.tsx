@@ -87,14 +87,14 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           placeholder={selectedOption ? selectedOption.label : placeholder}
-          className="w-full px-3 py-2.5 pr-8 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+          className="w-full px-3 py-2.5 pr-8 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
         />
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400 pointer-events-none" />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
       </div>
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-xl shadow-lg">
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded-xl shadow-lg">
           {filtered.length === 0 ? (
-            <div className="px-3 py-2 text-sm text-surface-400">No results found</div>
+            <div className="px-3 py-2 text-sm text-[var(--text-muted)]">No results found</div>
           ) : (
             filtered.map(option => (
               <button
@@ -102,12 +102,12 @@ function SearchableSelect({ options, value, onChange, placeholder = 'Search...',
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors ${
-                  option.value === value ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-surface-900 dark:text-surface-50'
+                  option.value === value ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' : 'text-[var(--text-primary)]'
                 }`}
               >
                 <div className="font-medium">{option.label}</div>
                 {option.subtitle && (
-                  <div className="text-xs text-surface-400 dark:text-surface-500">{option.subtitle}</div>
+                  <div className="text-xs text-[var(--text-muted)]">{option.subtitle}</div>
                 )}
               </button>
             ))
@@ -124,8 +124,8 @@ function InterviewsPageLoading() {
   return (
     <AppLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-surface-200 dark:bg-surface-700 rounded w-1/4" />
-        <div className="h-64 bg-surface-200 dark:bg-surface-700 rounded" />
+        <div className="h-8 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded w-1/4" />
+        <div className="h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded" />
       </div>
     </AppLayout>
   );
@@ -483,8 +483,8 @@ const getStatusColor = (status: InterviewStatus): string => {
     case 'RESCHEDULED': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
     case 'COMPLETED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
     case 'CANCELLED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-    case 'NO_SHOW': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-    default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    case 'NO_SHOW': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   }
 };
 
@@ -493,8 +493,8 @@ const getResultColor = (result?: InterviewResult): string => {
     case 'SELECTED': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
     case 'REJECTED': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
     case 'ON_HOLD': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-    case 'PENDING': return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
-    default: return 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-300';
+    case 'PENDING': return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+    default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   }
 };
 
@@ -539,8 +539,8 @@ const formatDateTime = (dateString?: string): string => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interviews</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">Schedule and manage candidate interviews</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Interviews</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Schedule and manage candidate interviews</p>
           </div>
           <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -557,8 +557,8 @@ const formatDateTime = (dateString?: string): string => {
                   <Calendar className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Total</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Total</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -570,8 +570,8 @@ const formatDateTime = (dateString?: string): string => {
                   <Clock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Scheduled</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.scheduled}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Scheduled</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.scheduled}</p>
                 </div>
               </div>
             </CardContent>
@@ -583,8 +583,8 @@ const formatDateTime = (dateString?: string): string => {
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Completed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.completed}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -596,8 +596,8 @@ const formatDateTime = (dateString?: string): string => {
                   <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Pending Decision</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">{stats.pending}</p>
+                  <p className="text-sm text-[var(--text-muted)]">Pending Decision</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
@@ -609,19 +609,19 @@ const formatDateTime = (dateString?: string): string => {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
                 <input
                   type="text"
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Status</option>
                 <option value="SCHEDULED">Scheduled</option>
@@ -639,8 +639,8 @@ const formatDateTime = (dateString?: string): string => {
           <CardContent className="p-0">
             {filteredInterviews.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                <p className="text-surface-500 dark:text-surface-400">No interviews found</p>
+                <Calendar className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <p className="text-[var(--text-muted)]">No interviews found</p>
                 <Button onClick={() => { resetCreate(); setEditingInterview(null); setShowAddModal(true); }} className="mt-4">
                   Schedule First Interview
                 </Button>
@@ -648,47 +648,47 @@ const formatDateTime = (dateString?: string): string => {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-surface-50 dark:bg-surface-800/50">
+                  <thead className="bg-[var(--bg-secondary)]/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Candidate</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Job</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Round</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Scheduled</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Interviewer</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Result</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Candidate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Job</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Round</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Scheduled</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Interviewer</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Result</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
                     {filteredInterviews.map((interview) => (
-                      <tr key={interview.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                      <tr key={interview.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
                               <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-surface-900 dark:text-surface-50">{interview.candidateName || 'Unknown'}</div>
+                              <div className="text-sm font-medium text-[var(--text-primary)]">{interview.candidateName || 'Unknown'}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           {interview.jobTitle || '-'}
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             {getTypeIcon(interview.interviewType)}
-                            <span className="text-sm text-surface-900 dark:text-surface-50">
+                            <span className="text-sm text-[var(--text-primary)]">
                               {interview.interviewRound?.replace(/_/g, ' ') || '-'}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-surface-900 dark:text-surface-50">{formatDateTime(interview.scheduledAt)}</div>
-                          <div className="text-xs text-surface-500 dark:text-surface-400">{interview.durationMinutes} min</div>
+                          <div className="text-sm text-[var(--text-primary)]">{formatDateTime(interview.scheduledAt)}</div>
+                          <div className="text-xs text-[var(--text-muted)]">{interview.durationMinutes} min</div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400">
+                        <td className="px-6 py-4 text-sm text-[var(--text-secondary)]">
                           <div>{interview.interviewerName || '-'}</div>
                           {(interview.googleMeetLink || interview.meetingLink) && (
                             <a
@@ -727,7 +727,7 @@ const formatDateTime = (dateString?: string): string => {
                             {interview.status === 'SCHEDULED' && (
                               <button
                                 onClick={() => handleProvideFeedback(interview)}
-                                className="p-2 text-surface-500 hover:text-green-600 dark:text-surface-400 dark:hover:text-green-400 transition-colors"
+                                className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:text-[var(--text-muted)] dark:hover:text-green-400 transition-colors"
                                 title="Provide Feedback"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -735,14 +735,14 @@ const formatDateTime = (dateString?: string): string => {
                             )}
                             <button
                               onClick={() => handleEdit(interview)}
-                              className="p-2 text-surface-500 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-primary-600 dark:text-[var(--text-muted)] dark:hover:text-primary-400 transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => { setInterviewToDelete(interview); setShowDeleteModal(true); }}
-                              className="p-2 text-surface-500 hover:text-red-600 dark:text-surface-400 dark:hover:text-red-400 transition-colors"
+                              className="p-2 text-[var(--text-muted)] hover:text-red-600 dark:text-[var(--text-muted)] dark:hover:text-red-400 transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -761,13 +761,13 @@ const formatDateTime = (dateString?: string): string => {
         {/* Add/Edit Modal */}
         {showAddModal && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
                   </h2>
-                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -775,7 +775,7 @@ const formatDateTime = (dateString?: string): string => {
                 <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Candidate *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate *</label>
                       <SearchableSelect
                         options={candidates.map(c => ({ value: c.id, label: c.fullName, subtitle: c.jobTitle || c.email }))}
                         value={watchCreate('candidateId') || ''}
@@ -791,7 +791,7 @@ const formatDateTime = (dateString?: string): string => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening *</label>
                       <SearchableSelect
                         options={jobOpenings.map(j => ({ value: j.id, label: j.jobTitle, subtitle: j.departmentName || j.location }))}
                         value={watchCreate('jobOpeningId') || ''}
@@ -804,10 +804,10 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Round</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Round</label>
                       <select
                         {...registerCreate('interviewRound')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="SCREENING">Screening</option>
                         <option value="TECHNICAL_1">Technical 1</option>
@@ -818,10 +818,10 @@ const formatDateTime = (dateString?: string): string => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interview Type</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interview Type</label>
                       <select
                         {...registerCreate('interviewType')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="VIDEO">Video Call</option>
                         <option value="PHONE">Phone</option>
@@ -832,29 +832,29 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Scheduled Date & Time *</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Scheduled Date & Time *</label>
                       <input
                         type="datetime-local"
                         {...registerCreate('scheduledAt')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errorsCreate.scheduledAt && <p className="text-red-500 text-xs mt-1">{errorsCreate.scheduledAt.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Duration (minutes)</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Duration (minutes)</label>
                       <input
                         type="number"
                         min="15"
                         step="15"
                         {...registerCreate('durationMinutes')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errorsCreate.durationMinutes && <p className="text-red-500 text-xs mt-1">{errorsCreate.durationMinutes.message}</p>}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Interviewer</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interviewer</label>
                     <SearchableSelect
                       options={interviewers.map((emp: Employee) => ({ value: emp.id, label: emp.fullName, subtitle: emp.designation || emp.departmentName }))}
                       value={watchCreate('interviewerId') || ''}
@@ -865,12 +865,12 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Google Meet Toggle */}
                   {!editingInterview && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
                       <div className="flex items-center gap-2 flex-1">
                         <Video className="h-5 w-5 text-blue-500" />
                         <div>
-                          <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Auto-create Google Meet</span>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">
+                          <span className="text-sm font-medium text-[var(--text-secondary)]">Auto-create Google Meet</span>
+                          <p className="text-xs text-[var(--text-muted)]">
                             {hasValidGoogleToken()
                               ? 'Creates a Calendar event with Meet link automatically'
                               : 'Sign in with Google to enable Meet link generation'}
@@ -896,7 +896,7 @@ const formatDateTime = (dateString?: string): string => {
                           }
                         }}
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/20 ${
-                          createMeetToggle ? 'bg-blue-500' : 'bg-surface-300 dark:bg-surface-600'
+                          createMeetToggle ? 'bg-blue-500' : 'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]600'
                         } ${!hasValidGoogleToken() ? 'opacity-50 cursor-not-allowed' : ''}`}
                         disabled={!hasValidGoogleToken()}
                       >
@@ -926,7 +926,7 @@ const formatDateTime = (dateString?: string): string => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         {createMeetToggle ? 'Meeting Link (auto-generated)' : 'Meeting Link'}
                       </label>
                       <input
@@ -934,26 +934,26 @@ const formatDateTime = (dateString?: string): string => {
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}
                         disabled={createMeetToggle}
-                        className={`w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
+                        className={`w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 ${
                           createMeetToggle ? 'opacity-60 cursor-not-allowed' : ''
                         }`}
                       />
                       {errorsCreate.meetingLink && <p className="text-red-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Location</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
                       <input
                         type="text"
                         {...registerCreate('location')}
                         placeholder="Conference Room A"
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">Notes</label>
+                      <label className="block text-sm font-medium text-[var(--text-secondary)]">Notes</label>
                       <button
                         type="button"
                         onClick={handleGenerateQuestions}
@@ -968,11 +968,11 @@ const formatDateTime = (dateString?: string): string => {
                       rows={3}
                       {...registerCreate('notes')}
                       placeholder="Additional notes..."
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="flex-1">
                       Cancel
                     </Button>
@@ -989,24 +989,24 @@ const formatDateTime = (dateString?: string): string => {
         {/* Feedback Modal */}
         {showFeedbackModal && selectedInterview && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Interview Feedback</h2>
-                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">Interview Feedback</h2>
+                  <button onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
 
-                <div className="mb-4 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                  <p className="text-sm text-surface-500 dark:text-surface-400">Candidate</p>
-                  <p className="font-medium text-surface-900 dark:text-surface-50">{selectedInterview.candidateName}</p>
-                  <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
+                <div className="mb-4 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                  <p className="text-sm text-[var(--text-muted)]">Candidate</p>
+                  <p className="font-medium text-[var(--text-primary)]">{selectedInterview.candidateName}</p>
+                  <p className="text-sm text-[var(--text-muted)] mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
                 </div>
 
                 <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Rating (1-5)</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Rating (1-5)</label>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((rating) => (
                         <button
@@ -1016,7 +1016,7 @@ const formatDateTime = (dateString?: string): string => {
                           className={`p-2 rounded-xl transition-colors ${
                             watchFeedback('rating') === rating
                               ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
-                              : 'bg-surface-100 dark:bg-surface-800 text-surface-400 hover:text-yellow-500'
+                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-yellow-500'
                           }`}
                         >
                           <Star className={`h-6 w-6 ${watchFeedback('rating') && watchFeedback('rating') >= rating ? 'fill-current' : ''}`} />
@@ -1026,10 +1026,10 @@ const formatDateTime = (dateString?: string): string => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Result</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Result</label>
                     <select
                       {...registerFeedback('result')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     >
                       <option value="PENDING">Pending</option>
                       <option value="SELECTED">Selected</option>
@@ -1039,17 +1039,17 @@ const formatDateTime = (dateString?: string): string => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Feedback *</label>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Feedback *</label>
                     <textarea
                       rows={4}
                       {...registerFeedback('feedback')}
                       placeholder="Provide detailed feedback about the candidate's performance..."
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="flex-1">
                       Cancel
                     </Button>
@@ -1066,15 +1066,15 @@ const formatDateTime = (dateString?: string): string => {
         {/* Delete Modal */}
         {showDeleteModal && interviewToDelete && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-[var(--border-main)] shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="ml-4 text-lg font-medium text-surface-900 dark:text-surface-50">Delete Interview</h3>
+                <h3 className="ml-4 text-lg font-medium text-[var(--text-primary)]">Delete Interview</h3>
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Are you sure you want to delete this interview for <strong className="text-surface-700 dark:text-surface-300">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
+              <p className="text-sm text-[var(--text-muted)] mb-6">
+                Are you sure you want to delete this interview for <strong className="text-[var(--text-secondary)]">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
@@ -1091,14 +1091,14 @@ const formatDateTime = (dateString?: string): string => {
         {/* AI Interview Questions Modal */}
         {showQuestionsModal && generatedQuestions && (
           <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--border-main)] shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-primary-500" />
-                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">AI Interview Questions</h2>
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">AI Interview Questions</h2>
                   </div>
-                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300">
+                  <button onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]">
                     <X className="h-6 w-6" />
                   </button>
                 </div>
@@ -1107,12 +1107,12 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Technical Questions */}
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Technical Questions</h3>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Technical Questions</h3>
                       <div className="space-y-3">
                         {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
+                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
+                              <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
                                 q.difficulty === 'easy' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
                                 q.difficulty === 'medium' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
@@ -1121,7 +1121,7 @@ const formatDateTime = (dateString?: string): string => {
                                 {q.difficulty}
                               </span>
                             </div>
-                            {q.purpose && <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Purpose: {q.purpose}</p>}
+                            {q.purpose && <p className="text-xs text-[var(--text-muted)] mt-2">Purpose: {q.purpose}</p>}
                           </div>
                         ))}
                       </div>
@@ -1131,12 +1131,12 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Behavioral Questions */}
                   {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Behavioral Questions</h3>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Behavioral Questions</h3>
                       <div className="space-y-3">
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
-                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Competency: {q.competency}</span>
+                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                            <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
+                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Competency: {q.competency}</span>
                           </div>
                         ))}
                       </div>
@@ -1146,12 +1146,12 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Situational Questions */}
                   {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Situational Questions</h3>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Situational Questions</h3>
                       <div className="space-y-3">
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
-                            <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">Scenario: {q.scenario}</p>
+                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                            <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
+                            <p className="text-xs text-[var(--text-muted)] mt-2">Scenario: {q.scenario}</p>
                           </div>
                         ))}
                       </div>
@@ -1161,12 +1161,12 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Cultural Fit Questions */}
                   {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Cultural Fit Questions</h3>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Cultural Fit Questions</h3>
                       <div className="space-y-3">
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
-                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Value: {q.value}</span>
+                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                            <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
+                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Value: {q.value}</span>
                           </div>
                         ))}
                       </div>
@@ -1176,12 +1176,12 @@ const formatDateTime = (dateString?: string): string => {
                   {/* Role-Specific Questions */}
                   {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">Role-Specific Questions</h3>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Role-Specific Questions</h3>
                       <div className="space-y-3">
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                            <p className="text-sm text-surface-900 dark:text-surface-50">{q.question}</p>
-                            <span className="text-xs text-surface-500 dark:text-surface-400 mt-2 block">Focus: {q.focus}</span>
+                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                            <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
+                            <span className="text-xs text-[var(--text-muted)] mt-2 block">Focus: {q.focus}</span>
                           </div>
                         ))}
                       </div>
@@ -1189,7 +1189,7 @@ const formatDateTime = (dateString?: string): string => {
                   )}
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-surface-200 dark:border-surface-700 mt-6">
+                <div className="flex gap-3 pt-4 border-t border-[var(--border-main)] mt-6">
                   <Button type="button" variant="outline" onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="flex-1">
                     Close
                   </Button>

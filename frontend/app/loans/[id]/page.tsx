@@ -32,8 +32,8 @@ export default function LoanDetailPage() {
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
       DRAFT: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: FileText,
       },
       PENDING_APPROVAL: {
@@ -81,7 +81,7 @@ export default function LoanDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading loan details...</p>
+            <p className="text-[var(--text-secondary)]">Loading loan details...</p>
           </div>
         </div>
       </AppLayout>
@@ -94,7 +94,7 @@ export default function LoanDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Loan not found'}
             </p>
             <button
@@ -122,13 +122,13 @@ export default function LoanDetailPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
               </h1>
               <span
@@ -138,7 +138,7 @@ export default function LoanDetailPage() {
                 {loan.status.replace('_', ' ')}
               </span>
             </div>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               {loanService.getLoanTypeLabel(loan.loanType)}
             </p>
           </div>
@@ -146,42 +146,42 @@ export default function LoanDetailPage() {
 
         {/* Amount Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
                 <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <span className="text-sm text-surface-500 dark:text-surface-400">
+              <span className="text-sm text-[var(--text-muted)]">
                 {loan.approvedAmount ? 'Approved Amount' : 'Requested Amount'}
               </span>
             </div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.approvedAmount || loan.requestedAmount)}
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
-              <span className="text-sm text-surface-500 dark:text-surface-400">Amount Repaid</span>
+              <span className="text-sm text-[var(--text-muted)]">Amount Repaid</span>
             </div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.amountRepaid)}
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
                 <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
-              <span className="text-sm text-surface-500 dark:text-surface-400">
+              <span className="text-sm text-[var(--text-muted)]">
                 Remaining Balance
               </span>
             </div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">
               {loanService.formatCurrency(loan.remainingBalance)}
             </p>
           </div>
@@ -189,22 +189,22 @@ export default function LoanDetailPage() {
 
         {/* Progress Bar */}
         {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                 Repayment Progress
               </h3>
               <span className="text-sm font-medium text-primary-600 dark:text-primary-400">
                 {progress.toFixed(1)}% Complete
               </span>
             </div>
-            <div className="h-3 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+            <div className="h-3 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-sm text-surface-500 dark:text-surface-400">
+            <div className="flex justify-between mt-2 text-sm text-[var(--text-muted)]">
               <span>Paid: {loanService.formatCurrency(loan.amountRepaid)}</span>
               <span>Remaining: {loanService.formatCurrency(loan.remainingBalance)}</span>
             </div>
@@ -212,39 +212,39 @@ export default function LoanDetailPage() {
         )}
 
         {/* Loan Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
             Loan Details
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Interest Rate</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Interest Rate</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.interestRate}% per annum
               </p>
             </div>
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Loan Term</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Loan Term</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.termMonths} months
               </p>
             </div>
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Monthly Payment</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Monthly Payment</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.monthlyPayment ? loanService.formatCurrency(loan.monthlyPayment) : 'N/A'}
               </p>
             </div>
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Repayment Frequency</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Repayment Frequency</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {loan.repaymentFrequency.replace('_', ' ')}
               </p>
             </div>
             {loan.nextPaymentDate && (
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Next Payment Date</p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-muted)] mb-1">Next Payment Date</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(loan.nextPaymentDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'short',
@@ -254,8 +254,8 @@ export default function LoanDetailPage() {
               </div>
             )}
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Request Date</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Request Date</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {new Date(loan.requestDate).toLocaleDateString('en-IN', {
                   day: '2-digit',
                   month: 'short',
@@ -267,37 +267,37 @@ export default function LoanDetailPage() {
         </div>
 
         {/* Purpose */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
             Purpose
           </h3>
-          <p className="text-surface-700 dark:text-surface-300">{loan.purpose}</p>
+          <p className="text-[var(--text-secondary)]">{loan.purpose}</p>
           {loan.notes && (
             <>
-              <h4 className="text-sm font-medium text-surface-500 dark:text-surface-400 mt-4 mb-2">
+              <h4 className="text-sm font-medium text-[var(--text-muted)] mt-4 mb-2">
                 Additional Notes
               </h4>
-              <p className="text-surface-600 dark:text-surface-400">{loan.notes}</p>
+              <p className="text-[var(--text-secondary)]">{loan.notes}</p>
             </>
           )}
         </div>
 
         {/* Approval Info */}
         {loan.approvedDate && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Approved By</p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-muted)] mb-1">Approved By</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {loan.approverName || 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Approved Date</p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-muted)] mb-1">Approved Date</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(loan.approvedDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'short',
@@ -307,8 +307,8 @@ export default function LoanDetailPage() {
               </div>
               {loan.disbursedDate && (
                 <div>
-                  <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Disbursed Date</p>
-                  <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                  <p className="text-sm text-[var(--text-muted)] mb-1">Disbursed Date</p>
+                  <p className="text-lg font-medium text-[var(--text-primary)]">
                     {new Date(loan.disbursedDate).toLocaleDateString('en-IN', {
                       day: '2-digit',
                       month: 'short',
@@ -338,7 +338,7 @@ export default function LoanDetailPage() {
         <div className="flex justify-end gap-3">
           <button
             onClick={() => router.push('/loans')}
-            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Back to Loans
           </button>

@@ -118,17 +118,17 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <Card className="bg-[var(--bg-card)] border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
+          <Card className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
             <CardContent className="pt-8 pb-8 text-center space-y-4">
               <div className="flex justify-center">
                 <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                   <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
               </div>
-              <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-100">
+              <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Account Created Successfully
               </h2>
-              <p className="text-sm text-surface-600 dark:text-surface-400">
+              <p className="text-sm text-[var(--text-secondary)]">
                 Your organisation has been set up. Sign in with your admin credentials to get started.
               </p>
               <Button
@@ -160,13 +160,13 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Set up your organisation in minutes
           </p>
         </div>
 
         {/* Signup Card */}
-        <Card className="bg-[var(--bg-card)] border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
+        <Card className="bg-[var(--bg-card)] border-[var(--border-main)]/80 dark:border-[var(--border-main)]/80 shadow-soft-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">Create your account</CardTitle>
             <CardDescription>Start your free trial — no credit card required</CardDescription>
@@ -183,14 +183,14 @@ export default function SignupPage() {
 
               {/* Company Section */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
                   <Building2 className="w-4 h-4" />
                   Company Details
                 </h3>
 
                 {/* Company Name */}
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Company Name
                   </label>
                   <input
@@ -199,10 +199,10 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.companyName
                         ? 'border-red-500 dark:border-red-500'
-                        : 'border-surface-200 dark:border-surface-700'
+                        : 'border-[var(--border-main)]'
                     }`}
                   />
                   {errors.companyName && (
@@ -212,22 +212,22 @@ export default function SignupPage() {
 
                 {/* Company Code */}
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Company Code
-                    <span className="ml-1 text-xs text-surface-500">(used in URLs, lowercase)</span>
+                    <span className="ml-1 text-xs text-[var(--text-muted)]">(used in URLs, lowercase)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Hash className="h-4 w-4 text-surface-400" />
+                      <Hash className="h-4 w-4 text-[var(--text-muted)]" />
                     </div>
                     <input
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
                           ? 'border-red-500 dark:border-red-500'
-                          : 'border-surface-200 dark:border-surface-700'
+                          : 'border-[var(--border-main)]'
                       }`}
                     />
                   </div>
@@ -239,7 +239,7 @@ export default function SignupPage() {
 
               {/* Admin Account Section */}
               <div className="space-y-4 pt-2">
-                <h3 className="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide flex items-center gap-2">
                   <User className="w-4 h-4" />
                   Admin Account
                 </h3>
@@ -247,17 +247,17 @@ export default function SignupPage() {
                 {/* Name Row */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)]">
                       First Name
                     </label>
                     <input
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
                           ? 'border-red-500 dark:border-red-500'
-                          : 'border-surface-200 dark:border-surface-700'
+                          : 'border-[var(--border-main)]'
                       }`}
                     />
                     {errors.adminFirstName && (
@@ -265,17 +265,17 @@ export default function SignupPage() {
                     )}
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)]">
                       Last Name
                     </label>
                     <input
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminLastName
                           ? 'border-red-500 dark:border-red-500'
-                          : 'border-surface-200 dark:border-surface-700'
+                          : 'border-[var(--border-main)]'
                       }`}
                     />
                     {errors.adminLastName && (
@@ -286,22 +286,22 @@ export default function SignupPage() {
 
                 {/* Email */}
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Work Email
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-surface-400" />
+                      <Mail className="h-5 w-5 text-[var(--text-muted)]" />
                     </div>
                     <input
                       {...register('adminEmail')}
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminEmail
                           ? 'border-red-500 dark:border-red-500'
-                          : 'border-surface-200 dark:border-surface-700'
+                          : 'border-[var(--border-main)]'
                       }`}
                     />
                   </div>
@@ -312,29 +312,29 @@ export default function SignupPage() {
 
                 {/* Password */}
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)]">
                     Password
-                    <span className="ml-1 text-xs text-surface-500">(min. 8 characters)</span>
+                    <span className="ml-1 text-xs text-[var(--text-muted)]">(min. 8 characters)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-surface-400" />
+                      <Lock className="h-5 w-5 text-[var(--text-muted)]" />
                     </div>
                     <input
                       {...register('password')}
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-[var(--text-primary)] placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.password
                           ? 'border-red-500 dark:border-red-500'
-                          : 'border-surface-200 dark:border-surface-700'
+                          : 'border-[var(--border-main)]'
                       }`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -357,7 +357,7 @@ export default function SignupPage() {
                 {isLoading ? 'Creating your account...' : 'Create Account'}
               </Button>
 
-              <p className="text-xs text-center text-surface-500 dark:text-surface-400">
+              <p className="text-xs text-center text-[var(--text-muted)]">
                 By creating an account, you agree to our{' '}
                 <Link href="/terms" className="text-primary-600 dark:text-primary-400 hover:underline">
                   Terms of Service
@@ -371,7 +371,7 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <p className="mt-6 text-center text-sm text-surface-600 dark:text-surface-400">
+        <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
           Already have an account?{' '}
           <Link
             href="/auth/login"

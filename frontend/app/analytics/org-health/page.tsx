@@ -40,8 +40,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/Button';
 import { useOrganizationHealth } from '@/lib/hooks/queries/useAnalytics';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { chartColors } from '@/lib/utils/theme-colors';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+const COLORS = chartColors.palette();
 
 export default function OrganizationHealthPage() {
     const { data, isLoading: loading, error, refetch } = useOrganizationHealth();
@@ -55,8 +56,8 @@ export default function OrganizationHealthPage() {
                     <Card className="max-w-md border-red-100 dark:border-red-900/30">
                         <CardContent className="pt-6 text-center">
                             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-                            <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">Failed to load Dashboard</h2>
-                            <p className="text-surface-600 dark:text-surface-400 mb-6">{error?.message || 'Unable to load organization health data'}</p>
+                            <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">Failed to load Dashboard</h2>
+                            <p className="text-[var(--text-secondary)] mb-6">{error?.message || 'Unable to load organization health data'}</p>
                             <Button onClick={() => refetch()} variant="primary">Try Again</Button>
                         </CardContent>
                     </Card>
@@ -76,8 +77,8 @@ export default function OrganizationHealthPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                     >
-                        <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">Organization Health</h1>
-                        <p className="text-surface-600 dark:text-surface-400 mt-1">Executive summary of workforce vitality and performance</p>
+                        <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Health</h1>
+                        <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
                     </motion.div>
                     <div className="flex items-center gap-3">
                         <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4" />}>
@@ -127,13 +128,13 @@ export default function OrganizationHealthPage() {
                                 <div className="flex items-end justify-between mb-4">
                                     <div>
                                         <div className="text-3xl font-bold">{100 - turnover.annualTurnoverRate}%</div>
-                                        <div className="text-sm text-surface-500">Annual Stability Rate</div>
+                                        <div className="text-sm text-[var(--text-muted)]">Annual Stability Rate</div>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-green-600 dark:text-green-400 font-medium flex items-center justify-end gap-1">
                                             <TrendingUp className="h-3 w-3" /> 1.2%
                                         </div>
-                                        <div className="text-xs text-surface-400">vs prev year</div>
+                                        <div className="text-xs text-[var(--text-muted)]">vs prev year</div>
                                     </div>
                                 </div>
                                 <div className="h-24">
@@ -141,11 +142,11 @@ export default function OrganizationHealthPage() {
                                         <AreaChart data={turnover.trend}>
                                             <defs>
                                                 <linearGradient id="retentionGrad" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
-                                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                                    <stop offset="5%" stopColor={chartColors.success()} stopOpacity={0.2} />
+                                                    <stop offset="95%" stopColor={chartColors.success()} stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <Area type="monotone" dataKey="value" stroke="#10b981" fill="url(#retentionGrad)" strokeWidth={2} dot={false} />
+                                            <Area type="monotone" dataKey="value" stroke={chartColors.success()} fill="url(#retentionGrad)" strokeWidth={2} dot={false} />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -163,17 +164,17 @@ export default function OrganizationHealthPage() {
                                 <div className="flex items-end justify-between mb-4">
                                     <div>
                                         <div className="text-3xl font-bold">{engagement.overallEngagementScore}/100</div>
-                                        <div className="text-sm text-surface-500">Avg Engagement Score</div>
+                                        <div className="text-sm text-[var(--text-muted)]">Avg Engagement Score</div>
                                     </div>
                                     <div className="text-right">
                                         <div className="text-primary-600 font-medium">{engagement.participationRate}%</div>
-                                        <div className="text-xs text-surface-400">Participation</div>
+                                        <div className="text-xs text-[var(--text-muted)]">Participation</div>
                                     </div>
                                 </div>
                                 <div className="h-24">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={engagement.engagementTrend}>
-                                            <Bar dataKey="value" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                                            <Bar dataKey="value" fill={chartColors.warning()} radius={[4, 4, 0, 0]} />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -211,7 +212,7 @@ export default function OrganizationHealthPage() {
                                 {Object.entries(diversity.genderDistribution).map(([name, _], idx) => (
                                     <div key={name} className="flex items-center gap-1.5">
                                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
-                                        <span className="text-xs text-surface-600 dark:text-surface-400">{name}</span>
+                                        <span className="text-xs text-[var(--text-secondary)]">{name}</span>
                                     </div>
                                 ))}
                             </div>
@@ -233,12 +234,12 @@ export default function OrganizationHealthPage() {
                                         <XAxis dataKey="label" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
                                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
                                         <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} />
-                                        <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="value" fill={chartColors.secondary()} radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
                             <div className="text-center mt-4">
-                                <span className="text-sm font-semibold text-surface-900 dark:text-surface-50">Avg Tenure: {tenure.averageTenureYears} Years</span>
+                                <span className="text-sm font-semibold text-[var(--text-primary)]">Avg Tenure: {tenure.averageTenureYears} Years</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -254,10 +255,10 @@ export default function OrganizationHealthPage() {
                             <div className="space-y-6 pt-4">
                                 <div>
                                     <div className="flex justify-between text-sm mb-2">
-                                        <span className="text-surface-600 dark:text-surface-400">Course Completion Rate</span>
+                                        <span className="text-[var(--text-secondary)]">Course Completion Rate</span>
                                         <span className="font-bold">{training.completionRate}%</span>
                                     </div>
-                                    <div className="h-2 w-full bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+                                    <div className="h-2 w-full bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                                         <motion.div
                                             className="h-full bg-yellow-400"
                                             initial={{ width: 0 }}
@@ -267,12 +268,12 @@ export default function OrganizationHealthPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 pt-4">
-                                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-2xl">
-                                        <div className="text-xs text-surface-500 mb-1">Total Hours</div>
+                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-2xl">
+                                        <div className="text-xs text-[var(--text-muted)] mb-1">Total Hours</div>
                                         <div className="text-2xl font-bold">{training.totalTrainingHours}</div>
                                     </div>
-                                    <div className="p-4 bg-surface-50 dark:bg-surface-800 rounded-2xl">
-                                        <div className="text-xs text-surface-500 mb-1">Active Learners</div>
+                                    <div className="p-4 bg-[var(--bg-secondary)] rounded-2xl">
+                                        <div className="text-xs text-[var(--text-muted)] mb-1">Active Learners</div>
                                         <div className="text-2xl font-bold">{training.activeLearners}</div>
                                     </div>
                                 </div>
@@ -295,7 +296,7 @@ export default function OrganizationHealthPage() {
                         <div className="relative overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="text-sm text-surface-500 border-b dark:border-surface-800">
+                                    <tr className="text-sm text-[var(--text-muted)] border-b dark:border-[var(--border-main)]800">
                                         <th className="pb-4 font-medium">Department</th>
                                         <th className="pb-4 font-medium">Stability</th>
                                         <th className="pb-4 font-medium">Engagement</th>
@@ -306,10 +307,10 @@ export default function OrganizationHealthPage() {
                                 <tbody className="divide-y dark:divide-surface-800">
                                     {Object.entries(diversity.departmentDistribution).map(([name, count], idx) => (
                                         <tr key={name} className="text-sm">
-                                            <td className="py-4 font-medium text-surface-900 dark:text-surface-50">{name}</td>
+                                            <td className="py-4 font-medium text-[var(--text-primary)]">{name}</td>
                                             <td className="py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-24 h-1.5 bg-surface-100 dark:bg-surface-800 rounded-full">
+                                                    <div className="w-24 h-1.5 bg-[var(--bg-secondary)] rounded-full">
                                                         <div className="h-full bg-green-500 rounded-full" style={{ width: `${90 - idx * 5}%` }} />
                                                     </div>
                                                     <span>{90 - idx * 5}%</span>
@@ -317,15 +318,15 @@ export default function OrganizationHealthPage() {
                                             </td>
                                             <td className="py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-24 h-1.5 bg-surface-100 dark:bg-surface-800 rounded-full">
+                                                    <div className="w-24 h-1.5 bg-[var(--bg-secondary)] rounded-full">
                                                         <div className="h-full bg-primary-500 rounded-full" style={{ width: `${85 - idx * 3}%` }} />
                                                     </div>
                                                     <span>{85 - idx * 3}%</span>
                                                 </div>
                                             </td>
-                                            <td className="py-4 text-surface-600 dark:text-surface-400">{count}</td>
+                                            <td className="py-4 text-[var(--text-secondary)]">{count}</td>
                                             <td className="py-4">
-                                                <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${idx === 0 ? 'bg-green-100 text-green-700 dark:bg-green-950/30' :
+                                                <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${idx === 0 ? 'bg-green-100 text-green-700 dark:bg-green-950/30' :
                                                         idx === 4 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30' :
                                                             'bg-primary-100 text-primary-700 dark:bg-primary-950/30'
                                                     }`}>
@@ -350,23 +351,23 @@ function LoadingSkeleton() {
             <div className="p-6 space-y-8 animate-pulse">
                 <div className="flex justify-between items-center">
                     <div className="space-y-2">
-                        <div className="h-8 w-64 bg-surface-200 dark:bg-surface-800 rounded-lg" />
-                        <div className="h-4 w-96 bg-surface-100 dark:bg-surface-800/50 rounded-lg" />
+                        <div className="h-8 w-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg" />
+                        <div className="h-4 w-96 bg-[var(--bg-secondary)]/50 rounded-lg" />
                     </div>
                     <div className="flex gap-2">
-                        <div className="h-10 w-32 bg-surface-200 dark:bg-surface-800 rounded-lg" />
-                        <div className="h-10 w-32 bg-surface-200 dark:bg-surface-800 rounded-lg" />
+                        <div className="h-10 w-32 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg" />
+                        <div className="h-10 w-32 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg" />
                     </div>
                 </div>
                 <div className="grid grid-cols-12 gap-6">
-                    <div className="col-span-4 h-64 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
-                    <div className="col-span-4 h-64 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
-                    <div className="col-span-4 h-64 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
+                    <div className="col-span-4 h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
+                    <div className="col-span-4 h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
+                    <div className="col-span-4 h-64 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
                 </div>
                 <div className="grid grid-cols-3 gap-6">
-                    <div className="h-96 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
-                    <div className="h-96 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
-                    <div className="h-96 bg-surface-200 dark:bg-surface-800 rounded-3xl" />
+                    <div className="h-96 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
+                    <div className="h-96 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
+                    <div className="h-96 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-3xl" />
                 </div>
             </div>
         </AppLayout>

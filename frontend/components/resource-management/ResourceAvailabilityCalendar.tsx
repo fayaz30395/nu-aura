@@ -80,7 +80,7 @@ export function ResourceAvailabilityCalendar({
                     )}
                   >
                     <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase">
+                      <span className="text-xs uppercase">
                         {format(date, 'EEE')}
                       </span>
                       <span
@@ -273,7 +273,7 @@ function AvailabilityCell({
       >
         {/* Show capacity % if partially available */}
         {status === 'PARTIAL' && (
-          <span className="text-[10px]" style={{ color }}>
+          <span className="text-xs" style={{ color }}>
             {Math.round(capacity)}
           </span>
         )}

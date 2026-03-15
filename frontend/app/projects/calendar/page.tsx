@@ -376,7 +376,7 @@ export default function ProjectCalendarPage() {
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="projects">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading calendar...</span>
+          <span className="ml-2 text-[var(--text-secondary)]">Loading calendar...</span>
         </div>
       </AppLayout>
     );
@@ -390,26 +390,26 @@ export default function ProjectCalendarPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push('/projects')}
-              className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
             >
-              <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 Project Calendar
               </h1>
-              <p className="text-surface-600 dark:text-surface-400">
+              <p className="text-[var(--text-secondary)]">
                 Visualize projects and tasks
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
+            <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
                   ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >
                 <LayoutList className="h-4 w-4" />
@@ -419,7 +419,7 @@ export default function ProjectCalendarPage() {
                 onClick={() => setViewMode('calendar')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
                   ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
-                  : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
               >
                 <CalendarIcon className="h-4 w-4" />
@@ -458,7 +458,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Status</option>
                   <option value="PLANNED">Planned</option>
@@ -470,7 +470,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Priority</option>
                   <option value="LOW">Low</option>
@@ -479,21 +479,21 @@ export default function ProjectCalendarPage() {
                   <option value="CRITICAL">Critical</option>
                 </select>
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center gap-2 text-sm text-surface-700 dark:text-surface-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showProjects}
                       onChange={(e) => setShowProjects(e.target.checked)}
-                      className="rounded border-surface-300 dark:border-surface-600"
+                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)]"
                     />
                     Projects
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-surface-700 dark:text-surface-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showTasks}
                       onChange={(e) => setShowTasks(e.target.checked)}
-                      className="rounded border-surface-300 dark:border-surface-600"
+                      className="rounded border-[var(--border-main)] dark:border-[var(--border-main)]"
                     />
                     Tasks
                   </label>
@@ -503,14 +503,14 @@ export default function ProjectCalendarPage() {
               {/* Navigation Controls */}
               <div className="flex items-center gap-2">
                 {viewMode === 'timeline' && (
-                  <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-lg mr-2">
+                  <div className="flex items-center gap-1 p-1 bg-[var(--bg-secondary)] rounded-lg mr-2">
                     {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
                       <button
                         key={level}
                         onClick={() => setZoomLevel(level)}
                         className={`px-3 py-1.5 text-sm rounded capitalize ${zoomLevel === level
                           ? 'bg-[var(--bg-surface)] shadow text-primary-600 dark:text-primary-400'
-                          : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
+                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-[var(--text-primary)]'
                           }`}
                       >
                         {level}
@@ -522,19 +522,19 @@ export default function ProjectCalendarPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={handlePrevious}
-                    className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-800"
+                    className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setCurrentDate(new Date())}
-                    className="px-3 py-2 text-sm rounded hover:bg-surface-100 dark:hover:bg-surface-800 font-medium"
+                    className="px-3 py-2 text-sm rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] font-medium"
                   >
                     {viewMode === 'timeline' ? 'Today' : currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </button>
                   <button
                     onClick={handleNext}
-                    className="p-2 rounded hover:bg-surface-100 dark:hover:bg-surface-800"
+                    className="p-2 rounded hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
@@ -551,15 +551,15 @@ export default function ProjectCalendarPage() {
               <div className="overflow-x-auto">
                 <div className="min-w-[1200px]">
                   {/* Header */}
-                  <div className="flex border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50 sticky top-0 z-10">
-                    <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700 font-medium text-surface-700 dark:text-surface-300">
+                  <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50 sticky top-0 z-10">
+                    <div className="w-80 p-3 border-r border-[var(--border-main)] font-medium text-[var(--text-secondary)]">
                       Project / Task
                     </div>
                     <div className="flex-1 flex">
                       {timelineColumns.map((col, idx) => (
                         <div
                           key={idx}
-                          className={`flex-1 p-3 text-center text-xs font-medium border-r border-surface-200 dark:border-surface-700 ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-surface-600 dark:text-surface-400'
+                          className={`flex-1 p-3 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'
                             }`}
                         >
                           {col.label}
@@ -579,16 +579,16 @@ export default function ProjectCalendarPage() {
                       return (
                         <div
                           key={item.id}
-                          className={`flex border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 ${isProject ? 'bg-surface-50/50 dark:bg-surface-900/30' : ''
+                          className={`flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 ${isProject ? 'bg-[var(--bg-secondary)]/50 dark:bg-[var(--bg-secondary)]900/30' : ''
                             }`}
                         >
                           {/* Name Column */}
-                          <div className="w-80 p-3 border-r border-surface-200 dark:border-surface-700">
+                          <div className="w-80 p-3 border-r border-[var(--border-main)]">
                             <div className="flex items-center gap-2">
                               {isProject && (
                                 <button
                                   onClick={() => toggleProjectExpansion(item.id)}
-                                  className="p-0.5 hover:bg-surface-200 dark:hover:bg-surface-700 rounded"
+                                  className="p-0.5 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded"
                                 >
                                   <ChevronRight
                                     className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''
@@ -597,7 +597,7 @@ export default function ProjectCalendarPage() {
                                 </button>
                               )}
                               <div className="flex-1 min-w-0">
-                                <div className={`truncate ${isProject ? 'font-medium text-surface-900 dark:text-white' : 'text-sm text-surface-700 dark:text-surface-300'}`}>
+                                <div className={`truncate ${isProject ? 'font-medium text-[var(--text-primary)]' : 'text-sm text-[var(--text-secondary)]'}`}>
                                   {item.name}
                                 </div>
                                 <div className="flex items-center gap-2 mt-1">
@@ -609,7 +609,7 @@ export default function ProjectCalendarPage() {
                                       {item.priority}
                                     </span>
                                   )}
-                                  <span className="text-xs text-surface-500">
+                                  <span className="text-xs text-[var(--text-muted)]">
                                     {item.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                     {' → '}
                                     {item.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -680,11 +680,11 @@ export default function ProjectCalendarPage() {
                   {/* Empty State */}
                   {ganttItems.length === 0 && !loading && (
                     <div className="p-12 text-center">
-                      <CalendarIcon className="h-12 w-12 mx-auto text-surface-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
+                      <CalendarIcon className="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" />
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
                         No Projects Found
                       </h3>
-                      <p className="text-surface-600 dark:text-surface-400 mb-4">
+                      <p className="text-[var(--text-secondary)] mb-4">
                         {statusFilter || priorityFilter
                           ? 'No projects match your filters.'
                           : 'Create your first project to see it on the timeline.'}
@@ -721,14 +721,14 @@ export default function ProjectCalendarPage() {
           <CardContent className="p-4">
             <div className="flex flex-wrap gap-6">
               <div>
-                <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Status
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(STATUS_COLORS).map(([status, color]) => (
                     <div key={status} className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded" style={{ backgroundColor: color }} />
-                      <span className="text-xs text-surface-600 dark:text-surface-400">
+                      <span className="text-xs text-[var(--text-secondary)]">
                         {status.replace('_', ' ')}
                       </span>
                     </div>
@@ -736,14 +736,14 @@ export default function ProjectCalendarPage() {
                 </div>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <h4 className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Priority
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(PRIORITY_COLORS).map(([priority, color]) => (
                     <div key={priority} className="flex items-center gap-2">
                       <Flag className="h-4 w-4" style={{ color }} />
-                      <span className="text-xs text-surface-600 dark:text-surface-400">
+                      <span className="text-xs text-[var(--text-secondary)]">
                         {priority}
                       </span>
                     </div>

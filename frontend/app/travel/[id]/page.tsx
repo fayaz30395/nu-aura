@@ -155,8 +155,8 @@ export default function TravelRequestDetailsPage() {
   const getStatusConfig = (status: TravelStatus) => {
     const configs = {
       DRAFT: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: Clock,
       },
       SUBMITTED: {
@@ -195,8 +195,8 @@ export default function TravelRequestDetailsPage() {
         icon: CheckCircle,
       },
       CANCELLED: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: XCircle,
       },
     };
@@ -224,7 +224,7 @@ export default function TravelRequestDetailsPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading travel request...</p>
+            <p className="text-[var(--text-secondary)]">Loading travel request...</p>
           </div>
         </div>
       </AppLayout>
@@ -237,7 +237,7 @@ export default function TravelRequestDetailsPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error || 'Travel request not found'}</p>
+            <p className="text-[var(--text-secondary)]">{error || 'Travel request not found'}</p>
             <button
               onClick={() => router.push('/travel')}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
@@ -271,13 +271,13 @@ export default function TravelRequestDetailsPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/travel')}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
             >
-              <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                   {travelRequest.requestNumber}
                 </h1>
                 <span
@@ -287,7 +287,7 @@ export default function TravelRequestDetailsPage() {
                   {travelRequest.status.replace(/_/g, ' ')}
                 </span>
               </div>
-              <p className="text-surface-500 dark:text-surface-400 mt-1">
+              <p className="text-[var(--text-muted)] mt-1">
                 {travelRequest.travelType.replace(/_/g, ' ')}
               </p>
             </div>
@@ -298,7 +298,7 @@ export default function TravelRequestDetailsPage() {
             {canEdit && (
               <button
                 onClick={() => router.push(`/travel/${travelRequest.id}/edit`)}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
               >
                 <Edit className="h-4 w-4" />
                 Edit
@@ -332,13 +332,13 @@ export default function TravelRequestDetailsPage() {
           {/* Left Column - Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Travel Information */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-              <div className="p-6 border-b border-surface-200 dark:border-surface-800">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+              <div className="p-6 border-b border-[var(--border-main)]">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                     <Plane className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                   </div>
-                  <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                     Travel Information
                   </h2>
                 </div>
@@ -348,15 +348,15 @@ export default function TravelRequestDetailsPage() {
                 {/* Journey */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <MapPin className="h-4 w-4 text-surface-400" />
-                    <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                    <MapPin className="h-4 w-4 text-[var(--text-muted)]" />
+                    <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                       Journey
                     </h3>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex-1">
-                      <p className="text-sm text-surface-500 dark:text-surface-400">From</p>
-                      <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                      <p className="text-sm text-[var(--text-muted)]">From</p>
+                      <p className="text-base font-medium text-[var(--text-primary)]">
                         {travelRequest.originCity}
                       </p>
                     </div>
@@ -366,8 +366,8 @@ export default function TravelRequestDetailsPage() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-surface-500 dark:text-surface-400">To</p>
-                      <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                      <p className="text-sm text-[var(--text-muted)]">To</p>
+                      <p className="text-base font-medium text-[var(--text-primary)]">
                         {travelRequest.destinationCity}
                       </p>
                     </div>
@@ -390,23 +390,23 @@ export default function TravelRequestDetailsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="h-4 w-4 text-surface-400" />
-                      <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Departure
                       </h3>
                     </div>
-                    <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-base font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.departureDate)}
                     </p>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="h-4 w-4 text-surface-400" />
-                      <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Return
                       </h3>
                     </div>
-                    <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-base font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.returnDate)}
                     </p>
                   </div>
@@ -415,12 +415,12 @@ export default function TravelRequestDetailsPage() {
                 {/* Purpose */}
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Info className="h-4 w-4 text-surface-400" />
-                    <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                    <Info className="h-4 w-4 text-[var(--text-muted)]" />
+                    <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                       Purpose
                     </h3>
                   </div>
-                  <p className="text-sm text-surface-700 dark:text-surface-300">
+                  <p className="text-sm text-[var(--text-secondary)]">
                     {travelRequest.purpose}
                   </p>
                 </div>
@@ -429,12 +429,12 @@ export default function TravelRequestDetailsPage() {
                 {travelRequest.clientName && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Building className="h-4 w-4 text-surface-400" />
-                      <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <Building className="h-4 w-4 text-[var(--text-muted)]" />
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Client
                       </h3>
                     </div>
-                    <p className="text-sm text-surface-700 dark:text-surface-300">
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {travelRequest.clientName}
                     </p>
                   </div>
@@ -444,16 +444,16 @@ export default function TravelRequestDetailsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Car className="h-4 w-4 text-surface-400" />
-                      <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <Car className="h-4 w-4 text-[var(--text-muted)]" />
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Transport
                       </h3>
                     </div>
-                    <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-base font-medium text-[var(--text-primary)]">
                       {travelRequest.transportMode}
                     </p>
                     {travelRequest.transportClass && (
-                      <p className="text-sm text-surface-500 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-muted)]">
                         {travelRequest.transportClass}
                       </p>
                     )}
@@ -461,12 +461,12 @@ export default function TravelRequestDetailsPage() {
                   {travelRequest.cabRequired && (
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <Car className="h-4 w-4 text-surface-400" />
-                        <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                        <Car className="h-4 w-4 text-[var(--text-muted)]" />
+                        <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                           Local Transport
                         </h3>
                       </div>
-                      <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                      <p className="text-base font-medium text-[var(--text-primary)]">
                         Cab Required
                       </p>
                     </div>
@@ -477,27 +477,27 @@ export default function TravelRequestDetailsPage() {
                 {travelRequest.accommodationRequired && (
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <Hotel className="h-4 w-4 text-surface-400" />
-                      <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      <Hotel className="h-4 w-4 text-[var(--text-muted)]" />
+                      <h3 className="text-sm font-medium text-[var(--text-secondary)]">
                         Accommodation
                       </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">Check-in</p>
-                        <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                        <p className="text-sm text-[var(--text-muted)]">Check-in</p>
+                        <p className="text-base font-medium text-[var(--text-primary)]">
                           {travelRequest.checkInDate && formatDate(travelRequest.checkInDate)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-surface-500 dark:text-surface-400">Check-out</p>
-                        <p className="text-base font-medium text-surface-900 dark:text-surface-100">
+                        <p className="text-sm text-[var(--text-muted)]">Check-out</p>
+                        <p className="text-base font-medium text-[var(--text-primary)]">
                           {travelRequest.checkOutDate && formatDate(travelRequest.checkOutDate)}
                         </p>
                       </div>
                     </div>
                     {travelRequest.hotelPreference && (
-                      <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
+                      <p className="mt-2 text-sm text-[var(--text-secondary)]">
                         Preference: {travelRequest.hotelPreference}
                       </p>
                     )}
@@ -507,10 +507,10 @@ export default function TravelRequestDetailsPage() {
                 {/* Special Instructions */}
                 {travelRequest.specialInstructions && (
                   <div>
-                    <h3 className="text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+                    <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Special Instructions
                     </h3>
-                    <p className="text-sm text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-800 p-3 rounded-lg">
+                    <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-secondary)] p-3 rounded-lg">
                       {travelRequest.specialInstructions}
                     </p>
                   </div>
@@ -519,17 +519,17 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Travel Expenses */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-              <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+              <div className="p-6 border-b border-[var(--border-main)] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                     <Receipt className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                       Travel Expenses
                     </h2>
-                    <p className="text-sm text-surface-500 dark:text-surface-400">
+                    <p className="text-sm text-[var(--text-muted)]">
                       {expenses.length} expense(s)
                     </p>
                   </div>
@@ -547,17 +547,17 @@ export default function TravelRequestDetailsPage() {
 
               {expenses.length === 0 ? (
                 <div className="p-12 text-center">
-                  <Receipt className="h-12 w-12 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                  <p className="text-surface-500 dark:text-surface-400">No expenses added yet</p>
+                  <Receipt className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                  <p className="text-[var(--text-muted)]">No expenses added yet</p>
                 </div>
               ) : (
                 <div className="divide-y divide-surface-100 dark:divide-surface-800">
                   {expenses.map((expense) => (
-                    <div key={expense.id} className="p-6 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                    <div key={expense.id} className="p-6 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-medium text-surface-900 dark:text-surface-100">
+                            <h3 className="font-medium text-[var(--text-primary)]">
                               {expense.expenseType.replace(/_/g, ' ')}
                             </h3>
                             <span
@@ -572,15 +572,15 @@ export default function TravelRequestDetailsPage() {
                               {expense.status}
                             </span>
                           </div>
-                          <p className="text-sm text-surface-600 dark:text-surface-400">
+                          <p className="text-sm text-[var(--text-secondary)]">
                             {expense.description}
                           </p>
-                          <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                          <p className="text-xs text-[var(--text-muted)] mt-1">
                             {formatDate(expense.expenseDate)}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-surface-900 dark:text-surface-100">
+                          <p className="font-semibold text-[var(--text-primary)]">
                             {formatCurrency(expense.amount)}
                           </p>
                           {expense.approvedAmount && expense.approvedAmount !== expense.amount && (
@@ -600,22 +600,22 @@ export default function TravelRequestDetailsPage() {
           {/* Right Column - Summary */}
           <div className="space-y-6">
             {/* Budget Summary */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                   <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                   Budget Summary
                 </h2>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">
+                  <span className="text-sm text-[var(--text-secondary)]">
                     Estimated Cost
                   </span>
-                  <span className="font-medium text-surface-900 dark:text-surface-100">
+                  <span className="font-medium text-[var(--text-primary)]">
                     {formatCurrency(travelRequest.estimatedCost)}
                   </span>
                 </div>
@@ -623,7 +623,7 @@ export default function TravelRequestDetailsPage() {
                 {travelRequest.advanceRequired > 0 && (
                   <>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-secondary)]">
                         Advance Required
                       </span>
                       <span className="font-medium text-amber-600 dark:text-amber-400">
@@ -631,7 +631,7 @@ export default function TravelRequestDetailsPage() {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-secondary)]">
                         Advance Approved
                       </span>
                       <span className="font-medium text-emerald-600 dark:text-emerald-400">
@@ -643,17 +643,17 @@ export default function TravelRequestDetailsPage() {
 
                 {expenses.length > 0 && (
                   <>
-                    <div className="pt-3 border-t border-surface-200 dark:border-surface-800" />
+                    <div className="pt-3 border-t border-[var(--border-main)]" />
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-secondary)]">
                         Total Expenses
                       </span>
-                      <span className="font-medium text-surface-900 dark:text-surface-100">
+                      <span className="font-medium text-[var(--text-primary)]">
                         {formatCurrency(totalExpenses)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">
+                      <span className="text-sm text-[var(--text-secondary)]">
                         Approved Expenses
                       </span>
                       <span className="font-medium text-emerald-600 dark:text-emerald-400">
@@ -666,12 +666,12 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Status Timeline */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                   <Clock className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                   Status Information
                 </h2>
               </div>
@@ -679,8 +679,8 @@ export default function TravelRequestDetailsPage() {
               <div className="space-y-3">
                 {travelRequest.submittedDate && (
                   <div>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">Submitted On</p>
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-sm text-[var(--text-secondary)]">Submitted On</p>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.submittedDate)}
                     </p>
                   </div>
@@ -688,12 +688,12 @@ export default function TravelRequestDetailsPage() {
 
                 {travelRequest.approvedDate && (
                   <div>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">Approved On</p>
-                    <p className="font-medium text-surface-900 dark:text-surface-100">
+                    <p className="text-sm text-[var(--text-secondary)]">Approved On</p>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {formatDate(travelRequest.approvedDate)}
                     </p>
                     {travelRequest.approverName && (
-                      <p className="text-sm text-surface-500 dark:text-surface-400">
+                      <p className="text-sm text-[var(--text-muted)]">
                         By: {travelRequest.approverName}
                       </p>
                     )}
@@ -714,19 +714,19 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Employee Info */}
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-[var(--border-main)]">
                 <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                   <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 </div>
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                   Employee Details
                 </h2>
               </div>
 
               <div>
-                <p className="text-sm text-surface-600 dark:text-surface-400">Employee Name</p>
-                <p className="font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-secondary)]">Employee Name</p>
+                <p className="font-medium text-[var(--text-primary)]">
                   {travelRequest.employeeName || 'N/A'}
                 </p>
               </div>
@@ -742,7 +742,7 @@ export default function TravelRequestDetailsPage() {
         </ModalHeader>
         <ModalBody>
           <div className="space-y-4">
-            <p className="text-sm text-surface-600 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Please provide a reason for rejecting this travel request.
             </p>
             <Textarea
@@ -779,7 +779,7 @@ export default function TravelRequestDetailsPage() {
         </ModalHeader>
         <ModalBody>
           <div className="space-y-4">
-            <p className="text-sm text-surface-600 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               Please provide a reason for cancelling this travel request.
             </p>
             <Textarea

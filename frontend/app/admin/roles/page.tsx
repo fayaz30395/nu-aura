@@ -260,7 +260,7 @@ export default function RolesPage() {
     return (
       <>
         <div className="flex items-center justify-center p-8">
-          <div className="text-surface-600 dark:text-surface-400">Loading...</div>
+          <div className="text-[var(--text-secondary)]">Loading...</div>
         </div>
       </>
     );
@@ -294,7 +294,7 @@ export default function RolesPage() {
           placeholder="Search roles..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         />
         <button
           onClick={() => setShowCreateModal(true)}
@@ -306,7 +306,7 @@ export default function RolesPage() {
 
       <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-[var(--border-main)]">
-          <thead className="bg-[var(--bg-surface)] dark:bg-surface-900">
+          <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Code
@@ -331,10 +331,10 @@ export default function RolesPage() {
           <tbody className="bg-[var(--bg-input)] divide-y divide-[var(--border-main)]">
             {filteredRoles.map((role) => (
               <tr key={role.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-surface-900 dark:text-surface-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                   {role.code}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-surface-900 dark:text-surface-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
                   {role.name}
                 </td>
                 <td className="px-6 py-4 text-sm text-[var(--text-muted)]">
@@ -388,18 +388,18 @@ export default function RolesPage() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">Create New Role</h2>
+            <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Role</h2>
             <form onSubmit={createForm.handleSubmit(handleCreateRole)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 {/* Code Input */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Code *
                   </label>
                   <input
                     type="text"
                     {...createForm.register('code')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., MANAGER"
                   />
                   {createForm.formState.errors.code && (
@@ -412,13 +412,13 @@ export default function RolesPage() {
 
                 {/* Name Input */}
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Name *
                   </label>
                   <input
                     type="text"
                     {...createForm.register('name')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., Manager"
                   />
                   {createForm.formState.errors.name && (
@@ -431,12 +431,12 @@ export default function RolesPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
                   {...createForm.register('description')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                   placeholder="Optional description of this role..."
                 />
@@ -447,7 +447,7 @@ export default function RolesPage() {
 
               {/* Permissions Dropdown - Note: permissions are NOT part of the form, handled separately */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Permissions
                 </label>
                 <div className="relative">
@@ -456,13 +456,13 @@ export default function RolesPage() {
                     value={permissionSearch}
                     onChange={(e) => setPermissionSearch(e.target.value)}
                     onFocus={() => setShowPermissionDropdown(true)}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="Search and select permissions..."
                   />
                   {showPermissionDropdown && permissions.length > 0 && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setShowPermissionDropdown(false)} />
-                      <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg shadow-lg max-h-64 overflow-y-auto">
                         {permissions
                           .filter(permission =>
                             permission.code.toLowerCase().includes(permissionSearch.toLowerCase()) ||
@@ -484,7 +484,7 @@ export default function RolesPage() {
                               >
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <div className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                                    <div className="text-sm font-medium text-[var(--text-primary)]">
                                       {permission.code}
                                     </div>
                                     <div className="text-xs text-[var(--text-muted)]">
@@ -516,7 +516,7 @@ export default function RolesPage() {
                     </>
                   )}
                   {showPermissionDropdown && permissions.length === 0 && (
-                    <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-surface-300 dark:border-surface-600 rounded-lg shadow-lg p-4">
+                    <div className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg shadow-lg p-4">
                       <p className="text-sm text-[var(--text-muted)] text-center">
                         No permissions available. Please check if you are logged in.
                       </p>
@@ -533,7 +533,7 @@ export default function RolesPage() {
                     setShowCreateModal(false);
                     createForm.reset();
                   }}
-                  className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-200 dark:bg-surface-800 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
@@ -554,39 +554,39 @@ export default function RolesPage() {
       {showEditModal && selectedRole && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">Edit Role</h2>
+            <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
             <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Code
                 </label>
                 <input
                   type="text"
                   value={selectedRole.code}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] dark:bg-surface-950 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] dark:bg-[var(--bg-primary)] text-[var(--text-primary)]"
                   disabled
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Name
                 </label>
                 <input
                   type="text"
                   {...editForm.register('name')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 />
                 {editForm.formState.errors.name && (
                   <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.name.message}</p>
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
                   {...editForm.register('description')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                 />
                 {editForm.formState.errors.description && (
@@ -601,7 +601,7 @@ export default function RolesPage() {
                     setSelectedRole(null);
                     editForm.reset();
                   }}
-                  className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                  className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>
@@ -622,7 +622,7 @@ export default function RolesPage() {
       {showPermissionsModal && selectedRole && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-5xl max-h-[85vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-2 text-surface-900 dark:text-surface-100">
+            <h2 className="text-xl font-bold mb-2 text-[var(--text-primary)]">
               Manage Permissions - {selectedRole.name}
             </h2>
             <p className="text-sm text-[var(--text-muted)] mb-4">
@@ -630,8 +630,8 @@ export default function RolesPage() {
             </p>
             <div className="space-y-4">
               {Object.entries(groupedPermissions).map(([resource, perms]) => (
-                <div key={resource} className="border border-surface-200 dark:border-surface-700 rounded-lg p-4 bg-[var(--bg-surface)] dark:bg-surface-950">
-                  <h3 className="font-semibold text-surface-900 dark:text-surface-100 mb-3">{resource}</h3>
+                <div key={resource} className="border border-[var(--border-main)] rounded-lg p-4 bg-[var(--bg-surface)] dark:bg-[var(--bg-primary)]">
+                  <h3 className="font-semibold text-[var(--text-primary)] mb-3">{resource}</h3>
                   <div className="space-y-3">
                     {perms.map((permission) => {
                       const isSelected = selectedPermissions.includes(permission.code);
@@ -644,7 +644,7 @@ export default function RolesPage() {
                           className={`p-3 rounded-lg border transition-colors ${
                             isSelected
                               ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20'
-                              : 'border-[var(--border-main)] dark:border-surface-700 hover:border-gray-300 dark:hover:border-gray-600'
+                              : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-gray-300 dark:hover:border-gray-600'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-4">
@@ -654,10 +654,10 @@ export default function RolesPage() {
                                 checked={isSelected}
                                 onChange={() => togglePermission(permission.code)}
                                 disabled={selectedRole.isSystemRole}
-                                className="mt-1 rounded text-primary-600 focus:ring-blue-500 dark:bg-surface-700 dark:border-surface-600"
+                                className="mt-1 rounded text-primary-600 focus:ring-blue-500 dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
                               />
                               <div>
-                                <span className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                                <span className="text-sm font-medium text-[var(--text-primary)]">
                                   {permission.name}
                                 </span>
                                 <span className="text-xs text-[var(--text-muted)] ml-2">
@@ -673,7 +673,7 @@ export default function RolesPage() {
 
                             {/* Show current scope badge for system roles */}
                             {isSelected && selectedRole.isSystemRole && (
-                              <span className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-surface-700 text-[var(--text-secondary)]">
+                              <span className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                                 {SCOPE_LABELS[currentScope]}
                               </span>
                             )}
@@ -700,8 +700,8 @@ export default function RolesPage() {
             </div>
 
             {/* Summary */}
-            <div className="mt-4 p-3 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg space-y-2">
-              <p className="text-sm text-surface-700 dark:text-surface-300">
+            <div className="mt-4 p-3 bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] rounded-lg space-y-2">
+              <p className="text-sm text-[var(--text-secondary)]">
                 <strong>{selectedPermissions.length}</strong> permission(s) selected
               </p>
               {/* Show warning for CUSTOM scopes without targets */}
@@ -729,7 +729,7 @@ export default function RolesPage() {
                   setSelectedPermissions([]);
                   setPermissionScopes(new Map());
                 }}
-                className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 Cancel
               </button>

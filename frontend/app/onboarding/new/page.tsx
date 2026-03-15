@@ -112,10 +112,10 @@ export default function NewOnboardingPage() {
                 {/* Header & Progress */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-extrabold tracking-tight text-surface-900 dark:text-white">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-[var(--text-primary)]">
                             Initiate <span className="text-primary-600">Onboarding</span>
                         </h1>
-                        <p className="text-surface-500 font-medium">Step {currentStep} of 3: {steps[currentStep - 1].name}</p>
+                        <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of 3: {steps[currentStep - 1].name}</p>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -123,12 +123,12 @@ export default function NewOnboardingPage() {
                             <div key={step.id} className="flex items-center">
                                 <div className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${currentStep >= step.id
                                         ? 'bg-primary-600 border-primary-600 text-white shadow-lg'
-                                        : 'bg-white border-surface-200 text-surface-400 dark:bg-surface-900'
+                                        : 'bg-white border-[var(--border-main)] text-[var(--text-muted)] dark:bg-[var(--bg-secondary)]900'
                                     }`}>
                                     <step.icon className="h-5 w-5" />
                                 </div>
                                 {idx < steps.length - 1 && (
-                                    <div className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? 'bg-primary-600' : 'bg-surface-200'
+                                    <div className={`w-12 h-1 mx-2 rounded-full ${currentStep > step.id ? 'bg-primary-600' : 'bg-[var(--bg-secondary)]'
                                         }`} />
                                 )}
                             </div>
@@ -162,7 +162,7 @@ export default function NewOnboardingPage() {
                                             onChange={(emp) => setSelectedEmployee(emp)}
                                             value={selectedEmployee}
                                         />
-                                        <p className="text-xs text-surface-500 mt-4 font-medium italic">
+                                        <p className="text-xs text-[var(--text-muted)] mt-4 font-medium italic">
                                             Search joiners who have already been added to the system database.
                                         </p>
                                     </div>
@@ -173,8 +173,8 @@ export default function NewOnboardingPage() {
                                                 {selectedEmployee.name.charAt(0)}
                                             </div>
                                             <div>
-                                                <h3 className="text-2xl font-black text-surface-900 dark:text-white">{selectedEmployee.name}</h3>
-                                                <p className="text-surface-500 font-bold">Selected Joiner</p>
+                                                <h3 className="text-2xl font-black text-[var(--text-primary)]">{selectedEmployee.name}</h3>
+                                                <p className="text-[var(--text-muted)] font-bold">Selected Joiner</p>
                                             </div>
                                         </div>
                                     )}
@@ -206,17 +206,17 @@ export default function NewOnboardingPage() {
                                                 onClick={() => setSelectedTemplate(temp)}
                                                 className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${selectedTemplate?.id === temp.id
                                                         ? 'bg-primary-500/10 border-primary-500 shadow-lg'
-                                                        : 'bg-[var(--bg-card)] border-transparent hover:border-surface-200'
+                                                        : 'bg-[var(--bg-card)] border-transparent hover:border-[var(--border-main)]'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className={`p-4 rounded-2xl ${selectedTemplate?.id === temp.id ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-500'
+                                                    <div className={`p-4 rounded-2xl ${selectedTemplate?.id === temp.id ? 'bg-primary-500 text-white' : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                                                         }`}>
                                                         <Layout className="h-6 w-6" />
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-black text-lg text-surface-900 dark:text-white capitalize">{temp.name}</h4>
-                                                        <p className="text-sm font-bold text-surface-500">{temp.estimatedDays} Days Estimated</p>
+                                                        <h4 className="font-black text-lg text-[var(--text-primary)] capitalize">{temp.name}</h4>
+                                                        <p className="text-sm font-bold text-[var(--text-muted)]">{temp.estimatedDays} Days Estimated</p>
                                                     </div>
                                                 </div>
                                                 {selectedTemplate?.id === temp.id && (
@@ -237,16 +237,16 @@ export default function NewOnboardingPage() {
                                 </CardHeader>
                                 <CardContent className="p-8 space-y-6">
                                     <div>
-                                        <label className="text-xs font-black uppercase tracking-widest text-surface-400 block mb-2">Kickoff Date</label>
+                                        <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Kickoff Date</label>
                                         <Input
                                             type="date"
                                             value={formData.startDate}
                                             onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                            className="rounded-2xl border-0 bg-surface-100 dark:bg-surface-900 font-bold"
+                                            className="rounded-2xl border-0 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900 font-bold"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-black uppercase tracking-widest text-surface-400 block mb-2">Buddy (Optional)</label>
+                                        <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Buddy (Optional)</label>
                                         <EmployeeSearchAutocomplete
                                             placeholder="Find a mentor..."
                                             onChange={(emp) => setSelectedBuddy(emp)}
@@ -270,17 +270,17 @@ export default function NewOnboardingPage() {
                                 <div className="p-8 rounded-3xl bg-primary-500/10 border border-primary-500/20 text-center space-y-2">
                                     <User className="h-10 w-10 mx-auto text-primary-600 mb-2" />
                                     <p className="text-xs font-black uppercase tracking-widest text-primary-600">Employee</p>
-                                    <p className="text-xl font-black text-surface-900 dark:text-white">{selectedEmployee?.name}</p>
+                                    <p className="text-xl font-black text-[var(--text-primary)]">{selectedEmployee?.name}</p>
                                 </div>
                                 <div className="p-8 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-center space-y-2">
                                     <Layout className="h-10 w-10 mx-auto text-indigo-600 mb-2" />
                                     <p className="text-xs font-black uppercase tracking-widest text-indigo-600">Checklist</p>
-                                    <p className="text-xl font-black text-surface-900 dark:text-white">{selectedTemplate?.name}</p>
+                                    <p className="text-xl font-black text-[var(--text-primary)]">{selectedTemplate?.name}</p>
                                 </div>
                                 <div className="p-8 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
                                     <Calendar className="h-10 w-10 mx-auto text-emerald-600 mb-2" />
                                     <p className="text-xs font-black uppercase tracking-widest text-emerald-600">Starts</p>
-                                    <p className="text-xl font-black text-surface-900 dark:text-white">{formData.startDate}</p>
+                                    <p className="text-xl font-black text-[var(--text-primary)]">{formData.startDate}</p>
                                 </div>
                             </div>
 
@@ -290,7 +290,7 @@ export default function NewOnboardingPage() {
                                 </CardHeader>
                                 <CardContent className="p-8">
                                     <textarea
-                                        className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-primary-500 outline-none text-surface-900 dark:text-white font-medium"
+                                        className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-primary-500 outline-none text-[var(--text-primary)] font-medium"
                                         rows={4}
                                         placeholder="Specific instructions for the onboarding buddy or HR team..."
                                         value={formData.notes}
@@ -303,7 +303,7 @@ export default function NewOnboardingPage() {
                 </AnimatePresence>
 
                 {/* Footer Actions */}
-                <div className="flex items-center justify-between pt-8 border-t border-surface-200 dark:border-surface-700">
+                <div className="flex items-center justify-between pt-8 border-t border-[var(--border-main)]">
                     <Button
                         variant="ghost"
                         onClick={handleBack}

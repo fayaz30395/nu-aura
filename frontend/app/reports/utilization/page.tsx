@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
+import { Button } from '@/components/ui/Button';
 import {
   Clock,
   Users,
@@ -135,10 +136,10 @@ export default function UtilizationReportsPage() {
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-surface-500 dark:text-surface-400">{title}</p>
-            <p className="text-3xl font-bold text-surface-900 dark:text-white">{value}</p>
+            <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
+            <p className="text-3xl font-bold text-[var(--text-primary)]">{value}</p>
             {subValue && (
-              <p className="text-sm text-surface-500 dark:text-surface-400">{subValue}</p>
+              <p className="text-sm text-[var(--text-muted)]">{subValue}</p>
             )}
             {trend && (
               <div className="flex items-center gap-1">
@@ -168,7 +169,7 @@ export default function UtilizationReportsPage() {
 
   const UtilizationBar = ({ rate }: { rate: number }) => (
     <div className="flex items-center gap-3">
-      <div className="flex-1 h-2 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${rate >= 90 ? 'bg-green-500' :
             rate >= 75 ? 'bg-blue-500' :
@@ -207,7 +208,7 @@ export default function UtilizationReportsPage() {
       </div>
 
       {/* Tabs Skeleton */}
-      <div className="flex gap-6 border-b border-surface-200 dark:border-surface-700 pb-1">
+      <div className="flex gap-6 border-b border-[var(--border-main)] pb-1">
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} className="h-10 w-24" />
         ))}
@@ -236,14 +237,15 @@ export default function UtilizationReportsPage() {
       <AppLayout activeMenuItem="reports">
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
           <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-          <h2 className="text-xl font-bold text-surface-900 dark:text-white">Failed to load data</h2>
-          <p className="text-surface-500 mt-2">{typeof error === 'object' && error ? (error as any).message : 'Unknown error occurred'}</p>
-          <button
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Failed to load data</h2>
+          <p className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as any).message : 'Unknown error occurred'}</p>
+          <Button
             onClick={() => refetch()}
-            className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            variant="primary"
+            className="mt-4"
           >
             Retry
-          </button>
+          </Button>
         </div>
       </AppLayout>
     );
@@ -262,10 +264,10 @@ export default function UtilizationReportsPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Utilization Dashboard
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Track employee productivity and resource utilization
             </p>
           </div>
@@ -276,7 +278,7 @@ export default function UtilizationReportsPage() {
               <select
                 value={selectedDateRange}
                 onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="thisWeek">This Week</option>
                 <option value="lastWeek">Last Week</option>
@@ -286,7 +288,7 @@ export default function UtilizationReportsPage() {
                 <option value="thisYear">This Year</option>
                 <option value="custom">Custom Range</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none" />
             </div>
 
             {selectedDateRange === 'custom' && (
@@ -295,14 +297,14 @@ export default function UtilizationReportsPage() {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
-                <span className="text-surface-400">to</span>
+                <span className="text-[var(--text-muted)]">to</span>
                 <input
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-3 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </>
             )}
@@ -310,15 +312,14 @@ export default function UtilizationReportsPage() {
             <button
               onClick={() => refetch()}
               disabled={loading}
-              className="p-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+              className="p-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-              <Download className="h-4 w-4" />
+            <Button variant="primary" leftIcon={<Download className="h-4 w-4" />}>
               Export
-            </button>
+            </Button>
           </div>
         </motion.div>
 
@@ -374,7 +375,7 @@ export default function UtilizationReportsPage() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="border-b border-surface-200 dark:border-surface-700">
+        <div className="border-b border-[var(--border-main)]">
           <nav className="flex gap-6">
             {[
               { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -387,7 +388,7 @@ export default function UtilizationReportsPage() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-1 py-3 border-b-2 transition-colors ${activeTab === tab.id
                   ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                   }`}
               >
                 <tab.icon className="h-4 w-4" />
@@ -419,16 +420,16 @@ export default function UtilizationReportsPage() {
                     {dashboardData.topPerformers.slice(0, 5).map((emp, index) => (
                       <div
                         key={emp.employeeId}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50"
+                        className="flex items-center gap-4 p-3 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-bold">
                           {index + 1}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-surface-900 dark:text-white truncate">
+                          <p className="font-medium text-[var(--text-primary)] truncate">
                             {emp.employeeName}
                           </p>
-                          <p className="text-sm text-surface-500 truncate">
+                          <p className="text-sm text-[var(--text-muted)] truncate">
                             {emp.designation} - {emp.departmentName}
                           </p>
                         </div>
@@ -436,7 +437,7 @@ export default function UtilizationReportsPage() {
                           <p className={`font-semibold ${getUtilizationColor(emp.utilizationRate)}`}>
                             {formatPercentage(emp.utilizationRate)}
                           </p>
-                          <p className="text-xs text-surface-500">
+                          <p className="text-xs text-[var(--text-muted)]">
                             {formatHours(emp.billableHours)} billable
                           </p>
                         </div>
@@ -459,16 +460,16 @@ export default function UtilizationReportsPage() {
                     {dashboardData.underUtilized.map((emp) => (
                       <div
                         key={emp.employeeId}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50"
+                        className="flex items-center gap-4 p-3 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                           <User className="h-5 w-5 text-red-600 dark:text-red-400" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-surface-900 dark:text-white truncate">
+                          <p className="font-medium text-[var(--text-primary)] truncate">
                             {emp.employeeName}
                           </p>
-                          <p className="text-sm text-surface-500 truncate">
+                          <p className="text-sm text-[var(--text-muted)] truncate">
                             {emp.designation} - {emp.departmentName}
                           </p>
                         </div>
@@ -478,7 +479,7 @@ export default function UtilizationReportsPage() {
                       </div>
                     ))}
                     {dashboardData.underUtilized.length === 0 && (
-                      <p className="text-center text-surface-500 py-8">
+                      <p className="text-center text-[var(--text-muted)] py-8">
                         All employees are well-utilized!
                       </p>
                     )}
@@ -499,16 +500,16 @@ export default function UtilizationReportsPage() {
                     {dashboardData.byDepartment.map((dept) => (
                       <div
                         key={dept.departmentId}
-                        className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
+                        className="p-4 rounded-lg border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 transition-colors"
                       >
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-surface-900 dark:text-white">
+                          <h4 className="font-medium text-[var(--text-primary)]">
                             {dept.departmentName}
                           </h4>
                           <Badge variant="secondary">{dept.employeeCount} members</Badge>
                         </div>
                         <UtilizationBar rate={dept.averageUtilization} />
-                        <div className="mt-3 flex justify-between text-sm text-surface-500">
+                        <div className="mt-3 flex justify-between text-sm text-[var(--text-muted)]">
                           <span>{formatHours(dept.billableHours)} billable</span>
                           <span>of {formatHours(dept.totalHours)} total</span>
                         </div>
@@ -526,13 +527,13 @@ export default function UtilizationReportsPage() {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <CardTitle>Employee Utilization</CardTitle>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                     <input
                       type="text"
                       placeholder="Search employees..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="pl-10 pr-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                 </div>
@@ -541,20 +542,20 @@ export default function UtilizationReportsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-surface-200 dark:border-surface-700">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-surface-500">Employee</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-surface-500">Department</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Total Hours</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Billable Hours</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-surface-500 w-48">Utilization</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Billable Rate</th>
+                      <tr className="border-b border-[var(--border-main)]">
+                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Employee</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Department</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Rate</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredEmployees.map((emp) => (
                         <tr
                           key={emp.employeeId}
-                          className="border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                          className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
@@ -562,14 +563,14 @@ export default function UtilizationReportsPage() {
                                 {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                               </div>
                               <div>
-                                <p className="font-medium text-surface-900 dark:text-white">{emp.employeeName}</p>
-                                <p className="text-xs text-surface-500">{emp.employeeCode}</p>
+                                <p className="font-medium text-[var(--text-primary)]">{emp.employeeName}</p>
+                                <p className="text-xs text-[var(--text-muted)]">{emp.employeeCode}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-surface-600 dark:text-surface-400">{emp.departmentName}</td>
-                          <td className="py-3 px-4 text-right text-surface-900 dark:text-white">{formatHours(emp.totalHours)}</td>
-                          <td className="py-3 px-4 text-right text-surface-900 dark:text-white">{formatHours(emp.billableHours)}</td>
+                          <td className="py-3 px-4 text-[var(--text-secondary)]">{emp.departmentName}</td>
+                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.totalHours)}</td>
+                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">{formatHours(emp.billableHours)}</td>
                           <td className="py-3 px-4">
                             <UtilizationBar rate={emp.utilizationRate} />
                           </td>
@@ -592,10 +593,10 @@ export default function UtilizationReportsPage() {
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-surface-900 dark:text-white">
+                        <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                           {dept.departmentName}
                         </h3>
-                        <p className="text-sm text-surface-500">{dept.employeeCount} employees</p>
+                        <p className="text-sm text-[var(--text-muted)]">{dept.employeeCount} employees</p>
                       </div>
                       <div className={`px-3 py-1 rounded-full text-sm font-medium ${getUtilizationBgColor(dept.averageUtilization)} ${getUtilizationColor(dept.averageUtilization)}`}>
                         {formatPercentage(dept.averageUtilization)}
@@ -605,12 +606,12 @@ export default function UtilizationReportsPage() {
                     <div className="space-y-4">
                       <div>
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-surface-500">Billable Hours</span>
-                          <span className="font-medium text-surface-900 dark:text-white">
+                          <span className="text-[var(--text-muted)]">Billable Hours</span>
+                          <span className="font-medium text-[var(--text-primary)]">
                             {formatHours(dept.billableHours)}
                           </span>
                         </div>
-                        <div className="h-2 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">
+                        <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
                             className="h-full bg-green-500 rounded-full"
                             style={{ width: `${(dept.billableHours / dept.totalHours) * 100}%` }}
@@ -620,12 +621,12 @@ export default function UtilizationReportsPage() {
 
                       <div>
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-surface-500">Non-Billable Hours</span>
-                          <span className="font-medium text-surface-900 dark:text-white">
+                          <span className="text-[var(--text-muted)]">Non-Billable Hours</span>
+                          <span className="font-medium text-[var(--text-primary)]">
                             {formatHours(dept.totalHours - dept.billableHours)}
                           </span>
                         </div>
-                        <div className="h-2 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">
+                        <div className="h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                           <div
                             className="h-full bg-yellow-500 rounded-full"
                             style={{ width: `${((dept.totalHours - dept.billableHours) / dept.totalHours) * 100}%` }}
@@ -633,10 +634,10 @@ export default function UtilizationReportsPage() {
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t border-surface-200 dark:border-surface-700">
+                      <div className="pt-3 border-t border-[var(--border-main)]">
                         <div className="flex justify-between">
-                          <span className="text-sm text-surface-500">Total Hours</span>
-                          <span className="font-semibold text-surface-900 dark:text-white">
+                          <span className="text-sm text-[var(--text-muted)]">Total Hours</span>
+                          <span className="font-semibold text-[var(--text-primary)]">
                             {formatHours(dept.totalHours)}
                           </span>
                         </div>
@@ -657,27 +658,27 @@ export default function UtilizationReportsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-surface-200 dark:border-surface-700">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-surface-500">Project</th>
-                        <th className="text-center py-3 px-4 text-sm font-medium text-surface-500">Team Size</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Total Hours</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Billable Hours</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-surface-500 w-48">Utilization</th>
-                        <th className="text-right py-3 px-4 text-sm font-medium text-surface-500">Revenue</th>
+                      <tr className="border-b border-[var(--border-main)]">
+                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Project</th>
+                        <th className="text-center py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Team Size</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Total Hours</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Billable Hours</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-[var(--text-muted)] w-48">Utilization</th>
+                        <th className="text-right py-3 px-4 text-sm font-medium text-[var(--text-muted)]">Revenue</th>
                       </tr>
                     </thead>
                     <tbody>
                       {dashboardData.byProject.map((project) => (
                         <tr
                           key={project.projectId}
-                          className="border-b border-surface-100 dark:border-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                          className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                                 <FolderOpen className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                               </div>
-                              <span className="font-medium text-surface-900 dark:text-white">
+                              <span className="font-medium text-[var(--text-primary)]">
                                 {project.projectName}
                               </span>
                             </div>
@@ -685,10 +686,10 @@ export default function UtilizationReportsPage() {
                           <td className="py-3 px-4 text-center">
                             <Badge variant="secondary">{project.teamSize}</Badge>
                           </td>
-                          <td className="py-3 px-4 text-right text-surface-900 dark:text-white">
+                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">
                             {formatHours(project.totalHours)}
                           </td>
-                          <td className="py-3 px-4 text-right text-surface-900 dark:text-white">
+                          <td className="py-3 px-4 text-right text-[var(--text-primary)]">
                             {formatHours(project.billableHours)}
                           </td>
                           <td className="py-3 px-4">

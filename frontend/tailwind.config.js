@@ -1,12 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Palette: Radix Jade + Slate (cool neutrals) with Sky/Orange accents
+ * Palette: Radix Indigo primary + Slate neutrals with Blue/Orange accents
  */
 
 const {
   amber,
+  blue,
   grass,
+  indigo,
   jade,
   orange,
   sand,
@@ -106,21 +108,21 @@ module.exports = {
         },
         // Semantic Tokens for Stable Theming
         brand: {
-          main: jade.jade9,
-          secondary: sky.sky9,
+          main: indigo.indigo9,
+          secondary: blue.blue9,
           accent: orange.orange9,
         },
-        // Primary - Jade (Radix)
-        primary: toScale(jade, 'jade'),
+        // Primary - Indigo (Radix) — vibrant, modern SaaS
+        primary: toScale(indigo, 'indigo'),
         // Secondary - Slate (Radix)
         secondary: toScale(slate, 'slate'),
         // Accent - Orange (Radix)
         accent: toScale(orange, 'orange'),
         // Success - Grass (Radix)
         success: toScale(grass, 'grass'),
-        // Info - Sky (Radix)
-        info: toScale(sky, 'sky'),
-        'blue-light': toScale(sky, 'sky'),
+        // Info - Blue (Radix)
+        info: toScale(blue, 'blue'),
+        'blue-light': toScale(blue, 'blue'),
         // Warning - Amber (Radix)
         warning: toScale(amber, 'amber'),
         // Danger - Tomato (Radix)
@@ -128,14 +130,14 @@ module.exports = {
         // Surface - Slate (Radix) — cool neutral, not warm sand
         surface: toScale(slate, 'slate'),
         // Legacy aliases -> new palette (keeps existing classnames consistent)
-        purple: toScale(jade, 'jade'),
-        violet: toScale(orange, 'orange'),
-        indigo: toScale(sky, 'sky'),
-        blue: toScale(sky, 'sky'),
-        teal: toScale(jade, 'jade'),
+        purple: toScale(indigo, 'indigo'),
+        violet: toScale(indigo, 'indigo'),
+        indigo: toScale(indigo, 'indigo'),
+        blue: toScale(blue, 'blue'),
+        teal: toScale(indigo, 'indigo'),
         pink: toScale(orange, 'orange'),
         rose: toScale(tomato, 'tomato'),
-        cyan: toScale(sky, 'sky'),
+        cyan: toScale(blue, 'blue'),
         green: toScale(grass, 'grass'),
         emerald: toScale(grass, 'grass'),
         red: toScale(tomato, 'tomato'),
@@ -144,6 +146,8 @@ module.exports = {
         amber: toScale(amber, 'amber'),
         slate: toScale(slate, 'slate'),
         sand: toScale(sand, 'sand'),
+        sky: toScale(sky, 'sky'),
+        jade: toScale(jade, 'jade'),
       },
       boxShadow: {
         'theme-xs': '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
@@ -273,11 +277,11 @@ module.exports = {
         // Pulse & Glow
         pulseGlow: {
           '0%, 100%': {
-            boxShadow: '0 0 0 0 rgba(41, 163, 131, 0.7)',
+            boxShadow: '0 0 0 0 rgba(62, 99, 221, 0.7)',
             opacity: '1',
           },
           '50%': {
-            boxShadow: '0 0 0 10px rgba(41, 163, 131, 0)',
+            boxShadow: '0 0 0 10px rgba(62, 99, 221, 0)',
             opacity: '0.8',
           },
         },
@@ -377,7 +381,7 @@ module.exports = {
       // Gradient utilities
       addUtilities({
         '.gradient-primary': {
-          background: `linear-gradient(135deg, ${jade.jade8} 0%, ${sky.sky9} 100%)`,
+          background: `linear-gradient(135deg, ${indigo.indigo8} 0%, ${blue.blue9} 100%)`,
         },
         '.gradient-secondary': {
           background: `linear-gradient(135deg, ${slate.slate7} 0%, ${slate.slate10} 100%)`,
@@ -386,14 +390,14 @@ module.exports = {
           background: `linear-gradient(135deg, ${grass.grass8} 0%, ${grass.grass10} 100%)`,
         },
         '.gradient-mesh': {
-          background: `radial-gradient(at 0% 0%, rgba(41, 163, 131, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(247, 107, 21, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 116, 158, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(41, 163, 131, 0.12) 0px, transparent 50%)`,
+          background: `radial-gradient(at 0% 0%, rgba(62, 99, 221, 0.14) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(247, 107, 21, 0.14) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 116, 217, 0.12) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(62, 99, 221, 0.12) 0px, transparent 50%)`,
         },
       });
 
       // Shadow utilities
       addUtilities({
         '.shadow-glow-primary': {
-          boxShadow: '0 0 20px rgba(41, 163, 131, 0.3)',
+          boxShadow: '0 0 20px rgba(62, 99, 221, 0.3)',
         },
         '.shadow-glow-success': {
           boxShadow: '0 0 20px rgba(70, 167, 88, 0.3)',

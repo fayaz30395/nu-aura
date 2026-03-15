@@ -119,7 +119,7 @@ export default function ExecutiveDashboardPage() {
     } else if (trend === 'DOWN') {
       return <ArrowDownRight className="h-4 w-4 text-red-600" />;
     }
-    return <Minus className="h-4 w-4 text-surface-400" />;
+    return <Minus className="h-4 w-4 text-[var(--text-muted)]" />;
   };
 
   const getStatusColor = (status: string) => {
@@ -131,7 +131,7 @@ export default function ExecutiveDashboardPage() {
       case 'CRITICAL':
         return 'text-red-600 bg-red-50 dark:bg-red-900/30';
       default:
-        return 'text-surface-600 bg-surface-50 dark:bg-surface-800';
+        return 'text-[var(--text-secondary)] bg-[var(--bg-secondary)]';
     }
   };
 
@@ -173,8 +173,8 @@ export default function ExecutiveDashboardPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Executive Dashboard</h1>
-              <p className="text-surface-600 dark:text-surface-400 mt-1">Comprehensive C-suite insights and analytics</p>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">Executive Dashboard</h1>
+              <p className="text-[var(--text-secondary)] mt-1">Comprehensive C-suite insights and analytics</p>
             </div>
           </div>
           <DashboardSkeleton />
@@ -195,7 +195,7 @@ export default function ExecutiveDashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-surface-600 dark:text-surface-400 mb-4">{error?.message || 'Unable to load dashboard data'}</p>
+              <p className="text-[var(--text-secondary)] mb-4">{error?.message || 'Unable to load dashboard data'}</p>
               <Button variant="primary" onClick={() => refetch()} className="w-full">
                 Try Again
               </Button>
@@ -212,13 +212,13 @@ export default function ExecutiveDashboardPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white">Executive Dashboard</h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Executive Dashboard</h1>
+            <p className="text-[var(--text-secondary)] mt-1">
               Comprehensive C-suite insights and analytics
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-sm text-surface-500">
+            <div className="text-sm text-[var(--text-muted)]">
               Last updated: {lastUpdated.toLocaleTimeString()}
             </div>
             <Button
@@ -243,16 +243,16 @@ export default function ExecutiveDashboardPage() {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-surface-500 dark:text-surface-400">{kpi.name}</p>
-                      <p className="text-3xl font-bold text-surface-900 dark:text-white mt-2">
+                      <p className="text-sm font-medium text-[var(--text-muted)]">{kpi.name}</p>
+                      <p className="text-3xl font-bold text-[var(--text-primary)] mt-2">
                         {kpi.value}{kpi.unit && kpi.unit !== '#' ? kpi.unit : ''}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         {getTrendIcon(kpi.trend)}
-                        <span className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-green-600' : kpi.trend === 'DOWN' ? 'text-red-600' : 'text-surface-400'}`}>
+                        <span className={`text-sm font-medium ${kpi.trend === 'UP' ? 'text-green-600' : kpi.trend === 'DOWN' ? 'text-red-600' : 'text-[var(--text-muted)]'}`}>
                           {kpi.changePercent != null ? formatPercentage(kpi.changePercent) : ''}
                         </span>
-                        <span className="text-xs text-surface-400">{kpi.changeDescription || ''}</span>
+                        <span className="text-xs text-[var(--text-muted)]">{kpi.changeDescription || ''}</span>
                       </div>
                     </div>
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getStatusColor(kpi.status)}`}>
@@ -364,10 +364,10 @@ export default function ExecutiveDashboardPage() {
                       >
                         <div className="flex-shrink-0 mt-0.5">{getAlertIcon(alert.severity)}</div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-semibold text-surface-900 dark:text-white">{alert.title}</h4>
-                          <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">{alert.description}</p>
+                          <h4 className="text-sm font-semibold text-[var(--text-primary)]">{alert.title}</h4>
+                          <p className="text-sm text-[var(--text-secondary)] mt-1">{alert.description}</p>
                           {alert.recommendation && (
-                            <p className="text-xs text-surface-500 mt-2">
+                            <p className="text-xs text-[var(--text-muted)] mt-2">
                               <span className="font-medium">Recommendation:</span> {alert.recommendation}
                             </p>
                           )}
@@ -390,7 +390,7 @@ export default function ExecutiveDashboardPage() {
                   ) : (
                     <div className="text-center py-8">
                       <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-2" />
-                      <p className="text-sm text-surface-500">No active alerts</p>
+                      <p className="text-sm text-[var(--text-muted)]">No active alerts</p>
                     </div>
                   )}
                 </div>
@@ -412,23 +412,23 @@ export default function ExecutiveDashboardPage() {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Total Headcount</span>
-                      <span className="text-lg font-bold text-surface-900 dark:text-white">{data.workforceSummary.totalHeadcount}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Total Headcount</span>
+                      <span className="text-lg font-bold text-[var(--text-primary)]">{data.workforceSummary.totalHeadcount}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Active Employees</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Active Employees</span>
                       <span className="text-lg font-bold text-green-600">{data.workforceSummary.activeEmployees}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">New Hires (Month)</span>
+                      <span className="text-sm text-[var(--text-secondary)]">New Hires (Month)</span>
                       <span className="text-lg font-bold text-blue-600">{data.workforceSummary.newHiresThisMonth}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Terminations (Month)</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Terminations (Month)</span>
                       <span className="text-lg font-bold text-red-600">{data.workforceSummary.terminationsThisMonth}</span>
                     </div>
-                    <div className="flex items-center justify-between pt-3 border-t border-surface-200 dark:border-surface-700">
-                      <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Retention Rate</span>
+                    <div className="flex items-center justify-between pt-3 border-t border-[var(--border-main)]">
+                      <span className="text-sm font-medium text-[var(--text-secondary)]">Retention Rate</span>
                       <span className="text-xl font-bold text-primary-600">{data.workforceSummary.retentionRate?.toFixed(1) || 0}%</span>
                     </div>
                   </div>
@@ -448,19 +448,19 @@ export default function ExecutiveDashboardPage() {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Attendance Rate</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Attendance Rate</span>
                       <span className="text-lg font-bold text-green-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Performance Rating</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Performance Rating</span>
                       <span className="text-lg font-bold text-primary-600">{data.productivityMetrics.avgPerformanceRating?.toFixed(1) || 0}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Engagement Score</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Engagement Score</span>
                       <span className="text-lg font-bold text-blue-600">{data.productivityMetrics.engagementScore?.toFixed(0) || 0}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">eNPS</span>
+                      <span className="text-sm text-[var(--text-secondary)]">eNPS</span>
                       <span className="text-lg font-bold text-orange-600">{data.productivityMetrics.eNPS || 0}</span>
                     </div>
                   </div>
@@ -480,19 +480,19 @@ export default function ExecutiveDashboardPage() {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">High Risk Employees</span>
+                      <span className="text-sm text-[var(--text-secondary)]">High Risk Employees</span>
                       <span className="text-lg font-bold text-red-600">{data.riskIndicators.highRiskEmployees}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Predicted Attrition</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Predicted Attrition</span>
                       <span className="text-lg font-bold text-orange-600">{data.riskIndicators.predictedAttritionRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Compliance Issues</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Compliance Issues</span>
                       <span className="text-lg font-bold text-yellow-600">{data.riskIndicators.complianceIssuesCount}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-surface-600 dark:text-surface-400">Skill Gaps</span>
+                      <span className="text-sm text-[var(--text-secondary)]">Skill Gaps</span>
                       <span className="text-lg font-bold text-purple-600">{data.riskIndicators.totalSkillGaps}</span>
                     </div>
                   </div>
@@ -508,10 +508,10 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Monthly Payroll</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Monthly Payroll</p>
                   <DollarSign className="h-5 w-5 text-primary-500" />
                 </div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.monthlyPayrollCost || 0)}
                 </p>
                 {data.financialSummary.payrollCostChangePercent != null && (
@@ -532,13 +532,13 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">YTD Payroll</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">YTD Payroll</p>
                   <Calendar className="h-5 w-5 text-green-500" />
                 </div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.yearToDatePayrollCost || 0)}
                 </p>
-                <p className="text-xs text-surface-400 mt-2">
+                <p className="text-xs text-[var(--text-muted)] mt-2">
                   Budget: {data.financialSummary.budgetUtilizationPercent?.toFixed(0) || 0}% utilized
                 </p>
               </CardContent>
@@ -547,13 +547,13 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Cost/Employee</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Cost/Employee</p>
                   <Users className="h-5 w-5 text-orange-500" />
                 </div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.avgCostPerEmployee || 0)}
                 </p>
-                <p className="text-xs text-surface-400 mt-2">
+                <p className="text-xs text-[var(--text-muted)] mt-2">
                   Monthly average
                 </p>
               </CardContent>
@@ -562,13 +562,13 @@ export default function ExecutiveDashboardPage() {
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-surface-500 dark:text-surface-400">Revenue/Employee</p>
+                  <p className="text-sm font-medium text-[var(--text-muted)]">Revenue/Employee</p>
                   <TrendingUp className="h-5 w-5 text-blue-500" />
                 </div>
-                <p className="text-2xl font-bold text-surface-900 dark:text-white">
+                <p className="text-2xl font-bold text-[var(--text-primary)]">
                   {formatCurrency(data.financialSummary.revenuePerEmployee || 0)}
                 </p>
-                <p className="text-xs text-surface-400 mt-2">
+                <p className="text-xs text-[var(--text-muted)] mt-2">
                   Per month
                 </p>
               </CardContent>

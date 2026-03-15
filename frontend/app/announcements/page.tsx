@@ -293,13 +293,13 @@ export default function AnnouncementsPage() {
                 placeholder="Search announcements..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-surface-50 dark:bg-surface-800/50 dark:text-white"
+                className="w-full pl-10 pr-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-[var(--bg-secondary)]/50 dark:text-white"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-input)] dark:text-white"
+              className="px-4 py-2.5 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] dark:text-white"
             >
               <option value="">All Categories</option>
               {Object.keys(categoryIcons).map((cat) => (
@@ -311,7 +311,7 @@ export default function AnnouncementsPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-input)] dark:text-white"
+              className="px-4 py-2.5 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] dark:text-white"
             >
               <option value="">All Priorities</option>
               {Object.entries(priorityLabels).map(([key, label]) => (
@@ -442,7 +442,7 @@ export default function AnnouncementsPage() {
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
@@ -452,7 +452,7 @@ export default function AnnouncementsPage() {
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -535,7 +535,7 @@ export default function AnnouncementsPage() {
                   />
 
                   {selectedAnnouncement.attachmentUrl && (
-                    <div className="mt-6 p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
+                    <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                       <a
                         href={selectedAnnouncement.attachmentUrl}
                         target="_blank"
@@ -550,7 +550,7 @@ export default function AnnouncementsPage() {
                 </div>
 
                 {/* Modal Footer */}
-                <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 dark:border-slate-700 flex justify-between items-center">
+                <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex justify-between items-center">
                   <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     Marked as read
@@ -582,7 +582,7 @@ export default function AnnouncementsPage() {
                     )}
                     <button
                       onClick={() => setSelectedAnnouncement(null)}
-                      className="px-4 py-2 bg-[var(--bg-surface)] dark:bg-slate-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors font-medium"
+                      className="px-4 py-2 bg-[var(--bg-surface)] dark:bg-slate-800 text-[var(--text-secondary)] rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors font-medium"
                     >
                       Close
                     </button>
@@ -720,7 +720,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 dark:border-slate-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-[var(--border-main)] dark:border-slate-700 flex items-center justify-between">
           <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
@@ -736,28 +736,28 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         <div className="p-6 overflow-y-auto max-h-[60vh] space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
               placeholder="Enter announcement title"
             />
           </div>
 
           {/* Content */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content <span className="text-red-500">*</span>
             </label>
             <textarea
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={5}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-slate-800 dark:text-white resize-none"
               placeholder="Enter announcement content"
             />
           </div>
@@ -765,13 +765,13 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           {/* Category and Priority */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Category
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value as AnnouncementCategory })}
-                className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
               >
                 {Object.keys(categoryIcons).map((cat) => (
                   <option key={cat} value={cat}>
@@ -781,13 +781,13 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Priority
               </label>
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value as AnnouncementPriority })}
-                className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg dark:bg-slate-800 dark:text-white"
+                className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
               >
                 {Object.entries(priorityLabels).map(([key, label]) => (
                   <option key={key} value={key}>
@@ -800,13 +800,13 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
 
           {/* Target Audience */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Target Audience
             </label>
             <select
               value={formData.targetAudience}
               onChange={(e) => setFormData({ ...formData, targetAudience: e.target.value as TargetAudience, targetDepartmentIds: [] })}
-              className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg dark:bg-slate-800 dark:text-white"
+              className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg dark:bg-slate-800 dark:text-white"
             >
               <option value="ALL_EMPLOYEES">All Employees</option>
               <option value="SPECIFIC_DEPARTMENTS">Specific Departments</option>
@@ -818,7 +818,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           {/* Department Selection - Only shown when SPECIFIC_DEPARTMENTS is selected */}
           {formData.targetAudience === 'SPECIFIC_DEPARTMENTS' && (
             <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Select Departments <span className="text-red-500">*</span>
               </label>
               {loadingDepartments ? (
@@ -829,7 +829,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               ) : departments.length === 0 ? (
                 <p className="text-sm text-[var(--text-muted)]">No departments found</p>
               ) : (
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-50 dark:bg-surface-800/50">
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50">
                   {departments.map((dept) => (
                     <label
                       key={dept.id}
@@ -845,7 +845,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                         onChange={() => toggleDepartment(dept.id)}
                         className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
                       />
-                      <span className="text-sm text-surface-700 dark:text-surface-300 truncate">
+                      <span className="text-sm text-[var(--text-secondary)] truncate">
                         {dept.name}
                       </span>
                     </label>
@@ -869,7 +869,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 onChange={(e) => setFormData({ ...formData, isPinned: e.target.checked })}
                 className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
               />
-              <span className="text-sm text-surface-700 dark:text-surface-300">Pin this announcement</span>
+              <span className="text-sm text-[var(--text-secondary)]">Pin this announcement</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -878,7 +878,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                 onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
                 className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
               />
-              <span className="text-sm text-surface-700 dark:text-surface-300">Send email notification</span>
+              <span className="text-sm text-[var(--text-secondary)]">Send email notification</span>
             </label>
           </div>
 
@@ -891,10 +891,10 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 dark:border-slate-700 flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border-main)] dark:border-slate-700 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

@@ -809,10 +809,10 @@ function DriveContent() {
 
   if (isLoading && !accessToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-100 dark:bg-surface-950">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] dark:bg-[var(--bg-primary)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-          <p className="text-surface-500 font-medium">Loading NU-Drive...</p>
+          <p className="text-[var(--text-muted)] font-medium">Loading NU-Drive...</p>
         </div>
       </div>
     );
@@ -831,8 +831,8 @@ function DriveContent() {
               <HardDrive className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">NU-Drive</h1>
-              <p className="text-sm text-surface-500">Your organization&apos;s Google Drive</p>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">NU-Drive</h1>
+              <p className="text-sm text-[var(--text-muted)]">Your organization&apos;s Google Drive</p>
             </div>
           </div>
           {!accessToken ? (
@@ -877,7 +877,7 @@ function DriveContent() {
                 variant="ghost"
                 size="sm"
                 onClick={clearToken}
-                className="text-surface-500 hover:text-red-600"
+                className="text-[var(--text-muted)] hover:text-red-600"
               >
                 Disconnect
               </Button>
@@ -902,16 +902,16 @@ function DriveContent() {
 
         {!accessToken ? (
           /* Connect Card */
-          <Card className="border-2 border-dashed border-surface-300 dark:border-surface-700">
+          <Card className="border-2 border-dashed border-[var(--border-main)] dark:border-[var(--border-main)]">
             <CardContent className="py-16">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-full bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mx-auto mb-6">
                   <HardDrive className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h2 className="text-xl font-semibold text-surface-900 dark:text-surface-50 mb-2">
+                <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
                   Connect to Google Drive
                 </h2>
-                <p className="text-surface-500 mb-6 max-w-md mx-auto">
+                <p className="text-[var(--text-muted)] mb-6 max-w-md mx-auto">
                   Access your organization&apos;s Google Drive files directly within NuLogic.
                   View, search, upload, share, and manage your documents all in one place.
                 </p>
@@ -923,7 +923,7 @@ function DriveContent() {
                 >
                   Connect Google Drive
                 </Button>
-                <p className="text-xs text-surface-400 mt-4">
+                <p className="text-xs text-[var(--text-muted)] mt-4">
                   You&apos;ll be asked to grant access to your Google Drive files.
                 </p>
               </div>
@@ -936,12 +936,12 @@ function DriveContent() {
               <Card>
                 <CardContent className="py-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Storage Used</span>
-                    <span className="text-sm text-surface-500">
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">Storage Used</span>
+                    <span className="text-sm text-[var(--text-muted)]">
                       {formatBytes(driveStats.used)} of {formatBytes(driveStats.limit)}
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500"
                       style={{ width: `${Math.min((driveStats.used / driveStats.limit) * 100, 100)}%` }}
@@ -952,13 +952,13 @@ function DriveContent() {
             )}
 
             {/* Tabs */}
-            <div className="flex items-center gap-1 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-center gap-1 border-b border-[var(--border-main)]">
               <button
                 onClick={() => handleTabChange('my-drive')}
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'my-drive'
                     ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                 }`}
               >
                 <FolderOpen className="h-4 w-4" />
@@ -969,7 +969,7 @@ function DriveContent() {
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'shared'
                     ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                 }`}
               >
                 <Users className="h-4 w-4" />
@@ -980,7 +980,7 @@ function DriveContent() {
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'starred'
                     ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                 }`}
               >
                 <Star className="h-4 w-4" />
@@ -991,7 +991,7 @@ function DriveContent() {
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'recent'
                     ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]'
                 }`}
               >
                 <Clock className="h-4 w-4" />
@@ -1002,7 +1002,7 @@ function DriveContent() {
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                 <Input
                   placeholder="Search files..."
                   value={searchQuery}
@@ -1011,16 +1011,16 @@ function DriveContent() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+                <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-800'}`}
+                    className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
                   >
                     <Grid className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-800'}`}
+                    className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 dark:bg-primary-950 text-primary-600' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -1033,12 +1033,12 @@ function DriveContent() {
               <div className="flex items-center gap-2 text-sm">
                 {breadcrumbs.map((crumb, index) => (
                   <React.Fragment key={crumb.id}>
-                    {index > 0 && <span className="text-surface-400">/</span>}
+                    {index > 0 && <span className="text-[var(--text-muted)]">/</span>}
                     <button
                       onClick={() => navigateToFolder(crumb.id, crumb.name)}
                       className={`hover:text-primary-600 ${index === breadcrumbs.length - 1
-                          ? 'text-surface-900 dark:text-surface-50 font-medium'
-                          : 'text-surface-500'
+                          ? 'text-[var(--text-primary)] font-medium'
+                          : 'text-[var(--text-muted)]'
                         }`}
                     >
                       {crumb.name}
@@ -1053,7 +1053,7 @@ function DriveContent() {
               <div className="flex items-center justify-center py-16">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-10 h-10 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin" />
-                  <p className="text-surface-500">Loading files...</p>
+                  <p className="text-[var(--text-muted)]">Loading files...</p>
                 </div>
               </div>
             ) : filteredFiles.length === 0 ? (
@@ -1061,15 +1061,15 @@ function DriveContent() {
               <Card>
                 <CardContent className="py-16">
                   <div className="text-center">
-                    <Folder className="h-16 w-16 text-surface-300 dark:text-surface-700 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-50 mb-2">
+                    <Folder className="h-16 w-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                       {searchQuery ? 'No files found' :
                        activeTab === 'shared' ? 'No files shared with you' :
                        activeTab === 'starred' ? 'No starred files' :
                        activeTab === 'recent' ? 'No recent files' :
                        'This folder is empty'}
                     </h3>
-                    <p className="text-surface-500">
+                    <p className="text-[var(--text-muted)]">
                       {searchQuery
                         ? 'Try adjusting your search query'
                         : activeTab === 'my-drive'
@@ -1106,23 +1106,23 @@ function DriveContent() {
                     key={file.id}
                     onClick={() => handleFileClick(file)}
                     onContextMenu={(e) => handleContextMenu(e, file)}
-                    className="group p-4 bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer relative"
+                    className="group p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-md transition-all cursor-pointer relative"
                   >
                     <button
                       onClick={(e) => handleContextMenu(e, file)}
-                      className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-surface-100 dark:hover:bg-surface-800 transition-opacity"
+                      className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-opacity"
                     >
-                      <MoreVertical className="h-4 w-4 text-surface-500" />
+                      <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                     </button>
                     <div className="flex flex-col items-center text-center">
-                      <div className="mb-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 transition-colors">
+                      <div className="mb-3 p-3 bg-[var(--bg-secondary)] rounded-xl group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 transition-colors">
                         {getFileIcon(file.mimeType)}
                       </div>
-                      <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate w-full">
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate w-full">
                         {file.name}
                       </p>
                       {file.modifiedTime && (
-                        <p className="text-xs text-surface-400 mt-1">
+                        <p className="text-xs text-[var(--text-muted)] mt-1">
                           {new Date(file.modifiedTime).toLocaleDateString()}
                         </p>
                       )}
@@ -1131,7 +1131,7 @@ function DriveContent() {
                           <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                         )}
                         {file.shared && (
-                          <Users className="h-3 w-3 text-surface-400" />
+                          <Users className="h-3 w-3 text-[var(--text-muted)]" />
                         )}
                       </div>
                     </div>
@@ -1147,42 +1147,42 @@ function DriveContent() {
                       key={file.id}
                       onClick={() => handleFileClick(file)}
                       onContextMenu={(e) => handleContextMenu(e, file)}
-                      className="flex items-center gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800 cursor-pointer transition-colors"
+                      className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer transition-colors"
                     >
                       <div className="flex-shrink-0">
                         {getFileIcon(file.mimeType)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate">
+                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                             {file.name}
                           </p>
                           {file.starred && (
                             <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                           )}
                           {file.shared && (
-                            <Users className="h-4 w-4 text-surface-400 flex-shrink-0" />
+                            <Users className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0" />
                           )}
                         </div>
                         <div className="flex items-center gap-4 mt-1">
                           {activeTab === 'shared' && file.sharingUser && (
-                            <span className="text-xs text-surface-500">
+                            <span className="text-xs text-[var(--text-muted)]">
                               Shared by {file.sharingUser.displayName}
                             </span>
                           )}
                           {file.owners?.[0] && activeTab !== 'shared' && (
-                            <span className="text-xs text-surface-500">
+                            <span className="text-xs text-[var(--text-muted)]">
                               {file.owners[0].displayName}
                             </span>
                           )}
                           {file.modifiedTime && (
-                            <span className="text-xs text-surface-400 flex items-center gap-1">
+                            <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               {new Date(file.modifiedTime).toLocaleDateString()}
                             </span>
                           )}
                           {file.size && (
-                            <span className="text-xs text-surface-400">
+                            <span className="text-xs text-[var(--text-muted)]">
                               {formatBytes(parseInt(file.size))}
                             </span>
                           )}
@@ -1190,9 +1190,9 @@ function DriveContent() {
                       </div>
                       <button
                         onClick={(e) => handleContextMenu(e, file)}
-                        className="p-2 rounded-full hover:bg-surface-100 dark:hover:bg-surface-700"
+                        className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
                       >
-                        <MoreVertical className="h-4 w-4 text-surface-500" />
+                        <MoreVertical className="h-4 w-4 text-[var(--text-muted)]" />
                       </button>
                     </div>
                   ))}
@@ -1208,7 +1208,7 @@ function DriveContent() {
         <div
           ref={contextMenuRef}
           style={{ left: contextMenuPos.x, top: contextMenuPos.y }}
-          className="fixed z-50 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg py-1 min-w-[180px]"
+          className="fixed z-50 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg shadow-lg py-1 min-w-[180px]"
         >
           {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && (
             <button
@@ -1216,7 +1216,7 @@ function DriveContent() {
                 openPreview(contextMenuFile);
                 setShowContextMenu(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
             >
               <File className="h-4 w-4" />
               Open
@@ -1228,7 +1228,7 @@ function DriveContent() {
                 window.open(contextMenuFile.webViewLink, '_blank');
                 setShowContextMenu(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
             >
               <ExternalLink className="h-4 w-4" />
               Open in Drive
@@ -1237,7 +1237,7 @@ function DriveContent() {
           {contextMenuFile.mimeType !== 'application/vnd.google-apps.folder' && contextMenuFile.webContentLink && (
             <button
               onClick={() => downloadFile(contextMenuFile)}
-              className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+              className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
             >
               <Download className="h-4 w-4" />
               Download
@@ -1245,26 +1245,26 @@ function DriveContent() {
           )}
           <button
             onClick={() => openShareModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
           >
             <Share2 className="h-4 w-4" />
             Share
           </button>
           <button
             onClick={() => toggleStar(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
           >
             <Star className={`h-4 w-4 ${contextMenuFile.starred ? 'fill-yellow-500 text-yellow-500' : ''}`} />
             {contextMenuFile.starred ? 'Remove star' : 'Add star'}
           </button>
           <button
             onClick={() => openRenameModal(contextMenuFile)}
-            className="w-full px-4 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-3"
+            className="w-full px-4 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-3"
           >
             <Edit3 className="h-4 w-4" />
             Rename
           </button>
-          <div className="border-t border-surface-100 dark:border-surface-700 my-1" />
+          <div className="border-t border-[var(--border-main)] dark:border-[var(--border-main)] my-1" />
           <button
             onClick={() => {
               deleteFile(contextMenuFile.id);
@@ -1281,21 +1281,21 @@ function DriveContent() {
       {showNewFolderModal && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Create New Folder</h3>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">Create New Folder</h3>
               <button
                 onClick={() => {
                   setShowNewFolderModal(false);
                   setNewFolderName('');
                 }}
-                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Folder Name
                 </label>
                 <Input
@@ -1333,11 +1333,11 @@ function DriveContent() {
       {showShareModal && selectedFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Share &quot;{selectedFile.name}&quot;</h3>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">Share &quot;{selectedFile.name}&quot;</h3>
               <button
                 onClick={() => setShowShareModal(false)}
-                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1351,7 +1351,7 @@ function DriveContent() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Share with
                 </label>
                 <Input
@@ -1363,13 +1363,13 @@ function DriveContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Permission
                 </label>
                 <select
                   value={shareRole}
                   onChange={(e) => setShareRole(e.target.value as 'reader' | 'writer' | 'commenter')}
-                  className="w-full px-3 py-2 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-50"
+                  className="w-full px-3 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
                 >
                   <option value="reader">Viewer</option>
                   <option value="commenter">Commenter</option>
@@ -1387,8 +1387,8 @@ function DriveContent() {
                 {sharing ? 'Sharing...' : 'Share'}
               </Button>
 
-              <div className="border-t border-surface-100 dark:border-surface-800 pt-4">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+              <div className="border-t border-[var(--border-main)] pt-4">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Get shareable link
                 </label>
                 {shareLink ? (
@@ -1415,7 +1415,7 @@ function DriveContent() {
                     Generate Link
                   </Button>
                 )}
-                <p className="text-xs text-surface-500 mt-2">
+                <p className="text-xs text-[var(--text-muted)] mt-2">
                   Anyone with this link can view the file.
                 </p>
               </div>
@@ -1428,21 +1428,21 @@ function DriveContent() {
       {showRenameModal && contextMenuFile && (
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-md">
-            <div className="flex items-center justify-between p-4 border-b border-surface-100 dark:border-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50">Rename</h3>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">Rename</h3>
               <button
                 onClick={() => {
                   setShowRenameModal(false);
                   setRenameValue('');
                 }}
-                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   New name
                 </label>
                 <Input
@@ -1480,13 +1480,13 @@ function DriveContent() {
       {showPreviewModal && previewFile && (
         <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
           {/* Preview Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-surface-900/90 border-b border-surface-700">
+          <div className="flex items-center justify-between px-4 py-3 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
             <div className="flex items-center gap-3">
               {getFileIcon(previewFile.mimeType)}
               <div>
                 <h3 className="font-medium text-white truncate max-w-md">{previewFile.name}</h3>
                 {previewFile.modifiedTime && (
-                  <p className="text-xs text-surface-400">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Modified {new Date(previewFile.modifiedTime).toLocaleDateString()}
                   </p>
                 )}
@@ -1498,7 +1498,7 @@ function DriveContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => downloadFile(previewFile)}
-                  className="text-white hover:bg-surface-700"
+                  className="text-white hover:bg-[var(--bg-secondary)]"
                   leftIcon={<Download className="h-4 w-4" />}
                 >
                   Download
@@ -1508,7 +1508,7 @@ function DriveContent() {
                 variant="ghost"
                 size="sm"
                 onClick={() => openShareModal(previewFile)}
-                className="text-white hover:bg-surface-700"
+                className="text-white hover:bg-[var(--bg-secondary)]"
                 leftIcon={<Share2 className="h-4 w-4" />}
               >
                 Share
@@ -1518,7 +1518,7 @@ function DriveContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => window.open(previewFile.webViewLink, '_blank')}
-                  className="text-white hover:bg-surface-700"
+                  className="text-white hover:bg-[var(--bg-secondary)]"
                   leftIcon={<ExternalLink className="h-4 w-4" />}
                 >
                   Open in Drive
@@ -1530,7 +1530,7 @@ function DriveContent() {
                   setPreviewFile(null);
                   setPreviewContent(null);
                 }}
-                className="p-2 rounded-full hover:bg-surface-700 text-white ml-2"
+                className="p-2 rounded-full hover:bg-[var(--bg-secondary)] text-white ml-2"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1547,7 +1547,7 @@ function DriveContent() {
             ) : previewContent ? (
               // Text content preview
               <div className="w-full h-full overflow-auto p-4">
-                <pre className="bg-surface-900 text-surface-100 p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
+                <pre className="bg-[var(--bg-secondary)] text-[var(--text-primary)] p-4 rounded-lg text-sm font-mono whitespace-pre-wrap overflow-auto max-h-full">
                   {previewContent}
                 </pre>
               </div>

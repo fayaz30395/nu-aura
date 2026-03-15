@@ -231,7 +231,7 @@ export default function CustomFieldsPage() {
     return (
       <>
         <div className="flex items-center justify-center p-8">
-          <div className="text-surface-600 dark:text-surface-400">Loading...</div>
+          <div className="text-[var(--text-secondary)]">Loading...</div>
         </div>
       </>
     );
@@ -241,8 +241,8 @@ export default function CustomFieldsPage() {
     <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100">Custom Fields</h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-1">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Custom Fields</h1>
+          <p className="text-[var(--text-secondary)] mt-1">
             Define custom fields to extend entity data with your own attributes
           </p>
         </div>
@@ -263,12 +263,12 @@ export default function CustomFieldsPage() {
               placeholder="Search fields..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <select
               value={filterEntityType}
               onChange={(e) => setFilterEntityType(e.target.value as EntityType | 'ALL')}
-              className="px-4 py-2 border border-gray-300 dark:border-surface-700 bg-[var(--bg-card)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-300 dark:border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="ALL">All Entity Types</option>
               {ENTITY_TYPES.map((type) => (
@@ -292,7 +292,7 @@ export default function CustomFieldsPage() {
 
         <div className="bg-[var(--bg-input)] rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-[var(--border-main)]">
-            <thead className="bg-[var(--bg-surface)] dark:bg-surface-900">
+            <thead className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Field
@@ -325,7 +325,7 @@ export default function CustomFieldsPage() {
                 filteredDefinitions.map((definition) => (
                   <tr key={definition.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                      <div className="text-sm font-medium text-[var(--text-primary)]">
                         {definition.fieldName}
                         {definition.isRequired && (
                           <span className="ml-1 text-red-500">*</span>
@@ -352,7 +352,7 @@ export default function CustomFieldsPage() {
                         className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           definition.isActive
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-700 dark:text-gray-300'
+                            : 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-300'
                         }`}
                       >
                         {definition.isActive ? 'Active' : 'Inactive'}
@@ -398,32 +398,32 @@ export default function CustomFieldsPage() {
         {(showCreateModal || showEditModal) && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">
+              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">
                 {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
               </h2>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Code *
                     </label>
                     <input
                       type="text"
                       {...register('fieldCode')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., blood_group"
                       disabled={showEditModal}
                     />
                     {errors.fieldCode && <p className="text-red-500 text-sm mt-1">{errors.fieldCode.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Display Name *
                     </label>
                     <input
                       type="text"
                       {...register('fieldName')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Blood Group"
                     />
                     {errors.fieldName && <p className="text-red-500 text-sm mt-1">{errors.fieldName.message}</p>}
@@ -431,12 +431,12 @@ export default function CustomFieldsPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Description
                   </label>
                   <textarea
                     {...register('description')}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
                     placeholder="Optional description..."
                   />
@@ -445,7 +445,7 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Entity Type *
                     </label>
                     <Controller
@@ -454,7 +454,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           disabled={showEditModal}
                         >
                           {ENTITY_TYPES.map((type) => (
@@ -468,7 +468,7 @@ export default function CustomFieldsPage() {
                     {errors.entityType && <p className="text-red-500 text-sm mt-1">{errors.entityType.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Type *
                     </label>
                     <Controller
@@ -477,7 +477,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           disabled={showEditModal}
                         >
                           {FIELD_TYPES.map((type) => (
@@ -494,25 +494,25 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Field Group
                     </label>
                     <input
                       type="text"
                       {...register('fieldGroup')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
                     {errors.fieldGroup && <p className="text-red-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Display Order
                     </label>
                     <input
                       type="number"
                       {...register('displayOrder')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {errors.displayOrder && <p className="text-red-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
@@ -520,12 +520,12 @@ export default function CustomFieldsPage() {
 
                 {showOptionsField && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Options (one per line)
                     </label>
                     <textarea
                       {...register('optionsText')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
@@ -535,25 +535,25 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Placeholder
                     </label>
                     <input
                       type="text"
                       {...register('placeholder')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Placeholder text..."
                     />
                     {errors.placeholder && <p className="text-red-500 text-sm mt-1">{errors.placeholder.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Default Value
                     </label>
                     <input
                       type="text"
                       {...register('defaultValue')}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {errors.defaultValue && <p className="text-red-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
@@ -561,7 +561,7 @@ export default function CustomFieldsPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       View Visibility
                     </label>
                     <Controller
@@ -570,7 +570,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>
@@ -583,7 +583,7 @@ export default function CustomFieldsPage() {
                     {errors.viewVisibility && <p className="text-red-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Edit Visibility
                     </label>
                     <Controller
@@ -592,7 +592,7 @@ export default function CustomFieldsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           {VISIBILITIES.map((v) => (
                             <option key={v} value={v}>
@@ -618,7 +618,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-primary-600 focus:ring-blue-500"
                         />
-                        <span className="text-sm text-surface-700 dark:text-surface-300">Required</span>
+                        <span className="text-sm text-[var(--text-secondary)]">Required</span>
                       </label>
                     )}
                   />
@@ -633,7 +633,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-primary-600 focus:ring-blue-500"
                         />
-                        <span className="text-sm text-surface-700 dark:text-surface-300">Searchable</span>
+                        <span className="text-sm text-[var(--text-secondary)]">Searchable</span>
                       </label>
                     )}
                   />
@@ -648,7 +648,7 @@ export default function CustomFieldsPage() {
                           onChange={(e) => onChange(e.target.checked)}
                           className="rounded text-primary-600 focus:ring-blue-500"
                         />
-                        <span className="text-sm text-surface-700 dark:text-surface-300">Show in List View</span>
+                        <span className="text-sm text-[var(--text-secondary)]">Show in List View</span>
                       </label>
                     )}
                   />
@@ -663,7 +663,7 @@ export default function CustomFieldsPage() {
                       setShowEditModal(false);
                       setSelectedDefinition(null);
                     }}
-                    className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-200 dark:bg-surface-800 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                    className="px-4 py-2 text-[var(--text-secondary)] bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
                   >
                     Cancel
                   </button>

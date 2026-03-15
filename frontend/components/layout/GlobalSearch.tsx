@@ -387,7 +387,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         />
         <div className="absolute right-3 flex items-center gap-1 text-[var(--text-muted)]">
           {isSearching && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-500" />}
-          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
+          <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium bg-[var(--bg-surface)] dark:bg-[var(--bg-surface)] rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
             <Command className="h-2.5 w-2.5" />
             <span>K</span>
           </kbd>
@@ -435,7 +435,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                   return (
                     <div key={category} className="mb-2">
                       <div className="px-4 py-1.5">
-                        <span className="text-[10px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                        <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                           {category}
                         </span>
                       </div>
@@ -448,7 +448,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                 {apiResults && apiResults.employees.length > 0 && (
                   <div className="mb-2">
                     <div className="px-4 py-1.5">
-                      <span className="text-[10px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                         People
                       </span>
                     </div>
@@ -462,7 +462,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                 {apiResults && apiResults.projects.length > 0 && (
                   <div className="mb-2">
                     <div className="px-4 py-1.5">
-                      <span className="text-[10px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                         Projects
                       </span>
                     </div>
@@ -476,7 +476,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                 {apiResults && apiResults.departments.length > 0 && (
                   <div className="mb-2">
                     <div className="px-4 py-1.5">
-                      <span className="text-[10px] font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
                         Departments
                       </span>
                     </div>
@@ -505,7 +505,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
 
           {/* Footer */}
           <div className="px-4 py-2.5 border-t border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-800/50 rounded-b-xl">
-            <div className="flex items-center gap-4 text-[10px] text-surface-400">
+            <div className="flex items-center gap-4 text-xs text-surface-400">
               <span className="flex items-center gap-1">
                 <kbd className="px-1.5 py-0.5 bg-surface-200 dark:bg-surface-700 rounded text-surface-500">↑↓</kbd>
                 Navigate

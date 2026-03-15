@@ -217,12 +217,12 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-surface-200 bg-white shadow-lg dark:border-surface-700 dark:bg-surface-800">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-white shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
           {loading && (
-            <div className="px-4 py-3 text-sm text-surface-500">Searching employees...</div>
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching employees...</div>
           )}
           {!loading && results.length === 0 && (
-            <div className="px-4 py-3 text-sm text-surface-500">No employees found</div>
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">No employees found</div>
           )}
           {!loading && results.length > 0 && (
             <ul className="max-h-64 overflow-y-auto">
@@ -230,14 +230,14 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
                 <li key={employee.id}>
                   <button
                     type="button"
-                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-surface-700 hover:bg-surface-100 dark:text-surface-200 dark:hover:bg-surface-700"
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:text-[var(--text-secondary)]200 dark:hover:bg-[var(--bg-secondary)]"
                     onClick={() => handleSelect(employee)}
                   >
-                    <span className="font-medium text-surface-900 dark:text-surface-50">
+                    <span className="font-medium text-[var(--text-primary)]">
                       {buildEmployeeName(employee)}
                     </span>
                     {employee.employeeCode && (
-                      <span className="text-xs text-surface-500 dark:text-surface-400">
+                      <span className="text-xs text-[var(--text-muted)]">
                         {employee.employeeCode}
                       </span>
                     )}
@@ -405,10 +405,10 @@ export default function ProjectDetailPage() {
       header: 'Employee',
       accessor: (allocation: ProjectAllocation) => (
         <div className="space-y-1">
-          <div className="font-medium text-surface-900 dark:text-surface-100">
+          <div className="font-medium text-[var(--text-primary)]">
             {allocation.employeeName || allocation.employeeCode || '—'}
           </div>
-          <div className="text-xs text-surface-500 dark:text-surface-400">
+          <div className="text-xs text-[var(--text-muted)]">
             {allocation.employeeCode || '—'}
           </div>
         </div>
@@ -419,7 +419,7 @@ export default function ProjectDetailPage() {
       key: 'allocation',
       header: 'Allocation',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-surface-700 dark:text-surface-300">
+        <span className="text-sm text-[var(--text-secondary)]">
           {formatPercent(allocation.allocationPercent)}
         </span>
       ),
@@ -429,7 +429,7 @@ export default function ProjectDetailPage() {
       key: 'start',
       header: 'Start Date',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-surface-700 dark:text-surface-300">
+        <span className="text-sm text-[var(--text-secondary)]">
           {formatDate(allocation.startDate)}
         </span>
       ),
@@ -439,7 +439,7 @@ export default function ProjectDetailPage() {
       key: 'end',
       header: 'End Date',
       accessor: (allocation: ProjectAllocation) => (
-        <span className="text-sm text-surface-700 dark:text-surface-300">
+        <span className="text-sm text-[var(--text-secondary)]">
           {formatDate(allocation.endDate)}
         </span>
       ),
@@ -470,7 +470,7 @@ export default function ProjectDetailPage() {
       <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: 'Project' }]}>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
-          <span className="ml-2 text-sm text-surface-500">Loading project...</span>
+          <span className="ml-2 text-sm text-[var(--text-muted)]">Loading project...</span>
         </div>
       </AppLayout>
     );
@@ -489,7 +489,7 @@ export default function ProjectDetailPage() {
             </Button>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                   {project?.name || 'Project'}
                 </h1>
                 {project && (() => {
@@ -507,7 +507,7 @@ export default function ProjectDetailPage() {
                   );
                 })()}
               </div>
-              <p className="text-sm text-surface-500 dark:text-surface-400">
+              <p className="text-sm text-[var(--text-muted)]">
                 {project?.projectCode || '—'}
               </p>
             </div>
@@ -539,26 +539,26 @@ export default function ProjectDetailPage() {
         <Card>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-surface-500">Project Manager</p>
-              <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-xs text-[var(--text-muted)]">Project Manager</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {project?.projectManagerName || '—'}
               </p>
             </div>
             <div>
-              <p className="text-xs text-surface-500">Start date</p>
-              <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-xs text-[var(--text-muted)]">Start date</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {formatDate(project?.startDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-surface-500">Expected end date</p>
-              <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-xs text-[var(--text-muted)]">Expected end date</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {formatDate(project?.expectedEndDate)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-surface-500">Client</p>
-              <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-xs text-[var(--text-muted)]">Client</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {project?.clientName || '—'}
               </p>
             </div>
@@ -569,8 +569,8 @@ export default function ProjectDetailPage() {
           <CardContent className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">Project Roster</h2>
-                <p className="text-sm text-surface-500">Allocated employees and their allocation percent.</p>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Project Roster</h2>
+                <p className="text-sm text-[var(--text-muted)]">Allocated employees and their allocation percent.</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Button

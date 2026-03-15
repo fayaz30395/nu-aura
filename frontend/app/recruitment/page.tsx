@@ -228,7 +228,7 @@ export default function RecruitmentDashboard() {
     return (
       <AppLayout>
         <div className="space-y-6">
-          <div className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg" />
+          <div className="h-32 bg-[var(--bg-secondary)] rounded-lg" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <SkeletonStatCard />
             <SkeletonStatCard />
@@ -267,10 +267,10 @@ export default function RecruitmentDashboard() {
         {/* Page Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-4xl font-bold text-[var(--text-primary)]">
               Recruitment Dashboard
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-2">
+            <p className="text-[var(--text-muted)] mt-2">
               Track job openings, candidates, and interviews
             </p>
           </div>
@@ -358,7 +358,7 @@ export default function RecruitmentDashboard() {
                   {todaysInterviews.map((interview, index) => (
                     <motion.div
                       key={interview.id}
-                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-50 dark:bg-surface-800/50"
+                      className="p-4 border border-[var(--border-main)] rounded-lg bg-[var(--bg-secondary)]/50"
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -368,13 +368,13 @@ export default function RecruitmentDashboard() {
                           <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-surface-900 dark:text-surface-50">
+                          <h4 className="font-semibold text-[var(--text-primary)]">
                             {interview.candidateName || 'Candidate'}
                           </h4>
-                          <p className="text-sm text-surface-500 dark:text-surface-400">
+                          <p className="text-sm text-[var(--text-muted)]">
                             {interview.jobTitle || 'Position'}
                           </p>
-                          <div className="flex items-center gap-2 mt-2 text-xs text-surface-500 dark:text-surface-400">
+                          <div className="flex items-center gap-2 mt-2 text-xs text-[var(--text-muted)]">
                             <Clock className="h-3.5 w-3.5" />
                             {formatTime(interview.scheduledAt)}
                             {interview.interviewRound && (
@@ -419,7 +419,7 @@ export default function RecruitmentDashboard() {
                   {recentOpenings.map((job, index) => (
                     <motion.div
                       key={job.id}
-                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                      className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                       onClick={() => router.push(`/recruitment/jobs?id=${job.id}`)}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -427,10 +427,10 @@ export default function RecruitmentDashboard() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-surface-900 dark:text-surface-50">
+                          <h3 className="font-semibold text-[var(--text-primary)]">
                             {job.jobTitle}
                           </h3>
-                          <div className="flex gap-4 mt-2 text-sm text-surface-500 dark:text-surface-400">
+                          <div className="flex gap-4 mt-2 text-sm text-[var(--text-muted)]">
                             {job.departmentName && (
                               <span className="flex items-center gap-1">
                                 <Users className="h-3.5 w-3.5" />
@@ -465,7 +465,7 @@ export default function RecruitmentDashboard() {
                   Recent Applications
                 </CardTitle>
                 {recentApplications.length > 0 && (
-                  <span className="text-xs text-surface-400 dark:text-surface-500">
+                  <span className="text-xs text-[var(--text-muted)]">
                     {visibleApplications.length} of {recentApplications.length}
                   </span>
                 )}
@@ -486,7 +486,7 @@ export default function RecruitmentDashboard() {
                   {visibleApplications.map((candidate, index) => (
                     <motion.div
                       key={candidate.id}
-                      className="p-4 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                      className="p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                       onClick={() =>
                         router.push(`/recruitment/candidates?id=${candidate.id}`)
                       }
@@ -497,15 +497,15 @@ export default function RecruitmentDashboard() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <h3
-                            className="font-semibold text-surface-900 dark:text-surface-50 truncate"
+                            className="font-semibold text-[var(--text-primary)] truncate"
                             title={candidate.fullName}
                           >
                             {candidate.fullName}
                           </h3>
-                          <p className="text-sm text-surface-500 dark:text-surface-400 truncate" title={candidate.jobTitle || 'Position not specified'}>
+                          <p className="text-sm text-[var(--text-muted)] truncate" title={candidate.jobTitle || 'Position not specified'}>
                             {candidate.jobTitle || 'Position not specified'}
                           </p>
-                          <p className="text-xs text-surface-400 dark:text-surface-500 mt-1">
+                          <p className="text-xs text-[var(--text-muted)] mt-1">
                             Applied {formatDate(candidate.appliedDate)}
                           </p>
                         </div>
@@ -519,7 +519,7 @@ export default function RecruitmentDashboard() {
                   {hasMore && (
                     <div ref={loadMoreRef} className="flex justify-center items-center py-4">
                       <Loader2 className="h-4 w-4 animate-spin text-primary-600 dark:text-primary-400 mr-2" />
-                      <span className="text-xs text-surface-400 dark:text-surface-500">
+                      <span className="text-xs text-[var(--text-muted)]">
                         Loading more candidates...
                       </span>
                     </div>

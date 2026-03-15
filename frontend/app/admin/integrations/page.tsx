@@ -195,10 +195,10 @@ export default function AdminIntegrationsPage() {
             <Settings className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Integrations
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Manage third-party integrations and external services
             </p>
           </div>
@@ -225,21 +225,21 @@ export default function AdminIntegrationsPage() {
         <CardContent className="space-y-6">
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Provider</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.provider || 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Status</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Status</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Last Checked</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Last Checked</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {smsStatus?.lastChecked
                   ? new Date(smsStatus.lastChecked).toLocaleTimeString()
                   : 'Never'}
@@ -248,8 +248,8 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Test SMS */}
-          <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
-            <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 flex items-center gap-2">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test SMS Service
             </h3>
@@ -295,8 +295,8 @@ export default function AdminIntegrationsPage() {
           </div>
 
           {/* Send SMS */}
-          <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
-            <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 flex items-center gap-2">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <Send className="h-4 w-4" />
               Send SMS
             </h3>
@@ -313,7 +313,7 @@ export default function AdminIntegrationsPage() {
               <div>
                 <Label>Template (Optional)</Label>
                 <select
-                  className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-card)]"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-card)]"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
                   disabled={sendSmsMutation.isPending}
@@ -330,7 +330,7 @@ export default function AdminIntegrationsPage() {
                 <div>
                   <Label>Message</Label>
                   <textarea
-                    className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-card)]"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-card)]"
                     placeholder="Enter your message here..."
                     value={sendMessage}
                     onChange={(e) => setSendMessage(e.target.value)}
@@ -418,29 +418,29 @@ export default function AdminIntegrationsPage() {
         <CardContent className="space-y-6">
           {/* Configuration Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Provider</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Provider</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.provider || 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Status</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Status</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.configured ? 'Configured' : 'Not configured'}
               </p>
             </div>
-            <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700">
-              <p className="text-sm text-surface-500 dark:text-surface-400">Supported Methods</p>
-              <p className="text-lg font-semibold text-surface-900 dark:text-surface-50 mt-1">
+            <div className="p-4 rounded-lg border border-[var(--border-main)]">
+              <p className="text-sm text-[var(--text-muted)]">Supported Methods</p>
+              <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">
                 {paymentStatus?.supportedMethods?.length || 0}
               </p>
             </div>
           </div>
 
           {/* Test Payment Gateway */}
-          <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
-            <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3 flex items-center gap-2">
+          <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+            <h3 className="font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
               <TestTube className="h-4 w-4" />
               Test Payment Gateway
             </h3>
@@ -477,15 +477,15 @@ export default function AdminIntegrationsPage() {
 
           {/* Supported Payment Methods */}
           {paymentStatus?.supportedMethods && paymentStatus.supportedMethods.length > 0 && (
-            <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800">
-              <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-3">
+            <div className="p-4 rounded-lg bg-[var(--bg-secondary)]">
+              <h3 className="font-semibold text-[var(--text-primary)] mb-3">
                 Supported Payment Methods
               </h3>
               <div className="flex flex-wrap gap-2">
                 {paymentStatus.supportedMethods.map((method) => (
                   <span
                     key={method}
-                    className="px-3 py-1.5 rounded-full bg-surface-200 dark:bg-surface-700 text-sm text-surface-700 dark:text-surface-300"
+                    className="px-3 py-1.5 rounded-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]"
                   >
                     {method}
                   </span>

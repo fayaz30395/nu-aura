@@ -180,10 +180,10 @@ export default function AllocationSummaryPage() {
       header: 'Employee',
       accessor: (row: AllocationSummaryItem) => (
         <div className="space-y-1">
-          <div className="font-medium text-surface-900 dark:text-surface-100">
+          <div className="font-medium text-[var(--text-primary)]">
             {buildEmployeeLabel(row)}
           </div>
-          <div className="text-xs text-surface-500 dark:text-surface-400">
+          <div className="text-xs text-[var(--text-muted)]">
             {row.employeeCode || row.employeeEmail || '—'}
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function AllocationSummaryPage() {
       header: 'Avg Allocation % (range)',
       accessor: (row: AllocationSummaryItem) => (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-surface-700 dark:text-surface-300">
+          <span className="text-sm text-[var(--text-secondary)]">
             {formatPercent(row.allocationPercent)}
           </span>
           {row.overAllocated && (
@@ -211,7 +211,7 @@ export default function AllocationSummaryPage() {
       key: 'projects',
       header: 'Active Projects',
       accessor: (row: AllocationSummaryItem) => (
-        <span className="text-sm text-surface-700 dark:text-surface-300">
+        <span className="text-sm text-[var(--text-secondary)]">
           {row.activeProjectCount ?? '—'}
         </span>
       ),
@@ -224,10 +224,10 @@ export default function AllocationSummaryPage() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Allocation Summary
             </h1>
-            <p className="text-sm text-surface-500">
+            <p className="text-sm text-[var(--text-muted)]">
               Average allocation across the selected date range.
             </p>
           </div>
@@ -295,7 +295,7 @@ export default function AllocationSummaryPage() {
                 />
               </div>
             </div>
-            <p className="text-xs text-surface-500">
+            <p className="text-xs text-[var(--text-muted)]">
               Average is computed over the selected period; over-cap is flagged if any day in the range exceeds 100%.
             </p>
           </CardContent>

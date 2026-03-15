@@ -121,7 +121,7 @@ export default function OnboardingDetailPage() {
             <AppLayout activeMenuItem="recruitment">
                 <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
                     <div className="h-16 w-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
-                    <p className="text-surface-500 font-bold animate-pulse">Initializing Dashboard...</p>
+                    <p className="text-[var(--text-muted)] font-bold animate-pulse">Initializing Dashboard...</p>
                 </div>
             </AppLayout>
         );
@@ -161,15 +161,15 @@ export default function OnboardingDetailPage() {
                                 {process.employeeName?.charAt(0)}
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black tracking-tight text-surface-900 dark:text-white">
+                                <h1 className="text-4xl font-black tracking-tight text-[var(--text-primary)]">
                                     {process.employeeName}
                                 </h1>
-                                <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-surface-500">
-                                    <span className="flex items-center gap-1.5 bg-surface-100 dark:bg-surface-800 px-3 py-1 rounded-full text-xs">
+                                <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-[var(--text-muted)]">
+                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1 rounded-full text-xs">
                                         <User className="h-3.5 w-3.5" />
                                         ID: {process.employeeId}
                                     </span>
-                                    <span className="flex items-center gap-1.5 bg-surface-100 dark:bg-surface-800 px-3 py-1 rounded-full text-xs">
+                                    <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-3 py-1 rounded-full text-xs">
                                         <Calendar className="h-3.5 w-3.5" />
                                         Started {new Date(process.startDate).toLocaleDateString()}
                                     </span>
@@ -183,9 +183,9 @@ export default function OnboardingDetailPage() {
 
                     <div className="flex items-center gap-4">
                         <div className="text-right sr-only md:not-sr-only">
-                            <p className="text-xs font-black uppercase tracking-widest text-surface-400 mb-1">Overall Progress</p>
+                            <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">Overall Progress</p>
                             <div className="flex items-center gap-3">
-                                <div className="w-48 h-3 bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden shadow-inner">
+                                <div className="w-48 h-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${process.completionPercentage}%` }}
@@ -218,8 +218,8 @@ export default function OnboardingDetailPage() {
                                                 {idx + 1}
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-black text-surface-900 dark:text-white capitalize">{category}</h3>
-                                                <p className="text-sm font-bold text-surface-500">
+                                                <h3 className="text-xl font-black text-[var(--text-primary)] capitalize">{category}</h3>
+                                                <p className="text-sm font-bold text-[var(--text-muted)]">
                                                     {catTasks.filter(t => t.status === 'COMPLETED').length} of {catTasks.length} tasks completed
                                                 </p>
                                             </div>
@@ -233,19 +233,19 @@ export default function OnboardingDetailPage() {
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                className="border-t border-surface-200 dark:border-surface-700/50"
+                                                className="border-t border-[var(--border-main)]/50"
                                             >
                                                 <div className="p-2 space-y-1">
                                                     {catTasks.map((task) => (
                                                         <div
                                                             key={task.id}
-                                                            className={`flex items-center justify-between p-4 rounded-2xl group transition-all ${task.status === 'COMPLETED' ? 'bg-emerald-500/5' : 'hover:bg-surface-500/5'
+                                                            className={`flex items-center justify-between p-4 rounded-2xl group transition-all ${task.status === 'COMPLETED' ? 'bg-emerald-500/5' : 'hover:bg-[var(--bg-secondary)]/5'
                                                                 }`}
                                                         >
                                                             <div className="flex items-center gap-4 flex-1">
                                                                 <button
                                                                     onClick={() => handleTaskStatusUpdate(task.id, task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED')}
-                                                                    className={`flex-shrink-0 transition-all ${task.status === 'COMPLETED' ? 'text-emerald-500' : 'text-surface-300 group-hover:text-primary-400'
+                                                                    className={`flex-shrink-0 transition-all ${task.status === 'COMPLETED' ? 'text-emerald-500' : 'text-[var(--text-muted)] group-hover:text-primary-400'
                                                                         }`}
                                                                 >
                                                                     {task.status === 'COMPLETED' ? (
@@ -255,13 +255,13 @@ export default function OnboardingDetailPage() {
                                                                     )}
                                                                 </button>
                                                                 <div>
-                                                                    <p className={`font-bold transition-all ${task.status === 'COMPLETED' ? 'text-surface-400 line-through' : 'text-surface-900 dark:text-white'
+                                                                    <p className={`font-bold transition-all ${task.status === 'COMPLETED' ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-primary)]'
                                                                         }`}>
                                                                         {task.taskName}
-                                                                        {task.isMandatory && <span className="ml-2 text-[10px] text-red-500 bg-red-500/10 px-1.5 rounded uppercase font-black">Required</span>}
+                                                                        {task.isMandatory && <span className="ml-2 text-xs text-red-500 bg-red-500/10 px-1.5 rounded uppercase font-black">Required</span>}
                                                                     </p>
                                                                     {task.description && (
-                                                                        <p className="text-sm text-surface-500 font-medium">{task.description}</p>
+                                                                        <p className="text-sm text-[var(--text-muted)] font-medium">{task.description}</p>
                                                                     )}
                                                                 </div>
                                                             </div>
@@ -270,7 +270,7 @@ export default function OnboardingDetailPage() {
                                                                 <select
                                                                     value={task.status}
                                                                     onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
-                                                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-surface-500 outline-none cursor-pointer hover:text-primary-500"
+                                                                    className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] outline-none cursor-pointer hover:text-primary-500"
                                                                 >
                                                                     <option value="PENDING">Pending</option>
                                                                     <option value="IN_PROGRESS">In Progress</option>
@@ -302,14 +302,14 @@ export default function OnboardingDetailPage() {
                             </CardHeader>
                             <CardContent className="space-y-6 pt-2">
                                 <div className="bg-white/10 rounded-2xl p-4">
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
+                                    <p className="text-xs font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
                                     <p className="font-bold text-lg mt-1">{process.assignedBuddyName || 'Not Assigned'}</p>
                                     <Button variant="ghost" size="sm" className="w-full mt-3 bg-white/10 hover:bg-white/20 border-0 text-white text-xs">
                                         Send Message
                                     </Button>
                                 </div>
                                 <div className="bg-white/10 rounded-2xl p-4">
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Primary Goal</p>
+                                    <p className="text-xs font-black uppercase tracking-widest opacity-60">Primary Goal</p>
                                     <p className="font-bold text-sm mt-1">Successfully integrate into the Engineering team by end of Month 1.</p>
                                 </div>
                             </CardContent>
@@ -318,7 +318,7 @@ export default function OnboardingDetailPage() {
                         <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <HardDrive className="h-5 w-5 text-surface-500" />
+                                    <HardDrive className="h-5 w-5 text-[var(--text-muted)]" />
                                     <span>Cloud Assets</span>
                                 </CardTitle>
                             </CardHeader>
@@ -339,9 +339,9 @@ export default function OnboardingDetailPage() {
                                         </div>
                                         <label className="block">
                                             <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && uploadFileToDrive(e.target.files[0])} disabled={uploading} />
-                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-surface-200 dark:border-surface-700 hover:border-primary-500 cursor-pointer transition-all">
-                                                {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UploadCloud className="h-5 w-5 text-surface-400" />}
-                                                <span className="text-xs font-black uppercase tracking-widest text-surface-500">Upload Doc</span>
+                                            <div className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-[var(--border-main)] hover:border-primary-500 cursor-pointer transition-all">
+                                                {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UploadCloud className="h-5 w-5 text-[var(--text-muted)]" />}
+                                                <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Upload Doc</span>
                                             </div>
                                         </label>
                                     </div>
@@ -352,24 +352,24 @@ export default function OnboardingDetailPage() {
                         <Card className="border-0 shadow-xl bg-[var(--bg-card)]">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <ClipboardList className="h-5 w-5 text-surface-500" />
+                                    <ClipboardList className="h-5 w-5 text-[var(--text-muted)]" />
                                     <span>Process History</span>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-0">
                                 <div className="px-6 pb-6 space-y-4">
                                     <div className="flex gap-4">
-                                        <div className="w-0.5 bg-surface-200 dark:bg-surface-800 relative">
+                                        <div className="w-0.5 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] relative">
                                             <div className="absolute top-2 -left-1 w-2.5 h-2.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
                                         </div>
                                         <div className="pb-4">
-                                            <p className="text-xs font-black text-surface-900 dark:text-white">Process Initiated</p>
-                                            <p className="text-[10px] text-surface-500 font-bold">{new Date(process.createdAt).toLocaleDateString()}</p>
+                                            <p className="text-xs font-black text-[var(--text-primary)]">Process Initiated</p>
+                                            <p className="text-xs text-[var(--text-muted)] font-bold">{new Date(process.createdAt).toLocaleDateString()}</p>
                                         </div>
                                     </div>
                                     {process.notes && (
-                                        <div className="p-4 rounded-2xl bg-surface-100 dark:bg-surface-900/50">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-surface-400 mb-1 flex items-center gap-1">
+                                        <div className="p-4 rounded-2xl bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]900/50">
+                                            <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1 flex items-center gap-1">
                                                 <MessageSquare className="h-3 w-3" /> Note
                                             </p>
                                             <p className="text-xs font-medium italic">&quot;{process.notes}&quot;</p>

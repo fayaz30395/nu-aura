@@ -61,8 +61,8 @@ export default function TimeEntryDetailPage() {
   const getStatusConfig = (status: TimeEntryStatus) => {
     const configs: Record<TimeEntryStatus, { bg: string; text: string; icon: typeof Clock }> = {
       DRAFT: {
-        bg: 'bg-surface-100 dark:bg-surface-800',
-        text: 'text-surface-600 dark:text-surface-400',
+        bg: 'bg-[var(--bg-secondary)]',
+        text: 'text-[var(--text-secondary)]',
         icon: FileText,
       },
       SUBMITTED: {
@@ -90,7 +90,7 @@ export default function TimeEntryDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading time entry...</p>
+            <p className="text-[var(--text-secondary)]">Loading time entry...</p>
           </div>
         </div>
       </AppLayout>
@@ -103,7 +103,7 @@ export default function TimeEntryDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Time entry not found'}
             </p>
             <button
@@ -128,13 +128,13 @@ export default function TimeEntryDetailPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div className="flex-1">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
                 Time Entry
               </h1>
               <span
@@ -144,7 +144,7 @@ export default function TimeEntryDetailPage() {
                 {entry.status}
               </span>
             </div>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               {new Date(entry.entryDate).toLocaleDateString('en-IN', {
                 weekday: 'long',
                 day: '2-digit',
@@ -157,26 +157,26 @@ export default function TimeEntryDetailPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30">
                 <Timer className="h-5 w-5 text-primary-600 dark:text-primary-400" />
               </div>
-              <span className="text-sm text-surface-500 dark:text-surface-400">Hours Worked</span>
+              <span className="text-sm text-[var(--text-muted)]">Hours Worked</span>
             </div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">
               {timeTrackingService.formatHours(entry.hoursWorked)}
             </p>
           </div>
 
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
-              <span className="text-sm text-surface-500 dark:text-surface-400">Billable Hours</span>
+              <span className="text-sm text-[var(--text-muted)]">Billable Hours</span>
             </div>
-            <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">
               {entry.isBillable
                 ? timeTrackingService.formatHours(entry.billableHours)
                 : 'N/A'}
@@ -184,16 +184,16 @@ export default function TimeEntryDetailPage() {
           </div>
 
           {entry.billingAmount && (
-            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                   <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <span className="text-sm text-surface-500 dark:text-surface-400">
+                <span className="text-sm text-[var(--text-muted)]">
                   Billing Amount
                 </span>
               </div>
-              <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">
                 {timeTrackingService.formatCurrency(entry.billingAmount)}
               </p>
             </div>
@@ -201,40 +201,40 @@ export default function TimeEntryDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-          <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
             Entry Details
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Entry Type</p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-sm text-[var(--text-muted)] mb-1">Entry Type</p>
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {timeTrackingService.getEntryTypeLabel(entry.entryType)}
               </p>
             </div>
 
             {entry.startTime && entry.endTime && (
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Time Range</p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-muted)] mb-1">Time Range</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {entry.startTime} - {entry.endTime}
                 </p>
               </div>
             )}
 
             <div>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">
+              <p className="text-sm text-[var(--text-muted)] mb-1">
                 Client / Project
               </p>
-              <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+              <p className="text-lg font-medium text-[var(--text-primary)]">
                 {entry.projectName || entry.clientName || 'General'}
               </p>
             </div>
 
             {entry.hourlyRate && (
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">Hourly Rate</p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-sm text-[var(--text-muted)] mb-1">Hourly Rate</p>
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {timeTrackingService.formatCurrency(entry.hourlyRate)}/hr
                 </p>
               </div>
@@ -244,44 +244,44 @@ export default function TimeEntryDetailPage() {
 
         {/* Description */}
         {entry.description && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
               Description
             </h3>
-            <p className="text-surface-700 dark:text-surface-300">{entry.description}</p>
+            <p className="text-[var(--text-secondary)]">{entry.description}</p>
           </div>
         )}
 
         {/* Notes */}
         {entry.notes && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">
               Notes
             </h3>
-            <p className="text-surface-600 dark:text-surface-400">{entry.notes}</p>
+            <p className="text-[var(--text-secondary)]">{entry.notes}</p>
           </div>
         )}
 
         {/* Approval Info */}
         {entry.approvedDate && (
-          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Approval Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">
+                <p className="text-sm text-[var(--text-muted)] mb-1">
                   {entry.status === 'APPROVED' ? 'Approved By' : 'Reviewed By'}
                 </p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {entry.approverName || 'N/A'}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-surface-500 dark:text-surface-400 mb-1">
+                <p className="text-sm text-[var(--text-muted)] mb-1">
                   {entry.status === 'APPROVED' ? 'Approved Date' : 'Review Date'}
                 </p>
-                <p className="text-lg font-medium text-surface-900 dark:text-surface-100">
+                <p className="text-lg font-medium text-[var(--text-primary)]">
                   {new Date(entry.approvedDate).toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'short',
@@ -310,7 +310,7 @@ export default function TimeEntryDetailPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => router.push('/time-tracking')}
-            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Back to Time Tracking
           </button>

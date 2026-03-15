@@ -136,10 +136,10 @@ export default function AdminSettingsPage() {
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">
             Admin Settings
           </h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-1">
+          <p className="text-[var(--text-secondary)] mt-1">
             Configure system settings and manage organization preferences
           </p>
         </div>
@@ -160,12 +160,12 @@ export default function AdminSettingsPage() {
                   <div className={`p-3 rounded-xl ${card.bgColor}`}>
                     <Icon className={`h-6 w-6 ${card.color}`} />
                   </div>
-                  <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="mt-4 font-semibold text-surface-900 dark:text-surface-50 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                <h3 className="mt-4 font-semibold text-[var(--text-primary)] group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                   {card.title}
                 </h3>
-                <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">
                   {card.description}
                 </p>
               </CardContent>
@@ -187,40 +187,40 @@ export default function AdminSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               onClick={() => router.push('/admin/leave-requests')}
-              className="flex items-center gap-3 p-4 rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors text-left"
+              className="flex items-center gap-3 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                 <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="font-medium text-surface-900 dark:text-surface-50">Leave Requests</p>
-                <p className="text-sm text-surface-500">View pending approvals</p>
+                <p className="font-medium text-[var(--text-primary)]">Leave Requests</p>
+                <p className="text-sm text-[var(--text-muted)]">View pending approvals</p>
               </div>
             </button>
 
             <button
               onClick={() => router.push('/employees')}
-              className="flex items-center gap-3 p-4 rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors text-left"
+              className="flex items-center gap-3 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
                 <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="font-medium text-surface-900 dark:text-surface-50">Employees</p>
-                <p className="text-sm text-surface-500">Manage employee records</p>
+                <p className="font-medium text-[var(--text-primary)]">Employees</p>
+                <p className="text-sm text-[var(--text-muted)]">Manage employee records</p>
               </div>
             </button>
 
             <button
               onClick={() => router.push('/departments')}
-              className="flex items-center gap-3 p-4 rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors text-left"
+              className="flex items-center gap-3 p-4 rounded-xl border border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors text-left"
             >
               <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
                 <Building2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
               </div>
               <div>
-                <p className="font-medium text-surface-900 dark:text-surface-50">Departments</p>
-                <p className="text-sm text-surface-500">Manage departments</p>
+                <p className="font-medium text-[var(--text-primary)]">Departments</p>
+                <p className="text-sm text-[var(--text-muted)]">Manage departments</p>
               </div>
             </button>
           </div>

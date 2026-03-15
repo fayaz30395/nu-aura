@@ -4,26 +4,27 @@
 
 /* ================================================================
    NU-AURA THEME — Production HR SaaS Palette
-   Reference: Keka, Monday.com, BambooHR, Linear, Vercel
-   Brand: Jade/Teal primary
+   Reference: Linear, Vercel, Stripe, Notion
+   Brand: Indigo primary — vibrant, modern SaaS
    Neutrals: Cool gray (no warm sand, no opacity abuse)
    ================================================================ */
 
 @layer base {
   :root {
     /* ── Surface Hierarchy (Solid, clean) ─────────── */
-    --bg-main: #f7f8fa;
-    --bg-surface: #eef0f4;
+    --bg-main: #f8f9fc;
+    --bg-surface: #eef1f6;
     --bg-elevated: #ffffff;
     --bg-card: #ffffff;
-    --bg-card-hover: #f3f4f7;
+    --bg-card-hover: #f3f5f9;
+    --bg-page: #f8f9fc;
     --bg-input: #ffffff;
-    --bg-sidebar: #ffffff;
+    --bg-sidebar: #1e1b4b;
     --bg-overlay: rgba(0, 0, 0, 0.5);
 
     /* ── Ambient Background (very subtle) ────────── */
-    --bg-radial-1: radial-gradient(1000px circle at 10% -8%, rgba(13, 148, 136, 0.04), transparent 50%);
-    --bg-radial-2: radial-gradient(700px circle at 92% 5%, rgba(99, 102, 241, 0.03), transparent 45%);
+    --bg-radial-1: radial-gradient(1000px circle at 10% -8%, rgba(62, 99, 221, 0.04), transparent 50%);
+    --bg-radial-2: radial-gradient(700px circle at 92% 5%, rgba(59, 130, 246, 0.03), transparent 45%);
     --bg-linear: none;
 
     /* ── Text Hierarchy ───────────────────────────── */
@@ -36,12 +37,19 @@
     --border-main: #e5e7eb;
     --border-subtle: #f3f4f6;
     --border-strong: #d1d5db;
-    --border-focus: #0d9488;
+    --border-focus: #3e63dd;
 
     /* ── Sidebar Active State ──────────────────────── */
-    --sidebar-active-bg: rgba(13, 148, 136, 0.12);
-    --sidebar-active-border: #0d9488;
-    --sidebar-hover-bg: rgba(13, 148, 136, 0.05);
+    --sidebar-active-bg: rgba(255, 255, 255, 0.15);
+    --sidebar-active-border: #818cf8;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+
+    /* ── Sidebar Text (dark sidebar in light mode) ── */
+    --sidebar-text: rgba(255, 255, 255, 0.7);
+    --sidebar-text-active: #ffffff;
+    --sidebar-text-muted: rgba(255, 255, 255, 0.4);
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+    --sidebar-section-text: rgba(255, 255, 255, 0.45);
 
     /* ── Shadows (crisp, modern) ─────────────────── */
     --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
@@ -50,17 +58,17 @@
     --shadow-dropdown: 0 16px 36px -8px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.06);
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(13, 148, 136, 0.3);
+    --ring-primary: rgba(62, 99, 221, 0.3);
     --ring-danger: rgba(239, 68, 68, 0.3);
     --ring-success: rgba(16, 185, 129, 0.3);
 
     /* ── Chart Colors (for Recharts/d3 — must be solid hex) ── */
-    --chart-primary: #0d9488;
-    --chart-secondary: #6366f1;
+    --chart-primary: #3e63dd;
+    --chart-secondary: #8b5cf6;
     --chart-success: #10b981;
     --chart-warning: #f59e0b;
     --chart-danger: #ef4444;
-    --chart-info: #0ea5e9;
+    --chart-info: #3b82f6;
     --chart-accent: #f97316;
     --chart-muted: #9ca3af;
     --chart-grid: #e5e7eb;
@@ -112,13 +120,14 @@
     --bg-elevated: #1a1a1d;
     --bg-card: #141416;
     --bg-card-hover: #1e1e21;
+    --bg-page: #09090b;
     --bg-input: #141416;
     --bg-sidebar: #0c0c0e;
     --bg-overlay: rgba(0, 0, 0, 0.75);
 
     /* ── Ambient Background (dark, minimal) ──────── */
-    --bg-radial-1: radial-gradient(900px circle at 8% -10%, rgba(13, 148, 136, 0.06), transparent 50%);
-    --bg-radial-2: radial-gradient(600px circle at 92% 8%, rgba(99, 102, 241, 0.04), transparent 45%);
+    --bg-radial-1: radial-gradient(900px circle at 8% -10%, rgba(62, 99, 221, 0.06), transparent 50%);
+    --bg-radial-2: radial-gradient(600px circle at 92% 8%, rgba(59, 130, 246, 0.04), transparent 45%);
     --bg-linear: none;
 
     /* ── Text Hierarchy (solid, no rgba) ──────────── */
@@ -131,12 +140,19 @@
     --border-main: #27272a;
     --border-subtle: #1c1c1f;
     --border-strong: #3f3f46;
-    --border-focus: #2dd4bf;
+    --border-focus: #818cf8;
 
-    /* ── Sidebar Active State (dark) ────────────── */
-    --sidebar-active-bg: rgba(45, 212, 191, 0.12);
-    --sidebar-active-border: #2dd4bf;
-    --sidebar-hover-bg: rgba(45, 212, 191, 0.05);
+    /* ── Sidebar Active State (dark — blended, not contrasting) ── */
+    --sidebar-active-bg: rgba(129, 140, 248, 0.15);
+    --sidebar-active-border: #818cf8;
+    --sidebar-hover-bg: rgba(129, 140, 248, 0.08);
+
+    /* ── Sidebar Text (dark mode — blended with bg) ── */
+    --sidebar-text: #a1a1aa;
+    --sidebar-text-active: #f4f4f5;
+    --sidebar-text-muted: #71717a;
+    --sidebar-border: #27272a;
+    --sidebar-section-text: #71717a;
 
     /* ── Shadows (deep) ──────────────────────────── */
     --shadow-card: 0 0 0 1px #27272a;
@@ -145,17 +161,17 @@
     --shadow-dropdown: 0 20px 44px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px #3f3f46;
 
     /* ── Ring / Focus ─────────────────────────────── */
-    --ring-primary: rgba(45, 212, 191, 0.35);
+    --ring-primary: rgba(129, 140, 248, 0.35);
     --ring-danger: rgba(248, 113, 113, 0.3);
     --ring-success: rgba(52, 211, 153, 0.3);
 
     /* ── Chart Colors (dark — adjusted for dark backgrounds) ── */
-    --chart-primary: #2dd4bf;
-    --chart-secondary: #818cf8;
+    --chart-primary: #818cf8;
+    --chart-secondary: #a78bfa;
     --chart-success: #34d399;
     --chart-warning: #fbbf24;
     --chart-danger: #f87171;
-    --chart-info: #38bdf8;
+    --chart-info: #60a5fa;
     --chart-accent: #fb923c;
     --chart-muted: #71717a;
     --chart-grid: #27272a;
@@ -555,7 +571,7 @@
 
   /* ── Sidebar Menu Item Active/Hover States ────────– */
   .sidebar-menu-item:hover {
-    background-color: var(--sidebar-hover-bg);
+    background-color: var(--sidebar-hover-bg) !important;
   }
 }
 

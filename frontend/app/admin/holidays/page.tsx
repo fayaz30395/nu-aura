@@ -214,8 +214,8 @@ export default function HolidayCalendarManagementPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-100">Holiday Calendar Management</h1>
-            <p className="mt-1 text-sm text-surface-600 dark:text-surface-400">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Holiday Calendar Management</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
               Manage organizational holidays and events
             </p>
           </div>
@@ -224,7 +224,7 @@ export default function HolidayCalendarManagementPage() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map((year) => (
                 <option key={year} value={year}>
@@ -262,23 +262,23 @@ export default function HolidayCalendarManagementPage() {
         {/* Statistics */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
-            <div className="text-sm text-surface-600 dark:text-surface-400">Total Holidays</div>
-            <div className="text-2xl font-bold text-surface-900 dark:text-surface-100">{holidays.length}</div>
+            <div className="text-sm text-[var(--text-secondary)]">Total Holidays</div>
+            <div className="text-2xl font-bold text-[var(--text-primary)]">{holidays.length}</div>
           </div>
           <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
-            <div className="text-sm text-surface-600 dark:text-surface-400">National</div>
+            <div className="text-sm text-[var(--text-secondary)]">National</div>
             <div className="text-2xl font-bold text-red-600">
               {holidays.filter((h) => h.holidayType === 'NATIONAL').length}
             </div>
           </div>
           <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
-            <div className="text-sm text-surface-600 dark:text-surface-400">Optional</div>
+            <div className="text-sm text-[var(--text-secondary)]">Optional</div>
             <div className="text-2xl font-bold text-yellow-600">
               {holidays.filter((h) => h.isOptional).length}
             </div>
           </div>
           <div className="bg-[var(--bg-card)] p-4 rounded-lg shadow">
-            <div className="text-sm text-surface-600 dark:text-surface-400">Restricted</div>
+            <div className="text-sm text-[var(--text-secondary)]">Restricted</div>
             <div className="text-2xl font-bold text-orange-600">
               {holidays.filter((h) => h.isRestricted).length}
             </div>
@@ -288,44 +288,44 @@ export default function HolidayCalendarManagementPage() {
         {/* Holidays List */}
         <div className="bg-[var(--bg-card)] rounded-lg shadow dark:shadow-surface-950/50">
           {loading ? (
-            <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
+            <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               Loading holidays for {selectedYear}...
             </div>
           ) : holidays.length === 0 ? (
-            <div className="px-6 py-12 text-center text-surface-500 dark:text-surface-400">
+            <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               <div className="flex flex-col items-center">
-                <svg className="h-12 w-12 text-surface-400 dark:text-surface-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-12 w-12 text-[var(--text-muted)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <p className="text-surface-600 dark:text-surface-400">No holidays configured for {selectedYear}</p>
-                <p className="text-sm text-surface-500 dark:text-surface-500 mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
+                <p className="text-[var(--text-secondary)]">No holidays configured for {selectedYear}</p>
+                <p className="text-sm text-[var(--text-muted)] mt-1">Click &quot;Add Holiday&quot; to create your first holiday</p>
               </div>
             </div>
           ) : (
             <div className="divide-y divide-surface-200 dark:divide-surface-700">
               {months.map((month) => (
                 <div key={month} className="p-6">
-                  <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-4">{month}</h3>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{month}</h3>
                   <div className="space-y-3">
                     {(holidaysByMonth[month] ?? []).map((holiday) => (
                       <div
                         key={holiday.id}
-                        className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg hover:bg-surface-100 dark:bg-surface-800 transition-colors"
+                        className="flex items-center justify-between p-4 bg-[var(--bg-secondary)]/50 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                       >
                         <div className="flex-1">
                           <div className="flex items-center space-x-3">
                             <div className="text-center min-w-16">
-                              <div className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                              <div className="text-2xl font-bold text-[var(--text-primary)]">
                                 {new Date(holiday.holidayDate).getDate()}
                               </div>
-                              <div className="text-xs text-surface-500 dark:text-surface-400 uppercase">
+                              <div className="text-xs text-[var(--text-muted)] uppercase">
                                 {new Date(holiday.holidayDate).toLocaleDateString('en-US', { weekday: 'short' })}
                               </div>
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-surface-900 dark:text-surface-100">{holiday.holidayName}</div>
+                              <div className="font-medium text-[var(--text-primary)]">{holiday.holidayName}</div>
                               {holiday.description && (
-                                <div className="text-sm text-surface-600 dark:text-surface-400 mt-1">{holiday.description}</div>
+                                <div className="text-sm text-[var(--text-secondary)] mt-1">{holiday.description}</div>
                               )}
                               <div className="flex flex-wrap gap-2 mt-2">
                                 <span className={`px-2 py-1 text-xs font-semibold rounded ${getHolidayTypeColor(holiday.holidayType)}`}>
@@ -342,7 +342,7 @@ export default function HolidayCalendarManagementPage() {
                                   </span>
                                 )}
                                 {holiday.applicableLocations && (
-                                  <span className="px-2 py-1 text-xs bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 rounded">
+                                  <span className="px-2 py-1 text-xs bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded">
                                     {holiday.applicableLocations}
                                   </span>
                                 )}
@@ -394,7 +394,7 @@ export default function HolidayCalendarManagementPage() {
             <div className="bg-[var(--bg-card)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+                  <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                     {editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
                   </h2>
                   <button
@@ -403,7 +403,7 @@ export default function HolidayCalendarManagementPage() {
                       setEditingHoliday(null);
                       resetForm();
                     }}
-                    className="text-surface-400 dark:text-surface-500 hover:text-surface-600 dark:hover:text-surface-300"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
                   >
                     <span className="text-2xl">&times;</span>
                   </button>
@@ -412,16 +412,16 @@ export default function HolidayCalendarManagementPage() {
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div>
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Holiday Information</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Holiday Information</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Holiday Name *
                         </label>
                         <input
                           type="text"
                           {...form.register('holidayName')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="New Year's Day, Independence Day"
                         />
                         {form.formState.errors.holidayName && (
@@ -431,25 +431,25 @@ export default function HolidayCalendarManagementPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Date *
                           </label>
                           <input
                             type="date"
                             {...form.register('holidayDate')}
-                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                           {form.formState.errors.holidayDate && (
                             <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Holiday Type *
                           </label>
                           <select
                             {...form.register('holidayType')}
-                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           >
                             {holidayTypes.map((type) => (
                               <option key={type} value={type}>
@@ -461,13 +461,13 @@ export default function HolidayCalendarManagementPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Description
                         </label>
                         <textarea
                           {...form.register('description')}
                           rows={2}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="Brief description of the holiday..."
                         />
                       </div>
@@ -476,58 +476,58 @@ export default function HolidayCalendarManagementPage() {
 
                   {/* Settings */}
                   <div>
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Settings</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Settings</h3>
                     <div className="space-y-3">
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           {...form.register('isOptional')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Optional Holiday</span>
-                        <span className="ml-2 text-xs text-surface-500 dark:text-surface-400">(Employees can choose to work)</span>
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Optional Holiday</span>
+                        <span className="ml-2 text-xs text-[var(--text-muted)]">(Employees can choose to work)</span>
                       </label>
 
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           {...form.register('isRestricted')}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--border-main)] dark:border-[var(--border-main)] rounded"
                         />
-                        <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Restricted Holiday</span>
-                        <span className="ml-2 text-xs text-surface-500 dark:text-surface-400">(Limited to certain employees)</span>
+                        <span className="ml-2 text-sm text-[var(--text-secondary)]">Restricted Holiday</span>
+                        <span className="ml-2 text-xs text-[var(--text-muted)]">(Limited to certain employees)</span>
                       </label>
                     </div>
                   </div>
 
                   {/* Applicability */}
                   <div>
-                    <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Applicability (Optional)</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Applicability (Optional)</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable Locations
                         </label>
                         <input
                           type="text"
                           {...form.register('applicableLocations')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., New York, California (comma-separated)"
                         />
-                        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Leave empty for all locations</p>
+                        <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all locations</p>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable Departments
                         </label>
                         <input
                           type="text"
                           {...form.register('applicableDepartments')}
-                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., Engineering, Sales (comma-separated)"
                         />
-                        <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">Leave empty for all departments</p>
+                        <p className="text-xs text-[var(--text-muted)] mt-1">Leave empty for all departments</p>
                       </div>
                     </div>
                   </div>
@@ -541,7 +541,7 @@ export default function HolidayCalendarManagementPage() {
                         setEditingHoliday(null);
                         resetForm();
                       }}
-                      className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                      className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                     >
                       Cancel
                     </button>

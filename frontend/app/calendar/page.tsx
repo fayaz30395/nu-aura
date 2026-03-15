@@ -74,7 +74,7 @@ export default function CalendarPage() {
         icon: XCircle,
       },
       COMPLETED: {
-        bg: 'bg-[var(--bg-surface)] dark:bg-surface-800',
+        bg: 'bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]',
         text: 'text-gray-700 dark:text-[var(--text-muted)]',
         icon: CheckCircle,
       },
@@ -120,7 +120,7 @@ export default function CalendarPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-            <p className="text-surface-600 dark:text-surface-400">Loading calendar...</p>
+            <p className="text-[var(--text-secondary)]">Loading calendar...</p>
           </div>
         </div>
       </AppLayout>
@@ -133,7 +133,7 @@ export default function CalendarPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               {error instanceof Error ? error.message : 'Failed to load calendar events'}
             </p>
           </div>
@@ -156,10 +156,10 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Calendar
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Manage your events and schedule
             </p>
           </div>
@@ -173,19 +173,19 @@ export default function CalendarPage() {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4">
+        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
             >
-              <ChevronLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <ChevronLeft className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
             <button
               onClick={() => navigateDate('next')}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
             >
-              <ChevronRight className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
             <button
               onClick={goToToday}
@@ -193,7 +193,7 @@ export default function CalendarPage() {
             >
               Today
             </button>
-            <span className="ml-2 text-lg font-semibold text-surface-900 dark:text-surface-50">
+            <span className="ml-2 text-lg font-semibold text-[var(--text-primary)]">
               {getDateRangeLabel()}
             </span>
           </div>
@@ -201,17 +201,17 @@ export default function CalendarPage() {
           <div className="flex items-center gap-2">
             <button
               disabled={isLoading}
-              className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors disabled:opacity-50"
+              className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-lg transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`h-5 w-5 text-surface-600 dark:text-surface-400 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-5 w-5 text-[var(--text-secondary)] ${isLoading ? 'animate-spin' : ''}`} />
             </button>
-            <div className="flex bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
+            <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setView('week')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'week'
-                    ? 'bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 shadow-sm'
-                    : 'text-surface-600 dark:text-surface-400'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-secondary)]'
                 }`}
               >
                 Week
@@ -220,8 +220,8 @@ export default function CalendarPage() {
                 onClick={() => setView('month')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'month'
-                    ? 'bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 shadow-sm'
-                    : 'text-surface-600 dark:text-surface-400'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-secondary)]'
                 }`}
               >
                 Month
@@ -269,20 +269,20 @@ export default function CalendarPage() {
         )}
 
         {/* Events List */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
-            <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] overflow-hidden">
+          <div className="flex items-center justify-between p-5 border-b border-[var(--border-main)]">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               {view === 'week' ? 'This Week' : 'This Month'}
             </h2>
-            <span className="text-sm text-surface-500 dark:text-surface-400">
+            <span className="text-sm text-[var(--text-muted)]">
               {events.length} events
             </span>
           </div>
 
           {events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <Calendar className="h-12 w-12 text-surface-300 dark:text-surface-600 mb-4" />
-              <p className="text-surface-500 dark:text-surface-400">No events scheduled</p>
+              <Calendar className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mb-4" />
+              <p className="text-[var(--text-muted)]">No events scheduled</p>
               <button
                 onClick={() => router.push('/calendar/new')}
                 className="mt-4 text-primary-600 dark:text-primary-400 hover:text-primary-700 text-sm font-medium"
@@ -294,8 +294,8 @@ export default function CalendarPage() {
             <div className="divide-y divide-surface-100 dark:divide-surface-800">
               {Object.entries(groupedEvents).map(([date, dateEvents]) => (
                 <div key={date}>
-                  <div className="px-5 py-3 bg-surface-50 dark:bg-surface-800/50">
-                    <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                  <div className="px-5 py-3 bg-[var(--bg-secondary)]/50">
+                    <p className="text-sm font-medium text-[var(--text-secondary)]">
                       {new Date(date).toLocaleDateString('en-IN', {
                         weekday: 'long',
                         day: '2-digit',
@@ -311,7 +311,7 @@ export default function CalendarPage() {
                       <div
                         key={event.id}
                         onClick={() => router.push(`/calendar/${event.id}`)}
-                        className="flex items-center gap-4 px-5 py-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 px-5 py-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors cursor-pointer"
                       >
                         <div
                           className={`w-1 h-12 rounded-full ${calendarService.getEventColor(
@@ -319,27 +319,27 @@ export default function CalendarPage() {
                           )}`}
                         />
                         <div className="min-w-[80px] text-center">
-                          <p className="text-sm font-medium text-surface-900 dark:text-surface-100">
+                          <p className="text-sm font-medium text-[var(--text-primary)]">
                             {event.allDay
                               ? 'All Day'
                               : calendarService.formatTime(event.startTime)}
                           </p>
                           {!event.allDay && (
-                            <p className="text-xs text-surface-500 dark:text-surface-400">
+                            <p className="text-xs text-[var(--text-muted)]">
                               {calendarService.formatTime(event.endTime)}
                             </p>
                           )}
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-surface-900 dark:text-surface-100">
+                          <p className="font-medium text-[var(--text-primary)]">
                             {event.title}
                           </p>
                           <div className="flex items-center gap-3 mt-1">
-                            <span className="text-xs text-surface-500 dark:text-surface-400">
+                            <span className="text-xs text-[var(--text-muted)]">
                               {calendarService.getEventTypeLabel(event.eventType)}
                             </span>
                             {event.location && (
-                              <span className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-1">
+                              <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
                                 <MapPin className="h-3 w-3" />
                                 {event.location}
                               </span>
@@ -351,7 +351,7 @@ export default function CalendarPage() {
                               </span>
                             )}
                             {event.attendeeIds && event.attendeeIds.length > 0 && (
-                              <span className="text-xs text-surface-500 dark:text-surface-400 flex items-center gap-1">
+                              <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
                                 <Users className="h-3 w-3" />
                                 {event.attendeeIds.length}
                               </span>
@@ -364,7 +364,7 @@ export default function CalendarPage() {
                           <StatusIcon className="h-3 w-3" />
                           {event.status}
                         </span>
-                        <ChevronRight className="h-5 w-5 text-surface-400" />
+                        <ChevronRight className="h-5 w-5 text-[var(--text-muted)]" />
                       </div>
                     );
                   })}
@@ -378,36 +378,36 @@ export default function CalendarPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => router.push('/calendar/new')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               Schedule Event
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               Create a new calendar event
             </p>
           </button>
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:scale-110 transition-transform">
                 <Video className="h-5 w-5 text-white" />
               </div>
-              <ChevronRight className="h-5 w-5 text-surface-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-1">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">
               My Meetings
             </h3>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               View all your meetings
             </p>
           </button>

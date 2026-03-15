@@ -73,7 +73,7 @@ export function PostComposer() {
         >
           <BarChart3 size={14} />
           Poll
-          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
+          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
         </button>
         <button
           onClick={() => setActiveTab('praise')}
@@ -85,7 +85,7 @@ export function PostComposer() {
         >
           <Trophy size={14} />
           Praise
-          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-[10px] text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
+          <span className="rounded bg-[var(--bg-surface)] px-1.5 py-0.5 text-xs text-[var(--text-muted)] dark:bg-gray-800 dark:text-[var(--text-muted)]">Soon</span>
         </button>
       </div>
 

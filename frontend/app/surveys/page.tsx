@@ -92,7 +92,7 @@ const getTypeColor = (type: SurveyType) => {
     case SurveyType.FEEDBACK:
       return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-950 dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
   }
 };
 
@@ -231,10 +231,10 @@ export default function SurveysPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Employee Surveys
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Create and manage employee surveys and feedback collection
             </p>
           </div>
@@ -253,8 +253,8 @@ export default function SurveysPage() {
                   <ClipboardList className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Surveys</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.total}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Surveys</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -266,8 +266,8 @@ export default function SurveysPage() {
                   <Play className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Active</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.active}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Active</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
@@ -275,12 +275,12 @@ export default function SurveysPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-[var(--bg-surface)] p-3 dark:bg-surface-800">
+                <div className="rounded-lg bg-[var(--bg-surface)] p-3 dark:bg-[var(--bg-secondary)]">
                   <FileText className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Drafts</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.draft}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Drafts</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.draft}</p>
                 </div>
               </div>
             </CardContent>
@@ -292,8 +292,8 @@ export default function SurveysPage() {
                   <CheckCircle className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Completed</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.completed}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Completed</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -305,8 +305,8 @@ export default function SurveysPage() {
                   <Users className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Total Responses</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.totalResponses}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Total Responses</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.totalResponses}</p>
                 </div>
               </div>
             </CardContent>
@@ -318,7 +318,7 @@ export default function SurveysPage() {
           <CardContent className="p-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
                 <Input
                   type="text"
                   placeholder="Search surveys..."
@@ -363,11 +363,11 @@ export default function SurveysPage() {
         ) : filteredSurveys.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <ClipboardList className="h-12 w-12 text-surface-400" />
-              <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+              <ClipboardList className="h-12 w-12 text-[var(--text-muted)]" />
+              <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                 No surveys found
               </p>
-              <p className="text-surface-600 dark:text-surface-400">
+              <p className="text-[var(--text-secondary)]">
                 Create your first survey to collect employee feedback
               </p>
               <Button onClick={handleCreateSurvey} className="mt-4">
@@ -398,19 +398,19 @@ export default function SurveysPage() {
                         {survey.surveyType}
                       </span>
                       {survey.isAnonymous && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-800 dark:text-gray-200">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-secondary)] dark:text-gray-200">
                           Anonymous
                         </span>
                       )}
                     </div>
 
-                    <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                    <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                       {survey.description || 'No description provided'}
                     </p>
 
                     <div className="space-y-2 text-sm">
                       {survey.startDate && (
-                        <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                           <Calendar className="h-4 w-4" />
                           <span>
                             {new Date(survey.startDate).toLocaleDateString()}
@@ -418,17 +418,17 @@ export default function SurveysPage() {
                           </span>
                         </div>
                       )}
-                      <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                         <Users className="h-4 w-4" />
                         <span>{survey.totalResponses || 0} responses</span>
                       </div>
-                      <div className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                      <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                         <BarChart3 className="h-4 w-4" />
                         <span>Target: {survey.targetAudience || 'All Employees'}</span>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 pt-2 border-t border-surface-200 dark:border-surface-700">
+                    <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-main)]">
                       <Button size="sm" variant="outline" onClick={() => handleViewSurvey(survey)}>
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -492,14 +492,14 @@ export default function SurveysPage() {
         {/* Create/Edit Survey Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {editingSurvey ? 'Edit Survey' : 'Create Survey'}
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Survey Code *
                 </label>
                 <Input
@@ -509,7 +509,7 @@ export default function SurveysPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Survey Type *
                 </label>
                 <Select
@@ -524,7 +524,7 @@ export default function SurveysPage() {
                 </Select>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
                 </label>
                 <Input
@@ -534,7 +534,7 @@ export default function SurveysPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <Textarea
@@ -545,7 +545,7 @@ export default function SurveysPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Start Date
                 </label>
                 <Input
@@ -555,7 +555,7 @@ export default function SurveysPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   End Date
                 </label>
                 <Input
@@ -565,7 +565,7 @@ export default function SurveysPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Target Audience
                 </label>
                 <Select
@@ -579,7 +579,7 @@ export default function SurveysPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Status
                 </label>
                 <Select
@@ -599,9 +599,9 @@ export default function SurveysPage() {
                     type="checkbox"
                     checked={formData.isAnonymous}
                     onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
-                    className="rounded border-surface-300 text-primary-600 focus:ring-primary-500"
+                    className="rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">
                     Anonymous Survey (responses will not be linked to employees)
                   </span>
                 </label>
@@ -621,7 +621,7 @@ export default function SurveysPage() {
         {/* View Survey Modal */}
         <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} size="lg">
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               {selectedSurvey?.title}
             </h2>
           </ModalHeader>
@@ -630,11 +630,11 @@ export default function SurveysPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-surface-500">Survey Code:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">{selectedSurvey.surveyCode}</p>
+                    <span className="text-[var(--text-muted)]">Survey Code:</span>
+                    <p className="font-medium text-[var(--text-primary)]">{selectedSurvey.surveyCode}</p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Status:</span>
+                    <span className="text-[var(--text-muted)]">Status:</span>
                     <p>
                       <Badge variant={toBadgeVariant(selectedSurvey.status)}>
                         {selectedSurvey.status}
@@ -642,38 +642,38 @@ export default function SurveysPage() {
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Type:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">{selectedSurvey.surveyType}</p>
+                    <span className="text-[var(--text-muted)]">Type:</span>
+                    <p className="font-medium text-[var(--text-primary)]">{selectedSurvey.surveyType}</p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Anonymous:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Anonymous:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.isAnonymous ? 'Yes' : 'No'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Start Date:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Start Date:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.startDate
                         ? new Date(selectedSurvey.startDate).toLocaleDateString()
                         : 'Not set'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">End Date:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">End Date:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.endDate
                         ? new Date(selectedSurvey.endDate).toLocaleDateString()
                         : 'Not set'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Total Responses:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">{selectedSurvey.totalResponses || 0}</p>
+                    <span className="text-[var(--text-muted)]">Total Responses:</span>
+                    <p className="font-medium text-[var(--text-primary)]">{selectedSurvey.totalResponses || 0}</p>
                   </div>
                   <div>
-                    <span className="text-surface-500">Target Audience:</span>
-                    <p className="font-medium text-surface-900 dark:text-white">
+                    <span className="text-[var(--text-muted)]">Target Audience:</span>
+                    <p className="font-medium text-[var(--text-primary)]">
                       {selectedSurvey.targetAudience || 'All Employees'}
                     </p>
                   </div>
@@ -681,8 +681,8 @@ export default function SurveysPage() {
 
                 {selectedSurvey.description && (
                   <div>
-                    <h4 className="font-medium text-surface-900 dark:text-white mb-2">Description</h4>
-                    <p className="text-sm text-surface-600 dark:text-surface-400">
+                    <h4 className="font-medium text-[var(--text-primary)] mb-2">Description</h4>
+                    <p className="text-sm text-[var(--text-secondary)]">
                       {selectedSurvey.description}
                     </p>
                   </div>

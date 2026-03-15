@@ -107,15 +107,15 @@ export default function NewLoanPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+            className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
-            <ArrowLeft className="h-5 w-5 text-surface-600 dark:text-surface-400" />
+            <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Apply for Loan
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-muted)] mt-1">
               Fill in the details for your loan application
             </p>
           </div>
@@ -129,16 +129,16 @@ export default function NewLoanPage() {
         )}
 
         {/* Form */}
-        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 space-y-6">
           {/* Loan Type */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Type *
             </label>
             <select
               value={formData.loanType}
               onChange={(e) => setFormData({ ...formData, loanType: e.target.value as LoanType })}
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               {loanTypes.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -150,11 +150,11 @@ export default function NewLoanPage() {
 
           {/* Loan Amount */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Amount *
             </label>
             <div className="relative">
-              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="number"
                 value={formData.requestedAmount || ''}
@@ -162,11 +162,11 @@ export default function NewLoanPage() {
                   setFormData({ ...formData, requestedAmount: parseFloat(e.target.value) || 0 })
                 }
                 placeholder="Enter loan amount"
-                className={`w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   validationErrors.requestedAmount
                     ? 'border-red-500'
-                    : 'border-surface-200 dark:border-surface-700'
-                } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    : 'border-[var(--border-main)]'
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
               />
             </div>
             {validationErrors.requestedAmount && (
@@ -176,7 +176,7 @@ export default function NewLoanPage() {
 
           {/* Interest Rate */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Interest Rate (% per annum)
             </label>
             <input
@@ -187,17 +187,17 @@ export default function NewLoanPage() {
                 setFormData({ ...formData, interestRate: parseFloat(e.target.value) || 0 })
               }
               placeholder="8.5"
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
           {/* Term Months */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Term (months) *
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-surface-400" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]" />
               <input
                 type="number"
                 value={formData.termMonths || ''}
@@ -205,11 +205,11 @@ export default function NewLoanPage() {
                   setFormData({ ...formData, termMonths: parseInt(e.target.value) || 0 })
                 }
                 placeholder="12"
-                className={`w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   validationErrors.termMonths
                     ? 'border-red-500'
-                    : 'border-surface-200 dark:border-surface-700'
-                } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    : 'border-[var(--border-main)]'
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500`}
               />
             </div>
             {validationErrors.termMonths && (
@@ -219,7 +219,7 @@ export default function NewLoanPage() {
 
           {/* Repayment Frequency */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Repayment Frequency
             </label>
             <select
@@ -227,7 +227,7 @@ export default function NewLoanPage() {
               onChange={(e) =>
                 setFormData({ ...formData, repaymentFrequency: e.target.value as RepaymentFrequency })
               }
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               {repaymentFrequencies.map((freq) => (
                 <option key={freq.value} value={freq.value}>
@@ -239,21 +239,21 @@ export default function NewLoanPage() {
 
           {/* Purpose */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Purpose *
             </label>
             <div className="relative">
-              <FileText className="absolute left-4 top-4 h-5 w-5 text-surface-400" />
+              <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]" />
               <textarea
                 value={formData.purpose}
                 onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
                 placeholder="Describe the purpose of this loan..."
                 rows={4}
-                className={`w-full pl-12 pr-4 py-3 bg-surface-50 dark:bg-surface-800 border ${
+                className={`w-full pl-12 pr-4 py-3 bg-[var(--bg-secondary)] border ${
                   validationErrors.purpose
                     ? 'border-red-500'
-                    : 'border-surface-200 dark:border-surface-700'
-                } rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none`}
+                    : 'border-[var(--border-main)]'
+                } rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none`}
               />
             </div>
             {validationErrors.purpose && (
@@ -263,7 +263,7 @@ export default function NewLoanPage() {
 
           {/* Additional Notes */}
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Additional Notes
             </label>
             <textarea
@@ -271,7 +271,7 @@ export default function NewLoanPage() {
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Any additional information..."
               rows={3}
-              className="w-full px-4 py-3 bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
           </div>
         </div>
@@ -296,14 +296,14 @@ export default function NewLoanPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => router.back()}
-            className="px-6 py-3 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="px-6 py-3 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={() => handleSubmit(true)}
             disabled={isLoading}
-            className="flex-1 px-6 py-3 bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 rounded-xl font-medium hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors disabled:opacity-50"
+            className="flex-1 px-6 py-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-xl font-medium hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors disabled:opacity-50"
           >
             Save as Draft
           </button>

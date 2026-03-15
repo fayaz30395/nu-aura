@@ -75,7 +75,7 @@ const getCategoryColor = (category: ProgramCategory) => {
     case ProgramCategory.STRESS_MANAGEMENT:
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
     default:
-      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-surface-950 dark:text-gray-200';
+      return 'bg-[var(--bg-surface)] text-gray-800 dark:bg-[var(--bg-primary)] dark:text-gray-200';
   }
 };
 
@@ -147,10 +147,10 @@ export default function WellnessPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">
               Employee Wellness
             </h1>
-            <p className="text-surface-600 dark:text-surface-400">
+            <p className="text-[var(--text-secondary)]">
               Track your health, join challenges, and earn rewards
             </p>
           </div>
@@ -182,8 +182,8 @@ export default function WellnessPage() {
                   <Flame className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Current Streak</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.currentStreak} days</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Current Streak</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.currentStreak} days</p>
                 </div>
               </div>
             </CardContent>
@@ -195,8 +195,8 @@ export default function WellnessPage() {
                   <Star className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Level</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.level}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Level</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.level}</p>
                 </div>
               </div>
             </CardContent>
@@ -208,8 +208,8 @@ export default function WellnessPage() {
                   <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm text-surface-600 dark:text-surface-400">Active Challenges</p>
-                  <p className="text-2xl font-bold text-surface-900 dark:text-white">{stats.activeChallenges}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">Active Challenges</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{stats.activeChallenges}</p>
                 </div>
               </div>
             </CardContent>
@@ -219,7 +219,7 @@ export default function WellnessPage() {
         {/* Quick Log Section */}
         <Card>
           <CardContent className="p-4">
-            <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-4">Quick Log</h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Quick Log</h3>
             <div className="flex flex-wrap gap-3">
               {metricOptions.map((metric) => {
                 const Icon = metric.icon;
@@ -230,10 +230,10 @@ export default function WellnessPage() {
                       setLogFormData({ ...logFormData, metricType: metric.value });
                       setIsLogModalOpen(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
                   >
                     <Icon className="h-5 w-5 text-primary-500" />
-                    <span className="text-sm font-medium text-surface-700 dark:text-surface-300">{metric.label}</span>
+                    <span className="text-sm font-medium text-[var(--text-secondary)]">{metric.label}</span>
                   </button>
                 );
               })}
@@ -271,11 +271,11 @@ export default function WellnessPage() {
               programs.length === 0 ? (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
-                    <Heart className="h-12 w-12 text-surface-400" />
-                    <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    <Heart className="h-12 w-12 text-[var(--text-muted)]" />
+                    <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                       No wellness programs available
                     </p>
-                    <p className="text-surface-600 dark:text-surface-400">
+                    <p className="text-[var(--text-secondary)]">
                       Check back later for new programs
                     </p>
                   </CardContent>
@@ -291,17 +291,17 @@ export default function WellnessPage() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-start justify-between">
-                              <h3 className="font-semibold text-surface-900 dark:text-white">
+                              <h3 className="font-semibold text-[var(--text-primary)]">
                                 {program.name}
                               </h3>
                               {program.isFeatured && (
                                 <Badge variant="warning" className="text-xs">Featured</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1 line-clamp-2">
+                            <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                               {program.description || 'Join this wellness program'}
                             </p>
-                            <div className="flex items-center gap-3 mt-3 text-xs text-surface-500">
+                            <div className="flex items-center gap-3 mt-3 text-xs text-[var(--text-muted)]">
                               {program.pointsReward && (
                                 <span className="flex items-center gap-1">
                                   <Trophy className="h-3 w-3" />
@@ -327,11 +327,11 @@ export default function WellnessPage() {
               challenges.length === 0 ? (
                 <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
-                    <Target className="h-12 w-12 text-surface-400" />
-                    <p className="mt-4 text-lg font-medium text-surface-900 dark:text-white">
+                    <Target className="h-12 w-12 text-[var(--text-muted)]" />
+                    <p className="mt-4 text-lg font-medium text-[var(--text-primary)]">
                       No active challenges
                     </p>
-                    <p className="text-surface-600 dark:text-surface-400">
+                    <p className="text-[var(--text-secondary)]">
                       Check back later for new challenges
                     </p>
                   </CardContent>
@@ -343,10 +343,10 @@ export default function WellnessPage() {
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold text-surface-900 dark:text-white">
+                            <h3 className="font-semibold text-[var(--text-primary)]">
                               {challenge.name}
                             </h3>
-                            <p className="text-sm text-surface-600 dark:text-surface-400 mt-1">
+                            <p className="text-sm text-[var(--text-secondary)] mt-1">
                               {challenge.description || 'Join this challenge and compete!'}
                             </p>
                           </div>
@@ -354,7 +354,7 @@ export default function WellnessPage() {
                             {challenge.isJoined ? 'Joined' : 'Open'}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 mt-4 text-sm text-surface-500">
+                        <div className="flex items-center gap-4 mt-4 text-sm text-[var(--text-muted)]">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {new Date(challenge.startDate).toLocaleDateString()} - {new Date(challenge.endDate).toLocaleDateString()}
@@ -391,23 +391,23 @@ export default function WellnessPage() {
           <div className="space-y-4">
             <Card>
               <CardContent className="p-4">
-                <h3 className="flex items-center gap-2 text-lg font-semibold text-surface-900 dark:text-white mb-4">
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)] mb-4">
                   <Crown className="h-5 w-5 text-yellow-500" />
                   Wellness Leaderboard
                 </h3>
                 {leaderboard.length === 0 ? (
-                  <p className="text-sm text-surface-500">No data yet</p>
+                  <p className="text-sm text-[var(--text-muted)]">No data yet</p>
                 ) : (
                   <div className="space-y-3">
                     {leaderboard.map((entry, index) => (
                       <div
                         key={entry.employeeId}
-                        className="flex items-center gap-3 p-2 rounded-lg bg-surface-50 dark:bg-surface-800"
+                        className="flex items-center gap-3 p-2 rounded-lg bg-[var(--bg-secondary)]"
                       >
                         <div className={`flex items-center justify-center w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-500 text-white' :
                             index === 1 ? 'bg-gray-400 text-white' :
                               index === 2 ? 'bg-amber-600 text-white' :
-                                'bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300'
+                                'bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                           }`}>
                           {index === 0 ? <Crown className="h-4 w-4" /> :
                             index === 1 ? <Medal className="h-4 w-4" /> :
@@ -415,7 +415,7 @@ export default function WellnessPage() {
                                 <span className="text-sm font-medium">{entry.rank}</span>}
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-surface-900 dark:text-white text-sm">
+                          <p className="font-medium text-[var(--text-primary)] text-sm">
                             {entry.employeeName}
                           </p>
                         </div>
@@ -423,7 +423,7 @@ export default function WellnessPage() {
                           <p className="font-bold text-green-600 dark:text-green-400">
                             {entry.points}
                           </p>
-                          <p className="text-xs text-surface-500">pts</p>
+                          <p className="text-xs text-[var(--text-muted)]">pts</p>
                         </div>
                       </div>
                     ))}
@@ -437,14 +437,14 @@ export default function WellnessPage() {
         {/* Log Health Modal */}
         <Modal isOpen={isLogModalOpen} onClose={() => setIsLogModalOpen(false)}>
           <ModalHeader>
-            <h2 className="text-xl font-semibold text-surface-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Log Health Metric
             </h2>
           </ModalHeader>
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Metric Type
                 </label>
                 <Select
@@ -459,7 +459,7 @@ export default function WellnessPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Value
                 </label>
                 <Input
@@ -470,7 +470,7 @@ export default function WellnessPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date
                 </label>
                 <Input
@@ -480,7 +480,7 @@ export default function WellnessPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Notes (Optional)
                 </label>
                 <Textarea

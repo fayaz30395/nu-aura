@@ -156,7 +156,7 @@ export function HolidayCarousel({
               <span className="text-xs text-[var(--text-muted)]">
                 {currentHoliday.daysUntil > 0 ? `In ${currentHoliday.daysUntil} days` : 'Today'}
               </span>
-              <span className="inline-block rounded bg-gray-200 px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)] uppercase dark:bg-gray-700 dark:text-[var(--text-muted)]">
+              <span className="inline-block rounded bg-gray-200 px-1.5 py-0.5 text-xs font-medium text-[var(--text-secondary)] uppercase dark:bg-gray-700 dark:text-[var(--text-muted)]">
                 {currentHoliday.type.replace(/_/g, ' ')}
               </span>
             </div>

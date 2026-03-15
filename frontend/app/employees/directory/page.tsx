@@ -96,7 +96,7 @@ const levelOptions = [
 
 const statusOptions = [
   { value: 'ACTIVE', label: 'Active', color: 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400' },
-  { value: 'INACTIVE', label: 'Inactive', color: 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-400' },
+  { value: 'INACTIVE', label: 'Inactive', color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]' },
   { value: 'ON_LEAVE', label: 'On Leave', color: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400' },
   { value: 'PROBATION', label: 'Probation', color: 'bg-blue-100 dark:bg-blue-950/30 text-blue-800 dark:text-blue-400' },
   { value: 'TERMINATED', label: 'Terminated', color: 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400' },
@@ -195,7 +195,7 @@ export default function TeamDirectory() {
 
   const getStatusColor = (status: string) => {
     const found = statusOptions.find((s) => s.value === status);
-    return found?.color || 'bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-400';
+    return found?.color || 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
   };
 
 
@@ -225,11 +225,11 @@ export default function TeamDirectory() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-3">
                 <Users className="w-7 h-7 text-primary-600 dark:text-primary-400" />
                 Team Directory
               </h1>
-              <p className="text-surface-500 dark:text-surface-400 mt-1">
+              <p className="text-[var(--text-muted)] mt-1">
                 Search and connect with colleagues across the organization
               </p>
             </div>
@@ -238,7 +238,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-xl transition-colors ${viewMode === 'grid'
                     ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
-                    : 'text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-800'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
                 <Grid3X3 className="w-5 h-5" />
@@ -247,7 +247,7 @@ export default function TeamDirectory() {
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-xl transition-colors ${viewMode === 'list'
                     ? 'bg-primary-100 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
-                    : 'text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-800'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                   }`}
               >
                 <List className="w-5 h-5" />
@@ -266,11 +266,11 @@ export default function TeamDirectory() {
             <CardContent className="p-6">
               <div className="flex gap-4 mb-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search by name, email, phone, or employee code..."
-                    className="w-full pl-12 pr-4 py-3 border border-surface-200 dark:border-surface-700 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-surface-50 dark:bg-surface-800 text-surface-900 dark:text-surface-50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 border border-[var(--border-main)] rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-[var(--bg-secondary)] text-[var(--text-primary)] transition-all"
                     value={filters.searchTerm}
                     onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -286,7 +286,7 @@ export default function TeamDirectory() {
                   onClick={() => setShowFilters(!showFilters)}
                   className={`px-4 py-3 border rounded-xl transition-colors flex items-center gap-2 ${showFilters
                       ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
-                      : 'border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-300'
+                      : 'border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                     }`}
                 >
                   <Filter className="w-4 h-4" />
@@ -308,15 +308,15 @@ export default function TeamDirectory() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="pt-4 border-t border-surface-100 dark:border-surface-800">
+                    <div className="pt-4 border-t border-[var(--border-main)]">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Department Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Department
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
                             value={filters.departmentIds[0] || ''}
                             onChange={(e) =>
                               handleFilterChange(
@@ -336,11 +336,11 @@ export default function TeamDirectory() {
 
                         {/* Job Role Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Job Role
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
                             value={filters.jobRoles[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('jobRoles', e.target.value ? [e.target.value] : [])
@@ -357,11 +357,11 @@ export default function TeamDirectory() {
 
                         {/* Level Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Level
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
                             value={filters.levels[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('levels', e.target.value ? [e.target.value] : [])
@@ -378,11 +378,11 @@ export default function TeamDirectory() {
 
                         {/* Status Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Status
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
+                            className="w-full border border-[var(--border-main)] rounded-xl p-2.5 bg-[var(--bg-input)] text-[var(--text-primary)]"
                             value={filters.statuses[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('statuses', e.target.value ? [e.target.value] : [])
@@ -401,7 +401,7 @@ export default function TeamDirectory() {
                       <div className="flex justify-end mt-4">
                         <button
                           onClick={clearFilters}
-                          className="text-sm text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+                          className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)]"
                         >
                           Clear all filters
                         </button>
@@ -412,15 +412,15 @@ export default function TeamDirectory() {
               </AnimatePresence>
 
               {/* Results Count */}
-              <div className="mt-4 flex items-center justify-between text-sm text-surface-600 dark:text-surface-400">
+              <div className="mt-4 flex items-center justify-between text-sm text-[var(--text-secondary)]">
                 <span>
-                  Found <strong className="text-surface-900 dark:text-surface-50">{totalElements}</strong>{' '}
+                  Found <strong className="text-[var(--text-primary)]">{totalElements}</strong>{' '}
                   employee{totalElements !== 1 ? 's' : ''}
                 </span>
                 <div className="flex items-center gap-2">
                   <span>Sort by:</span>
                   <select
-                    className="border-0 bg-transparent font-medium text-surface-900 dark:text-surface-50 focus:ring-0 cursor-pointer"
+                    className="border-0 bg-transparent font-medium text-[var(--text-primary)] focus:ring-0 cursor-pointer"
                     value={filters.sortBy}
                     onChange={(e) => handleFilterChange('sortBy', e.target.value)}
                   >
@@ -476,10 +476,10 @@ export default function TeamDirectory() {
 
                       {/* Card Content */}
                       <CardContent className="pt-12 pb-4 px-4 text-center">
-                        <h3 className="font-semibold text-surface-900 dark:text-surface-50 text-lg">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg">
                           {employee.fullName}
                         </h3>
-                        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
+                        <p className="text-sm text-[var(--text-muted)] mt-1">
                           {employee.designation || employee.jobRole}
                         </p>
 
@@ -494,7 +494,7 @@ export default function TeamDirectory() {
                         </div>
 
                         {employee.departmentName && (
-                          <div className="mt-3 flex items-center justify-center gap-1 text-sm text-surface-500 dark:text-surface-400">
+                          <div className="mt-3 flex items-center justify-center gap-1 text-sm text-[var(--text-muted)]">
                             <Building2 className="w-4 h-4" />
                             <span>{employee.departmentName}</span>
                           </div>
@@ -530,21 +530,21 @@ export default function TeamDirectory() {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <Card className="bg-[var(--bg-card)] overflow-hidden">
                   <table className="w-full">
-                    <thead className="bg-surface-50 dark:bg-surface-800/50">
+                    <thead className="bg-[var(--bg-secondary)]/50">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Employee
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Department
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Contact
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
@@ -557,7 +557,7 @@ export default function TeamDirectory() {
                           animate={{ opacity: 1 }}
                           transition={{ delay: index * 0.03 }}
                           onClick={() => setSelectedEmployee(employee)}
-                          className="hover:bg-surface-50 dark:hover:bg-surface-800/50 cursor-pointer transition-colors"
+                          className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                         >
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -569,28 +569,28 @@ export default function TeamDirectory() {
                                 {getInitials(employee.fullName)}
                               </div>
                               <div>
-                                <p className="font-medium text-surface-900 dark:text-surface-50">
+                                <p className="font-medium text-[var(--text-primary)]">
                                   {employee.fullName}
                                 </p>
-                                <p className="text-sm text-surface-500 dark:text-surface-400">
+                                <p className="text-sm text-[var(--text-muted)]">
                                   {employee.employeeCode}
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <p className="text-surface-900 dark:text-surface-50">
+                            <p className="text-[var(--text-primary)]">
                               {employee.departmentName || '-'}
                             </p>
-                            <p className="text-sm text-surface-500 dark:text-surface-400">
+                            <p className="text-sm text-[var(--text-muted)]">
                               {employee.designation || employee.jobRole}
                             </p>
                           </td>
                           <td className="px-6 py-4">
-                            <p className="text-surface-900 dark:text-surface-50 text-sm">
+                            <p className="text-[var(--text-primary)] text-sm">
                               {employee.personalEmail || '-'}
                             </p>
-                            <p className="text-sm text-surface-500 dark:text-surface-400">
+                            <p className="text-sm text-[var(--text-muted)]">
                               {employee.phoneNumber || '-'}
                             </p>
                           </td>
@@ -609,7 +609,7 @@ export default function TeamDirectory() {
                                 <a
                                   href={`mailto:${employee.personalEmail}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                  className="p-2 text-[var(--text-muted)] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                 >
                                   <Mail className="w-4 h-4" />
                                 </a>
@@ -618,7 +618,7 @@ export default function TeamDirectory() {
                                 <a
                                   href={`tel:${employee.phoneNumber}`}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="p-2 text-surface-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                                  className="p-2 text-[var(--text-muted)] hover:text-green-600 dark:hover:text-green-400 transition-colors"
                                 >
                                   <Phone className="w-4 h-4" />
                                 </a>
@@ -639,9 +639,9 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => handlePageChange(filters.page - 1)}
                   disabled={filters.page === 0}
-                  className="p-2 border border-surface-200 dark:border-surface-700 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+                  <ChevronLeft className="w-5 h-5 text-[var(--text-secondary)]" />
                 </button>
 
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -658,7 +658,7 @@ export default function TeamDirectory() {
                       onClick={() => handlePageChange(pageNum)}
                       className={`w-10 h-10 rounded-xl font-medium transition-colors ${filters.page === pageNum
                           ? 'bg-primary-500 text-white'
-                          : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'
                         }`}
                     >
                       {pageNum + 1}
@@ -669,9 +669,9 @@ export default function TeamDirectory() {
                 <button
                   onClick={() => handlePageChange(filters.page + 1)}
                   disabled={filters.page >= totalPages - 1}
-                  className="p-2 border border-surface-200 dark:border-surface-700 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-2 border border-[var(--border-main)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <ChevronRight className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+                  <ChevronRight className="w-5 h-5 text-[var(--text-secondary)]" />
                 </button>
               </div>
             )}
@@ -679,11 +679,11 @@ export default function TeamDirectory() {
             {/* Empty State */}
             {employees.length === 0 && !loading && (
               <div className="text-center py-12">
-                <Users className="w-16 h-16 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-surface-900 dark:text-surface-50 mb-2">
+                <Users className="w-16 h-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
                   No employees found
                 </h3>
-                <p className="text-surface-500 dark:text-surface-400">
+                <p className="text-[var(--text-muted)]">
                   Try adjusting your search or filters
                 </p>
               </div>
@@ -732,10 +732,10 @@ export default function TeamDirectory() {
                 {/* Modal Content */}
                 <div className="pt-16 pb-6 px-6">
                   <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                    <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                       {selectedEmployee.fullName}
                     </h2>
-                    <p className="text-surface-500 dark:text-surface-400">
+                    <p className="text-[var(--text-muted)]">
                       {selectedEmployee.designation || selectedEmployee.jobRole}
                     </p>
                     <div className="mt-2 flex justify-center">
@@ -751,11 +751,11 @@ export default function TeamDirectory() {
 
                   <div className="space-y-4">
                     {selectedEmployee.departmentName && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Building2 className="w-5 h-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Building2 className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Department</p>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs text-[var(--text-muted)]">Department</p>
+                          <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.departmentName}
                           </p>
                         </div>
@@ -763,11 +763,11 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.personalEmail && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Mail className="w-5 h-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Mail className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Email</p>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs text-[var(--text-muted)]">Email</p>
+                          <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.personalEmail}
                           </p>
                         </div>
@@ -781,11 +781,11 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.phoneNumber && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Phone className="w-5 h-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Phone className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Phone</p>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs text-[var(--text-muted)]">Phone</p>
+                          <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.phoneNumber}
                           </p>
                         </div>
@@ -799,11 +799,11 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.managerName && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <UserCircle className="w-5 h-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <UserCircle className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Reports To</p>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs text-[var(--text-muted)]">Reports To</p>
+                          <p className="font-medium text-[var(--text-primary)]">
                             {selectedEmployee.managerName}
                           </p>
                         </div>
@@ -811,11 +811,11 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.joiningDate && (
-                      <div className="flex items-center gap-3 p-3 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                        <Calendar className="w-5 h-5 text-surface-400" />
+                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                        <Calendar className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
-                          <p className="text-xs text-surface-500 dark:text-surface-400">Joined</p>
-                          <p className="font-medium text-surface-900 dark:text-surface-50">
+                          <p className="text-xs text-[var(--text-muted)]">Joined</p>
+                          <p className="font-medium text-[var(--text-primary)]">
                             {new Date(selectedEmployee.joiningDate).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
@@ -830,7 +830,7 @@ export default function TeamDirectory() {
                   <div className="mt-6 flex gap-3">
                     <button
                       onClick={() => setSelectedEmployee(null)}
-                      className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors font-medium"
+                      className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors font-medium"
                     >
                       Close
                     </button>

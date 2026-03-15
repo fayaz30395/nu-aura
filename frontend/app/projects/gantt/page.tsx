@@ -204,7 +204,7 @@ export default function GanttChartPage() {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <AlertCircle className="h-12 w-12 text-rose-500" />
-        <p className="text-lg text-surface-600 dark:text-surface-400">{errorMessage}</p>
+        <p className="text-lg text-[var(--text-secondary)]">{errorMessage}</p>
         <Button onClick={refetch}>Try Again</Button>
       </div>
     );
@@ -220,10 +220,10 @@ export default function GanttChartPage() {
             <Calendar className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">
               Gantt Chart
             </h1>
-            <p className="text-surface-600 dark:text-surface-400 mt-1">
+            <p className="text-[var(--text-secondary)] mt-1">
               Project timeline and task dependencies
             </p>
           </div>
@@ -248,7 +248,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Total Tasks</p>
+              <p className="text-sm text-[var(--text-muted)]">Total Tasks</p>
               <p className="text-2xl font-bold">{stats.total}</p>
             </div>
           </CardContent>
@@ -259,7 +259,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Completed</p>
+              <p className="text-sm text-[var(--text-muted)]">Completed</p>
               <p className="text-2xl font-bold">{stats.completed}</p>
             </div>
           </CardContent>
@@ -270,7 +270,7 @@ export default function GanttChartPage() {
               <Clock className="h-5 w-5 text-rose-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Delayed</p>
+              <p className="text-sm text-[var(--text-muted)]">Delayed</p>
               <p className="text-2xl font-bold">{stats.delayed}</p>
             </div>
           </CardContent>
@@ -281,7 +281,7 @@ export default function GanttChartPage() {
               <AlertCircle className="h-5 w-5 text-amber-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">At Risk</p>
+              <p className="text-sm text-[var(--text-muted)]">At Risk</p>
               <p className="text-2xl font-bold">{stats.atRisk}</p>
             </div>
           </CardContent>
@@ -292,7 +292,7 @@ export default function GanttChartPage() {
               <Target className="h-5 w-5 text-violet-600" />
             </div>
             <div>
-              <p className="text-sm text-surface-500">Avg Progress</p>
+              <p className="text-sm text-[var(--text-muted)]">Avg Progress</p>
               <p className="text-2xl font-bold">{stats.avgProgress}%</p>
             </div>
           </CardContent>
@@ -333,7 +333,7 @@ export default function GanttChartPage() {
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-surface-500">Zoom:</span>
+          <span className="text-sm text-[var(--text-muted)]">Zoom:</span>
           {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
             <Button
               key={level}
@@ -352,16 +352,16 @@ export default function GanttChartPage() {
         <CardContent className="p-0 overflow-x-auto">
           <div className="min-w-[1200px]">
             {/* Timeline Header */}
-            <div className="flex border-b border-surface-200 dark:border-surface-700">
-              <div className="w-64 flex-shrink-0 p-3 bg-surface-50 dark:bg-surface-800 font-semibold border-r border-surface-200 dark:border-surface-700">
+            <div className="flex border-b border-[var(--border-main)]">
+              <div className="w-64 flex-shrink-0 p-3 bg-[var(--bg-secondary)] font-semibold border-r border-[var(--border-main)]">
                 Task Name
               </div>
               <div className="flex-1 flex">
                 {timelineColumns.map((col, idx) => (
                   <div
                     key={idx}
-                    className={`flex-1 min-w-[80px] p-2 text-center text-sm border-r border-surface-200 dark:border-surface-700 ${
-                      col.isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-surface-50 dark:bg-surface-800'
+                    className={`flex-1 min-w-[80px] p-2 text-center text-sm border-r border-[var(--border-main)] ${
+                      col.isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-[var(--bg-secondary)]'
                     }`}
                   >
                     {col.label}
@@ -374,11 +374,11 @@ export default function GanttChartPage() {
             {ganttTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800"
+                className="flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               >
                 {/* Task Name */}
-                <div className={`w-64 flex-shrink-0 p-3 border-r border-surface-200 dark:border-surface-700 ${
-                  task.type === 'project' ? 'font-semibold bg-surface-100 dark:bg-surface-700' : 'pl-8'
+                <div className={`w-64 flex-shrink-0 p-3 border-r border-[var(--border-main)] ${
+                  task.type === 'project' ? 'font-semibold bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]' : 'pl-8'
                 }`}>
                   <div className="flex items-center gap-2">
                     <div
@@ -388,7 +388,7 @@ export default function GanttChartPage() {
                     <span className="truncate">{task.name}</span>
                   </div>
                   {task.type === 'task' && (
-                    <div className="text-xs text-surface-500 mt-1">
+                    <div className="text-xs text-[var(--text-muted)] mt-1">
                       {task.progress}% complete
                     </div>
                   )}
@@ -430,7 +430,7 @@ export default function GanttChartPage() {
             ))}
 
             {ganttTasks.length === 0 && (
-              <div className="p-12 text-center text-surface-500">
+              <div className="p-12 text-center text-[var(--text-muted)]">
                 No tasks found. Create projects and tasks to see the Gantt chart.
               </div>
             )}
