@@ -23,6 +23,9 @@ public class CreatePostRequest {
 
     private WallPost.PostVisibility visibility = WallPost.PostVisibility.ORGANIZATION;
 
+    // For praise — category badge (e.g., "Team Player", "Innovator")
+    private String celebrationType;
+
     // For polls
     @Size(min = 2, max = 10, message = "Poll must have between 2 and 10 options")
     private List<String> pollOptions;
