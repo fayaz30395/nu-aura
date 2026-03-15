@@ -125,7 +125,7 @@ export default function PricingPage() {
     {
       question: 'Can I change plans later?',
       answer:
-        'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any charges.',
+        'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we will prorate any charges.',
     },
     {
       question: 'What payment methods do you accept?',

@@ -535,3 +535,257 @@
  ✓ Compiled in 3.8s (7203 modules)
  ✓ Compiled in 2.4s (7203 modules)
  ✓ Compiled in 5.6s (7217 modules)
+ ✓ Compiled in 3.9s (7203 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 6.6s (3831 modules)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'clientModules')
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:40:25679
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:191:62
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at NoopContextManager.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NoopTracer.startActiveSpan (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18093)
+    at ProxyTracer.startActiveSpan (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:18854)
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:122:103
+    at NoopContextManager.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:7062)
+    at ContextAPI.with (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/@opentelemetry/api/index.js:1:518)
+    at NextTracerImpl.trace (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:122:28)
+    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/lib/trace/tracer.js:191:31
+    at ne (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:42:1678)
+    at async doRender (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/base-server.js:1427:30)
+    at async cacheEntry.responseCache.get.routeKind (/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/base-server.js:1588:28) {
+  page: '/'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 4.6s (7363 modules)
+ GET / 500 in 12249ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 523ms (3873 modules)
+ GET /_next/static/css/app/layout.css?v=1773600575406 404 in 905ms
+ GET /_next/static/css/app/layout.css?v=1773600575406 404 in 35ms
+ GET /me/dashboard 200 in 289ms
+ GET /_next/static/css/app/layout.css?v=1773600615166 404 in 25ms
+ GET /_next/static/chunks/main-app.js?v=1773600615166 404 in 27ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 756ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 758ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 757ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 762ms
+ GET /_next/static/chunks/app/me/error.js 404 in 773ms
+ GET /_next/static/chunks/app/layout.js 404 in 1187ms
+ GET /_next/static/chunks/app/error.js 404 in 47ms
+ GET /_next/static/chunks/app/not-found.js 404 in 47ms
+ GET /_next/static/chunks/app/global-error.js 404 in 48ms
+ GET /_next/static/chunks/app/loading.js 404 in 49ms
+ GET /me/dashboard 200 in 165ms
+ GET /me/dashboard 200 in 125ms
+ GET /_next/static/css/app/layout.css?v=1773600617490 404 in 19ms
+ GET /_next/static/chunks/main-app.js?v=1773600617490 404 in 18ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 57ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 56ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 58ms
+ GET /_next/static/chunks/app/me/error.js 404 in 57ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 56ms
+ GET /_next/static/chunks/app/layout.js 404 in 54ms
+ GET /me/dashboard 200 in 165ms
+ GET /_next/static/css/app/layout.css?v=1773600619706 404 in 16ms
+ GET /_next/static/chunks/main-app.js?v=1773600619706 404 in 49ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 45ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 45ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 46ms
+ GET /_next/static/chunks/app/me/error.js 404 in 45ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 45ms
+ GET /_next/static/chunks/app/layout.js 404 in 64ms
+ GET /_next/static/chunks/app/error.js 404 in 63ms
+ GET /_next/static/chunks/app/global-error.js 404 in 63ms
+ GET /_next/static/chunks/app/not-found.js 404 in 63ms
+ GET /_next/static/chunks/app/loading.js 404 in 63ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/es-object-atoms' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js', but to 'Error: Can't resolve './vendor-chunks/es-object-atoms' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/es-object-atoms (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/handle-externals.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/handle-externals.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/has-tostringtag' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/has-tostringtag.js', but to 'Error: Can't resolve './vendor-chunks/has-tostringtag' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/has-tostringtag (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/has-tostringtag.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/use-isomorphic-layout-effect' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/use-isomorphic-layout-effect.js', but to 'Error: Can't resolve './vendor-chunks/use-isomorphic-layout-effect' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/use-isomorphic-layout-effect (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/use-isomorphic-layout-effect.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/es-object-atoms' in /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server for build dependencies doesn't lead to expected result '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js', but to 'Error: Can't resolve './vendor-chunks/es-object-atoms' in '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/es-object-atoms (expected /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/vendor-chunks/es-object-atoms.js)
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/webpack-runtime.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/.next/server/app/me/dashboard/page.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET /me/dashboard 200 in 165ms
+ GET /_next/static/css/app/layout.css?v=1773600640656 404 in 20ms
+ GET /_next/static/chunks/main-app.js?v=1773600640656 404 in 50ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 45ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 46ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 48ms
+ GET /_next/static/chunks/app/me/error.js 404 in 45ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 46ms
+ GET /_next/static/chunks/app/layout.js 404 in 33ms
+ GET /_next/static/chunks/app/error.js 404 in 32ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 32ms
+ GET /_next/static/chunks/app/global-error.js 404 in 32ms
+ GET /me/dashboard 200 in 195ms
+ GET /_next/static/css/app/layout.css?v=1773600654188 404 in 16ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 42ms
+ GET /_next/static/chunks/main-app.js?v=1773600654188 404 in 43ms
+ GET /_next/static/chunks/app/me/error.js 404 in 41ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 43ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 41ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 42ms
+ GET /_next/static/chunks/app/layout.js 404 in 35ms
+ GET /_next/static/chunks/app/error.js 404 in 34ms
+ GET /_next/static/chunks/app/global-error.js 404 in 34ms
+ GET /_next/static/chunks/app/not-found.js 404 in 35ms
+ GET /_next/static/chunks/app/loading.js 404 in 35ms
+ GET /me/dashboard 200 in 138ms
+ GET /_next/static/css/app/layout.css?v=1773600664471 404 in 20ms
+ GET /_next/static/chunks/main-app.js?v=1773600664471 404 in 59ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 60ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 60ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 60ms
+ GET /_next/static/chunks/app/me/error.js 404 in 61ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 61ms
+ GET /_next/static/chunks/app/layout.js 404 in 35ms
+ GET /_next/static/chunks/app/error.js 404 in 34ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/global-error.js 404 in 33ms
+ GET /me/dashboard 200 in 171ms
+ GET /_next/static/css/app/layout.css?v=1773600665601 404 in 17ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 50ms
+ GET /_next/static/chunks/main-app.js?v=1773600665601 404 in 55ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 51ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 52ms
+ GET /_next/static/chunks/app/me/error.js 404 in 54ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 55ms
+ GET /_next/static/chunks/app/layout.js 404 in 34ms
+ GET /_next/static/chunks/app/not-found.js 404 in 33ms
+ GET /_next/static/chunks/app/error.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET /_next/static/chunks/app/global-error.js 404 in 32ms
+ GET /me/dashboard 200 in 92ms
+ GET /me/dashboard 200 in 64ms
+ GET /me/dashboard 200 in 67ms
+ GET /me/dashboard 200 in 59ms
+ GET /me/dashboard 200 in 83ms
+ GET /me/dashboard 200 in 80ms
+ GET /me/dashboard 200 in 79ms
+ GET /me/dashboard 200 in 72ms
+ GET /me/dashboard 200 in 61ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 66ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 69ms
+ GET /me/dashboard 200 in 66ms
+ GET /me/dashboard 200 in 68ms
+ GET /me/dashboard 200 in 65ms
+ GET /me/dashboard 200 in 85ms
+ GET /me/dashboard 200 in 85ms
+ GET /_next/static/css/app/layout.css?v=1773600667472 404 in 14ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 31ms
+ GET /_next/static/chunks/main-app.js?v=1773600667472 404 in 32ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 31ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/app/me/error.js 404 in 31ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 31ms
+ GET /_next/static/chunks/app/layout.js 404 in 30ms
+ GET /_next/static/chunks/app/loading.js 404 in 29ms
+ GET /_next/static/chunks/app/not-found.js 404 in 30ms
+ GET /_next/static/chunks/app/error.js 404 in 31ms
+ GET /_next/static/chunks/app/global-error.js 404 in 30ms
+ GET /me/dashboard 200 in 140ms
+ GET /_next/static/css/app/layout.css?v=1773600672037 404 in 18ms
+ GET /_next/static/chunks/main-app.js?v=1773600672037 404 in 40ms
+ GET /_next/static/chunks/app/me/dashboard/page.js 404 in 36ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 37ms
+ GET /_next/static/chunks/app/me/error.js 404 in 36ms
+ GET /_next/static/chunks/app/me/dashboard/loading.js 404 in 37ms
+ GET /_next/static/chunks/app/me/loading.js 404 in 37ms
+ GET /_next/static/chunks/app/layout.js 404 in 39ms
+ GET /_next/static/chunks/app/error.js 404 in 36ms
+ GET /_next/static/chunks/app/not-found.js 404 in 35ms
+ GET /_next/static/chunks/app/loading.js 404 in 35ms
+ GET /_next/static/chunks/app/global-error.js 404 in 36ms
+motion() is deprecated. Use motion.create() instead.
+ GET / 200 in 194ms
+ GET /_next/static/css/app/layout.css?v=1773600674207 404 in 14ms
+ GET /_next/static/chunks/main-app.js?v=1773600674207 404 in 20ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/app/page.js 404 in 30ms
+ GET /_next/static/chunks/app/layout.js 404 in 37ms
+ GET /_next/static/chunks/app/error.js 404 in 25ms
+ GET /_next/static/chunks/app/not-found.js 404 in 26ms
+ GET /_next/static/chunks/app/global-error.js 404 in 33ms
+ GET /_next/static/chunks/app/loading.js 404 in 33ms
+ GET / 200 in 174ms
+ GET /_next/static/css/app/layout.css?v=1773600676368 404 in 22ms
+ GET /_next/static/chunks/main-app.js?v=1773600676368 404 in 56ms
+ GET /_next/static/chunks/app/page.js 404 in 49ms
+ GET /_next/static/chunks/app/layout.js 404 in 49ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 51ms
+ GET /_next/static/chunks/app/not-found.js 404 in 50ms
+ GET /_next/static/chunks/app/error.js 404 in 50ms
+ GET /_next/static/chunks/app/loading.js 404 in 20ms
+ GET /_next/static/chunks/app/global-error.js 404 in 20ms
+ GET / 200 in 226ms
+ GET /_next/static/css/app/layout.css?v=1773600677710 404 in 32ms
+ GET /_next/static/chunks/main-app.js?v=1773600677710 404 in 73ms
+ GET /_next/static/chunks/app/layout.js 404 in 62ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 63ms
+ GET /_next/static/chunks/app/page.js 404 in 62ms
+ GET /_next/static/chunks/app/not-found.js 404 in 62ms
+ GET /_next/static/chunks/app/error.js 404 in 58ms
+ GET /_next/static/chunks/app/loading.js 404 in 22ms
+ GET /_next/static/chunks/app/global-error.js 404 in 22ms
