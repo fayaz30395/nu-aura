@@ -375,16 +375,19 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
       .toUpperCase()
       .slice(0, 2);
 
+    // Resolve avatar: backend avatarUrl → current user's Google pic → generated fallback
+    const isOwnPost = user?.employeeId === item.wallPostAuthorId;
+    const avatarUrl = item.personAvatarUrl
+      || (isOwnPost && user?.profilePictureUrl ? user.profilePictureUrl : null)
+      || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.wallPostAuthor || 'U')}&background=6366f1&color=fff&size=80&bold=true&format=svg`;
+
     return (
       <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] overflow-hidden transition-colors">
         {/* Header: avatar + "Author created a post" + timestamp + action menu */}
         <div className="flex items-start gap-3 px-4 pt-4 pb-2">
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-            {item.personAvatarUrl ? (
-              <Image src={item.personAvatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover" />
-            ) : (
-              <span className="text-sm font-semibold text-primary-700 dark:text-primary-300">{authorInitials}</span>
-            )}
+          <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40} className="rounded-full object-cover w-10 h-10" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm leading-snug">
@@ -455,9 +458,7 @@ function FeedCard({ item, onDeleted }: { item: FeedItem; onDeleted?: (id: string
             <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
               {localLikeCount > 0 && (
                 <span className="inline-flex items-center gap-1">
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-500 text-white">
-                    <ThumbsUp className="h-2 w-2" />
-                  </span>
+                  <span className="text-sm leading-none">👍</span>
                   {localLikeCount} {localLikeCount === 1 ? 'reaction' : 'reactions'}
                 </span>
               )}
@@ -766,12 +767,7 @@ function FeedCommentItem({
   const [isLoadingReplies, setIsLoadingReplies] = useState(false);
   const [repliesFetched, setRepliesFetched] = useState(false);
 
-  const initials = comment.author.fullName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const commentAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.author.fullName)}&background=6366f1&color=fff&size=48&bold=true&format=svg`;
 
   const handleLikeComment = () => {
     // Optimistic toggle — backend comment-like endpoint not yet implemented
@@ -824,10 +820,9 @@ function FeedCommentItem({
   return (
     <div className={depth > 0 ? 'ml-6 mt-1.5' : ''}>
       <div className="flex gap-2">
-        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-          <span className="text-[10px] font-semibold text-primary-700 dark:text-primary-300">
-            {initials}
-          </span>
+        <div className="flex-shrink-0 w-6 h-6 rounded-full overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={commentAvatarUrl} alt={comment.author.fullName} width={24} height={24} className="rounded-full object-cover w-6 h-6" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="rounded-lg bg-[var(--bg-secondary)] px-2.5 py-1.5">

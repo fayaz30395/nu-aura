@@ -190,7 +190,8 @@
       "Bash(unzip -l ~/.m2/repository/com/nulogic/common-module/1.0.0/common-module-1.0.0.jar)",
       "WebFetch(domain:www.nulogic.io)",
       "WebFetch(domain:brandfetch.com)",
-      "WebFetch(domain:www.keka.com)"
+      "WebFetch(domain:www.keka.com)",
+      "Bash(git remote:*)"
     ],
     "additionalDirectories": [
       "/tmp"
