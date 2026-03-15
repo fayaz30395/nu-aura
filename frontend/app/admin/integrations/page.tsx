@@ -313,7 +313,7 @@ export default function AdminIntegrationsPage() {
               <div>
                 <Label>Template (Optional)</Label>
                 <select
-                  className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900"
+                  className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-card)]"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
                   disabled={sendSmsMutation.isPending}
@@ -330,7 +330,7 @@ export default function AdminIntegrationsPage() {
                 <div>
                   <Label>Message</Label>
                   <textarea
-                    className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900"
+                    className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-card)]"
                     placeholder="Enter your message here..."
                     value={sendMessage}
                     onChange={(e) => setSendMessage(e.target.value)}

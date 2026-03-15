@@ -162,8 +162,8 @@ export default function CourseCatalogPage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Course Catalog</h1>
-            <p className="text-gray-500 mt-1 text-sm">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Course Catalog</h1>
+            <p className="text-[var(--text-muted)] mt-1 text-sm">
               Browse and enroll in available courses
             </p>
           </div>
@@ -207,7 +207,7 @@ export default function CourseCatalogPage() {
         {/* Filters */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="relative flex-1 min-w-[220px] max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
             <Input
               placeholder="Search courses…"
               value={searchQuery}
@@ -225,7 +225,7 @@ export default function CourseCatalogPage() {
             Mandatory only
           </Button>
           {visibleCourses.length > 0 && (
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[var(--text-muted)]">
               {visibleCourses.length} course{visibleCourses.length !== 1 ? 's' : ''}
             </span>
           )}
@@ -233,14 +233,14 @@ export default function CourseCatalogPage() {
 
         {/* Course grid */}
         {loading && courses.length === 0 ? (
-          <div className="flex items-center justify-center py-20 text-gray-400">
+          <div className="flex items-center justify-center py-20 text-[var(--text-muted)]">
             <Loader2 className="h-8 w-8 animate-spin mr-3" />
             <span>Loading catalog…</span>
           </div>
         ) : visibleCourses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400 space-y-3">
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)] space-y-3">
             <GraduationCap className="h-12 w-12 text-gray-300" />
-            <p className="text-lg font-medium text-gray-500">No courses found</p>
+            <p className="text-lg font-medium text-[var(--text-muted)]">No courses found</p>
             {searchQuery && (
               <p className="text-sm">
                 Try clearing the search or{' '}
@@ -263,7 +263,7 @@ export default function CourseCatalogPage() {
               return (
                 <Card
                   key={course.id}
-                  className="border border-gray-200 hover:shadow-md transition-shadow flex flex-col"
+                  className="border border-[var(--border-main)] hover:shadow-md transition-shadow flex flex-col"
                 >
                   {/* Thumbnail placeholder */}
                   <div className="h-36 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
@@ -286,7 +286,7 @@ export default function CourseCatalogPage() {
                   <CardContent className="p-4 flex-1 flex flex-col">
                     {/* Title & difficulty */}
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2">
+                      <h3 className="font-semibold text-[var(--text-primary)] text-sm leading-snug line-clamp-2">
                         {course.title}
                       </h3>
                       <DifficultyBadge level={course.difficultyLevel} />
@@ -294,7 +294,7 @@ export default function CourseCatalogPage() {
 
                     {/* Description */}
                     {course.shortDescription && (
-                      <p className="text-xs text-gray-500 line-clamp-2 mb-3">
+                      <p className="text-xs text-[var(--text-muted)] line-clamp-2 mb-3">
                         {course.shortDescription}
                       </p>
                     )}
@@ -311,7 +311,7 @@ export default function CourseCatalogPage() {
                           </span>
                         ))}
                         {course.skillsCovered.length > 3 && (
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-[var(--text-muted)]">
                             +{course.skillsCovered.length - 3} more
                           </span>
                         )}
@@ -319,7 +319,7 @@ export default function CourseCatalogPage() {
                     )}
 
                     {/* Meta row */}
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-4 mt-auto">
+                    <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mb-4 mt-auto">
                       {course.durationHours && (
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
@@ -384,7 +384,7 @@ export default function CourseCatalogPage() {
         )}
 
         {loading && courses.length > 0 && (
-          <div className="flex justify-center py-4 text-gray-400">
+          <div className="flex justify-center py-4 text-[var(--text-muted)]">
             <Loader2 className="h-6 w-6 animate-spin mr-2" />
             <span className="text-sm">Loading more…</span>
           </div>

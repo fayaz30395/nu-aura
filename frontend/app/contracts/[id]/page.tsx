@@ -21,7 +21,7 @@ export default function ContractDetailPage() {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="p-8 text-center text-gray-500">Loading contract...</div>
+        <div className="p-8 text-center text-[var(--text-muted)]">Loading contract...</div>
       </AppLayout>
     );
   }
@@ -29,7 +29,7 @@ export default function ContractDetailPage() {
   if (!contract) {
     return (
       <AppLayout>
-        <div className="p-8 text-center text-gray-500">Contract not found</div>
+        <div className="p-8 text-center text-[var(--text-muted)]">Contract not found</div>
       </AppLayout>
     );
   }
@@ -46,12 +46,12 @@ export default function ContractDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded">
+            <button onClick={() => router.back()} className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 rounded">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <h1 className="text-3xl font-bold">{contract.title}</h1>
-              <p className="text-gray-600 dark:text-gray-400">{contractService.getTypeLabel(contract.type)}</p>
+              <p className="text-[var(--text-secondary)]">{contractService.getTypeLabel(contract.type)}</p>
             </div>
           </div>
           <Badge size="lg" color={contract.status === 'ACTIVE' ? 'green' : 'gray'}>
@@ -62,18 +62,18 @@ export default function ContractDetailPage() {
         {/* Key Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Start Date</div>
+            <div className="text-sm text-[var(--text-secondary)] mb-1">Start Date</div>
             <div className="text-lg font-semibold">{contractService.formatDate(contract.startDate)}</div>
           </Card>
           {contract.endDate && (
             <Card>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">End Date</div>
+              <div className="text-sm text-[var(--text-secondary)] mb-1">End Date</div>
               <div className="text-lg font-semibold">{contractService.formatDate(contract.endDate)}</div>
             </Card>
           )}
           {contract.value && (
             <Card>
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Value</div>
+              <div className="text-sm text-[var(--text-secondary)] mb-1">Value</div>
               <div className="text-lg font-semibold">{contractService.formatCurrency(contract.value, contract.currency)}</div>
             </Card>
           )}
@@ -149,7 +149,7 @@ export default function ContractDetailPage() {
                 </Table.Tbody>
               </Table>
             ) : (
-              <div className="text-center p-8 text-gray-500">No signatures yet</div>
+              <div className="text-center p-8 text-[var(--text-muted)]">No signatures yet</div>
             )}
           </Tabs.Panel>
 
@@ -158,18 +158,18 @@ export default function ContractDetailPage() {
               <div className="space-y-4">
                 {contract.employeeName && (
                   <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Employee</div>
+                    <div className="text-sm text-[var(--text-secondary)]">Employee</div>
                     <div className="font-semibold">{contract.employeeName}</div>
                   </div>
                 )}
                 {contract.vendorName && (
                   <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Vendor</div>
+                    <div className="text-sm text-[var(--text-secondary)]">Vendor</div>
                     <div className="font-semibold">{contract.vendorName}</div>
                   </div>
                 )}
                 <div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Auto Renew</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Auto Renew</div>
                   <div className="font-semibold">{contract.autoRenew ? 'Yes' : 'No'}</div>
                 </div>
               </div>

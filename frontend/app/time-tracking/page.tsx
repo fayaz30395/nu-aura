@@ -157,7 +157,7 @@ export default function TimeTrackingPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
                 <Timer className="h-5 w-5 text-white" />
@@ -173,7 +173,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -189,7 +189,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
@@ -205,7 +205,7 @@ export default function TimeTrackingPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
                 <FileText className="h-5 w-5 text-white" />
@@ -247,7 +247,7 @@ export default function TimeTrackingPage() {
         )}
 
         {/* Entries List */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
             <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
               Recent Time Entries
@@ -385,7 +385,7 @@ export default function TimeTrackingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => router.push('/time-tracking/new')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -403,7 +403,7 @@ export default function TimeTrackingPage() {
 
           <button
             onClick={() => router.push('/time-tracking?view=week')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">

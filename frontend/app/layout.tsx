@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Space_Grotesk, Fraunces } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
+import { getThemeScript } from '@/lib/theme/theme-script';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -34,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript />
+        {/* FOUC prevention — runs synchronously before paint */}
+        <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
+        <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <body className={`${spaceGrotesk.variable} ${fraunces.variable} font-sans`}>
         <Providers>{children}</Providers>

@@ -163,7 +163,7 @@ export default function CourseDetailPage() {
           )}
           <div className="flex flex-wrap items-center gap-4 text-sm text-blue-200">
             {course.difficultyLevel && (
-              <span className={`px-2 py-0.5 rounded text-xs font-medium ${DIFFICULTY_COLOR[course.difficultyLevel as keyof typeof DIFFICULTY_COLOR] ?? 'bg-gray-100 text-gray-700'}`}>
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${DIFFICULTY_COLOR[course.difficultyLevel as keyof typeof DIFFICULTY_COLOR] ?? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'}`}>
                 {course.difficultyLevel}
               </span>
             )}
@@ -195,16 +195,16 @@ export default function CourseDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           {course.description && (
-            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">About this course</h2>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{course.description}</p>
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-6">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-3">About this course</h2>
+              <p className="text-[var(--text-secondary)] text-sm leading-relaxed">{course.description}</p>
             </div>
           )}
 
           {/* Progress (if enrolled) */}
           {isEnrolled && (
-            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Your Progress</h2>
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-6">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Your Progress</h2>
               
               {/* Completion percentage */}
               <div className="mb-6">
@@ -212,10 +212,10 @@ export default function CourseDetailPage() {
                   <div className="flex-1 h-3 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">{completionPercentage}%</span>
+                  <span className="text-sm font-bold text-[var(--text-primary)]">{completionPercentage}%</span>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Status: <span className="font-medium capitalize text-gray-900 dark:text-white">{enrollment?.status?.toLowerCase().replace('_', ' ')}</span>
+                <p className="text-xs text-[var(--text-muted)]">
+                  Status: <span className="font-medium capitalize text-[var(--text-primary)]">{enrollment?.status?.toLowerCase().replace('_', ' ')}</span>
                   {enrollment?.completedAt && ` · Completed ${new Date(enrollment.completedAt).toLocaleDateString()}`}
                 </p>
               </div>
@@ -223,12 +223,12 @@ export default function CourseDetailPage() {
               {/* Progress segments by module */}
               {course.modules && course.modules.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">Modules Progress</p>
+                  <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase">Modules Progress</p>
                   <div className="space-y-1">
                     {course.modules.map((mod, idx) => (
                       <div key={mod.id} className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400 flex-1 truncate">{idx + 1}. {mod.title}</span>
-                        <span className="text-gray-900 dark:text-white font-medium ml-2">
+                        <span className="text-[var(--text-secondary)] flex-1 truncate">{idx + 1}. {mod.title}</span>
+                        <span className="text-[var(--text-primary)] font-medium ml-2">
                           {Math.round(completionPercentage / course.modules!.length)}%
                         </span>
                       </div>
@@ -241,13 +241,13 @@ export default function CourseDetailPage() {
 
           {/* Quizzes Section */}
           {isEnrolled && quizzes.length > 0 && (
-            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 overflow-hidden">
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 overflow-hidden">
               <div className="p-6 border-b border-gray-100 dark:border-surface-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
                   <HelpCircle className="h-5 w-5" />
                   Quizzes & Assessments
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-sm text-[var(--text-muted)] mt-1">
                   {quizzes.length} quiz{quizzes.length !== 1 ? 'zes' : ''} · Test your knowledge
                 </p>
               </div>
@@ -259,12 +259,12 @@ export default function CourseDetailPage() {
                   const isFailed = quiz.status === 'FAILED';
 
                   return (
-                    <div key={quiz.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <div key={quiz.id} className="p-4 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50 transition-colors">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-gray-400 dark:text-gray-500 w-6">{idx + 1}</span>
-                            <h4 className="font-semibold text-gray-900 dark:text-white">{quiz.title}</h4>
+                            <span className="text-xs font-bold text-[var(--text-muted)] w-6">{idx + 1}</span>
+                            <h4 className="font-semibold text-[var(--text-primary)]">{quiz.title}</h4>
                             {isPassed && (
                               <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs font-medium rounded">
                                 <CheckCircle2 className="h-3 w-3" /> Passed
@@ -277,9 +277,9 @@ export default function CourseDetailPage() {
                             )}
                           </div>
                           {quiz.description && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{quiz.description}</p>
+                            <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">{quiz.description}</p>
                           )}
-                          <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-600 dark:text-gray-400">
+                          <div className="flex flex-wrap gap-3 mt-2 text-xs text-[var(--text-secondary)]">
                             <span>{quiz.totalQuestions} questions</span>
                             {quiz.timeLimit && <span>{quiz.timeLimit} min time limit</span>}
                             <span className="text-blue-600 dark:text-blue-400 font-medium">{quiz.passingScore}% to pass</span>
@@ -292,7 +292,7 @@ export default function CourseDetailPage() {
                           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
                             isAvailable || isPassed || isFailed
                               ? 'bg-blue-600 text-white hover:bg-blue-700'
-                              : 'bg-gray-200 dark:bg-surface-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                              : 'bg-gray-200 dark:bg-surface-700 text-[var(--text-muted)] cursor-not-allowed'
                           }`}
                         >
                           {isPassed ? 'Review' : isFailed ? 'Retry' : 'Take Quiz'}
@@ -307,10 +307,10 @@ export default function CourseDetailPage() {
 
           {/* Curriculum */}
           {course.modules && course.modules.length > 0 && (
-            <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 overflow-hidden">
+            <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 overflow-hidden">
               <div className="p-6 border-b border-gray-100 dark:border-surface-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Course Curriculum</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Course Curriculum</h2>
+                <p className="text-sm text-[var(--text-muted)] mt-0.5">
                   {course.modules.length} modules · {totalContents} lessons
                 </p>
               </div>
@@ -321,29 +321,29 @@ export default function CourseDetailPage() {
                     <div key={mod.id} className="border-b border-gray-100 dark:border-surface-700 last:border-0">
                       <button
                         onClick={() => toggleModule(mod.id)}
-                        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-xs font-bold text-gray-400 dark:text-gray-500 w-5">{idx + 1}</span>
+                          <span className="text-xs font-bold text-[var(--text-muted)] w-5">{idx + 1}</span>
                           <div>
                             <p className="text-sm font-semibold text-gray-800 dark:text-white">{mod.title}</p>
-                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                            <p className="text-xs text-[var(--text-muted)] mt-0.5">
                               {mod.contents?.length ?? 0} lessons
                               {mod.durationMinutes ? ` · ${mod.durationMinutes}m` : ''}
                             </p>
                           </div>
                         </div>
-                        {expanded ? <ChevronUp className="h-4 w-4 text-gray-400 dark:text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+                        {expanded ? <ChevronUp className="h-4 w-4 text-[var(--text-muted)]" /> : <ChevronDown className="h-4 w-4 text-[var(--text-muted)]" />}
                       </button>
                       {expanded && mod.contents && (
-                        <div className="bg-gray-50 dark:bg-surface-700/30 border-t border-gray-100 dark:border-surface-700">
+                        <div className="bg-[var(--bg-surface)] dark:bg-surface-700/30 border-t border-gray-100 dark:border-surface-700">
                           {mod.contents.map((content, cIdx) => (
                             <div key={content.id} className="flex items-center gap-3 px-6 py-2.5 border-b border-gray-100 dark:border-surface-700 last:border-0">
-                              <span className="text-xs text-gray-400 dark:text-gray-500 w-4">{cIdx + 1}</span>
-                              <BookOpen className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500 shrink-0" />
-                              <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">{content.title}</p>
+                              <span className="text-xs text-[var(--text-muted)] w-4">{cIdx + 1}</span>
+                              <BookOpen className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
+                              <p className="text-sm text-[var(--text-primary)] dark:text-gray-300 flex-1">{content.title}</p>
                               {content.durationMinutes && (
-                                <span className="text-xs text-gray-400 dark:text-gray-500">{content.durationMinutes}m</span>
+                                <span className="text-xs text-[var(--text-muted)]">{content.durationMinutes}m</span>
                               )}
                             </div>
                           ))}
@@ -359,7 +359,7 @@ export default function CourseDetailPage() {
 
         {/* Right: CTA card */}
         <div className="space-y-4">
-          <div className="bg-white dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700 p-6 shadow-sm sticky top-6">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-surface-700 p-6 shadow-sm sticky top-6">
             {course.thumbnailUrl && (
               <img
                 src={course.thumbnailUrl}
@@ -372,8 +372,8 @@ export default function CourseDetailPage() {
               <>
                 <div className="mb-4">
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-600 dark:text-gray-400">Progress</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">{progress}%</span>
+                    <span className="text-[var(--text-secondary)]">Progress</span>
+                    <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                   </div>
                   <div className="w-full h-2 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
                     <div className="h-full bg-blue-600 rounded-full" style={{ width: `${progress}%` }} />
@@ -418,7 +418,7 @@ export default function CourseDetailPage() {
                 {enrollment?.status === 'COMPLETED' && enrollment?.certificateId && (
                   <Link
                     href="/learning/certificates"
-                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 dark:border-surface-600 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 border border-gray-300 dark:border-surface-600 text-[var(--text-primary)] dark:text-gray-300 rounded-md text-sm font-medium hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700"
                   >
                     <Award className="h-4 w-4 text-green-600 dark:text-green-400" /> View All Certificates
                   </Link>
@@ -440,31 +440,31 @@ export default function CourseDetailPage() {
 
             {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
 
-            <div className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 space-y-2 text-sm text-[var(--text-secondary)]">
               {course.instructorName && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-500">Instructor</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{course.instructorName}</span>
+                  <span className="text-[var(--text-muted)]">Instructor</span>
+                  <span className="font-medium text-[var(--text-primary)]">{course.instructorName}</span>
                 </div>
               )}
               {course.durationHours && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-500">Duration</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{course.durationHours}h</span>
+                  <span className="text-[var(--text-muted)]">Duration</span>
+                  <span className="font-medium text-[var(--text-primary)]">{course.durationHours}h</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-500">Level</span>
-                <span className="font-medium text-gray-900 dark:text-white capitalize">{course.difficultyLevel?.toLowerCase()}</span>
+                <span className="text-[var(--text-muted)]">Level</span>
+                <span className="font-medium text-[var(--text-primary)] capitalize">{course.difficultyLevel?.toLowerCase()}</span>
               </div>
               {course.passingScore && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-500">Passing score</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{course.passingScore}%</span>
+                  <span className="text-[var(--text-muted)]">Passing score</span>
+                  <span className="font-medium text-[var(--text-primary)]">{course.passingScore}%</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-500">Certificate</span>
+                <span className="text-[var(--text-muted)]">Certificate</span>
                 <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Awarded
                 </span>

@@ -116,9 +116,9 @@ export default function ApplyLeavePage() {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Apply for Leave</h1>
+        <h1 className="text-3xl font-bold mb-8 text-[var(--text-primary)]">Apply for Leave</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
@@ -127,7 +127,7 @@ export default function ApplyLeavePage() {
               </label>
               <select
                 {...register('leaveTypeId')}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes.map((type) => (
@@ -152,7 +152,7 @@ export default function ApplyLeavePage() {
               <input
                 type="date"
                 {...register('startDate')}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
               {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
@@ -166,7 +166,7 @@ export default function ApplyLeavePage() {
                 type="date"
                 {...register('endDate')}
                 min={startDate}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
               />
               {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
@@ -227,7 +227,7 @@ export default function ApplyLeavePage() {
               <textarea
                 {...register('reason')}
                 rows={4}
-                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-[var(--bg-card)] text-[var(--text-primary)]"
                 placeholder="Please provide a reason for your leave..."
               />
               {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}

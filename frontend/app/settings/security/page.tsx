@@ -241,7 +241,7 @@ export default function SecuritySettingsPage() {
                         maxLength={6}
                         placeholder="000000"
                         disabled={disableMfaMutation.isPending}
-                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                        className="w-full px-4 py-2 text-center text-xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-[var(--bg-surface)] text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                         autoComplete="off"
                         {...register('code', {
                           onChange: (e) => {

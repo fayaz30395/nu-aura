@@ -431,7 +431,7 @@ export default function ScheduledReportsPage() {
                         type="text"
                         placeholder="e.g., Weekly Attendance Report"
                         {...register('scheduleName')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       />
                       {errors.scheduleName && <p className="text-red-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
@@ -443,7 +443,7 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('reportType')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       >
                         {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
@@ -460,7 +460,7 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('frequency')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         >
                           {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
                             <option key={value} value={value}>{label}</option>
@@ -477,7 +477,7 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfWeek', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
@@ -494,7 +494,7 @@ export default function ScheduledReportsPage() {
                           </label>
                           <select
                             {...register('dayOfMonth', { valueAsNumber: true })}
-                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                            className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                           >
                             {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
@@ -514,7 +514,7 @@ export default function ScheduledReportsPage() {
                         <input
                           type="time"
                           {...register('timeOfDay')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         />
                         {errors.timeOfDay && <p className="text-red-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
                       </div>
@@ -526,7 +526,7 @@ export default function ScheduledReportsPage() {
                         </label>
                         <select
                           {...register('exportFormat')}
-                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                         >
                           <option value="EXCEL">Excel (.xlsx)</option>
                           <option value="PDF">PDF</option>
@@ -543,7 +543,7 @@ export default function ScheduledReportsPage() {
                       </label>
                       <select
                         {...register('departmentId')}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                       >
                         <option value="">All Departments</option>
                         {departments.map((dept) => (
@@ -564,7 +564,7 @@ export default function ScheduledReportsPage() {
                               type="email"
                               placeholder="email@example.com"
                               {...register(`recipients.${index}.email`)}
-                              className="flex-1 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
+                              className="flex-1 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-[var(--bg-input)]"
                             />
                             {recipientFields.length > 1 && (
                               <button

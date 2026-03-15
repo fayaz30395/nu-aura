@@ -40,7 +40,7 @@ const REVIEWER_TYPES = ['SELF', 'MANAGER', 'PEER', 'DIRECT_REPORT', 'EXTERNAL'] 
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'DRAFT':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-[var(--bg-surface)] text-gray-800';
     case 'ACTIVE':
     case 'IN_PROGRESS':
       return 'bg-blue-100 text-blue-800';
@@ -49,9 +49,9 @@ const getStatusColor = (status: string) => {
     case 'COMPLETED':
       return 'bg-green-100 text-green-800';
     case 'CLOSED':
-      return 'bg-gray-100 text-gray-500';
+      return 'bg-[var(--bg-surface)] text-[var(--text-muted)]';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-[var(--bg-surface)] text-gray-800';
   }
 };
 
@@ -64,7 +64,7 @@ const getRequestStatusIcon = (status: string) => {
     case 'DECLINED':
       return <AlertTriangle className="h-5 w-5 text-red-500" />;
     default:
-      return <Clock className="h-5 w-5 text-gray-400" />;
+      return <Clock className="h-5 w-5 text-[var(--text-muted)]" />;
   }
 };
 
@@ -274,8 +274,8 @@ export default function Feedback360Page() {
       <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">360-Degree Feedback</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">360-Degree Feedback</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1">
             Multi-rater feedback and performance assessment
           </p>
         </div>
@@ -300,14 +300,14 @@ export default function Feedback360Page() {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-[var(--border-main)] mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('cycles')}
             className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
               activeTab === 'cycles'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             <Users className="h-5 w-5" />
@@ -318,7 +318,7 @@ export default function Feedback360Page() {
             className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
               activeTab === 'pending'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             <ClipboardCheck className="h-5 w-5" />
@@ -334,7 +334,7 @@ export default function Feedback360Page() {
             className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
               activeTab === 'summaries'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             <BarChart3 className="h-5 w-5" />
@@ -347,10 +347,10 @@ export default function Feedback360Page() {
       {activeTab === 'cycles' && (
         <div className="space-y-4">
           {cycles.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-              <Users className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No feedback cycles</h3>
-              <p className="mt-1 text-sm text-gray-500">
+            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+              <Users className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
+              <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No feedback cycles</h3>
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
                 Create a new 360-degree feedback cycle to get started.
               </p>
             </div>
@@ -359,10 +359,10 @@ export default function Feedback360Page() {
               {cycles.map((cycle) => (
                 <div
                   key={cycle.id}
-                  className="bg-white rounded-lg border border-gray-200 shadow-sm p-5"
+                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-5"
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-lg font-medium text-gray-900">{cycle.name}</h3>
+                    <h3 className="text-lg font-medium text-[var(--text-primary)]">{cycle.name}</h3>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
                         cycle.status
@@ -372,11 +372,11 @@ export default function Feedback360Page() {
                     </span>
                   </div>
                   {cycle.description && (
-                    <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+                    <p className="text-sm text-[var(--text-muted)] mb-3 line-clamp-2">
                       {cycle.description}
                     </p>
                   )}
-                  <div className="space-y-2 text-xs text-gray-500 mb-4">
+                  <div className="space-y-2 text-xs text-[var(--text-muted)] mb-4">
                     <div className="flex justify-between">
                       <span>Period:</span>
                       <span>
@@ -392,16 +392,16 @@ export default function Feedback360Page() {
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       {cycle.includeSelfReview && (
-                        <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">Self</span>
+                        <span className="px-2 py-0.5 bg-[var(--bg-surface)] rounded text-xs">Self</span>
                       )}
                       {cycle.includeManagerReview && (
-                        <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">Manager</span>
+                        <span className="px-2 py-0.5 bg-[var(--bg-surface)] rounded text-xs">Manager</span>
                       )}
                       {cycle.includePeerReview && (
-                        <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">Peer</span>
+                        <span className="px-2 py-0.5 bg-[var(--bg-surface)] rounded text-xs">Peer</span>
                       )}
                       {cycle.includeUpwardReview && (
-                        <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">Upward</span>
+                        <span className="px-2 py-0.5 bg-[var(--bg-surface)] rounded text-xs">Upward</span>
                       )}
                       {cycle.isAnonymous && (
                         <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">
@@ -410,7 +410,7 @@ export default function Feedback360Page() {
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                  <div className="flex justify-end gap-2 pt-3 border-t border-[var(--border-subtle)]">
                     {cycle.status === 'DRAFT' && (
                       <>
                         <button
@@ -432,7 +432,7 @@ export default function Feedback360Page() {
                     {(cycle.status === 'ACTIVE' || cycle.status === 'IN_PROGRESS') && (
                       <button
                         onClick={() => setCloseConfirm(cycle.id)}
-                        className="p-2 text-gray-600 hover:bg-gray-50 rounded"
+                        className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] rounded"
                         title="Close"
                       >
                         <Square className="h-5 w-5" />
@@ -450,41 +450,41 @@ export default function Feedback360Page() {
       {activeTab === 'pending' && (
         <div className="space-y-4">
           {pendingReviews.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
               <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">All caught up!</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">All caught up!</h3>
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
                 You have no pending feedback reviews.
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200">
+            <div className="bg-white rounded-lg border border-[var(--border-main)]">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-[var(--bg-surface)]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Subject
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Review Type
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Created
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {pendingReviews.map((request) => (
-                      <tr key={request.id} className="hover:bg-gray-50">
+                      <tr key={request.id} className="hover:bg-[var(--bg-surface)]">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-[var(--text-primary)]">
                             Employee #{request.subjectEmployeeId.slice(0, 8)}
                           </div>
                         </td>
@@ -496,10 +496,10 @@ export default function Feedback360Page() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             {getRequestStatusIcon(request.status)}
-                            <span className="text-sm text-gray-500">{request.status}</span>
+                            <span className="text-sm text-[var(--text-muted)]">{request.status}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)]">
                           {new Date(request.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -525,10 +525,10 @@ export default function Feedback360Page() {
       {activeTab === 'summaries' && (
         <div className="space-y-4">
           {summaries.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-              <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No results yet</h3>
-              <p className="mt-1 text-sm text-gray-500">
+            <div className="text-center py-12 bg-white rounded-lg border border-[var(--border-main)]">
+              <BarChart3 className="mx-auto h-12 w-12 text-[var(--text-muted)]" />
+              <h3 className="mt-2 text-sm font-medium text-[var(--text-primary)]">No results yet</h3>
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
                 Your feedback summaries will appear here once reviews are complete.
               </p>
             </div>
@@ -537,20 +537,20 @@ export default function Feedback360Page() {
               {summaries.map((summary) => (
                 <div
                   key={summary.id}
-                  className="bg-white rounded-lg border border-gray-200 shadow-sm p-5"
+                  className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm p-5"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)]">
                         Feedback Summary
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-[var(--text-muted)]">
                         Cycle: {summary.cycleId.slice(0, 8)}
                       </p>
                     </div>
                     {summary.finalRating && (
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-gray-900">
+                        <div className="text-2xl font-bold text-[var(--text-primary)]">
                           {summary.finalRating.toFixed(1)}
                         </div>
                         <RatingStars rating={Math.round(summary.finalRating)} />
@@ -560,46 +560,46 @@ export default function Feedback360Page() {
 
                   <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Responses:</span>
+                      <span className="text-[var(--text-muted)]">Responses:</span>
                       <span className="font-medium">
                         {summary.responsesReceived}/{summary.totalReviewers}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Self Review:</span>
+                      <span className="text-[var(--text-muted)]">Self Review:</span>
                       <span className="font-medium">
                         {summary.selfReviewCompleted ? (
                           <CheckCircle className="h-5 w-5 text-green-500 inline" />
                         ) : (
-                          <Clock className="h-5 w-5 text-gray-400 inline" />
+                          <Clock className="h-5 w-5 text-[var(--text-muted)] inline" />
                         )}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Manager Review:</span>
+                      <span className="text-[var(--text-muted)]">Manager Review:</span>
                       <span className="font-medium">
                         {summary.managerReviewCompleted ? (
                           <CheckCircle className="h-5 w-5 text-green-500 inline" />
                         ) : (
-                          <Clock className="h-5 w-5 text-gray-400 inline" />
+                          <Clock className="h-5 w-5 text-[var(--text-muted)] inline" />
                         )}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Peer Reviews:</span>
+                      <span className="text-[var(--text-muted)]">Peer Reviews:</span>
                       <span className="font-medium">{summary.peerReviewsCompleted}</span>
                     </div>
                   </div>
 
                   {/* Competency Ratings */}
                   {(summary.avgCommunication || summary.avgTeamwork || summary.avgLeadership) && (
-                    <div className="space-y-2 border-t border-gray-100 pt-4 mb-4">
-                      <h4 className="text-xs font-medium text-gray-500 uppercase">
+                    <div className="space-y-2 border-t border-[var(--border-subtle)] pt-4 mb-4">
+                      <h4 className="text-xs font-medium text-[var(--text-muted)] uppercase">
                         Competency Ratings
                       </h4>
                       {summary.avgCommunication && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Communication</span>
+                          <span className="text-sm text-[var(--text-secondary)]">Communication</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div
@@ -615,7 +615,7 @@ export default function Feedback360Page() {
                       )}
                       {summary.avgTeamwork && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Teamwork</span>
+                          <span className="text-sm text-[var(--text-secondary)]">Teamwork</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div
@@ -631,7 +631,7 @@ export default function Feedback360Page() {
                       )}
                       {summary.avgLeadership && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Leadership</span>
+                          <span className="text-sm text-[var(--text-secondary)]">Leadership</span>
                           <div className="flex items-center gap-2">
                             <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div
@@ -650,11 +650,11 @@ export default function Feedback360Page() {
 
                   {/* Strengths & Improvements */}
                   {(summary.consolidatedStrengths || summary.consolidatedImprovements) && (
-                    <div className="space-y-3 border-t border-gray-100 pt-4">
+                    <div className="space-y-3 border-t border-[var(--border-subtle)] pt-4">
                       {summary.consolidatedStrengths && (
                         <div>
                           <h4 className="text-xs font-medium text-green-600 mb-1">Strengths</h4>
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                             {summary.consolidatedStrengths}
                           </p>
                         </div>
@@ -664,7 +664,7 @@ export default function Feedback360Page() {
                           <h4 className="text-xs font-medium text-orange-600 mb-1">
                             Areas for Improvement
                           </h4>
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-sm text-[var(--text-secondary)] line-clamp-2">
                             {summary.consolidatedImprovements}
                           </p>
                         </div>
@@ -672,9 +672,9 @@ export default function Feedback360Page() {
                     </div>
                   )}
 
-                  <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 mt-4">
+                  <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)] mt-4">
                     <button
-                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
+                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)]"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       View Details
@@ -700,62 +700,62 @@ export default function Feedback360Page() {
       {showCycleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">
+            <div className="px-6 py-4 border-b border-[var(--border-main)]">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                 Create 360 Feedback Cycle
               </h2>
             </div>
             <div className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Cycle Name *
                 </label>
                 <input
                   type="text"
                   value={cycleForm.name}
                   onChange={(e) => setCycleForm({ ...cycleForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   placeholder="Q4 2024 Performance Review"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Description
                 </label>
                 <textarea
                   value={cycleForm.description}
                   onChange={(e) => setCycleForm({ ...cycleForm, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={2}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Start Date *
                   </label>
                   <input
                     type="date"
                     value={cycleForm.startDate}
                     onChange={(e) => setCycleForm({ ...cycleForm, startDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     End Date *
                   </label>
                   <input
                     type="date"
                     value={cycleForm.endDate}
                     onChange={(e) => setCycleForm({ ...cycleForm, endDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Nomination Deadline
                   </label>
                   <input
@@ -764,11 +764,11 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, nominationDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Self Review Deadline
                   </label>
                   <input
@@ -777,13 +777,13 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, selfReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Peer Review Deadline
                   </label>
                   <input
@@ -792,11 +792,11 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, peerReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Manager Review Deadline
                   </label>
                   <input
@@ -805,13 +805,13 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, managerReviewDeadline: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Min Peer Reviewers
                   </label>
                   <input
@@ -822,11 +822,11 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, minPeersRequired: parseInt(e.target.value) })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Max Peer Reviewers
                   </label>
                   <input
@@ -837,12 +837,12 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, maxPeersAllowed: parseInt(e.target.value) })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   />
                 </div>
               </div>
-              <div className="space-y-3 border-t border-gray-200 pt-4">
-                <h4 className="text-sm font-medium text-gray-700">Review Types</h4>
+              <div className="space-y-3 border-t border-[var(--border-main)] pt-4">
+                <h4 className="text-sm font-medium text-[var(--text-primary)]">Review Types</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex items-center">
                     <input
@@ -851,9 +851,9 @@ export default function Feedback360Page() {
                       onChange={(e) =>
                         setCycleForm({ ...cycleForm, includeSelfReview: e.target.checked })
                       }
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Self Review</span>
+                    <span className="ml-2 text-sm text-[var(--text-primary)]">Self Review</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -862,9 +862,9 @@ export default function Feedback360Page() {
                       onChange={(e) =>
                         setCycleForm({ ...cycleForm, includeManagerReview: e.target.checked })
                       }
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Manager Review</span>
+                    <span className="ml-2 text-sm text-[var(--text-primary)]">Manager Review</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -873,9 +873,9 @@ export default function Feedback360Page() {
                       onChange={(e) =>
                         setCycleForm({ ...cycleForm, includePeerReview: e.target.checked })
                       }
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Peer Review</span>
+                    <span className="ml-2 text-sm text-[var(--text-primary)]">Peer Review</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -884,9 +884,9 @@ export default function Feedback360Page() {
                       onChange={(e) =>
                         setCycleForm({ ...cycleForm, includeUpwardReview: e.target.checked })
                       }
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Upward Review</span>
+                    <span className="ml-2 text-sm text-[var(--text-primary)]">Upward Review</span>
                   </label>
                 </div>
                 <label className="flex items-center mt-2">
@@ -896,21 +896,21 @@ export default function Feedback360Page() {
                     onChange={(e) =>
                       setCycleForm({ ...cycleForm, isAnonymous: e.target.checked })
                     }
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 border-[var(--border-strong)] rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-700">
+                  <span className="ml-2 text-sm text-[var(--text-primary)]">
                     Anonymous peer feedback
                   </span>
                 </label>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowCycleModal(false);
                   resetCycleForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
@@ -930,9 +930,9 @@ export default function Feedback360Page() {
       {showResponseModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Provide Feedback</h2>
-              <p className="text-sm text-gray-500 mt-1">
+            <div className="px-6 py-4 border-b border-[var(--border-main)]">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)]">Provide Feedback</h2>
+              <p className="text-sm text-[var(--text-muted)] mt-1">
                 {selectedRequest.reviewerType} review for Employee #
                 {selectedRequest.subjectEmployeeId.slice(0, 8)}
               </p>
@@ -940,17 +940,17 @@ export default function Feedback360Page() {
             <div className="px-6 py-4 space-y-6">
               {/* Rating Categories */}
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-gray-700">Competency Ratings</h3>
+                <h3 className="text-sm font-medium text-[var(--text-primary)]">Competency Ratings</h3>
                 <div className="grid gap-4">
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Overall Performance</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Overall Performance</label>
                     <RatingStars
                       rating={responseForm.overallRating || 0}
                       onChange={(r) => setResponseForm({ ...responseForm, overallRating: r })}
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Communication</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Communication</label>
                     <RatingStars
                       rating={responseForm.communicationRating || 0}
                       onChange={(r) =>
@@ -959,14 +959,14 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Teamwork</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Teamwork</label>
                     <RatingStars
                       rating={responseForm.teamworkRating || 0}
                       onChange={(r) => setResponseForm({ ...responseForm, teamworkRating: r })}
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Leadership</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Leadership</label>
                     <RatingStars
                       rating={responseForm.leadershipRating || 0}
                       onChange={(r) =>
@@ -975,7 +975,7 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Problem Solving</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Problem Solving</label>
                     <RatingStars
                       rating={responseForm.problemSolvingRating || 0}
                       onChange={(r) =>
@@ -984,7 +984,7 @@ export default function Feedback360Page() {
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="text-sm text-gray-600">Technical Skills</label>
+                    <label className="text-sm text-[var(--text-secondary)]">Technical Skills</label>
                     <RatingStars
                       rating={responseForm.technicalSkillsRating || 0}
                       onChange={(r) =>
@@ -997,7 +997,7 @@ export default function Feedback360Page() {
 
               {/* Text Feedback */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Strengths
                 </label>
                 <textarea
@@ -1005,13 +1005,13 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, strengths: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="What does this person do well?"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Areas for Improvement
                 </label>
                 <textarea
@@ -1019,13 +1019,13 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, areasForImprovement: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="What areas could they improve?"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                   Additional Comments
                 </label>
                 <textarea
@@ -1033,27 +1033,27 @@ export default function Feedback360Page() {
                   onChange={(e) =>
                     setResponseForm({ ...responseForm, additionalComments: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md"
                   rows={3}
                   placeholder="Any other feedback or observations?"
                 />
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+            <div className="px-6 py-4 border-t border-[var(--border-main)] flex justify-between">
               <button
                 onClick={() => {
                   setShowResponseModal(false);
                   setSelectedRequest(null);
                   resetResponseForm();
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
               >
                 Cancel
               </button>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleSubmitResponse(true)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-white border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
                 >
                   Save Draft
                 </button>

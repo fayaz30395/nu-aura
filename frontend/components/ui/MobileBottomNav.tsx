@@ -59,7 +59,7 @@ export function MobileBottomNav({
         // Only show on mobile
         'fixed bottom-0 left-0 right-0 z-50 md:hidden',
         // Background and border
-        'bg-white dark:bg-surface-900 border-t border-surface-200 dark:border-surface-700',
+        'bg-[var(--bg-card)] border-t border-surface-200 dark:border-surface-700',
         // Safe area for devices with home indicator
         'pb-safe',
         className

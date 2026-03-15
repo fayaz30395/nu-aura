@@ -155,7 +155,7 @@ export default function RegularizationPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
@@ -171,7 +171,7 @@ export default function RegularizationPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -187,7 +187,7 @@ export default function RegularizationPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
@@ -205,7 +205,7 @@ export default function RegularizationPage() {
         </div>
 
         {/* Requests Table */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50">
               Your Regularization Requests
@@ -293,8 +293,8 @@ export default function RegularizationPage() {
 
       {/* Create Request Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+          <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
             <div className="p-6">
               <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-6">
                 Request Attendance Regularization
@@ -310,7 +310,7 @@ export default function RegularizationPage() {
                       type="date"
                       {...register('attendanceDate')}
                       max={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {errors.attendanceDate && <p className="text-red-500 text-sm mt-1">{errors.attendanceDate.message}</p>}
                   </div>
@@ -323,7 +323,7 @@ export default function RegularizationPage() {
                       <input
                         type="time"
                         {...register('requestedCheckIn')}
-                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.requestedCheckIn && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckIn.message}</p>}
                     </div>
@@ -334,7 +334,7 @@ export default function RegularizationPage() {
                       <input
                         type="time"
                         {...register('requestedCheckOut')}
-                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {errors.requestedCheckOut && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckOut.message}</p>}
                     </div>
@@ -347,7 +347,7 @@ export default function RegularizationPage() {
                     <textarea
                       {...register('reason')}
                       rows={4}
-                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Please explain why you need attendance regularization..."
                     />
                     {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}

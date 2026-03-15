@@ -78,7 +78,7 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
   };
 
   return (
-    <Card className="max-w-md w-full backdrop-blur-xl bg-white/95 dark:bg-surface-900/95 border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
+    <Card className="max-w-md w-full bg-[var(--bg-card)] border border-[var(--border-main)] shadow-soft-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5" />
@@ -127,8 +127,8 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({ userId, onSucc
               disabled={isVerifying}
               className={`w-full px-4 py-3 text-center font-mono text-2xl tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all disabled:opacity-50 ${
                 error
-                  ? 'border-red-500 dark:border-red-500 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100'
-                  : 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500'
+                  ? 'border-red-500 dark:border-red-500 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100'
+                  : 'border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 placeholder-surface-400 dark:placeholder-surface-500'
               }`}
               autoComplete="off"
             />

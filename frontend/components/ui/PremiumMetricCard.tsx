@@ -32,7 +32,7 @@ export const PremiumMetricCard: React.FC<PremiumMetricCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="relative overflow-hidden rounded-2xl border border-white/10 bg-midnight-obsidian/60 p-6 backdrop-blur-xl shadow-xl shadow-black/20"
+      className="relative overflow-hidden rounded-2xl border border-[var(--border-main)] bg-[var(--bg-card)] p-6 shadow-xl shadow-[var(--shadow-card)]"
     >
       {/* Background Glow Effect */}
       <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary-500/10 blur-3xl" />

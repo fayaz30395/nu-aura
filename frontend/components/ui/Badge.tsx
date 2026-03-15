@@ -43,9 +43,9 @@ const badgeVariants = cva(
           'bg-transparent border border-danger-300 text-danger-700 dark:border-danger-700 dark:text-danger-300',
       },
       size: {
-        sm: 'text-xs px-2 py-0.5 rounded',
+        sm: 'text-xs px-2 py-0.5 rounded-md',
         md: 'text-xs px-2.5 py-1 rounded-md',
-        lg: 'text-sm px-3 py-1 rounded-md',
+        lg: 'text-sm px-2.5 py-1 rounded-lg',
       },
     },
     defaultVariants: {

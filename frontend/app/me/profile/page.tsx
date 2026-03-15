@@ -263,12 +263,12 @@ export default function MyProfilePage() {
                   <img
                     src={employee.profilePhotoUrl}
                     alt={displayName}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-white dark:bg-slate-800"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-[var(--bg-input)]"
                     onError={() => setPhotoLoadError(true)}
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-white dark:bg-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
+                  <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">
                     {getInitials(displayName)}
                   </div>
                 )}

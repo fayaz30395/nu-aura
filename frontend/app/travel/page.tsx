@@ -181,7 +181,7 @@ export default function TravelPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
@@ -252,7 +252,7 @@ export default function TravelPage() {
 
         {/* Travel Requests List */}
         {error ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex flex-col items-center justify-center py-12 bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800">
             <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
             <p className="text-surface-600 dark:text-surface-400 mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
@@ -281,7 +281,7 @@ export default function TravelPage() {
                 <div
                   key={request.id}
                   onClick={() => router.push(`/travel/${request.id}`)}
-                  className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 cursor-pointer"
+                  className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-4">
@@ -395,7 +395,7 @@ export default function TravelPage() {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
               disabled={currentPage === 0}
-              className="px-4 py-2 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
@@ -405,7 +405,7 @@ export default function TravelPage() {
             <button
               onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
               disabled={currentPage >= totalPages - 1}
-              className="px-4 py-2 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>

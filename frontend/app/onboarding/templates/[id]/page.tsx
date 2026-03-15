@@ -174,7 +174,7 @@ export default function TemplateEditorPage() {
                         <Button
                             variant="outline"
                             size="sm"
-                            className="rounded-2xl h-12 w-12 p-0 border-white/20 bg-white/20 backdrop-blur-xl group"
+                            className="rounded-2xl h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                             onClick={() => router.back()}
                         >
                             <ArrowLeft className="h-5 w-5 text-surface-500 group-hover:text-primary-600 transition-colors" />
@@ -204,7 +204,7 @@ export default function TemplateEditorPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     {/* Left Panel: Template Info */}
                     <div className="space-y-6">
-                        <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
+                        <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
                             <CardHeader className="p-8 pb-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
                                     <Type className="h-4 w-4" />
@@ -215,7 +215,7 @@ export default function TemplateEditorPage() {
                                 <div className="space-y-3">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Template Title</label>
                                     <Input
-                                        className="rounded-2xl bg-white/50 dark:bg-black/20 border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
+                                        className="rounded-2xl bg-[var(--bg-input)] border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
                                         value={localTemplate?.name || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                                     />
@@ -224,7 +224,7 @@ export default function TemplateEditorPage() {
                                     <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Mission Description</label>
                                     <textarea
                                         rows={5}
-                                        className="w-full rounded-2xl bg-white/50 dark:bg-black/20 border-0 p-4 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full rounded-2xl bg-[var(--bg-input)] border-0 p-4 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
                                         value={localTemplate?.description || ''}
                                         onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, description: e.target.value } : null)}
                                     />
@@ -247,7 +247,7 @@ export default function TemplateEditorPage() {
 
                     {/* Right Panel: Task Orchestration */}
                     <div className="lg:col-span-2 space-y-6">
-                        <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden min-h-[600px]">
+                        <Card className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden min-h-[600px]">
                             <CardHeader className="p-8 flex flex-row items-center justify-between border-b border-white/20">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
                                     <ListChecks className="h-4 w-4" />
@@ -271,7 +271,7 @@ export default function TemplateEditorPage() {
                                                 key={task.id}
                                                 initial={{ opacity: 0, x: 20 }}
                                                 animate={{ opacity: 1, x: 0 }}
-                                                className="p-6 hover:bg-white/40 dark:hover:bg-white/5 group transition-all"
+                                                className="p-6 hover:bg-[var(--bg-card-hover)] group transition-all"
                                             >
                                                 <div className="flex items-start justify-between gap-6">
                                                     <div className="flex items-start gap-4 flex-1">
@@ -349,13 +349,13 @@ export default function TemplateEditorPage() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                        className="absolute inset-0 bg-[var(--bg-overlay)]"
                         onClick={() => setEditingTask(null)}
                     />
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="relative w-full max-w-2xl bg-white dark:bg-surface-900 rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-primary-600"
+                        className="relative w-full max-w-2xl bg-[var(--bg-card)] rounded-[40px] shadow-2xl overflow-hidden border-t-8 border-primary-600"
                     >
                         <div className="p-12 space-y-10">
                             <div className="flex items-center justify-between">

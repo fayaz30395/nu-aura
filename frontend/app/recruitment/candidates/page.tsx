@@ -601,7 +601,7 @@ function CandidatesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
@@ -614,7 +614,7 @@ function CandidatesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -627,7 +627,7 @@ function CandidatesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
@@ -640,7 +640,7 @@ function CandidatesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -656,7 +656,7 @@ function CandidatesPage() {
         </div>
 
         {/* Search and Filters */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -666,13 +666,13 @@ function CandidatesPage() {
                   placeholder="Search candidates..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <select
                 value={selectedJobFilter}
                 onChange={(e) => setSelectedJobFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Job Openings</option>
                 {jobOpenings.map((job) => (
@@ -682,7 +682,7 @@ function CandidatesPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="">All Status</option>
                 <option value="NEW">New</option>
@@ -700,7 +700,7 @@ function CandidatesPage() {
         </Card>
 
         {/* Candidates Table */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             {candidatesLoading ? (
               <div className="text-center py-12 text-surface-500 dark:text-surface-400">Loading candidates...</div>
@@ -880,8 +880,8 @@ function CandidatesPage() {
 
         {/* Parse Resume Modal */}
         {showParseResumeModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
@@ -901,7 +901,7 @@ function CandidatesPage() {
                         {...resumeParseForm.register('resumeText')}
                         rows={6}
                         placeholder="Paste resume content here..."
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {resumeParseForm.formState.errors.resumeText && (
                         <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeText.message}</p>
@@ -916,7 +916,7 @@ function CandidatesPage() {
                         {...resumeParseForm.register('resumeUrl')}
                         type="url"
                         placeholder="https://example.com/resume.pdf"
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {resumeParseForm.formState.errors.resumeUrl && (
                         <p className="text-xs text-red-500 mt-1">{resumeParseForm.formState.errors.resumeUrl.message}</p>
@@ -1002,8 +1002,8 @@ function CandidatesPage() {
 
         {/* Add/Edit Candidate Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
@@ -1021,7 +1021,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('candidateCode')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="CAN-001"
                       />
                       {candidateForm.formState.errors.candidateCode && (
@@ -1032,7 +1032,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Job Opening *</label>
                       <select
                         {...candidateForm.register('jobOpeningId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Job Opening</option>
                         {jobOpenings.map((job) => (
@@ -1051,7 +1051,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('firstName')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.firstName && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.firstName.message}</p>
@@ -1062,7 +1062,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('lastName')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.lastName && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.lastName.message}</p>
@@ -1076,7 +1076,7 @@ function CandidatesPage() {
                       <input
                         type="email"
                         {...candidateForm.register('email')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.email && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.email.message}</p>
@@ -1087,7 +1087,7 @@ function CandidatesPage() {
                       <input
                         type="tel"
                         {...candidateForm.register('phone')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                       {candidateForm.formState.errors.phone && (
                         <p className="text-xs text-red-500 mt-1">{candidateForm.formState.errors.phone.message}</p>
@@ -1101,7 +1101,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('currentCompany')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
@@ -1109,7 +1109,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('currentDesignation')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
@@ -1117,7 +1117,7 @@ function CandidatesPage() {
                       <input
                         type="text"
                         {...candidateForm.register('currentLocation')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
@@ -1129,7 +1129,7 @@ function CandidatesPage() {
                         type="number"
                         step="0.5"
                         {...candidateForm.register('totalExperience', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
@@ -1137,7 +1137,7 @@ function CandidatesPage() {
                       <input
                         type="number"
                         {...candidateForm.register('currentCtc', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
@@ -1145,7 +1145,7 @@ function CandidatesPage() {
                       <input
                         type="number"
                         {...candidateForm.register('expectedCtc', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                     <div>
@@ -1153,7 +1153,7 @@ function CandidatesPage() {
                       <input
                         type="number"
                         {...candidateForm.register('noticePeriodDays', { valueAsNumber: true })}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
                     </div>
                   </div>
@@ -1163,7 +1163,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Source</label>
                       <select
                         {...candidateForm.register('source')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="JOB_PORTAL">Job Portal</option>
                         <option value="REFERRAL">Referral</option>
@@ -1179,7 +1179,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Status</label>
                       <select
                         {...candidateForm.register('status')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="NEW">New</option>
                         <option value="SCREENING">Screening</option>
@@ -1196,7 +1196,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Current Stage</label>
                       <select
                         {...candidateForm.register('currentStage')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="RECRUITERS_PHONE_CALL">Phone Call</option>
                         <option value="PANEL_REVIEW">Panel Review</option>
@@ -1220,7 +1220,7 @@ function CandidatesPage() {
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Assigned Recruiter</label>
                       <select
                         {...candidateForm.register('assignedRecruiterId')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Recruiter</option>
                         {recruiters.map((recruiter) => (
@@ -1233,7 +1233,7 @@ function CandidatesPage() {
                       <input
                         type="url"
                         {...candidateForm.register('resumeUrl')}
-                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                        className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                         placeholder="https://..."
                       />
                       {candidateForm.formState.errors.resumeUrl && (
@@ -1247,7 +1247,7 @@ function CandidatesPage() {
                     <textarea
                       rows={3}
                       {...candidateForm.register('notes')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Additional notes..."
                     />
                   </div>
@@ -1268,8 +1268,8 @@ function CandidatesPage() {
 
         {/* View Candidate Modal */}
         {showViewModal && selectedCandidate && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Candidate Details</h2>
@@ -1391,8 +1391,8 @@ function CandidatesPage() {
 
         {/* Delete Candidate Modal */}
         {showDeleteModal && candidateToDelete && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -1416,8 +1416,8 @@ function CandidatesPage() {
 
         {/* Screening Summary Modal */}
         {showScreeningSummaryModal && screeningSummary && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 {/* Demo Mode Banner */}
                 {screeningSummary.aiModelVersion === 'mock-v1' && (
@@ -1580,8 +1580,8 @@ function CandidatesPage() {
 
         {/* Feedback Synthesis Modal */}
         {showFeedbackSynthesisModal && feedbackSynthesis && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
@@ -1677,8 +1677,8 @@ function CandidatesPage() {
 
         {/* Generate Offer Modal */}
         {showOfferModal && candidateForOffer && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
@@ -1701,7 +1701,7 @@ function CandidatesPage() {
                     <input
                       type="number"
                       {...offerForm.register('offeredSalary', { valueAsNumber: true })}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {offerForm.formState.errors.offeredSalary && (
                       <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.offeredSalary.message}</p>
@@ -1713,7 +1713,7 @@ function CandidatesPage() {
                     <input
                       type="text"
                       {...offerForm.register('positionTitle')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
@@ -1722,7 +1722,7 @@ function CandidatesPage() {
                     <input
                       type="date"
                       {...offerForm.register('joiningDate')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                     {offerForm.formState.errors.joiningDate && (
                       <p className="text-xs text-red-500 mt-1">{offerForm.formState.errors.joiningDate.message}</p>
@@ -1734,7 +1734,7 @@ function CandidatesPage() {
                     <input
                       type="date"
                       {...offerForm.register('offerExpiryDate')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
@@ -1743,7 +1743,7 @@ function CandidatesPage() {
                     <textarea
                       rows={3}
                       {...offerForm.register('notes')}
-                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                      className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
                   </div>
 
@@ -1763,8 +1763,8 @@ function CandidatesPage() {
 
         {/* Accept Offer Modal */}
         {showAcceptModal && candidateForOffer && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -1780,7 +1780,7 @@ function CandidatesPage() {
                   type="date"
                   value={confirmedJoiningDate}
                   onChange={(e) => setConfirmedJoiningDate(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-3">
@@ -1797,8 +1797,8 @@ function CandidatesPage() {
 
         {/* Decline Offer Modal */}
         {showDeclineModal && candidateForOffer && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-md w-full p-6 border border-surface-200 dark:border-surface-700 shadow-xl">
               <div className="flex items-center mb-4">
                 <div className="flex-shrink-0 h-12 w-12 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -1815,7 +1815,7 @@ function CandidatesPage() {
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder="Optional: Enter reason for declining..."
-                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-3">

@@ -157,7 +157,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30">
                 <Timer className="h-5 w-5 text-primary-600 dark:text-primary-400" />
@@ -169,7 +169,7 @@ export default function TimeEntryDetailPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -184,7 +184,7 @@ export default function TimeEntryDetailPage() {
           </div>
 
           {entry.billingAmount && (
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                   <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -201,7 +201,7 @@ export default function TimeEntryDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
           <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
             Entry Details
           </h3>
@@ -244,7 +244,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Description */}
         {entry.description && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
               Description
             </h3>
@@ -254,7 +254,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Notes */}
         {entry.notes && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
               Notes
             </h3>
@@ -264,7 +264,7 @@ export default function TimeEntryDetailPage() {
 
         {/* Approval Info */}
         {entry.approvedDate && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
               Approval Information
             </h3>

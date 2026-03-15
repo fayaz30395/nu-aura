@@ -220,7 +220,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-surface-500 mb-2">
             <DollarSign className="w-4 h-4" />
             <span className="text-sm">Total Expenses</span>
@@ -242,7 +242,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
           </div>
         </div>
 
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-surface-500 mb-2">
             <Calendar className="w-4 h-4" />
             <span className="text-sm">Average per Claim</span>
@@ -253,7 +253,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
           <p className="text-sm text-surface-500 mt-1">{summary.totalClaims} total claims</p>
         </div>
 
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-green-500 mb-2">
             <DollarSign className="w-4 h-4" />
             <span className="text-sm">Approved</span>
@@ -264,7 +264,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
           <p className="text-sm text-surface-500 mt-1">{summary.approvedCount} claims</p>
         </div>
 
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-4 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-surface-200 dark:border-surface-700">
           <div className="flex items-center gap-2 text-warning-500 mb-2">
             <DollarSign className="w-4 h-4" />
             <span className="text-sm">Pending</span>
@@ -278,7 +278,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Trend Chart */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
             Monthly Trend
@@ -304,7 +304,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
         </div>
 
         {/* Category Breakdown */}
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
             <PieChart className="w-4 h-4" />
             By Category
@@ -370,7 +370,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
 
       {/* Top Spenders */}
       {topSpenders.length > 0 && (
-        <div className="bg-white dark:bg-surface-800 rounded-lg p-6 border border-surface-200 dark:border-surface-700">
+        <div className="bg-[var(--bg-input)] rounded-lg p-6 border border-surface-200 dark:border-surface-700">
           <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-4 flex items-center gap-2">
             <Users className="w-4 h-4" />
             Top Spenders
@@ -397,7 +397,7 @@ export function ExpenseAnalytics({ claims, className = '' }: ExpenseAnalyticsPro
                           index === 0
                             ? 'bg-yellow-100 text-yellow-700'
                             : index === 1
-                              ? 'bg-gray-100 text-gray-700'
+                              ? 'bg-[var(--bg-surface)] text-[var(--text-primary)]'
                               : index === 2
                                 ? 'bg-orange-100 text-orange-700'
                                 : 'bg-surface-100 text-surface-600'

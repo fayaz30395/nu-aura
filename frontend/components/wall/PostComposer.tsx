@@ -137,7 +137,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
   };
 
   return (
-    <Card className="mb-6 bg-white dark:bg-surface-800" variant="default" padding="md">
+    <Card className="mb-6 bg-[var(--bg-input)]" variant="default" padding="md">
       <CardContent className="p-0">
         {/* Header with user info */}
         <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-700">
@@ -251,7 +251,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       <select
                         {...field}
                         className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-white dark:bg-surface-900 dark:text-surface-50',
+                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
                           'border-surface-200 dark:border-surface-700',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
                         )}
@@ -373,7 +373,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       <select
                         {...field}
                         className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-white dark:bg-surface-900 dark:text-surface-50',
+                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
                           'border-surface-200 dark:border-surface-700',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
                         )}
@@ -467,7 +467,7 @@ export function PostComposer({ onSubmit, isSubmitting }: PostComposerProps): Rea
                       <select
                         {...field}
                         className={cn(
-                          'px-3 py-2 text-sm border rounded-lg bg-white dark:bg-surface-900 dark:text-surface-50',
+                          'px-3 py-2 text-sm border rounded-lg bg-[var(--bg-card)] dark:text-surface-50',
                           'border-surface-200 dark:border-surface-700',
                           'focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500'
                         )}

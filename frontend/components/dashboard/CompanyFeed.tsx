@@ -15,52 +15,52 @@ import type { FeedItem, FeedItemType } from '@/lib/types/feed';
 // ─── Config ──────────────────────────────────────────────────────────
 const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
   ANNOUNCEMENT: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   BIRTHDAY: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   WORK_ANNIVERSARY: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   NEW_JOINER: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   PROMOTION: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   RECOGNITION: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   LINKEDIN_POST: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
   SPOTLIGHT: {
-    bg: 'bg-gray-50 dark:bg-gray-900',
+    bg: 'bg-[var(--bg-surface)]',
     border: 'border-l-gray-400',
-    icon: 'text-gray-500 dark:text-gray-400',
-    badge: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    icon: 'text-[var(--text-muted)]',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-primary)] dark:bg-gray-800 dark:text-gray-300',
   },
 };
 
@@ -134,11 +134,11 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Company Feed</h3>
+      <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Company Feed</h3>
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse flex items-start gap-2.5 p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
+            <div key={i} className="animate-pulse flex items-start gap-2.5 p-3 rounded-lg bg-[var(--bg-surface)]">
               <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
@@ -152,16 +152,16 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
           Company Feed
         </h3>
         <button
           onClick={() => loadFeed(true)}
           disabled={isRefreshing}
-          className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-1 rounded text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 transition-colors"
           title="Refresh"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -176,8 +176,8 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
             onClick={() => { setActiveFilter(option.value); setVisibleCount(ITEMS_PER_PAGE); }}
             className={`px-2.5 py-1 text-[11px] font-medium rounded-full transition-colors ${
               activeFilter === option.value
-                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
+                ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
+                : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-gray-200 dark:bg-gray-800 dark:text-[var(--text-muted)] dark:hover:bg-gray-700'
             }`}
           >
             {option.label}
@@ -194,7 +194,7 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
         </div>
       ) : (
         <div className="text-center py-6">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[var(--text-muted)]">
             {activeFilter === 'ALL' ? 'No feed items yet.' : `No ${FEED_LABELS[activeFilter as FeedItemType]?.toLowerCase()} items.`}
           </p>
         </div>
@@ -204,7 +204,7 @@ export function CompanyFeed({ employeeId }: CompanyFeedProps) {
       {hasMore && (
         <button
           onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
-          className="w-full mt-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-colors flex items-center justify-center gap-1"
+          className="w-full mt-3 py-2 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] dark:hover:bg-gray-900 rounded-lg transition-colors flex items-center justify-center gap-1"
         >
           Show more <ChevronDown className="h-3.5 w-3.5" />
         </button>
@@ -240,10 +240,10 @@ function FeedCard({ item }: { item: FeedItem }) {
   };
 
   return (
-    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800`}>
+    <div className={`rounded-lg border-l-2 ${colors.border} ${colors.bg} p-3 transition-colors hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800`}>
       <div className="flex items-start gap-2.5">
         {/* Icon */}
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-[var(--border-main)] dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
           {item.personAvatarUrl ? (
             <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32} className="rounded-full object-cover" />
           ) : icon}
@@ -257,7 +257,7 @@ function FeedCard({ item }: { item: FeedItem }) {
               {FEED_LABELS[item.type]}
             </span>
             {item.isPinned && (
-              <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+              <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                 <Pin className="h-2.5 w-2.5" /> Pinned
               </span>
             )}
@@ -270,40 +270,40 @@ function FeedCard({ item }: { item: FeedItem }) {
           </div>
 
           {/* Title */}
-          <p className="text-sm font-medium text-gray-900 dark:text-white leading-snug">
+          <p className="text-sm font-medium text-[var(--text-primary)] leading-snug">
             {item.title}
           </p>
 
           {/* Type-specific content */}
           {item.type === 'ANNOUNCEMENT' && item.description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">
               {stripHtml(item.description)}
             </p>
           )}
 
           {item.type === 'RECOGNITION' && (
             <div className="mt-0.5">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {item.giverName} recognized <span className="font-medium text-gray-700 dark:text-gray-300">{item.receiverName}</span>
+              <p className="text-xs text-[var(--text-muted)]">
+                {item.giverName} recognized <span className="font-medium text-[var(--text-secondary)]">{item.receiverName}</span>
               </p>
               {item.description && (
-                <p className="text-xs text-gray-400 mt-0.5 line-clamp-2 italic">
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2 italic">
                   &ldquo;{item.description}&rdquo;
                 </p>
               )}
               <div className="flex items-center gap-2.5 mt-1">
                 {item.pointsAwarded && item.pointsAwarded > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-500">
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                     <Star className="h-2.5 w-2.5" /> {item.pointsAwarded} pts
                   </span>
                 )}
                 {(item.likesCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                     <ThumbsUp className="h-2.5 w-2.5" /> {item.likesCount}
                   </span>
                 )}
                 {(item.commentsCount ?? 0) > 0 && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                  <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                     <MessageCircle className="h-2.5 w-2.5" /> {item.commentsCount}
                   </span>
                 )}
@@ -312,23 +312,23 @@ function FeedCard({ item }: { item: FeedItem }) {
           )}
 
           {item.type === 'BIRTHDAY' && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {item.personDepartment}
               {!item.isToday && item.daysUntil !== undefined && ` · in ${item.daysUntil}d`}
             </p>
           )}
 
           {item.type === 'WORK_ANNIVERSARY' && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {item.personDesignation}{item.personDepartment && ` · ${item.personDepartment}`}
             </p>
           )}
 
           {item.type === 'NEW_JOINER' && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {item.description}
               {item.daysSinceJoining !== undefined && item.daysSinceJoining <= 7 && (
-                <span className="ml-1 text-gray-500 font-medium">
+                <span className="ml-1 text-[var(--text-secondary)] font-medium">
                   (joined {item.daysSinceJoining === 0 ? 'today' : `${item.daysSinceJoining}d ago`})
                 </span>
               )}
@@ -338,10 +338,10 @@ function FeedCard({ item }: { item: FeedItem }) {
           {item.type === 'LINKEDIN_POST' && (
             <div className="mt-1">
               {item.description && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
+                <p className="text-xs text-[var(--text-muted)] line-clamp-2">{item.description}</p>
               )}
               {item.linkedinImageUrl && (
-                <div className="mt-1.5 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 relative w-full h-24">
+                <div className="mt-1.5 rounded-lg overflow-hidden bg-[var(--bg-surface)] relative w-full h-24">
                   <Image src={item.linkedinImageUrl} alt={item.title ? `Image for post: ${item.title}` : 'LinkedIn post image'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                 </div>
               )}
@@ -349,12 +349,12 @@ function FeedCard({ item }: { item: FeedItem }) {
                 {item.linkedinEngagement && (
                   <>
                     {item.linkedinEngagement.likes > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                         <ThumbsUp className="h-2.5 w-2.5" /> {item.linkedinEngagement.likes}
                       </span>
                     )}
                     {item.linkedinEngagement.comments > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-[10px] text-gray-400">
+                      <span className="inline-flex items-center gap-0.5 text-[10px] text-[var(--text-muted)]">
                         <MessageCircle className="h-2.5 w-2.5" /> {item.linkedinEngagement.comments}
                       </span>
                     )}
@@ -365,7 +365,7 @@ function FeedCard({ item }: { item: FeedItem }) {
                     href={item.linkedinPostUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-0.5 text-[10px] font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 ml-auto"
+                    className="inline-flex items-center gap-0.5 text-[10px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:hover:text-gray-300 ml-auto"
                   >
                     View on LinkedIn <ExternalLink className="h-2.5 w-2.5" />
                   </a>
@@ -375,24 +375,24 @@ function FeedCard({ item }: { item: FeedItem }) {
           )}
 
           {/* Reaction Bar */}
-          <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-gray-100 dark:border-gray-800">
+          <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-[var(--border-subtle)]">
             <button
               onClick={handleLike}
               className={`inline-flex items-center gap-1 text-[11px] transition-colors ${
-                liked ? 'text-red-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                liked ? 'text-red-500' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300'
               }`}
             >
               <Heart className={`h-3 w-3 ${liked ? 'fill-red-500' : ''}`} />
               {localLikeCount > 0 ? localLikeCount : 'Like'}
             </button>
-            <button className="inline-flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+            <button className="inline-flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-gray-300 transition-colors">
               <MessageCircle className="h-3 w-3" />
               {(item.commentsCount ?? 0) > 0 ? item.commentsCount : 'Comment'}
             </button>
           </div>
 
           {/* Timestamp */}
-          <div className="flex items-center gap-1.5 mt-1 text-[10px] text-gray-400">
+          <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[var(--text-muted)]">
             <span>{formatFeedDate(item.timestamp)}</span>
             {item.publishedByName && <span>· {item.publishedByName}</span>}
             {item.readCount !== undefined && item.readCount > 0 && (

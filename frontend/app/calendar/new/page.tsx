@@ -159,7 +159,7 @@ export default function NewEventPage() {
         )}
 
         {/* Form */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">

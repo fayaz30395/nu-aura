@@ -188,17 +188,17 @@ export default function FeedbackResponseForm({
   return (
     <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+      <div className="px-6 py-4 border-b border-[var(--border-main)] sticky top-0 bg-white z-10">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Provide 360 Feedback</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">Provide 360 Feedback</h2>
+            <p className="text-sm text-[var(--text-muted)] mt-1">
               {reviewerType} review for{' '}
               {isAnonymous && reviewerType !== 'SELF' ? 'Team Member' : subjectEmployeeName}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">Progress</div>
+            <div className="text-sm text-[var(--text-muted)]">Progress</div>
             <div className="text-2xl font-bold text-blue-600">{progressPercentage}%</div>
           </div>
         </div>
@@ -223,14 +223,14 @@ export default function FeedbackResponseForm({
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 px-6">
+      <div className="border-b border-[var(--border-main)] px-6">
         <nav className="-mb-px flex gap-6">
           <button
             onClick={() => setActiveSection('ratings')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'ratings'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             Ratings ({completedRatings + (formData.overallRating ? 1 : 0)}/
@@ -241,7 +241,7 @@ export default function FeedbackResponseForm({
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeSection === 'feedback'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
             }`}
           >
             Written Feedback
@@ -257,8 +257,8 @@ export default function FeedbackResponseForm({
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="text-base font-semibold text-gray-900">Overall Performance</h3>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <h3 className="text-base font-semibold text-[var(--text-primary)]">Overall Performance</h3>
+                  <p className="text-sm text-[var(--text-muted)] mt-1">
                     How would you rate this person&apos;s overall performance?
                   </p>
                 </div>
@@ -269,28 +269,28 @@ export default function FeedbackResponseForm({
                   onChange={(r) => updateRating('overallRating', r)}
                 />
                 {formData.overallRating ? (
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-[var(--text-primary)]">
                     {formData.overallRating}/5
                   </span>
                 ) : (
-                  <span className="text-sm text-gray-500">Not rated</span>
+                  <span className="text-sm text-[var(--text-muted)]">Not rated</span>
                 )}
               </div>
             </div>
 
             {/* Competency Ratings */}
             <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Competency Ratings</h3>
+              <h3 className="text-base font-semibold text-[var(--text-primary)] mb-4">Competency Ratings</h3>
               <div className="space-y-4">
                 {ratingCategories.map((category) => (
                   <div
                     key={category.key}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+                    className="p-4 border border-[var(--border-main)] rounded-lg hover:border-[var(--border-strong)] transition-colors"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900">{category.label}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{category.description}</p>
+                        <h4 className="text-sm font-medium text-[var(--text-primary)]">{category.label}</h4>
+                        <p className="text-xs text-[var(--text-muted)] mt-1">{category.description}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -299,11 +299,11 @@ export default function FeedbackResponseForm({
                         onChange={(r) => updateRating(category.key, r)}
                       />
                       {formData[category.key] !== undefined && typeof formData[category.key] === 'number' ? (
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-[var(--text-primary)]">
                           {formData[category.key] as number}/5
                         </span>
                       ) : (
-                        <span className="text-sm text-gray-400">Optional</span>
+                        <span className="text-sm text-[var(--text-muted)]">Optional</span>
                       )}
                     </div>
                   </div>
@@ -317,71 +317,71 @@ export default function FeedbackResponseForm({
         {activeSection === 'feedback' && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Key Strengths <span className="text-red-500">*</span>
               </label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-[var(--text-muted)] mb-2">
                 What does this person do particularly well? Provide specific examples.
               </p>
               <textarea
                 value={formData.strengths}
                 onChange={(e) => updateText('strengths', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="E.g., Excellent at breaking down complex problems into actionable tasks..."
               />
-              <div className="text-xs text-gray-500 mt-1 text-right">
+              <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
                 {formData.strengths?.length || 0} characters
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Areas for Improvement <span className="text-red-500">*</span>
               </label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-[var(--text-muted)] mb-2">
                 What areas could this person develop or improve?
               </p>
               <textarea
                 value={formData.areasForImprovement}
                 onChange={(e) => updateText('areasForImprovement', e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="E.g., Could benefit from more proactive communication with stakeholders..."
               />
-              <div className="text-xs text-gray-500 mt-1 text-right">
+              <div className="text-xs text-[var(--text-muted)] mt-1 text-right">
                 {formData.areasForImprovement?.length || 0} characters
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Development Suggestions
               </label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-[var(--text-muted)] mb-2">
                 What specific actions or training would help this person grow?
               </p>
               <textarea
                 value={formData.developmentSuggestions}
                 onChange={(e) => updateText('developmentSuggestions', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="E.g., Leadership training, mentorship in project management..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Additional Comments
               </label>
-              <p className="text-xs text-gray-500 mb-2">
+              <p className="text-xs text-[var(--text-muted)] mb-2">
                 Any other observations or feedback you&apos;d like to share?
               </p>
               <textarea
                 value={formData.additionalComments}
                 onChange={(e) => updateText('additionalComments', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Optional additional feedback..."
               />
             </div>
@@ -398,7 +398,7 @@ export default function FeedbackResponseForm({
       </div>
 
       {/* Actions */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between sticky bottom-0">
+      <div className="px-6 py-4 border-t border-[var(--border-main)] bg-[var(--bg-surface)] flex justify-between sticky bottom-0">
         <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancel
         </Button>

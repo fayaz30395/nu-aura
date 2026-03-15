@@ -230,10 +230,10 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-surface-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
+      <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-surface-900 dark:text-white">Create Performance Improvement Plan</h2>
           <button
             onClick={onClose}
@@ -255,7 +255,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 type="text"
                 placeholder="Employee name or ID"
                 {...register('employeeId')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {errors.employeeId && (
                 <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
@@ -269,7 +269,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 type="text"
                 placeholder="Manager name or ID"
                 {...register('managerId')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {errors.managerId && (
                 <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>
@@ -284,7 +284,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </label>
             <select
               {...register('reason')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="">Select a reason</option>
               {PIP_REASONS.map(reason => (
@@ -321,7 +321,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 <input
                   type="date"
                   {...register('startDate')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {errors.startDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
@@ -332,7 +332,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 <input
                   type="date"
                   {...register('endDate')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {errors.endDate && (
                   <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
@@ -350,7 +350,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               placeholder="Describe the specific goals and success criteria..."
               rows={4}
               {...register('goals')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
             {errors.goals && (
               <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
@@ -364,7 +364,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </label>
             <select
               {...register('checkInFrequency')}
-              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="WEEKLY">Weekly</option>
               <option value="BIWEEKLY">Bi-weekly</option>
@@ -472,10 +472,10 @@ function PIPDetailModal({
   const progress = calculateProgress(pip.startDate, pip.endDate);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-surface-800 rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
+      <div className="bg-[var(--bg-input)] rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-[var(--bg-input)] border-b border-surface-200 dark:border-surface-700 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-surface-900 dark:text-white">PIP Details</h2>
             <p className="text-sm text-surface-500 mt-0.5">{pip.employeeName}</p>
@@ -589,7 +589,7 @@ function PIPDetailModal({
                   placeholder="Employee progress notes..."
                   rows={2}
                   {...registerCheckIn('progressNotes')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {checkInErrors.progressNotes && (
                   <p className="text-red-500 text-sm">{checkInErrors.progressNotes.message}</p>
@@ -598,7 +598,7 @@ function PIPDetailModal({
                   placeholder="Manager comments..."
                   rows={2}
                   {...registerCheckIn('managerComments')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
                 {checkInErrors.managerComments && (
                   <p className="text-red-500 text-sm">{checkInErrors.managerComments.message}</p>
@@ -621,7 +621,7 @@ function PIPDetailModal({
               <p className="text-sm font-medium text-surface-700 dark:text-surface-300">Update Status</p>
               <select
                 {...registerClose('status')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="COMPLETED">Mark Complete</option>
                 <option value="EXTENDED">Extend PIP</option>
@@ -634,7 +634,7 @@ function PIPDetailModal({
                 placeholder="Closing notes..."
                 rows={2}
                 {...registerClose('notes')}
-                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
               {closeErrors.notes && (
                 <p className="text-red-500 text-sm">{closeErrors.notes.message}</p>
@@ -661,7 +661,7 @@ function PIPCard({ pip, onView }: { pip: PIPResponse; onView: () => void }) {
   const statusConfig = STATUS_CONFIG[pip.status];
 
   return (
-    <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4 hover:shadow-lg transition-shadow">
+    <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <h3 className="font-semibold text-surface-900 dark:text-white">{pip.employeeName}</h3>
@@ -799,7 +799,7 @@ export default function PIPPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <TrendingUp className="text-blue-600 dark:text-blue-400" size={20} />
@@ -810,7 +810,7 @@ export default function PIPPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <CheckCircle2 className="text-green-600 dark:text-green-400" size={20} />
@@ -821,7 +821,7 @@ export default function PIPPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-4">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Calendar className="text-purple-600 dark:text-purple-400" size={20} />
@@ -844,7 +844,7 @@ export default function PIPPage() {
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   activeTab === tab
                     ? 'bg-primary-600 text-white'
-                    : 'bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700'
+                    : 'bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700'
                 }`}
               >
                 {tab === 'ACTIVE' && 'Active'}
@@ -863,10 +863,10 @@ export default function PIPPage() {
                 placeholder="Search by employee name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="w-full pl-10 pr-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
             </div>
-            <button className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors flex items-center gap-2">
               <Filter size={16} />
               Filter
             </button>
@@ -879,7 +879,7 @@ export default function PIPPage() {
             <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
           </div>
         ) : pips.length === 0 ? (
-          <div className="bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-12 text-center">
+          <div className="bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-12 text-center">
             <FileText className="w-12 h-12 text-surface-300 dark:text-surface-600 mx-auto mb-3" />
             <p className="text-surface-600 dark:text-surface-400 font-medium">No PIPs found</p>
             <p className="text-surface-500 text-sm mt-1">Create your first PIP to get started</p>

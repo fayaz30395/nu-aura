@@ -110,7 +110,7 @@ export default function NewTimeEntryPage() {
         )}
 
         {/* Form */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-6">
           {/* Entry Date */}
           <div>
             <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -244,7 +244,7 @@ export default function NewTimeEntryPage() {
                     setFormData({ ...formData, billableHours: parseFloat(e.target.value) || 0 })
                   }
                   placeholder="Billable hours"
-                  className="flex-1 px-3 py-2 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg text-sm text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 px-3 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-700 rounded-lg text-sm text-surface-900 dark:text-surface-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             )}

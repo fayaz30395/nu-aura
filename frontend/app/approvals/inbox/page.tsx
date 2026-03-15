@@ -746,7 +746,7 @@ function SummaryCard({
 }) {
   return (
     <div className={`flex items-center gap-4 rounded-xl p-4 ${color}`}>
-      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${textColor} bg-white/60 dark:bg-black/10`}>
+      <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${textColor} bg-[var(--bg-surface)]`}>
         {icon}
       </div>
       <div>

@@ -12,7 +12,7 @@ export default function Loading() {
       </div>
 
       {/* Form card skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-6">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-6">
         {/* Form fields */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, index) => (

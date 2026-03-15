@@ -47,8 +47,8 @@ function CircularProgress({ used, total }: { used: number; total: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-2xl font-semibold text-gray-900 dark:text-white">{total - used}</div>
-        <div className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Days Left</div>
+        <div className="text-2xl font-semibold text-[var(--text-primary)]">{total - used}</div>
+        <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Days Left</div>
       </div>
     </div>
   );
@@ -64,15 +64,15 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
   const current = balances[selectedIndex];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Leave Balance</h3>
+          <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
+          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Leave Balance</h3>
         </div>
         <a
           href="/leaves"
-          className="inline-flex items-center gap-0.5 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          className="inline-flex items-center gap-0.5 text-xs text-[var(--text-muted)] hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
         >
           View All <ArrowRight className="h-3 w-3" />
         </a>
@@ -85,10 +85,10 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
 
       {/* Leave Type Label */}
       <div className="text-center mb-3">
-        <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
           {current.leaveName}
         </p>
-        <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
           {current.used} used · {current.total} total
         </p>
       </div>
@@ -109,16 +109,16 @@ export function LeaveBalanceWidget({ leaveBalances = null }: LeaveBalanceWidgetP
       )}
 
       {/* Actions */}
-      <div className="space-y-1.5 pt-3 border-t border-gray-100 dark:border-gray-800">
+      <div className="space-y-1.5 pt-3 border-t border-[var(--border-subtle)]">
         <a
           href="/leaves/request"
-          className="block w-full rounded-lg bg-slate-800 py-2 text-center text-xs font-medium text-white hover:bg-slate-700 transition-colors dark:bg-slate-700 dark:hover:bg-slate-600"
+          className="block w-full rounded-lg bg-primary-600 py-2 text-center text-xs font-medium text-white hover:bg-primary-700 transition-colors"
         >
           Request Leave
         </a>
         <a
           href="/leaves/balance"
-          className="block w-full rounded-lg border border-gray-200 py-2 text-center text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-900"
+          className="block w-full rounded-lg border border-[var(--border-main)] py-2 text-center text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors dark:hover:bg-gray-900"
         >
           View All Balances
         </a>

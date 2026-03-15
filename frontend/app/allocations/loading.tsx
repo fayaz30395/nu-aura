@@ -19,7 +19,7 @@ export default function AllocationsLoading() {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
+            className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6"
           >
             <Skeleton height={16} width="60%" className="mb-3" />
             <Skeleton height={32} width="80%" className="mb-3" />
@@ -29,13 +29,13 @@ export default function AllocationsLoading() {
       </div>
 
       {/* Chart area skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-6">
         <Skeleton height={20} width="40%" className="mb-4" />
         <Skeleton height={300} />
       </div>
 
       {/* Table section skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="border-b border-surface-200 dark:border-surface-800 p-4">
           <Skeleton height={20} width="30%" />
         </div>

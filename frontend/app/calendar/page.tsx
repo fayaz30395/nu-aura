@@ -74,8 +74,8 @@ export default function CalendarPage() {
         icon: XCircle,
       },
       COMPLETED: {
-        bg: 'bg-gray-100 dark:bg-surface-800',
-        text: 'text-gray-700 dark:text-gray-400',
+        bg: 'bg-[var(--bg-surface)] dark:bg-surface-800',
+        text: 'text-gray-700 dark:text-[var(--text-muted)]',
         icon: CheckCircle,
       },
     };
@@ -173,7 +173,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4">
+        <div className="flex items-center justify-between bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigateDate('prev')}
@@ -210,7 +210,7 @@ export default function CalendarPage() {
                 onClick={() => setView('week')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'week'
-                    ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 shadow-sm'
+                    ? 'bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 shadow-sm'
                     : 'text-surface-600 dark:text-surface-400'
                 }`}
               >
@@ -220,7 +220,7 @@ export default function CalendarPage() {
                 onClick={() => setView('month')}
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   view === 'month'
-                    ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 shadow-sm'
+                    ? 'bg-[var(--bg-surface)] text-surface-900 dark:text-surface-100 shadow-sm'
                     : 'text-surface-600 dark:text-surface-400'
                 }`}
               >
@@ -269,7 +269,7 @@ export default function CalendarPage() {
         )}
 
         {/* Events List */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
             <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
               {view === 'week' ? 'This Week' : 'This Month'}
@@ -378,7 +378,7 @@ export default function CalendarPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => router.push('/calendar/new')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -396,7 +396,7 @@ export default function CalendarPage() {
 
           <button
             onClick={() => router.push('/calendar?filter=meetings')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 group-hover:scale-110 transition-transform">

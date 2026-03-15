@@ -84,7 +84,7 @@ const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
 
 const getStatusColor = (status: ExitStatus | string | null | undefined) => {
   if (!status) {
-    return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
   switch (status) {
     case ExitStatus.INITIATED:
@@ -98,13 +98,13 @@ const getStatusColor = (status: ExitStatus | string | null | undefined) => {
     case ExitStatus.CANCELLED:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
 const getExitTypeColor = (type: ExitType | string | null | undefined) => {
   if (!type) {
-    return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+    return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
   switch (type) {
     case ExitType.RESIGNATION:
@@ -118,7 +118,7 @@ const getExitTypeColor = (type: ExitType | string | null | undefined) => {
     case ExitType.ABSCONDING:
       return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
@@ -462,13 +462,13 @@ export default function OffboardingPage() {
               placeholder="Search by employee name, company..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Status</option>
             <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -480,7 +480,7 @@ export default function OffboardingPage() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Types</option>
             <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -572,7 +572,7 @@ export default function OffboardingPage() {
                             <button className="p-1 rounded hover:bg-surface-100 dark:hover:bg-surface-700">
                               <MoreVertical className="h-4 w-4 text-surface-400" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div className="absolute right-0 top-full mt-1 w-44 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(process)}
                                 className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
@@ -673,7 +673,7 @@ export default function OffboardingPage() {
                   <input
                     type="text"
                     disabled={isEditing}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                     placeholder="Enter employee ID"
                     {...register('employeeId')}
                   />
@@ -686,7 +686,7 @@ export default function OffboardingPage() {
                       Exit Type *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('exitType')}
                     >
                       <option value={ExitType.RESIGNATION}>Resignation</option>
@@ -702,7 +702,7 @@ export default function OffboardingPage() {
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('status')}
                     >
                       <option value={ExitStatus.INITIATED}>Initiated</option>
@@ -722,7 +722,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('resignationDate')}
                     />
                   </div>
@@ -732,7 +732,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('lastWorkingDate')}
                     />
                   </div>
@@ -744,7 +744,7 @@ export default function OffboardingPage() {
                   </label>
                   <input
                     type="number"
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="30"
                     {...register('noticePeriodDays')}
                   />
@@ -757,7 +757,7 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Reason for leaving..."
                     {...register('reasonForLeaving')}
                   />
@@ -770,7 +770,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New company name"
                       {...register('newCompany')}
                     />
@@ -781,7 +781,7 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New designation"
                       {...register('newDesignation')}
                     />
@@ -806,7 +806,7 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={2}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />

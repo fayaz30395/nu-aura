@@ -110,7 +110,7 @@ export default function OnboardingPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                         >
-                            <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20">
+                            <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
@@ -128,20 +128,20 @@ export default function OnboardingPage() {
 
                 {/* Filters and List */}
                 <div className="space-y-6">
-                    <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
-                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center bg-white/20">
+                    <Card className="border-0 shadow-2xl bg-[var(--bg-card)] overflow-hidden">
+                        <div className="p-6 border-b border-surface-200 dark:border-surface-700/50 flex flex-col md:flex-row gap-6 justify-between items-center">
                             <div className="relative w-full md:w-1/3">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
                                 <Input
                                     placeholder="Search joiners by name or ID..."
-                                    className="pl-12 rounded-2xl bg-white/50 dark:bg-black/20 border-0 font-bold focus:ring-2 focus:ring-primary-500"
+                                    className="pl-12 rounded-2xl bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-primary-500"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
 
                             <div className="flex items-center gap-4 w-full md:w-auto">
-                                <div className="flex items-center gap-2 bg-white/50 dark:bg-black/20 px-4 py-2 rounded-2xl border border-white/20">
+                                <div className="flex items-center gap-2 bg-[var(--bg-input)] px-4 py-2 rounded-2xl border border-white/20">
                                     <Filter className="h-4 w-4 text-surface-500" />
                                     <select
                                         className="bg-transparent border-none text-xs font-black uppercase tracking-widest text-surface-600 dark:text-surface-300 focus:ring-0 cursor-pointer outline-none"
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: idx * 0.05 }}
-                                            className="p-6 hover:bg-white/40 dark:hover:bg-white/5 transition-all cursor-pointer group"
+                                            className="p-6 hover:bg-[var(--bg-card-hover)] transition-all cursor-pointer group"
                                             onClick={() => router.push(`/onboarding/${process.id}`)}
                                         >
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -233,7 +233,7 @@ export default function OnboardingPage() {
                                                         {process.status.replace('_', ' ')}
                                                     </Badge>
 
-                                                    <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-white dark:bg-surface-800 shadow-sm border border-surface-100 dark:border-surface-700 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                                                    <div className="h-10 w-10 flex items-center justify-center rounded-2xl bg-[var(--bg-input)] shadow-sm border border-surface-100 dark:border-surface-700 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
                                                         <ChevronRight className="h-5 w-5 text-primary-600" />
                                                     </div>
                                                 </div>

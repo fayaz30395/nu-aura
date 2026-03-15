@@ -208,8 +208,8 @@ export default function ReportBuilderPage() {
     >
       <div className="p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Custom Report Builder</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Custom Report Builder</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1">
             Select a data source, pick columns, add filters, then preview or export.
           </p>
         </div>
@@ -228,8 +228,8 @@ export default function ReportBuilderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* ── Left panel: Module + Columns ─────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Data Source</h2>
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Data Source</h2>
               <div className="grid grid-cols-2 gap-2">
                 {MODULES.map(m => (
                   <button
@@ -238,7 +238,7 @@ export default function ReportBuilderPage() {
                     className={`px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
                       module === m.value
                         ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        : 'bg-white text-[var(--text-primary)] border-[var(--border-strong)] hover:bg-[var(--bg-surface)]'
                     }`}
                   >
                     {m.label}
@@ -247,8 +247,8 @@ export default function ReportBuilderPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Columns</h2>
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Columns</h2>
               <div className="space-y-2">
                 {columns.map(col => (
                   <label key={col.key} className="flex items-center gap-2 cursor-pointer">
@@ -256,9 +256,9 @@ export default function ReportBuilderPage() {
                       type="checkbox"
                       checked={selectedCols.includes(col.key)}
                       onChange={() => toggleColumn(col.key)}
-                      className="rounded border-gray-300 text-blue-600"
+                      className="rounded border-[var(--border-strong)] text-blue-600"
                     />
-                    <span className="text-sm text-gray-700">{col.label}</span>
+                    <span className="text-sm text-[var(--text-primary)]">{col.label}</span>
                   </label>
                 ))}
               </div>
@@ -267,9 +267,9 @@ export default function ReportBuilderPage() {
 
           {/* ── Middle panel: Filters + Sort + Save ──────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-gray-700">Filters</h2>
+                <h2 className="text-sm font-semibold text-[var(--text-primary)]">Filters</h2>
                 {filters.length < 5 && (
                   <button
                     onClick={addFilter}
@@ -281,7 +281,7 @@ export default function ReportBuilderPage() {
               </div>
 
               {filters.length === 0 && (
-                <p className="text-xs text-gray-400">No filters applied. All rows returned.</p>
+                <p className="text-xs text-[var(--text-muted)]">No filters applied. All rows returned.</p>
               )}
 
               <div className="space-y-3">
@@ -291,7 +291,7 @@ export default function ReportBuilderPage() {
                       <select
                         value={f.column}
                         onChange={e => updateFilter(i, 'column', e.target.value)}
-                        className="flex-1 text-xs border border-gray-300 rounded px-2 py-1"
+                        className="flex-1 text-xs border border-[var(--border-strong)] rounded px-2 py-1"
                       >
                         {columns.map(c => (
                           <option key={c.key} value={c.key}>{c.label}</option>
@@ -300,7 +300,7 @@ export default function ReportBuilderPage() {
                       <select
                         value={f.operator}
                         onChange={e => updateFilter(i, 'operator', e.target.value)}
-                        className="text-xs border border-gray-300 rounded px-2 py-1"
+                        className="text-xs border border-[var(--border-strong)] rounded px-2 py-1"
                       >
                         {OPERATORS.map(op => (
                           <option key={op.value} value={op.value}>{op.label}</option>
@@ -318,20 +318,20 @@ export default function ReportBuilderPage() {
                       placeholder="Value"
                       value={f.value}
                       onChange={e => updateFilter(i, 'value', e.target.value)}
-                      className="w-full text-xs border border-gray-300 rounded px-2 py-1"
+                      className="w-full text-xs border border-[var(--border-strong)] rounded px-2 py-1"
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Sort</h2>
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Sort</h2>
               <div className="flex gap-2">
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
-                  className="flex-1 text-sm border border-gray-300 rounded px-2 py-1.5"
+                  className="flex-1 text-sm border border-[var(--border-strong)] rounded px-2 py-1.5"
                 >
                   <option value="">No sort</option>
                   {columns
@@ -343,7 +343,7 @@ export default function ReportBuilderPage() {
                 <select
                   value={sortDir}
                   onChange={e => setSortDir(e.target.value)}
-                  className="text-sm border border-gray-300 rounded px-2 py-1.5"
+                  className="text-sm border border-[var(--border-strong)] rounded px-2 py-1.5"
                 >
                   <option value="ASC">ASC</option>
                   <option value="DESC">DESC</option>
@@ -351,19 +351,19 @@ export default function ReportBuilderPage() {
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Save Template</h2>
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Save Template</h2>
               <input
                 type="text"
                 placeholder="Template name"
                 value={templateName}
                 onChange={e => setTemplateName(e.target.value)}
-                className="w-full text-sm border border-gray-300 rounded px-3 py-1.5 mb-2"
+                className="w-full text-sm border border-[var(--border-strong)] rounded px-3 py-1.5 mb-2"
               />
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-1.5 rounded border border-gray-300 disabled:opacity-50"
+                className="w-full bg-[var(--bg-surface)] hover:bg-gray-200 text-[var(--text-primary)] text-sm font-medium py-1.5 rounded border border-[var(--border-strong)] disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Save Template'}
               </button>
@@ -372,8 +372,8 @@ export default function ReportBuilderPage() {
 
           {/* ── Right panel: Actions ──────────────────────────────────────── */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">Actions</h2>
+            <div className="bg-white border border-[var(--border-main)] rounded-lg p-4">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Actions</h2>
               <div className="space-y-2">
                 <button
                   onClick={handlePreview}
@@ -385,7 +385,7 @@ export default function ReportBuilderPage() {
                 <button
                   onClick={handleExport}
                   disabled={loading || selectedCols.length === 0}
-                  className="w-full bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 rounded border border-gray-300 disabled:opacity-50"
+                  className="w-full bg-white hover:bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium py-2 rounded border border-[var(--border-strong)] disabled:opacity-50"
                 >
                   Export CSV
                 </button>
@@ -396,21 +396,21 @@ export default function ReportBuilderPage() {
 
         {/* ── Preview Table ───────────────────────────────────────────────── */}
         {previewRows.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-700">
+          <div className="bg-white border border-[var(--border-main)] rounded-lg overflow-hidden">
+            <div className="px-4 py-3 border-b border-[var(--border-main)] flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 Preview — {previewRows.length} row{previewRows.length !== 1 ? 's' : ''}
               </h2>
-              <span className="text-xs text-gray-400">Showing up to 100 rows</span>
+              <span className="text-xs text-[var(--text-muted)]">Showing up to 100 rows</span>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-[var(--bg-surface)]">
                   <tr>
                     {Object.keys(previewRows[0]).map(col => (
                       <th
                         key={col}
-                        className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                        className="px-4 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider whitespace-nowrap"
                       >
                         {col}
                       </th>
@@ -419,9 +419,9 @@ export default function ReportBuilderPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
                   {previewRows.slice(0, 50).map((row, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
+                    <tr key={i} className="hover:bg-[var(--bg-surface)]">
                       {Object.values(row).map((val, j) => (
-                        <td key={j} className="px-4 py-2 text-gray-700 whitespace-nowrap">
+                        <td key={j} className="px-4 py-2 text-[var(--text-primary)] whitespace-nowrap">
                           {val != null ? String(val) : '—'}
                         </td>
                       ))}
@@ -434,7 +434,7 @@ export default function ReportBuilderPage() {
         )}
 
         {previewRows.length === 0 && !loading && (
-          <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-12 text-center text-gray-400 text-sm">
+          <div className="bg-[var(--bg-surface)] border border-dashed border-[var(--border-strong)] rounded-lg p-12 text-center text-[var(--text-muted)] text-sm">
             Select columns and click <strong>Preview Results</strong> to see data.
           </div>
         )}

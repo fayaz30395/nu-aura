@@ -245,10 +245,10 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
   };
 
   return (
-    <div className="space-y-3 p-4 bg-gray-50 dark:bg-surface-800 rounded-lg border border-gray-200 dark:border-surface-700">
+    <div className="space-y-3 p-4 bg-[var(--bg-surface)] dark:bg-surface-800 rounded-lg border border-[var(--border-main)] dark:border-surface-700">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Custom Scope Targets</p>
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-xs text-[var(--text-muted)]">
           {targets.length} selected
         </span>
       </div>
@@ -263,8 +263,8 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             disabled={disabled}
             className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
               targetType === type
-                ? 'bg-white dark:bg-surface-600 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] dark:hover:text-white'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {getTargetTypeIcon(type)}
@@ -287,9 +287,9 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
             onFocus={() => setShowDropdown(true)}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
-            className="w-full px-3 py-2 pl-9 text-sm border border-gray-300 dark:border-surface-600 rounded-md bg-white dark:bg-surface-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 pl-9 text-sm border border-gray-300 dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
           />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[var(--text-muted)]">
             {isSearching ? (
               <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -305,25 +305,25 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
 
         {/* Search Results Dropdown */}
         {showDropdown && (searchResults.length > 0 || (searchQuery && !isSearching)) && (
-          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-surface-700 border border-gray-200 dark:border-surface-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute z-10 w-full mt-1 bg-[var(--bg-surface)] border border-[var(--border-main)] dark:border-surface-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
             {searchResults.length > 0 ? (
               searchResults.map((result) => (
                 <button
                   key={`${result.type}-${result.id}`}
                   type="button"
                   onClick={() => addTarget(result)}
-                  className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                  className="w-full px-3 py-2 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-gray-600 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <span className={`p-1 rounded ${getTargetTypeBadgeColor(result.type)}`}>
                       {getTargetTypeIcon(result.type)}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {result.name}
                       </p>
                       {result.subtext && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <p className="text-xs text-[var(--text-muted)] truncate">
                           {result.subtext}
                         </p>
                       )}
@@ -332,7 +332,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
                 </button>
               ))
             ) : (
-              <div className="px-3 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-3 py-4 text-center text-sm text-[var(--text-muted)]">
                 No {getTargetTypeLabel(targetType).toLowerCase()}s found
               </div>
             )}
@@ -348,7 +348,7 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
       {/* Selected Targets */}
       {targets.length > 0 ? (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
             Selected Targets
           </p>
           <div className="flex flex-wrap gap-2">
@@ -376,13 +376,13 @@ export function CustomTargetPicker({ targets, onChange, disabled = false }: Cust
           </div>
         </div>
       ) : (
-        <p className="text-sm text-gray-400 dark:text-gray-500 italic text-center py-2">
+        <p className="text-sm text-[var(--text-muted)] italic text-center py-2">
           No custom targets selected. Search to add employees, departments, or locations.
         </p>
       )}
 
       {/* Help Text */}
-      <p className="text-xs text-gray-400 dark:text-gray-500">
+      <p className="text-xs text-[var(--text-muted)]">
         Users with this permission will only have access to records belonging to the selected targets.
       </p>
     </div>

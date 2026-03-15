@@ -1,3 +1,8 @@
+'use client';
+
+import React from 'react';
+import { cn } from '@/lib/utils';
+
 interface LoadingProps {
   size?: 'sm' | 'md' | 'lg';
   text?: string;
@@ -12,21 +17,131 @@ export function Loading({ size = 'md', text, fullScreen = false }: LoadingProps)
   };
 
   const spinner = (
-    <div className="flex flex-col items-center justify-center gap-3">
-      <div className={`${sizeClasses[size]} border-4 border-blue-200 dark:border-blue-900 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin`} />
-      {text && <p className="text-gray-600 dark:text-gray-400 text-sm">{text}</p>}
+    <div className="flex flex-col items-center justify-center gap-4">
+      <div
+        className={cn(
+          sizeClasses[size],
+          'border-4 rounded-full animate-spin',
+          'border-[var(--border-main)] border-t-[var(--border-focus)]'
+        )}
+      />
+      {text && <p className="text-[var(--text-secondary)] text-sm">{text}</p>}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-white/80 dark:bg-surface-950/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
         {spinner}
       </div>
     );
   }
 
   return <div className="flex items-center justify-center py-8">{spinner}</div>;
+}
+
+/* ── Skeleton Components ──────────────────────────────── */
+
+interface SkeletonProps {
+  className?: string;
+}
+
+/** Base skeleton block — use for custom layouts */
+export function Skeleton({ className }: SkeletonProps) {
+  return (
+    <div
+      className={cn('skeleton-aura', className)}
+      aria-hidden="true"
+    />
+  );
+}
+
+/** Skeleton for stat cards (matches StatCard layout) */
+export function SkeletonStatCard() {
+  return (
+    <div className="card-aura p-4" aria-hidden="true">
+      <div className="flex items-start justify-between mb-4">
+        <div className="skeleton-aura h-10 w-10 rounded-lg" />
+        <div className="skeleton-aura h-4 w-16 rounded" />
+      </div>
+      <div className="space-y-2">
+        <div className="skeleton-aura h-8 w-24 rounded" />
+        <div className="skeleton-aura h-4 w-32 rounded" />
+      </div>
+    </div>
+  );
+}
+
+/** Skeleton for table rows */
+export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
+  return (
+    <div className="card-aura overflow-hidden" aria-hidden="true">
+      {/* Header */}
+      <div className="flex gap-4 px-6 py-3 border-b border-[var(--border-main)]">
+        {Array.from({ length: columns }).map((_, i) => (
+          <div key={i} className="skeleton-aura h-4 rounded flex-1" />
+        ))}
+      </div>
+      {/* Rows */}
+      {Array.from({ length: rows }).map((_, rowIdx) => (
+        <div
+          key={rowIdx}
+          className="flex gap-4 px-6 py-3 border-b border-[var(--border-subtle)]"
+        >
+          {Array.from({ length: columns }).map((_, colIdx) => (
+            <div
+              key={colIdx}
+              className={cn(
+                'skeleton-aura h-4 rounded flex-1',
+                colIdx === 0 && 'max-w-[180px]'
+              )}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Skeleton for chart containers */
+export function SkeletonChart({ height = 'h-64' }: { height?: string }) {
+  return (
+    <div className={cn('card-aura p-6', height)} aria-hidden="true">
+      <div className="flex items-center justify-between mb-6">
+        <div className="skeleton-aura h-6 w-32 rounded" />
+        <div className="skeleton-aura h-8 w-24 rounded-lg" />
+      </div>
+      <div className="flex items-end gap-2 h-[calc(100%-4rem)]">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div
+            key={i}
+            className="skeleton-aura flex-1 rounded-t"
+            style={{ height: `${30 + Math.random() * 60}%` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Skeleton for card content (generic) */
+export function SkeletonCard() {
+  return (
+    <div className="card-aura p-6" aria-hidden="true">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="skeleton-aura h-10 w-10 rounded-lg flex-shrink-0" />
+        <div className="flex-1 space-y-2">
+          <div className="skeleton-aura h-4 w-3/4 rounded" />
+          <div className="skeleton-aura h-4 w-1/2 rounded" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="skeleton-aura h-4 w-full rounded" />
+        <div className="skeleton-aura h-4 w-5/6 rounded" />
+        <div className="skeleton-aura h-4 w-2/3 rounded" />
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -44,23 +159,23 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
             <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-primary-500 shadow-lg shadow-primary-500/50" />
           </div>
           {/* Middle orbit ring */}
-          <div className="absolute inset-3 rounded-full border-2 border-violet-200 dark:border-violet-800 animate-[spin_2s_linear_infinite_reverse]">
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50" />
+          <div className="absolute inset-4 rounded-full border-2 border-info-200 dark:border-info-800 animate-[spin_2s_linear_infinite_reverse]">
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-info-500 shadow-lg shadow-info-500/50" />
           </div>
           {/* Inner pulsing core */}
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary-500 to-violet-600 shadow-xl shadow-primary-500/30 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary-500 to-info-600 shadow-xl shadow-primary-500/30 animate-pulse flex items-center justify-center">
             <span className="text-white font-bold text-lg tracking-tight">N</span>
           </div>
         </div>
 
         {/* Brand text */}
         <div className="text-center space-y-2">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-violet-600 dark:from-primary-400 dark:to-violet-400 bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-info-600 dark:from-primary-400 dark:to-info-400 bg-clip-text text-transparent">
             NU-AURA
           </h2>
           {/* Shimmer loading text */}
           <div className="relative overflow-hidden">
-            <p className="text-sm text-surface-500 dark:text-surface-400">
+            <p className="text-sm text-[var(--text-muted)]">
               {message}
             </p>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 dark:via-surface-800/60 to-transparent animate-[shimmer_2s_infinite]" />
@@ -68,7 +183,7 @@ export function NuAuraLoader({ message = 'Loading your workspace...' }: { messag
         </div>
 
         {/* Animated progress dots */}
-        <div className="flex gap-1.5">
+        <div className="flex gap-2">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}

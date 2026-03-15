@@ -59,18 +59,18 @@ export function TimeClockWidget({
   }, [isCheckedIn, checkInTime]);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+    <div className="rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <Clock className="h-4 w-4 text-[var(--text-muted)]" />
+          <span className="text-xs text-[var(--text-muted)]">
             {dateDisplay}
           </span>
         </div>
         <a
           href="/attendance"
-          className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
         >
           View All
         </a>
@@ -78,11 +78,11 @@ export function TimeClockWidget({
 
       {/* Time Display */}
       <div className="mb-4">
-        <div className="text-3xl font-semibold text-gray-900 dark:text-white tracking-tight font-mono">
+        <div className="text-3xl font-semibold text-[var(--text-primary)] tracking-tight font-mono">
           {currentTime}
         </div>
         {elapsedTime && (
-          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-1 text-xs text-[var(--text-muted)]">
             Working: {elapsedTime}
           </div>
         )}
@@ -94,8 +94,8 @@ export function TimeClockWidget({
         disabled={isLoading}
         className={`flex w-full items-center justify-center gap-2 rounded-lg py-2.5 px-4 text-sm font-medium transition-colors ${
           isCheckedIn
-            ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-            : 'bg-slate-800 text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600'
+            ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            : 'bg-primary-600 text-white hover:bg-primary-700'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         {isCheckedIn ? (

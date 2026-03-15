@@ -130,11 +130,11 @@ export default function CompanySpotlightPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
                   <Lightbulb className="w-8 h-8 text-amber-500" />
                   Company Spotlight
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                <p className="text-[var(--text-secondary)] mt-2">
                   Create carousel slides to highlight company news and culture
                 </p>
               </div>
@@ -184,7 +184,7 @@ export default function CompanySpotlightPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
+                      className="bg-[var(--bg-card)] rounded-xl shadow-sm hover:shadow-md transition-all border border-surface-200 dark:border-surface-700 overflow-hidden group"
                     >
                       <div className="flex gap-6 p-5">
                         {/* Preview */}
@@ -209,18 +209,18 @@ export default function CompanySpotlightPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-4 mb-3">
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 dark:text-white text-lg truncate">
+                              <h3 className="font-semibold text-[var(--text-primary)] text-lg truncate">
                                 {spotlight.title}
                               </h3>
                               {spotlight.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                                <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                                   {spotlight.description}
                                 </p>
                               )}
                             </div>
                             <div className="flex items-center gap-2 flex-shrink-0">
                               {!spotlight.isActive && (
-                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-[var(--bg-surface)] text-gray-700 dark:text-gray-300">
                                   Inactive
                                 </span>
                               )}
@@ -233,7 +233,7 @@ export default function CompanySpotlightPage() {
                           </div>
 
                           {/* Metadata */}
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)]">
                             <span>Order: {spotlight.displayOrder}</span>
                             {spotlight.startDate && (
                               <span className="flex items-center gap-1">
@@ -390,26 +390,26 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Spotlight Slide' : 'Create Spotlight Slide'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
         </div>
 
@@ -518,7 +518,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                   onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
                   className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent dark:bg-slate-800 dark:text-white"
                 />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
                   Lower numbers appear first
                 </p>
               </div>
@@ -575,7 +575,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
                     </p>
                   )}
                   {formData.ctaLabel && (
-                    <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-gray-900 hover:bg-gray-100 transition-colors truncate">
+                    <button className="mt-4 px-4 py-2 bg-white text-sm font-semibold rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors truncate">
                       {formData.ctaLabel}
                     </button>
                   )}
@@ -589,7 +589,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
         <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

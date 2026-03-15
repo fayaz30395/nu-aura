@@ -37,7 +37,7 @@ import { Project } from '@/lib/types/project';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    DRAFT: 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-300',
+    DRAFT: 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300',
     SUBMITTED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
     UNDER_REVIEW: 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
     APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
@@ -649,7 +649,7 @@ export default function TimesheetsPage() {
                   required
                   value={entryForm.projectId}
                   onChange={(e) => setEntryForm({ ...entryForm, projectId: e.target.value })}
-                  className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Select a project</option>
                   {projects.map((project) => (
@@ -670,7 +670,7 @@ export default function TimesheetsPage() {
                     required
                     value={entryForm.entryDate}
                     onChange={(e) => setEntryForm({ ...entryForm, entryDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -685,7 +685,7 @@ export default function TimesheetsPage() {
                     step="0.5"
                     value={entryForm.hours}
                     onChange={(e) => setEntryForm({ ...entryForm, hours: parseFloat(e.target.value) })}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -697,7 +697,7 @@ export default function TimesheetsPage() {
                 <select
                   value={entryForm.activityType}
                   onChange={(e) => setEntryForm({ ...entryForm, activityType: e.target.value as ActivityType })}
-                  className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   {ACTIVITY_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -715,7 +715,7 @@ export default function TimesheetsPage() {
                   rows={3}
                   value={entryForm.workDescription}
                   onChange={(e) => setEntryForm({ ...entryForm, workDescription: e.target.value })}
-                  className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Describe the work done..."
                 />
               </div>

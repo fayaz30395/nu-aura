@@ -100,7 +100,7 @@ export default function TeamAttendancePage() {
         )}
 
         {/* Controls */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               <div className="flex gap-4 items-center">
@@ -110,7 +110,7 @@ export default function TeamAttendancePage() {
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="px-4 py-2 border border-surface-200 dark:border-surface-700 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
               </div>
               <div className="flex gap-2">
@@ -141,7 +141,7 @@ export default function TeamAttendancePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="card-interactive">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center">
@@ -155,7 +155,7 @@ export default function TeamAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="card-interactive">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
@@ -169,7 +169,7 @@ export default function TeamAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="card-interactive">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
@@ -183,7 +183,7 @@ export default function TeamAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="card-interactive">
             <CardContent className="p-5">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
@@ -199,7 +199,7 @@ export default function TeamAttendancePage() {
         </div>
 
         {/* Attendance Records */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
               <Users className="h-5 w-5" />
@@ -223,25 +223,25 @@ export default function TeamAttendancePage() {
                 <table className="w-full">
                   <thead className="bg-surface-50 dark:bg-surface-800/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Employee
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Check In
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Check Out
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Work Hours
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Source
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                         Remarks
                       </th>
                     </tr>
@@ -293,7 +293,7 @@ export default function TeamAttendancePage() {
           <Card
             isClickable
             onClick={() => router.push('/attendance')}
-            className="bg-white dark:bg-surface-900 cursor-pointer"
+            className="card-interactive"
           >
             <CardContent className="p-6">
               <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center mb-4">
@@ -307,7 +307,7 @@ export default function TeamAttendancePage() {
           <Card
             isClickable
             onClick={() => router.push('/attendance/regularization')}
-            className="bg-white dark:bg-surface-900 cursor-pointer"
+            className="card-interactive"
           >
             <CardContent className="p-6">
               <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center mb-4">
@@ -321,7 +321,7 @@ export default function TeamAttendancePage() {
           <Card
             isClickable
             onClick={() => window.print()}
-            className="bg-white dark:bg-surface-900 cursor-pointer"
+            className="card-interactive"
           >
             <CardContent className="p-6">
               <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center mb-4">

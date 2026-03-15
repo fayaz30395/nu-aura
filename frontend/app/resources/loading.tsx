@@ -33,7 +33,7 @@ export default function Loading() {
         {Array.from({ length: 2 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-3"
+            className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-3"
           >
             <Skeleton height={20} width="40%" />
             {Array.from({ length: 3 }).map((_, i) => (

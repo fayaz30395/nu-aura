@@ -171,23 +171,23 @@ export default function StatutoryPage() {
                 <form onSubmit={form.handleSubmit(handleCalculate)}>
                   <Stack gap="md">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Employee ID
                       </label>
                       <input
                         type="text"
                         placeholder="550e8400-e29b-41d4-a716-446655440000"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {...form.register('employeeId')}
                       />
                       {form.formState.errors.employeeId && (
                         <p className="text-red-600 text-xs mt-1">{form.formState.errors.employeeId.message}</p>
                       )}
-                      <p className="text-gray-500 text-xs mt-1">Enter the employee UUID</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-1">Enter the employee UUID</p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Basic Salary (INR / month)
                       </label>
                       <input
@@ -195,17 +195,17 @@ export default function StatutoryPage() {
                         min="0"
                         step="0.01"
                         placeholder="25000"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {...form.register('basicSalary')}
                       />
                       {form.formState.errors.basicSalary && (
                         <p className="text-red-600 text-xs mt-1">{form.formState.errors.basicSalary.message}</p>
                       )}
-                      <p className="text-gray-500 text-xs mt-1">Monthly basic component only</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-1">Monthly basic component only</p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Gross Salary (INR / month)
                       </label>
                       <input
@@ -213,21 +213,21 @@ export default function StatutoryPage() {
                         min="0"
                         step="0.01"
                         placeholder="40000"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {...form.register('grossSalary')}
                       />
                       {form.formState.errors.grossSalary && (
                         <p className="text-red-600 text-xs mt-1">{form.formState.errors.grossSalary.message}</p>
                       )}
-                      <p className="text-gray-500 text-xs mt-1">Basic + all allowances</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-1">Basic + all allowances</p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         State
                       </label>
                       <select
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--border-strong)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         {...form.register('state')}
                       >
                         {STATE_OPTIONS.map(opt => (
@@ -239,7 +239,7 @@ export default function StatutoryPage() {
                       {form.formState.errors.state && (
                         <p className="text-red-600 text-xs mt-1">{form.formState.errors.state.message}</p>
                       )}
-                      <p className="text-gray-500 text-xs mt-1">Used for Professional Tax slab</p>
+                      <p className="text-[var(--text-muted)] text-xs mt-1">Used for Professional Tax slab</p>
                     </div>
 
                     <Button

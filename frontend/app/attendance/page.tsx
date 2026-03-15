@@ -298,7 +298,7 @@ export default function AttendancePage() {
           </div>
 
           {/* Compact Live Clock */}
-          <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 rounded-lg shadow-sm border border-surface-200 dark:border-surface-700">
+          <div className="flex items-center gap-3 px-4 py-2 bg-[var(--bg-surface)] rounded-lg shadow-sm border border-[var(--border-main)]">
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-pulse">
               <Clock className="h-5 w-5 text-white" />
             </div>
@@ -336,7 +336,7 @@ export default function AttendancePage() {
                 {/* Compact Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="space-y-1">
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-semibold uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[var(--bg-elevated)] rounded-full text-[10px] font-semibold uppercase tracking-wider">
                       <div className="h-1.5 w-1.5 bg-green-400 rounded-full animate-pulse" />
                       Today&apos;s Shift
                     </div>
@@ -375,7 +375,7 @@ export default function AttendancePage() {
                   {/* Action Button */}
                   <div>
                     {dayComplete ? (
-                      <div className="bg-white/20 backdrop-blur-md rounded-2xl px-5 py-3 text-center border border-white/30">
+                      <div className="bg-[var(--bg-elevated)] rounded-2xl px-5 py-3 text-center border border-white/30">
                         <CheckCircle className="h-8 w-8 text-emerald-300 mx-auto mb-1" />
                         <div className="text-sm font-bold">Day Complete!</div>
                         <div className="text-xs text-indigo-100 mt-0.5">{formatDuration(calculateHours(todayRecord?.checkInTime, todayRecord?.checkOutTime))} worked</div>
@@ -384,7 +384,7 @@ export default function AttendancePage() {
                       <Button
                         onClick={handleCheckIn}
                         isLoading={checkInMutation.isPending}
-                        className="h-12 px-6 text-base font-semibold bg-white text-indigo-600 hover:bg-white/95 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
+                        className="h-12 px-6 text-base font-semibold bg-[var(--bg-elevated)] text-primary-600 hover:bg-[var(--bg-card-hover)] border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
                         Check In
@@ -408,7 +408,7 @@ export default function AttendancePage() {
           {/* Compact Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
             {/* Check In Time */}
-            <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 hover:shadow-lg transition-shadow">
+            <Card className="border-0 shadow-md bg-[var(--bg-card)] border border-[var(--border-main)] hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
@@ -426,7 +426,7 @@ export default function AttendancePage() {
             </Card>
 
             {/* Work Duration */}
-            <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 hover:shadow-lg transition-shadow">
+            <Card className="border-0 shadow-md bg-[var(--bg-card)] border border-[var(--border-main)] hover:shadow-lg transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-sm">
@@ -444,7 +444,7 @@ export default function AttendancePage() {
             </Card>
 
             {/* Weekly Averages Combined */}
-            <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 hover:shadow-lg transition-shadow col-span-2 lg:col-span-1">
+            <Card className="border-0 shadow-md bg-[var(--bg-card)] border border-[var(--border-main)] hover:shadow-lg transition-shadow col-span-2 lg:col-span-1">
               <CardContent className="p-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -560,7 +560,7 @@ export default function AttendancePage() {
           {/* Quick Actions */}
           <div className="space-y-3">
             <Link href="/attendance/my-attendance" className="block group">
-              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20">
+              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-[var(--bg-card)] border border-[var(--border-main)]">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
@@ -575,7 +575,7 @@ export default function AttendancePage() {
             </Link>
 
             <Link href="/attendance/regularization" className="block group">
-              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20">
+              <Card className="border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 bg-[var(--bg-card)] border border-[var(--border-main)]">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
@@ -590,7 +590,7 @@ export default function AttendancePage() {
             </Link>
 
             {/* This Week Info */}
-            <Card className="border-0 shadow-md bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-800 dark:to-gray-800">
+            <Card className="border-0 shadow-md bg-[var(--bg-card)] border border-[var(--border-main)]">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Coffee className="h-4 w-4 text-surface-500" />

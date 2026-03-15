@@ -118,9 +118,9 @@ export default function AdminLeaveRequestsPage() {
       PENDING: 'bg-yellow-100 text-yellow-800',
       APPROVED: 'bg-green-100 text-green-800',
       REJECTED: 'bg-red-100 text-red-800',
-      CANCELLED: 'bg-gray-100 text-gray-800',
+      CANCELLED: 'bg-[var(--bg-surface)] text-gray-800',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-[var(--bg-surface)] text-gray-800';
   };
 
   const formatDate = (dateString: string) => {
@@ -137,7 +137,7 @@ export default function AdminLeaveRequestsPage() {
         <div className="flex items-center justify-center p-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading leave requests...</p>
+            <p className="mt-4 text-[var(--text-secondary)]">Loading leave requests...</p>
           </div>
         </div>
       </>
@@ -176,37 +176,37 @@ export default function AdminLeaveRequestsPage() {
         </div>
 
         {/* Leave Requests Table */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow overflow-hidden">
           <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
             <thead className="bg-surface-50 dark:bg-surface-800/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase tracking-wider">
                   Request #
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Employee ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Leave Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Dates
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Days
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Applied On
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-200 dark:divide-surface-700">
+            <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
               {leaveRequests.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-surface-600 dark:text-surface-400">
@@ -277,7 +277,7 @@ export default function AdminLeaveRequestsPage() {
       {/* Approve Modal */}
       {showApproveModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg p-6 max-w-md w-full">
+          <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">Approve Leave Request</h3>
             <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
@@ -321,7 +321,7 @@ export default function AdminLeaveRequestsPage() {
       {/* Reject Modal */}
       {showRejectModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-surface-900 rounded-lg p-6 max-w-md w-full">
+          <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4 text-surface-900 dark:text-surface-100">Reject Leave Request</h3>
             <p className="text-sm text-surface-600 dark:text-surface-400 mb-4">
               Please provide a reason for rejecting this leave request.

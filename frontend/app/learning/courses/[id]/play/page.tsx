@@ -153,7 +153,7 @@ export default function CoursePlayerPage() {
   const renderContent = () => {
     if (!activeContent) {
       return (
-        <div className="flex flex-col items-center justify-center h-full text-gray-400">
+        <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)]">
           <BookOpen className="h-16 w-16 mb-4" />
           <p className="text-lg">Select content from the sidebar to begin</p>
         </div>
@@ -175,7 +175,7 @@ export default function CoursePlayerPage() {
                   onTimeUpdate={handleVideoTimeUpdate}
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="flex items-center justify-center h-full text-[var(--text-muted)]">
                   <Play className="h-16 w-16 opacity-30" />
                   <span className="ml-3">Video not available</span>
                 </div>
@@ -200,11 +200,11 @@ export default function CoursePlayerPage() {
       case 'TEXT':
         return (
           <div className="flex flex-col gap-4">
-            <div className="prose max-w-none bg-white rounded-lg border border-gray-200 p-6">
+            <div className="prose max-w-none bg-white rounded-lg border border-[var(--border-main)] p-6">
               {sanitizedTextContent ? (
                 <div dangerouslySetInnerHTML={{ __html: sanitizedTextContent }} />
               ) : (
-                <p className="text-gray-400 italic">No content available</p>
+                <p className="text-[var(--text-muted)] italic">No content available</p>
               )}
             </div>
             <div className="flex justify-end">
@@ -227,9 +227,9 @@ export default function CoursePlayerPage() {
         return (
           <div className="flex flex-col gap-4">
             {activeContent.documentUrl ? (
-              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                <div className="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-50">
-                  <span className="text-sm font-medium text-gray-700">{activeContent.title}</span>
+              <div className="bg-white rounded-lg border border-[var(--border-main)] overflow-hidden">
+                <div className="flex items-center justify-between p-3 border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
+                  <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
                     href={activeContent.documentUrl}
                     target="_blank"
@@ -247,7 +247,7 @@ export default function CoursePlayerPage() {
                 />
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-48 bg-gray-50 rounded-lg border border-gray-200 text-gray-400">
+              <div className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] text-[var(--text-muted)]">
                 <FileText className="h-12 w-12 mb-2 opacity-30" />
                 <span>Document not available</span>
               </div>
@@ -295,9 +295,9 @@ export default function CoursePlayerPage() {
       case 'EXTERNAL_LINK':
         return (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col items-center justify-center h-48 bg-gray-50 rounded-lg border border-gray-200 gap-4">
-              <ExternalLink className="h-12 w-12 text-gray-400" />
-              <p className="text-gray-600">External resource</p>
+            <div className="flex flex-col items-center justify-center h-48 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] gap-4">
+              <ExternalLink className="h-12 w-12 text-[var(--text-muted)]" />
+              <p className="text-[var(--text-secondary)]">External resource</p>
               <a
                 href={activeContent.videoUrl || '#'}
                 target="_blank"
@@ -325,7 +325,7 @@ export default function CoursePlayerPage() {
 
       default:
         return (
-          <div className="flex items-center justify-center h-48 text-gray-400">
+          <div className="flex items-center justify-center h-48 text-[var(--text-muted)]">
             Content type not supported yet
           </div>
         );
@@ -337,7 +337,7 @@ export default function CoursePlayerPage() {
       <div className="flex items-center justify-center min-h-screen bg-surface-50">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">Loading course...</p>
+          <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>
     );
@@ -358,30 +358,30 @@ export default function CoursePlayerPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-screen bg-gray-100 overflow-hidden">
+      <div className="flex flex-col h-screen bg-[var(--bg-surface)] overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shrink-0 z-10">
+      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-[var(--border-main)] shrink-0 z-10">
         <div className="flex items-center gap-3">
-          <Link href="/learning" className="text-gray-400 hover:text-gray-600">
+          <Link href="/learning" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
             <X className="h-5 w-5" />
           </Link>
           <button
             onClick={() => setSidebarOpen(o => !o)}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="hidden md:block">
             <p className="text-sm font-semibold text-gray-800 truncate max-w-xs">{course.title}</p>
             {activeContent && (
-              <p className="text-xs text-gray-400">{activeContent.title}</p>
+              <p className="text-xs text-[var(--text-muted)]">{activeContent.title}</p>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-4">
           {updateProgressMutation.isPending && (
-            <span className="text-xs text-gray-400 animate-pulse">Saving...</span>
+            <span className="text-xs text-[var(--text-muted)] animate-pulse">Saving...</span>
           )}
           {/* Progress bar */}
           <div className="hidden sm:flex items-center gap-2">
@@ -391,13 +391,13 @@ export default function CoursePlayerPage() {
                 style={{ width: `${overallProgress}%` }}
               />
             </div>
-            <span className="text-xs text-gray-500 font-medium">{overallProgress}%</span>
+            <span className="text-xs text-[var(--text-muted)] font-medium">{overallProgress}%</span>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={goPrev}
               disabled={activeContentIdx <= 0}
-              className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed"
               title="Previous"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -405,7 +405,7 @@ export default function CoursePlayerPage() {
             <button
               onClick={goNext}
               disabled={activeContentIdx >= allContents.length - 1}
-              className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="p-1.5 rounded hover:bg-[var(--bg-surface)] disabled:opacity-30 disabled:cursor-not-allowed"
               title="Next"
             >
               <ChevronRight className="h-4 w-4" />
@@ -417,18 +417,18 @@ export default function CoursePlayerPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         {sidebarOpen && (
-          <aside className="w-72 bg-white border-r border-gray-200 flex flex-col overflow-y-auto shrink-0">
-            <div className="p-4 border-b border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Course Content</p>
-              <p className="text-xs text-gray-400 mt-0.5">
+          <aside className="w-72 bg-white border-r border-[var(--border-main)] flex flex-col overflow-y-auto shrink-0">
+            <div className="p-4 border-b border-[var(--border-subtle)]">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Course Content</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">
                 {completedCount} / {totalContents} completed
               </p>
             </div>
             <div className="flex-1 overflow-y-auto">
               {course.modules?.map((mod, modIdx) => (
                 <div key={mod.id}>
-                  <div className="px-4 py-2 bg-gray-50 border-b border-gray-100">
-                    <p className="text-xs font-semibold text-gray-600">
+                  <div className="px-4 py-2 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)]">
+                    <p className="text-xs font-semibold text-[var(--text-secondary)]">
                       {modIdx + 1}. {mod.title}
                     </p>
                   </div>
@@ -443,7 +443,7 @@ export default function CoursePlayerPage() {
                         className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors border-b border-gray-50 ${
                           isActive
                             ? 'bg-blue-50 border-l-2 border-l-blue-600'
-                            : 'hover:bg-gray-50'
+                            : 'hover:bg-[var(--bg-surface)]'
                         }`}
                       >
                         <div className="shrink-0 mt-0.5">
@@ -456,12 +456,12 @@ export default function CoursePlayerPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-xs font-medium truncate ${isActive ? 'text-blue-700' : 'text-gray-700'}`}>
+                          <p className={`text-xs font-medium truncate ${isActive ? 'text-blue-700' : 'text-[var(--text-primary)]'}`}>
                             {contentIdx + 1}. {content.title}
                           </p>
                           <div className="flex items-center gap-1 mt-0.5">
-                            <Icon className="h-3 w-3 text-gray-400" />
-                            <span className="text-xs text-gray-400">
+                            <Icon className="h-3 w-3 text-[var(--text-muted)]" />
+                            <span className="text-xs text-[var(--text-muted)]">
                               {CONTENT_TYPE_LABEL[content.contentType]}
                               {content.durationMinutes ? ` · ${content.durationMinutes}m` : ''}
                             </span>
@@ -481,13 +481,13 @@ export default function CoursePlayerPage() {
           {activeContent ? (
             <div className="max-w-4xl mx-auto">
               <div className="mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">{activeContent.title}</h2>
+                <h2 className="text-xl font-semibold text-[var(--text-primary)]">{activeContent.title}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   {(() => {
                     const Icon = CONTENT_TYPE_ICON[activeContent.contentType] ?? FileText;
-                    return <Icon className="h-4 w-4 text-gray-400" />;
+                    return <Icon className="h-4 w-4 text-[var(--text-muted)]" />;
                   })()}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-[var(--text-muted)]">
                     {CONTENT_TYPE_LABEL[activeContent.contentType]}
                     {activeContent.durationMinutes ? ` · ${activeContent.durationMinutes} min` : ''}
                   </span>
@@ -502,11 +502,11 @@ export default function CoursePlayerPage() {
               {renderContent()}
 
               {/* Navigation buttons */}
-              <div className="flex justify-between mt-6 pt-4 border-t border-gray-200">
+              <div className="flex justify-between mt-6 pt-4 border-t border-[var(--border-main)]">
                 <button
                   onClick={goPrev}
                   disabled={activeContentIdx <= 0}
-                  className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="h-4 w-4" /> Previous
                 </button>
@@ -520,7 +520,7 @@ export default function CoursePlayerPage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-3">
+            <div className="flex flex-col items-center justify-center h-full text-[var(--text-muted)] gap-3">
               <BookOpen className="h-16 w-16 opacity-20" />
               <p>Select content to begin learning</p>
             </div>
@@ -530,16 +530,16 @@ export default function CoursePlayerPage() {
 
       {/* Completion overlay */}
       {showCompletion && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
             <div className="flex justify-center mb-4">
               <div className="p-4 bg-green-100 rounded-full">
                 <Award className="h-12 w-12 text-green-600" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Course Complete!</h2>
-            <p className="text-gray-500 text-sm mb-6">
-              You&apos;ve completed <span className="font-semibold text-gray-900">{course.title}</span>.
+            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Course Complete!</h2>
+            <p className="text-[var(--text-muted)] text-sm mb-6">
+              You&apos;ve completed <span className="font-semibold text-[var(--text-primary)]">{course.title}</span>.
               {enrollment?.certificateId && ' Your certificate has been issued.'}
             </p>
             <div className="flex flex-col gap-2">
@@ -550,7 +550,7 @@ export default function CoursePlayerPage() {
               )}
               <Link
                 href="/learning"
-                className="block w-full px-4 py-2 border border-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-50 text-center"
+                className="block w-full px-4 py-2 border border-[var(--border-main)] text-[var(--text-primary)] rounded-md font-medium hover:bg-[var(--bg-surface)] text-center"
               >
                 Back to Learning
               </Link>

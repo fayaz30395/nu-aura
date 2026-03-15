@@ -146,7 +146,7 @@ export default function LoanDetailPage() {
 
         {/* Amount Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
                 <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -160,7 +160,7 @@ export default function LoanDetailPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
                 <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -172,7 +172,7 @@ export default function LoanDetailPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
                 <Wallet className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -189,7 +189,7 @@ export default function LoanDetailPage() {
 
         {/* Progress Bar */}
         {(loan.status === 'ACTIVE' || loan.status === 'DISBURSED') && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
                 Repayment Progress
@@ -212,7 +212,7 @@ export default function LoanDetailPage() {
         )}
 
         {/* Loan Details */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
           <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
             Loan Details
           </h3>
@@ -267,7 +267,7 @@ export default function LoanDetailPage() {
         </div>
 
         {/* Purpose */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
           <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-3">
             Purpose
           </h3>
@@ -284,7 +284,7 @@ export default function LoanDetailPage() {
 
         {/* Approval Info */}
         {loan.approvedDate && (
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6">
             <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
               Approval Information
             </h3>

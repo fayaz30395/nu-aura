@@ -2,89 +2,148 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
-interface DarkModeContextType {
+// ── Types ────────────────────────────────────────────────────────────
+export type ThemeMode = 'light' | 'dark' | 'system';
+export type ResolvedTheme = 'light' | 'dark';
+
+interface ThemeContextType {
+  /** User's chosen preference: light, dark, or system */
+  theme: ThemeMode;
+  /** The actual resolved theme applied to the DOM */
+  resolvedTheme: ResolvedTheme;
+  /** Convenience boolean — true when resolvedTheme === 'dark' */
   isDark: boolean;
+  /** Set theme to light, dark, or system */
+  setTheme: (mode: ThemeMode) => void;
+  /** Legacy toggle: cycles light → dark → light */
   toggleDarkMode: () => void;
+  /** Legacy setter — kept for backward compatibility */
   setDarkMode: (isDark: boolean) => void;
 }
 
-const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'nu-aura-theme';
 
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function getSystemTheme(): ResolvedTheme {
+  if (typeof window === 'undefined') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function resolveTheme(mode: ThemeMode): ResolvedTheme {
+  if (mode === 'system') return getSystemTheme();
+  return mode;
+}
+
+function applyToDOM(resolved: ResolvedTheme): void {
+  if (typeof window === 'undefined') return;
+  const html = document.documentElement;
+  if (resolved === 'dark') {
+    html.classList.add('dark');
+  } else {
+    html.classList.remove('dark');
+  }
+}
+
+function getSavedTheme(): ThemeMode {
+  if (typeof window === 'undefined') return 'light';
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved === 'dark' || saved === 'light' || saved === 'system') return saved;
+  return 'system'; // default to system if nothing saved
+}
+
+// ── Provider ─────────────────────────────────────────────────────────
+
 export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDark, setIsDarkState] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<ThemeMode>('system');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
 
-  // Initialize from localStorage or system preference
+  // Initialize on mount — read from localStorage
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    const saved = getSavedTheme();
+    const resolved = resolveTheme(saved);
 
-    // Check localStorage first
-    const savedTheme = localStorage.getItem(STORAGE_KEY);
-    let initialDarkMode = false;
-
-    if (savedTheme !== null) {
-      initialDarkMode = savedTheme === 'dark';
-    } else {
-      // Fall back to system preference
-      initialDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-
-    setIsDarkState(initialDarkMode);
-    applyTheme(initialDarkMode);
-    setMounted(true);
+    setThemeState(saved);
+    setResolvedTheme(resolved);
+    applyToDOM(resolved);
   }, []);
 
-  // Apply theme to DOM
-  const applyTheme = (isDarkMode: boolean) => {
-    if (typeof window === 'undefined') return;
+  // Listen for system theme changes when mode is 'system'
+  useEffect(() => {
+    if (theme !== 'system') return;
 
-    const html = document.documentElement;
-    if (isDarkMode) {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-  };
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
-  // Set dark mode directly (useCallback to prevent recreating on every render)
-  const setDarkMode = useCallback((isDarkMode: boolean) => {
-    setIsDarkState(isDarkMode);
-    applyTheme(isDarkMode);
+    const handler = (e: MediaQueryListEvent) => {
+      const newResolved: ResolvedTheme = e.matches ? 'dark' : 'light';
+      setResolvedTheme(newResolved);
+      applyToDOM(newResolved);
+    };
 
-    // Persist to localStorage
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [theme]);
+
+  // ── Public API ───────────────────────────────────────────────────
+
+  const setTheme = useCallback((mode: ThemeMode) => {
+    const resolved = resolveTheme(mode);
+
+    setThemeState(mode);
+    setResolvedTheme(resolved);
+    applyToDOM(resolved);
+
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, isDarkMode ? 'dark' : 'light');
+      localStorage.setItem(STORAGE_KEY, mode);
     }
   }, []);
 
-  // Toggle dark mode (useCallback with isDark dependency)
+  // Legacy: binary toggle (light ↔ dark). If currently 'system', resolve then toggle.
   const toggleDarkMode = useCallback(() => {
-    setDarkMode(!isDark);
-  }, [isDark, setDarkMode]);
+    const next: ThemeMode = resolvedTheme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+  }, [resolvedTheme, setTheme]);
 
-  // Memoize context value to prevent unnecessary re-renders
+  // Legacy: direct boolean setter
+  const setDarkMode = useCallback((isDark: boolean) => {
+    setTheme(isDark ? 'dark' : 'light');
+  }, [setTheme]);
+
+  const isDark = resolvedTheme === 'dark';
+
   const contextValue = useMemo(
     () => ({
+      theme,
+      resolvedTheme,
       isDark,
+      setTheme,
       toggleDarkMode,
       setDarkMode,
     }),
-    [isDark, toggleDarkMode, setDarkMode]
+    [theme, resolvedTheme, isDark, setTheme, toggleDarkMode, setDarkMode]
   );
 
   return (
-    <DarkModeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
-    </DarkModeContext.Provider>
+    </ThemeContext.Provider>
   );
 };
 
-export const useDarkMode = (): DarkModeContextType => {
-  const context = useContext(DarkModeContext);
+// ── Hooks ────────────────────────────────────────────────────────────
+
+/** Full theme hook — new API */
+export const useTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useDarkMode must be used within DarkModeProvider');
+    throw new Error('useTheme must be used within DarkModeProvider');
   }
   return context;
+};
+
+/** Legacy hook — backward compatible. Same context, same provider. */
+export const useDarkMode = (): ThemeContextType => {
+  return useTheme();
 };

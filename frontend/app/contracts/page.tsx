@@ -59,8 +59,8 @@ export default function ContractsPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Contracts</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">Manage employment, vendor, and other contracts</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Contracts</h1>
+            <p className="text-[var(--text-secondary)] mt-1">Manage employment, vendor, and other contracts</p>
           </div>
           <Button
             onClick={() => router.push('/contracts/new')}
@@ -107,11 +107,11 @@ export default function ContractsPage() {
         </div>
 
         {/* Contracts Table */}
-        <div className="bg-white dark:bg-surface-950 rounded-lg shadow">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow">
           {isLoading ? (
-            <div className="p-8 text-center text-gray-500">Loading contracts...</div>
+            <div className="p-8 text-center text-[var(--text-muted)]">Loading contracts...</div>
           ) : contracts.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-[var(--text-muted)]">
               <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>No contracts found</p>
             </div>

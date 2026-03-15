@@ -23,7 +23,7 @@ export default function Loading() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {Array.from({ length: 2 }).map((_, index) => (
-          <div key={index} className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-3">
+          <div key={index} className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-3">
             <Skeleton height={20} width="40%" />
             {Array.from({ length: 3 }).map((_, i) => (
               <Skeleton key={i} height={48} />

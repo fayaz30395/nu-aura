@@ -193,11 +193,11 @@ export default function AnnouncementsPage() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)] flex items-center gap-3">
                 <Megaphone className="w-8 h-8 text-purple-600" />
                 Announcements
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">
+              <p className="text-[var(--text-secondary)] mt-2">
                 Stay updated with company news and important updates
               </p>
             </div>
@@ -221,7 +221,7 @@ export default function AnnouncementsPage() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
               <Pin className="w-5 h-5 text-yellow-500" />
               Pinned
             </h2>
@@ -252,13 +252,13 @@ export default function AnnouncementsPage() {
                             </span>
                           ) : null}
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg group-hover:text-yellow-600 transition-colors">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-yellow-600 transition-colors">
                           {announcement.title}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}
@@ -269,7 +269,7 @@ export default function AnnouncementsPage() {
                           </span>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-yellow-600 transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-yellow-600 transition-colors" />
                     </div>
                   </motion.div>
                 );
@@ -283,11 +283,11 @@ export default function AnnouncementsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-4 mb-6"
+          className="bg-[var(--bg-card)] rounded-xl shadow-sm p-4 mb-6"
         >
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px] relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search announcements..."
@@ -299,7 +299,7 @@ export default function AnnouncementsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-white dark:bg-slate-800 dark:text-white"
+              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-input)] dark:text-white"
             >
               <option value="">All Categories</option>
               {Object.keys(categoryIcons).map((cat) => (
@@ -311,7 +311,7 @@ export default function AnnouncementsPage() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-white dark:bg-slate-800 dark:text-white"
+              className="px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-lg bg-[var(--bg-input)] dark:text-white"
             >
               <option value="">All Priorities</option>
               {Object.entries(priorityLabels).map(([key, label]) => (
@@ -329,7 +329,7 @@ export default function AnnouncementsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
             <Bell className="w-5 h-5 text-purple-600" />
             All Announcements
           </h2>
@@ -355,7 +355,7 @@ export default function AnnouncementsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                     onClick={() => handleAnnouncementClick(announcement)}
-                    className={`bg-white dark:bg-slate-900 rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
+                    className={`bg-[var(--bg-card)] rounded-xl shadow-sm p-5 cursor-pointer hover:shadow-lg transition-all group border-l-4 ${
                       announcement.isRead
                         ? 'border-l-gray-200 dark:border-l-slate-700'
                         : 'border-l-purple-500'
@@ -379,13 +379,13 @@ export default function AnnouncementsPage() {
                             </span>
                           )}
                         </div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg group-hover:text-purple-600 transition-colors">
+                        <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-purple-600 transition-colors">
                           {announcement.title}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p className="text-sm text-[var(--text-secondary)] mt-1 line-clamp-2">
                           {announcement.content.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-4 mt-3 text-xs text-[var(--text-muted)]">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" />
                             {formatDate(announcement.publishedAt)}
@@ -410,7 +410,7 @@ export default function AnnouncementsPage() {
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={(e) => handleEditAnnouncement(announcement, e)}
-                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                              className="p-1.5 text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                               title="Edit"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -420,14 +420,14 @@ export default function AnnouncementsPage() {
                                 e.stopPropagation();
                                 setShowDeleteConfirm(announcement.id);
                               }}
-                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                              className="p-1.5 text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         )}
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 transition-colors" />
+                        <ChevronRight className="w-5 h-5 text-[var(--text-muted)] group-hover:text-purple-600 transition-colors" />
                       </div>
                     </div>
                   </motion.div>
@@ -442,17 +442,17 @@ export default function AnnouncementsPage() {
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="px-4 py-2 text-sm text-[var(--text-secondary)]">
                 Page {page + 1} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -467,14 +467,14 @@ export default function AnnouncementsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
               onClick={() => setSelectedAnnouncement(null)}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -512,7 +512,7 @@ export default function AnnouncementsPage() {
 
                 {/* Modal Content */}
                 <div className="p-6 overflow-y-auto max-h-[60vh]">
-                  <div className="flex items-center gap-4 mb-6 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-4 mb-6 text-sm text-[var(--text-muted)]">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
                       Published {formatDate(selectedAnnouncement.publishedAt)}
@@ -551,7 +551,7 @@ export default function AnnouncementsPage() {
 
                 {/* Modal Footer */}
                 <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 dark:border-slate-700 flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
                     <CheckCircle className="w-4 h-4 text-green-500" />
                     Marked as read
                   </div>
@@ -582,7 +582,7 @@ export default function AnnouncementsPage() {
                     )}
                     <button
                       onClick={() => setSelectedAnnouncement(null)}
-                      className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors font-medium"
+                      className="px-4 py-2 bg-[var(--bg-surface)] dark:bg-slate-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors font-medium"
                     >
                       Close
                     </button>
@@ -709,26 +709,26 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface-200 dark:border-surface-700 dark:border-slate-700 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
             {isEditing ? 'Edit Announcement' : 'Create Announcement'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-[var(--text-muted)]" />
           </button>
         </div>
 
@@ -824,10 +824,10 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
               {loadingDepartments ? (
                 <div className="flex items-center justify-center py-4">
                   <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
-                  <span className="ml-2 text-sm text-gray-500">Loading departments...</span>
+                  <span className="ml-2 text-sm text-[var(--text-muted)]">Loading departments...</span>
                 </div>
               ) : departments.length === 0 ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400">No departments found</p>
+                <p className="text-sm text-[var(--text-muted)]">No departments found</p>
               ) : (
                 <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 border border-surface-200 dark:border-surface-700 rounded-lg bg-surface-50 dark:bg-surface-800/50">
                   {departments.map((dept) => (
@@ -836,7 +836,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
                       className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
                         formData.targetDepartmentIds?.includes(dept.id)
                           ? 'bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700'
-                          : 'hover:bg-gray-100 dark:hover:bg-slate-700 border border-transparent'
+                          : 'hover:bg-[var(--bg-surface)] dark:hover:bg-slate-700 border border-transparent'
                       }`}
                     >
                       <input
@@ -894,7 +894,7 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
         <div className="px-6 py-4 border-t border-surface-200 dark:border-surface-700 dark:border-slate-700 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors font-medium"
+            className="flex-1 px-4 py-2.5 border border-surface-200 dark:border-surface-700 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-[var(--bg-surface)] dark:hover:bg-slate-800 transition-colors font-medium"
           >
             Cancel
           </button>

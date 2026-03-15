@@ -106,7 +106,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Image
@@ -118,7 +118,7 @@ export default function SignupPage() {
               priority
             />
           </div>
-          <Card className="backdrop-blur-xl bg-white/95 dark:bg-surface-900/95 border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
+          <Card className="bg-[var(--bg-card)] border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
             <CardContent className="pt-8 pb-8 text-center space-y-4">
               <div className="flex justify-center">
                 <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
@@ -146,7 +146,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-[var(--bg-surface)] to-teal-50 dark:from-surface-950 dark:via-surface-900 dark:to-primary-950/30 py-12 px-4 sm:px-6 lg:px-8 pattern-dots">
       <div className="max-w-lg w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -166,7 +166,7 @@ export default function SignupPage() {
         </div>
 
         {/* Signup Card */}
-        <Card className="backdrop-blur-xl bg-white/95 dark:bg-surface-900/95 border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
+        <Card className="bg-[var(--bg-card)] border-surface-200/80 dark:border-surface-700/80 shadow-soft-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">Create your account</CardTitle>
             <CardDescription>Start your free trial — no credit card required</CardDescription>
@@ -199,7 +199,7 @@ export default function SignupPage() {
                     })}
                     type="text"
                     placeholder="Acme Corporation"
-                    className={`block w-full px-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.companyName
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
@@ -224,7 +224,7 @@ export default function SignupPage() {
                       {...register('companyCode')}
                       type="text"
                       placeholder="acme-corp"
-                      className={`block w-full pl-9 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
+                      className={`block w-full pl-9 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-mono text-sm ${
                         errors.companyCode
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-surface-200 dark:border-surface-700'
@@ -254,7 +254,7 @@ export default function SignupPage() {
                       {...register('adminFirstName')}
                       type="text"
                       placeholder="John"
-                      className={`block w-full px-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminFirstName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-surface-200 dark:border-surface-700'
@@ -272,7 +272,7 @@ export default function SignupPage() {
                       {...register('adminLastName')}
                       type="text"
                       placeholder="Doe"
-                      className={`block w-full px-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full px-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminLastName
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-surface-200 dark:border-surface-700'
@@ -298,7 +298,7 @@ export default function SignupPage() {
                       type="email"
                       autoComplete="email"
                       placeholder="john@acmecorp.com"
-                      className={`block w-full pl-10 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.adminEmail
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-surface-200 dark:border-surface-700'
@@ -325,7 +325,7 @@ export default function SignupPage() {
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       placeholder="Create a strong password"
-                      className={`block w-full pl-10 pr-12 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                      className={`block w-full pl-10 pr-12 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                         errors.password
                           ? 'border-red-500 dark:border-red-500'
                           : 'border-surface-200 dark:border-surface-700'

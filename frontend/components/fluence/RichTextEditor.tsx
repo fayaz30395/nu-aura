@@ -206,10 +206,10 @@ export default function RichTextEditor({
   if (!editor) {
     return (
       <div
-        className="w-full rounded-lg border border-gray-300 bg-white dark:border-surface-700 dark:bg-surface-800 flex items-center justify-center"
+        className="w-full rounded-lg border border-[var(--border-strong)] bg-white dark:border-surface-700 dark:bg-surface-800 flex items-center justify-center"
         style={{ minHeight }}
       >
-        <div className="text-gray-400">Loading editor...</div>
+        <div className="text-[var(--text-muted)]">Loading editor...</div>
       </div>
     );
   }
@@ -217,7 +217,7 @@ export default function RichTextEditor({
   return (
     <div className={`space-y-2 ${className}`}>
       {/* Toolbar */}
-      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border border-b-0 border-gray-300 bg-gray-50 p-2 dark:border-surface-700 dark:bg-surface-950">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border border-b-0 border-[var(--border-strong)] bg-[var(--bg-surface)] p-2 dark:border-surface-700 dark:bg-surface-950">
         {/* Text Formatting */}
         <div className="flex items-center gap-1">
           <Tooltip label="Bold" position="bottom">
@@ -600,7 +600,7 @@ export default function RichTextEditor({
 
       {/* Editor */}
       <div
-        className="tiptap-editor rounded-b-lg border border-t-0 border-gray-300 bg-white dark:border-surface-700 dark:bg-surface-800"
+        className="tiptap-editor rounded-b-lg border border-t-0 border-[var(--border-strong)] bg-white dark:border-surface-700 dark:bg-surface-800"
         style={{ minHeight, maxHeight, overflow: 'auto' }}
       >
         <EditorContent editor={editor} />

@@ -353,7 +353,7 @@ export default function CalibrationPage() {
             <button
               onClick={exportCsv}
               disabled={filteredAndSorted.length === 0}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-[var(--bg-input)] text-sm font-medium text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50 transition-colors"
             >
               <Download size={16} />
               Export
@@ -369,7 +369,7 @@ export default function CalibrationPage() {
         </div>
 
         {/* Cycle Selector */}
-        <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+        <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -381,7 +381,7 @@ export default function CalibrationPage() {
                 <select
                   value={selectedCycleId}
                   onChange={e => setSelectedCycleId(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-white dark:bg-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                  className="w-full px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm text-surface-900 dark:text-white bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
                   <option value="">Select a cycle</option>
                   {cycles.map(c => (
@@ -415,7 +415,7 @@ export default function CalibrationPage() {
             {/* Distribution Overview */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Current vs Target */}
-              <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
+              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-5 space-y-4">
                 <div>
                   <h2 className="text-sm font-semibold text-surface-900 dark:text-white mb-3">
                     Current Distribution
@@ -432,7 +432,7 @@ export default function CalibrationPage() {
 
               {/* Stats */}
               <div className="space-y-3">
-                <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                       <Users className="text-blue-600 dark:text-blue-400" size={20} />
@@ -446,7 +446,7 @@ export default function CalibrationPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                       <Target className="text-green-600 dark:text-green-400" size={20} />
@@ -460,7 +460,7 @@ export default function CalibrationPage() {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+                <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                       <BarChart3 className="text-purple-600 dark:text-purple-400" size={20} />
@@ -514,7 +514,7 @@ export default function CalibrationPage() {
                     placeholder="Search employee..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   />
                 </div>
 
@@ -522,7 +522,7 @@ export default function CalibrationPage() {
                   <select
                     value={departmentFilter}
                     onChange={e => setDepartmentFilter(e.target.value)}
-                    className="px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                    className="px-3 py-2.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-surface)] text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                   >
                     <option value="">All Departments</option>
                     {uniqueDepartments.map(dept => (
@@ -545,7 +545,7 @@ export default function CalibrationPage() {
                 <span className="text-surface-500">Loading reviews...</span>
               </div>
             ) : filteredAndSorted.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700">
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
                 <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
                 <p className="text-surface-600 dark:text-surface-400 font-medium">
                   No reviews found
@@ -555,7 +555,7 @@ export default function CalibrationPage() {
                 </p>
               </div>
             ) : (
-              <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
+              <div className="bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -652,7 +652,7 @@ export default function CalibrationPage() {
                                   handleFinalRatingChange(row.employeeId, e.target.value)
                                 }
                                 placeholder="1–5"
-                                className="w-20 text-center px-2 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-white dark:bg-surface-700 text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                                className="w-20 text-center px-2 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg text-sm bg-[var(--bg-surface)] text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                               />
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -676,7 +676,7 @@ export default function CalibrationPage() {
             )}
           </>
         ) : !selectedCycleId && !cyclesLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700">
+          <div className="flex flex-col items-center justify-center py-20 text-center bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700">
             <Info size={32} className="text-surface-400 dark:text-surface-600 mb-3" />
             <p className="text-surface-600 dark:text-surface-400 font-medium">
               No review cycle selected

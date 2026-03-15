@@ -118,7 +118,7 @@ const getCategoryColor = (category: AssetCategory) => {
     case AssetCategory.SOFTWARE_LICENSE:
       return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
@@ -131,11 +131,11 @@ const getStatusColor = (status: AssetStatus) => {
     case AssetStatus.IN_MAINTENANCE:
       return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
     case AssetStatus.RETIRED:
-      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
     case AssetStatus.LOST:
       return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
     default:
-      return 'bg-gray-100 text-gray-700 dark:bg-surface-950 dark:text-gray-300';
+      return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-950 dark:text-gray-300';
   }
 };
 
@@ -488,13 +488,13 @@ export default function AssetManagementPage() {
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Status</option>
             <option value={AssetStatus.AVAILABLE}>Available</option>
@@ -506,7 +506,7 @@ export default function AssetManagementPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">All Categories</option>
             <option value={AssetCategory.LAPTOP}>Laptop</option>
@@ -596,7 +596,7 @@ export default function AssetManagementPage() {
                             <button className="p-1 rounded hover:bg-surface-100 dark:hover:bg-surface-700">
                               <MoreVertical className="h-4 w-4 text-surface-400" />
                             </button>
-                            <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                            <div className="absolute right-0 top-full mt-1 w-40 bg-[var(--bg-input)] border border-surface-200 dark:border-surface-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                               <button
                                 onClick={() => handleViewDetails(asset)}
                                 className="w-full px-3 py-2 text-left text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 flex items-center gap-2"
@@ -698,7 +698,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="AST001"
                       {...register('assetCode')}
                     />
@@ -710,7 +710,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16"
                       {...register('assetName')}
                     />
@@ -724,7 +724,7 @@ export default function AssetManagementPage() {
                       Category *
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('category')}
                     >
                       <option value={AssetCategory.LAPTOP}>Laptop</option>
@@ -744,7 +744,7 @@ export default function AssetManagementPage() {
                       Status
                     </label>
                     <select
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('status')}
                     >
                       <option value={AssetStatus.AVAILABLE}>Available</option>
@@ -764,7 +764,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Apple"
                       {...register('brand')}
                     />
@@ -775,7 +775,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16 M3"
                       {...register('model')}
                     />
@@ -788,7 +788,7 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="C02XG2JHH7JY"
                     {...register('serialNumber')}
                   />
@@ -801,7 +801,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('purchaseDate')}
                     />
                   </div>
@@ -811,7 +811,7 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       {...register('warrantyExpiry')}
                     />
                   </div>
@@ -825,7 +825,7 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
                       {...register('purchaseCost')}
                     />
@@ -837,7 +837,7 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
                       {...register('currentValue')}
                     />
@@ -850,7 +850,7 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Main Office - Floor 3"
                     {...register('location')}
                   />
@@ -862,7 +862,7 @@ export default function AssetManagementPage() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
                     {...register('notes')}
                   />
@@ -1095,7 +1095,7 @@ export default function AssetManagementPage() {
                 </label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Enter employee ID"
                   {...registerAssign('assignEmployeeId')}
                 />

@@ -16,7 +16,7 @@ export default function Loading() {
         </div>
 
         {/* Form card skeleton */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="space-y-2">
               <Skeleton height={14} width="25%" />

@@ -1,113 +1,124 @@
 /**
- * Compact Theme Configuration
- * Modern, space-efficient design system inspired by Keka
+ * NU-AURA Design System — Compact Theme Configuration
+ *
+ * STRICT 8px GRID: All spacing values must be multiples of 4px/8px.
+ * Allowed scale: 4, 8, 16, 24, 32, 48, 64px
+ * Tailwind map: p-1(4), p-2(8), p-4(16), p-6(24), p-8(32), p-12(48), p-16(64)
+ *
+ * BANNED: gap-3, p-3, p-5, gap-5, space-y-5, space-y-3
+ *
+ * Reference: Linear, Vercel, Stripe dashboard density
  */
 
 export const compactTheme = {
-  // Spacing
+  // ── Spacing (strict 8px grid) ──────────────────────
   spacing: {
-    page: 'p-4 md:p-5 lg:p-6',
-    sectionGap: 'space-y-4',
+    page: 'p-4 md:p-6 lg:p-8',
+    sectionGap: 'space-y-6',
     cardGap: 'gap-4',
-    cardGapSmall: 'gap-3',
+    cardGapLarge: 'gap-6',
     cardPadding: 'p-4',
-    cardPaddingSmall: 'p-3',
+    cardPaddingLarge: 'p-6',
   },
 
-  // Typography
+  // ── Typography (enforced scale) ────────────────────
   typography: {
-    pageTitle: 'text-2xl font-bold',
-    cardTitle: 'text-base font-bold',
-    sectionTitle: 'text-lg font-bold',
+    pageTitle: 'text-2xl font-bold tracking-tight',
+    sectionTitle: 'text-lg font-semibold',
+    cardTitle: 'text-base font-semibold',
     label: 'text-xs font-medium',
-    labelSmall: 'text-[10px] font-semibold uppercase tracking-wider',
+    labelMicro: 'text-[11px] font-medium uppercase tracking-wider',
     body: 'text-sm',
     bodySmall: 'text-xs',
     statLarge: 'text-2xl font-bold tabular-nums',
     statMedium: 'text-xl font-bold tabular-nums',
   },
 
-  // Icons
+  // ── Icons (standardized per context) ───────────────
   icons: {
     pageHeader: 'h-8 w-8',
     cardHeader: 'h-8 w-8',
+    statCard: 'h-10 w-10',
+    cardInline: 'h-5 w-5',
     cardIcon: 'h-4 w-4',
-    cardIconMedium: 'h-5 w-5',
-    stat: 'h-8 w-8',
-    statSmall: 'h-7 w-7',
+    button: 'h-4 w-4',
+    badgeMeta: 'h-3.5 w-3.5',
   },
 
-  // Buttons
+  // ── Buttons (consistent sizing) ────────────────────
   buttons: {
     primary: 'h-10 px-4 text-sm font-semibold rounded-lg',
-    secondary: 'h-9 px-3 text-sm font-medium rounded-lg',
-    small: 'h-8 px-3 text-xs font-medium rounded-md',
+    secondary: 'h-10 px-4 text-sm font-medium rounded-lg',
+    small: 'h-8 px-4 text-xs font-medium rounded-lg',
     large: 'h-12 px-6 text-base font-semibold rounded-xl',
   },
 
-  // Cards
+  // ── Cards (unified standard) ───────────────────────
   cards: {
-    base: 'border-0 shadow-md hover:shadow-lg transition-shadow rounded-lg',
-    interactive: 'border-0 shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 rounded-lg',
-    gradient: 'bg-gradient-to-br border-0 shadow-lg rounded-lg',
+    base: 'card-aura',
+    interactive: 'card-interactive',
+    elevated: 'card-elevated',
+    gradient: 'bg-gradient-to-br card-aura',
   },
 
-  // Gradients
+  // ── Gradients (semantic color names — NOT aliased) ─
   gradients: {
-    primary: 'from-indigo-500 to-purple-600',
-    success: 'from-emerald-500 to-teal-600',
-    warning: 'from-amber-500 to-orange-600',
-    danger: 'from-rose-500 to-pink-600',
-    info: 'from-blue-500 to-cyan-600',
-    purple: 'from-purple-500 to-pink-600',
+    primary: 'from-primary-500 to-primary-700',
+    success: 'from-success-500 to-success-700',
+    warning: 'from-warning-500 to-accent-600',
+    danger: 'from-danger-500 to-danger-700',
+    info: 'from-info-500 to-info-700',
+    accent: 'from-accent-500 to-accent-700',
   },
 
-  // Background Gradients
+  // ── Background Gradients (with dark variants) ──────
   bgGradients: {
-    primary: 'from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20',
-    success: 'from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20',
-    warning: 'from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20',
-    danger: 'from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20',
-    info: 'from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20',
-    purple: 'from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20',
-    slate: 'from-slate-50 to-gray-50 dark:from-slate-800 dark:to-gray-800',
+    primary: 'from-primary-50 to-primary-100/60 dark:from-primary-950/30 dark:to-primary-900/20',
+    success: 'from-success-50 to-success-100/60 dark:from-success-950/30 dark:to-success-900/20',
+    warning: 'from-warning-50 to-accent-50 dark:from-warning-950/30 dark:to-accent-900/20',
+    danger: 'from-danger-50 to-danger-100/60 dark:from-danger-950/30 dark:to-danger-900/20',
+    info: 'from-info-50 to-info-100/60 dark:from-info-950/30 dark:to-info-900/20',
+    accent: 'from-accent-50 to-accent-100/60 dark:from-accent-950/30 dark:to-accent-900/20',
+    neutral: 'from-surface-50 to-surface-100 dark:from-surface-900 dark:to-surface-800',
   },
 
-  // Table
+  // ── Table (consistent, sticky-ready) ───────────────
   table: {
-    header: 'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider',
+    header: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]',
+    headerSticky: 'sticky top-0 z-10 bg-[var(--bg-card)]',
     cell: 'px-4 py-3 text-sm',
-    row: 'hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors',
+    row: 'hover:bg-[var(--bg-card-hover)] transition-colors duration-100',
+    divider: 'border-b border-[var(--border-subtle)]',
   },
 
-  // Forms
+  // ── Forms (consistent heights) ─────────────────────
   forms: {
-    input: 'h-10 px-3 text-sm rounded-lg',
-    inputSmall: 'h-9 px-3 text-sm rounded-md',
-    label: 'text-xs font-medium mb-1.5',
-    select: 'h-10 px-3 text-sm rounded-lg',
+    input: 'h-10 px-4 text-sm rounded-lg',
+    inputSmall: 'h-8 px-4 text-sm rounded-lg',
+    label: 'text-xs font-medium mb-2',
+    select: 'h-10 px-4 text-sm rounded-lg',
   },
 
-  // Badges
+  // ── Badges ─────────────────────────────────────────
   badges: {
-    base: 'px-2 py-0.5 text-xs font-medium rounded-full',
-    large: 'px-3 py-1 text-sm font-medium rounded-full',
+    base: 'px-2 py-1 text-xs font-medium rounded-md',
+    large: 'px-2.5 py-1 text-sm font-medium rounded-md',
   },
 
-  // Shadows
+  // ── Shadows (use CSS variables for theme-awareness) ─
   shadows: {
-    sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
-    xl: 'shadow-xl',
+    card: 'shadow-card',
+    cardHover: 'shadow-card-hover',
+    elevated: 'shadow-elevated',
+    dropdown: 'shadow-dropdown',
   },
 };
 
 // Helper function to create compact stat card classes
 export const createStatCardClasses = (gradient: keyof typeof compactTheme.gradients) => ({
   card: `${compactTheme.cards.base} bg-gradient-to-br ${compactTheme.bgGradients[gradient]}`,
-  icon: `${compactTheme.icons.stat} rounded-lg bg-gradient-to-br ${compactTheme.gradients[gradient]} flex items-center justify-center shadow-sm`,
-  label: compactTheme.typography.labelSmall,
+  icon: `${compactTheme.icons.statCard} rounded-lg bg-gradient-to-br ${compactTheme.gradients[gradient]} flex items-center justify-center shadow-sm`,
+  label: compactTheme.typography.labelMicro,
   value: compactTheme.typography.statLarge,
   description: compactTheme.typography.bodySmall,
 });
@@ -115,7 +126,7 @@ export const createStatCardClasses = (gradient: keyof typeof compactTheme.gradie
 // Helper function to create compact action card classes
 export const createActionCardClasses = (gradient: keyof typeof compactTheme.bgGradients) => ({
   card: `${compactTheme.cards.interactive} bg-gradient-to-br ${compactTheme.bgGradients[gradient]}`,
-  icon: `h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`,
-  title: `${compactTheme.typography.cardTitle} mb-0.5`,
+  icon: `${compactTheme.icons.statCard} rounded-xl bg-gradient-to-br flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200`,
+  title: `${compactTheme.typography.cardTitle} mb-1`,
   description: compactTheme.typography.bodySmall,
 });

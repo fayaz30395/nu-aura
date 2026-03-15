@@ -121,15 +121,15 @@ export default function CreateWikiPage() {
             <div className="flex items-center gap-3 mb-2">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--bg-surface)] dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">
                 Create Wiki Page
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 ml-11">
+            <p className="text-[var(--text-secondary)] ml-11">
               Create a new page in your knowledge base
             </p>
           </div>
@@ -209,7 +209,7 @@ export default function CreateWikiPage() {
               {...register('parentId')}
               disabled={isSubmitting}
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs text-[var(--text-muted)] mt-1">
               Leave empty for a top-level page
             </p>
           </div>
@@ -235,7 +235,7 @@ export default function CreateWikiPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 justify-end pt-6 border-t border-gray-200 dark:border-surface-700">
+          <div className="flex gap-3 justify-end pt-6 border-t border-[var(--border-main)] dark:border-surface-700">
             <Button
               onClick={() => router.back()}
               variant="secondary"

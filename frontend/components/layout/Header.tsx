@@ -23,13 +23,11 @@ import {
   MapPin,
   Users as UsersIcon,
   CheckCircle,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { GlobalSearch } from './GlobalSearch';
 import { cn } from '@/lib/utils';
 import AppSwitcher from '../platform/AppSwitcher';
-import { useDarkMode } from './DarkModeProvider';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { formatDistanceToNow } from 'date-fns';
 import { useWebSocket } from '@/lib/contexts/WebSocketContext';
 import {
@@ -114,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { unreadCount: wsUnreadCount, notifications: wsNotifications, markAsRead: wsMarkAsRead, markAllAsRead: wsMarkAllAsRead } = useWebSocket();
-  const { isDark, toggleDarkMode } = useDarkMode();
+
 
   // REST API — persisted notifications (hybrid with WebSocket)
   const { data: persistedNotifications = [], isLoading: notificationsLoading } = useNotificationInbox(10);
@@ -463,25 +461,27 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 glass-aura border-b transition-all duration-300',
+        'sticky top-0 z-40 flex-shrink-0 glass-aura border-b transition-all duration-300',
+        'h-16', // Fixed height — matches sidebar header (64px)
         className
       )}
     >
-      <div className="flex items-center justify-between px-4 py-3 sm:px-6">
+      <div className="flex items-center justify-between h-full px-4 sm:px-6">
         {/* Left Side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* Mobile hamburger */}
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="p-2 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all md:hidden min-w-[40px] min-h-[40px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
             </button>
           )}
 
-          {/* Logo Section */}
-          <div className="flex items-center gap-3">
+          {/* Logo — only visible on mobile (sidebar has logo on desktop) */}
+          <div className="flex items-center gap-3 md:hidden">
              <Image
                src="/images/logo.png"
                alt="NuLogic"
@@ -493,7 +493,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* App Switcher */}
-          <div className="block">
+          <div className="flex items-center">
             <AppSwitcher />
           </div>
 
@@ -522,24 +522,15 @@ const Header: React.FC<HeaderProps> = ({
             <HelpCircle className="h-5 w-5" />
           </button>
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2.5 rounded-xl text-primary-500/60 hover:text-primary-500 hover:bg-primary-500/10 transition-all"
-            aria-label="Toggle dark mode"
-          >
-            {mounted && (isDark ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            ))}
-          </button>
+          {/* Theme Toggle (Light / Dark / System) */}
+          <ThemeToggle className="hidden sm:block" />
+          <ThemeToggle compact className="sm:hidden" />
 
           {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
+              className="notification-btn relative p-2.5 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-all"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
@@ -555,21 +546,21 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Notification Dropdown */}
             {isNotificationsOpen && (
-              <div className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl glass-midnight shadow-xl shadow-black/20 animate-fade-in-down overflow-hidden z-50">
+              <div className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl glass-midnight animate-fade-in-down overflow-hidden z-50">
                 {/* Tabs */}
-                <div className="flex border-b border-white/10">
+                <div className="flex border-b border-[var(--dropdown-divider)]">
                   <button
                     onClick={() => setNotificationTab('google')}
                     className={cn(
                       "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
                       notificationTab === 'google'
-                        ? "text-primary-400 border-b-2 border-primary-500"
-                        : "text-white/60 hover:text-white"
+                        ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500"
+                        : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
                     )}
                   >
                     Google
                     {googleNotifications.length > 0 && (
-                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/20 text-primary-300 rounded-full">
+                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/15 text-primary-600 dark:text-primary-300 rounded-full">
                         {googleNotifications.length}
                       </span>
                     )}
@@ -579,8 +570,8 @@ const Header: React.FC<HeaderProps> = ({
                     className={cn(
                       "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
                       notificationTab === 'system'
-                        ? "text-primary-400 border-b-2 border-primary-500"
-                        : "text-white/60 hover:text-white"
+                        ? "text-primary-500 dark:text-primary-400 border-b-2 border-primary-500"
+                        : "text-[var(--dropdown-text-secondary)] hover:text-[var(--dropdown-text)]"
                     )}
                   >
                     System
@@ -633,7 +624,7 @@ const Header: React.FC<HeaderProps> = ({
                                 getNotificationBg(notification.type)
                               )}
                             >
-                              <div className="w-8 h-8 rounded-lg bg-white dark:bg-surface-800 flex items-center justify-center flex-shrink-0 shadow-sm">
+                              <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-sm">
                                 {getNotificationIcon(notification.type)}
                               </div>
                               <div className="flex-1 min-w-0">
@@ -838,13 +829,13 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl glass-midnight shadow-xl shadow-black/20 animate-fade-in-down overflow-hidden">
+              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl glass-midnight animate-fade-in-down overflow-hidden">
                 {/* User Info Header */}
-                <div className="p-4 border-b border-white/10 bg-white/5">
-                  <p className="text-sm font-semibold text-white">
+                <div className="p-4 border-b border-[var(--dropdown-divider)] bg-[var(--bg-card-hover)]">
+                  <p className="text-sm font-semibold text-[var(--dropdown-text)]">
                     {userName}
                   </p>
-                  <p className="text-xs text-white/50 mt-0.5">
+                  <p className="text-xs text-[var(--dropdown-text-secondary)] mt-0.5">
                     {userRole}
                   </p>
                 </div>
@@ -856,10 +847,10 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onProfile?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5">
-                      <User className="h-4 w-4 text-white/60" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
+                      <User className="h-4 w-4 text-[var(--text-muted)]" />
                     </div>
                     <span>View Profile</span>
                   </button>
@@ -869,24 +860,24 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onSettings?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[var(--dropdown-text-secondary)] hover:bg-[var(--dropdown-hover)] hover:text-[var(--dropdown-text)] transition-all duration-150"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5">
-                      <Settings className="h-4 w-4 text-white/60" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[var(--bg-surface)]">
+                      <Settings className="h-4 w-4 text-[var(--text-muted)]" />
                     </div>
                     <span>Settings</span>
                   </button>
                 </div>
 
-                <div className="border-t border-white/10 p-2">
+                <div className="border-t border-[var(--dropdown-divider)] p-2">
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
                       onLogout?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-accent-400 hover:bg-accent-500/10 transition-all duration-200"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 transition-all duration-150"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-500/10">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-danger-50 dark:bg-danger-950/30">
                       <LogOut className="h-4 w-4" />
                     </div>
                     <span>Sign out</span>
@@ -902,10 +893,10 @@ const Header: React.FC<HeaderProps> = ({
       {isMobileSearchOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-[var(--bg-overlay)]"
             onClick={() => setIsMobileSearchOpen(false)}
           />
-          <div className="absolute top-0 left-0 right-0 bg-white dark:bg-surface-900 p-4 shadow-xl animate-fade-in-down">
+          <div className="absolute top-0 left-0 right-0 bg-[var(--bg-elevated)] p-4 shadow-xl animate-fade-in-down">
             <GlobalSearch
               onSelect={() => setIsMobileSearchOpen(false)}
               autoFocus
@@ -918,10 +909,10 @@ const Header: React.FC<HeaderProps> = ({
       {selectedEvent && selectedEvent.calendarEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-[var(--bg-overlay)]"
             onClick={() => setSelectedEvent(null)}
           />
-          <div className="relative bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
               <div className="flex items-start justify-between">
@@ -1070,13 +1061,13 @@ const Header: React.FC<HeaderProps> = ({
       {selectedEmail && selectedEmail.emailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-[var(--bg-overlay)]"
             onClick={() => {
               setSelectedEmail(null);
               setEmailContent('');
             }}
           />
-          <div className="relative bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-fade-in-down">
             {/* Header */}
             <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
               <div className="flex items-start justify-between">
@@ -1145,10 +1136,10 @@ const Header: React.FC<HeaderProps> = ({
       {selectedFile && selectedFile.driveFile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-[var(--bg-overlay)]"
             onClick={() => setSelectedFile(null)}
           />
-          <div className="relative bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
+          <div className="relative bg-[var(--bg-elevated)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] overflow-hidden animate-fade-in-down">
             {/* Header */}
             <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
               <div className="flex items-start justify-between">

@@ -126,7 +126,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Leave Calendar</h1>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Leave Calendar</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('my')}
@@ -152,15 +152,15 @@ export default function LeaveCalendarPage() {
         </div>
 
         {/* Calendar Controls */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
               </h2>
               <button
                 onClick={goToToday}
-                className="px-3 py-1 text-sm bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg text-gray-900 dark:text-white"
+                className="px-3 py-1 text-sm bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg text-[var(--text-primary)]"
               >
                 Today
               </button>
@@ -168,13 +168,13 @@ export default function LeaveCalendarPage() {
             <div className="flex gap-2">
               <button
                 onClick={previousMonth}
-                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-gray-900 dark:text-white"
+                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-[var(--text-primary)]"
               >
                 ← Previous
               </button>
               <button
                 onClick={nextMonth}
-                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-gray-900 dark:text-white"
+                className="px-4 py-2 bg-surface-100 dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg font-medium text-[var(--text-primary)]"
               >
                 Next →
               </button>
@@ -183,7 +183,7 @@ export default function LeaveCalendarPage() {
         </div>
 
         {/* Legend */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-4 mb-6">
           <div className="flex flex-wrap gap-4">
             <div className="text-sm text-surface-600 dark:text-surface-400 font-medium">Legend:</div>
             {leaveTypes.map(type => (
@@ -192,20 +192,20 @@ export default function LeaveCalendarPage() {
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: type.colorCode }}
                 />
-                <span className="text-sm text-gray-900 dark:text-white">{type.leaveName}</span>
+                <span className="text-sm text-[var(--text-primary)]">{type.leaveName}</span>
               </div>
             ))}
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500" />
-              <span className="text-sm text-gray-900 dark:text-white">Holiday</span>
+              <span className="text-sm text-[var(--text-primary)]">Holiday</span>
             </div>
           </div>
         </div>
 
         {/* Calendar Grid */}
-        <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
           {loading ? (
-            <div className="text-center py-12 text-gray-900 dark:text-white">Loading calendar...</div>
+            <div className="text-center py-12 text-[var(--text-primary)]">Loading calendar...</div>
           ) : (
             <div className="p-4">
               {/* Week day headers */}
@@ -229,7 +229,7 @@ export default function LeaveCalendarPage() {
                       day.isToday
                         ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30'
                         : day.isCurrentMonth
-                        ? 'border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900'
+                        ? 'border-surface-200 dark:border-surface-700 bg-[var(--bg-card)]'
                         : 'border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50'
                     } ${day.holiday ? 'bg-red-50 dark:bg-red-900/20' : ''}`}
                   >
@@ -238,8 +238,8 @@ export default function LeaveCalendarPage() {
                         day.isToday
                           ? 'text-primary-600 dark:text-primary-400'
                           : day.isCurrentMonth
-                          ? 'text-gray-900 dark:text-white'
-                          : 'text-gray-400 dark:text-gray-600'
+                          ? 'text-[var(--text-primary)]'
+                          : 'text-gray-400 dark:text-[var(--text-secondary)]'
                       }`}
                     >
                       {day.date.getDate()}
@@ -283,7 +283,7 @@ export default function LeaveCalendarPage() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Total Leaves This Month</div>
             <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">
               {leaves.filter(l => {
@@ -293,13 +293,13 @@ export default function LeaveCalendarPage() {
               }).length}
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Pending Approvals</div>
             <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
               {leaves.filter(l => l.status === 'PENDING').length}
             </div>
           </div>
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6">
             <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Upcoming Leaves</div>
             <div className="text-3xl font-bold text-purple-600 dark:text-purple-500">
               {leaves.filter(l => new Date(l.startDate) > new Date()).length}
@@ -311,27 +311,27 @@ export default function LeaveCalendarPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <button
             onClick={() => router.push('/leave/apply')}
-            className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-primary-600 dark:text-primary-400 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Apply for Leave</h3>
+            <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">Apply for Leave</h3>
             <p className="text-surface-600 dark:text-surface-400 text-sm">Submit a new leave request</p>
           </button>
 
           <button
             onClick={() => router.push('/leave/my-leaves')}
-            className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-green-600 dark:text-green-500 mb-2">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">My Leave History</h3>
+            <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">My Leave History</h3>
             <p className="text-surface-600 dark:text-surface-400 text-sm">View all your leave requests</p>
           </button>
         </div>

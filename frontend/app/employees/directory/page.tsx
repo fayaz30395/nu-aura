@@ -262,7 +262,7 @@ export default function TeamDirectory() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
               <div className="flex gap-4 mb-4">
                 <div className="flex-1 relative">
@@ -316,7 +316,7 @@ export default function TeamDirectory() {
                             Department
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                             value={filters.departmentIds[0] || ''}
                             onChange={(e) =>
                               handleFilterChange(
@@ -340,7 +340,7 @@ export default function TeamDirectory() {
                             Job Role
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                             value={filters.jobRoles[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('jobRoles', e.target.value ? [e.target.value] : [])
@@ -361,7 +361,7 @@ export default function TeamDirectory() {
                             Level
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                             value={filters.levels[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('levels', e.target.value ? [e.target.value] : [])
@@ -382,7 +382,7 @@ export default function TeamDirectory() {
                             Status
                           </label>
                           <select
-                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50"
+                            className="w-full border border-surface-200 dark:border-surface-700 rounded-xl p-2.5 bg-[var(--bg-input)] text-surface-900 dark:text-surface-50"
                             value={filters.statuses[0] || ''}
                             onChange={(e) =>
                               handleFilterChange('statuses', e.target.value ? [e.target.value] : [])
@@ -457,12 +457,12 @@ export default function TeamDirectory() {
                   >
                     <Card
                       isClickable
-                      className="bg-white dark:bg-surface-900 overflow-hidden cursor-pointer group"
+                      className="bg-[var(--bg-card)] overflow-hidden cursor-pointer group"
                     >
                       {/* Card Header with gradient */}
                       <div className={`h-20 ${getRandomColor(employee.fullName)} relative`}>
                         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                          <div className="w-16 h-16 rounded-full bg-white dark:bg-surface-900 p-1 shadow-lg">
+                          <div className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-lg">
                             <div
                               className={`w-full h-full rounded-full ${getRandomColor(
                                 employee.fullName
@@ -528,7 +528,7 @@ export default function TeamDirectory() {
               </motion.div>
             ) : (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <Card className="bg-white dark:bg-surface-900 overflow-hidden">
+                <Card className="bg-[var(--bg-card)] overflow-hidden">
                   <table className="w-full">
                     <thead className="bg-surface-50 dark:bg-surface-800/50">
                       <tr>
@@ -698,14 +698,14 @@ export default function TeamDirectory() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-overlay)] p-4"
               onClick={() => setSelectedEmployee(null)}
             >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+                className="bg-[var(--bg-card)] rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
@@ -717,7 +717,7 @@ export default function TeamDirectory() {
                     <X className="w-5 h-5 text-white" />
                   </button>
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                    <div className="w-24 h-24 rounded-full bg-white dark:bg-surface-900 p-1 shadow-lg">
+                    <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-lg">
                       <div
                         className={`w-full h-full rounded-full ${getRandomColor(
                           selectedEmployee.fullName

@@ -164,7 +164,7 @@ export function TaskDetailsModal({
       case 'phase':
         return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300';
       default:
-        return 'bg-gray-100 text-gray-700 dark:bg-surface-800 dark:text-gray-300';
+        return 'bg-[var(--bg-surface)] text-gray-700 dark:bg-surface-800 dark:text-gray-300';
     }
   };
 
@@ -208,7 +208,7 @@ export function TaskDetailsModal({
                   value={normalizedTask.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   disabled={isSaving}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-card)] text-surface-900 dark:text-surface-100"
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>

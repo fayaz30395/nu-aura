@@ -280,11 +280,9 @@ code, kbd, samp, pre {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Glassmorphism Effect */
+/* Solid background (glass effect removed) */
 .glass {
-  background: rgba(21, 29, 46, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(21, 29, 46, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 

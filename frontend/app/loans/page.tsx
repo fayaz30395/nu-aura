@@ -151,7 +151,7 @@ export default function LoansPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600">
                 <CreditCard className="h-5 w-5 text-white" />
@@ -167,7 +167,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -183,7 +183,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <TrendingUp className="h-5 w-5 text-white" />
@@ -199,7 +199,7 @@ export default function LoansPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
@@ -217,7 +217,7 @@ export default function LoansPage() {
         </div>
 
         {/* Loans List */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-surface-200 dark:border-surface-800">
             <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
               My Loans
@@ -236,25 +236,25 @@ export default function LoansPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-surface-50 dark:bg-surface-800/50">
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Loan #
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Type
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Amount
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Term
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Status
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Balance
                     </th>
-                    <th className="px-5 py-3 text-left text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    <th className="px-5 py-3 text-left text-xs font-medium text-surface-500 dark:text-surface-400">
                       Actions
                     </th>
                   </tr>
@@ -327,7 +327,7 @@ export default function LoansPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => router.push('/loans/new')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
@@ -345,7 +345,7 @@ export default function LoansPage() {
 
           <button
             onClick={() => router.push('/loans?filter=active')}
-            className="group bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
+            className="group bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">

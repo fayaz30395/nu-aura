@@ -250,7 +250,7 @@ function ResponsiveTable<T>({
             <div
               key={key}
               className={cn(
-                'bg-white dark:bg-surface-800 rounded-lg border border-surface-200 dark:border-surface-700 p-4',
+                'bg-[var(--bg-input)] rounded-lg border border-surface-200 dark:border-surface-700 p-4',
                 'transition-all duration-200',
                 onRowClick && 'cursor-pointer active:scale-[0.98]',
                 isSelected && 'ring-2 ring-primary-500 border-primary-500'
@@ -353,7 +353,7 @@ export function TablePagination({
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="text-sm border border-surface-300 dark:border-surface-600 rounded px-2 py-1 bg-white dark:bg-surface-800"
+              className="text-sm border border-surface-300 dark:border-surface-600 rounded px-2 py-1 bg-[var(--bg-input)]"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>

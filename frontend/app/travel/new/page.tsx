@@ -197,7 +197,7 @@ export default function NewTravelRequestPage() {
         )}
 
         {/* Form */}
-        <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+        <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
           {/* Travel Type & Purpose */}
           <div className="p-6 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
@@ -295,7 +295,7 @@ export default function NewTravelRequestPage() {
                   value={formData.originCity || ''}
                   onChange={(e) => handleInputChange('originCity', e.target.value)}
                   placeholder="e.g., Mumbai"
-                  className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.originCity
                       ? 'border-red-500'
                       : 'border-surface-200 dark:border-surface-700'
@@ -316,7 +316,7 @@ export default function NewTravelRequestPage() {
                   value={formData.destinationCity || ''}
                   onChange={(e) => handleInputChange('destinationCity', e.target.value)}
                   placeholder="e.g., Delhi"
-                  className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.destinationCity
                       ? 'border-red-500'
                       : 'border-surface-200 dark:border-surface-700'
@@ -336,7 +336,7 @@ export default function NewTravelRequestPage() {
                   type="date"
                   value={formData.departureDate || ''}
                   onChange={(e) => handleInputChange('departureDate', e.target.value)}
-                  className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.departureDate
                       ? 'border-red-500'
                       : 'border-surface-200 dark:border-surface-700'
@@ -357,7 +357,7 @@ export default function NewTravelRequestPage() {
                   value={formData.returnDate || ''}
                   onChange={(e) => handleInputChange('returnDate', e.target.value)}
                   min={formData.departureDate}
-                  className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                  className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                     validationErrors.returnDate
                       ? 'border-red-500'
                       : 'border-surface-200 dark:border-surface-700'
@@ -376,7 +376,7 @@ export default function NewTravelRequestPage() {
                   type="checkbox"
                   checked={formData.isInternational || false}
                   onChange={(e) => handleInputChange('isInternational', e.target.checked)}
-                  className="w-4 h-4 text-primary-600 bg-white dark:bg-surface-900 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
                 />
                 <span className="text-sm text-surface-700 dark:text-surface-300">
                   International Travel
@@ -389,7 +389,7 @@ export default function NewTravelRequestPage() {
                     type="checkbox"
                     checked={formData.visaRequired || false}
                     onChange={(e) => handleInputChange('visaRequired', e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-white dark:bg-surface-900 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                    className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
                   />
                   <span className="text-sm text-surface-700 dark:text-surface-300">
                     Visa Required
@@ -484,7 +484,7 @@ export default function NewTravelRequestPage() {
                 type="checkbox"
                 checked={formData.accommodationRequired || false}
                 onChange={(e) => handleInputChange('accommodationRequired', e.target.checked)}
-                className="w-4 h-4 text-primary-600 bg-white dark:bg-surface-900 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 bg-[var(--bg-card)] border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
               />
               <span className="text-sm text-surface-700 dark:text-surface-300">
                 Accommodation required
@@ -503,7 +503,7 @@ export default function NewTravelRequestPage() {
                     value={formData.hotelPreference || ''}
                     onChange={(e) => handleInputChange('hotelPreference', e.target.value)}
                     placeholder="Enter preferred hotel or area"
-                    className="w-full px-4 py-2.5 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-700 rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   />
                 </div>
 
@@ -517,7 +517,7 @@ export default function NewTravelRequestPage() {
                     value={formData.checkInDate || ''}
                     onChange={(e) => handleInputChange('checkInDate', e.target.value)}
                     min={formData.departureDate}
-                    className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                    className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                       validationErrors.checkInDate
                         ? 'border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
@@ -539,7 +539,7 @@ export default function NewTravelRequestPage() {
                     onChange={(e) => handleInputChange('checkOutDate', e.target.value)}
                     min={formData.checkInDate || formData.departureDate}
                     max={formData.returnDate}
-                    className={`w-full px-4 py-2.5 bg-white dark:bg-surface-900 border ${
+                    className={`w-full px-4 py-2.5 bg-[var(--bg-card)] border ${
                       validationErrors.checkOutDate
                         ? 'border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
@@ -626,7 +626,7 @@ export default function NewTravelRequestPage() {
           <button
             onClick={() => router.back()}
             disabled={createMutation.isPending || submitMutation.isPending}
-            className="px-6 py-2.5 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

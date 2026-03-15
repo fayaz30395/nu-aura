@@ -103,7 +103,7 @@ export default function OrganizationHealthPage() {
                             <CardContent className="p-8 flex flex-col items-center justify-center text-center h-full relative z-10">
                                 <span className="text-primary-100 text-sm font-medium tracking-wider uppercase mb-2">Organization Pulse</span>
                                 <div className="text-8xl font-black mb-4">{healthScore.score}</div>
-                                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full mb-6">
+                                <div className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-elevated)] rounded-full mb-6">
                                     <Zap className="h-5 w-5 text-yellow-300" />
                                     <span className="font-bold text-lg">{healthScore.status}</span>
                                 </div>
@@ -116,7 +116,7 @@ export default function OrganizationHealthPage() {
                     </motion.div>
 
                     <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="bg-white dark:bg-surface-900 border-none shadow-sm shadow-primary-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-primary-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Staff Retention</CardTitle>
@@ -152,7 +152,7 @@ export default function OrganizationHealthPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-white dark:bg-surface-900 border-none shadow-sm shadow-primary-100/20">
+                        <Card className="bg-[var(--bg-card)] border-none shadow-sm shadow-primary-100/20">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Engagement Intensity</CardTitle>
@@ -184,7 +184,7 @@ export default function OrganizationHealthPage() {
 
                 {/* Breakdown Sections */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <Card className="bg-white dark:bg-surface-900">
+                    <Card className="bg-[var(--bg-card)]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <PieChartIcon className="h-5 w-5 text-primary-500" /> Diversity & Inclusion
@@ -218,7 +218,7 @@ export default function OrganizationHealthPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-white dark:bg-surface-900">
+                    <Card className="bg-[var(--bg-card)]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Clock className="h-5 w-5 text-indigo-500" /> Tenure Distribution
@@ -243,7 +243,7 @@ export default function OrganizationHealthPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-white dark:bg-surface-900">
+                    <Card className="bg-[var(--bg-card)]">
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Award className="h-5 w-5 text-yellow-500" /> Learning Vitality
@@ -286,7 +286,7 @@ export default function OrganizationHealthPage() {
                 </div>
 
                 {/* Department Heatmap Stand-in */}
-                <Card className="bg-white dark:bg-surface-900">
+                <Card className="bg-[var(--bg-card)]">
                     <CardHeader>
                         <CardTitle>Department Vibrancy</CardTitle>
                         <CardDescription>Stability and engagement ranking by department</CardDescription>

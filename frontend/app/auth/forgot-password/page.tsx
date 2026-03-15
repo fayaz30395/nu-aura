@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           {/* Logo */}
           <div className="text-center mb-8">
@@ -65,11 +65,11 @@ export default function ForgotPasswordPage() {
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
-              NU-HRMS
+              NU-AURA
             </h1>
           </div>
 
-          <Card className="backdrop-blur-sm bg-white/90 dark:bg-surface-900/90 border-surface-200 dark:border-surface-700 shadow-xl">
+          <Card className="bg-[var(--bg-card)] border-surface-200 dark:border-surface-700 shadow-xl">
             <CardContent className="pt-8 pb-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -106,7 +106,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-surface-50 to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
-            NU-HRMS
+            NU-AURA
           </h1>
           <p className="mt-2 text-sm text-surface-600 dark:text-surface-400">
             Reset your password
@@ -122,7 +122,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Forgot Password Card */}
-        <Card className="backdrop-blur-sm bg-white/90 dark:bg-surface-900/90 border-surface-200 dark:border-surface-700 shadow-xl">
+        <Card className="bg-[var(--bg-card)] border-surface-200 dark:border-surface-700 shadow-xl">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl">Forgot Password</CardTitle>
             <CardDescription>
@@ -158,7 +158,7 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                     disabled={isLoading}
                     placeholder="Enter your email"
-                    className={`block w-full pl-10 pr-4 py-3 bg-white dark:bg-surface-800 border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                    className={`block w-full pl-10 pr-4 py-3 bg-[var(--bg-input)] border rounded-xl text-surface-900 dark:text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
                       errors.email
                         ? 'border-red-500 dark:border-red-500'
                         : 'border-surface-200 dark:border-surface-700'
@@ -199,7 +199,7 @@ export default function ForgotPasswordPage() {
 
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-surface-400 dark:text-surface-500">
-          NU-HRMS v1.0 &copy; {new Date().getFullYear()}
+          NU-AURA v1.0 &copy; {new Date().getFullYear()}
         </p>
       </div>
     </div>

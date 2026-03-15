@@ -188,7 +188,7 @@ export function CalendarView({
             }}
             className={`min-h-[100px] p-1 border-r border-b border-surface-200 dark:border-surface-700 cursor-pointer transition-colors ${
               isCurrentMonth
-                ? 'bg-white dark:bg-surface-900'
+                ? 'bg-[var(--bg-card)]'
                 : 'bg-surface-50 dark:bg-surface-800/50'
             } hover:bg-surface-100 dark:hover:bg-surface-800`}
           >
@@ -434,7 +434,7 @@ export function CalendarView({
   };
 
   return (
-    <div className={`bg-white dark:bg-surface-900 rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
+    <div className={`bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-700 ${className}`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-surface-200 dark:border-surface-700">
         <div className="flex items-center gap-3">
@@ -469,7 +469,7 @@ export function CalendarView({
               onClick={() => setViewType(type)}
               className={`px-3 py-1.5 text-sm rounded-md capitalize transition-colors ${
                 viewType === type
-                  ? 'bg-white dark:bg-surface-700 text-primary-600 dark:text-primary-400 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-primary-600 dark:text-primary-400 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
               }`}
             >

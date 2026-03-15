@@ -237,7 +237,7 @@ export default function DepartmentsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
@@ -251,7 +251,7 @@ export default function DepartmentsPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
@@ -265,7 +265,7 @@ export default function DepartmentsPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-surface-900">
+          <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
@@ -291,7 +291,7 @@ export default function DepartmentsPage() {
         )}
 
         {/* Search and Filter */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-400" />
@@ -300,14 +300,14 @@ export default function DepartmentsPage() {
                 placeholder="Search departments by name, code, or type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Departments Table */}
-        <Card className="bg-white dark:bg-surface-900">
+        <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -442,8 +442,8 @@ export default function DepartmentsPage() {
 
         {/* Add/Edit Department Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-surface-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="p-6 border-b border-surface-200 dark:border-surface-700">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
@@ -476,7 +476,7 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('code')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
                     />
                     {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
@@ -488,7 +488,7 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('name')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Engineering"
                     />
                     {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
@@ -502,7 +502,7 @@ export default function DepartmentsPage() {
                   <textarea
                     {...register('description')}
                     rows={3}
-                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                     placeholder="Department description..."
                   />
                   {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
@@ -519,7 +519,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">Select Type</option>
                           {departmentTypes.map(type => (
@@ -540,7 +540,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">None (Root Department)</option>
                           {departments
@@ -568,7 +568,7 @@ export default function DepartmentsPage() {
                       render={({ field }) => (
                         <select
                           {...field}
-                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         >
                           <option value="">Select Manager</option>
                           {employees.map((emp) => (
@@ -588,7 +588,7 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('location')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
                     />
                     {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
@@ -603,7 +603,7 @@ export default function DepartmentsPage() {
                     <input
                       type="text"
                       {...register('costCenter')}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-[var(--bg-input)] text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="CC-1001"
                     />
                     {errors.costCenter && <p className="text-red-500 text-sm mt-1">{errors.costCenter.message}</p>}

@@ -9,6 +9,11 @@ import { ChevronRight, ChevronDown, Sparkles, PanelLeftClose, PanelLeft, X } fro
 
 const STORAGE_KEY_COLLAPSED_SECTIONS = 'sidebar-collapsed-sections';
 
+/** Shared layout constants — keep in sync with AppLayout & Header */
+export const SIDEBAR_WIDTH_EXPANDED = 256;
+export const SIDEBAR_WIDTH_COLLAPSED = 72;
+export const HEADER_HEIGHT = 64; // h-16 = 4rem = 64px
+
 export interface SidebarItem {
   id: string;
   label: string;
@@ -93,7 +98,7 @@ const ChildrenFlyover: React.FC<{
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-200',
+          'fixed inset-0 z-40 bg-[var(--bg-overlay)] transition-opacity duration-200',
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
@@ -103,14 +108,15 @@ const ChildrenFlyover: React.FC<{
       <div
         ref={panelRef}
         className={cn(
-          'fixed z-50 w-64 glass-aura',
+          'fixed z-50 w-64 bg-[var(--bg-elevated)]',
           'rounded-lg shadow-xl',
           'transform transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
         style={{
           left: `${triggerRect.right + 8}px`,
-          top: `${triggerRect.top}px`,
+          // Clamp top so flyover doesn't overflow viewport
+          top: `${Math.min(triggerRect.top, window.innerHeight - 400)}px`,
         }}
       >
         {/* Header */}
@@ -244,26 +250,25 @@ const SidebarMenuItem: React.FC<{
   };
 
   const commonClasses = cn(
-    'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
+    'sidebar-menu-item group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
     'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     isActive || isFlyoverOpen
-      ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 shadow-sm'
+      ? 'font-semibold shadow-sm border-l-[3px]'
       : 'text-secondary',
-    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-primary-500/5 hover:text-primary',
+    !item.disabled && !isActive && !isFlyoverOpen && 'hover:text-primary',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
+  // Active state styling with CSS variables
+  const activeStyles = isActive || isFlyoverOpen ? {
+    backgroundColor: 'var(--sidebar-active-bg)',
+    borderLeftColor: 'var(--sidebar-active-border)',
+    color: 'var(--border-focus)',
+  } : {};
+
   const content = (
     <>
-      {/* Active indicator with smooth animation */}
-      <div
-        className={cn(
-          'absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full transition-all duration-250 ease-out',
-          isActive || isFlyoverOpen
-            ? 'w-1 h-6 bg-primary-500'
-            : 'w-0 h-0 bg-primary-500'
-        )}
-      />
+      {/* Active indicator (handled by border-l in commonClasses) */}
 
       {item.icon && (
         <span
@@ -306,7 +311,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (all items) */}
       {isCollapsed && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface/90 backdrop-blur-lg border border-main text-primary text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-primary text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs text-white">
@@ -327,6 +332,7 @@ const SidebarMenuItem: React.FC<{
           href={item.href}
           onClick={handleClick}
           className={commonClasses}
+          style={activeStyles}
           prefetch={true}
         >
           {content}
@@ -342,6 +348,7 @@ const SidebarMenuItem: React.FC<{
         ref={elementRef as React.Ref<HTMLButtonElement>}
         onClick={handleClick}
         className={commonClasses}
+        style={activeStyles}
         disabled={item.disabled}
       >
         {content}
@@ -415,17 +422,11 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     const [flyoverTriggerRect, setFlyoverTriggerRect] = useState<DOMRect | null>(null);
     const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
-    // Load collapsed state from localStorage
+    // Load collapsed section state from localStorage
+    // NOTE: Sidebar collapsed state (expand/collapse) is managed by AppLayout to avoid
+    // dual-source race conditions. Only section collapse (which sections are open) is local.
     useEffect(() => {
       if (typeof window !== 'undefined') {
-        const savedCollapsed = localStorage.getItem(STORAGE_KEY_COLLAPSED);
-        if (savedCollapsed !== null) {
-          const parsedCollapsed = savedCollapsed === 'true';
-          setIsCollapsed(parsedCollapsed);
-          onCollapsedChange?.(parsedCollapsed);
-        }
-
-        // Load collapsed sections
         const savedCollapsedSections = localStorage.getItem(STORAGE_KEY_COLLAPSED_SECTIONS);
         if (savedCollapsedSections) {
           try {
@@ -436,7 +437,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           }
         }
       }
-    }, [onCollapsedChange]);
+    }, []);
 
     // Sync with prop changes
     useEffect(() => {
@@ -523,21 +524,20 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
     return (
       <>
-        <motion.div
+        <div
           ref={ref as React.Ref<HTMLDivElement>}
           data-sidebar
           className={cn(
-            'flex flex-col border-r transition-all duration-300 relative',
+            'flex flex-col border-r relative h-screen overflow-hidden',
+            'transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
+            'will-change-[width]',
             className
           )}
-          style={{ backgroundColor: 'var(--bg-sidebar)', borderColor: 'var(--border-main)' }}
-          animate={{
-            width: isCollapsed ? 72 : 256,
-          }}
-          transition={{
-            type: 'spring',
-            stiffness: 260,
-            damping: 20,
+          style={{
+            backgroundColor: 'var(--bg-sidebar)',
+            borderColor: 'var(--border-main)',
+            width: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+            minWidth: isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
           }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
@@ -611,7 +611,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-hide">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 scrollbar-hide">
             {groupedItems.map((section, sectionIndex) => {
               const isSectionExpanded = !collapsedSections.has(section.id);
 
@@ -698,13 +698,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             ) : (
               <div className="w-8 h-8 rounded-md bg-primary-500/10 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/20 shadow-sm">
                 <Sparkles className="h-4 w-4 text-primary-500 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface/90 backdrop-blur-lg border border-main text-primary text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-[var(--bg-elevated)] border border-[var(--border-main)] text-primary text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl">
                   Pro Features Active
                 </div>
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Children Flyover Panel */}
         {flyoverItem && (

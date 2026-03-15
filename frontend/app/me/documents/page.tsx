@@ -340,7 +340,7 @@ export default function MyDocumentsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, documentType: e.target.value as DocumentType })
                   }
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                 >
                   {DOCUMENT_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -363,7 +363,7 @@ export default function MyDocumentsPage() {
                   onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
                   placeholder="Why do you need this document?"
                   rows={3}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                 />
               </div>
 
@@ -377,7 +377,7 @@ export default function MyDocumentsPage() {
                   value={formData.addressedTo}
                   onChange={(e) => setFormData({ ...formData, addressedTo: e.target.value })}
                   placeholder="e.g., Immigration Department, Bank Name"
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                 />
               </div>
 
@@ -391,7 +391,7 @@ export default function MyDocumentsPage() {
                   value={formData.requiredByDate}
                   onChange={(e) => setFormData({ ...formData, requiredByDate: e.target.value })}
                   min={format(new Date(), 'yyyy-MM-dd')}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                 />
               </div>
 
@@ -432,7 +432,7 @@ export default function MyDocumentsPage() {
                     onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
                     placeholder="Enter delivery address"
                     rows={2}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                   />
                 </div>
               )}
@@ -445,7 +445,7 @@ export default function MyDocumentsPage() {
                 <select
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
-                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                  className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-surface-100"
                 >
                   <option value={1}>High - Urgent</option>
                   <option value={2}>Normal</option>

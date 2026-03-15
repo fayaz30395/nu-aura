@@ -25,7 +25,7 @@ import {
   IconCheck,
   IconClock,
 } from '@tabler/icons-react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import { AdminPageContent } from '@/components/layout';
 
 interface MobileEndpoint {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT';
@@ -223,7 +223,7 @@ export default function MobileApiPage() {
   );
 
   return (
-    <AppLayout>
+    <AdminPageContent>
       <Container size="lg" py="xl">
         {/* Header */}
         <Group justify="space-between" mb="xl">
@@ -448,6 +448,6 @@ const MyComponent = () => {
           </Stack>
         </Paper>
       </Container>
-    </AppLayout>
+    </AdminPageContent>
   );
 }

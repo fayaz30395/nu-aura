@@ -408,7 +408,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('timeline')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'timeline'
-                  ? 'bg-white dark:bg-surface-700 text-primary-600 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
                   }`}
               >
@@ -418,7 +418,7 @@ export default function ProjectCalendarPage() {
               <button
                 onClick={() => setViewMode('calendar')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all ${viewMode === 'calendar'
-                  ? 'bg-white dark:bg-surface-700 text-primary-600 shadow-sm'
+                  ? 'bg-[var(--bg-surface)] text-primary-600 shadow-sm'
                   : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
                   }`}
               >
@@ -458,7 +458,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Status</option>
                   <option value="PLANNED">Planned</option>
@@ -470,7 +470,7 @@ export default function ProjectCalendarPage() {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-3 py-2 bg-[var(--bg-input)] text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">All Priority</option>
                   <option value="LOW">Low</option>
@@ -509,7 +509,7 @@ export default function ProjectCalendarPage() {
                         key={level}
                         onClick={() => setZoomLevel(level)}
                         className={`px-3 py-1.5 text-sm rounded capitalize ${zoomLevel === level
-                          ? 'bg-white dark:bg-surface-700 shadow text-primary-600 dark:text-primary-400'
+                          ? 'bg-[var(--bg-surface)] shadow text-primary-600 dark:text-primary-400'
                           : 'text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-100'
                           }`}
                       >

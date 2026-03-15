@@ -258,16 +258,16 @@ export const counterTransition = {
 // ==================== Glassmorphism Presets ====================
 
 export const glassPresets = {
-  /** Light glass card */
-  card: 'bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl border border-white/20 dark:border-surface-700/30',
-  /** Modal backdrop */
-  modalBackdrop: 'bg-black/40 backdrop-blur-sm',
-  /** Elevated glass panel */
-  panel: 'bg-white/90 dark:bg-surface-900/90 backdrop-blur-lg border border-surface-200/50 dark:border-surface-700/50',
-  /** Sidebar glass */
-  sidebar: 'bg-white/95 dark:bg-surface-900/95 backdrop-blur-xl',
-  /** Floating toolbar */
-  toolbar: 'bg-white/70 dark:bg-surface-800/70 backdrop-blur-md border border-surface-200/30 dark:border-surface-700/30 shadow-lg',
+  /** Solid card background */
+  card: 'bg-[var(--bg-card)] border border-[var(--border-main)]',
+  /** Solid modal backdrop */
+  modalBackdrop: 'bg-[var(--bg-overlay)]',
+  /** Solid elevated panel */
+  panel: 'bg-[var(--bg-card)] border border-[var(--border-main)]',
+  /** Solid sidebar background */
+  sidebar: 'bg-[var(--bg-sidebar)]',
+  /** Solid floating toolbar */
+  toolbar: 'bg-[var(--bg-elevated)] border border-[var(--border-main)] shadow-lg',
 } as const;
 
 // ==================== Shadow Presets ====================

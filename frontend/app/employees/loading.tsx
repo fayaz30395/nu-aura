@@ -28,7 +28,7 @@ export default function Loading() {
       </div>
 
       {/* Table skeleton */}
-      <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+      <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
         <div className="border-b border-surface-200 dark:border-surface-800">
           <Skeleton height={44} />
         </div>

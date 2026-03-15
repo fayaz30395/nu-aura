@@ -665,7 +665,7 @@ export default function SignPage() {
 
       {/* Decline Modal */}
       {showDeclineModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-base font-semibold text-slate-800 mb-1">
               Decline to Sign

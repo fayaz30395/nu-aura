@@ -298,7 +298,7 @@ export default function TravelRequestDetailsPage() {
             {canEdit && (
               <button
                 onClick={() => router.push(`/travel/${travelRequest.id}/edit`)}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
               >
                 <Edit className="h-4 w-4" />
                 Edit
@@ -308,7 +308,7 @@ export default function TravelRequestDetailsPage() {
               <button
                 onClick={() => setShowCancelReasonModal(true)}
                 disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-900 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-card)] border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
               >
                 <XCircle className="h-4 w-4" />
                 Cancel Request
@@ -332,7 +332,7 @@ export default function TravelRequestDetailsPage() {
           {/* Left Column - Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Travel Information */}
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
               <div className="p-6 border-b border-surface-200 dark:border-surface-800">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
@@ -519,7 +519,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Travel Expenses */}
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden">
               <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
@@ -600,7 +600,7 @@ export default function TravelRequestDetailsPage() {
           {/* Right Column - Summary */}
           <div className="space-y-6">
             {/* Budget Summary */}
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
               <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
                 <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                   <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -666,7 +666,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Status Timeline */}
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
               <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
                 <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
                   <Clock className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
@@ -714,7 +714,7 @@ export default function TravelRequestDetailsPage() {
             </div>
 
             {/* Employee Info */}
-            <div className="bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-surface-200 dark:border-surface-800 p-6 space-y-4">
               <div className="flex items-center gap-3 pb-4 border-b border-surface-200 dark:border-surface-800">
                 <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
                   <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />

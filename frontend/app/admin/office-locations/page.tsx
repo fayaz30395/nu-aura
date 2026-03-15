@@ -211,7 +211,7 @@ export default function OfficeLocationsPage() {
         </div>
 
         {showForm && (
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit Location' : 'Add New Location'}
             </h2>
@@ -337,7 +337,7 @@ export default function OfficeLocationsPage() {
         {loading ? (
           <div className="text-center py-8">Loading...</div>
         ) : (
-          <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg shadow-md overflow-hidden">
             <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-700">
               <thead className="bg-surface-50 dark:bg-surface-800/50">
                 <tr>
@@ -349,7 +349,7 @@ export default function OfficeLocationsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-surface-600 dark:text-surface-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-surface-900 divide-y divide-surface-200 dark:divide-surface-700">
+              <tbody className="bg-[var(--bg-card)] divide-y divide-surface-200 dark:divide-surface-700">
                 {locations.map((location) => (
                   <tr key={location.id}>
                     <td className="px-6 py-4 whitespace-nowrap">

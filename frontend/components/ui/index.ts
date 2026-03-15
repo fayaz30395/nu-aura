@@ -33,7 +33,7 @@ export { StatCard } from './StatCard';
 export type { StatCardProps } from './StatCard';
 
 // Sidebar Components
-export { Sidebar } from './Sidebar';
+export { Sidebar, SIDEBAR_WIDTH_EXPANDED, SIDEBAR_WIDTH_COLLAPSED, HEADER_HEIGHT } from './Sidebar';
 export type { SidebarProps, SidebarItem, SidebarSection } from './Sidebar';
 
 // Modal Components

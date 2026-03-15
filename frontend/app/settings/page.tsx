@@ -227,7 +227,7 @@ export default function SettingsPage() {
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-[var(--bg-surface)] transition-transform ${
             enabled ? 'translate-x-6' : 'translate-x-1'
           }`}
         />
@@ -318,7 +318,7 @@ export default function SettingsPage() {
                   }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-surface-200 transition-transform ${
+                    className={`inline-block h-4 w-4 transform rounded-full bg-[var(--bg-surface)] transition-transform ${
                       isDark ? 'translate-x-6' : 'translate-x-1'
                     }`}
                   />

@@ -414,7 +414,7 @@ const ApplicationModal: React.FC<{
             <textarea
               placeholder="Tell us why you're interested in this position..."
               rows={4}
-              className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              className="w-full px-3 py-2 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
               {...register('coverLetter')}
             />
             {errors.coverLetter && <p className="text-red-500 text-sm mt-1">{errors.coverLetter.message}</p>}
@@ -559,7 +559,7 @@ export default function CareersPage() {
                 placeholder="Search job titles or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                className="w-full pl-12 pr-4 py-3 bg-[var(--bg-input)] border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
               />
             </div>
           </div>
@@ -585,7 +585,7 @@ export default function CareersPage() {
                     setSelectedDepartment(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 dark:bg-slate-900 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 >
                   <option value="">All Departments</option>
                   {departments.map((dept) => (
@@ -607,7 +607,7 @@ export default function CareersPage() {
                     setSelectedLocation(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 dark:bg-slate-900 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 >
                   <option value="">All Locations</option>
                   {locations.map((loc) => (
@@ -629,7 +629,7 @@ export default function CareersPage() {
                     setSelectedType(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 dark:bg-slate-900 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 >
                   <option value="">All Types</option>
                   {types.map((type) => (
@@ -651,7 +651,7 @@ export default function CareersPage() {
                     setSelectedExperience(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full px-3 py-2 bg-slate-700 dark:bg-slate-900 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-600"
                 >
                   <option value="">All Levels</option>
                   {experiences.map((exp) => (

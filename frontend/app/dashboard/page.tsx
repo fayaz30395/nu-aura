@@ -902,7 +902,7 @@ export default function DashboardPage() {
                         onClick={() => handleNotificationClick(notification)}
                         className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer hover:shadow-sm transition-all ${getNotificationBg(notification.type)}`}
                       >
-                        <div className="w-8 h-8 rounded-lg bg-white dark:bg-surface-800 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-sm">
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1001,8 +1001,8 @@ export default function DashboardPage() {
 
       {/* Calendar Event Modal */}
       {selectedEvent && selectedEvent.calendarEvent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
               <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50">
                 Event Details
@@ -1147,8 +1147,8 @@ export default function DashboardPage() {
 
       {/* Email Preview Modal */}
       {selectedEmail && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
               <h3 className="text-lg font-semibold text-surface-900 dark:text-surface-50 truncate pr-4">
                 {selectedEmail.title}
@@ -1207,8 +1207,8 @@ export default function DashboardPage() {
 
       {/* Drive File Preview Modal */}
       {selectedFile && selectedFile.driveFile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">

@@ -26,7 +26,7 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const variantConfig = {
   default: {
-    bg: 'bg-white dark:bg-surface-900',
+    bg: 'bg-[var(--bg-card)]',
     border: 'border-surface-200 dark:border-surface-800',
     iconBg: 'bg-surface-100 dark:bg-surface-800',
     iconColor: 'text-surface-600 dark:text-surface-400',

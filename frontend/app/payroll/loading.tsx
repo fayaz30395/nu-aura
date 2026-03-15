@@ -25,7 +25,7 @@ export default function Loading() {
             <Skeleton height={40} width={220} />
             <Skeleton height={36} width={150} />
           </div>
-          <div className="bg-white dark:bg-surface-900 rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
+          <div className="bg-[var(--bg-card)] rounded-lg border border-surface-200 dark:border-surface-800 overflow-hidden">
             <Skeleton height={44} />
             <div className="space-y-2 p-3 sm:p-4">
               {Array.from({ length: 5 }).map((_, index) => (
