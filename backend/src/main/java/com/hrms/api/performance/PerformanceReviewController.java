@@ -62,10 +62,30 @@ public class PerformanceReviewController {
         return ResponseEntity.ok(reviews);
     }
 
+    /** Paginated variant — prefer this for large employee review histories. */
+    @GetMapping("/employee/{employeeId}/paged")
+    @RequiresPermission(Permission.REVIEW_VIEW)
+    public ResponseEntity<Page<ReviewResponse>> getEmployeeReviewsPaged(
+            @PathVariable UUID employeeId,
+            Pageable pageable) {
+        Page<ReviewResponse> reviews = reviewService.getEmployeeReviewsPaged(employeeId, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
     @GetMapping("/pending/{reviewerId}")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<List<ReviewResponse>> getPendingReviews(@PathVariable UUID reviewerId) {
         List<ReviewResponse> reviews = reviewService.getPendingReviews(reviewerId);
+        return ResponseEntity.ok(reviews);
+    }
+
+    /** Paginated variant — prefer this when a reviewer has a large queue. */
+    @GetMapping("/pending/{reviewerId}/paged")
+    @RequiresPermission(Permission.REVIEW_VIEW)
+    public ResponseEntity<Page<ReviewResponse>> getPendingReviewsPaged(
+            @PathVariable UUID reviewerId,
+            Pageable pageable) {
+        Page<ReviewResponse> reviews = reviewService.getPendingReviewsPaged(reviewerId, pageable);
         return ResponseEntity.ok(reviews);
     }
 

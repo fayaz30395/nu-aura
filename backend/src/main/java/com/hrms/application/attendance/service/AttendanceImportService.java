@@ -42,6 +42,7 @@ public class AttendanceImportService {
     /**
      * Generate Excel template for attendance import
      */
+    @Transactional(readOnly = true)
     public byte[] generateTemplate() throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Attendance Import");

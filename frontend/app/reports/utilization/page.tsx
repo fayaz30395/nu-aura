@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -41,15 +42,29 @@ import {
   formatCurrency,
   UtilizationDashboardData,
 } from '@/lib/types/utilization';
-import { utilizationService, getDateRanges } from '@/lib/services/utilization.service';
-
-
+import { getDateRanges } from '@/lib/services/utilization.service';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useUtilizationDashboard } from '@/lib/hooks/queries/useReports';
 
 type DateRangeKey = 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'thisQuarter' | 'thisYear' | 'custom';
 
 export default function UtilizationReportsPage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/reports');
+    }
+  }, [permReady, hasPermission, router]);
+
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
+
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>('thisMonth');
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
@@ -65,29 +80,13 @@ export default function UtilizationReportsPage() {
     return dateRanges[selectedDateRange];
   }, [selectedDateRange, customStartDate, customEndDate, dateRanges]);
 
-  // Initialize with null or empty structure
-  const [dashboardData, setDashboardData] = useState<UtilizationDashboardData | null>(null);
-
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await utilizationService.getDashboardData({
-        startDate: currentRange.startDate,
-        endDate: currentRange.endDate,
-      });
-      setDashboardData(data);
-    } catch (err: unknown) {
-      console.error('Error fetching dashboard data:', err);
-      setError('Failed to load utilization data. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, [currentRange]);
+  const { data: dashboardData, isLoading: loading, error, refetch } = useUtilizationDashboard(
+    {
+      startDate: currentRange.startDate,
+      endDate: currentRange.endDate,
+    },
+    true
+  );
 
   const filteredEmployees = useMemo(() => {
     if (!dashboardData) return [];
@@ -238,9 +237,9 @@ export default function UtilizationReportsPage() {
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
           <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
           <h2 className="text-xl font-bold text-surface-900 dark:text-white">Failed to load data</h2>
-          <p className="text-surface-500 mt-2">{error || 'Unknown error occurred'}</p>
+          <p className="text-surface-500 mt-2">{typeof error === 'object' && error ? (error as any).message : 'Unknown error occurred'}</p>
           <button
-            onClick={fetchDashboardData}
+            onClick={() => refetch()}
             className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
             Retry
@@ -309,7 +308,7 @@ export default function UtilizationReportsPage() {
             )}
 
             <button
-              onClick={fetchDashboardData}
+              onClick={() => refetch()}
               disabled={loading}
               className="p-2 bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
             >
@@ -331,7 +330,7 @@ export default function UtilizationReportsPage() {
             className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3"
           >
             <AlertCircle className="h-5 w-5 text-red-500" />
-            <span className="text-red-700 dark:text-red-400">{error}</span>
+            <span className="text-red-700 dark:text-red-400">{typeof error === 'object' && error ? (error as any).message : String(error)}</span>
           </motion.div>
         )}
 

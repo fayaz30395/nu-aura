@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
     Layout,
     ArrowLeft,
@@ -17,22 +19,29 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { onboardingService } from '@/lib/services/onboarding.service';
 
+const templateFormSchema = z.object({
+    name: z.string().min(1, 'Template name is required').max(255, 'Template name must not exceed 255 characters'),
+    description: z.string().optional().default(''),
+});
+
+type TemplateFormData = z.infer<typeof templateFormSchema>;
+
 export default function NewTemplatePage() {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TemplateFormData>({
+        resolver: zodResolver(templateFormSchema),
+        defaultValues: {
+            name: '',
+            description: '',
+        },
+    });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit = async (data: TemplateFormData) => {
         try {
-            setLoading(true);
-            const template = await onboardingService.createTemplate({ name, description });
+            const template = await onboardingService.createTemplate({ name: data.name, description: data.description });
             router.push(`/onboarding/templates/${template.id}`);
         } catch (error) {
             console.error('Failed to create template:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -70,19 +79,18 @@ export default function NewTemplatePage() {
                 >
                     <Card className="border-0 shadow-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border-t border-white/20 overflow-hidden">
                         <CardContent className="p-10">
-                            <form onSubmit={handleSubmit} className="space-y-8">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                                 <div className="space-y-4">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-surface-400 flex items-center gap-2">
                                         <ClipboardList className="h-3.5 w-3.5" />
                                         Template Name
                                     </label>
                                     <Input
-                                        required
                                         placeholder="e.g., Engineering Onboarding - Standard"
                                         className="rounded-2xl bg-white/50 dark:bg-black/20 border-0 py-8 px-6 text-xl font-black focus:ring-2 focus:ring-primary-500"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        {...register('name')}
                                     />
+                                    {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
                                 </div>
 
                                 <div className="space-y-4">
@@ -94,16 +102,16 @@ export default function NewTemplatePage() {
                                         rows={4}
                                         placeholder="Briefly describe what this template is for and which departments should use it."
                                         className="w-full rounded-2xl bg-white/50 dark:bg-black/20 border-0 p-6 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
+                                        {...register('description')}
                                     />
+                                    {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
                                 </div>
 
                                 <div className="pt-6 border-t border-surface-200/50 dark:border-surface-700/50 flex justify-end">
                                     <Button
                                         type="submit"
-                                        isLoading={loading}
-                                        disabled={!name}
+                                        isLoading={isSubmitting}
+                                        disabled={isSubmitting}
                                         className="font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
                                         leftIcon={<Save className="h-4 w-4" />}
                                     >

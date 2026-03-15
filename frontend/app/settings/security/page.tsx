@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useRef, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Shield,
   Lock,
@@ -15,90 +17,71 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { mfaApi } from '@/lib/api/mfa';
+import { useMfaStatus, useEnableMfa, useDisableMfa } from '@/lib/hooks/queries/useMfa';
 import { MfaSetup } from '@/components/auth/MfaSetup';
 
-type MfaStatus = 'loading' | 'disabled' | 'enabled' | 'error';
+// Zod schema for disable MFA form
+const disableMfaFormSchema = z.object({
+  code: z.string()
+    .length(6, 'Code must be 6 digits')
+    .regex(/^\d+$/, 'Only numbers allowed'),
+});
+
+type DisableMfaFormData = z.infer<typeof disableMfaFormSchema>;
 
 export default function SecuritySettingsPage() {
-  const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  
-  // MFA state
-  const [mfaStatus, setMfaStatus] = useState<MfaStatus>('loading');
-  const [mfaSetupAt, setMfaSetupAt] = useState<string | null>(null);
+
+  // React Query hooks
+  const { data: mfaStatusData, isLoading: isMfaLoading, isError: isMfaError } = useMfaStatus(
+    isAuthenticated && hasHydrated
+  );
+  const disableMfaMutation = useDisableMfa();
+
+  // Local UI state
   const [showMfaSetup, setShowMfaSetup] = useState(false);
-  const [isDisablingMfa, setIsDisablingMfa] = useState(false);
-  const [mfaDisableCode, setMfaDisableCode] = useState('');
   const [showDisableForm, setShowDisableForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  // BUG-007 FIX: store timer ref so we can clear it on unmount (prevents setState on unmounted component)
+  const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (successTimerRef.current) clearTimeout(successTimerRef.current);
+  }, []);
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!hasHydrated) return;
-
-    // Tokens are stored in httpOnly cookies — Zustand `isAuthenticated` is the
-    // sole source of truth. Do NOT check localStorage for access/refresh tokens.
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [isAuthenticated, hasHydrated, router]);
-
-  // Load MFA status on mount
-  useEffect(() => {
-    if (!isAuthenticated || !hasHydrated) return;
-
-    const loadMfaStatus = async () => {
-      try {
-        setMfaStatus('loading');
-        const status = await mfaApi.getStatus();
-        setMfaStatus(status.enabled ? 'enabled' : 'disabled');
-        if (status.setupAt) {
-          setMfaSetupAt(status.setupAt);
-        }
-      } catch (err: unknown) {
-        console.error('Failed to load MFA status:', err);
-        setMfaStatus('error');
-        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        setError(msg || 'Failed to load security settings');
-      }
-    };
-
-    loadMfaStatus();
-  }, [isAuthenticated, hasHydrated]);
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    reset: resetForm,
+    formState: { errors },
+  } = useForm<DisableMfaFormData>({
+    resolver: zodResolver(disableMfaFormSchema),
+    defaultValues: {
+      code: '',
+    },
+  });
 
   const handleMfaSetupSuccess = () => {
     setShowMfaSetup(false);
-    setMfaStatus('enabled');
     setSuccess(true);
-    setTimeout(() => setSuccess(false), 3000);
+    if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
   };
 
-  const handleDisableMfa = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!mfaDisableCode || mfaDisableCode.length !== 6) {
-      setError('Please enter a valid 6-digit code');
-      return;
-    }
-
+  const handleDisableMfa = async (data: DisableMfaFormData) => {
     try {
-      setIsDisablingMfa(true);
       setError(null);
-      await mfaApi.disable(mfaDisableCode);
-      setMfaStatus('disabled');
+      await disableMfaMutation.mutateAsync(data.code);
       setShowDisableForm(false);
-      setMfaDisableCode('');
+      resetForm();
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to disable MFA:', err);
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to disable MFA. Please try again.');
-      setMfaDisableCode('');
-    } finally {
-      setIsDisablingMfa(false);
     }
   };
 
@@ -159,19 +142,19 @@ export default function SecuritySettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Status Card */}
-              {mfaStatus !== 'loading' && mfaStatus !== 'error' && (
+              {!isMfaLoading && !isMfaError && mfaStatusData && (
                 <div className={`p-4 rounded-lg border-2 ${
-                  mfaStatus === 'enabled'
+                  mfaStatusData.enabled
                     ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
                     : 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'
                 }`}>
                   <div className="flex items-start gap-3">
                     <div className={`p-2 rounded-full ${
-                      mfaStatus === 'enabled'
+                      mfaStatusData.enabled
                         ? 'bg-green-100 dark:bg-green-900/30'
                         : 'bg-amber-100 dark:bg-amber-900/30'
                     }`}>
-                      {mfaStatus === 'enabled' ? (
+                      {mfaStatusData.enabled ? (
                         <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
                       ) : (
                         <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -179,22 +162,22 @@ export default function SecuritySettingsPage() {
                     </div>
                     <div className="flex-1">
                       <p className={`font-medium ${
-                        mfaStatus === 'enabled'
+                        mfaStatusData.enabled
                           ? 'text-green-900 dark:text-green-100'
                           : 'text-amber-900 dark:text-amber-100'
                       }`}>
-                        {mfaStatus === 'enabled' ? 'Two-Factor Authentication Enabled' : 'Two-Factor Authentication Disabled'}
+                        {mfaStatusData.enabled ? 'Two-Factor Authentication Enabled' : 'Two-Factor Authentication Disabled'}
                       </p>
-                      {mfaStatus === 'enabled' && mfaSetupAt && (
+                      {mfaStatusData.enabled && mfaStatusData.setupAt && (
                         <p className={`text-sm mt-1 ${
-                          mfaStatus === 'enabled'
+                          mfaStatusData.enabled
                             ? 'text-green-700 dark:text-green-300'
                             : 'text-amber-700 dark:text-amber-300'
                         }`}>
-                          Enabled on {formatDate(mfaSetupAt)}
+                          Enabled on {formatDate(mfaStatusData.setupAt)}
                         </p>
                       )}
-                      {mfaStatus === 'disabled' && (
+                      {!mfaStatusData.enabled && (
                         <p className="text-sm mt-1 text-amber-700 dark:text-amber-300">
                           Your account is not protected by two-factor authentication. We recommend enabling it.
                         </p>
@@ -205,7 +188,7 @@ export default function SecuritySettingsPage() {
               )}
 
               {/* Loading State */}
-              {mfaStatus === 'loading' && (
+              {isMfaLoading && (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin">
                     <div className="w-8 h-8 border-4 border-slate-200 dark:border-slate-700 border-t-primary-600 rounded-full" />
@@ -214,14 +197,14 @@ export default function SecuritySettingsPage() {
               )}
 
               {/* Error State */}
-              {mfaStatus === 'error' && (
+              {isMfaError && (
                 <div className="flex items-center justify-center py-8">
                   <p className="text-red-600 dark:text-red-400">Failed to load MFA status</p>
                 </div>
               )}
 
               {/* Actions */}
-              {mfaStatus === 'disabled' && (
+              {!isMfaLoading && !isMfaError && mfaStatusData && !mfaStatusData.enabled && (
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                   <Button
                     onClick={() => setShowMfaSetup(true)}
@@ -236,7 +219,7 @@ export default function SecuritySettingsPage() {
                 </div>
               )}
 
-              {mfaStatus === 'enabled' && (
+              {!isMfaLoading && !isMfaError && mfaStatusData && mfaStatusData.enabled && (
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                   {!showDisableForm ? (
                     <Button
@@ -247,7 +230,7 @@ export default function SecuritySettingsPage() {
                       Disable Two-Factor Authentication
                     </Button>
                   ) : (
-                    <form onSubmit={handleDisableMfa} className="space-y-3">
+                    <form onSubmit={handleSubmit(handleDisableMfa)} className="space-y-3">
                       <p className="text-sm text-slate-600 dark:text-slate-400">
                         Enter your current 6-digit authenticator code to disable two-factor authentication:
                       </p>
@@ -256,25 +239,26 @@ export default function SecuritySettingsPage() {
                         inputMode="numeric"
                         maxLength={6}
                         placeholder="000000"
-                        value={mfaDisableCode}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                          setMfaDisableCode(value);
-                        }}
-                        disabled={isDisablingMfa}
+                        disabled={disableMfaMutation.isPending}
                         className="w-full px-4 py-2 text-center text-xl tracking-widest border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-50 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                         autoComplete="off"
+                        {...register('code', {
+                          onChange: (e) => {
+                            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                          },
+                        })}
                       />
+                      {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
                       <div className="flex gap-3">
                         <Button
                           type="button"
                           variant="outline"
                           onClick={() => {
                             setShowDisableForm(false);
-                            setMfaDisableCode('');
+                            resetForm();
                             setError(null);
                           }}
-                          disabled={isDisablingMfa}
+                          disabled={disableMfaMutation.isPending}
                           className="flex-1"
                         >
                           Cancel
@@ -282,11 +266,11 @@ export default function SecuritySettingsPage() {
                         <Button
                           type="submit"
                           variant="danger"
-                          isLoading={isDisablingMfa}
-                          disabled={mfaDisableCode.length !== 6 || isDisablingMfa}
+                          isLoading={disableMfaMutation.isPending}
+                          disabled={disableMfaMutation.isPending}
                           className="flex-1"
                         >
-                          {isDisablingMfa ? 'Disabling...' : 'Disable'}
+                          {disableMfaMutation.isPending ? 'Disabling...' : 'Disable'}
                         </Button>
                       </div>
                     </form>

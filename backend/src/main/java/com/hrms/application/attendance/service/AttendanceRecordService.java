@@ -44,6 +44,10 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null
      */
+    // R2-005 FIX: Removed @Transactional(readOnly=true) — checkIn creates or updates
+    // attendance records so a read-only transaction silently makes the save() a no-op
+    // on some JPA providers (or throws an exception on others).
+    @Transactional
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location,
             String ip) {
         return checkIn(employeeId, checkInTime, source, location, ip, null);
@@ -64,6 +68,8 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null
      */
+    // R2-005 FIX: Same as above — this overload does the actual write work.
+    @Transactional
     public AttendanceRecord checkIn(UUID employeeId, LocalDateTime checkInTime, String source, String location,
             String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
@@ -120,6 +126,7 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
+    @Transactional(readOnly = true)
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
             String ip) {
         return checkOut(employeeId, checkOutTime, source, location, ip, null);
@@ -141,6 +148,7 @@ public class AttendanceRecordService {
      * @throws IllegalStateException    if tenant context is not set
      * @throws IllegalArgumentException if employeeId is null or no check-in found
      */
+    @Transactional(readOnly = true)
     public AttendanceRecord checkOut(UUID employeeId, LocalDateTime checkOutTime, String source, String location,
             String ip, LocalDate attendanceDate) {
         validateEmployeeId(employeeId);
@@ -375,6 +383,7 @@ public class AttendanceRecordService {
         return attendanceRecordRepository.save(record);
     }
 
+    @Transactional
     public AttendanceRecord approveRegularization(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -567,6 +576,7 @@ public class AttendanceRecordService {
     /**
      * Reject a regularization request.
      */
+    @Transactional
     public AttendanceRecord rejectRegularization(UUID id, UUID rejectorId, String reason) {
         UUID tenantId = validateAndGetTenantId();
 

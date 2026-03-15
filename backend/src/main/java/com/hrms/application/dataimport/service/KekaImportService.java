@@ -188,6 +188,7 @@ public class KekaImportService {
     /**
      * Get import history for the current tenant
      */
+    @Transactional(readOnly = true)
     public Page<KekaImportHistoryEntry> getImportHistory(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -198,6 +199,7 @@ public class KekaImportService {
     /**
      * Get details of a specific import
      */
+    @Transactional(readOnly = true)
     public KekaImportHistoryEntry getImportDetails(String importId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

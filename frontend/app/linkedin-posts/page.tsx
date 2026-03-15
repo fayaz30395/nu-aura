@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -23,7 +23,12 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isAdmin } from '@/lib/utils';
-import { linkedinService } from '@/lib/services/linkedin.service';
+import {
+  useAllLinkedInPosts,
+  useCreateLinkedInPost,
+  useUpdateLinkedInPost,
+  useDeleteLinkedInPost,
+} from '@/lib/hooks/queries/useLinkedIn';
 import { LinkedInPost, CreateLinkedInPostRequest, UpdateLinkedInPostRequest } from '@/lib/types/linkedin';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -36,32 +41,18 @@ const logger = createLogger('LinkedInPosts');
 export default function LinkedInPostsPage() {
   const { user } = useAuth();
   const toast = useToast();
-  const [posts, setPosts] = useState<LinkedInPost[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingPost, setEditingPost] = useState<LinkedInPost | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const loadPosts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await linkedinService.getAllLinkedInPosts(0, 100);
-      setPosts(response.content || []);
-    } catch (error) {
-      logger.error('Error loading LinkedIn posts:', error);
-      toast.error('Load Failed', 'Unable to load LinkedIn posts. Please refresh the page.');
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  // React Query hooks
+  const { data: postsResponse, isLoading } = useAllLinkedInPosts(0, 100);
+  const deletePostMutation = useDeleteLinkedInPost();
 
-  useEffect(() => {
-    loadPosts();
-  }, [loadPosts]);
+  const posts = postsResponse?.content || [];
 
   const handleEditPost = (post: LinkedInPost) => {
     setEditingPost(post);
@@ -72,16 +63,12 @@ export default function LinkedInPostsPage() {
     if (!showDeleteConfirm) return;
 
     try {
-      setIsDeleting(true);
-      await linkedinService.deleteLinkedInPost(showDeleteConfirm);
+      await deletePostMutation.mutateAsync(showDeleteConfirm);
       setShowDeleteConfirm(null);
       toast.success('Post Deleted', 'The LinkedIn post has been deleted.');
-      loadPosts();
     } catch (error) {
       logger.error('Failed to delete post:', error);
       toast.error('Delete Failed', 'Unable to delete the post. Please try again.');
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -157,7 +144,7 @@ export default function LinkedInPostsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {loading ? (
+            {isLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
               </div>
@@ -320,7 +307,6 @@ export default function LinkedInPostsPage() {
             onSuccess={() => {
               setShowCreateModal(false);
               setEditingPost(null);
-              loadPosts();
             }}
           />
         )}
@@ -336,7 +322,7 @@ export default function LinkedInPostsPage() {
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
-        loading={isDeleting}
+        loading={deletePostMutation.isPending}
       />
     </AppLayout>
   );
@@ -367,7 +353,9 @@ interface LinkedInFormData {
 function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPostModalProps) {
   const toast = useToast();
   const isEditing = !!post;
-  const [loading, setLoading] = useState(false);
+  const createPostMutation = useCreateLinkedInPost();
+  const updatePostMutation = useUpdateLinkedInPost();
+
   const [error, setError] = useState('');
   const [formData, setFormData] = useState<LinkedInFormData>({
     postUrl: post?.postUrl || '',
@@ -391,7 +379,6 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
       return;
     }
 
-    setLoading(true);
     setError('');
 
     try {
@@ -400,18 +387,6 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
         .map((t: string) => t.trim())
         .filter((t: string) => t);
 
-      const payload: CreateLinkedInPostRequest = {
-        postUrl: formData.postUrl,
-        authorName: formData.authorName,
-        authorTitle: formData.authorTitle,
-        contentSnippet: formData.contentSnippet,
-        imageUrl: formData.imageUrl,
-        postedAt: formData.postedAt,
-        engagement: formData.engagement,
-        tags,
-        isFromNulogic: formData.isFromNulogic,
-      };
-
       if (isEditing && post) {
         const updatePayload: UpdateLinkedInPostRequest = {
           contentSnippet: formData.contentSnippet,
@@ -419,10 +394,21 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           engagement: formData.engagement,
           tags,
         };
-        await linkedinService.updateLinkedInPost(post.id, updatePayload);
+        await updatePostMutation.mutateAsync({ id: post.id, data: updatePayload });
         toast.success('Post Updated', 'The LinkedIn post has been updated.');
       } else {
-        await linkedinService.createLinkedInPost(payload);
+        const createPayload: CreateLinkedInPostRequest = {
+          postUrl: formData.postUrl,
+          authorName: formData.authorName,
+          authorTitle: formData.authorTitle,
+          contentSnippet: formData.contentSnippet,
+          imageUrl: formData.imageUrl,
+          postedAt: formData.postedAt,
+          engagement: formData.engagement,
+          tags,
+          isFromNulogic: formData.isFromNulogic,
+        };
+        await createPostMutation.mutateAsync(createPayload);
         toast.success('Post Created', 'The LinkedIn post has been added.');
       }
       onSuccess();
@@ -431,8 +417,6 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} post`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -651,10 +635,10 @@ function CreateLinkedInPostModal({ post, onClose, onSuccess }: CreateLinkedInPos
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={createPostMutation.isPending || updatePostMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {createPostMutation.isPending || updatePostMutation.isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 {isEditing ? 'Updating...' : 'Adding...'}

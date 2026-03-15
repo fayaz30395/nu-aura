@@ -158,6 +158,11 @@ public class Candidate {
     }
 
     public enum RecruitmentStage {
+        APPLICATION_RECEIVED,
+        SCREENING,
+        INTERVIEW,
+        OFFER,
+        JOINED,
         RECRUITERS_PHONE_CALL,
         PANEL_REVIEW,
         PANEL_REJECT,

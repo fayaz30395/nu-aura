@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -20,6 +21,7 @@ public class ExcelExportService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
+    @Transactional(readOnly = true)
     public byte[] exportEmployeeDirectoryToExcel(List<EmployeeDirectoryReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Employee Directory");
@@ -76,6 +78,7 @@ public class ExcelExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportAttendanceToExcel(List<AttendanceReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Attendance Report");
@@ -127,6 +130,7 @@ public class ExcelExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportLeaveToExcel(List<LeaveReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Leave Report");
@@ -187,6 +191,7 @@ public class ExcelExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPayrollToExcel(List<PayrollReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Payroll Report");
@@ -255,6 +260,7 @@ public class ExcelExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportDepartmentHeadcountToExcel(List<DepartmentHeadcountReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Department Headcount");
@@ -296,6 +302,7 @@ public class ExcelExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPerformanceToExcel(List<PerformanceReportRow> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Performance Report");

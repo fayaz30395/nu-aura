@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Settings,
@@ -18,7 +18,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { integrationService } from '@/lib/services/integration.service';
 import {
   IntegrationStatus,
   SmsSendRequest,
@@ -28,145 +27,129 @@ import {
 } from '@/lib/types/integration';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  useSmsStatus,
+  useIntegrationPaymentStatus as usePaymentStatus,
+  useSmsTemplates,
+  useTestSms,
+  useSendSms,
+  useTestPayment,
+} from '@/lib/hooks/queries/useIntegrations';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function AdminIntegrationsPage() {
+  const toast = useToast();
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [loading, setLoading] = useState(true);
-  const [smsStatus, setSmsStatus] = useState<IntegrationStatus | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<IntegrationStatus | null>(null);
-  const [smsTemplates, setSmsTemplates] = useState<Record<string, string>>({});
+
+  // React Query hooks
+  const { data: smsStatus, isLoading: smsLoading } = useSmsStatus();
+  const { data: paymentStatus, isLoading: paymentLoading } = usePaymentStatus();
+  const { data: smsTemplates = {} } = useSmsTemplates();
+  const testSmsMutation = useTestSms();
+  const sendSmsMutation = useSendSms();
+  const testPaymentMutation = useTestPayment();
+
+  const loading = smsLoading || paymentLoading;
 
   // SMS Test State
   const [testPhoneNumber, setTestPhoneNumber] = useState('');
-  const [testingSms, setTestingSms] = useState(false);
   const [smsTestResult, setSmsTestResult] = useState<IntegrationTestResponse | null>(null);
 
   // SMS Send State
   const [sendPhoneNumber, setSendPhoneNumber] = useState('');
   const [sendMessage, setSendMessage] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
-  const [sendingSms, setSendingSms] = useState(false);
   const [smsSendResult, setSmsSendResult] = useState<SmsSendResponse | null>(null);
 
   // Payment Test State
-  const [testingPayment, setTestingPayment] = useState(false);
   const [paymentTestResult, setPaymentTestResult] = useState<IntegrationTestResponse | null>(null);
 
-  useEffect(() => {
-    if (!hasHydrated || !isReady) return;
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/home');
+    return null;
+  }
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
 
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
-      return;
-    }
-
-    loadIntegrationStatus();
-  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
-
-  const loadIntegrationStatus = async () => {
-    setLoading(true);
-    try {
-      const [sms, payment, templates] = await Promise.all([
-        integrationService.getSmsStatus(),
-        integrationService.getPaymentStatus(),
-        integrationService.getSmsTemplates(),
-      ]);
-
-      setSmsStatus(sms);
-      setPaymentStatus(payment);
-      setSmsTemplates(templates);
-    } catch (error) {
-      console.error('Failed to load integration status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTestSms = async () => {
+  const handleTestSms = () => {
     if (!testPhoneNumber) {
-      alert('Please enter a phone number');
+      toast.warning('Please enter a phone number');
       return;
     }
 
-    setTestingSms(true);
     setSmsTestResult(null);
-
-    try {
-      const request: SmsTestRequest = { phoneNumber: testPhoneNumber };
-      const result = await integrationService.testSms(request);
-      setSmsTestResult(result);
-    } catch (error: unknown) {
-      setSmsTestResult({
-        success: false,
-        message: (error instanceof Error ? error.message : String(error)) || 'Failed to test SMS',
-        timestamp: new Date().toISOString(),
-      });
-    } finally {
-      setTestingSms(false);
-    }
+    const request: SmsTestRequest = { phoneNumber: testPhoneNumber };
+    testSmsMutation.mutate(request, {
+      onSuccess: (result) => {
+        setSmsTestResult(result);
+      },
+      onError: (error: unknown) => {
+        setSmsTestResult({
+          success: false,
+          message: (error instanceof Error ? error.message : String(error)) || 'Failed to test SMS',
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
   };
 
-  const handleSendSms = async () => {
+  const handleSendSms = () => {
     if (!sendPhoneNumber) {
-      alert('Please enter a phone number');
+      toast.warning('Please enter a phone number');
       return;
     }
 
     if (!sendMessage && !selectedTemplate) {
-      alert('Please enter a message or select a template');
+      toast.warning('Please enter a message or select a template');
       return;
     }
 
-    setSendingSms(true);
     setSmsSendResult(null);
+    const request: SmsSendRequest = {
+      phoneNumber: sendPhoneNumber,
+      message: selectedTemplate ? undefined : sendMessage,
+      templateId: selectedTemplate || undefined,
+    };
 
-    try {
-      const request: SmsSendRequest = {
-        phoneNumber: sendPhoneNumber,
-        message: selectedTemplate ? undefined : sendMessage,
-        templateId: selectedTemplate || undefined,
-      };
-
-      const result = await integrationService.sendSms(request);
-      setSmsSendResult(result);
-    } catch (error: unknown) {
-      setSmsSendResult({
-        messageId: '',
-        success: false,
-        phoneNumber: sendPhoneNumber,
-        errorMessage: (error instanceof Error ? error.message : String(error)) || 'Failed to send SMS',
-        timestamp: new Date().toISOString(),
-      });
-    } finally {
-      setSendingSms(false);
-    }
+    sendSmsMutation.mutate(request, {
+      onSuccess: (result) => {
+        setSmsSendResult(result);
+      },
+      onError: (error: unknown) => {
+        setSmsSendResult({
+          messageId: '',
+          success: false,
+          phoneNumber: sendPhoneNumber,
+          errorMessage: (error instanceof Error ? error.message : String(error)) || 'Failed to send SMS',
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
   };
 
-  const handleTestPayment = async () => {
-    setTestingPayment(true);
+  const handleTestPayment = () => {
     setPaymentTestResult(null);
-
-    try {
-      const result = await integrationService.testPaymentGateway();
-      setPaymentTestResult(result);
-    } catch (error: unknown) {
-      setPaymentTestResult({
-        success: false,
-        message: (error instanceof Error ? error.message : String(error)) || 'Failed to test payment gateway',
-        timestamp: new Date().toISOString(),
-      });
-    } finally {
-      setTestingPayment(false);
-    }
+    testPaymentMutation.mutate(undefined, {
+      onSuccess: (result) => {
+        setPaymentTestResult(result);
+      },
+      onError: (error: unknown) => {
+        setPaymentTestResult({
+          success: false,
+          message: (error instanceof Error ? error.message : String(error)) || 'Failed to test payment gateway',
+          timestamp: new Date().toISOString(),
+        });
+      },
+    });
   };
 
   const renderStatusBadge = (status: IntegrationStatus | null) => {
@@ -220,10 +203,7 @@ export default function AdminIntegrationsPage() {
             </p>
           </div>
         </div>
-        <Button variant="outline" onClick={loadIntegrationStatus}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
+        {/* Refresh disabled - data is automatically refetched by React Query */}
       </div>
 
       {/* SMS Integration */}
@@ -279,11 +259,11 @@ export default function AdminIntegrationsPage() {
                   placeholder="+1234567890"
                   value={testPhoneNumber}
                   onChange={(e) => setTestPhoneNumber(e.target.value)}
-                  disabled={testingSms}
+                  disabled={testSmsMutation.isPending}
                 />
               </div>
-              <Button onClick={handleTestSms} disabled={testingSms || !smsStatus?.configured}>
-                {testingSms ? (
+              <Button onClick={handleTestSms} disabled={testSmsMutation.isPending || !smsStatus?.configured}>
+                {testSmsMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Sending...
@@ -327,7 +307,7 @@ export default function AdminIntegrationsPage() {
                   placeholder="+1234567890"
                   value={sendPhoneNumber}
                   onChange={(e) => setSendPhoneNumber(e.target.value)}
-                  disabled={sendingSms}
+                  disabled={sendSmsMutation.isPending}
                 />
               </div>
               <div>
@@ -336,7 +316,7 @@ export default function AdminIntegrationsPage() {
                   className="w-full px-3 py-2 rounded-lg border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900"
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
-                  disabled={sendingSms}
+                  disabled={sendSmsMutation.isPending}
                 >
                   <option value="">Select a template...</option>
                   {Object.keys(smsTemplates).map((key) => (
@@ -354,13 +334,13 @@ export default function AdminIntegrationsPage() {
                     placeholder="Enter your message here..."
                     value={sendMessage}
                     onChange={(e) => setSendMessage(e.target.value)}
-                    disabled={sendingSms}
+                    disabled={sendSmsMutation.isPending}
                     rows={4}
                   />
                 </div>
               )}
-              <Button onClick={handleSendSms} disabled={sendingSms || !smsStatus?.configured}>
-                {sendingSms ? (
+              <Button onClick={handleSendSms} disabled={sendSmsMutation.isPending || !smsStatus?.configured}>
+                {sendSmsMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Sending...
@@ -464,8 +444,8 @@ export default function AdminIntegrationsPage() {
               <TestTube className="h-4 w-4" />
               Test Payment Gateway
             </h3>
-            <Button onClick={handleTestPayment} disabled={testingPayment || !paymentStatus?.configured}>
-              {testingPayment ? (
+            <Button onClick={handleTestPayment} disabled={testPaymentMutation.isPending || !paymentStatus?.configured}>
+              {testPaymentMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Testing...

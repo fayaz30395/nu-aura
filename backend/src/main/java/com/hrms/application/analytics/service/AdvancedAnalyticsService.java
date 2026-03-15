@@ -46,6 +46,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Workforce Analytics ====================
 
+        @Transactional(readOnly = true)
         public WorkforceAnalyticsResponse getWorkforceAnalytics() {
                 UUID tenantId = TenantContext.getCurrentTenant();
                 List<Employee> employees = employeeRepository.findByTenantId(tenantId);
@@ -123,6 +124,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Hiring Analytics ====================
 
+        @Transactional(readOnly = true)
         public HiringAnalyticsResponse getHiringAnalytics() {
                 UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -203,6 +205,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Performance Analytics ====================
 
+        @Transactional(readOnly = true)
         public PerformanceAnalyticsResponse getPerformanceAnalytics() {
                 UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -282,6 +285,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Compensation Analytics ====================
 
+        @Transactional(readOnly = true)
         public CompensationAnalyticsResponse getCompensationAnalytics() {
                 UUID tenantId = TenantContext.getCurrentTenant();
                 LocalDate today = LocalDate.now();
@@ -376,6 +380,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Attendance Analytics ====================
 
+        @Transactional(readOnly = true)
         public AttendanceAnalyticsResponse getAttendanceAnalytics() {
                 UUID tenantId = TenantContext.getCurrentTenant();
                 LocalDate today = LocalDate.now();
@@ -452,6 +457,7 @@ public class AdvancedAnalyticsService {
 
         // ==================== Dashboard Summary ====================
 
+        @Transactional(readOnly = true)
         public Map<String, Object> getAnalyticsDashboard() {
                 Map<String, Object> dashboard = new HashMap<>();
 

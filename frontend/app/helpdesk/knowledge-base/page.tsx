@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useKnowledgeBaseArticles, useArticleFeedback, type Article as KBArticle } from '@/lib/hooks/queries/useKnowledgeBase';
 import {
   Search,
   ThumbsUp,
@@ -126,34 +127,18 @@ const ArticleDetailModal: React.FC<{
   onSubmitTicket: () => void;
 }> = ({ article, isOpen, onClose, onSubmitTicket }) => {
   const [isHelpful, setIsHelpful] = useState<boolean | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const feedbackMutation = useArticleFeedback();
 
   if (!article) return null;
 
   const handleHelpful = async (helpful: boolean) => {
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
     try {
-      const response = await fetch(`/api/v1/helpdesk/knowledge-base/${article.id}/helpful`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ helpful }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit feedback');
-      }
-
+      await feedbackMutation.mutateAsync({ articleId: article.id, helpful });
       setIsHelpful(helpful);
       setSubmitStatus('success');
     } catch (error) {
       setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -208,7 +193,7 @@ const ArticleDetailModal: React.FC<{
                 variant={isHelpful === true ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => handleHelpful(true)}
-                disabled={isSubmitting || isHelpful === true}
+                disabled={feedbackMutation.isPending || isHelpful === true}
                 className={isHelpful === true ? 'bg-green-600 hover:bg-green-700' : ''}
               >
                 <ThumbsUp className="h-4 w-4 mr-2" />
@@ -218,7 +203,7 @@ const ArticleDetailModal: React.FC<{
                 variant={isHelpful === false ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => handleHelpful(false)}
-                disabled={isSubmitting || isHelpful === false}
+                disabled={feedbackMutation.isPending || isHelpful === false}
                 className={isHelpful === false ? 'bg-red-600 hover:bg-red-700' : ''}
               >
                 <ThumbsDown className="h-4 w-4 mr-2" />
@@ -279,8 +264,6 @@ const ArticleSkeletonCard: React.FC = () => (
 
 export default function KnowledgeBasePage() {
   const { user } = useAuth();
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -299,44 +282,12 @@ export default function KnowledgeBasePage() {
     'Company Policies',
   ];
 
-  // Fetch articles
-  const fetchArticles = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedCategory) params.append('category', selectedCategory);
-      if (searchQuery) params.append('q', searchQuery);
-
-      const response = await fetch(
-        `/api/v1/helpdesk/knowledge-base?${params.toString()}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${document.cookie
-              .split('; ')
-              .find((row) => row.startsWith('access_token='))
-              ?.split('=')[1] || ''}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setArticles(data.articles || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch articles:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedCategory, searchQuery]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchArticles();
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [fetchArticles]);
+  // React Query - automatically refetches when filters change
+  const { data: articles = [], isLoading } = useKnowledgeBaseArticles({
+    category: selectedCategory || undefined,
+    q: searchQuery || undefined,
+  });
+  const feedbackMutation = useArticleFeedback();
 
   const handleViewArticle = (article: Article) => {
     setSelectedArticle(article);

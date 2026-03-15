@@ -1,55 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { AppLayout } from '@/components/layout';
-import { lmsService, Course, CourseEnrollment, Certificate, LmsDashboard } from '@/lib/services/lms.service';
+import {
+  useLearningDashboard,
+  usePublishedCourses,
+  useMyEnrollments,
+  useMyCertificates,
+  useEnrollCourse,
+} from '@/lib/hooks/queries/useLearning';
+import type { Course, CourseEnrollment, Certificate } from '@/lib/services/lms.service';
 
 export default function LearningPage() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'my-courses' | 'certificates'>('catalog');
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [myEnrollments, setMyEnrollments] = useState<CourseEnrollment[]>([]);
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [dashboard, setDashboard] = useState<LmsDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [enrollingId, setEnrollingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
+  // React Query hooks
+  const { data: dashboard, isLoading: dashboardLoading } = useLearningDashboard();
+  const { data: coursesData, isLoading: coursesLoading } = usePublishedCourses(
+    0,
+    20,
+    activeTab === 'catalog'
+  );
+  const { data: enrollmentsData, isLoading: enrollmentsLoading } = useMyEnrollments(
+    0,
+    20,
+    activeTab === 'my-courses'
+  );
+  const { data: certificatesData, isLoading: certificatesLoading } = useMyCertificates(
+    0,
+    20,
+    activeTab === 'certificates'
+  );
+  const enrollMutation = useEnrollCourse();
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const dashboardData = await lmsService.getMyDashboard();
-      setDashboard(dashboardData);
-
-      if (activeTab === 'catalog') {
-        const result = await lmsService.getPublishedCourses();
-        setCourses(result.content);
-      } else if (activeTab === 'my-courses') {
-        const enrollments = await lmsService.getMyEnrollments();
-        setMyEnrollments(enrollments);
-      } else if (activeTab === 'certificates') {
-        const certs = await lmsService.getMyCertificates();
-        setCertificates(certs);
-      }
-    } catch (error) {
-      console.error('Error loading learning data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const courses: Course[] = coursesData?.content ?? [];
+  const myEnrollments: CourseEnrollment[] = Array.isArray(enrollmentsData) ? enrollmentsData : [];
+  const certificates: Certificate[] = Array.isArray(certificatesData) ? certificatesData : [];
+  const loading = dashboardLoading || coursesLoading || enrollmentsLoading || certificatesLoading;
 
   const handleEnroll = async (courseId: string) => {
-    try {
-      setEnrollingId(courseId);
-      await lmsService.enrollSelf(courseId);
-      await loadData();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in course');
-    } finally {
-      setEnrollingId(null);
-    }
+    enrollMutation.mutate(courseId);
   };
 
   const getDifficultyColor = (level: string) => {
@@ -141,7 +132,9 @@ export default function LearningPage() {
                   courses.map((course) => (
                     <div key={course.id} className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md overflow-hidden">
                       {course.thumbnailUrl ? (
-                        <img src={course.thumbnailUrl} alt={course.title} className="w-full h-40 object-cover" />
+                        <div className="relative w-full h-40">
+                          <Image src={course.thumbnailUrl} alt={course.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                        </div>
                       ) : (
                         <div className="w-full h-40 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                           <span className="text-4xl text-white">📚</span>
@@ -177,10 +170,10 @@ export default function LearningPage() {
                         </div>
                         <button
                           onClick={() => handleEnroll(course.id)}
-                          disabled={enrollingId === course.id}
+                          disabled={enrollMutation.isPending}
                           className="w-full px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                         >
-                          {enrollingId === course.id ? 'Enrolling...' : 'Enroll Now'}
+                          {enrollMutation.isPending ? 'Enrolling...' : 'Enroll Now'}
                         </button>
                       </div>
                     </div>

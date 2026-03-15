@@ -65,7 +65,7 @@ public class TravelController {
     @Operation(summary = "Approve travel request", description = "Approve a submitted travel request")
     public ResponseEntity<TravelRequestDto> approveRequest(
             @PathVariable UUID id,
-            @RequestBody(required = false) Map<String, String> body
+            @Valid @RequestBody(required = false) Map<String, String> body
     ) {
         String comments = body != null ? body.get("comments") : null;
         return ResponseEntity.ok(travelService.approveRequest(id, comments));
@@ -76,7 +76,7 @@ public class TravelController {
     @Operation(summary = "Reject travel request", description = "Reject a submitted travel request")
     public ResponseEntity<TravelRequestDto> rejectRequest(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body
+            @Valid @RequestBody Map<String, String> body
     ) {
         String reason = body.get("reason");
         return ResponseEntity.ok(travelService.rejectRequest(id, reason));

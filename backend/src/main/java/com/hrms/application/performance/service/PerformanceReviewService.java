@@ -135,6 +135,13 @@ public class PerformanceReviewService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ReviewResponse> getEmployeeReviewsPaged(UUID employeeId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Transactional(readOnly = true)
     public List<ReviewResponse> getPendingReviews(UUID reviewerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -142,6 +149,13 @@ public class PerformanceReviewService {
         return reviews.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> getPendingReviewsPaged(UUID reviewerId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return reviewRepository.findPendingReviews(tenantId, reviewerId, pageable)
+                .map(this::mapToResponse);
     }
 
     @Transactional

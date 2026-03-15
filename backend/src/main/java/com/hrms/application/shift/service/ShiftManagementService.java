@@ -38,6 +38,7 @@ public class ShiftManagementService {
 
     // ========== Shift Management ==========
 
+    @Transactional
     public ShiftResponse createShift(ShiftRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating shift: {} for tenant: {}", request.getShiftCode(), tenantId);
@@ -72,6 +73,7 @@ public class ShiftManagementService {
         return mapToShiftResponse(shift);
     }
 
+    @Transactional
     public ShiftResponse updateShift(UUID shiftId, ShiftRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
@@ -124,6 +126,7 @@ public class ShiftManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteShift(UUID shiftId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Shift shift = shiftRepository.findByIdAndTenantId(shiftId, tenantId)
@@ -134,6 +137,7 @@ public class ShiftManagementService {
 
     // ========== Shift Assignment ==========
 
+    @Transactional
     public ShiftAssignmentResponse assignShiftToEmployee(ShiftAssignmentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Assigning shift {} to employee: {}", request.getShiftId(), request.getEmployeeId());
@@ -180,6 +184,7 @@ public class ShiftManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void cancelAssignment(UUID assignmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ShiftAssignment assignment = shiftAssignmentRepository.findByIdAndTenantId(assignmentId, tenantId)
@@ -220,6 +225,7 @@ public class ShiftManagementService {
     /**
      * Transfer an assignment to a different employee (for GIVE_AWAY / PICK_UP type requests).
      */
+    @Transactional
     public void transferAssignment(UUID assignmentId, UUID newEmployeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ShiftAssignment assignment = shiftAssignmentRepository.findByIdAndTenantId(assignmentId, tenantId)

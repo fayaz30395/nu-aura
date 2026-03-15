@@ -447,38 +447,50 @@ export const resourceManagementService = {
     }
   },
 
-  // ---- New endpoints wired to /api/v1/resources/* ----
+  // ---- New endpoints wired to /resources/* ----
+  // NOTE: apiClient base URL already includes /api/v1 — do not prefix paths with it.
 
   getAllocationSummary: async (): Promise<AllocationSummaryEntry[]> => {
-    const res = await fetch('/api/v1/resources/allocation-summary', { credentials: 'include' });
-    if (!res.ok) throw new Error('Failed to load allocation summary');
-    return res.json();
+    try {
+      const response = await apiClient.get<AllocationSummaryEntry[]>('/resources/allocation-summary');
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error, 'load allocation summary');
+    }
   },
 
   getAvailableResources: async (minAvailablePercent = 20): Promise<AvailableResource[]> => {
-    const res = await fetch(
-      `/api/v1/resources/available?minAvailablePercent=${minAvailablePercent}`,
-      { credentials: 'include' }
-    );
-    if (!res.ok) throw new Error('Failed to load available resources');
-    return res.json();
+    try {
+      const response = await apiClient.get<AvailableResource[]>('/resources/available', {
+        params: { minAvailablePercent },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error, 'load available resources');
+    }
   },
 
   getEmployeeAllocationTimeline: async (employeeId: string): Promise<EmployeeTimeline> => {
-    const res = await fetch(`/api/v1/resources/employees/${employeeId}/timeline`, { credentials: 'include' });
-    if (!res.ok) throw new Error('Failed to load employee timeline');
-    return res.json();
+    try {
+      const response = await apiClient.get<EmployeeTimeline>(
+        `/resources/employees/${employeeId}/timeline`
+      );
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error, 'load employee timeline');
+    }
   },
 
   reallocate: async (allocationId: string, data: ReallocateData): Promise<object> => {
-    const res = await fetch(`/api/v1/resources/allocations/${allocationId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Failed to reallocate');
-    return res.json();
+    try {
+      const response = await apiClient.put<object>(
+        `/resources/allocations/${allocationId}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error, 'reallocate resource');
+    }
   },
 };
 

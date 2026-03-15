@@ -110,6 +110,7 @@ public class RecognitionService {
                 .map(e -> enrichRecognitionResponse(RecognitionResponse.fromEntity(e), tenantId));
     }
 
+    @Transactional
     public void addReaction(UUID recognitionId, UUID employeeId, RecognitionReaction.ReactionType reactionType) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -133,6 +134,7 @@ public class RecognitionService {
         recognitionRepository.save(recognition);
     }
 
+    @Transactional
     public void removeReaction(UUID recognitionId, UUID employeeId, RecognitionReaction.ReactionType reactionType) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

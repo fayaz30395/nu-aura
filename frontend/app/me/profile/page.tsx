@@ -21,21 +21,42 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { employeeService } from '@/lib/services/employee.service';
+import { useEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
 import { Employee, UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 
 export default function MyProfilePage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [editData, setEditData] = useState<UpdateEmployeeRequest>({});
   const [photoLoadError, setPhotoLoadError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // React Query hooks
+  const { data: employee, isLoading } = useEmployee(
+    user?.employeeId || '',
+    hasHydrated && !!user?.employeeId
+  );
+
+  const updateMutation = useUpdateEmployee();
+
+  // Initialize edit data when employee data loads
+  useEffect(() => {
+    if (employee) {
+      setEditData({
+        personalEmail: employee.personalEmail,
+        phoneNumber: employee.phoneNumber,
+        emergencyContactNumber: employee.emergencyContactNumber,
+        address: employee.address,
+        city: employee.city,
+        state: employee.state,
+        postalCode: employee.postalCode,
+        country: employee.country,
+      });
+    }
+  }, [employee]);
 
   useEffect(() => {
     // Wait for hydration before checking authentication
@@ -52,58 +73,23 @@ export default function MyProfilePage() {
       router.push('/auth/login');
       return;
     }
-
-    if (user) {
-      if (user.employeeId) {
-        loadProfile();
-      } else {
-        // User is authenticated but doesn't have an employee record
-        setIsLoading(false);
-        setError('No employee profile found for your account. Please contact your administrator.');
-      }
-    }
-  }, [isAuthenticated, hasHydrated, user, router]);
-
-  const loadProfile = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await employeeService.getEmployee(user!.employeeId!);
-      setEmployee(data);
-      setEditData({
-        personalEmail: data.personalEmail,
-        phoneNumber: data.phoneNumber,
-        emergencyContactNumber: data.emergencyContactNumber,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        postalCode: data.postalCode,
-        country: data.country,
-      });
-    } catch (err: unknown) {
-      console.error('Failed to load profile:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load profile');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [isAuthenticated, hasHydrated, router]);
 
   const handleSave = async () => {
     if (!employee) return;
 
     try {
-      setIsSaving(true);
       setError(null);
-      await employeeService.updateEmployee(employee.id, editData);
-      await loadProfile();
+      await updateMutation.mutateAsync({
+        id: employee.id,
+        data: editData,
+      });
       setIsEditing(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to update profile:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update profile');
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -169,12 +155,6 @@ export default function MyProfilePage() {
               <p className="text-slate-600 dark:text-slate-400 mb-4">
                 {error || 'Unable to load your profile'}
               </p>
-              <button
-                onClick={loadProfile}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                Retry
-              </button>
             </CardContent>
           </Card>
         </div>
@@ -228,7 +208,7 @@ export default function MyProfilePage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCancel}
-                disabled={isSaving}
+                disabled={updateMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors disabled:opacity-50"
               >
                 <X className="h-4 w-4" />
@@ -236,10 +216,10 @@ export default function MyProfilePage() {
               </button>
               <button
                 onClick={handleSave}
-                disabled={isSaving}
+                disabled={updateMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
               >
-                {isSaving ? (
+                {updateMutation.isPending ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     Saving...

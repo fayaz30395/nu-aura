@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { X, Copy, Check, AlertCircle, Loader2, Shield, Key } from 'lucide-react';
 import { mfaApi } from '@/lib/api/mfa';
 import { Button } from '@/components/ui/Button';
@@ -134,7 +135,8 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({ isOpen, onSuccess, onCancel 
             {/* QR Code */}
             {qrCodeUrl && (
               <div className="flex justify-center p-4 bg-white dark:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-600">
-                <img src={qrCodeUrl} alt="QR Code for MFA" className="w-48 h-48" />
+                {/* unoptimized because qrCodeUrl is a data: URI — next/image optimization doesn't apply */}
+                <Image src={qrCodeUrl} alt="QR Code for MFA" width={192} height={192} unoptimized />
               </div>
             )}
 

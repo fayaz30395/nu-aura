@@ -27,6 +27,7 @@ public class QuizManagementService {
     /**
      * Create a new quiz for a course
      */
+    @Transactional
     public Quiz createQuiz(UUID courseId, Quiz quiz, UUID tenantId) {
         quiz.setId(null);
         quiz.setCourseId(courseId);
@@ -39,6 +40,7 @@ public class QuizManagementService {
     /**
      * Update quiz
      */
+    @Transactional
     public Quiz updateQuiz(UUID quizId, Quiz quizUpdates, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
@@ -84,6 +86,7 @@ public class QuizManagementService {
     /**
      * Delete a quiz and all its questions
      */
+    @Transactional
     public void deleteQuiz(UUID quizId, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
@@ -98,6 +101,7 @@ public class QuizManagementService {
     /**
      * Add a question to a quiz
      */
+    @Transactional
     public QuizQuestion addQuestionToQuiz(UUID quizId, QuizQuestion question, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
@@ -119,6 +123,7 @@ public class QuizManagementService {
     /**
      * Update a quiz question
      */
+    @Transactional
     public QuizQuestion updateQuestion(UUID questionId, QuizQuestion updates, UUID tenantId) {
         QuizQuestion question = questionRepository.findByIdAndTenantId(questionId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
@@ -164,6 +169,7 @@ public class QuizManagementService {
     /**
      * Delete a question
      */
+    @Transactional
     public void deleteQuestion(UUID questionId, UUID tenantId) {
         QuizQuestion question = questionRepository.findByIdAndTenantId(questionId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
@@ -173,6 +179,7 @@ public class QuizManagementService {
     /**
      * Get quiz by ID (includes questions)
      */
+    @Transactional(readOnly = true)
     public Quiz getQuizWithQuestions(UUID quizId, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
@@ -185,6 +192,7 @@ public class QuizManagementService {
     /**
      * Get all quizzes for a course
      */
+    @Transactional(readOnly = true)
     public List<Quiz> getQuizzesByCourse(UUID courseId, UUID tenantId) {
         return quizRepository.findByCourseIdAndTenantId(courseId, tenantId);
     }
@@ -192,6 +200,7 @@ public class QuizManagementService {
     /**
      * Get quiz questions
      */
+    @Transactional(readOnly = true)
     public List<QuizQuestion> getQuizQuestions(UUID quizId, UUID tenantId) {
         return questionRepository.findByQuizIdAndTenantIdOrderByOrderIndexAsc(quizId, tenantId);
     }

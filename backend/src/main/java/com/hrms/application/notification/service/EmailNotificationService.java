@@ -14,6 +14,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for sending email notifications.
@@ -37,6 +38,7 @@ public class EmailNotificationService {
      * Send a simple text email.
      */
     @Async
+    @Transactional
     public void sendSimpleEmail(String to, String subject, String body) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -58,6 +60,7 @@ public class EmailNotificationService {
      * Send an HTML email using a template.
      */
     @Async
+    @Transactional
     public void sendHtmlEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         try {
             Context context = new Context();
@@ -169,6 +172,7 @@ public class EmailNotificationService {
      * Send welcome email to new employee.
      */
     @Async
+    @Transactional
     public void sendWelcomeEmail(String employeeEmail, String employeeName, String tempPassword) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
@@ -182,6 +186,7 @@ public class EmailNotificationService {
      * Send password reset email.
      */
     @Async
+    @Transactional
     public void sendPasswordResetEmail(String email, String name, String resetToken) {
         Map<String, Object> variables = Map.of(
                 "name", name,
@@ -195,6 +200,7 @@ public class EmailNotificationService {
      * Send password changed confirmation.
      */
     @Async
+    @Transactional
     public void sendPasswordChangedEmail(String email, String name) {
         Map<String, Object> variables = Map.of(
                 "name", name
@@ -208,6 +214,7 @@ public class EmailNotificationService {
      * Send attendance reminder.
      */
     @Async
+    @Transactional
     public void sendAttendanceReminder(String employeeEmail, String employeeName) {
         Map<String, Object> variables = Map.of(
                 "employeeName", employeeName,
@@ -222,6 +229,7 @@ public class EmailNotificationService {
      * Send company announcement.
      */
     @Async
+    @Transactional
     public void sendAnnouncement(String employeeEmail, String employeeName,
                                   String title, String content) {
         Map<String, Object> variables = Map.of(

@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+// R2-001 FIX: @Version enables JPA optimistic locking — concurrent deductions
+// now cause an ObjectOptimisticLockingFailureException instead of a silent
+// last-write-wins race that can over-spend leave balances.
+
 @Entity
 @Table(name = "leave_balances", indexes = {
     @Index(name = "idx_leave_balances_tenant_id", columnList = "tenantId"),

@@ -42,6 +42,7 @@ public class StatutoryService {
      * @param slab the TDS slab to create
      * @return the created TDS slab with generated ID
      */
+    @Transactional
     public TDSSlab createTDSSlab(TDSSlab slab) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         slab.setId(UUID.randomUUID());
@@ -73,6 +74,7 @@ public class StatutoryService {
      * @param declaration the TDS declaration to submit
      * @return the submitted declaration with generated ID and submission timestamp
      */
+    @Transactional
     public EmployeeTDSDeclaration submitTDSDeclaration(EmployeeTDSDeclaration declaration) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         declaration.setId(UUID.randomUUID());
@@ -106,6 +108,7 @@ public class StatutoryService {
      * @param approverId the approver's user ID
      * @return the approved declaration if found
      */
+    @Transactional
     public Optional<EmployeeTDSDeclaration> approveTDSDeclaration(UUID declarationId, UUID approverId) {
         log.info("Approving TDS declaration {} by approver {}", declarationId, approverId);
         return tdsDeclarationRepository.findById(declarationId)
@@ -125,6 +128,7 @@ public class StatutoryService {
      * @param slab the PT slab to create
      * @return the created PT slab with generated ID
      */
+    @Transactional
     public ProfessionalTaxSlab createPTSlab(ProfessionalTaxSlab slab) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         slab.setId(UUID.randomUUID());
@@ -155,6 +159,7 @@ public class StatutoryService {
      * @param config the PF configuration to create
      * @return the created PF configuration with generated ID
      */
+    @Transactional
     public ProvidentFundConfig createPFConfig(ProvidentFundConfig config) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         config.setId(UUID.randomUUID());
@@ -210,6 +215,7 @@ public class StatutoryService {
      * @param config the ESI configuration to create
      * @return the created ESI configuration with generated ID
      */
+    @Transactional
     public ESIConfig createESIConfig(ESIConfig config) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         config.setId(UUID.randomUUID());

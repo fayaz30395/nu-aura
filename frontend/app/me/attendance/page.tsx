@@ -20,25 +20,39 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { attendanceService } from '@/lib/services/attendance.service';
+import { useAttendanceByDateRange, useMyTimeEntries, useCheckIn, useCheckOut, useRequestRegularization } from '@/lib/hooks/queries/useAttendance';
 import { AttendanceRecord, AttendanceStatus, TimeEntry } from '@/lib/types/attendance';
 import { getLocalDateString, getMonthStartString, getMonthEndString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 
 export default function MyAttendancePage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [isCheckingIn, setIsCheckingIn] = useState(false);
-  const [todayAttendance, setTodayAttendance] = useState<AttendanceRecord | null>(null);
   const [showRegularizationModal, setShowRegularizationModal] = useState(false);
   const [regularizationReason, setRegularizationReason] = useState('');
   const [regularizingRecord, setRegularizingRecord] = useState<AttendanceRecord | null>(null);
-  const [selectedDateTimeEntries, setSelectedDateTimeEntries] = useState<TimeEntry[]>([]); // Selected date's time entries
-  const [isLoadingTimeEntries, setIsLoadingTimeEntries] = useState(false);
+
+  const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
+  const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
+
+  const { data: attendance = [] } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
+  const todayDateStr = getLocalDateString();
+  const { data: selectedDateTimeEntries = [], isLoading: isLoadingTimeEntries } = useMyTimeEntries(selectedDate ? getLocalDateString(selectedDate) : todayDateStr, Boolean(selectedDate));
+
+  const checkIn = useCheckIn();
+  const checkOut = useCheckOut();
+  const requestRegularization = useRequestRegularization();
+
+  const isLoading = !attendance || attendance.length === 0;
+
+  const todayAttendance = attendance.find((a) => {
+    const recordDate = a.attendanceDate?.includes('T')
+      ? a.attendanceDate.split('T')[0]
+      : a.attendanceDate;
+    return recordDate === todayDateStr;
+  });
 
   useEffect(() => {
     // Wait for auth store to hydrate before checking authentication
@@ -47,114 +61,50 @@ export default function MyAttendancePage() {
     if (!isAuthenticated) {
       router.push('/auth/login');
     } else if (user?.employeeId) {
-      loadAttendance();
-    } else if (user) {
-      // User without employee profile (e.g., SuperAdmin) — stop loading
-      setIsLoading(false);
-    }
-  }, [hasHydrated, isAuthenticated, user, router, currentDate]);
-
-  const loadAttendance = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Use utility functions for consistent timezone handling
-      const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
-      const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
-
-      const data = await attendanceService.getAttendanceByDateRange(
-        startOfMonth,
-        endOfMonth
-      );
-      setAttendance(data);
-
-      // Use local date format (YYYY-MM-DD) to match backend's LocalDate
-      const today = getLocalDateString();
-      const todayRecord = data.find((a) => {
-        const recordDate = a.attendanceDate?.includes('T')
-          ? a.attendanceDate.split('T')[0]
-          : a.attendanceDate;
-        return recordDate === today;
-      });
-      setTodayAttendance(todayRecord || null);
-
-      // Load today's time entries and set today as selected
+      // Set selectedDate to today when component mounts
       setSelectedDate(new Date());
-      await loadTimeEntries(today);
-    } catch (err: unknown) {
-      console.error('Failed to load attendance:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load attendance');
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [hasHydrated, isAuthenticated, user, router]);
 
-  const loadTimeEntries = async (date: string) => {
-    try {
-      setIsLoadingTimeEntries(true);
-      const entries = await attendanceService.getMyTimeEntries(date);
-      setSelectedDateTimeEntries(entries);
-    } catch (err: unknown) {
-      console.error('Failed to load time entries:', err);
-      // Don't show error for time entries - it's not critical
-      setSelectedDateTimeEntries([]);
-    } finally {
-      setIsLoadingTimeEntries(false);
-    }
-  };
-
-  const handleDateSelect = async (day: Date) => {
+  const handleDateSelect = (day: Date) => {
     setSelectedDate(day);
-    const dateStr = getLocalDateString(day);
-    await loadTimeEntries(dateStr);
   };
 
   const handleCheckIn = async () => {
     try {
-      setIsCheckingIn(true);
       setError(null);
 
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
       const localTime = getLocalDateTimeString();
 
-      await attendanceService.checkIn({
+      await checkIn.mutateAsync({
         employeeId: user!.employeeId!,
         checkInTime: localTime,
         attendanceDate: localDate,
       });
-
-      await loadAttendance();
     } catch (err: unknown) {
       console.error('Failed to check in:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
-    } finally {
-      setIsCheckingIn(false);
     }
   };
 
   const handleCheckOut = async () => {
     try {
-      setIsCheckingIn(true);
       setError(null);
 
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
       const localTime = getLocalDateTimeString();
 
-      await attendanceService.checkOut({
+      await checkOut.mutateAsync({
         employeeId: user!.employeeId!,
         checkOutTime: localTime,
         attendanceDate: localDate,
       });
-
-      await loadAttendance();
     } catch (err: unknown) {
       console.error('Failed to check out:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
-    } finally {
-      setIsCheckingIn(false);
     }
   };
 
@@ -163,14 +113,16 @@ export default function MyAttendancePage() {
 
     try {
       setError(null);
-      await attendanceService.requestRegularization(regularizingRecord.id, {
-        reason: regularizationReason,
+      await requestRegularization.mutateAsync({
+        id: regularizingRecord.id,
+        data: {
+          reason: regularizationReason,
+        },
       });
 
       setShowRegularizationModal(false);
       setRegularizationReason('');
       setRegularizingRecord(null);
-      await loadAttendance();
     } catch (err: unknown) {
       console.error('Failed to request regularization:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to request regularization');
@@ -376,31 +328,31 @@ export default function MyAttendancePage() {
                 {canCheckIn && (
                   <button
                     onClick={handleCheckIn}
-                    disabled={isCheckingIn}
+                    disabled={checkIn.isPending || checkOut.isPending}
                     className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
-                    {isCheckingIn ? 'Checking In...' : 'Check In'}
+                    {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In'}
                   </button>
                 )}
                 {canCheckOut && (
                   <button
                     onClick={handleCheckOut}
-                    disabled={isCheckingIn}
+                    disabled={checkIn.isPending || checkOut.isPending}
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogOut className="h-5 w-5" />
-                    {isCheckingIn ? 'Checking Out...' : 'Check Out'}
+                    {checkIn.isPending || checkOut.isPending ? 'Checking Out...' : 'Check Out'}
                   </button>
                 )}
                 {attendanceComplete && (
                   <button
                     onClick={handleCheckIn}
-                    disabled={isCheckingIn}
+                    disabled={checkIn.isPending || checkOut.isPending}
                     className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
-                    {isCheckingIn ? 'Checking In...' : 'Check In Again'}
+                    {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In Again'}
                   </button>
                 )}
               </div>

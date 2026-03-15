@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { calendarService } from '@/lib/services/calendar.service';
-import { CalendarEvent, EventStatus } from '@/lib/types/calendar';
+import { EventStatus, CalendarEvent } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useMyCalendarEventsByDateRange } from '@/lib/hooks/queries/useCalendar';
 import {
   Calendar,
   Plus,
@@ -25,41 +26,30 @@ import {
 
 export default function CalendarPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'week' | 'month'>('week');
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadEvents();
-  }, [isAuthenticated, hasHydrated, router, currentDate, view]);
+  // Calculate date range
+  const dateRange =
+    view === 'week'
+      ? calendarService.getWeekRange(currentDate)
+      : calendarService.getMonthRange(currentDate);
 
-  const loadEvents = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // React Query hook
+  const { data: events = [], isLoading, error } = useMyCalendarEventsByDateRange(
+    dateRange.start,
+    dateRange.end
+  );
 
-      const range =
-        view === 'week'
-          ? calendarService.getWeekRange(currentDate)
-          : calendarService.getMonthRange(currentDate);
+  if (!hasHydrated) {
+    return null;
+  }
 
-      const eventsData = await calendarService.getMyEventsForRange(range.start, range.end);
-      setEvents(eventsData);
-    } catch (error) {
-      console.error('Error loading calendar events:', error);
-      setError('Failed to load calendar events');
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!isAuthenticated) {
+    router.push('/login');
+    return null;
+  }
 
   const getStatusConfig = (status: EventStatus) => {
     const configs: Record<EventStatus, { bg: string; text: string; icon: typeof Clock }> = {
@@ -124,7 +114,7 @@ export default function CalendarPage() {
     return grouped;
   };
 
-  if (loading && events.length === 0) {
+  if (isLoading && events.length === 0) {
     return (
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -143,13 +133,9 @@ export default function CalendarPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error}</p>
-            <button
-              onClick={loadEvents}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
-            >
-              Retry
-            </button>
+            <p className="text-surface-600 dark:text-surface-400">
+              {error instanceof Error ? error.message : 'Failed to load calendar events'}
+            </p>
           </div>
         </div>
       </AppLayout>
@@ -214,11 +200,10 @@ export default function CalendarPage() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={loadEvents}
-              disabled={loading}
+              disabled={isLoading}
               className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`h-5 w-5 text-surface-600 dark:text-surface-400 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-5 w-5 text-surface-600 dark:text-surface-400 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
             <div className="flex bg-surface-100 dark:bg-surface-800 rounded-lg p-1">
               <button

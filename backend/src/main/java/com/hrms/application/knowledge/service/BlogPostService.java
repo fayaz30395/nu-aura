@@ -23,6 +23,7 @@ public class BlogPostService {
 
     private final BlogPostRepository blogPostRepository;
 
+    @Transactional
     public BlogPost createPost(BlogPost post) {
         UUID tenantId = TenantContext.getCurrentTenant();
         post.setTenantId(tenantId);
@@ -37,6 +38,7 @@ public class BlogPostService {
         return saved;
     }
 
+    @Transactional
     public BlogPost updatePost(UUID postId, BlogPost postData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -171,6 +173,7 @@ public class BlogPostService {
         return updated;
     }
 
+    @Transactional
     public void deletePost(UUID postId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

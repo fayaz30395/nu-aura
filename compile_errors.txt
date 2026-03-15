@@ -1,0 +1,274 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] NuLogic Platform                                                   [pom]
+[INFO] NuLogic Common Module                                              [jar]
+[INFO] NuLogic PM Module                                                  [jar]
+[INFO] HRMS Platform Backend                                              [jar]
+[INFO] 
+[INFO] --------------------< com.nulogic:nulogic-platform >--------------------
+[INFO] Building NuLogic Platform 1.0.0                                    [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] ---------------------< com.nulogic:common-module >----------------------
+[INFO] Building NuLogic Common Module 1.0.0                               [2/4]
+[INFO]   from modules/common/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ common-module ---
+[INFO] skip non existing resourceDirectory /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/resources
+[INFO] skip non existing resourceDirectory /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ common-module ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ common-module ---
+[INFO] skip non existing resourceDirectory /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/common/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ common-module ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] -----------------------< com.nulogic:pm-module >------------------------
+[INFO] Building NuLogic PM Module 1.0.0                                   [3/4]
+[INFO]   from modules/pm/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ pm-module ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 8 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ pm-module ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ pm-module ---
+[INFO] skip non existing resourceDirectory /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/modules/pm/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ pm-module ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] -----------------------< com.hrms:hrms-backend >------------------------
+[INFO] Building HRMS Platform Backend 1.0.0                               [4/4]
+[INFO]   from backend/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.13:prepare-agent (prepare-agent) @ hrms-backend ---
+[INFO] argLine set to -javaagent:/Users/fayaz.m/.m2/repository/org/jacoco/org.jacoco.agent/0.8.13/org.jacoco.agent-0.8.13-runtime.jar=destfile=/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ hrms-backend ---
+[INFO] Copying 5 resources from src/main/resources to target/classes
+[INFO] Copying 39 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ hrms-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ hrms-backend ---
+[INFO] Copying 3 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ hrms-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 73 source files with javac [debug release 17] to target/test-classes
+[INFO] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/e2e/AttendanceE2ETest.java: Some input files use or override a deprecated API.
+[INFO] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/e2e/AttendanceE2ETest.java: Recompile with -Xlint:deprecation for details.
+[INFO] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/recruitment/controller/AIRecruitmentFileParsingIntegrationTest.java: Some input files additionally use or override a deprecated API that is marked for removal.
+[INFO] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/recruitment/service/ApplicantServiceTest.java: Some input files use unchecked or unsafe operations.
+[INFO] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/recruitment/service/ApplicantServiceTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[WARNING] COMPILATION WARNING : 
+[INFO] -------------------------------------------------------------
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[45,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[45,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[45,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[45,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[45,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/dashboard/controller/DashboardControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[65,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[65,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[65,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[65,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[65,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[68,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[68,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[68,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[68,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[68,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[71,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[71,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[71,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[71,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[71,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[74,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[74,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[74,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[74,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[74,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[77,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[77,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[77,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[77,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[77,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[80,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[80,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[80,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[80,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[80,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[83,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[83,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[83,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[83,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[83,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[86,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[86,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[86,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[86,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[86,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[89,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[89,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[89,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[89,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[89,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[92,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[92,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[92,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[92,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[92,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[95,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[95,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[95,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[95,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[95,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[98,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[98,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[98,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[98,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/auth/controller/AuthControllerTest.java:[98,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[48,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[51,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[54,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[57,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[57,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[57,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[57,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[WARNING] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/api/home/controller/HomeControllerTest.java:[57,6] org.springframework.boot.test.mock.mockito.MockBean in org.springframework.boot.test.mock.mockito has been deprecated and marked for removal
+[INFO] 100 warnings 
+[INFO] -------------------------------------------------------------
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[98,38] constructor LeaveRequestedEvent in class com.hrms.domain.event.leave.LeaveRequestedEvent cannot be applied to given types;
+  required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.util.UUID
+  found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[115,38] constructor LeaveRequestedEvent in class com.hrms.domain.event.leave.LeaveRequestedEvent cannot be applied to given types;
+  required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.util.UUID
+  found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[176,42] constructor ExpenseSubmittedEvent in class com.hrms.domain.event.expense.ExpenseSubmittedEvent cannot be applied to given types;
+  required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String,java.util.UUID
+  found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[191,42] constructor ExpenseSubmittedEvent in class com.hrms.domain.event.expense.ExpenseSubmittedEvent cannot be applied to given types;
+  required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String,java.util.UUID
+  found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[290,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+  required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+  found:    java.util.UUID,java.util.UUID,java.time.LocalDateTime
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[307,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+  required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+  found:    java.util.UUID,java.util.UUID,java.time.LocalDateTime
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[324,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+  required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+  found:    java.lang.Object,java.lang.Object,java.lang.Object
+  reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[332,44] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+  required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+  found:    java.util.UUID,java.util.UUID,java.lang.Object
+  reason: actual and formal argument lists differ in length
+[INFO] 8 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for NuLogic Platform 1.0.0:
+[INFO] 
+[INFO] NuLogic Platform ................................... SUCCESS [  0.002 s]
+[INFO] NuLogic Common Module .............................. SUCCESS [  0.496 s]
+[INFO] NuLogic PM Module .................................. SUCCESS [  0.207 s]
+[INFO] HRMS Platform Backend .............................. FAILURE [  5.585 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.548 s
+[INFO] Finished at: 2026-03-15T00:51:49+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:testCompile (default-testCompile) on project hrms-backend: Compilation failure: Compilation failure: 
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[98,38] constructor LeaveRequestedEvent in class com.hrms.domain.event.leave.LeaveRequestedEvent cannot be applied to given types;
+[ERROR]   required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.util.UUID
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[115,38] constructor LeaveRequestedEvent in class com.hrms.domain.event.leave.LeaveRequestedEvent cannot be applied to given types;
+[ERROR]   required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate,java.util.UUID
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.lang.String,java.time.LocalDate,java.time.LocalDate
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[176,42] constructor ExpenseSubmittedEvent in class com.hrms.domain.event.expense.ExpenseSubmittedEvent cannot be applied to given types;
+[ERROR]   required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String,java.util.UUID
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/security/MultiTenantAsyncIsolationTest.java:[191,42] constructor ExpenseSubmittedEvent in class com.hrms.domain.event.expense.ExpenseSubmittedEvent cannot be applied to given types;
+[ERROR]   required: java.lang.Object,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String,java.util.UUID
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.util.UUID,java.util.UUID,java.lang.String,java.math.BigDecimal,java.lang.String
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[290,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+[ERROR]   required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.time.LocalDateTime
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[307,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+[ERROR]   required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.time.LocalDateTime
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[324,41] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+[ERROR]   required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+[ERROR]   found:    java.lang.Object,java.lang.Object,java.lang.Object
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/backend/src/test/java/com/hrms/application/workflow/service/WorkflowServiceTest.java:[332,44] method countTodayActionsByUser in interface com.hrms.infrastructure.workflow.repository.StepExecutionRepository cannot be applied to given types;
+[ERROR]   required: java.util.UUID,java.util.UUID,java.time.LocalDateTime,java.util.Collection<com.hrms.domain.workflow.StepExecution.ApprovalAction>
+[ERROR]   found:    java.util.UUID,java.util.UUID,java.lang.Object
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :hrms-backend

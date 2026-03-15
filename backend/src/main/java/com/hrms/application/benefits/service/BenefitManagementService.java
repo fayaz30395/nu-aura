@@ -24,6 +24,7 @@ public class BenefitManagementService {
 
     private final BenefitPlanRepository benefitPlanRepository;
 
+    @Transactional
     public BenefitPlanResponse createPlan(BenefitPlanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating benefit plan {} for tenant {}", request.getPlanCode(), tenantId);
@@ -52,6 +53,7 @@ public class BenefitManagementService {
         return mapToResponse(savedPlan);
     }
 
+    @Transactional
     public BenefitPlanResponse updatePlan(UUID planId, BenefitPlanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating benefit plan {} for tenant {}", planId, tenantId);
@@ -132,6 +134,7 @@ public class BenefitManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deletePlan(UUID planId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BenefitPlan plan = benefitPlanRepository.findByIdAndTenantId(planId, tenantId)

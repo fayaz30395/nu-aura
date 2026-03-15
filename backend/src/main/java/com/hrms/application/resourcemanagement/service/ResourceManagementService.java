@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,7 @@ public class ResourceManagementService {
         // CAPACITY & ALLOCATION
         // ============================================
 
+        @Transactional(readOnly = true)
         public List<EmployeeCapacity> getEmployeesCapacity(List<UUID> employeeIds, LocalDate asOfDate) {
                 if (employeeIds == null || employeeIds.isEmpty()) {
                         UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -134,6 +136,7 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        @Transactional
         public EmployeeWorkload updateAllocation(UpdateAllocationRequest request) {
                 if (request == null) {
                         throw new IllegalArgumentException("Update request is required");
@@ -171,6 +174,7 @@ public class ResourceManagementService {
                 return getEmployeeWorkload(request.getEmployeeId());
         }
 
+        @Transactional(readOnly = true)
         public List<EmployeeCapacity> getOverAllocatedEmployees(UUID departmentId, Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 List<Employee> employees = departmentId != null
@@ -185,6 +189,7 @@ public class ResourceManagementService {
                                 .collect(Collectors.toList());
         }
 
+        @Transactional(readOnly = true)
         public List<EmployeeCapacity> getAvailableEmployees(Integer minCapacity, UUID departmentId, Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 List<Employee> employees = departmentId != null
@@ -199,6 +204,7 @@ public class ResourceManagementService {
                                 .collect(Collectors.toList());
         }
 
+        @Transactional(readOnly = true)
         public EmployeeCapacity getEmployeeCapacity(UUID employeeId, LocalDate asOfDate) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 Employee employee = employeeRepository.findById(employeeId)
@@ -209,7 +215,7 @@ public class ResourceManagementService {
                                 .findAllByEmployeeIdAndTenantIdAndIsActive(employeeId, tenantId, true);
                 List<AllocationApprovalRequest> pendingRequests = approvalRepository
                                 .findAllByTenantIdAndStatus(tenantId, AllocationApprovalRequest.ApprovalStatus.PENDING,
-                                                Pageable.unpaged())
+                                                PageRequest.of(0, 10_000))
                                 .getContent().stream()
                                 .filter(r -> r.getEmployeeId().equals(employeeId))
                                 .collect(Collectors.toList());
@@ -335,6 +341,7 @@ public class ResourceManagementService {
                                 .stream().mapToInt(ProjectEmployee::getAllocationPercentage).sum();
         }
 
+        @Transactional(readOnly = true)
         public AllocationApprovalResponse getAllocationRequest(UUID requestId) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 AllocationApprovalRequest request = approvalRepository.findById(requestId)
@@ -343,6 +350,7 @@ public class ResourceManagementService {
                 return mapToApprovalResponse(request);
         }
 
+        @Transactional(readOnly = true)
         public Page<AllocationApprovalResponse> getAllPendingRequests(UUID departmentId, Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 return approvalRepository
@@ -351,12 +359,14 @@ public class ResourceManagementService {
                                 .map(this::mapToApprovalResponse);
         }
 
+        @Transactional(readOnly = true)
         public Page<AllocationApprovalResponse> getEmployeeAllocationHistory(UUID employeeId, Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 return approvalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
                                 .map(this::mapToApprovalResponse);
         }
 
+        @Transactional(readOnly = true)
         public long getPendingApprovalsCount() {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 return approvalRepository.countByTenantIdAndStatus(tenantId,
@@ -453,13 +463,14 @@ public class ResourceManagementService {
         // WORKLOAD DASHBOARD
         // ============================================
 
+        @Transactional(readOnly = true)
         public WorkloadDashboardData getWorkloadDashboard(WorkloadFilterOptions filters) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 // Only include ACTIVE employees in workload dashboard
                 List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId).stream()
                                 .filter(e -> e.getStatus() == Employee.EmployeeStatus.ACTIVE)
                                 .collect(Collectors.toList());
-                List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId, Pageable.unpaged())
+                List<Project> activeProjects = projectRepository.findAllByTenantId(tenantId, PageRequest.of(0, 10_000))
                                 .getContent();
 
                 // First, map ALL active employees to workloads (before applying filters)
@@ -494,6 +505,7 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        @Transactional(readOnly = true)
         public EmployeeWorkload getEmployeeWorkload(UUID employeeId) {
                 EmployeeCapacity capacity = getEmployeeCapacity(employeeId, LocalDate.now());
                 return EmployeeWorkload.builder()
@@ -728,6 +740,7 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        @Transactional(readOnly = true)
         public Page<EmployeeWorkload> getEmployeeWorkloads(WorkloadFilterOptions filters, Pageable pageable) {
                 WorkloadDashboardData dashboardData = getWorkloadDashboard(filters);
                 List<EmployeeWorkload> workloads = dashboardData.getEmployeeWorkloads();
@@ -738,6 +751,7 @@ public class ResourceManagementService {
                 return new PageImpl<>(workloads.subList(start, end), pageable, workloads.size());
         }
 
+        @Transactional(readOnly = true)
         public List<DepartmentWorkload> getDepartmentWorkloads(LocalDate startDate, LocalDate endDate) {
                 WorkloadFilterOptions filters = new WorkloadFilterOptions();
                 filters.setStartDate(startDate);
@@ -745,6 +759,7 @@ public class ResourceManagementService {
                 return getWorkloadDashboard(filters).getDepartmentWorkloads();
         }
 
+        @Transactional(readOnly = true)
         public List<WorkloadHeatmapRow> getWorkloadHeatmap(LocalDate startDate, LocalDate endDate, UUID departmentId,
                         Integer limit) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -801,12 +816,14 @@ public class ResourceManagementService {
                                 .collect(Collectors.toList());
         }
 
+        @Transactional(readOnly = true)
         public TeamAvailabilityView getAggregatedAvailability(LocalDate startDate, LocalDate endDate,
                         UUID departmentId) {
                 return getTeamAvailability(departmentId != null ? Collections.singletonList(departmentId) : null,
                                 startDate, endDate);
         }
 
+        @Transactional(readOnly = true)
         public Page<AllocationApprovalResponse> getMyPendingApprovals(Pageable pageable) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 UUID managerId = SecurityContext.getCurrentEmployeeId();
@@ -816,6 +833,7 @@ public class ResourceManagementService {
                                 .map(this::mapToApprovalResponse);
         }
 
+        @Transactional(readOnly = true)
         public EmployeeAvailability getEmployeeAvailability(UUID employeeId, LocalDate startDate, LocalDate endDate) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
                 Employee employee = employeeRepository.findById(employeeId)
@@ -965,6 +983,7 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        @Transactional(readOnly = true)
         public TeamAvailabilityView getTeamAvailability(ResourceCalendarFilter filter) {
                 if (filter == null) {
                         return getTeamAvailability(null, LocalDate.now(), LocalDate.now().plusMonths(1));
@@ -975,6 +994,7 @@ public class ResourceManagementService {
                                 filter.getEndDate() != null ? filter.getEndDate() : LocalDate.now().plusMonths(1));
         }
 
+        @Transactional(readOnly = true)
         public TeamAvailabilityView getTeamAvailability(List<UUID> departmentIds, LocalDate startDate,
                         LocalDate endDate) {
                 UUID tenantId = SecurityContext.getCurrentTenantId();
@@ -1031,6 +1051,7 @@ public class ResourceManagementService {
                                 .build();
         }
 
+        @Transactional(readOnly = true)
         public byte[] exportWorkloadReport(String format, WorkloadFilterOptions filters) {
                 WorkloadDashboardData data = getWorkloadDashboard(filters);
 

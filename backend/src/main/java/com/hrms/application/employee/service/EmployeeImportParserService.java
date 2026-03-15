@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to parse CSV and Excel files for employee bulk import.
@@ -148,6 +149,7 @@ public class EmployeeImportParserService {
     /**
      * Get active custom field definitions for EMPLOYEE entity type
      */
+    @Transactional(readOnly = true)
     public List<CustomFieldDefinition> getActiveCustomFieldDefinitions() {
         try {
             UUID tenantId = TenantContext.getCurrentTenant();
@@ -483,6 +485,7 @@ public class EmployeeImportParserService {
     /**
      * Generate a sample CSV template.
      */
+    @Transactional(readOnly = true)
     public byte[] generateCsvTemplate() {
         StringBuilder sb = new StringBuilder();
 
@@ -517,6 +520,7 @@ public class EmployeeImportParserService {
     /**
      * Generate a sample Excel template.
      */
+    @Transactional(readOnly = true)
     public byte[] generateExcelTemplate() throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Employee Import");

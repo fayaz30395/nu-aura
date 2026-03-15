@@ -20,10 +20,13 @@ import {
   Textarea,
 } from '@/components/ui';
 import { applicantService } from '@/lib/services/applicant.service';
-import { recruitmentService } from '@/lib/services/recruitment.service';
 import { letterService } from '@/lib/services/letter.service';
 import { LetterCategory } from '@/lib/types/letter';
 import type { LetterTemplate } from '@/lib/types/letter';
+import { useQueryClient } from '@tanstack/react-query';
+import { useJobOpenings } from '@/lib/hooks/queries/useRecruitment';
+import { usePipelineByJob, applicantKeys } from '@/lib/hooks/queries/useApplicants';
+import { useActiveLetterTemplates } from '@/lib/hooks/queries/useLetter';
 import {
   ApplicationSource,
   ApplicationStatus,
@@ -413,16 +416,30 @@ const EMPTY_NEW_APPLICANT: ApplicantRequest = {
 };
 
 export default function ApplicantPipelinePage() {
-  // ── Job Openings ──────────────────────────────────────────────────────────
-  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([]);
-  const [jobsLoading, setJobsLoading] = useState(true);
-  const [jobsError, setJobsError] = useState<string | null>(null);
+  // ── React Query Hooks ──────────────────────────────────────────────────────
+  const queryClient = useQueryClient();
+  const jobOpeningsQuery = useJobOpenings(0, 200);
   const [selectedJobId, setSelectedJobId] = useState<string>('');
+  const pipelineQuery = usePipelineByJob(selectedJobId, !!selectedJobId);
+  const { data: letterTemplatesData } = useActiveLetterTemplates(true);
 
-  // ── Pipeline Data ─────────────────────────────────────────────────────────
-  const [pipelineData, setPipelineData] = useState<PipelineData>(EMPTY_PIPELINE);
-  const [pipelineLoading, setPipelineLoading] = useState(false);
-  const [pipelineError, setPipelineError] = useState<string | null>(null);
+  // Initialize selectedJobId once on mount
+  useEffect(() => {
+    if (!selectedJobId && jobOpeningsQuery.data?.content && jobOpeningsQuery.data.content.length > 0) {
+      setSelectedJobId(jobOpeningsQuery.data.content[0].id);
+    }
+  }, [jobOpeningsQuery.data?.content, selectedJobId]);
+
+  // Extract data from queries
+  const jobOpenings = jobOpeningsQuery.data?.content ?? [];
+  const jobsLoading = jobOpeningsQuery.isLoading;
+  const jobsError = jobOpeningsQuery.isError ? 'Failed to load job openings' : null;
+
+  const pipelineData = pipelineQuery.data || EMPTY_PIPELINE;
+  const pipelineLoading = pipelineQuery.isLoading;
+  const pipelineError = pipelineQuery.isError ? 'Failed to load pipeline' : null;
+
+  const offerTemplates = (letterTemplatesData || []).filter(t => t.category === LetterCategory.OFFER);
 
   // ── Search & Filters ──────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState('');
@@ -455,7 +472,6 @@ export default function ApplicantPipelinePage() {
   // ── Create Offer Modal ────────────────────────────────────────────────
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [offerApplicant, setOfferApplicant] = useState<Applicant | null>(null);
-  const [offerTemplates, setOfferTemplates] = useState<LetterTemplate[]>([]);
   const [offerTemplatesLoading, setOfferTemplatesLoading] = useState(false);
   const [offerForm, setOfferForm] = useState({
     templateId: '',
@@ -467,50 +483,6 @@ export default function ApplicantPipelinePage() {
   const [offerLoading, setOfferLoading] = useState(false);
   const [offerError, setOfferError] = useState<string | null>(null);
   const [offerSuccess, setOfferSuccess] = useState<string | null>(null);
-
-  // ── Load Job Openings ────────────────────────────────────────────────────
-  const loadJobOpenings = useCallback(async () => {
-    try {
-      setJobsLoading(true);
-      setJobsError(null);
-      const response = await recruitmentService.getAllJobOpenings(0, 200);
-      const jobs = response.content ?? [];
-      setJobOpenings(jobs);
-      if (jobs.length > 0) {
-        setSelectedJobId(jobs[0].id);
-      }
-    } catch (err) {
-      setJobsError(getErrorMessage(err, 'Failed to load job openings'));
-    } finally {
-      setJobsLoading(false);
-    }
-  }, []);
-
-  // ── Load Pipeline ─────────────────────────────────────────────────────────
-  const loadPipeline = useCallback(async (jobId: string) => {
-    if (!jobId) return;
-    try {
-      setPipelineLoading(true);
-      setPipelineError(null);
-      const data = await applicantService.getPipeline(jobId);
-      setPipelineData(data || EMPTY_PIPELINE);
-    } catch (err) {
-      setPipelineError(getErrorMessage(err, 'Failed to load pipeline'));
-      setPipelineData(EMPTY_PIPELINE);
-    } finally {
-      setPipelineLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadJobOpenings();
-  }, [loadJobOpenings]);
-
-  useEffect(() => {
-    if (selectedJobId) {
-      loadPipeline(selectedJobId);
-    }
-  }, [selectedJobId, loadPipeline]);
 
   // ── Clear drag error after 4s ─────────────────────────────────────────
   useEffect(() => {
@@ -543,7 +515,6 @@ export default function ApplicantPipelinePage() {
   const handleJobChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const jobId = e.target.value;
     setSelectedJobId(jobId);
-    setPipelineData(EMPTY_PIPELINE);
   };
 
   const openAddModal = () => {
@@ -567,7 +538,7 @@ export default function ApplicantPipelinePage() {
       await applicantService.createApplicant(newApplicant);
       setShowAddModal(false);
       setNewApplicant({ ...EMPTY_NEW_APPLICANT });
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
       setAddError(getErrorMessage(err, 'Failed to add applicant'));
     } finally {
@@ -614,7 +585,7 @@ export default function ApplicantPipelinePage() {
 
       setShowDetailModal(false);
       setActiveApplicant(null);
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
       setDetailError(getErrorMessage(err, 'Failed to update applicant'));
     } finally {
@@ -634,7 +605,7 @@ export default function ApplicantPipelinePage() {
       });
       setShowDetailModal(false);
       setActiveApplicant(null);
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
       setDetailError(getErrorMessage(err, 'Failed to reject applicant'));
     } finally {
@@ -652,7 +623,7 @@ export default function ApplicantPipelinePage() {
         status: nextStage,
         notes: applicant.notes,
       });
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
       console.error('Failed to advance stage:', err);
     } finally {
@@ -667,7 +638,7 @@ export default function ApplicantPipelinePage() {
         status: ApplicationStatus.REJECTED,
         rejectionReason: 'Not selected',
       });
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
       console.error('Failed to reject:', err);
     } finally {
@@ -695,13 +666,6 @@ export default function ApplicantPipelinePage() {
     const applicant = applicants.find(a => a.id === draggableId);
     if (!applicant) return;
 
-    // Optimistic update
-    const prevData = { ...pipelineData };
-    const newPipeline = { ...pipelineData } as PipelineData;
-    newPipeline[fromStage] = newPipeline[fromStage].filter(a => a.id !== draggableId);
-    newPipeline[toStage] = [...newPipeline[toStage], { ...applicant, status: toStage }];
-    setPipelineData(newPipeline);
-
     try {
       setMovingId(draggableId);
       const payload: ApplicantStatusUpdate = {
@@ -710,20 +674,19 @@ export default function ApplicantPipelinePage() {
         rejectionReason: toStage === ApplicationStatus.REJECTED ? 'Not selected' : undefined,
       };
       await applicantService.updateStatus(draggableId, payload);
-      await loadPipeline(selectedJobId);
+      // Refetch pipeline after status update
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
     } catch (err) {
-      // Rollback optimistic update
-      setPipelineData(prevData);
       setDragError(getErrorMessage(err, 'Failed to move applicant'));
     } finally {
       setMovingId(null);
     }
   };
 
-  const openOfferModal = async (applicant: Applicant) => {
+  const openOfferModal = (applicant: Applicant) => {
     setOfferApplicant(applicant);
     setOfferForm({
-      templateId: '',
+      templateId: offerTemplates.length === 1 ? offerTemplates[0].id : '',
       offeredCtc: applicant.expectedSalary?.toString() ?? '',
       offeredDesignation: applicant.jobTitle ?? '',
       proposedJoiningDate: '',
@@ -732,19 +695,6 @@ export default function ApplicantPipelinePage() {
     setOfferError(null);
     setOfferSuccess(null);
     setShowOfferModal(true);
-
-    setOfferTemplatesLoading(true);
-    try {
-      const templates = await letterService.getTemplatesByCategory(LetterCategory.OFFER);
-      setOfferTemplates(templates);
-      if (templates.length === 1) {
-        setOfferForm(prev => ({ ...prev, templateId: templates[0].id }));
-      }
-    } catch {
-      setOfferTemplates([]);
-    } finally {
-      setOfferTemplatesLoading(false);
-    }
   };
 
   const handleCreateOffer = async () => {
@@ -777,7 +727,7 @@ export default function ApplicantPipelinePage() {
       });
 
       setOfferSuccess(`Offer letter sent successfully! Reference: ${letter.referenceNumber}`);
-      await loadPipeline(selectedJobId);
+      await queryClient.invalidateQueries({ queryKey: applicantKeys.pipeline(selectedJobId) });
 
       setTimeout(() => {
         setShowOfferModal(false);

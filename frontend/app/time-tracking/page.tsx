@@ -1,11 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
 import { TimeEntry, TimeEntryStatus } from '@/lib/types/time-tracking';
 import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useMyTimeTrackingEntries,
+  useTimeSummary,
+  useSubmitMultipleTimeEntries,
+} from '@/lib/hooks/queries/useTimeTracking';
 import {
   Clock,
   Plus,
@@ -25,61 +30,31 @@ import {
 export default function TimeTrackingPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [entries, setEntries] = useState<TimeEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [summary, setSummary] = useState({
-    totalHours: 0,
-    billableHours: 0,
-    pendingHours: 0,
-    draftCount: 0,
-  });
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadData();
-  }, [isAuthenticated, hasHydrated, router]);
+  const { weekStart, weekEnd } = useMemo(() => timeTrackingService.getWeekDates(), []);
+  const { data: entriesData, isLoading, error } = useMyTimeTrackingEntries(0, 20);
+  const { data: summaryData } = useTimeSummary(weekStart, weekEnd);
+  const submitMultipleMutation = useSubmitMultipleTimeEntries();
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const entries = entriesData?.content || [];
 
-      const { weekStart, weekEnd } = timeTrackingService.getWeekDates();
-      const [entriesData, summaryData] = await Promise.all([
-        timeTrackingService.getMyEntries(0, 20),
-        timeTrackingService.getTimeSummary(weekStart, weekEnd),
-      ]);
+  const summary = useMemo(() => {
+    const draftEntries = entries.filter((e) => e.status === 'DRAFT');
+    const billableHours = entries
+      .filter((e) => e.isBillable && e.status === 'APPROVED')
+      .reduce((sum, e) => sum + e.billableHours, 0);
+    const pendingHours = entries
+      .filter((e) => e.status === 'SUBMITTED')
+      .reduce((sum, e) => sum + e.hoursWorked, 0);
 
-      setEntries(entriesData.content);
-
-      const draftEntries = entriesData.content.filter((e) => e.status === 'DRAFT');
-      const billableHours = entriesData.content
-        .filter((e) => e.isBillable && e.status === 'APPROVED')
-        .reduce((sum, e) => sum + e.billableHours, 0);
-      const pendingHours = entriesData.content
-        .filter((e) => e.status === 'SUBMITTED')
-        .reduce((sum, e) => sum + e.hoursWorked, 0);
-
-      setSummary({
-        totalHours: summaryData.totalHoursWorked || 0,
-        billableHours,
-        pendingHours,
-        draftCount: draftEntries.length,
-      });
-    } catch (error) {
-      console.error('Error loading time tracking data:', error);
-      setError('Failed to load time entries');
-    } finally {
-      setLoading(false);
-    }
-  };
+    return {
+      totalHours: summaryData?.totalHoursWorked || 0,
+      billableHours,
+      pendingHours,
+      draftCount: draftEntries.length,
+    };
+  }, [entries, summaryData]);
 
   const getStatusConfig = (status: TimeEntryStatus) => {
     const configs: Record<TimeEntryStatus, { bg: string; text: string; icon: typeof Clock }> = {
@@ -117,19 +92,14 @@ export default function TimeTrackingPage() {
     if (selectedEntries.length === 0) return;
 
     try {
-      setSubmitting(true);
-      await timeTrackingService.submitMultiple(selectedEntries);
+      await submitMultipleMutation.mutateAsync(selectedEntries);
       setSelectedEntries([]);
-      await loadData();
     } catch (error) {
       console.error('Error submitting entries:', error);
-      setError('Failed to submit entries');
-    } finally {
-      setSubmitting(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -148,9 +118,9 @@ export default function TimeTrackingPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error}</p>
+            <p className="text-surface-600 dark:text-surface-400">{error instanceof Error ? error.message : 'Failed to load time entries'}</p>
             <button
-              onClick={loadData}
+              onClick={() => window.location.reload()}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
             >
               Retry
@@ -263,10 +233,10 @@ export default function TimeTrackingPage() {
             </div>
             <button
               onClick={handleSubmitSelected}
-              disabled={selectedEntries.length === 0 || submitting}
+              disabled={selectedEntries.length === 0 || submitMultipleMutation.isPending}
               className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
             >
-              {submitting ? (
+              {submitMultipleMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Send className="h-4 w-4" />

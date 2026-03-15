@@ -1,39 +1,22 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, Select } from '@mantine/core';
 import { IconPlus, IconDotsVertical, IconFileInvoice, IconSend, IconDownload } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { psaService } from '@/lib/services/psa.service';
 import { PSAInvoice, InvoiceStatus } from '@/lib/types/psa';
 import { notifications } from '@mantine/notifications';
+import { usePsaInvoices, useApproveInvoice } from '@/lib/hooks/queries/usePsa';
 
 export default function PsaInvoicesPage() {
     const router = useRouter();
-    const [invoices, setInvoices] = useState<PSAInvoice[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data: invoices = [], isLoading: loading, error } = usePsaInvoices();
+    const approveMutation = useApproveInvoice();
 
-    useEffect(() => {
-        fetchInvoices();
-    }, []);
-
-    const fetchInvoices = async () => {
-        try {
-            setLoading(true);
-            // Assuming a generic getAll for invoices exists or we fetch by status
-            // For now using client/project fetch placeholders or a hypothetical getAll endpoint if added to service
-            // Let's assume we iterate or fetch specific lists. Ideally backend should have getAllInvoices
-            // Since service doesn't have getAllInvoices, we might need to add it or use a specific one.
-            // For this demo, let's assume empty or mock.
-            setInvoices([]);
-        } catch (error) {
-            console.error('Error fetching invoices:', error);
-            notifications.show({ title: 'Error', message: 'Failed to load invoices', color: 'red' });
-        } finally {
-            setLoading(false);
-        }
-    };
+    if (error) {
+        notifications.show({ title: 'Error', message: 'Failed to load invoices', color: 'red' });
+    }
 
     const statusColor = (status: InvoiceStatus) => {
         switch (status) {

@@ -110,6 +110,10 @@ app:
       # Enable CSRF protection in production
       enabled: true
 
+  # CORS — must be explicitly set via env var in production; no wildcard permitted
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://app.nulogic.io}
+
   # Rate limiting ON in production to prevent abuse
   rate-limit:
     enabled: true

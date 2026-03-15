@@ -29,6 +29,7 @@ public class TimeTrackingService {
 
     private final TimeEntryRepository timeEntryRepository;
 
+    @Transactional
     public TimeEntryDto createEntry(CreateTimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
@@ -61,6 +62,7 @@ public class TimeTrackingService {
         return TimeEntryDto.fromEntity(saved);
     }
 
+    @Transactional
     public TimeEntryDto updateEntry(UUID entryId, CreateTimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -94,6 +96,7 @@ public class TimeTrackingService {
         return TimeEntryDto.fromEntity(saved);
     }
 
+    @Transactional
     public TimeEntryDto submitEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -112,12 +115,14 @@ public class TimeTrackingService {
         return TimeEntryDto.fromEntity(saved);
     }
 
+    @Transactional
     public List<TimeEntryDto> submitMultiple(List<UUID> entryIds) {
         return entryIds.stream()
                 .map(this::submitEntry)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public TimeEntryDto approveEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -138,12 +143,14 @@ public class TimeTrackingService {
         return TimeEntryDto.fromEntity(saved);
     }
 
+    @Transactional
     public List<TimeEntryDto> approveMultiple(List<UUID> entryIds) {
         return entryIds.stream()
                 .map(this::approveEntry)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public TimeEntryDto rejectEntry(UUID entryId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -165,6 +172,7 @@ public class TimeTrackingService {
         return TimeEntryDto.fromEntity(saved);
     }
 
+    @Transactional
     public void deleteEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for generating PDF reports using OpenPDF.
@@ -44,6 +45,7 @@ public class ReportGenerationService {
     /**
      * Generate a payslip PDF for an employee.
      */
+    @Transactional(readOnly = true)
     public ReportResult generatePayslip(UUID employeeId, int year, int month,
                                          Map<String, Object> payslipData) {
         String filename = String.format("payslip_%s_%d_%02d.pdf", employeeId, year, month);
@@ -116,6 +118,7 @@ public class ReportGenerationService {
     /**
      * Generate an attendance report for an employee or department.
      */
+    @Transactional(readOnly = true)
     public ReportResult generateAttendanceReport(UUID entityId, LocalDate startDate, LocalDate endDate,
                                                   Map<String, Object> attendanceData, String reportType) {
         String filename = String.format("attendance_report_%s_%s_to_%s.pdf",
@@ -180,6 +183,7 @@ public class ReportGenerationService {
     /**
      * Generate a leave summary report.
      */
+    @Transactional(readOnly = true)
     public ReportResult generateLeaveReport(UUID entityId, int year, Map<String, Object> leaveData) {
         String filename = String.format("leave_report_%s_%d.pdf", entityId, year);
 
@@ -240,6 +244,7 @@ public class ReportGenerationService {
     /**
      * Generate an employee letter (offer, confirmation, experience, etc.).
      */
+    @Transactional(readOnly = true)
     public ReportResult generateLetter(UUID employeeId, String letterType, Map<String, Object> letterData) {
         String filename = String.format("%s_letter_%s_%s.pdf",
                 letterType.toLowerCase(),
@@ -321,6 +326,7 @@ public class ReportGenerationService {
     /**
      * Generate an HR analytics report.
      */
+    @Transactional(readOnly = true)
     public ReportResult generateAnalyticsReport(Map<String, Object> analyticsData, String reportPeriod) {
         UUID tenantId = TenantContext.getCurrentTenant();
         String filename = String.format("hr_analytics_%s_%s.pdf",
@@ -398,6 +404,7 @@ public class ReportGenerationService {
      * Async version for batch report generation.
      */
     @Async
+    @Transactional(readOnly = true)
     public CompletableFuture<ReportResult> generateReportAsync(String reportType, Map<String, Object> data) {
         try {
             ReportResult result = switch (reportType.toUpperCase()) {

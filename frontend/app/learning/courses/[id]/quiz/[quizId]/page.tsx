@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
 import {
@@ -78,86 +79,87 @@ interface QuizResult {
 export default function QuizPage() {
   const { id: courseId, quizId } = useParams<{ id: string; quizId: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   // Quiz data
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [answers, setAnswers] = useState<Map<string, string | string[]>>(new Map());
 
   // UI state
   const [state, setState] = useState<QuizState>('intro');
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<QuizResult | null>(null);
 
   // Timer
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
 
-  useEffect(() => {
-    loadQuiz();
-  }, [quizId]);
-
-  async function loadQuiz() {
-    try {
-      setLoading(true);
+  // Query for quiz
+  const { data: quiz, isLoading } = useQuery({
+    queryKey: ['quiz', quizId],
+    queryFn: async () => {
       const response = await apiClient.get<Quiz>(`/lms/quizzes/${quizId}`);
-      setQuiz(response.data);
       if (response.data.timeLimit) {
         setTimeRemaining(response.data.timeLimit * 60);
       }
-    } catch (err) {
-      setError('Failed to load quiz');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
+      return response.data;
+    },
+    enabled: !!quizId,
+  });
 
-  const handleStartQuiz = useCallback(async () => {
-    try {
-      setSubmitting(true);
+  // Mutations
+  const startQuizMutation = useMutation({
+    mutationFn: async () => {
       const response = await apiClient.post<QuizAttempt>(`/lms/quizzes/${quizId}/start`);
-      setAttempt(response.data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setAttempt(data);
       setState('taking');
-      // Reset answers
       setAnswers(new Map());
       setCurrentQuestionIdx(0);
-    } catch (err: unknown) {
+    },
+    onError: (err: unknown) => {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to start quiz');
-    } finally {
-      setSubmitting(false);
-    }
-  }, [quizId]);
+    },
+  });
+
+  const submitQuizMutation = useMutation({
+    mutationFn: async (quizAnswers: QuizAnswer[]) => {
+      if (!attempt) throw new Error('No attempt in progress');
+      const response = await apiClient.post<QuizResult>(`/lms/quizzes/attempts/${attempt.id}/submit`, {
+        answers: quizAnswers,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setResult(data);
+      setState('submitted');
+    },
+    onError: (err: unknown) => {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit quiz');
+    },
+  });
+
+  const handleStartQuiz = useCallback(async () => {
+    await startQuizMutation.mutateAsync();
+  }, [startQuizMutation]);
 
   const handleAnswer = useCallback((questionId: string, answer: string | string[]) => {
     setAnswers(prev => new Map(prev).set(questionId, answer));
   }, []);
 
   const handleSubmitQuiz = useCallback(async () => {
-    if (!attempt) return;
+    if (!quiz) return;
 
-    try {
-      setSubmitting(true);
-      const quizAnswers: QuizAnswer[] = quiz!.questions.map(q => ({
-        questionId: q.id,
-        answer: answers.get(q.id) || '',
-      }));
+    const quizAnswers: QuizAnswer[] = quiz.questions.map(q => ({
+      questionId: q.id,
+      answer: answers.get(q.id) || '',
+    }));
 
-      const response = await apiClient.post(`/lms/quizzes/attempts/${attempt.id}/submit`, {
-        answers: quizAnswers,
-      });
-
-      setResult(response.data);
-      setState('submitted');
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit quiz');
-    } finally {
-      setSubmitting(false);
-    }
-  }, [attempt, quiz, answers]);
+    await submitQuizMutation.mutateAsync(quizAnswers);
+  }, [quiz, answers, submitQuizMutation]);
 
   const handleRetry = useCallback(async () => {
     setAnswers(new Map());
@@ -166,26 +168,40 @@ export default function QuizPage() {
     await handleStartQuiz();
   }, [handleStartQuiz]);
 
-  // Timer countdown
+  // Stable ref so the interval callback always sees the latest handleSubmitQuiz
+  // without causing the effect to restart every render.
+  const handleSubmitQuizRef = useRef(handleSubmitQuiz);
   useEffect(() => {
-    if (state !== 'taking' || !timeRemaining) return;
+    handleSubmitQuizRef.current = handleSubmitQuiz;
+  }, [handleSubmitQuiz]);
+
+  // BUG-001 FIX: Wire the countdown timer to a useEffect so it actually runs.
+  // Starts when state transitions to 'taking' with a positive timeRemaining.
+  // Stops and cleans up on unmount or when the quiz is no longer in-progress.
+  useEffect(() => {
+    if (state !== 'taking' || timeRemaining <= 0) return;
 
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
-          // Auto-submit when time is up
-          handleSubmitQuiz();
+          clearInterval(timer);
+          handleSubmitQuizRef.current();
           return 0;
         }
-        setShowTimeWarning(prev < 300); // Show warning when less than 5 min
+        // Show warning badge when less than 5 minutes remain
+        setShowTimeWarning(prev - 1 < 300);
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [state, timeRemaining, handleSubmitQuiz]);
+    // Only restart the interval when the quiz state changes or a new quiz begins.
+    // timeRemaining is intentionally excluded: we do not want to restart the
+    // interval on every tick — only when transitioning into 'taking'.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-surface-50 flex items-center justify-center">
         <div className="text-center">
@@ -291,10 +307,10 @@ export default function QuizPage() {
 
               <button
                 onClick={handleStartQuiz}
-                disabled={submitting}
+                disabled={startQuizMutation.isPending}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {submitting ? (
+                {startQuizMutation.isPending ? (
                   <>
                     <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                     Starting...
@@ -497,10 +513,10 @@ export default function QuizPage() {
 
             <button
               onClick={handleSubmitQuiz}
-              disabled={submitting || questionsAnswered < quiz.questions.length}
+              disabled={submitQuizMutation.isPending || questionsAnswered < quiz.questions.length}
               className="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {submitting ? (
+              {submitQuizMutation.isPending ? (
                 <>
                   <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                   Submitting...
@@ -582,7 +598,7 @@ export default function QuizPage() {
                             <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">Q{idx + 1}: {detail.questionTitle}</p>
+                            <p className="font-medium text-gray-900">Q{idx + 1}: {detail.questionId}</p>
                             <p className="text-sm text-gray-600 mt-1">Your answer: <span className="font-medium">{detail.userAnswer || 'Not answered'}</span></p>
                             {!detail.isCorrect && detail.correctAnswer && (
                               <p className="text-sm text-gray-600">Correct answer: <span className="font-medium text-green-700">{detail.correctAnswer}</span></p>

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/wiki/spaces")
@@ -34,7 +35,7 @@ public class WikiSpaceController {
     @Operation(summary = "Create wiki space")
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_CREATE)
-    public ResponseEntity<WikiSpaceDto> createSpace(@RequestBody CreateWikiSpaceRequest request) {
+    public ResponseEntity<WikiSpaceDto> createSpace(@Valid @RequestBody CreateWikiSpaceRequest request) {
         WikiSpace space = WikiSpace.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -86,7 +87,7 @@ public class WikiSpaceController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
     public ResponseEntity<WikiSpaceDto> updateSpace(
             @PathVariable UUID spaceId,
-            @RequestBody CreateWikiSpaceRequest request) {
+            @Valid @RequestBody CreateWikiSpaceRequest request) {
         WikiSpace spaceData = WikiSpace.builder()
                 .name(request.getName())
                 .description(request.getDescription())

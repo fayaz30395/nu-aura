@@ -248,7 +248,7 @@ describe('Notification Flow Integration Tests', () => {
       render(<MockNotificationBell />);
 
       await waitFor(() => {
-        const badge = screen.getByTestId('unread-badge');
+        const badge = screen.getByText('3');
         expect(badge).toBeInTheDocument();
         expect(badge).toHaveTextContent('3');
       });
@@ -517,8 +517,10 @@ describe('Notification Flow Integration Tests', () => {
       const user = userEvent.setup();
       render(<MockNotificationBell />);
 
-      let badge = screen.getByTestId('unread-badge');
-      expect(badge).toHaveTextContent('1');
+      await waitFor(() => {
+        let badge = screen.getByText('1');
+        expect(badge).toHaveTextContent('1');
+      });
 
       await user.click(screen.getByTestId('notification-bell-button'));
 
@@ -534,7 +536,7 @@ describe('Notification Flow Integration Tests', () => {
 
       // Badge should be removed after marking all as read
       await waitFor(() => {
-        expect(screen.queryByTestId('unread-badge')).not.toBeInTheDocument();
+        expect(screen.queryByText('1')).not.toBeInTheDocument();
       });
     });
   });

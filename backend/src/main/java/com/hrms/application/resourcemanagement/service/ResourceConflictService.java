@@ -149,6 +149,7 @@ public class ResourceConflictService {
     /**
      * Get open conflicts for a tenant.
      */
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getOpenConflicts(UUID tenantId) {
         return jdbcTemplate.queryForList(
                 "SELECT * FROM resource_conflict_log WHERE tenant_id = ? AND status = 'OPEN' ORDER BY detected_at DESC",

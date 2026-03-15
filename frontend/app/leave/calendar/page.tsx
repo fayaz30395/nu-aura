@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { leaveService } from '@/lib/services/leave.service';
+import { useEmployeeLeaveRequests, useLeaveRequestsByStatus, useActiveLeaveTypes } from '@/lib/hooks/queries/useLeaves';
 import { LeaveRequest, LeaveType } from '@/lib/types/leave';
 
 interface Holiday {
@@ -27,49 +27,29 @@ export default function LeaveCalendarPage() {
   const { user, hasHydrated } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
-  const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'team' | 'my'>('my');
 
+  // Determine which query to use based on viewMode
+  const employeeRequestsQuery = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId && viewMode === 'my'));
+  const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100);
+  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+
+  const leaves = (viewMode === 'my' ? employeeRequestsQuery.data?.content : approvedRequestsQuery.data?.content) ?? [];
+  const loading = !employeeRequestsQuery.data && !approvedRequestsQuery.data;
+
+  // Switch to team view if user has no employeeId
   useEffect(() => {
-    if (hasHydrated) {
-      loadData();
+    if (hasHydrated && !user?.employeeId && viewMode === 'my') {
+      setViewMode('team');
     }
-  }, [currentDate, viewMode, hasHydrated]);
+  }, [hasHydrated, user?.employeeId]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-
-      const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-      const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
-
-      // If user has no employeeId and viewing "my" leaves, switch to team view
-      if (!user?.employeeId && viewMode === 'my') {
-        setViewMode('team');
-        return; // Will re-trigger useEffect with new viewMode
-      }
-
-      const [leavesData, typesData] = await Promise.all([
-        viewMode === 'my' && user.employeeId
-          ? leaveService.getLeaveRequestsByEmployee(user.employeeId, 0, 100)
-          : leaveService.getLeaveRequestsByStatus('APPROVED', 0, 100),
-        leaveService.getActiveLeaveTypes(),
-      ]);
-
-      setLeaves(leavesData.content);
-      setLeaveTypes(typesData);
+  // Generate calendar when data or view mode changes
+  useEffect(() => {
+    if (leaves.length > 0 || viewMode === 'team') {
       generateCalendar();
-    } catch (error) {
-      console.error('Error loading calendar data:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentDate, viewMode, leaves]);
 
   const generateCalendar = () => {
     const year = currentDate.getFullYear();

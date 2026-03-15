@@ -18,8 +18,8 @@ import { PostComposer } from '@/components/dashboard/PostComposer';
 import { CelebrationTabs } from '@/components/dashboard/CelebrationTabs';
 import { CompanyFeed } from '@/components/dashboard/CompanyFeed';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { selfServiceService } from '@/lib/services/selfservice.service';
 import { attendanceService } from '@/lib/services/attendance.service';
+import { useSelfServiceDashboard } from '@/lib/hooks/queries';
 import { SelfServiceDashboard } from '@/lib/types/selfservice';
 
 // Helper function to format elapsed time
@@ -47,6 +47,12 @@ export default function MyDashboardPage() {
   const [checkInTime, setCheckInTime] = useState<Date | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Use React Query hook
+  const { data: dashboardData, isLoading: queryLoading } = useSelfServiceDashboard(
+    user?.employeeId || '',
+    hasHydrated && !!user?.employeeId
+  );
+
   useEffect(() => {
     if (hasHydrated && !user) {
       router.push('/auth/login');
@@ -56,12 +62,21 @@ export default function MyDashboardPage() {
   useEffect(() => {
     if (!hasHydrated || !user) return;
     if (user?.employeeId) {
-      loadDashboard();
+      // Dashboard data will be handled by React Query hook
+      setIsLoading(queryLoading);
     } else {
       // SuperAdmin or user without employee profile — skip loading self-service data
       setIsLoading(false);
     }
-  }, [hasHydrated, user?.employeeId]);
+  }, [hasHydrated, user?.employeeId, queryLoading]);
+
+  // Update dashboard from query data
+  useEffect(() => {
+    if (dashboardData) {
+      setDashboard(dashboardData);
+      setIsLoading(false);
+    }
+  }, [dashboardData]);
 
   // Real-time timer effect
   useEffect(() => {
@@ -95,12 +110,11 @@ export default function MyDashboardPage() {
   }, [checkInTime, isCheckedIn]);
 
   const loadDashboard = async () => {
-    if (!user?.employeeId) return;
+    if (!user?.employeeId || !dashboardData) return;
 
     try {
       setIsLoading(true);
-      const data = await selfServiceService.getDashboard(user.employeeId);
-      setDashboard(data);
+      setDashboard(dashboardData);
 
       // Always fetch today's attendance directly to get accurate check-in time
       // This is more reliable than depending on self-service dashboard data
@@ -134,10 +148,10 @@ export default function MyDashboardPage() {
       } catch (err) {
         console.error('Failed to fetch today\'s attendance:', err);
         // Fallback to self-service dashboard data
-        const checkedIn = data.todayAttendanceStatus === 'CHECKED_IN' || data.todayAttendanceStatus === 'PRESENT';
+        const checkedIn = dashboardData.todayAttendanceStatus === 'CHECKED_IN' || dashboardData.todayAttendanceStatus === 'PRESENT';
         setIsCheckedIn(checkedIn);
-        if (checkedIn && data.todayCheckInTime && !data.todayCheckOutTime) {
-          setCheckInTime(parseISO(data.todayCheckInTime));
+        if (checkedIn && dashboardData.todayCheckInTime && !dashboardData.todayCheckOutTime) {
+          setCheckInTime(parseISO(dashboardData.todayCheckInTime));
         } else {
           setCheckInTime(null);
         }

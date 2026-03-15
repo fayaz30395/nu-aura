@@ -162,7 +162,7 @@ export function usePinPost() {
 
 // ─── Reaction Mutations ─────────────────────────────────────────────────────
 
-export function useAddReaction() {
+export function useAddWallReaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -175,7 +175,7 @@ export function useAddReaction() {
   });
 }
 
-export function useRemoveReaction() {
+export function useRemoveWallReaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -205,7 +205,7 @@ export function useAddComment() {
   });
 }
 
-export function useDeleteComment() {
+export function useDeleteWallComment() {
   const queryClient = useQueryClient();
 
   return useMutation({

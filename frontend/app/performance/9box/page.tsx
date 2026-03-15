@@ -1,8 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
 import {
   Download,
   Info,
@@ -14,7 +13,7 @@ import {
   TrendingUp,
   Target,
 } from 'lucide-react';
-import { reviewCycleService, reviewService } from '@/lib/services/performance.service';
+import { usePerformanceAllCycles, useAllReviews } from '@/lib/hooks/queries/usePerformance';
 import type { ReviewCycle, PerformanceReview } from '@/lib/types/performance';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
@@ -173,46 +172,35 @@ function NineBoxGrid({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function NineBoxPage() {
-  const [cycles, setCycles] = useState<ReviewCycle[]>([]);
+  // React Query hooks
+  const cyclesQuery = usePerformanceAllCycles(0, 100);
+  const allReviewsQuery = useAllReviews(0, 500);
+
+  // Local state
   const [selectedCycleId, setSelectedCycleId] = useState('');
-  const [reviews, setReviews] = useState<PerformanceReview[]>([]);
-  const [cyclesLoading, setCyclesLoading] = useState(true);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [selectedBox, setSelectedBox] = useState<string | null>(null);
   const [potentialOverrides, setPotentialOverrides] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('name');
 
-  // Load cycles
-  useEffect(() => {
-    reviewCycleService
-      .getAll(0, 100)
-      .then(res => {
-        const all = res.content;
-        setCycles(all);
-        const active = all.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
-        if (active) setSelectedCycleId(active.id);
-        else if (all.length > 0) setSelectedCycleId(all[0].id);
-      })
-      .finally(() => setCyclesLoading(false));
-  }, []);
+  // Initialize selected cycle
+  if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
+    const cycles = cyclesQuery.data.content;
+    const active = cycles.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
+    if (active) {
+      setSelectedCycleId(active.id);
+    } else if (cycles.length > 0) {
+      setSelectedCycleId(cycles[0].id);
+    }
+  }
 
-  // Load reviews when cycle changes
-  useEffect(() => {
-    if (!selectedCycleId) return;
-    setReviewsLoading(true);
-    reviewService
-      .getAllReviews(0, 500)
-      .then(res => {
-        const filtered = res.content.filter(
-          r => (r.reviewCycleId || r.cycleId) === selectedCycleId
-        );
-        setReviews(filtered);
-        setPotentialOverrides({});
-        setSelectedBox(null);
-      })
-      .finally(() => setReviewsLoading(false));
-  }, [selectedCycleId]);
+  // Filter reviews by selected cycle
+  const reviews = useMemo(() => {
+    if (!selectedCycleId || !allReviewsQuery.data?.content) return [];
+    return allReviewsQuery.data.content.filter(
+      r => (r.reviewCycleId || r.cycleId) === selectedCycleId
+    );
+  }, [selectedCycleId, allReviewsQuery.data]);
 
   // Build employee points
   const points = useMemo<EmployeePoint[]>(() => {
@@ -321,6 +309,10 @@ export default function NineBoxPage() {
 
     return { categories, highPerformers, highPotential, stars };
   }, [points]);
+
+  const cycles = cyclesQuery.data?.content || [];
+  const cyclesLoading = cyclesQuery.isLoading;
+  const reviewsLoading = allReviewsQuery.isLoading;
 
   return (
     <AppLayout>

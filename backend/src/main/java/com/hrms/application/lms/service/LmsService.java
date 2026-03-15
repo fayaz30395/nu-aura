@@ -33,6 +33,7 @@ public class LmsService {
 
     // ================== Course Management ==================
 
+    @Transactional
     public Course createCourse(Course course) {
         course.setStatus(CourseStatus.DRAFT);
         course.setCreatedAt(LocalDateTime.now());
@@ -41,23 +42,28 @@ public class LmsService {
         return courseRepository.save(course);
     }
 
+    @Transactional
     public Course updateCourse(Course course) {
         course.setUpdatedAt(LocalDateTime.now());
         return courseRepository.save(course);
     }
 
+    @Transactional(readOnly = true)
     public Page<Course> getAllCourses(UUID tenantId, Pageable pageable) {
         return courseRepository.findAllByTenantId(tenantId, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<Course> getPublishedCourses(UUID tenantId, Pageable pageable) {
         return courseRepository.findPublishedCourses(tenantId, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Course> getCourseById(UUID tenantId, UUID id) {
         return courseRepository.findByIdAndTenantId(id, tenantId);
     }
 
+    @Transactional(readOnly = true)
     public Page<Course> searchCourses(UUID tenantId, String search, Pageable pageable) {
         return courseRepository.searchCourses(tenantId, search, pageable);
     }
@@ -76,6 +82,7 @@ public class LmsService {
         });
     }
 
+    @Transactional
     public void deleteCourse(UUID tenantId, UUID id) {
         courseRepository.findByIdAndTenantId(id, tenantId).ifPresent(course -> {
             // Delete sub-resources
@@ -90,24 +97,29 @@ public class LmsService {
 
     // ================== Module Management ==================
 
+    @Transactional
     public CourseModule createModule(CourseModule module) {
         module.setCreatedAt(LocalDateTime.now());
         return moduleRepository.save(module);
     }
 
+    @Transactional
     public CourseModule updateModule(CourseModule module) {
         module.setUpdatedAt(LocalDateTime.now());
         return moduleRepository.save(module);
     }
 
+    @Transactional(readOnly = true)
     public List<CourseModule> getModulesByCourse(UUID tenantId, UUID courseId) {
         return moduleRepository.findByCourseOrdered(tenantId, courseId);
     }
 
+    @Transactional(readOnly = true)
     public Optional<CourseModule> getModuleById(UUID tenantId, UUID id) {
         return moduleRepository.findByIdAndTenantId(id, tenantId);
     }
 
+    @Transactional
     public void deleteModule(UUID tenantId, UUID id) {
         moduleRepository.findByIdAndTenantId(id, tenantId).ifPresent(module -> {
             contentRepository.deleteAllByModuleId(id);
@@ -117,24 +129,29 @@ public class LmsService {
 
     // ================== Content Management ==================
 
+    @Transactional
     public ModuleContent createContent(ModuleContent content) {
         content.setCreatedAt(LocalDateTime.now());
         return contentRepository.save(content);
     }
 
+    @Transactional
     public ModuleContent updateContent(ModuleContent content) {
         content.setUpdatedAt(LocalDateTime.now());
         return contentRepository.save(content);
     }
 
+    @Transactional(readOnly = true)
     public List<ModuleContent> getContentByModule(UUID tenantId, UUID moduleId) {
         return contentRepository.findByModuleOrdered(tenantId, moduleId);
     }
 
+    @Transactional(readOnly = true)
     public Optional<ModuleContent> getContentById(UUID tenantId, UUID id) {
         return contentRepository.findByIdAndTenantId(id, tenantId);
     }
 
+    @Transactional
     public void deleteContent(UUID tenantId, UUID id) {
         contentRepository.findByIdAndTenantId(id, tenantId).ifPresent(contentRepository::delete);
     }
@@ -168,6 +185,7 @@ public class LmsService {
         return saved;
     }
 
+    @Transactional
     public CourseEnrollment updateEnrollmentProgress(UUID tenantId, UUID enrollmentId) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found"));
@@ -207,18 +225,22 @@ public class LmsService {
         return enrollmentRepository.save(enrollment);
     }
 
+    @Transactional(readOnly = true)
     public List<CourseEnrollment> getEmployeeEnrollments(UUID tenantId, UUID employeeId) {
         return enrollmentRepository.findByEmployee(tenantId, employeeId);
     }
 
+    @Transactional(readOnly = true)
     public Optional<CourseEnrollment> getEnrollmentById(UUID tenantId, UUID id) {
         return enrollmentRepository.findByIdAndTenantId(id, tenantId);
     }
 
+    @Transactional(readOnly = true)
     public Optional<CourseEnrollment> getEnrollment(UUID tenantId, UUID courseId, UUID employeeId) {
         return enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(courseId, employeeId, tenantId);
     }
 
+    @Transactional
     public ContentProgress updateContentProgress(UUID tenantId, UUID enrollmentId, UUID contentId,
             ProgressStatus status, int timeSpentSeconds) {
         ContentProgress progress = progressRepository
@@ -254,6 +276,7 @@ public class LmsService {
         return saved;
     }
 
+    @Transactional(readOnly = true)
     public List<ContentProgress> getProgressByEnrollment(UUID tenantId, UUID enrollmentId) {
         return progressRepository.findByEnrollment(tenantId, enrollmentId);
     }
@@ -294,10 +317,12 @@ public class LmsService {
         return saved;
     }
 
+    @Transactional(readOnly = true)
     public List<Certificate> getEmployeeCertificates(UUID tenantId, UUID employeeId) {
         return certificateRepository.findActiveByEmployee(tenantId, employeeId);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Certificate> getCertificateById(UUID tenantId, UUID id) {
         return certificateRepository.findByIdAndTenantId(id, tenantId);
     }
@@ -308,6 +333,7 @@ public class LmsService {
 
     // ================== Dashboards ==================
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getEmployeeDashboard(UUID tenantId, UUID employeeId) {
         List<CourseEnrollment> enrollments = getEmployeeEnrollments(tenantId, employeeId);
         Double avgProgress = enrollmentRepository.getAverageProgressForEmployee(tenantId, employeeId);
@@ -324,6 +350,7 @@ public class LmsService {
         return stats;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getAdminDashboard(UUID tenantId) {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalCourses", courseRepository.count()); // Simplification
@@ -333,6 +360,7 @@ public class LmsService {
     }
 
     // Catalog Mapping (from previous implementation)
+    @Transactional(readOnly = true)
     public CourseCatalogResponse getCourseCatalog(UUID tenantId, int page, int size) {
         Page<Course> coursePage = courseRepository.findPublishedCourses(tenantId, PageRequest.of(page, size));
         List<CourseSummaryDto> dtos = coursePage.getContent().stream()

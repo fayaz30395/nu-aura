@@ -1,13 +1,10 @@
-import axios from 'axios';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-// No JWT interceptor — public endpoints
-const publicApi = axios.create({ baseURL: BASE_URL });
+// Public (unauthenticated) e-signature endpoints — use the shared publicApiClient
+// to ensure consistent base URL, timeout, and error handling across the platform.
+import { publicApiClient } from '../api/public-client';
 
 export const esignPublicService = {
   async getSignatureInfo(token: string) {
-    const res = await publicApi.get(`/api/v1/esignature/external/${token}`);
+    const res = await publicApiClient.get(`/esignature/external/${token}`);
     return res.data;
   },
   async sign(
@@ -19,12 +16,12 @@ export const esignPublicService = {
       comments?: string;
     }
   ) {
-    const res = await publicApi.post(`/api/v1/esignature/external/${token}/sign`, body);
+    const res = await publicApiClient.post(`/esignature/external/${token}/sign`, body);
     return res.data;
   },
   async decline(token: string, signerEmail: string, reason?: string) {
-    const res = await publicApi.post(
-      `/api/v1/esignature/external/${token}/decline`,
+    const res = await publicApiClient.post(
+      `/esignature/external/${token}/decline`,
       null,
       {
         params: { signerEmail, reason: reason || '' },

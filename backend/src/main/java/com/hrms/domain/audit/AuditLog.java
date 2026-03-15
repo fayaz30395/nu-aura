@@ -46,6 +46,9 @@ public class AuditLog extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String changes;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @Column(length = 50)
     private String ipAddress;
 

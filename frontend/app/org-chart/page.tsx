@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
-import { employeeService } from '@/lib/services/employee.service';
-import { departmentService } from '@/lib/services/department.service';
+import { useEmployees, useEmployeeHierarchy } from '@/lib/hooks/queries/useEmployees';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { Employee, Department } from '@/lib/types/employee';
 
 interface TreeNode extends Employee {
@@ -11,41 +11,28 @@ interface TreeNode extends Employee {
 }
 
 export default function OrgChartPage() {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [orgTree, setOrgTree] = useState<TreeNode[]>([]);
   const [viewMode, setViewMode] = useState<'hierarchy' | 'department'>('hierarchy');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+  const [orgTree, setOrgTree] = useState<TreeNode[]>([]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // React Query - fetch employees and departments
+  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(0, 1000);
+  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
 
+  const employees = employeeResponse?.content ?? [];
+  const isLoading = employeesLoading || departmentsLoading;
+  const error = employeesError
+    ? employeesError instanceof Error
+      ? employeesError.message
+      : 'Failed to load organization data'
+    : null;
+
+  // Rebuild org tree when employees, viewMode, or selectedDepartment changes
   useEffect(() => {
     if (employees.length > 0) {
       buildOrgTree();
     }
   }, [employees, viewMode, selectedDepartment]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [empResponse, deptResponse] = await Promise.all([
-        employeeService.getAllEmployees(0, 1000),
-        departmentService.getActiveDepartments(),
-      ]);
-      setEmployees(empResponse.content);
-      setDepartments(deptResponse);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load organization data');
-      console.error('Error loading org data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const buildOrgTree = () => {
     let filteredEmployees = employees;
@@ -265,7 +252,7 @@ export default function OrgChartPage() {
 
         {/* Content */}
         <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm p-6">
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>

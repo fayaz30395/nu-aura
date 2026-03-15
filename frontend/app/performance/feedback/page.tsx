@@ -1,98 +1,107 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { feedbackService } from '@/lib/services/performance.service';
+import { useReceivedFeedback, useGivenFeedback, useCreateFeedback, useUpdateFeedback, useDeleteFeedback } from '@/lib/hooks/queries/usePerformance';
 import { Feedback, FeedbackRequest, FeedbackType } from '@/lib/types/performance';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const feedbackFormSchema = z.object({
+  recipientId: z.string().min(1, 'Recipient is required'),
+  giverId: z.string().min(1, 'Giver ID is required'),
+  feedbackType: z.enum(['PRAISE', 'CONSTRUCTIVE', 'GENERAL', 'REQUEST'] as const) as z.ZodType<FeedbackType>,
+  category: z.string().optional().or(z.literal('')),
+  feedbackText: z.string().min(1, 'Feedback is required').max(5000),
+  isAnonymous: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
+  relatedReviewId: z.string().optional().or(z.literal('')),
+});
+
+type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
 
 export default function FeedbackPage() {
-  const [receivedFeedback, setReceivedFeedback] = useState<Feedback[]>([]);
-  const [givenFeedback, setGivenFeedback] = useState<Feedback[]>([]);
-  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+
+  // Get current user ID from localStorage
+  const [currentUserId, setCurrentUserId] = useState('');
+
+  if (!currentUserId) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.employeeId) {
+      setCurrentUserId(user.employeeId);
+    }
+  }
+
+  // React Query hooks
+  const receivedQuery = useReceivedFeedback(currentUserId);
+  const givenQuery = useGivenFeedback(currentUserId);
+  const createMutation = useCreateFeedback();
+  const updateMutation = useUpdateFeedback();
+  const deleteMutation = useDeleteFeedback();
+
+  // Local state
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [activeTab, setActiveTab] = useState<'received' | 'given'>('received');
   const [filterType, setFilterType] = useState<FeedbackType | 'ALL'>('ALL');
-  const [formData, setFormData] = useState<FeedbackRequest>({
-    recipientId: '',
-    giverId: '',
-    feedbackType: 'GENERAL',
-    category: '',
-    feedbackText: '',
-    isAnonymous: false,
-    isPublic: false,
-    relatedReviewId: undefined,
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FeedbackFormData>({
+    resolver: zodResolver(feedbackFormSchema),
+    defaultValues: {
+      recipientId: '',
+      giverId: '',
+      feedbackType: 'GENERAL',
+      category: '',
+      feedbackText: '',
+      isAnonymous: false,
+      isPublic: false,
+      relatedReviewId: '',
+    },
   });
 
-  useEffect(() => {
-    loadFeedback();
-  }, []);
+  const receivedFeedback = receivedQuery.data || [];
+  const givenFeedback = givenQuery.data || [];
+  const isLoading = receivedQuery.isLoading || givenQuery.isLoading;
 
-  const loadFeedback = async () => {
-    try {
-      setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      
-      const [received, given] = await Promise.all([
-        feedbackService.getByRecipient(user.employeeId),
-        feedbackService.getByGiver(user.employeeId),
-      ]);
+  const handleFormSubmit = async (formData: FeedbackFormData) => {
+    const feedbackData = {
+      ...formData,
+      giverId: currentUserId,
+      category: formData.category || '',
+      relatedReviewId: formData.relatedReviewId || undefined,
+    };
 
-      setReceivedFeedback(received);
-      setGivenFeedback(given);
-    } catch (error) {
-      console.error('Error loading feedback:', error);
-      alert('Failed to load feedback');
-    } finally {
-      setLoading(false);
+    if (selectedFeedback) {
+      await updateMutation.mutateAsync({ id: selectedFeedback.id, data: feedbackData as FeedbackRequest });
+    } else {
+      await createMutation.mutateAsync(feedbackData as FeedbackRequest);
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const feedbackData = { 
-        ...formData, 
-        giverId: user.employeeId
-      };
-
-      if (selectedFeedback) {
-        await feedbackService.update(selectedFeedback.id, feedbackData);
-      } else {
-        await feedbackService.create(feedbackData);
-      }
-
-      setShowModal(false);
-      resetForm();
-      await loadFeedback();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save feedback');
-    } finally {
-      setLoading(false);
-    }
+    setShowModal(false);
+    resetFormHandler();
   };
 
   const handleDelete = async () => {
     if (!selectedFeedback) return;
-    try {
-      setLoading(true);
-      await feedbackService.delete(selectedFeedback.id);
-      setShowDeleteConfirm(false);
-      setSelectedFeedback(null);
-      await loadFeedback();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete feedback');
-    } finally {
-      setLoading(false);
-    }
+    await deleteMutation.mutateAsync(selectedFeedback.id);
+    setShowDeleteConfirm(false);
+    setSelectedFeedback(null);
   };
 
   const openEditModal = (feedback: Feedback) => {
     setSelectedFeedback(feedback);
-    setFormData({
+    reset({
       recipientId: feedback.recipientId,
       giverId: feedback.giverId,
       feedbackType: feedback.feedbackType,
@@ -100,7 +109,7 @@ export default function FeedbackPage() {
       feedbackText: feedback.feedbackText,
       isAnonymous: feedback.isAnonymous,
       isPublic: feedback.isPublic,
-      relatedReviewId: feedback.relatedReviewId,
+      relatedReviewId: feedback.relatedReviewId || '',
     });
     setShowModal(true);
   };
@@ -110,9 +119,9 @@ export default function FeedbackPage() {
     setShowDeleteConfirm(true);
   };
 
-  const resetForm = () => {
+  const resetFormHandler = () => {
     setSelectedFeedback(null);
-    setFormData({
+    reset({
       recipientId: '',
       giverId: '',
       feedbackType: 'GENERAL',
@@ -120,7 +129,7 @@ export default function FeedbackPage() {
       feedbackText: '',
       isAnonymous: false,
       isPublic: false,
-      relatedReviewId: undefined,
+      relatedReviewId: '',
     });
   };
 
@@ -140,6 +149,16 @@ export default function FeedbackPage() {
     return true;
   });
 
+  if (!currentUserId) {
+    return (
+      <AppLayout activeMenuItem="performance">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout activeMenuItem="performance">
       <div className="max-w-7xl mx-auto">
@@ -147,7 +166,7 @@ export default function FeedbackPage() {
           <h1 className="text-3xl font-bold">Feedback</h1>
           <button
             onClick={() => {
-              resetForm();
+              resetFormHandler();
               setShowModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -192,7 +211,7 @@ export default function FeedbackPage() {
           </div>
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="text-surface-600 dark:text-surface-400">Loading feedback...</div>
           </div>
@@ -204,7 +223,7 @@ export default function FeedbackPage() {
             {activeTab === 'given' && (
               <button
                 onClick={() => {
-                  resetForm();
+                  resetFormHandler();
                   setShowModal(true);
                 }}
                 className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -283,7 +302,7 @@ export default function FeedbackPage() {
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedFeedback ? 'Edit Feedback' : 'Give Feedback'}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -291,12 +310,13 @@ export default function FeedbackPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={formData.recipientId}
-                        onChange={(e) => setFormData({ ...formData, recipientId: e.target.value })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="Enter employee ID"
+                        {...register('recipientId')}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.recipientId && (
+                        <p className="text-red-500 text-sm mt-1">{errors.recipientId.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -304,9 +324,7 @@ export default function FeedbackPage() {
                         Feedback Type *
                       </label>
                       <select
-                        required
-                        value={formData.feedbackType}
-                        onChange={(e) => setFormData({ ...formData, feedbackType: e.target.value as FeedbackType })}
+                        {...register('feedbackType')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="PRAISE">Praise</option>
@@ -314,6 +332,9 @@ export default function FeedbackPage() {
                         <option value="GENERAL">General</option>
                         <option value="REQUEST">Request</option>
                       </select>
+                      {errors.feedbackType && (
+                        <p className="text-red-500 text-sm mt-1">{errors.feedbackType.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -322,11 +343,13 @@ export default function FeedbackPage() {
                       </label>
                       <input
                         type="text"
-                        value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="e.g., Communication, Leadership, Technical Skills"
+                        {...register('category')}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.category && (
+                        <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -334,21 +357,21 @@ export default function FeedbackPage() {
                         Feedback *
                       </label>
                       <textarea
-                        required
-                        value={formData.feedbackText}
-                        onChange={(e) => setFormData({ ...formData, feedbackText: e.target.value })}
                         rows={6}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="Provide detailed feedback..."
+                        {...register('feedbackText')}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.feedbackText && (
+                        <p className="text-red-500 text-sm mt-1">{errors.feedbackText.message}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          checked={formData.isAnonymous}
-                          onChange={(e) => setFormData({ ...formData, isAnonymous: e.target.checked })}
+                          {...register('isAnonymous')}
                           className="w-4 h-4 text-primary-600 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">
@@ -359,8 +382,7 @@ export default function FeedbackPage() {
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          checked={formData.isPublic}
-                          onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                          {...register('isPublic')}
                           className="w-4 h-4 text-primary-600 border-surface-300 dark:border-surface-600 rounded focus:ring-primary-500"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">
@@ -375,7 +397,7 @@ export default function FeedbackPage() {
                       type="button"
                       onClick={() => {
                         setShowModal(false);
-                        resetForm();
+                        resetFormHandler();
                       }}
                       className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                     >
@@ -383,10 +405,10 @@ export default function FeedbackPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSubmitting}
                       className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {loading ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
+                      {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
                     </button>
                   </div>
                 </form>
@@ -414,10 +436,10 @@ export default function FeedbackPage() {
                 </button>
                 <button
                   onClick={handleDelete}
-                  disabled={loading}
+                  disabled={deleteMutation.isPending}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
                 >
-                  {loading ? 'Deleting...' : 'Delete'}
+                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

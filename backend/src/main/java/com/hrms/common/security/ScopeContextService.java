@@ -144,30 +144,37 @@ public class ScopeContextService {
         private final Map<String, Set<UUID>> departmentTargets = new HashMap<>();
         private final Map<String, Set<UUID>> locationTargets = new HashMap<>();
 
+        @Transactional
         public void addEmployeeTarget(String permissionCode, UUID employeeId) {
             employeeTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(employeeId);
         }
 
+        @Transactional
         public void addDepartmentTarget(String permissionCode, UUID departmentId) {
             departmentTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(departmentId);
         }
 
+        @Transactional
         public void addLocationTarget(String permissionCode, UUID locationId) {
             locationTargets.computeIfAbsent(permissionCode, k -> new HashSet<>()).add(locationId);
         }
 
+        @Transactional(readOnly = true)
         public Set<UUID> getEmployeeTargets(String permissionCode) {
             return employeeTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
+        @Transactional(readOnly = true)
         public Set<UUID> getDepartmentTargets(String permissionCode) {
             return departmentTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
+        @Transactional(readOnly = true)
         public Set<UUID> getLocationTargets(String permissionCode) {
             return locationTargets.getOrDefault(permissionCode, Collections.emptySet());
         }
 
+        @Transactional(readOnly = true)
         public Set<String> getPermissionsWithCustomTargets() {
             Set<String> permissions = new HashSet<>();
             permissions.addAll(employeeTargets.keySet());

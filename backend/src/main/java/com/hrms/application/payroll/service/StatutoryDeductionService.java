@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Calculates India-specific statutory deductions for a single payroll period.
@@ -72,6 +73,7 @@ public class StatutoryDeductionService {
      * @param state       Indian state name (Karnataka, Maharashtra, Tamil Nadu, or others)
      * @return a fully populated {@link StatutoryDeductions} DTO
      */
+    @Transactional(readOnly = true)
     public StatutoryDeductions calculate(
             UUID employeeId,
             BigDecimal basicSalary,

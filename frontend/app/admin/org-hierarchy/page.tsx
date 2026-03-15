@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { getInitials } from '@/lib/utils';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 
 interface EmployeeNode extends Employee {
   subordinates?: EmployeeNode[];
@@ -14,84 +14,69 @@ interface EmployeeNode extends Employee {
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
+const buildEmployeeTree = (employees: Employee[]): EmployeeNode[] => {
+  const employeeMap = new Map<string, EmployeeNode>();
+  const rootEmployees: EmployeeNode[] = [];
+
+  // Create map of all employees
+  employees.forEach(emp => {
+    employeeMap.set(emp.id, { ...emp, subordinates: [] });
+  });
+
+  // Build tree structure
+  employees.forEach(emp => {
+    const employee = employeeMap.get(emp.id)!;
+
+    if (emp.managerId && employeeMap.has(emp.managerId)) {
+      // Employee has a manager - add as subordinate
+      const manager = employeeMap.get(emp.managerId)!;
+      if (!manager.subordinates) {
+        manager.subordinates = [];
+      }
+      manager.subordinates.push(employee);
+    } else {
+      // No manager or manager not found - this is a root employee
+      rootEmployees.push(employee);
+    }
+  });
+
+  return rootEmployees;
+};
+
 export default function OrgHierarchyPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
 
-  const [hierarchy, setHierarchy] = useState<EmployeeNode[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [hierarchy, setHierarchy] = useState<EmployeeNode[]>([]);
 
-  useEffect(() => {
-    if (!hasHydrated || !isReady) return;
+  // React Query hook
+  const { data: employeesData, isLoading, error } = useEmployees(0, 1000);
+  const employees = employeesData?.content || [];
+  const loading = isLoading;
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
+  // Build hierarchy when employees data changes
+  if (employees.length > 0 && hierarchy.length === 0) {
+    const tree = buildEmployeeTree(employees);
+    setHierarchy(tree);
+    // Auto-expand root level
+    if (expandedNodes.size === 0) {
+      setExpandedNodes(new Set(tree.map(e => e.id)));
     }
+  }
 
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/me/dashboard');
-      return;
-    }
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/me/dashboard');
+    return null;
+  }
 
-    loadHierarchy();
-  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
-
-  const loadHierarchy = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Load all employees
-      const employeesData = await employeeService.getAllEmployees(0, 1000);
-      const employees = employeesData.content;
-
-      // Build employee hierarchy tree
-      const employeeTree = buildEmployeeTree(employees);
-      setHierarchy(employeeTree);
-
-      // Auto-expand root level
-      const rootIds = new Set(employeeTree.map(e => e.id));
-      setExpandedNodes(rootIds);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load organization hierarchy');
-      console.error('Error loading org hierarchy:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const buildEmployeeTree = (employees: Employee[]): EmployeeNode[] => {
-    const employeeMap = new Map<string, EmployeeNode>();
-    const rootEmployees: EmployeeNode[] = [];
-
-    // Create map of all employees
-    employees.forEach(emp => {
-      employeeMap.set(emp.id, { ...emp, subordinates: [] });
-    });
-
-    // Build tree structure
-    employees.forEach(emp => {
-      const employee = employeeMap.get(emp.id)!;
-
-      if (emp.managerId && employeeMap.has(emp.managerId)) {
-        // Employee has a manager - add as subordinate
-        const manager = employeeMap.get(emp.managerId)!;
-        if (!manager.subordinates) {
-          manager.subordinates = [];
-        }
-        manager.subordinates.push(employee);
-      } else {
-        // No manager or manager not found - this is a root employee
-        rootEmployees.push(employee);
-      }
-    });
-
-    return rootEmployees;
-  };
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
 
   const toggleNode = (id: string) => {
     setExpandedNodes(prev => {
@@ -289,15 +274,6 @@ export default function OrgHierarchyPage() {
         <div className="bg-white dark:bg-surface-900 rounded-xl shadow-md p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center space-x-3">
             <button
-              onClick={loadHierarchy}
-              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors flex items-center space-x-2 shadow-sm"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>Refresh</span>
-            </button>
-            <button
               onClick={() => {
                 const allIds = new Set<string>();
                 const collectIds = (emps: EmployeeNode[]) => {
@@ -360,13 +336,7 @@ export default function OrgHierarchyPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <p className="text-red-600 font-medium mb-4">{error}</p>
-                <button
-                  onClick={loadHierarchy}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                  Try Again
-                </button>
+                <p className="text-red-600 font-medium mb-4">{error instanceof Error ? error.message : 'Failed to load organization hierarchy'}</p>
               </div>
             </div>
           ) : hierarchy.length === 0 ? (

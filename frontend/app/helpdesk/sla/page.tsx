@@ -1,88 +1,116 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { helpdeskSLAService, TicketSLA, TicketEscalation, SLADashboard } from '@/lib/services/helpdesk-sla.service';
+import { TicketSLA } from '@/lib/services/helpdesk-sla.service';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const slaFormSchema = z.object({
+  name: z.string().min(1, 'Policy name is required').max(255),
+  description: z.string().optional().or(z.literal('')),
+  priority: z.string().optional().or(z.literal('')),
+  firstResponseMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1'),
+  resolutionMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1'),
+  escalationAfterMinutes: z.number({ coerce: true }).min(1, 'Must be >= 1').optional(),
+  businessStartHour: z.number({ coerce: true }).min(0).max(23),
+  businessEndHour: z.number({ coerce: true }).min(0).max(23),
+  isBusinessHoursOnly: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+  applyToAllCategories: z.boolean().optional(),
+});
+
+type SLAFormData = z.infer<typeof slaFormSchema>;
+import {
+  useSLADashboard,
+  useSlaConfigs,
+  useMyPendingEscalations,
+  useCreateSlaConfig,
+  useUpdateSlaConfig,
+  useDeleteSlaConfig,
+  useAcknowledgeEscalation,
+} from '@/lib/hooks/queries/useHelpdeskSla';
 
 export default function HelpdeskSLAPage() {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'slas' | 'escalations'>('dashboard');
-  const [slas, setSlas] = useState<TicketSLA[]>([]);
-  const [escalations, setEscalations] = useState<TicketEscalation[]>([]);
-  const [dashboard, setDashboard] = useState<SLADashboard | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<TicketSLA>>({
-    name: '',
-    description: '',
-    firstResponseMinutes: 60,
-    resolutionMinutes: 480,
-    escalationAfterMinutes: 240,
-    isBusinessHoursOnly: true,
-    businessStartHour: 9,
-    businessEndHour: 18,
-    workingDays: 'MON,TUE,WED,THU,FRI',
-    isActive: true,
-    applyToAllCategories: true,
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SLAFormData>({
+    resolver: zodResolver(slaFormSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      firstResponseMinutes: 60,
+      resolutionMinutes: 480,
+      escalationAfterMinutes: 240,
+      isBusinessHoursOnly: true,
+      businessStartHour: 9,
+      businessEndHour: 18,
+      isActive: true,
+      applyToAllCategories: true,
+    },
   });
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
+  const { data: dashboardData } = useSLADashboard();
+  const { data: slasResponse, isLoading: slasLoading } = useSlaConfigs();
+  const { data: escalations = [], isLoading: escalationsLoading } =
+    useMyPendingEscalations();
+  const createMutation = useCreateSlaConfig();
+  const updateMutation = useUpdateSlaConfig();
+  const deleteMutation = useDeleteSlaConfig();
+  const acknowledgeMutation = useAcknowledgeEscalation();
 
-  const loadData = async () => {
+  const slas = slasResponse?.content || [];
+  const loading = slasLoading || escalationsLoading;
+
+  const handleFormSubmit = async (data: SLAFormData) => {
     try {
-      setLoading(true);
-      const dashboardData = await helpdeskSLAService.getDashboard();
-      setDashboard(dashboardData);
+      const slaData: Partial<TicketSLA> = {
+        ...data,
+        description: data.description || '',
+        priority: data.priority || '',
+        escalationAfterMinutes: data.escalationAfterMinutes || 240,
+        workingDays: 'MON,TUE,WED,THU,FRI',
+      };
 
-      if (activeTab === 'slas') {
-        const result = await helpdeskSLAService.getSLAs();
-        setSlas(result.content);
-      } else if (activeTab === 'escalations') {
-        const pending = await helpdeskSLAService.getMyPendingEscalations();
-        setEscalations(pending);
-      }
-    } catch (error) {
-      console.error('Error loading SLA data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
       if (editingId) {
-        await helpdeskSLAService.updateSLA(editingId, formData);
+        await updateMutation.mutateAsync({ id: editingId, data: slaData });
       } else {
-        await helpdeskSLAService.createSLA(formData);
+        await createMutation.mutateAsync(slaData);
       }
       setShowForm(false);
       setEditingId(null);
-      resetForm();
-      loadData();
+      resetFormHandler();
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save SLA');
+      toast.error(
+        (error as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || 'Failed to save SLA'
+      );
     }
   };
 
   const handleEdit = (sla: TicketSLA) => {
-    setFormData({
+    reset({
       name: sla.name,
-      description: sla.description,
-      categoryId: sla.categoryId,
-      priority: sla.priority,
+      description: sla.description || '',
+      priority: sla.priority || '',
       firstResponseMinutes: sla.firstResponseMinutes,
       resolutionMinutes: sla.resolutionMinutes,
       escalationAfterMinutes: sla.escalationAfterMinutes,
-      escalationTo: sla.escalationTo,
-      secondEscalationMinutes: sla.secondEscalationMinutes,
-      secondEscalationTo: sla.secondEscalationTo,
       isBusinessHoursOnly: sla.isBusinessHoursOnly,
       businessStartHour: sla.businessStartHour,
       businessEndHour: sla.businessEndHour,
-      workingDays: sla.workingDays,
       isActive: sla.isActive,
       applyToAllCategories: sla.applyToAllCategories,
     });
@@ -93,24 +121,28 @@ export default function HelpdeskSLAPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this SLA?')) return;
     try {
-      await helpdeskSLAService.deleteSLA(id);
-      loadData();
+      await deleteMutation.mutateAsync(id);
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete SLA');
+      toast.error(
+        (error as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || 'Failed to delete SLA'
+      );
     }
   };
 
   const handleAcknowledge = async (escalationId: string) => {
     try {
-      await helpdeskSLAService.acknowledgeEscalation(escalationId);
-      loadData();
+      await acknowledgeMutation.mutateAsync(escalationId);
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to acknowledge escalation');
+      toast.error(
+        (error as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || 'Failed to acknowledge escalation'
+      );
     }
   };
 
-  const resetForm = () => {
-    setFormData({
+  const resetFormHandler = () => {
+    reset({
       name: '',
       description: '',
       firstResponseMinutes: 60,
@@ -119,7 +151,6 @@ export default function HelpdeskSLAPage() {
       isBusinessHoursOnly: true,
       businessStartHour: 9,
       businessEndHour: 18,
-      workingDays: 'MON,TUE,WED,THU,FRI',
       isActive: true,
       applyToAllCategories: true,
     });
@@ -148,7 +179,7 @@ export default function HelpdeskSLAPage() {
           <h1 className="text-3xl font-bold text-surface-900 dark:text-surface-50">SLA Management</h1>
           {activeTab === 'slas' && (
             <button
-              onClick={() => { setShowForm(true); setEditingId(null); resetForm(); }}
+              onClick={() => { setShowForm(true); setEditingId(null); resetFormHandler(); }}
               className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
             >
               Create SLA Policy
@@ -157,28 +188,28 @@ export default function HelpdeskSLAPage() {
         </div>
 
         {/* Dashboard Cards */}
-        {dashboard && (
+        {dashboardData && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboard.slaComplianceRate?.toFixed(1) || 0}%</div>
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</div>
               <div className="text-surface-600 dark:text-surface-400">SLA Compliance</div>
               <div className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                {dashboard.slaMetCount} met / {dashboard.slaBreachedCount} breached
+                {dashboardData.slaMetCount} met / {dashboardData.slaBreachedCount} breached
               </div>
             </div>
             <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatMinutes(dashboard.averageFirstResponseMinutes || 0)}</div>
+              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatMinutes(dashboardData.averageFirstResponseMinutes || 0)}</div>
               <div className="text-surface-600 dark:text-surface-400">Avg First Response</div>
             </div>
             <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatMinutes(dashboard.averageResolutionMinutes || 0)}</div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatMinutes(dashboardData.averageResolutionMinutes || 0)}</div>
               <div className="text-surface-600 dark:text-surface-400">Avg Resolution Time</div>
             </div>
             <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow p-6">
-              <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboard.averageCSAT?.toFixed(1) || '-'}</div>
+              <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{dashboardData.averageCSAT?.toFixed(1) || '-'}</div>
               <div className="text-surface-600 dark:text-surface-400">Avg CSAT Score</div>
               <div className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-                {dashboard.firstContactResolutions} FCR
+                {dashboardData.firstContactResolutions} FCR
               </div>
             </div>
           </div>
@@ -212,23 +243,23 @@ export default function HelpdeskSLAPage() {
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit SLA Policy' : 'Create SLA Policy'}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Policy Name *</label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    {...register('name')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
-                    required
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Priority</label>
                   <select
-                    value={formData.priority || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value }))}
+                    {...register('priority')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
                   >
                     <option value="">All Priorities</option>
@@ -243,8 +274,7 @@ export default function HelpdeskSLAPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
                 <textarea
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  {...register('description')}
                   className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
                   rows={2}
                 />
@@ -255,30 +285,31 @@ export default function HelpdeskSLAPage() {
                   <label className="block text-sm font-medium mb-1">First Response (minutes) *</label>
                   <input
                     type="number"
-                    value={formData.firstResponseMinutes}
-                    onChange={(e) => setFormData(prev => ({ ...prev, firstResponseMinutes: parseInt(e.target.value) }))}
+                    {...register('firstResponseMinutes')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
-                    required
                     min="1"
                   />
+                  {errors.firstResponseMinutes && (
+                    <p className="text-red-500 text-sm mt-1">{errors.firstResponseMinutes.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Resolution Time (minutes) *</label>
                   <input
                     type="number"
-                    value={formData.resolutionMinutes}
-                    onChange={(e) => setFormData(prev => ({ ...prev, resolutionMinutes: parseInt(e.target.value) }))}
+                    {...register('resolutionMinutes')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
-                    required
                     min="1"
                   />
+                  {errors.resolutionMinutes && (
+                    <p className="text-red-500 text-sm mt-1">{errors.resolutionMinutes.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Escalate After (minutes)</label>
                   <input
                     type="number"
-                    value={formData.escalationAfterMinutes || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, escalationAfterMinutes: parseInt(e.target.value) || undefined }))}
+                    {...register('escalationAfterMinutes')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
                     min="1"
                   />
@@ -289,8 +320,7 @@ export default function HelpdeskSLAPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Business Hours Start</label>
                   <select
-                    value={formData.businessStartHour}
-                    onChange={(e) => setFormData(prev => ({ ...prev, businessStartHour: parseInt(e.target.value) }))}
+                    {...register('businessStartHour')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
@@ -301,8 +331,7 @@ export default function HelpdeskSLAPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Business Hours End</label>
                   <select
-                    value={formData.businessEndHour}
-                    onChange={(e) => setFormData(prev => ({ ...prev, businessEndHour: parseInt(e.target.value) }))}
+                    {...register('businessEndHour')}
                     className="w-full p-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-900"
                   >
                     {Array.from({ length: 24 }, (_, i) => (
@@ -314,8 +343,7 @@ export default function HelpdeskSLAPage() {
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={formData.isBusinessHoursOnly}
-                      onChange={(e) => setFormData(prev => ({ ...prev, isBusinessHoursOnly: e.target.checked }))}
+                      {...register('isBusinessHoursOnly')}
                       className="mr-2"
                     />
                     Business Hours Only
@@ -327,8 +355,7 @@ export default function HelpdeskSLAPage() {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+                    {...register('isActive')}
                     className="mr-2"
                   />
                   Active
@@ -336,8 +363,7 @@ export default function HelpdeskSLAPage() {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={formData.applyToAllCategories}
-                    onChange={(e) => setFormData(prev => ({ ...prev, applyToAllCategories: e.target.checked }))}
+                    {...register('applyToAllCategories')}
                     className="mr-2"
                   />
                   Apply to All Categories
@@ -347,7 +373,8 @@ export default function HelpdeskSLAPage() {
               <div className="flex gap-4 pt-4">
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                 >
                   {editingId ? 'Update' : 'Create'}
                 </button>
@@ -368,7 +395,7 @@ export default function HelpdeskSLAPage() {
         ) : (
           <>
             {/* Dashboard Tab */}
-            {activeTab === 'dashboard' && dashboard && (
+            {activeTab === 'dashboard' && dashboardData && (
               <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">SLA Performance Overview</h2>
                 <div className="space-y-6">
@@ -376,15 +403,15 @@ export default function HelpdeskSLAPage() {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-surface-700 dark:text-surface-300">SLA Compliance Rate</span>
-                      <span className="font-bold">{dashboard.slaComplianceRate?.toFixed(1) || 0}%</span>
+                      <span className="font-bold">{dashboardData.slaComplianceRate?.toFixed(1) || 0}%</span>
                     </div>
                     <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-4">
                       <div
                         className={`h-4 rounded-full ${
-                          (dashboard.slaComplianceRate || 0) >= 90 ? 'bg-green-500' :
-                          (dashboard.slaComplianceRate || 0) >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                          (dashboardData.slaComplianceRate || 0) >= 90 ? 'bg-green-500' :
+                          (dashboardData.slaComplianceRate || 0) >= 70 ? 'bg-yellow-500' : 'bg-red-500'
                         }`}
-                        style={{ width: `${dashboard.slaComplianceRate || 0}%` }}
+                        style={{ width: `${dashboardData.slaComplianceRate || 0}%` }}
                       />
                     </div>
                   </div>
@@ -392,20 +419,20 @@ export default function HelpdeskSLAPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                       <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">SLA Met</div>
-                      <div className="text-2xl font-bold text-green-600">{dashboard.slaMetCount}</div>
+                      <div className="text-2xl font-bold text-green-600">{dashboardData.slaMetCount}</div>
                     </div>
                     <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                       <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">SLA Breached</div>
-                      <div className="text-2xl font-bold text-red-600">{dashboard.slaBreachedCount}</div>
+                      <div className="text-2xl font-bold text-red-600">{dashboardData.slaBreachedCount}</div>
                     </div>
                     <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                       <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">First Contact Resolutions</div>
-                      <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{dashboard.firstContactResolutions}</div>
+                      <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">{dashboardData.firstContactResolutions}</div>
                     </div>
                     <div className="p-4 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                       <div className="text-sm text-surface-600 dark:text-surface-400 mb-1">Customer Satisfaction</div>
                       <div className="text-2xl font-bold text-purple-600">
-                        {dashboard.averageCSAT ? `${dashboard.averageCSAT.toFixed(1)}/5` : 'N/A'}
+                        {dashboardData.averageCSAT ? `${dashboardData.averageCSAT.toFixed(1)}/5` : 'N/A'}
                       </div>
                     </div>
                   </div>

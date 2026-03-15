@@ -186,8 +186,14 @@ public class CompOffService {
     @Transactional
     public int autoApproveEligibleRequests(UUID tenantId, int autoApproveAfterDays) {
         LocalDate cutoff = LocalDate.now().minusDays(autoApproveAfterDays);
+        // R2-009 FIX: Replace hardcoded epoch date (2020-01-01) with a rolling 6-month
+        // lookback window.  The epoch date caused the query to scan ALL pending comp-off
+        // requests since the beginning of time on every nightly run, growing linearly
+        // with the size of the dataset.  A 6-month window is large enough to catch any
+        // legitimately pending request while keeping the query bounded.
+        LocalDate lookbackStart = LocalDate.now().minusMonths(6);
         List<CompOffRequest> pending = compOffRequestRepository
-                .findPendingInDateRange(tenantId, LocalDate.of(2020, 1, 1), cutoff);
+                .findPendingInDateRange(tenantId, lookbackStart, cutoff);
 
         int count = 0;
         for (CompOffRequest req : pending) {

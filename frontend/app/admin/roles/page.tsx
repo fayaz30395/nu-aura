@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { rolesApi, permissionsApi } from '@/lib/api/roles';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Role,
   Permission,
@@ -17,32 +19,68 @@ import { ScopeSelector } from '@/components/admin/ScopeSelector';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
+import {
+  useRoles,
+  usePermissions as useQueryPermissions,
+  useCreateRole,
+  useUpdateRole,
+  useDeleteRole,
+  useAssignPermissionsWithScope,
+} from '@/lib/hooks/queries/useRoles';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
+const createRoleFormSchema = z.object({
+  code: z.string().min(1, 'Code is required').max(50),
+  name: z.string().min(1, 'Name is required').max(100),
+  description: z.string().optional().or(z.literal('')),
+});
+
+const updateRoleFormSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  description: z.string().optional().or(z.literal('')),
+});
+
+type CreateRoleFormData = z.infer<typeof createRoleFormSchema>;
+type UpdateRoleFormData = z.infer<typeof updateRoleFormSchema>;
 
 export default function RolesPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // Query hooks
+  const rolesQuery = useRoles();
+  const permissionsQuery = useQueryPermissions();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [formData, setFormData] = useState<CreateRoleRequest>({
-    code: '',
-    name: '',
-    description: '',
-    permissionCodes: [],
-  });
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
-  // New: Track permissions with their scopes
+  // Track permissions with their scopes
   const [permissionScopes, setPermissionScopes] = useState<Map<string, { scope: RoleScope; customTargets: CustomTarget[] }>>(new Map());
   const [searchTerm, setSearchTerm] = useState('');
   const [permissionSearch, setPermissionSearch] = useState('');
   const [showPermissionDropdown, setShowPermissionDropdown] = useState(false);
+
+  // Create form (for new role)
+  const createForm = useForm<CreateRoleFormData>({
+    resolver: zodResolver(createRoleFormSchema),
+    defaultValues: { code: '', name: '', description: '' },
+  });
+
+  // Edit form (for updating role)
+  const editForm = useForm<UpdateRoleFormData>({
+    resolver: zodResolver(updateRoleFormSchema),
+    defaultValues: { name: '', description: '' },
+  });
+
+  // Mutation hooks
+  const createRoleMutation = useCreateRole();
+  const updateRoleMutation = useUpdateRole(selectedRole?.id || '');
+  const deleteRoleMutation = useDeleteRole();
+  const assignPermissionsMutation = useAssignPermissionsWithScope(selectedRole?.id || '');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -56,52 +94,39 @@ export default function RolesPage() {
       router.push('/home');
       return;
     }
-
-    loadData();
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [rolesData, permissionsData] = await Promise.all([
-        rolesApi.getAllRoles(),
-        permissionsApi.getAllPermissions(),
-      ]);
-      setRoles(rolesData);
-      setPermissions(permissionsData);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      alert('Failed to load roles and permissions. Please check if you are logged in and the backend is running.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const roles = rolesQuery.data || [];
+  const permissions = permissionsQuery.data || [];
+  const isLoading = rolesQuery.isLoading || permissionsQuery.isLoading;
 
-  const handleCreateRole = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateRole = async (data: CreateRoleFormData) => {
     try {
-      await rolesApi.createRole(formData);
+      const submitData: CreateRoleRequest = {
+        code: data.code,
+        name: data.name,
+        description: data.description || '',
+        permissionCodes: [],
+      };
+      await createRoleMutation.mutateAsync(submitData);
       setShowCreateModal(false);
-      setFormData({ code: '', name: '', description: '', permissionCodes: [] });
-      loadData();
+      createForm.reset();
     } catch (error) {
       console.error('Failed to create role:', error);
     }
   };
 
-  const handleUpdateRole = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUpdateRole = async (data: UpdateRoleFormData) => {
     if (!selectedRole) return;
     try {
       const updateData: UpdateRoleRequest = {
-        name: formData.name,
-        description: formData.description,
+        name: data.name,
+        description: data.description || '',
       };
-      await rolesApi.updateRole(selectedRole.id, updateData);
+      await updateRoleMutation.mutateAsync(updateData);
       setShowEditModal(false);
       setSelectedRole(null);
-      setFormData({ code: '', name: '', description: '', permissionCodes: [] });
-      loadData();
+      editForm.reset();
     } catch (error) {
       console.error('Failed to update role:', error);
     }
@@ -110,8 +135,7 @@ export default function RolesPage() {
   const handleDeleteRole = async (id: string) => {
     if (!confirm('Are you sure you want to delete this role?')) return;
     try {
-      await rolesApi.deleteRole(id);
-      loadData();
+      await deleteRoleMutation.mutateAsync(id);
     } catch (error) {
       console.error('Failed to delete role:', error);
     }
@@ -130,7 +154,7 @@ export default function RolesPage() {
         };
       });
 
-      await rolesApi.assignPermissionsWithScope(selectedRole.id, {
+      await assignPermissionsMutation.mutateAsync({
         permissions: permissionsWithScopes,
         replaceAll: true,
       });
@@ -138,7 +162,6 @@ export default function RolesPage() {
       setSelectedRole(null);
       setSelectedPermissions([]);
       setPermissionScopes(new Map());
-      loadData();
     } catch (error) {
       console.error('Failed to assign permissions:', error);
     }
@@ -146,11 +169,9 @@ export default function RolesPage() {
 
   const openEditModal = (role: Role) => {
     setSelectedRole(role);
-    setFormData({
-      code: role.code,
+    editForm.reset({
       name: role.name,
       description: role.description || '',
-      permissionCodes: role.permissions.map((p) => p.code),
     });
     setShowEditModal(true);
   };
@@ -225,7 +246,7 @@ export default function RolesPage() {
     role.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <div className="flex items-center justify-center p-8">
@@ -344,7 +365,7 @@ export default function RolesPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-surface-900 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">Create New Role</h2>
-            <form onSubmit={handleCreateRole}>
+            <form onSubmit={createForm.handleSubmit(handleCreateRole)}>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 {/* Code Input */}
                 <div>
@@ -353,12 +374,13 @@ export default function RolesPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                    {...createForm.register('code')}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., MANAGER"
-                    required
                   />
+                  {createForm.formState.errors.code && (
+                    <p className="mt-1 text-xs text-red-500">{createForm.formState.errors.code.message}</p>
+                  )}
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Unique identifier for this role (uppercase)
                   </p>
@@ -371,12 +393,13 @@ export default function RolesPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    {...createForm.register('name')}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="e.g., Manager"
-                    required
                   />
+                  {createForm.formState.errors.name && (
+                    <p className="mt-1 text-xs text-red-500">{createForm.formState.errors.name.message}</p>
+                  )}
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Display name for this role
                   </p>
@@ -388,15 +411,17 @@ export default function RolesPage() {
                   Description
                 </label>
                 <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  {...createForm.register('description')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                   placeholder="Optional description of this role..."
                 />
+                {createForm.formState.errors.description && (
+                  <p className="mt-1 text-xs text-red-500">{createForm.formState.errors.description.message}</p>
+                )}
               </div>
 
-              {/* Permissions Dropdown - Continue from here */}
+              {/* Permissions Dropdown - Note: permissions are NOT part of the form, handled separately */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                   Permissions
@@ -420,16 +445,14 @@ export default function RolesPage() {
                             permission.description?.toLowerCase().includes(permissionSearch.toLowerCase())
                           )
                           .map((permission) => {
-                            const isSelected = formData.permissionCodes?.includes(permission.code) || false;
+                            // Permissions are managed separately from form
+                            const isSelected = false;
                             return (
                               <div
                                 key={permission.code}
                                 onClick={() => {
-                                  const currentPermissions = formData.permissionCodes || [];
-                                  const newPermissions = isSelected
-                                    ? currentPermissions.filter((code) => code !== permission.code)
-                                    : [...currentPermissions, permission.code];
-                                  setFormData({ ...formData, permissionCodes: newPermissions });
+                                  // Permissions are managed separately via the Permissions modal
+                                  // Not part of the create form
                                 }}
                                 className={`px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 ${
                                   isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
@@ -476,30 +499,7 @@ export default function RolesPage() {
                     </div>
                   )}
                 </div>
-                {(formData.permissionCodes?.length ?? 0) > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {formData.permissionCodes?.map((code) => (
-                      <span
-                        key={code}
-                        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                      >
-                        {code}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData({
-                              ...formData,
-                              permissionCodes: formData.permissionCodes?.filter((c) => c !== code) || [],
-                            });
-                          }}
-                          className="ml-1 hover:text-primary-600 dark:hover:text-blue-200"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {/* Permissions will be shown only in the permissions modal after creation */}
               </div>
 
               <div className="flex justify-end gap-2 mt-6">
@@ -507,7 +507,7 @@ export default function RolesPage() {
                   type="button"
                   onClick={() => {
                     setShowCreateModal(false);
-                    setFormData({ code: '', name: '', description: '', permissionCodes: [] });
+                    createForm.reset();
                   }}
                   className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-200 dark:bg-surface-800 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
@@ -515,9 +515,10 @@ export default function RolesPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                  disabled={createForm.formState.isSubmitting || createRoleMutation.isPending}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                 >
-                  Create Role
+                  {createForm.formState.isSubmitting || createRoleMutation.isPending ? 'Creating...' : 'Create Role'}
                 </button>
               </div>
             </form>
@@ -530,14 +531,14 @@ export default function RolesPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-surface-900 rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">Edit Role</h2>
-            <form onSubmit={handleUpdateRole}>
+            <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                   Code
                 </label>
                 <input
                   type="text"
-                  value={formData.code}
+                  value={selectedRole.code}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-gray-100 dark:bg-surface-950 text-surface-900 dark:text-surface-100"
                   disabled
                 />
@@ -548,22 +549,25 @@ export default function RolesPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  {...editForm.register('name')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  required
                 />
+                {editForm.formState.errors.name && (
+                  <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.name.message}</p>
+                )}
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                   Description
                 </label>
                 <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  {...editForm.register('description')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   rows={3}
                 />
+                {editForm.formState.errors.description && (
+                  <p className="mt-1 text-xs text-red-500">{editForm.formState.errors.description.message}</p>
+                )}
               </div>
               <div className="flex justify-end gap-3">
                 <button
@@ -571,7 +575,7 @@ export default function RolesPage() {
                   onClick={() => {
                     setShowEditModal(false);
                     setSelectedRole(null);
-                    setFormData({ code: '', name: '', description: '', permissionCodes: [] });
+                    editForm.reset();
                   }}
                   className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
@@ -579,9 +583,10 @@ export default function RolesPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 dark:bg-blue-500 dark:hover:bg-primary-500"
+                  disabled={editForm.formState.isSubmitting || updateRoleMutation.isPending}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-primary-500"
                 >
-                  Update
+                  {editForm.formState.isSubmitting || updateRoleMutation.isPending ? 'Updating...' : 'Update'}
                 </button>
               </div>
             </form>

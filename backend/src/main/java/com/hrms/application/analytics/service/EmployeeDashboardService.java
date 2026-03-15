@@ -53,6 +53,7 @@ public class EmployeeDashboardService {
     /**
      * Get employee dashboard for the currently logged-in employee
      */
+    @Transactional(readOnly = true)
     public EmployeeDashboardResponse getEmployeeDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
@@ -67,6 +68,7 @@ public class EmployeeDashboardService {
     /**
      * Get employee dashboard for a specific employee
      */
+    @Transactional(readOnly = true)
     public EmployeeDashboardResponse getEmployeeDashboard(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();

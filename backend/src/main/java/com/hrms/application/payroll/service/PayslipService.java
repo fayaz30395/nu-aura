@@ -1,5 +1,6 @@
 package com.hrms.application.payroll.service;
 
+import com.hrms.application.payroll.dto.StatutoryDeductions;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.payroll.Payslip;
 import com.hrms.infrastructure.payroll.repository.PayslipRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,10 @@ import java.util.UUID;
 public class PayslipService {
 
     private final PayslipRepository payslipRepository;
+    // Injected lazily via setter to avoid circular-dependency with StatutoryDeductionService
+    private StatutoryDeductionService statutoryDeductionService;
 
+    @Transactional
     public Payslip createPayslip(Payslip payslip) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payslip.setTenantId(tenantId);
@@ -35,6 +40,7 @@ public class PayslipService {
         return payslipRepository.save(payslip);
     }
 
+    @Transactional
     public Payslip updatePayslip(UUID id, Payslip payslipData) {
         UUID tenantId = TenantContext.getCurrentTenant();
         
@@ -111,8 +117,57 @@ public class PayslipService {
         return payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, year);
     }
 
+    @Transactional
     public void deletePayslip(UUID id) {
         Payslip payslip = getPayslipById(id);
         payslipRepository.delete(payslip);
+    }
+
+    /**
+     * BUG-002 FIX: Apply India statutory deductions to a payslip inside a single
+     * @Transactional boundary.  Previously this logic lived directly in the
+     * controller (PayrollStatutoryController) which meant:
+     *   1. No transaction: partial writes were possible if calculateTotals() threw.
+     *   2. Repository bypass: the controller held a direct PayslipRepository reference.
+     *
+     * @param payslipId UUID of the payslip to update
+     * @param state     Indian state for professional-tax lookup (e.g. "Karnataka")
+     * @return the calculated {@link StatutoryDeductions} DTO
+     */
+    @Transactional
+    public StatutoryDeductions applyStatutoryDeductions(UUID payslipId, String state) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Payslip payslip = payslipRepository.findById(payslipId)
+                .filter(p -> p.getTenantId().equals(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Payslip not found: " + payslipId));
+
+        StatutoryDeductions deductions = statutoryDeductionService.calculate(
+                payslip.getEmployeeId(),
+                payslip.getBasicSalary(),
+                payslip.getGrossSalary(),
+                state);
+
+        // Apply all deduction fields atomically — if any setter or calculateTotals()
+        // throws, the whole transaction rolls back and no partial data is saved.
+        payslip.setEmployeePf(deductions.getEmployeePf());
+        payslip.setEmployerPf(deductions.getEmployerPf());
+        payslip.setEmployeeEsi(deductions.getEmployeeEsi());
+        payslip.setEmployerEsi(deductions.getEmployerEsi());
+        payslip.setStatutoryProfessionalTax(deductions.getProfessionalTax());
+        payslip.setTdsMonthly(deductions.getTdsMonthly());
+        payslip.setStatutoryCalculatedAt(LocalDateTime.now());
+        payslip.setProvidentFund(deductions.getEmployeePf());
+        payslip.setProfessionalTax(deductions.getProfessionalTax());
+        payslip.setIncomeTax(deductions.getTdsMonthly());
+        payslip.calculateTotals();
+
+        payslipRepository.save(payslip);
+        return deductions;
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setStatutoryDeductionService(StatutoryDeductionService statutoryDeductionService) {
+        this.statutoryDeductionService = statutoryDeductionService;
     }
 }

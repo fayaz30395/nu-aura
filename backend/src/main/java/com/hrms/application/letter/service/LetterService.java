@@ -59,6 +59,7 @@ public class LetterService {
 
     // ==================== Template Operations ====================
 
+    @Transactional
     public LetterTemplateResponse createTemplate(LetterTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -94,6 +95,7 @@ public class LetterService {
         return LetterTemplateResponse.fromEntity(saved);
     }
 
+    @Transactional
     public LetterTemplateResponse updateTemplate(UUID templateId, LetterTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -157,6 +159,7 @@ public class LetterService {
                 .toList();
     }
 
+    @Transactional
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LetterTemplate entity = templateRepository.findByIdAndTenantId(templateId, tenantId)
@@ -173,6 +176,7 @@ public class LetterService {
 
     // ==================== Letter Generation Operations ====================
 
+    @Transactional(readOnly = true)
     public GeneratedLetterResponse generateLetter(GenerateLetterRequest request, UUID generatedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -222,6 +226,7 @@ public class LetterService {
      * Generate an offer letter for a candidate (not yet an employee).
      * Updates candidate with offer details and optionally links to e-signature flow.
      */
+    @Transactional(readOnly = true)
     public GeneratedLetterResponse generateOfferLetter(GenerateOfferLetterRequest request, UUID generatedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -348,6 +353,7 @@ public class LetterService {
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));
     }
 
+    @Transactional
     public GeneratedLetterResponse submitForApproval(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
@@ -364,6 +370,7 @@ public class LetterService {
         return enrichLetterResponse(GeneratedLetterResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public GeneratedLetterResponse approveLetter(UUID letterId, UUID approverId, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
@@ -487,6 +494,7 @@ public class LetterService {
         return eSignatureService.sendForSignature(response.getId());
     }
 
+    @Transactional
     public GeneratedLetterResponse revokeLetter(UUID letterId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
@@ -503,6 +511,7 @@ public class LetterService {
         return enrichLetterResponse(GeneratedLetterResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public void markLetterDownloaded(UUID letterId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)

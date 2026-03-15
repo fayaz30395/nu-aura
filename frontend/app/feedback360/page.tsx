@@ -5,7 +5,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Feedback360RedirectPage() {
+export default function Feedback360RedirectPage(): null {
   const router = useRouter();
 
   useEffect(() => {

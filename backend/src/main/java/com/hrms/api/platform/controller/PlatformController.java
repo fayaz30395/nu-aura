@@ -188,7 +188,7 @@ public class PlatformController {
     @RequiresPermission("ROLE:MANAGE")
     public ResponseEntity<AppRoleDTO> updateRolePermissions(
             @PathVariable UUID roleId,
-            @RequestBody Set<String> permissionCodes) {
+            @Valid @RequestBody Set<String> permissionCodes) {
         AppRole role = platformService.updateRolePermissions(roleId, permissionCodes);
         return ResponseEntity.ok(AppRoleDTO.fromEntity(role));
     }
@@ -271,7 +271,7 @@ public class PlatformController {
     public ResponseEntity<UserAppAccessDTO> updateUserRoles(
             @PathVariable UUID userId,
             @PathVariable String appCode,
-            @RequestBody Set<String> roleCodes) {
+            @Valid @RequestBody Set<String> roleCodes) {
         UUID grantedBy = SecurityContext.getCurrentUserId();
         UserAppAccess access = platformService.grantAccess(userId, appCode, roleCodes, grantedBy);
         return ResponseEntity.ok(UserAppAccessDTO.fromEntity(access));
@@ -294,7 +294,7 @@ public class PlatformController {
      */
     @PostMapping("/check-permissions")
     @RequiresPermission(Permission.PLATFORM_VIEW)
-    public ResponseEntity<Map<String, Boolean>> checkPermissions(@RequestBody List<String> permissions) {
+    public ResponseEntity<Map<String, Boolean>> checkPermissions(@Valid @RequestBody List<String> permissions) {
         Map<String, Boolean> result = new LinkedHashMap<>();
         for (String perm : permissions) {
             result.put(perm, SecurityContext.hasPermission(perm));

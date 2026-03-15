@@ -107,6 +107,16 @@ class EmployeeService {
     return response.data;
   }
 
+  /**
+   * BUG-013 FIX: Fetch only employees with managerial levels (LEAD and above).
+   * Used exclusively for manager-picker dropdowns — avoids fetching the entire
+   * employee list when only a small managerial subset is needed.
+   */
+  async getManagers(): Promise<Employee[]> {
+    const response = await apiClient.get<Employee[]>('/employees/managers');
+    return response.data;
+  }
+
   async getTalentProfile(id: string): Promise<TalentProfile> {
     const response = await apiClient.get<TalentProfile>(`/employees/${id}/talent-profile`);
     return response.data;

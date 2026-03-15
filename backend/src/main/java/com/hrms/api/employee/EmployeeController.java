@@ -126,6 +126,24 @@ public class EmployeeController {
         return ResponseEntity.ok(subordinates);
     }
 
+    /**
+     * BUG-013 FIX: Return only employees with managerial levels (LEAD and above)
+     * for use in the manager-picker dropdown during employee onboarding / editing.
+     * Avoids loading the entire employee list when only a small subset is valid.
+     */
+    @GetMapping("/managers")
+    @RequiresPermission({
+        Permission.EMPLOYEE_VIEW_ALL,
+        Permission.EMPLOYEE_VIEW_DEPARTMENT,
+        Permission.EMPLOYEE_VIEW_TEAM,
+        Permission.EMPLOYEE_VIEW_SELF
+    })
+    @Operation(summary = "Get eligible managers",
+               description = "Returns active employees at LEAD level and above, for manager-picker dropdowns")
+    public ResponseEntity<List<EmployeeResponse>> getManagers() {
+        return ResponseEntity.ok(employeeService.getManagerEmployees());
+    }
+
     @PutMapping("/{id}")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<EmployeeResponse> updateEmployee(

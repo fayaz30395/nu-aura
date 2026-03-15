@@ -28,7 +28,13 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { selfServiceService } from '@/lib/services/selfservice.service';
+import {
+  useMyDocumentRequests,
+  useCreateDocumentRequest,
+  useCompleteDocumentRequest,
+  useMarkDocumentDelivered,
+  useRejectDocumentRequest,
+} from '@/lib/hooks/queries';
 import {
   DocumentRequestResponse,
   DocumentRequestDto,
@@ -63,10 +69,7 @@ const STATUS_CONFIG: Record<DocumentRequestStatus, { icon: React.ReactNode; colo
 export default function MyDocumentsPage() {
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
-  const [requests, setRequests] = useState<DocumentRequestResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<DocumentRequestDto>({
@@ -79,42 +82,31 @@ export default function MyDocumentsPage() {
     priority: 2,
   });
 
+  // React Query hooks
+  const { data: requestsData, isLoading } = useMyDocumentRequests(
+    user?.employeeId || '',
+    0,
+    100,
+    hasHydrated && !!user?.employeeId
+  );
+
+  const createMutation = useCreateDocumentRequest();
+  const requests = requestsData?.content ?? [];
+
   useEffect(() => {
     if (hasHydrated && !user) {
       router.push('/auth/login');
     }
   }, [hasHydrated, user, router]);
 
-  useEffect(() => {
-    if (user?.employeeId) {
-      loadRequests();
-    } else if (user) {
-      // User without employee profile (e.g., SuperAdmin) — stop loading
-      setIsLoading(false);
-    }
-  }, [user?.employeeId, user]);
-
-  const loadRequests = async () => {
-    if (!user?.employeeId) return;
-
-    try {
-      setIsLoading(true);
-      const response = await selfServiceService.getMyDocumentRequests(user.employeeId);
-      setRequests(response.content || []);
-    } catch (error) {
-      console.error('Failed to load document requests:', error);
-      setRequests([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSubmit = async () => {
     if (!user?.employeeId || !formData.purpose) return;
 
     try {
-      setSubmitting(true);
-      await selfServiceService.createDocumentRequest(user.employeeId, formData);
+      await createMutation.mutateAsync({
+        employeeId: user.employeeId,
+        data: formData,
+      });
       setShowModal(false);
       setFormData({
         documentType: 'EMPLOYMENT_CERTIFICATE',
@@ -125,11 +117,8 @@ export default function MyDocumentsPage() {
         deliveryAddress: '',
         priority: 2,
       });
-      loadRequests();
     } catch (error) {
       console.error('Failed to create document request:', error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -471,9 +460,9 @@ export default function MyDocumentsPage() {
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={submitting || !formData.purpose}
+              disabled={createMutation.isPending || !formData.purpose}
             >
-              {submitting ? 'Submitting...' : 'Submit Request'}
+              {createMutation.isPending ? 'Submitting...' : 'Submit Request'}
             </Button>
           </ModalFooter>
         </Modal>

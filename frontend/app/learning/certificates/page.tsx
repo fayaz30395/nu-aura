@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -17,48 +17,26 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
-
-interface Certificate {
-  id: string;
-  certificateNumber: string;
-  courseId: string;
-  courseTitle: string;
-  issuedAt: string;
-  expiryDate?: string;
-  isActive: boolean;
-  scoreAchieved?: number;
-  instructorName?: string;
-  employeeId?: string;
-  employeeName?: string;
-}
+import { useToast } from '@/components/notifications/ToastProvider';
+import { useMyCertificates } from '@/lib/hooks/queries/useLearning';
+import type { Certificate } from '@/lib/services/lms.service';
 
 export default function CertificateGalleryPage() {
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [filteredCerts, setFilteredCerts] = useState<Certificate[]>([]);
-  const [loading, setLoading] = useState(true);
+  const toast = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('ALL');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadCertificates();
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
   }, []);
 
-  async function loadCertificates() {
-    try {
-      setLoading(true);
-      const response = await apiClient.get<Certificate[]>('/lms/my-certificates');
-      setCertificates(response.data || []);
-    } catch (err) {
-      console.error('Failed to load certificates:', err);
-      setCertificates([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Query
+  const { data: certificates = [], isLoading } = useMyCertificates();
 
   // Apply filters
-  useEffect(() => {
+  const filteredCerts = (() => {
     let filtered = certificates;
 
     // Filter by search query
@@ -71,12 +49,9 @@ export default function CertificateGalleryPage() {
 
     // Filter by date range
     if (dateFilter !== 'ALL') {
-      const now = new Date();
-      const issuedDate = new Date(filtered[0]?.issuedAt || '');
-
       filtered = filtered.filter(c => {
         const certDate = new Date(c.issuedAt);
-        const daysDiff = Math.floor((now.getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysDiff = Math.floor((new Date().getTime() - certDate.getTime()) / (1000 * 60 * 60 * 24));
 
         switch (dateFilter) {
           case 'LAST_30':
@@ -91,8 +66,8 @@ export default function CertificateGalleryPage() {
       });
     }
 
-    setFilteredCerts(filtered);
-  }, [certificates, searchQuery, dateFilter]);
+    return filtered;
+  })();
 
   const handleDownload = async (certId: string, certNumber: string) => {
     try {
@@ -108,7 +83,7 @@ export default function CertificateGalleryPage() {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to download certificate:', err);
-      alert('Failed to download certificate');
+      toast.error('Failed to download certificate');
     }
   };
 
@@ -126,7 +101,8 @@ export default function CertificateGalleryPage() {
   const handleCopyCertificateNumber = (certNumber: string) => {
     navigator.clipboard.writeText(certNumber);
     setCopiedId(certNumber);
-    setTimeout(() => setCopiedId(null), 2000);
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    copiedTimerRef.current = setTimeout(() => setCopiedId(null), 2000);
   };
 
   const getStatusBadge = (isActive: boolean) => {
@@ -157,7 +133,7 @@ export default function CertificateGalleryPage() {
         </div>
 
         {/* Summary Stats */}
-        {!loading && certificates.length > 0 && (
+        {!isLoading && certificates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white dark:bg-surface-800 rounded-lg shadow-md p-6">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{certificates.length}</div>
@@ -211,7 +187,7 @@ export default function CertificateGalleryPage() {
         </div>
 
         {/* Content */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
@@ -280,13 +256,6 @@ export default function CertificateGalleryPage() {
                       <div className="flex items-center justify-between text-gray-700 dark:text-gray-300">
                         <span className="text-gray-600 dark:text-gray-400">Score</span>
                         <span className="font-bold text-blue-600 dark:text-blue-400">{cert.scoreAchieved}%</span>
-                      </div>
-                    )}
-
-                    {cert.instructorName && (
-                      <div className="flex items-center justify-between text-gray-700 dark:text-gray-300">
-                        <span className="text-gray-600 dark:text-gray-400">Instructor</span>
-                        <span className="font-medium text-xs">{cert.instructorName}</span>
                       </div>
                     )}
                   </div>

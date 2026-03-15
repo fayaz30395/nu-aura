@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Users, Calendar, CheckCircle, XCircle, AlertCircle, Clock, Printer, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
 import { getLocalDateString } from '@/lib/utils/dateUtils';
+import { useAttendanceByDate } from '@/lib/hooks/queries/useAttendance';
 
 interface EmployeeAttendanceSummary {
   employeeId: string;
@@ -22,30 +22,16 @@ interface EmployeeAttendanceSummary {
 
 export default function TeamAttendancePage() {
   const router = useRouter();
-  const [records, setRecords] = useState<AttendanceRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [viewMode, setViewMode] = useState<'daily' | 'summary'>('daily');
 
-  useEffect(() => {
-    loadTeamAttendance();
-  }, [selectedDate]);
+  const { data: attendanceResponse, isLoading: loading, error } = useAttendanceByDate(
+    selectedDate,
+    0,
+    100
+  );
 
-  const loadTeamAttendance = async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      // In a real implementation, this would fetch subordinates' attendance
-      const response = await attendanceService.getAttendanceByDate(selectedDate, 0, 100);
-      setRecords(response.content);
-    } catch (error) {
-      console.error('Error loading team attendance:', error);
-      setError('Failed to load team attendance.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const records: AttendanceRecord[] = attendanceResponse?.content || [];
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -108,11 +94,8 @@ export default function TeamAttendancePage() {
           <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+              <p className="text-sm text-red-800 dark:text-red-300">{error.message || 'Failed to load team attendance.'}</p>
             </div>
-            <button onClick={loadTeamAttendance} className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
-              <RefreshCw className="w-4 h-4" />
-            </button>
           </div>
         )}
 

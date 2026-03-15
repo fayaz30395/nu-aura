@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { loanService } from '@/lib/services/loan.service';
 import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useEmployeeLoans } from '@/lib/hooks/queries/useLoans';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Wallet,
@@ -25,54 +26,33 @@ import {
 
 export default function LoansPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [loans, setLoans] = useState<EmployeeLoan[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [summary, setSummary] = useState({
-    activeLoans: 0,
-    totalOutstanding: 0,
-    totalRepaid: 0,
-    pendingApprovals: 0,
-  });
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const [page] = useState(0);
+  const [size] = useState(10);
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadData();
-  }, [isAuthenticated, hasHydrated, router]);
+  // Fetch loans using React Query
+  const { data: loansResponse, isLoading: loading, error: queryError } = useEmployeeLoans(
+    page,
+    size,
+    isAuthenticated && hasHydrated
+  );
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const loans = loansResponse?.content ?? [];
+  const error = queryError ? 'Failed to load loans data' : null;
 
-      const loansData = await loanService.getMyLoans(0, 10);
-      setLoans(loansData.content);
+  // Calculate summary from loans
+  const activeLoans = loans.filter((l) =>
+    l.status === 'ACTIVE' || l.status === 'DISBURSED'
+  );
+  const totalOutstanding = activeLoans.reduce((sum, l) => sum + l.remainingBalance, 0);
+  const totalRepaid = loans.reduce((sum, l) => sum + l.amountRepaid, 0);
+  const pendingApprovals = loans.filter((l) => l.status === 'PENDING_APPROVAL').length;
 
-      // Calculate summary from loans
-      const activeLoans = loansData.content.filter(l =>
-        l.status === 'ACTIVE' || l.status === 'DISBURSED'
-      );
-      const totalOutstanding = activeLoans.reduce((sum, l) => sum + l.remainingBalance, 0);
-      const totalRepaid = loansData.content.reduce((sum, l) => sum + l.amountRepaid, 0);
-      const pendingApprovals = loansData.content.filter(l => l.status === 'PENDING_APPROVAL').length;
-
-      setSummary({
-        activeLoans: activeLoans.length,
-        totalOutstanding,
-        totalRepaid,
-        pendingApprovals,
-      });
-    } catch (error) {
-      console.error('Error loading loans data:', error);
-      setError('Failed to load loans data');
-    } finally {
-      setLoading(false);
-    }
+  const summary = {
+    activeLoans: activeLoans.length,
+    totalOutstanding,
+    totalRepaid,
+    pendingApprovals,
   };
 
   const getStatusConfig = (status: LoanStatus) => {
@@ -141,12 +121,6 @@ export default function LoansPage() {
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
             <p className="text-surface-600 dark:text-surface-400">{error}</p>
-            <button
-              onClick={loadData}
-              className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
-            >
-              Retry
-            </button>
           </div>
         </div>
       </AppLayout>

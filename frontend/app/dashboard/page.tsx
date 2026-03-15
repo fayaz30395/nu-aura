@@ -41,14 +41,29 @@ import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
 import { getGoogleToken } from '@/lib/utils/googleToken';
-import { analyticsService } from '@/lib/services/analytics.service';
-import { attendanceService } from '@/lib/services/attendance.service';
+import {
+  useDashboardAnalytics,
+  useAnalyticsSummary,
+  useOrganizationHealth,
+} from '@/lib/hooks/queries/useAnalytics';
+import {
+  useAttendanceByDateRange,
+  useMyTimeEntries,
+  useCheckIn,
+  useCheckOut,
+} from '@/lib/hooks/queries/useAttendance';
+import { useOnboardingProcessesByStatus } from '@/lib/hooks/queries/useOnboarding';
 import { DashboardAnalytics } from '@/lib/types/analytics';
 import { AttendanceRecord, TimeEntry } from '@/lib/types/attendance';
-import { onboardingService } from '@/lib/services/onboarding.service';
 import { getLocalDateString, getLocalDateTimeString, getDateOffsetString } from '@/lib/utils/dateUtils';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
+
+interface EmailHeader {
+  name: string;
+  value: string;
+}
 
 interface GoogleNotification {
   id: string;
@@ -93,15 +108,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { hasPermission, isReady: permissionsReady } = usePermissions();
-  const [isLoading, setIsLoading] = useState(true);
-  const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [todayAttendance, setTodayAttendance] = useState<AttendanceRecord | null>(null);
-  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
   const [isClockingIn, setIsClockingIn] = useState(false);
   const [clockError, setClockError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [activeOnboardingCount, setActiveOnboardingCount] = useState<number>(0);
 
   // Google Notifications State
   const [notifications, setNotifications] = useState<GoogleNotification[]>([]);
@@ -132,22 +141,24 @@ export default function DashboardPage() {
       router.replace('/me/dashboard');
       return;
     }
-    loadAnalytics();
-    loadTodayAttendance();
     loadGoogleNotifications();
-    if (user?.roles?.some(r => r.name === 'ADMIN' || r.name === 'HR')) {
-      loadOnboardingStats();
-    }
-  }, [hasHydrated, permissionsReady, isAuthenticated, router, user, hasPermission]);
+  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
-  const loadOnboardingStats = async () => {
-    try {
-      const data = await onboardingService.getProcessesByStatus('IN_PROGRESS');
-      setActiveOnboardingCount(data.length);
-    } catch (err) {
-      console.error('Failed to load onboarding stats:', err);
-    }
-  };
+  // React Query hooks for loading data
+  const today = getLocalDateString();
+  const { data: analyticsData, isLoading: isAnalyticsLoading, error: analyticsError } = useDashboardAnalytics();
+  const { data: attendanceRangeData = [] } = useAttendanceByDateRange(today, today, !!user?.employeeId);
+  const { data: timeEntriesData = [] } = useMyTimeEntries(today, !!user?.employeeId);
+  const { data: onboardingData = [] } = useOnboardingProcessesByStatus(
+    'IN_PROGRESS'
+  );
+
+  const todayAttendance = attendanceRangeData.length > 0 ? attendanceRangeData[0] : null;
+  const timeEntries = timeEntriesData;
+  const activeOnboardingCount = onboardingData.length;
+  const analytics = analyticsData;
+  const isLoading = isAnalyticsLoading;
+  const error = analyticsError instanceof Error ? analyticsError.message : null;
 
   const loadGoogleNotifications = async () => {
     const token = getGoogleToken();
@@ -178,8 +189,8 @@ export default function DashboardPage() {
             );
             if (detailResponse.ok) {
               const detail = await detailResponse.json();
-              const fromHeader = detail.payload?.headers?.find((h: any) => h.name === 'From');
-              const subjectHeader = detail.payload?.headers?.find((h: any) => h.name === 'Subject');
+              const fromHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'From');
+              const subjectHeader = detail.payload?.headers?.find((h: EmailHeader) => h.name === 'Subject');
               allNotifications.push({
                 id: `email-${msg.id}`,
                 type: 'email',
@@ -297,28 +308,6 @@ export default function DashboardPage() {
     setNotificationsLoading(false);
   };
 
-  const loadTodayAttendance = async () => {
-    if (!user?.employeeId) return;
-    try {
-      // Use utility function for consistent local timezone handling
-      const today = getLocalDateString();
-      const [attendanceData, entriesData] = await Promise.all([
-        attendanceService.getAttendanceByDateRange(today, today),
-        attendanceService.getMyTimeEntries(today).catch(() => [] as TimeEntry[]),
-      ]);
-
-      if (attendanceData.length > 0) {
-        setTodayAttendance(attendanceData[0]);
-      } else {
-        setTodayAttendance(null);
-      }
-      setTimeEntries(entriesData);
-    } catch (err) {
-      console.error('Failed to load today attendance:', err);
-      setTodayAttendance(null);
-      setTimeEntries([]);
-    }
-  };
 
   const hasCheckedIn = Boolean(todayAttendance?.checkInTime);
   const hasCheckedOut = Boolean(todayAttendance?.checkOutTime);
@@ -329,6 +318,10 @@ export default function DashboardPage() {
   const canCheckOut = hasOpenSession;
   const attendanceComplete = !hasOpenSession && (hasCheckedIn || hasCheckedOut || timeEntries.length > 0);
 
+  // React Query mutations for check-in/out
+  const checkInMutation = useCheckIn();
+  const checkOutMutation = useCheckOut();
+
   const handleCheckIn = async () => {
     if (!user?.employeeId) return;
     try {
@@ -337,13 +330,11 @@ export default function DashboardPage() {
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
       const localTime = getLocalDateTimeString();
-      await attendanceService.checkIn({
+      await checkInMutation.mutateAsync({
         employeeId: user.employeeId,
         checkInTime: localTime,
         attendanceDate: localDate,
       });
-      // Reload attendance and time entries to get fresh data
-      await loadTodayAttendance();
     } catch (err: unknown) {
       setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check in');
     } finally {
@@ -359,13 +350,11 @@ export default function DashboardPage() {
       // Use utility functions for consistent timezone handling
       const localDate = getLocalDateString();
       const localTime = getLocalDateTimeString();
-      await attendanceService.checkOut({
+      await checkOutMutation.mutateAsync({
         employeeId: user.employeeId,
         checkOutTime: localTime,
         attendanceDate: localDate,
       });
-      // Reload attendance and time entries to get fresh data
-      await loadTodayAttendance();
     } catch (err: unknown) {
       setClockError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to check out');
     } finally {
@@ -373,23 +362,6 @@ export default function DashboardPage() {
     }
   };
 
-  const loadAnalytics = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await analyticsService.getDashboardAnalytics();
-      setAnalytics(data);
-    } catch (err: unknown) {
-      console.error('Analytics error:', err);
-      if ((err as { response?: { status?: number } })?.response?.status === 403) {
-        setError('You do not have access to analytics.');
-        return;
-      }
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load analytics data');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(value);
@@ -525,7 +497,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-surface-600 dark:text-surface-400 mb-4">{error || 'Unable to load analytics data'}</p>
-              <Button variant="primary" onClick={loadAnalytics} className="w-full">Try Again</Button>
+              <Button variant="primary" onClick={() => window.location.reload()} className="w-full">Try Again</Button>
             </CardContent>
           </Card>
         </div>
@@ -666,94 +638,49 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Stats Grid - Keka Style */}
+        {/* Stats Grid - AURA Midnight Premium */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Total Employees / Team Members */}
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-3 sm:p-5">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-surface-500 truncate">
-                    {analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
-                  </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{analytics.headcount.total}</p>
-                  <div className="flex items-center gap-1 mt-2 flex-wrap">
-                    {analytics.viewType === 'ADMIN' && analytics.headcount.growthPercentage !== 0 ? (
-                      <>
-                        {analytics.headcount.growthPercentage >= 0 ? (
-                          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-                        ) : (
-                          <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
-                        )}
-                        <span className={`text-xs sm:text-sm font-medium ${analytics.headcount.growthPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {Math.abs(analytics.headcount.growthPercentage)}%
-                        </span>
-                        <span className="text-xs sm:text-sm text-surface-400 hidden sm:inline">vs last month</span>
-                      </>
-                    ) : (
-                      <span className="text-xs sm:text-sm text-surface-400">
-                        {analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0 ml-2">
-                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 dark:text-primary-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PremiumMetricCard
+            title={analytics.viewType === 'ADMIN' ? 'Total Employees' : analytics.viewType === 'MANAGER' ? 'Team Members' : 'Your Status'}
+            value={analytics.headcount.total.toString()}
+            change={analytics.viewType === 'ADMIN' && analytics.headcount.growthPercentage !== 0
+              ? `${Math.abs(analytics.headcount.growthPercentage)}%`
+              : analytics.viewType === 'MANAGER' ? 'Direct & Indirect' : 'Active'}
+            isPositive={analytics.headcount.growthPercentage >= 0}
+            icon={<Users className="h-6 w-6" />}
+            delay={0}
+          />
 
           {/* Present Today */}
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-3 sm:p-5">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-surface-500 truncate">Present Today</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{analytics.attendance.present}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    <span className="text-xs sm:text-sm font-medium text-green-600">{analytics.attendance.attendancePercentage}%</span>
-                    <span className="text-xs sm:text-sm text-surface-400 hidden sm:inline">attendance</span>
-                  </div>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center flex-shrink-0 ml-2">
-                  <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PremiumMetricCard
+            title="Present Today"
+            value={analytics.attendance.present.toString()}
+            change={`${analytics.attendance.attendancePercentage}% attendance`}
+            isPositive={true}
+            icon={<UserCheck className="h-6 w-6" />}
+            delay={0.1}
+          />
 
           {/* On Leave */}
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-3 sm:p-5">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-surface-500 truncate">On Leave</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{analytics.attendance.onLeave}</p>
-                  <p className="text-xs sm:text-sm text-surface-400 mt-2 truncate">Approved today</p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center flex-shrink-0 ml-2">
-                  <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PremiumMetricCard
+            title="On Leave"
+            value={analytics.attendance.onLeave.toString()}
+            change="Approved today"
+            isPositive={false}
+            icon={<Calendar className="h-6 w-6" />}
+            delay={0.2}
+          />
 
           {/* Pending Approvals */}
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="p-3 sm:p-5">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-surface-500 truncate">Pending Approvals</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-surface-900 dark:text-surface-50 mt-1">{analytics.leave.pending}</p>
-                  <p className="text-xs sm:text-sm text-surface-400 mt-2 truncate">Awaiting action</p>
-                </div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center flex-shrink-0 ml-2">
-                  <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 dark:text-red-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PremiumMetricCard
+            title="Pending Approvals"
+            value={analytics.leave.pending.toString()}
+            change="Awaiting action"
+            isPositive={false}
+            icon={<Bell className="h-6 w-6" />}
+            delay={0.3}
+          />
         </div>
 
         {/* Two Column Layout */}

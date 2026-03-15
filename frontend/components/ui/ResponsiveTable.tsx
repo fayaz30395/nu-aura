@@ -232,7 +232,14 @@ function ResponsiveTable<T>({
           // Custom mobile card renderer
           if (renderMobileCard) {
             return (
-              <div key={key} onClick={() => onRowClick?.(row)}>
+              <div
+                key={key}
+                onClick={() => onRowClick?.(row)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick?.(row); } }}
+                tabIndex={onRowClick ? 0 : undefined}
+                role={onRowClick ? 'button' : undefined}
+                aria-label={onRowClick ? 'View row details' : undefined}
+              >
                 {renderMobileCard(row, columns)}
               </div>
             );

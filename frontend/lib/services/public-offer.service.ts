@@ -1,14 +1,6 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
-
-// Create a separate axios instance for public (unauthenticated) endpoints
-const publicClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Public (unauthenticated) offer-acceptance endpoints — use the shared publicApiClient
+// to ensure consistent base URL, timeout, and error handling across the platform.
+import { publicApiClient } from '../api/public-client';
 
 export interface PublicOfferResponse {
   candidateId: string;
@@ -47,7 +39,7 @@ class PublicOfferService {
    * Get offer details by token (public endpoint - no auth required)
    */
   async getOfferByToken(token: string): Promise<PublicOfferResponse> {
-    const response = await publicClient.get<PublicOfferResponse>(`/public/offers/${token}`);
+    const response = await publicApiClient.get<PublicOfferResponse>(`/public/offers/${token}`);
     return response.data;
   }
 
@@ -55,7 +47,7 @@ class PublicOfferService {
    * Accept offer using token (public endpoint - no auth required)
    */
   async acceptOffer(token: string, data: AcceptOfferRequest): Promise<PublicOfferResponse> {
-    const response = await publicClient.post<PublicOfferResponse>(
+    const response = await publicApiClient.post<PublicOfferResponse>(
       `/public/offers/${token}/accept`,
       data
     );
@@ -66,7 +58,7 @@ class PublicOfferService {
    * Decline offer using token (public endpoint - no auth required)
    */
   async declineOffer(token: string, data: DeclineOfferRequest): Promise<PublicOfferResponse> {
-    const response = await publicClient.post<PublicOfferResponse>(
+    const response = await publicApiClient.post<PublicOfferResponse>(
       `/public/offers/${token}/decline`,
       data
     );

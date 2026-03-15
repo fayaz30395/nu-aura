@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity,
@@ -38,34 +38,13 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { analyticsService } from '@/lib/services/analytics.service';
-import { OrganizationHealth } from '@/lib/types/analytics';
+import { useOrganizationHealth } from '@/lib/hooks/queries/useAnalytics';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 export default function OrganizationHealthPage() {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState<OrganizationHealth | null>(null);
-
-    useEffect(() => {
-        loadHealthData();
-    }, []);
-
-    const loadHealthData = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const result = await analyticsService.getOrganizationHealth();
-            setData(result);
-        } catch (err: unknown) {
-            console.error('Failed to load org health data:', err);
-            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Unable to fetch organization health metrics.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data, isLoading: loading, error, refetch } = useOrganizationHealth();
 
     if (loading) return <LoadingSkeleton />;
 
@@ -77,8 +56,8 @@ export default function OrganizationHealthPage() {
                         <CardContent className="pt-6 text-center">
                             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
                             <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50 mb-2">Failed to load Dashboard</h2>
-                            <p className="text-surface-600 dark:text-surface-400 mb-6">{error}</p>
-                            <Button onClick={loadHealthData} variant="primary">Try Again</Button>
+                            <p className="text-surface-600 dark:text-surface-400 mb-6">{error?.message || 'Unable to load organization health data'}</p>
+                            <Button onClick={() => refetch()} variant="primary">Try Again</Button>
                         </CardContent>
                     </Card>
                 </div>
@@ -101,7 +80,7 @@ export default function OrganizationHealthPage() {
                         <p className="text-surface-600 dark:text-surface-400 mt-1">Executive summary of workforce vitality and performance</p>
                     </motion.div>
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" size="sm" onClick={loadHealthData} leftIcon={<RefreshCw className="h-4 w-4" />}>
+                        <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4" />}>
                             Refresh Data
                         </Button>
                         <Button variant="primary" size="sm" leftIcon={<Download className="h-4 w-4" />}>

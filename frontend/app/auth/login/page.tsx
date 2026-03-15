@@ -178,7 +178,7 @@ function FeaturePills() {
 // ─── Loading Fallback ────────────────────────────────────────────────
 function LoginPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0e27]">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0e27]">
       <div className="flex flex-col items-center gap-4">
         <div className="w-12 h-12 border-2 border-indigo-500/30 border-t-indigo-400 rounded-full animate-spin" />
         <p className="text-white/40 text-sm">Loading NU-AURA...</p>
@@ -324,9 +324,10 @@ function LoginPage() {
     setIsLoading(true);
     try {
       const response = await login({ email: data.email, password: data.password });
-      if ((response as any).mfaRequired && (response as any).userId) {
+      const responseWithMfa = response as unknown as { mfaRequired?: boolean; userId?: string };
+      if (responseWithMfa.mfaRequired && responseWithMfa.userId) {
         setMfaRequired(true);
-        setMfaUserId((response as any).userId);
+        setMfaUserId(responseWithMfa.userId);
         setIsLoading(false);
         return;
       }
@@ -458,7 +459,7 @@ function LoginPage() {
   // MFA screen
   if (mfaRequired && mfaUserId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0e27] py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0a0e27] py-12 px-4">
         <AnimatedBackground />
         <div className="relative z-10 max-w-md w-full">
           <MfaVerification
@@ -527,7 +528,7 @@ function LoginPage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-5xl font-bold text-white leading-tight mb-6">
+            <h1 className="text-5xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
               Your People.
               <br />
               <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
@@ -535,7 +536,7 @@ function LoginPage() {
               </span>
             </h1>
 
-            <p className="text-lg text-white/50 leading-relaxed mb-8">
+            <p className="text-lg text-gray-600 dark:text-white/50 leading-relaxed mb-8">
               One platform for HR, Recruitment, Performance, and Knowledge
               Management. Built for teams that move fast.
             </p>
@@ -559,7 +560,7 @@ function LoginPage() {
                   >
                     {app.icon}
                   </div>
-                  <span className="text-white/40 text-xs font-medium">
+                  <span className="text-gray-500 dark:text-white/40 text-xs font-medium">
                     NU-{app.name}
                   </span>
                 </div>
@@ -588,7 +589,7 @@ function LoginPage() {
                   alt="NuLogic"
                   width={180}
                   height={54}
-                  className="h-14 w-auto object-contain relative brightness-0 invert"
+                  className="h-14 w-auto object-contain relative dark:brightness-0 dark:invert"
                   priority
                 />
               </div>
@@ -599,7 +600,7 @@ function LoginPage() {
               <h2 className="text-2xl font-bold text-white mb-2">
                 Welcome to <span className="text-indigo-400">NU-AURA</span>
               </h2>
-              <p className="text-white/40 text-sm">
+              <p className="text-gray-500 dark:text-white/40 text-sm">
                 Your unified people platform
               </p>
             </div>
@@ -610,7 +611,7 @@ function LoginPage() {
                 <h3 className="text-xl font-semibold text-white mb-1">
                   Sign In
                 </h3>
-                <p className="text-white/40 text-sm">
+                <p className="text-gray-500 dark:text-white/40 text-sm">
                   Access your workspace with Google SSO
                 </p>
               </div>

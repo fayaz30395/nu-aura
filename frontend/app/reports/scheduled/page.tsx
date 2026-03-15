@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { scheduledReportService } from '@/lib/services/scheduled-report.service';
-import { departmentService } from '@/lib/services/department.service';
 import { Department } from '@/lib/types/employee';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import {
   ScheduledReport,
   ScheduledReportRequest,
@@ -15,6 +17,7 @@ import {
   FREQUENCY_LABELS,
   DAY_OF_WEEK_LABELS,
 } from '@/lib/types/analytics';
+import { useToast } from '@/components/notifications/ToastProvider';
 import {
   Plus,
   Edit,
@@ -33,6 +36,14 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
+import React from 'react';
+import {
+  useScheduledReports,
+  useCreateScheduledReport,
+  useUpdateScheduledReport,
+  useDeleteScheduledReport,
+  useToggleScheduledReportStatus,
+} from '@/lib/hooks/queries/useReports';
 
 const REPORT_TYPE_ICONS: Record<ReportType, React.ElementType> = {
   EMPLOYEE_DIRECTORY: Users,
@@ -52,124 +63,142 @@ const REPORT_TYPE_COLORS: Record<ReportType, string> = {
   DEPARTMENT_HEADCOUNT: 'text-pink-600 bg-pink-50 dark:bg-pink-950/20',
 };
 
+// Zod schema for scheduled report form
+const scheduledReportFormSchema = z.object({
+  scheduleName: z.string().min(1, 'Schedule name is required'),
+  reportType: z.string().min(1, 'Report type is required'),
+  frequency: z.enum(['DAILY', 'WEEKLY', 'MONTHLY']),
+  dayOfWeek: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v) : v).optional(),
+  dayOfMonth: z.union([z.string(), z.number()]).transform(v => typeof v === 'string' ? parseInt(v) : v).optional(),
+  timeOfDay: z.string().min(1, 'Time is required'),
+  recipients: z.array(z.object({ email: z.string().email('Invalid email') })),
+  departmentId: z.string().optional(),
+  exportFormat: z.enum(['EXCEL', 'PDF', 'CSV']),
+  isActive: z.boolean(),
+});
+
+type ScheduledReportFormData = z.infer<typeof scheduledReportFormSchema>;
+
 export default function ScheduledReportsPage() {
-  const [reports, setReports] = useState<ScheduledReport[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(false);
+  const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedReport, setSelectedReport] = useState<ScheduledReport | null>(null);
   const [filterActive, setFilterActive] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
-  const [formData, setFormData] = useState<ScheduledReportRequest>({
-    scheduleName: '',
-    reportType: 'EMPLOYEE_DIRECTORY',
-    frequency: 'WEEKLY',
-    dayOfWeek: 1,
-    dayOfMonth: 1,
-    timeOfDay: '09:00',
-    recipients: [''],
-    exportFormat: 'EXCEL',
-    isActive: true,
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<ScheduledReportFormData>({
+    resolver: zodResolver(scheduledReportFormSchema),
+    defaultValues: {
+      scheduleName: '',
+      reportType: 'EMPLOYEE_DIRECTORY',
+      frequency: 'WEEKLY',
+      dayOfWeek: 1,
+      dayOfMonth: 1,
+      timeOfDay: '09:00',
+      recipients: [{ email: '' }],
+      exportFormat: 'EXCEL',
+      isActive: true,
+    },
   });
 
-  useEffect(() => {
-    loadReports();
-    loadDepartments();
-  }, []);
+  const { fields: recipientFields, append: appendRecipient, remove: removeRecipient } = useFieldArray({
+    control,
+    name: 'recipients',
+  });
 
-  const loadReports = async () => {
-    try {
-      setLoading(true);
-      const response = await scheduledReportService.getAll();
-      setReports(response.content);
-    } catch (error) {
-      console.error('Error loading scheduled reports:', error);
-      alert('Failed to load scheduled reports');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const frequency = watch('frequency');
 
-  const loadDepartments = async () => {
-    try {
-      const depts = await departmentService.getActiveDepartments();
-      setDepartments(depts);
-    } catch (error) {
-      console.error('Error loading departments:', error);
-    }
-  };
+  const { data: response, isLoading: loading, refetch } = useScheduledReports();
+  const { data: departmentsData = [] } = useActiveDepartments();
+  const reports = response?.content || [];
+  const departments = departmentsData;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const createMutation = useCreateScheduledReport();
+  const updateMutation = useUpdateScheduledReport();
+  const deleteMutation = useDeleteScheduledReport();
+  const toggleMutation = useToggleScheduledReportStatus();
 
+  const handleFormSubmit = async (data: ScheduledReportFormData) => {
     // Filter out empty recipients
-    const filteredRecipients = formData.recipients.filter(r => r.trim() !== '');
+    const filteredRecipients = data.recipients.filter(r => r.email.trim() !== '').map(r => r.email);
     if (filteredRecipients.length === 0) {
-      alert('Please add at least one recipient email');
+      toast.error('Please add at least one recipient email');
       return;
     }
 
-    try {
-      setLoading(true);
-      const dataToSubmit = {
-        ...formData,
-        recipients: filteredRecipients,
-        dayOfWeek: formData.frequency === 'WEEKLY' ? formData.dayOfWeek : undefined,
-        dayOfMonth: formData.frequency === 'MONTHLY' ? formData.dayOfMonth : undefined,
-      };
+    const dataToSubmit: ScheduledReportRequest = {
+      scheduleName: data.scheduleName,
+      reportType: data.reportType as ReportType,
+      frequency: data.frequency,
+      dayOfWeek: data.frequency === 'WEEKLY' ? data.dayOfWeek : undefined,
+      dayOfMonth: data.frequency === 'MONTHLY' ? data.dayOfMonth : undefined,
+      timeOfDay: data.timeOfDay,
+      recipients: filteredRecipients,
+      departmentId: data.departmentId || undefined,
+      exportFormat: data.exportFormat,
+      isActive: data.isActive,
+    };
 
+    try {
       if (selectedReport) {
-        await scheduledReportService.update(selectedReport.id, dataToSubmit);
+        await updateMutation.mutateAsync({ id: selectedReport.id, data: dataToSubmit });
+        toast.success('Scheduled report updated successfully');
       } else {
-        await scheduledReportService.create(dataToSubmit);
+        await createMutation.mutateAsync(dataToSubmit);
+        toast.success('Scheduled report created successfully');
       }
 
       setShowModal(false);
-      resetForm();
-      await loadReports();
+      reset();
+      setSelectedReport(null);
+      refetch();
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save scheduled report');
-    } finally {
-      setLoading(false);
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save scheduled report');
     }
   };
 
   const handleDelete = async () => {
     if (!selectedReport) return;
     try {
-      setLoading(true);
-      await scheduledReportService.delete(selectedReport.id);
+      await deleteMutation.mutateAsync(selectedReport.id);
+      toast.success('Scheduled report deleted successfully');
       setShowDeleteConfirm(false);
       setSelectedReport(null);
-      await loadReports();
+      refetch();
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete scheduled report');
-    } finally {
-      setLoading(false);
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete scheduled report');
     }
   };
 
   const handleToggleStatus = async (report: ScheduledReport) => {
     try {
-      await scheduledReportService.toggleStatus(report.id);
-      await loadReports();
+      await toggleMutation.mutateAsync(report.id);
+      toast.success(report.isActive ? 'Report paused' : 'Report activated');
+      refetch();
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to toggle report status');
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to toggle report status');
     }
   };
 
   const openEditModal = (report: ScheduledReport) => {
     setSelectedReport(report);
-    setFormData({
+    reset({
       scheduleName: report.scheduleName,
-      reportType: report.reportType,
+      reportType: report.reportType as string,
       frequency: report.frequency,
       dayOfWeek: report.dayOfWeek || 1,
       dayOfMonth: report.dayOfMonth || 1,
       timeOfDay: report.timeOfDay,
-      recipients: report.recipients.length > 0 ? report.recipients : [''],
-      departmentId: report.departmentId,
-      status: report.status,
+      recipients: report.recipients.length > 0 ? report.recipients.map(r => ({ email: r })) : [{ email: '' }],
+      departmentId: report.departmentId || '',
       exportFormat: report.exportFormat,
       isActive: report.isActive,
     });
@@ -179,36 +208,6 @@ export default function ScheduledReportsPage() {
   const openDeleteConfirm = (report: ScheduledReport) => {
     setSelectedReport(report);
     setShowDeleteConfirm(true);
-  };
-
-  const resetForm = () => {
-    setSelectedReport(null);
-    setFormData({
-      scheduleName: '',
-      reportType: 'EMPLOYEE_DIRECTORY',
-      frequency: 'WEEKLY',
-      dayOfWeek: 1,
-      dayOfMonth: 1,
-      timeOfDay: '09:00',
-      recipients: [''],
-      exportFormat: 'EXCEL',
-      isActive: true,
-    });
-  };
-
-  const addRecipient = () => {
-    setFormData({ ...formData, recipients: [...formData.recipients, ''] });
-  };
-
-  const removeRecipient = (index: number) => {
-    const newRecipients = formData.recipients.filter((_, i) => i !== index);
-    setFormData({ ...formData, recipients: newRecipients.length > 0 ? newRecipients : [''] });
-  };
-
-  const updateRecipient = (index: number, value: string) => {
-    const newRecipients = [...formData.recipients];
-    newRecipients[index] = value;
-    setFormData({ ...formData, recipients: newRecipients });
   };
 
   const getScheduleDescription = (report: ScheduledReport) => {
@@ -245,7 +244,8 @@ export default function ScheduledReportsPage() {
           </div>
           <button
             onClick={() => {
-              resetForm();
+              reset();
+              setSelectedReport(null);
               setShowModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2"
@@ -293,7 +293,8 @@ export default function ScheduledReportsPage() {
             {filterActive === 'ALL' && (
               <button
                 onClick={() => {
-                  resetForm();
+                  reset();
+                  setSelectedReport(null);
                   setShowModal(true);
                 }}
                 className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -419,7 +420,7 @@ export default function ScheduledReportsPage() {
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedReport ? 'Edit Scheduled Report' : 'Create Scheduled Report'}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     {/* Schedule Name */}
                     <div>
@@ -428,12 +429,11 @@ export default function ScheduledReportsPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={formData.scheduleName}
-                        onChange={(e) => setFormData({ ...formData, scheduleName: e.target.value })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                         placeholder="e.g., Weekly Attendance Report"
+                        {...register('scheduleName')}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                       />
+                      {errors.scheduleName && <p className="text-red-500 text-sm mt-1">{errors.scheduleName.message}</p>}
                     </div>
 
                     {/* Report Type */}
@@ -442,15 +442,14 @@ export default function ScheduledReportsPage() {
                         Report Type *
                       </label>
                       <select
-                        required
-                        value={formData.reportType}
-                        onChange={(e) => setFormData({ ...formData, reportType: e.target.value as ReportType })}
+                        {...register('reportType')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                       >
                         {Object.entries(REPORT_TYPE_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
                         ))}
                       </select>
+                      {errors.reportType && <p className="text-red-500 text-sm mt-1">{errors.reportType.message}</p>}
                     </div>
 
                     {/* Frequency */}
@@ -460,51 +459,48 @@ export default function ScheduledReportsPage() {
                           Frequency *
                         </label>
                         <select
-                          required
-                          value={formData.frequency}
-                          onChange={(e) => setFormData({ ...formData, frequency: e.target.value as Frequency })}
+                          {...register('frequency')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                         >
                           {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
                             <option key={value} value={value}>{label}</option>
                           ))}
                         </select>
+                        {errors.frequency && <p className="text-red-500 text-sm mt-1">{errors.frequency.message}</p>}
                       </div>
 
                       {/* Day Selection based on frequency */}
-                      {formData.frequency === 'WEEKLY' && (
+                      {frequency === 'WEEKLY' && (
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                             Day of Week *
                           </label>
                           <select
-                            required
-                            value={formData.dayOfWeek}
-                            onChange={(e) => setFormData({ ...formData, dayOfWeek: parseInt(e.target.value) })}
+                            {...register('dayOfWeek', { valueAsNumber: true })}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                           >
                             {Object.entries(DAY_OF_WEEK_LABELS).map(([value, label]) => (
                               <option key={value} value={value}>{label}</option>
                             ))}
                           </select>
+                          {errors.dayOfWeek && <p className="text-red-500 text-sm mt-1">{errors.dayOfWeek.message}</p>}
                         </div>
                       )}
 
-                      {formData.frequency === 'MONTHLY' && (
+                      {frequency === 'MONTHLY' && (
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                             Day of Month *
                           </label>
                           <select
-                            required
-                            value={formData.dayOfMonth}
-                            onChange={(e) => setFormData({ ...formData, dayOfMonth: parseInt(e.target.value) })}
+                            {...register('dayOfMonth', { valueAsNumber: true })}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                           >
                             {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                               <option key={day} value={day}>{day}</option>
                             ))}
                           </select>
+                          {errors.dayOfMonth && <p className="text-red-500 text-sm mt-1">{errors.dayOfMonth.message}</p>}
                         </div>
                       )}
                     </div>
@@ -517,11 +513,10 @@ export default function ScheduledReportsPage() {
                         </label>
                         <input
                           type="time"
-                          required
-                          value={formData.timeOfDay}
-                          onChange={(e) => setFormData({ ...formData, timeOfDay: e.target.value })}
+                          {...register('timeOfDay')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                         />
+                        {errors.timeOfDay && <p className="text-red-500 text-sm mt-1">{errors.timeOfDay.message}</p>}
                       </div>
 
                       {/* Export Format */}
@@ -530,15 +525,14 @@ export default function ScheduledReportsPage() {
                           Export Format *
                         </label>
                         <select
-                          required
-                          value={formData.exportFormat}
-                          onChange={(e) => setFormData({ ...formData, exportFormat: e.target.value as ExportFormat })}
+                          {...register('exportFormat')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                         >
                           <option value="EXCEL">Excel (.xlsx)</option>
                           <option value="PDF">PDF</option>
                           <option value="CSV">CSV</option>
                         </select>
+                        {errors.exportFormat && <p className="text-red-500 text-sm mt-1">{errors.exportFormat.message}</p>}
                       </div>
                     </div>
 
@@ -548,8 +542,7 @@ export default function ScheduledReportsPage() {
                         Filter by Department (optional)
                       </label>
                       <select
-                        value={formData.departmentId || ''}
-                        onChange={(e) => setFormData({ ...formData, departmentId: e.target.value || undefined })}
+                        {...register('departmentId')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                       >
                         <option value="">All Departments</option>
@@ -565,16 +558,15 @@ export default function ScheduledReportsPage() {
                         Recipients *
                       </label>
                       <div className="space-y-2">
-                        {formData.recipients.map((email, index) => (
-                          <div key={index} className="flex gap-2">
+                        {recipientFields.map((field, index) => (
+                          <div key={field.id} className="flex gap-2">
                             <input
                               type="email"
-                              value={email}
-                              onChange={(e) => updateRecipient(index, e.target.value)}
-                              className="flex-1 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                               placeholder="email@example.com"
+                              {...register(`recipients.${index}.email`)}
+                              className="flex-1 px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-800"
                             />
-                            {formData.recipients.length > 1 && (
+                            {recipientFields.length > 1 && (
                               <button
                                 type="button"
                                 onClick={() => removeRecipient(index)}
@@ -587,13 +579,14 @@ export default function ScheduledReportsPage() {
                         ))}
                         <button
                           type="button"
-                          onClick={addRecipient}
+                          onClick={() => appendRecipient({ email: '' })}
                           className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
                         >
                           <Plus className="h-4 w-4" />
                           Add another recipient
                         </button>
                       </div>
+                      {errors.recipients && <p className="text-red-500 text-sm mt-1">Please check recipients</p>}
                     </div>
                   </div>
 
@@ -602,7 +595,8 @@ export default function ScheduledReportsPage() {
                       type="button"
                       onClick={() => {
                         setShowModal(false);
-                        resetForm();
+                        reset();
+                        setSelectedReport(null);
                       }}
                       className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                     >

@@ -93,7 +93,7 @@ const ChildrenFlyover: React.FC<{
       {/* Backdrop */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/5 dark:bg-black/20 transition-opacity duration-200',
+          'fixed inset-0 z-40 bg-black/30 transition-opacity duration-200',
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         )}
         onClick={onClose}
@@ -103,9 +103,9 @@ const ChildrenFlyover: React.FC<{
       <div
         ref={panelRef}
         className={cn(
-          'fixed z-50 w-64 bg-white dark:bg-surface-900',
-          'border border-surface-200 dark:border-surface-700 rounded-lg shadow-xl',
-          'transform transition-all duration-250 ease-out',
+          'fixed z-50 w-64 glass-midnight',
+          'rounded-lg shadow-xl shadow-black/20',
+          'transform transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)]',
           isOpen ? 'translate-x-0 opacity-100 scale-100' : 'translate-x-3 opacity-0 scale-95 pointer-events-none'
         )}
         style={{
@@ -114,14 +114,14 @@ const ChildrenFlyover: React.FC<{
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
           <div className="flex items-center gap-2">
             {item.icon && (
-              <span className="text-primary-600 dark:text-primary-400">
+              <span className="text-primary-400">
                 {item.icon}
               </span>
             )}
-            <span className="font-semibold text-sm text-surface-900 dark:text-surface-50">
+            <span className="font-semibold text-sm text-white">
               {item.label}
             </span>
             {item.badge && (
@@ -132,7 +132,7 @@ const ChildrenFlyover: React.FC<{
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 dark:hover:text-surface-300 transition-colors"
+            className="p-1 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -143,10 +143,10 @@ const ChildrenFlyover: React.FC<{
         <div className="py-2 max-h-[400px] overflow-y-auto scrollbar-hide">
           {item.children?.map((child) => {
             const childClasses = cn(
-              'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-out',
+              'w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)]',
               activeId === child.id
-                ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-medium'
-                : 'text-surface-700 dark:text-surface-400 hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200'
+                ? 'bg-primary-500/10 text-primary-300 font-medium shadow-[0_0_10px_rgba(139,92,246,0.15)]'
+                : 'text-white/70 hover:bg-white/10 hover:text-white'
             );
 
             const childContent = (
@@ -154,14 +154,14 @@ const ChildrenFlyover: React.FC<{
                 {child.icon && (
                   <span className={cn(
                     "w-5 h-5 flex items-center justify-center",
-                    activeId === child.id ? 'text-primary-600 dark:text-primary-400' : 'text-surface-400'
+                    activeId === child.id ? 'text-primary-400' : 'text-white/50'
                   )}>
                     {child.icon}
                   </span>
                 )}
                 <span className="flex-1 text-left truncate">{child.label}</span>
                 {child.badge && (
-                  <span className="text-xs bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
                     {child.badge}
                   </span>
                 )}
@@ -202,8 +202,8 @@ const ChildrenFlyover: React.FC<{
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 border-t border-surface-100 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-800/30">
-          <p className="text-xs text-surface-400 dark:text-surface-500">
+        <div className="px-4 py-2 border-t border-white/5 bg-white/5">
+          <p className="text-xs text-white/40">
             {item.children?.length || 0} items
           </p>
         </div>
@@ -245,11 +245,11 @@ const SidebarMenuItem: React.FC<{
 
   const commonClasses = cn(
     'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
-    'transition-all duration-200 ease-out',
+    'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
     isActive || isFlyoverOpen
-      ? 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 shadow-sm'
-      : 'text-surface-700 dark:text-surface-400',
-    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-surface-100/70 hover:text-surface-900 dark:hover:bg-surface-800/70 dark:hover:text-surface-200',
+      ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300 shadow-[0_0_10px_rgba(139,92,246,0.1)] dark:shadow-[0_0_10px_rgba(139,92,246,0.2)]'
+      : 'text-gray-600 dark:text-white/70',
+    !item.disabled && !isActive && !isFlyoverOpen && 'hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white',
     item.disabled && 'cursor-not-allowed opacity-50'
   );
 
@@ -270,8 +270,8 @@ const SidebarMenuItem: React.FC<{
           className={cn(
             'flex items-center justify-center w-6 h-6 flex-shrink-0 transition-colors duration-200',
             isActive || isFlyoverOpen
-              ? 'text-primary-600 dark:text-primary-400'
-              : 'text-surface-500 group-hover:text-surface-700 dark:text-surface-400 dark:group-hover:text-surface-300'
+              ? 'text-primary-400'
+              : 'text-white/50 group-hover:text-white/90'
           )}
         >
           {item.icon}
@@ -287,7 +287,7 @@ const SidebarMenuItem: React.FC<{
                 'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-medium transition-colors duration-200',
                 isActive || isFlyoverOpen
                   ? 'bg-primary-500 text-white'
-                  : 'bg-surface-200 text-surface-600 dark:bg-surface-700 dark:text-surface-300'
+                  : 'bg-white/10 text-white/70'
               )}>
                 {item.badge}
               </span>
@@ -295,8 +295,8 @@ const SidebarMenuItem: React.FC<{
             {hasChildren && (
               <ChevronRight
                 className={cn(
-                  'h-4 w-4 text-surface-400 transition-all duration-200',
-                  isFlyoverOpen && 'translate-x-0.5'
+                  'h-4 w-4 text-white/30 transition-all duration-200',
+                  isFlyoverOpen && 'translate-x-0.5 text-primary-400'
                 )}
               />
             )}
@@ -306,7 +306,7 @@ const SidebarMenuItem: React.FC<{
 
       {/* Tooltip for collapsed state (items without children) */}
       {isCollapsed && !hasChildren && (
-        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-lg pointer-events-none transition-all duration-150">
+        <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-midnight-obsidian/90 backdrop-blur-lg border border-white/10 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible whitespace-nowrap z-50 shadow-xl shadow-black/20 pointer-events-none transition-all duration-150">
           {item.label}
           {item.badge && (
             <span className="ml-2 px-1.5 py-0.5 bg-primary-500 rounded-full text-xs">
@@ -361,7 +361,7 @@ const SectionDivider: React.FC<{
   if (isCollapsed) {
     return (
       <div className="px-3 py-3">
-        <div className="w-full h-px bg-gradient-to-r from-surface-200 via-surface-200 to-transparent dark:from-surface-700 dark:via-surface-700 dark:to-transparent" />
+        <div className="w-full h-px bg-gradient-to-r from-white/20 via-white/10 to-transparent" />
       </div>
     );
   }
@@ -369,11 +369,11 @@ const SectionDivider: React.FC<{
   return (
     <motion.button
       onClick={() => onToggleSection(sectionId)}
-      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-surface-50/60 dark:hover:bg-surface-800/30 rounded-md transition-all duration-200"
+      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-white/5 rounded-md transition-all duration-200"
       whileHover={{ x: 2 }}
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-500 dark:text-surface-500 group-hover:text-surface-700 dark:group-hover:text-surface-400 transition-colors duration-200 relative">
+      <span className="text-[10px] font-semibold uppercase tracking-widest text-white/40 group-hover:text-white/70 transition-colors duration-200 relative">
         {label}
         {/* Subtle left border highlight on hover */}
         <motion.div
@@ -385,7 +385,7 @@ const SectionDivider: React.FC<{
       </span>
       <ChevronDown
         className={cn(
-          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-300 ease-out',
+          'h-3 w-3 text-white/30 transition-transform duration-300 ease-out',
           !isSectionExpanded && '-rotate-90'
         )}
       />
@@ -527,9 +527,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           ref={ref as React.Ref<HTMLDivElement>}
           data-sidebar
           className={cn(
-            'flex flex-col bg-white border-r border-surface-200 h-screen relative',
-            'dark:bg-surface-900 dark:border-surface-800',
-            'hover:shadow-sm dark:hover:shadow-none transition-shadow duration-300',
+            'flex flex-col bg-white dark:bg-midnight-obsidian/80 border-r border-gray-200 dark:border-white/10 h-screen relative backdrop-blur-xl transition-all duration-300',
+            'hover:shadow-[0_0_20px_rgba(139,92,246,0.05)] dark:hover:shadow-[0_0_20px_rgba(139,92,246,0.1)]',
             className
           )}
           animate={{
@@ -545,7 +544,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         >
           {/* Logo Header */}
           <div className={cn(
-            'flex items-center border-b border-surface-200 dark:border-surface-800 h-16 px-4 transition-all duration-300',
+            'flex items-center border-b border-white/10 h-16 px-4 transition-all duration-300',
             isCollapsed ? 'justify-center' : 'justify-between'
           )}>
             {!isCollapsed ? (
@@ -576,16 +575,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           {/* Collapse Toggle */}
           {collapsible && (
             <div className={cn(
-              'px-3 py-2.5 border-b border-surface-100 dark:border-surface-800 transition-all duration-300',
+              'px-3 py-2.5 border-b border-white/5 transition-all duration-300',
               isCollapsed ? 'flex justify-center' : ''
             )}>
               <button
                 onClick={() => handleCollapsedChange(!isCollapsed)}
                 className={cn(
-                  'flex items-center gap-2 p-2 rounded-lg text-surface-500 transition-all duration-200 ease-out',
-                  'hover:text-surface-700 hover:bg-surface-100/70 dark:hover:bg-surface-800/70 dark:hover:text-surface-300',
+                  'flex items-center gap-2 p-2 rounded-lg text-white/60 transition-all duration-200 ease-out',
+                  'hover:text-white hover:bg-white/10',
                   isCollapsed ? 'w-full justify-center' : 'w-full',
-                  isCollapsed && isHovering && 'bg-surface-100/50 dark:bg-surface-800/50'
+                  isCollapsed && isHovering && 'bg-white/5'
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 title={isCollapsed ? 'Expand sidebar (Ctrl+B)' : 'Collapse sidebar (Ctrl+B)'}
@@ -596,7 +595,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <>
                     <PanelLeftClose className="h-5 w-5 transition-transform duration-300" />
                     <span className="text-xs font-medium transition-opacity duration-200">Collapse</span>
-                    <kbd className="ml-auto text-[10px] font-mono text-surface-400 bg-surface-100/50 dark:bg-surface-800/50 px-1.5 py-0.5 rounded transition-colors duration-200">
+                    <kbd className="ml-auto text-[10px] font-mono text-white/40 bg-white/5 px-1.5 py-0.5 rounded transition-colors duration-200">
                       ⌘B
                     </kbd>
                   </>
@@ -624,14 +623,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   {sectionIndex === 0 && !isCollapsed && (
                     <button
                       onClick={() => handleToggleSection(section.id)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-surface-50/60 dark:hover:bg-surface-800/30 rounded-md transition-all duration-200"
+                      className="w-full flex items-center justify-between px-3 py-2.5 group hover:bg-white/5 rounded-md transition-all duration-200"
                     >
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-surface-500 dark:text-surface-500 group-hover:text-surface-700 dark:group-hover:text-surface-400 transition-colors duration-200">
+                      <span className="text-[10px] font-semibold uppercase tracking-widest text-white/40 group-hover:text-white/70 transition-colors duration-200">
                         {section.label}
                       </span>
                       <ChevronDown
                         className={cn(
-                          'h-3 w-3 text-surface-400 dark:text-surface-500 transition-transform duration-300 ease-out',
+                          'h-3 w-3 text-white/30 transition-transform duration-300 ease-out',
                           !isSectionExpanded && '-rotate-90'
                         )}
                       />
@@ -670,27 +669,27 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
 
           {/* Footer */}
           <div className={cn(
-            'border-t border-surface-200 dark:border-surface-800 p-3 transition-all duration-300',
+            'border-t border-white/10 p-3 transition-all duration-300',
             isCollapsed && 'flex justify-center'
           )}>
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-primary-50 to-primary-50/50 dark:from-primary-950/50 dark:to-primary-950/30 border border-primary-100/50 dark:border-primary-900/30 transition-all duration-200">
-                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 transition-colors duration-200">
-                  <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20 shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all duration-200">
+                <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary-500/20 transition-colors duration-200">
+                  <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-primary-700 dark:text-primary-300 truncate">
+                  <p className="text-xs font-medium text-primary-300 truncate">
                     Pro Features
                   </p>
-                  <p className="text-[10px] text-primary-600/70 dark:text-primary-400/70">
+                  <p className="text-[10px] text-primary-400/70">
                     All modules active
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-md bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-200 dark:hover:bg-primary-900/70">
-                <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
-                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-surface-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-lg">
+              <div className="w-8 h-8 rounded-md bg-primary-500/20 flex items-center justify-center group relative transition-all duration-200 hover:bg-primary-500/30 shadow-[0_0_10px_rgba(139,92,246,0.1)]">
+                <Sparkles className="h-4 w-4 text-primary-400 transition-transform duration-200" />
+                <div className="absolute left-full ml-2 px-2.5 py-1.5 bg-midnight-obsidian/90 backdrop-blur-lg border border-white/10 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 whitespace-nowrap z-50 shadow-xl shadow-black/20">
                   Pro Features Active
                 </div>
               </div>

@@ -4,8 +4,14 @@ import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -19,6 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Slf4j
 public class WorkflowRule extends TenantAware {
 
     @Column(nullable = false)
@@ -116,12 +123,65 @@ public class WorkflowRule extends TenantAware {
         return true;
     }
 
-    // Simple expression evaluator - in production, use SpEL or similar
+    /**
+     * BUG-011 FIX: Evaluate the rule expression against the supplied context using
+     * Spring SpEL with {@link SimpleEvaluationContext} (read-only, restricted).
+     *
+     * <p>SimpleEvaluationContext is intentionally restricted: it allows property
+     * access and comparison operators but blocks arbitrary Java method invocations,
+     * preventing expression-injection attacks from user-supplied rule strings stored
+     * in the database.</p>
+     *
+     * <p>Expression syntax depends on the type of {@code context}:
+     * <ul>
+     *   <li>{@code Map<String,Object>} — each entry is exposed as a SpEL variable
+     *       prefixed with {@code #}, e.g. {@code #amount > 10000 && #department == 'SALES'}</li>
+     *   <li>Any POJO — used as the SpEL root object; properties are accessed directly,
+     *       e.g. {@code amount > 10000 && department == 'SALES'}</li>
+     * </ul>
+     *
+     * <p>On any parse or evaluation error the method returns {@code false} (fail-closed)
+     * so a broken rule expression never accidentally grants access.</p>
+     *
+     * @param context evaluation context — either a {@code Map<String,Object>} or a POJO
+     * @return {@code true} if the expression evaluates to {@code true}; {@code false} otherwise
+     */
     public boolean evaluate(Object context) {
-        if (ruleExpression == null || ruleExpression.isEmpty()) {
+        if (ruleExpression == null || ruleExpression.isBlank()) {
+            // Empty expression — no condition to check, rule always matches
             return true;
         }
-        // Placeholder - actual implementation would use expression evaluation
-        return true;
+        try {
+            ExpressionParser parser = new SpelExpressionParser();
+
+            SimpleEvaluationContext evalContext;
+            if (context instanceof Map<?, ?>) {
+                // Build a read-only context and expose each map entry as a named variable
+                evalContext = SimpleEvaluationContext
+                        .forReadOnlyDataBinding()
+                        .withInstanceMethods()
+                        .build();
+                @SuppressWarnings("unchecked")
+                Map<String, Object> variables = (Map<String, Object>) context;
+                variables.forEach(evalContext::setVariable);
+            } else {
+                // POJO root object: properties are accessed by name directly
+                evalContext = SimpleEvaluationContext
+                        .forReadOnlyDataBinding()
+                        .withRootObject(context)
+                        .withInstanceMethods()
+                        .build();
+            }
+
+            Expression expression = parser.parseExpression(ruleExpression);
+            Boolean result = expression.getValue(evalContext, Boolean.class);
+            return Boolean.TRUE.equals(result);
+
+        } catch (Exception e) {
+            // Fail-closed: a malformed or un-evaluable expression never passes
+            log.warn("WorkflowRule [{}] expression evaluation failed for expression [{}]: {}",
+                    name, ruleExpression, e.getMessage());
+            return false;
+        }
     }
 }

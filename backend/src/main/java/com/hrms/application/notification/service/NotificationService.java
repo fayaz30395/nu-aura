@@ -31,6 +31,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    @Transactional
     public Notification createNotification(
             UUID userId,
             Notification.NotificationType type,
@@ -86,21 +87,25 @@ public class NotificationService {
         return notificationRepository.findRecentNotifications(tenantId, userId, since);
     }
 
+    @Transactional
     public void markAsRead(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         notificationRepository.markAsRead(tenantId, notificationId, LocalDateTime.now());
     }
 
+    @Transactional
     public void markAllAsRead(UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         notificationRepository.markAllAsReadForUser(tenantId, userId, LocalDateTime.now());
     }
 
+    @Transactional
     public void deleteNotification(UUID notificationId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         notificationRepository.deleteByIdAndTenantId(notificationId, tenantId);
     }
 
+    @Transactional
     public void deleteOldNotifications(UUID userId, int daysOld) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDateTime before = LocalDateTime.now().minusDays(daysOld);

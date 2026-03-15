@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Heart,
   Plus,
@@ -34,8 +34,15 @@ import {
   Badge,
   Textarea,
 } from '@/components/ui';
-import { wellnessService } from '@/lib/services/wellness.service';
-import type { WellnessProgram, WellnessChallenge, HealthLog, WellnessPoints, LeaderboardEntry } from '@/lib/types/wellness';
+import {
+  useActivePrograms,
+  useActiveChallenges,
+  useWellnessLeaderboard,
+  useMyWellnessPoints,
+  useLogHealth,
+  useJoinChallenge,
+} from '@/lib/hooks/queries/useWellness';
+import type { HealthLog } from '@/lib/types/wellness';
 import { ProgramCategory, MetricType } from '@/lib/types/wellness';
 
 const getCategoryIcon = (category: ProgramCategory) => {
@@ -81,14 +88,7 @@ const metricOptions = [
 ];
 
 export default function WellnessPage() {
-  const [programs, setPrograms] = useState<WellnessProgram[]>([]);
-  const [challenges, setChallenges] = useState<WellnessChallenge[]>([]);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [myPoints, setMyPoints] = useState<WellnessPoints | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'programs' | 'challenges'>('programs');
-
-  // Modal states
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [logFormData, setLogFormData] = useState<Partial<HealthLog>>({
     metricType: MetricType.STEPS,
@@ -97,51 +97,35 @@ export default function WellnessPage() {
     notes: '',
   });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // React Query hooks
+  const { data: programs = [], isLoading: programsLoading } = useActivePrograms();
+  const { data: challenges = [], isLoading: challengesLoading } = useActiveChallenges();
+  const { data: leaderboard = [], isLoading: leaderboardLoading } = useWellnessLeaderboard(5);
+  const { data: myPoints } = useMyWellnessPoints();
+  const logHealthMutation = useLogHealth();
+  const joinChallengeMutation = useJoinChallenge();
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [programsData, challengesData, leaderboardData, pointsData] = await Promise.all([
-        wellnessService.getActivePrograms().catch(() => [] as WellnessProgram[]),
-        wellnessService.getActiveChallenges().catch(() => [] as WellnessChallenge[]),
-        wellnessService.getLeaderboard(5).catch(() => [] as LeaderboardEntry[]),
-        wellnessService.getMyPoints().catch(() => null as WellnessPoints | null),
-      ]);
+  const loading = programsLoading || challengesLoading || leaderboardLoading;
 
-      setPrograms(programsData);
-      setChallenges(challengesData);
-      setLeaderboard(leaderboardData);
-      setMyPoints(pointsData);
-    } catch (error) {
-      console.error('Error fetching wellness data:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleLogHealth = () => {
+    logHealthMutation.mutate({
+      ...logFormData,
+      loggedAt: logFormData.loggedAt || new Date().toISOString(),
+    } as HealthLog, {
+      onSuccess: () => {
+        setIsLogModalOpen(false);
+        setLogFormData({
+          metricType: MetricType.STEPS,
+          value: 0,
+          loggedAt: new Date().toISOString().split('T')[0],
+          notes: '',
+        });
+      },
+    });
   };
 
-  const handleLogHealth = async () => {
-    try {
-      await wellnessService.logHealth({
-        ...logFormData,
-        loggedAt: logFormData.loggedAt || new Date().toISOString(),
-      } as HealthLog);
-      setIsLogModalOpen(false);
-      fetchData();
-    } catch (error) {
-      console.error('Error logging health metric:', error);
-    }
-  };
-
-  const handleJoinChallenge = async (challengeId: string) => {
-    try {
-      await wellnessService.joinChallenge(challengeId);
-      fetchData();
-    } catch (error) {
-      console.error('Error joining challenge:', error);
-    }
+  const handleJoinChallenge = (challengeId: string) => {
+    joinChallengeMutation.mutate(challengeId);
   };
 
   // Stats

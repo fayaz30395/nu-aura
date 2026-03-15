@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 /**
  * Employee Directory API for searching and browsing employees.
@@ -77,7 +78,7 @@ public class EmployeeDirectoryController {
         Permission.EMPLOYEE_VIEW_SELF
     })
     public ResponseEntity<Page<EmployeeDirectoryResponse>> searchEmployees(
-        @RequestBody EmployeeSearchRequest request
+        @Valid @RequestBody EmployeeSearchRequest request
     ) {
         log.info("Received employee directory search request: {}", request);
         Page<EmployeeDirectoryResponse> results = employeeDirectoryService.searchEmployees(request);

@@ -24,7 +24,7 @@ import {
 import type { ApprovalInboxItem, InboxFilterParams } from '@/lib/hooks/queries/useApprovals';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import { useWebSocket } from '@/lib/contexts/WebSocketContext';
+import { useWebSocket, Notification } from '@/lib/contexts/WebSocketContext';
 import { createLogger } from '@/lib/utils/logger';
 import { useQueryClient } from '@tanstack/react-query';
 import { notifications as mNotifications } from '@mantine/notifications';
@@ -199,7 +199,7 @@ export default function ApprovalInboxPage() {
   useEffect(() => {
     if (!onApprovalTaskAssigned) return;
 
-    const handleApprovalNotification = (notification: any) => {
+    const handleApprovalNotification = (notification: Notification) => {
       // Show toast notification
       mNotifications.show({
         title: notification.title,

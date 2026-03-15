@@ -83,21 +83,21 @@ export default function AppSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Switch application"
         aria-expanded={isOpen}
-        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-surface-100 hover:bg-surface-200 dark:bg-surface-800 dark:hover:bg-surface-700 border border-surface-200 dark:border-surface-700 transition-all duration-200 shadow-sm hover:shadow-md"
+        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-sm hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]"
       >
         <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${app.gradient} flex items-center justify-center shadow-sm`}>
           <CurrentIcon className="w-5 h-5 text-white" />
         </div>
         <div className="hidden sm:flex flex-col items-start">
-          <span className="text-sm font-semibold text-surface-800 dark:text-surface-100">
+          <span className="text-sm font-semibold text-white">
             {app.name}
           </span>
-          <span className="text-[10px] text-surface-500 dark:text-surface-400 -mt-0.5">
+          <span className="text-[10px] text-white/50 -mt-0.5">
             NU-AURA Platform
           </span>
         </div>
         {/* Waffle grid icon (9 dots) */}
-        <LayoutGrid className="w-4 h-4 text-surface-500 dark:text-surface-400" />
+        <LayoutGrid className="w-4 h-4 text-white/40" />
       </button>
 
       {/* Waffle Grid Dropdown */}
@@ -107,20 +107,20 @@ export default function AppSwitcher() {
             initial={{ opacity: 0, y: -8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.96 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute top-full left-0 mt-2 w-[320px] bg-white dark:bg-surface-900 rounded-2xl shadow-xl border border-surface-200 dark:border-surface-700 overflow-hidden z-50"
+            transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-full left-0 mt-2 w-[320px] glass-midnight rounded-2xl shadow-xl shadow-black/20 overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="px-5 py-3.5 bg-gradient-to-r from-primary-50 to-surface-50 dark:from-primary-900/20 dark:to-surface-800/50 border-b border-surface-200 dark:border-surface-700">
+            <div className="px-5 py-3.5 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border-b border-white/10">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
                   <LayoutGrid className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-surface-800 dark:text-surface-100">
+                  <p className="text-sm font-semibold text-white">
                     NU-AURA Platform
                   </p>
-                  <p className="text-[10px] text-surface-500 dark:text-surface-400">
+                  <p className="text-[10px] text-white/50">
                     Switch between apps
                   </p>
                 </div>
@@ -151,12 +151,12 @@ export default function AppSwitcher() {
                         disabled={isLocked}
                         className={`
                           relative flex flex-col items-center gap-2.5 p-4 rounded-xl
-                          transition-all duration-200 group w-full h-full
+                          transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group w-full h-full
                           ${isActive
-                            ? 'bg-primary-50 dark:bg-primary-900/30 border-2 border-primary-300 dark:border-primary-600 shadow-sm'
+                            ? 'bg-primary-500/10 border-2 border-primary-500/30 shadow-[0_0_15px_rgba(139,92,246,0.2)]'
                             : isLocked
-                              ? 'bg-surface-50 dark:bg-surface-800/50 border-2 border-surface-200 dark:border-surface-700 opacity-60 cursor-not-allowed'
-                              : 'bg-surface-50 dark:bg-surface-800/50 border-2 border-transparent hover:border-surface-300 dark:hover:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 hover:shadow-md cursor-pointer'
+                              ? 'bg-white/5 border-2 border-white/10 opacity-60 cursor-not-allowed'
+                              : 'bg-white/5 border-2 border-transparent hover:border-white/20 hover:bg-white/10 hover:shadow-[0_0_10px_rgba(139,92,246,0.1)] cursor-pointer'
                           }
                         `}
                       >
@@ -210,17 +210,17 @@ export default function AppSwitcher() {
                         <div className="text-center">
                           <p className={`text-sm font-semibold leading-tight ${
                             isActive
-                              ? 'text-primary-700 dark:text-primary-300'
+                              ? 'text-primary-300'
                               : isLocked
-                                ? 'text-surface-400 dark:text-surface-500'
-                                : 'text-surface-700 dark:text-surface-200'
+                                ? 'text-white/40'
+                                : 'text-white/90'
                           }`}>
                             {targetApp.name}
                           </p>
                           <p className={`text-[10px] mt-0.5 ${
                             isLocked
-                              ? 'text-surface-400 dark:text-surface-600'
-                              : 'text-surface-500 dark:text-surface-400'
+                              ? 'text-white/30'
+                              : 'text-white/50'
                           }`}>
                             {isLocked && !targetApp.available
                               ? 'Coming soon'
@@ -237,8 +237,8 @@ export default function AppSwitcher() {
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 bg-surface-50 dark:bg-surface-800/50 border-t border-surface-200 dark:border-surface-700">
-              <p className="text-[10px] text-surface-400 dark:text-surface-500 text-center">
+            <div className="px-5 py-3 bg-white/5 border-t border-white/10">
+              <p className="text-[10px] text-white/40 text-center">
                 {APP_LIST.filter((a) => a.available).length} of {APP_LIST.length} apps available
               </p>
             </div>

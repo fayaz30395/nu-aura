@@ -100,7 +100,7 @@ public class WorkflowController {
     @RequiresPermission(Permission.WORKFLOW_EXECUTE)
     public ResponseEntity<WorkflowExecutionResponse> approveExecution(
             @PathVariable UUID id,
-            @RequestBody(required = false) Map<String, String> body) {
+            @Valid @RequestBody(required = false) Map<String, String> body) {
         ApprovalActionRequest request = new ApprovalActionRequest();
         request.setAction(com.hrms.domain.workflow.StepExecution.ApprovalAction.APPROVE);
         request.setComments(body != null ? body.get("comments") : null);
@@ -111,7 +111,7 @@ public class WorkflowController {
     @RequiresPermission(Permission.WORKFLOW_EXECUTE)
     public ResponseEntity<WorkflowExecutionResponse> rejectExecution(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         ApprovalActionRequest request = new ApprovalActionRequest();
         request.setAction(com.hrms.domain.workflow.StepExecution.ApprovalAction.REJECT);
         request.setComments(body.get("comments"));
@@ -122,7 +122,7 @@ public class WorkflowController {
     @RequiresPermission(Permission.WORKFLOW_EXECUTE)
     public ResponseEntity<WorkflowExecutionResponse> returnForModification(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         ApprovalActionRequest request = new ApprovalActionRequest();
         request.setAction(com.hrms.domain.workflow.StepExecution.ApprovalAction.RETURN_FOR_MODIFICATION);
         request.setComments(body.get("comments"));
@@ -133,7 +133,7 @@ public class WorkflowController {
     @RequiresPermission(Permission.WORKFLOW_EXECUTE)
     public ResponseEntity<Void> cancelWorkflow(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         workflowService.cancelWorkflow(id, body.get("reason"));
         return ResponseEntity.ok().build();
     }
@@ -201,7 +201,7 @@ public class WorkflowController {
     @RequiresPermission(Permission.WORKFLOW_EXECUTE)
     public ResponseEntity<Void> revokeDelegation(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         workflowService.revokeDelegation(id, body.get("reason"));
         return ResponseEntity.ok().build();
     }

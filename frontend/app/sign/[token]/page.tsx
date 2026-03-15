@@ -12,23 +12,12 @@ import {
   AlertCircle,
   ExternalLink,
 } from 'lucide-react';
-import { esignPublicService } from '@/lib/services/esign-public.service';
-
-interface ExternalSignatureInfoResponse {
-  approvalId: string;
-  documentTitle: string;
-  documentDescription: string;
-  documentType: string;
-  documentUrl: string;
-  documentName: string;
-  status: string;
-  signerEmail: string;
-  tokenExpiresAt: string;
-  tokenValid: boolean;
-  errorMessage?: string;
-  candidateName?: string;
-  companyName?: string;
-}
+import {
+  useSignatureInfo,
+  useSignDocument,
+  useDeclineDocument,
+  ExternalSignatureInfoResponse,
+} from '@/lib/hooks/queries/useEsignPublic';
 
 type Step = 'verify' | 'sign' | 'success' | 'declined' | 'already_processed';
 type SignatureMethod = 'DRAWN' | 'TYPED';
@@ -36,13 +25,17 @@ type SignatureMethod = 'DRAWN' | 'TYPED';
 export default function SignPage() {
   const { token } = useParams<{ token: string }>();
 
-  // Document info
-  const [docInfo, setDocInfo] = useState<ExternalSignatureInfoResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // React Query hooks
+  const { data: docInfo, isLoading, isError, error: queryError } = useSignatureInfo(
+    token,
+    !!token
+  );
+  const signDocumentMutation = useSignDocument();
+  const declineDocumentMutation = useDeclineDocument();
 
-  // Flow
+  // Flow state
   const [step, setStep] = useState<Step>('verify');
+  const [error, setError] = useState<string | null>(null);
 
   // Email verification
   const [signerEmail, setSignerEmail] = useState('');
@@ -54,13 +47,11 @@ export default function SignPage() {
   const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
 
   // Submission
-  const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Decline
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [declineReason, setDeclineReason] = useState('');
-  const [decliningLoading, setDecliningLoading] = useState(false);
   const [declineError, setDeclineError] = useState<string | null>(null);
 
   // Canvas
@@ -68,39 +59,16 @@ export default function SignPage() {
   const ctx = useRef<CanvasRenderingContext2D | null>(null);
   const isDrawing = useRef(false);
 
-  // Load document info
+  // Initialize step based on document info
   useEffect(() => {
-    if (!token) return;
-    const load = async () => {
-      try {
-        const data: ExternalSignatureInfoResponse =
-          await esignPublicService.getSignatureInfo(token);
-        setDocInfo(data);
-        if (!data.tokenValid) {
-          setError(data.errorMessage || 'This signing link is invalid or has expired.');
-        } else if (data.status !== 'PENDING') {
-          setStep('already_processed');
-        }
-      } catch (err: unknown) {
-        const message =
-          err &&
-          typeof err === 'object' &&
-          'response' in err &&
-          err.response &&
-          typeof err.response === 'object' &&
-          'data' in err.response &&
-          err.response.data &&
-          typeof err.response.data === 'object' &&
-          'message' in err.response.data
-            ? String((err.response as { data: { message: unknown } }).data.message)
-            : 'Failed to load document information. Please try again.';
-        setError(message);
-      } finally {
-        setLoading(false);
+    if (!isLoading && docInfo) {
+      if (!docInfo.tokenValid) {
+        setError(docInfo.errorMessage || 'This signing link is invalid or has expired.');
+      } else if (docInfo.status !== 'PENDING') {
+        setStep('already_processed');
       }
-    };
-    load();
-  }, [token]);
+    }
+  }, [isLoading, docInfo]);
 
   // Init canvas context when entering sign step
   useEffect(() => {
@@ -203,10 +171,11 @@ export default function SignPage() {
       signatureData = typedName.trim();
     }
 
-    setSubmitting(true);
     setSubmitError(null);
     try {
-      await esignPublicService.sign(token, {
+      if (!token) throw new Error('Token is missing');
+      await signDocumentMutation.mutateAsync({
+        token,
         signerEmail: signerEmail.trim().toLowerCase(),
         signatureMethod,
         signatureData,
@@ -226,20 +195,18 @@ export default function SignPage() {
           ? String((err.response as { data: { message: unknown } }).data.message)
           : 'Failed to submit signature. Please try again.';
       setSubmitError(message);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleDecline = async () => {
-    setDecliningLoading(true);
     setDeclineError(null);
     try {
-      await esignPublicService.decline(
+      if (!token) throw new Error('Token is missing');
+      await declineDocumentMutation.mutateAsync({
         token,
-        signerEmail.trim().toLowerCase() || docInfo?.signerEmail || '',
-        declineReason.trim()
-      );
+        signerEmail: signerEmail.trim().toLowerCase() || docInfo?.signerEmail || '',
+        reason: declineReason.trim(),
+      });
       setShowDeclineModal(false);
       setStep('declined');
     } catch (err: unknown) {
@@ -256,8 +223,6 @@ export default function SignPage() {
           ? String((err.response as { data: { message: unknown } }).data.message)
           : 'Failed to decline. Please try again.';
       setDeclineError(message);
-    } finally {
-      setDecliningLoading(false);
     }
   };
 
@@ -277,7 +242,7 @@ export default function SignPage() {
 
   // --- Render states ---
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
@@ -526,7 +491,8 @@ export default function SignPage() {
               </div>
               <button
                 onClick={handleEmailVerify}
-                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
+                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
               >
                 Continue to Sign
               </button>
@@ -662,17 +628,17 @@ export default function SignPage() {
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setShowDeclineModal(true)}
-                disabled={submitting}
+                disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
                 className="flex-1 py-2.5 px-4 border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50"
               >
                 I Decline
               </button>
               <button
                 onClick={handleSign}
-                disabled={submitting}
+                disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
                 className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {submitting ? (
+                {signDocumentMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Submitting...
@@ -728,17 +694,17 @@ export default function SignPage() {
                   setDeclineReason('');
                   setDeclineError(null);
                 }}
-                disabled={decliningLoading}
+                disabled={declineDocumentMutation.isPending}
                 className="flex-1 py-2.5 px-4 border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDecline}
-                disabled={decliningLoading}
+                disabled={declineDocumentMutation.isPending}
                 className="flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {decliningLoading ? (
+                {declineDocumentMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Declining...

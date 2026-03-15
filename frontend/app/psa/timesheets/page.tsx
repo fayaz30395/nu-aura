@@ -1,25 +1,27 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, Tabs, Modal, Select, NumberInput, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconPlus, IconDotsVertical, IconCheck, IconX, IconCalendar, IconClock } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { psaService } from '@/lib/services/psa.service';
 import { PSATimesheet, PSAProject, TimesheetStatus } from '@/lib/types/psa';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  usePsaEmployeeTimesheets,
+  useCreatePsaTimesheet,
+  useSubmitPsaTimesheet,
+  usePsaProjects,
+} from '@/lib/hooks/queries/usePsa';
 
 export default function PsaTimesheetsPage() {
     const router = useRouter();
-    const [timesheets, setTimesheets] = useState<PSATimesheet[]>([]);
-    const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<string | null>('my-timesheets');
 
     // Create Timesheet Modal State
     const [opened, { open, close }] = useDisclosure(false);
-    const [projects, setProjects] = useState<PSAProject[]>([]);
     const [newTimesheet, setNewTimesheet] = useState({
         projectId: '',
         weekStartDate: new Date(),
@@ -27,41 +29,16 @@ export default function PsaTimesheetsPage() {
         description: ''
     });
 
-    useEffect(() => {
-        fetchTimesheets();
-        fetchProjects();
-    }, []);
-
-    const fetchTimesheets = async () => {
-        try {
-            setLoading(true);
-            // Mocking employee ID for now - In real app, get from auth context
-            const employeeId = 'current-user-id-placeholder';
-            const data = await psaService.getEmployeeTimesheets(employeeId);
-            setTimesheets(data);
-        } catch (error) {
-            console.error('Error fetching timesheets:', error);
-            // Fallback for demo if backend is empty/erroring
-            setTimesheets([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchProjects = async () => {
-        try {
-            const data = await psaService.getAllProjects();
-            setProjects(data);
-        } catch (error) {
-
-        }
-    }
+    // Queries & mutations
+    const employeeId = 'current-user-id-placeholder'; // Should come from auth context
+    const { data: timesheets = [], isLoading: loading } = usePsaEmployeeTimesheets(employeeId);
+    const { data: projects = [] } = usePsaProjects();
+    const createTimesheet = useCreatePsaTimesheet();
+    const submitTimesheet = useSubmitPsaTimesheet();
 
     const handleCreateTimesheet = async () => {
         try {
-            // This is a simplified create flow. Ideally, we create a header then entries.
-            // For this demo, we'll assume creating a timesheet header for the week.
-            await psaService.createTimesheet({
+            await createTimesheet.mutateAsync({
                 employeeId: 'current-user-uuid', // Should be dynamic
                 weekStartDate: newTimesheet.weekStartDate.toISOString().split('T')[0],
                 weekEndDate: new Date(newTimesheet.weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -70,7 +47,6 @@ export default function PsaTimesheetsPage() {
             });
             notifications.show({ title: 'Success', message: 'Timesheet created', color: 'green' });
             close();
-            fetchTimesheets();
         } catch (error) {
             notifications.show({ title: 'Error', message: 'Failed to create timesheet', color: 'red' });
         }
@@ -107,7 +83,10 @@ export default function PsaTimesheetsPage() {
                                 Edit Entries
                             </Menu.Item>
                             {ts.status === TimesheetStatus.DRAFT && (
-                                <Menu.Item leftSection={<IconCheck size={16} stroke={1.5} />} onClick={() => psaService.submitTimesheet(ts.id)}>
+                                <Menu.Item
+                                    leftSection={<IconCheck size={16} stroke={1.5} />}
+                                    onClick={() => submitTimesheet.mutateAsync(ts.id)}
+                                >
                                     Submit
                                 </Menu.Item>
                             )}

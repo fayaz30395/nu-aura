@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Users, UserPlus, Calendar, CheckCircle2, Clock,
   AlertCircle, MoreVertical, Search, Mail, RefreshCw
@@ -10,51 +13,115 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { apiClient } from '@/lib/api/client';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  usePreboardingCandidates,
+  useCreatePreboardingCandidate,
+  useResendPreboardingInvitation,
+  type PreboardingCandidate,
+  type CreatePreboardingRequest,
+} from '@/lib/hooks/queries/usePreboarding';
 
-interface PreboardingCandidate {
-  id: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  expectedJoiningDate: string;
-  designation: string;
-  status: string;
-  completionPercentage: number;
-  createdAt: string;
+const preBoardingFormSchema = z.object({
+  firstName: z.string().min(1, 'First name required'),
+  lastName: z.string().optional().or(z.literal('')),
+  email: z.string().email('Invalid email address'),
+  joiningDate: z.string().min(1, 'Joining date required'),
+  designation: z.string().optional().or(z.literal('')),
+});
+
+type PreBoardingFormData = z.infer<typeof preBoardingFormSchema>;
+
+interface PreBoardingModalProps {
+  onClose: () => void;
+  createMutation: ReturnType<typeof useCreatePreboardingCandidate>;
+}
+
+function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<PreBoardingFormData>({
+    resolver: zodResolver(preBoardingFormSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      joiningDate: '',
+      designation: '',
+    },
+  });
+
+  const onSubmit = async (data: PreBoardingFormData) => {
+    try {
+      const request: CreatePreboardingRequest = {
+        firstName: data.firstName,
+        lastName: data.lastName || undefined,
+        email: data.email,
+        expectedJoiningDate: data.joiningDate,
+        designation: data.designation || undefined,
+      };
+      await createMutation.mutateAsync(request);
+      reset();
+      onClose();
+    } catch (error) {
+      console.error('Failed to invite candidate:', error);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-surface-800 rounded-xl p-6 w-full max-w-md">
+        <h2 className="text-lg font-bold mb-4">Invite Candidate</h2>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-4">
+            <div>
+              <Input placeholder="First Name *" {...register('firstName')} />
+              {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName.message}</span>}
+            </div>
+            <div>
+              <Input placeholder="Last Name" {...register('lastName')} />
+              {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName.message}</span>}
+            </div>
+            <div>
+              <Input type="email" placeholder="Email *" {...register('email')} />
+              {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+            </div>
+            <div>
+              <Input type="date" {...register('joiningDate')} />
+              {errors.joiningDate && <span className="text-red-500 text-sm">{errors.joiningDate.message}</span>}
+            </div>
+            <div>
+              <Input placeholder="Designation" {...register('designation')} />
+              {errors.designation && <span className="text-red-500 text-sm">{errors.designation.message}</span>}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-6">
+            <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Send Invitation'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default function PreboardingPage() {
-  const [loading, setLoading] = useState(true);
-  const [candidates, setCandidates] = useState<PreboardingCandidate[]>([]);
+  const toast = useToast();
+  const { data: candidates = [], isLoading: loading } = usePreboardingCandidates();
+  const createCandidateMutation = useCreatePreboardingCandidate();
+  const resendInvitationMutation = useResendPreboardingInvitation();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  useEffect(() => {
-    loadCandidates();
-  }, []);
-
-  const loadCandidates = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get<{ content: PreboardingCandidate[] }>('/api/v1/preboarding/candidates');
-      setCandidates(response.data.content || []);
-    } catch (error) {
-      console.error('Failed to load preboarding candidates:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resendInvitation = async (id: string) => {
-    try {
-      await apiClient.post(`/api/v1/preboarding/candidates/${id}/resend`);
-      alert('Invitation resent successfully');
-    } catch (error) {
-      console.error('Failed to resend invitation:', error);
-    }
+  const handleResendInvitation = async (id: string) => {
+    await resendInvitationMutation.mutateAsync(id);
   };
 
   const getStatusColor = (status: string) => {
@@ -235,8 +302,9 @@ export default function PreboardingPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => resendInvitation(candidate.id)}
+                            onClick={() => handleResendInvitation(candidate.id)}
                             title="Resend Invitation"
+                            disabled={resendInvitationMutation.isPending}
                           >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
@@ -251,44 +319,8 @@ export default function PreboardingPage() {
         </Card>
       </div>
 
-      {/* Invite Modal - simplified for now */}
-      {showInviteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 w-full max-w-md">
-            <h2 className="text-lg font-bold mb-4">Invite Candidate</h2>
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              const form = e.target as HTMLFormElement;
-              const formData = new FormData(form);
-              try {
-                await apiClient.post('/api/v1/preboarding/candidates', {
-                  firstName: formData.get('firstName'),
-                  lastName: formData.get('lastName'),
-                  email: formData.get('email'),
-                  expectedJoiningDate: formData.get('joiningDate'),
-                  designation: formData.get('designation'),
-                });
-                setShowInviteModal(false);
-                loadCandidates();
-              } catch (error) {
-                console.error('Failed to invite candidate:', error);
-              }
-            }}>
-              <div className="space-y-4">
-                <Input name="firstName" placeholder="First Name *" required />
-                <Input name="lastName" placeholder="Last Name" />
-                <Input name="email" type="email" placeholder="Email *" required />
-                <Input name="joiningDate" type="date" required />
-                <Input name="designation" placeholder="Designation" />
-              </div>
-              <div className="flex justify-end gap-2 mt-6">
-                <Button type="button" variant="ghost" onClick={() => setShowInviteModal(false)}>Cancel</Button>
-                <Button type="submit" variant="primary">Send Invitation</Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Invite Modal */}
+      {showInviteModal && <PreBoardingModal onClose={() => setShowInviteModal(false)} createMutation={createCandidateMutation} />}
     </AppLayout>
   );
 }

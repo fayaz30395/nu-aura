@@ -3,6 +3,7 @@ package com.hrms.domain.notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("domainWebSocketNotificationService")
 @RequiredArgsConstructor
@@ -10,6 +11,7 @@ public class WebSocketNotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    @Transactional
     public void sendToUser(String userId, NotificationMessage message) {
         // In a real app with Spring Security, you would target specific users
         // For this demo, we'll broadcast to a user-specific topic that the frontend

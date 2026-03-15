@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for file storage operations using MinIO.
@@ -151,6 +152,7 @@ public class FileStorageService {
     /**
      * Get a pre-signed URL for downloading a file.
      */
+    @Transactional(readOnly = true)
     public String getDownloadUrl(String objectName) {
         try {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
@@ -168,6 +170,7 @@ public class FileStorageService {
     /**
      * Get file as InputStream.
      */
+    @Transactional(readOnly = true)
     public InputStream getFile(String objectName) {
         try {
             return minioClient.getObject(GetObjectArgs.builder()
@@ -183,6 +186,7 @@ public class FileStorageService {
     /**
      * Delete a file from storage.
      */
+    @Transactional
     public void deleteFile(String objectName) {
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()

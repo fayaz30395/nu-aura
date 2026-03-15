@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { format, formatDistanceToNow, isToday, parseISO } from 'date-fns';
 import {
   Megaphone, Cake, Trophy, UserPlus, TrendingUp, Award,
@@ -244,7 +245,7 @@ function FeedCard({ item }: { item: FeedItem }) {
         {/* Icon */}
         <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${colors.icon}`}>
           {item.personAvatarUrl ? (
-            <img src={item.personAvatarUrl} alt={item.personName || ''} className="w-8 h-8 rounded-full object-cover" />
+            <Image src={item.personAvatarUrl} alt={item.personName || ''} width={32} height={32} className="rounded-full object-cover" />
           ) : icon}
         </div>
 
@@ -340,8 +341,8 @@ function FeedCard({ item }: { item: FeedItem }) {
                 <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
               )}
               {item.linkedinImageUrl && (
-                <div className="mt-1.5 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                  <img src={item.linkedinImageUrl} alt="" className="w-full h-24 object-cover" />
+                <div className="mt-1.5 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 relative w-full h-24">
+                  <Image src={item.linkedinImageUrl} alt={item.title ? `Image for post: ${item.title}` : 'LinkedIn post image'} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                 </div>
               )}
               <div className="flex items-center gap-2.5 mt-1.5">

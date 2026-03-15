@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { loanService } from '@/lib/services/loan.service';
 import { EmployeeLoan, LoanStatus } from '@/lib/types/loan';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLoan } from '@/lib/hooks/queries/useLoans';
+import { loanService } from '@/lib/services/loan.service';
 import {
   ArrowLeft,
   Loader2,
@@ -25,32 +25,9 @@ export default function LoanDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [loan, setLoan] = useState<EmployeeLoan | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const loanId = params.id as string;
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadLoan();
-  }, [isAuthenticated, hasHydrated, router, params.id]);
-
-  const loadLoan = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await loanService.getLoanById(params.id as string);
-      setLoan(data);
-    } catch (error) {
-      console.error('Error loading loan:', error);
-      setError('Failed to load loan details');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: loan, isLoading, error } = useLoan(loanId);
 
   const getStatusConfig = (status: LoanStatus) => {
     const configs: Record<LoanStatus, { bg: string; text: string; icon: typeof Clock }> = {
@@ -98,7 +75,7 @@ export default function LoanDetailPage() {
     return configs[status] || configs.DRAFT;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="loans">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -117,7 +94,9 @@ export default function LoanDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error || 'Loan not found'}</p>
+            <p className="text-surface-600 dark:text-surface-400">
+              {error instanceof Error ? error.message : 'Loan not found'}
+            </p>
             <button
               onClick={() => router.push('/loans')}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -54,8 +54,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { dashboardService } from '@/lib/services/dashboard.service';
-import { ManagerDashboardResponse } from '@/lib/types/dashboard';
+import { useManagerDashboard } from '@/lib/hooks/queries';
 
 // Utility function to format dates
 const formatDate = (dateStr: string) => {
@@ -100,33 +99,17 @@ const getSeverityIcon = (severity: string) => {
 
 export default function ManagerDashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [dashboardData, setDashboardData] = useState<ManagerDashboardResponse | null>(null);
+  const { isAuthenticated, hasHydrated } = useAuth();
+  const { data: dashboardData, isLoading: loading, error } = useManagerDashboard(
+    hasHydrated && isAuthenticated
+  );
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else {
-      loadDashboard();
     }
   }, [hasHydrated, isAuthenticated, router]);
-
-  const loadDashboard = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await dashboardService.getManagerDashboard();
-      setDashboardData(data);
-    } catch (err: unknown) {
-      console.error('Error loading manager dashboard:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Loading skeleton
   const DashboardSkeleton = () => (
@@ -167,7 +150,7 @@ export default function ManagerDashboardPage() {
               <h3 className="text-lg font-semibold text-red-900 dark:text-red-200">
                 Error Loading Dashboard
               </h3>
-              <p className="text-red-700 dark:text-red-400">{error}</p>
+              <p className="text-red-700 dark:text-red-400">{error instanceof Error ? error.message : String(error)}</p>
             </div>
           </div>
         </div>

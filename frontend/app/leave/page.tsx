@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { leaveService } from '@/lib/services/leave.service';
+import {
+  useEmployeeBalancesForYear,
+  useActiveLeaveTypes,
+  useEmployeeLeaveRequests,
+} from '@/lib/hooks/queries/useLeaves';
 import { LeaveBalance, LeaveRequest, LeaveType } from '@/lib/types/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { motion } from 'framer-motion';
@@ -29,11 +33,6 @@ import {
 export default function LeavePage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [balances, setBalances] = useState<LeaveBalance[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [recentRequests, setRecentRequests] = useState<LeaveRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -41,36 +40,36 @@ export default function LeavePage() {
       router.push('/login');
       return;
     }
-    loadData();
   }, [isAuthenticated, hasHydrated, router]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const year = new Date().getFullYear();
+  const year = new Date().getFullYear();
+  const employeeId = user?.employeeId ?? '';
 
-      if (!user?.employeeId) {
-        setError('Employee ID not found');
-        return;
-      }
+  // React Query hooks
+  const {
+    data: balancesData = [],
+    isLoading: isBalancesLoading,
+    error: balancesError,
+  } = useEmployeeBalancesForYear(employeeId, year, !!employeeId);
+  const { data: leaveTypesData = [], isLoading: isTypesLoading } = useActiveLeaveTypes();
+  const {
+    data: requestsData,
+    isLoading: isRequestsLoading,
+    error: requestsError,
+  } = useEmployeeLeaveRequests(employeeId, 0, 5, !!employeeId);
 
-      const [balancesData, typesData, requestsData] = await Promise.all([
-        leaveService.getEmployeeBalancesForYear(user.employeeId, year),
-        leaveService.getActiveLeaveTypes(),
-        leaveService.getLeaveRequestsByEmployee(user.employeeId, 0, 5),
-      ]);
-
-      setBalances(balancesData);
-      setLeaveTypes(typesData);
-      setRecentRequests(requestsData.content);
-    } catch (error) {
-      console.error('Error loading leave data:', error);
-      setError('Failed to load leave data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const balances = balancesData;
+  const leaveTypes = leaveTypesData;
+  const recentRequests = requestsData?.content || [];
+  const loading = isBalancesLoading || isTypesLoading || isRequestsLoading;
+  const error =
+    balancesError instanceof Error
+      ? balancesError.message
+      : requestsError instanceof Error
+        ? requestsError.message
+        : !employeeId
+          ? 'Employee ID not found'
+          : null;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -149,7 +148,7 @@ export default function LeavePage() {
             <AlertCircle className="h-12 w-12 text-red-500" />
             <p className="text-surface-600 dark:text-surface-400">{error}</p>
             <button
-              onClick={loadData}
+              onClick={() => window.location.reload()}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
             >
               Retry

@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   FileText,
   Search,
@@ -47,6 +50,35 @@ import {
 import { Candidate } from '@/lib/types/recruitment';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+
+// Zod schemas for forms
+const GenerateLetterFormSchema = z.object({
+  templateId: z.string().min(1, 'Template is required'),
+  employeeId: z.string().min(1, 'Employee ID is required'),
+  letterTitle: z.string().optional().or(z.literal('')),
+  letterDate: z.string().min(1, 'Letter date is required'),
+  effectiveDate: z.string().optional().or(z.literal('')),
+  expiryDate: z.string().optional().or(z.literal('')),
+  additionalNotes: z.string().optional().or(z.literal('')),
+});
+
+type GenerateLetterFormData = z.infer<typeof GenerateLetterFormSchema>;
+
+const GenerateOfferLetterFormSchema = z.object({
+  templateId: z.string().min(1, 'Template is required'),
+  candidateId: z.string().min(1, 'Candidate is required'),
+  letterTitle: z.string().optional().or(z.literal('')),
+  offeredDesignation: z.string().min(1, 'Offered designation is required'),
+  offeredCtc: z.number({ coerce: true }).positive('Offered CTC must be greater than 0'),
+  proposedJoiningDate: z.string().min(1, 'Proposed joining date is required'),
+  letterDate: z.string().min(1, 'Letter date is required'),
+  expiryDate: z.string().optional().or(z.literal('')),
+  additionalNotes: z.string().optional().or(z.literal('')),
+  submitForApproval: z.boolean(),
+  sendForESign: z.boolean(),
+});
+
+type GenerateOfferLetterFormData = z.infer<typeof GenerateOfferLetterFormSchema>;
 
 const getCategoryLabel = (category: LetterCategory) => {
   const labels: Record<LetterCategory, string> = {
@@ -139,30 +171,35 @@ export default function LettersPage() {
   const [saving, setSaving] = useState(false);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
 
-  // Form state
-  const [formData, setFormData] = useState<GenerateLetterRequest>({
-    templateId: '',
-    employeeId: '',
-    letterTitle: '',
-    letterDate: new Date().toISOString().split('T')[0],
-    effectiveDate: '',
-    expiryDate: '',
-    additionalNotes: '',
+  // Form hooks
+  const generateLetterForm = useForm<GenerateLetterFormData>({
+    resolver: zodResolver(GenerateLetterFormSchema),
+    defaultValues: {
+      templateId: '',
+      employeeId: '',
+      letterTitle: '',
+      letterDate: new Date().toISOString().split('T')[0],
+      effectiveDate: '',
+      expiryDate: '',
+      additionalNotes: '',
+    },
   });
 
-  // Offer letter form state
-  const [offerFormData, setOfferFormData] = useState<GenerateOfferLetterRequest>({
-    templateId: '',
-    candidateId: '',
-    letterTitle: '',
-    offeredCtc: 0,
-    offeredDesignation: '',
-    proposedJoiningDate: '',
-    letterDate: new Date().toISOString().split('T')[0],
-    expiryDate: '',
-    additionalNotes: '',
-    submitForApproval: false,
-    sendForESign: false,
+  const offerLetterForm = useForm<GenerateOfferLetterFormData>({
+    resolver: zodResolver(GenerateOfferLetterFormSchema),
+    defaultValues: {
+      templateId: '',
+      candidateId: '',
+      letterTitle: '',
+      offeredCtc: 0,
+      offeredDesignation: '',
+      proposedJoiningDate: '',
+      letterDate: new Date().toISOString().split('T')[0],
+      expiryDate: '',
+      additionalNotes: '',
+      submitForApproval: false,
+      sendForESign: false,
+    },
   });
 
   const fetchLetters = useCallback(async () => {
@@ -246,7 +283,7 @@ export default function LettersPage() {
   }, [fetchLetters, fetchTemplates, fetchCandidates, isAuthenticated, hasHydrated, router]);
 
   const resetForm = () => {
-    setFormData({
+    generateLetterForm.reset({
       templateId: '',
       employeeId: '',
       letterTitle: '',
@@ -259,7 +296,7 @@ export default function LettersPage() {
   };
 
   const resetOfferForm = () => {
-    setOfferFormData({
+    offerLetterForm.reset({
       templateId: '',
       candidateId: '',
       letterTitle: '',
@@ -293,34 +330,39 @@ export default function LettersPage() {
   const handleTemplateSelect = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     setSelectedTemplate(template || null);
-    setFormData({ ...formData, templateId });
+    generateLetterForm.setValue('templateId', templateId);
   };
 
   const handleOfferTemplateSelect = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     setSelectedTemplate(template || null);
-    setOfferFormData({ ...offerFormData, templateId });
+    offerLetterForm.setValue('templateId', templateId);
   };
 
   const handleCandidateSelect = (candidateId: string) => {
     const candidate = candidates.find((c) => c.id === candidateId);
     if (candidate) {
-      setOfferFormData({
-        ...offerFormData,
-        candidateId,
-        offeredDesignation: candidate.currentDesignation || '',
-        offeredCtc: candidate.expectedCtc || 0,
-      });
+      offerLetterForm.setValue('candidateId', candidateId);
+      offerLetterForm.setValue('offeredDesignation', candidate.currentDesignation || '');
+      offerLetterForm.setValue('offeredCtc', candidate.expectedCtc || 0);
     } else {
-      setOfferFormData({ ...offerFormData, candidateId });
+      offerLetterForm.setValue('candidateId', candidateId);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmitGenerateLetter = async (data: GenerateLetterFormData) => {
     setSaving(true);
     try {
-      await letterService.generateLetter(formData, user?.id || '');
+      const submitData: GenerateLetterRequest = {
+        templateId: data.templateId,
+        employeeId: data.employeeId,
+        letterTitle: data.letterTitle || '',
+        letterDate: data.letterDate,
+        effectiveDate: data.effectiveDate || '',
+        expiryDate: data.expiryDate || '',
+        additionalNotes: data.additionalNotes || '',
+      };
+      await letterService.generateLetter(submitData, user?.id || '');
       setShowGenerateModal(false);
       resetForm();
       fetchLetters();
@@ -332,11 +374,23 @@ export default function LettersPage() {
     }
   };
 
-  const handleOfferLetterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmitOfferLetter = async (data: GenerateOfferLetterFormData) => {
     setSaving(true);
     try {
-      await letterService.generateOfferLetter(offerFormData, user?.id || '');
+      const submitData: GenerateOfferLetterRequest = {
+        templateId: data.templateId,
+        candidateId: data.candidateId,
+        letterTitle: data.letterTitle || '',
+        offeredCtc: data.offeredCtc,
+        offeredDesignation: data.offeredDesignation,
+        proposedJoiningDate: data.proposedJoiningDate,
+        letterDate: data.letterDate,
+        expiryDate: data.expiryDate || '',
+        additionalNotes: data.additionalNotes || '',
+        submitForApproval: data.submitForApproval,
+        sendForESign: data.sendForESign,
+      };
+      await letterService.generateOfferLetter(submitData, user?.id || '');
       setShowOfferLetterModal(false);
       resetOfferForm();
       fetchLetters();
@@ -848,7 +902,7 @@ export default function LettersPage() {
               Generate Letter
             </h2>
           </ModalHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={generateLetterForm.handleSubmit(onSubmitGenerateLetter)}>
             <ModalBody>
               <div className="space-y-4">
                 <div>
@@ -856,8 +910,7 @@ export default function LettersPage() {
                     Template *
                   </label>
                   <select
-                    required
-                    value={formData.templateId}
+                    {...generateLetterForm.register('templateId')}
                     onChange={(e) => handleTemplateSelect(e.target.value)}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
@@ -868,6 +921,9 @@ export default function LettersPage() {
                       </option>
                     ))}
                   </select>
+                  {generateLetterForm.formState.errors.templateId && (
+                    <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.templateId.message}</p>
+                  )}
                   {selectedTemplate && (
                     <p className="mt-1 text-xs text-surface-500">{selectedTemplate.description}</p>
                   )}
@@ -879,12 +935,13 @@ export default function LettersPage() {
                   </label>
                   <input
                     type="text"
-                    required
-                    value={formData.employeeId}
-                    onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                    {...generateLetterForm.register('employeeId')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Enter employee ID"
                   />
+                  {generateLetterForm.formState.errors.employeeId && (
+                    <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.employeeId.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -893,8 +950,7 @@ export default function LettersPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.letterTitle}
-                    onChange={(e) => setFormData({ ...formData, letterTitle: e.target.value })}
+                    {...generateLetterForm.register('letterTitle')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Letter title (optional)"
                   />
@@ -907,10 +963,12 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.letterDate}
-                      onChange={(e) => setFormData({ ...formData, letterDate: e.target.value })}
+                      {...generateLetterForm.register('letterDate')}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {generateLetterForm.formState.errors.letterDate && (
+                      <p className="text-red-500 text-xs mt-1">{generateLetterForm.formState.errors.letterDate.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -918,8 +976,7 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.effectiveDate}
-                      onChange={(e) => setFormData({ ...formData, effectiveDate: e.target.value })}
+                      {...generateLetterForm.register('effectiveDate')}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
@@ -931,8 +988,7 @@ export default function LettersPage() {
                   </label>
                   <input
                     type="date"
-                    value={formData.expiryDate}
-                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                    {...generateLetterForm.register('expiryDate')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
@@ -943,8 +999,7 @@ export default function LettersPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={formData.additionalNotes}
-                    onChange={(e) => setFormData({ ...formData, additionalNotes: e.target.value })}
+                    {...generateLetterForm.register('additionalNotes')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Any additional notes..."
                   />
@@ -1102,7 +1157,7 @@ export default function LettersPage() {
               Generate Offer Letter
             </h2>
           </ModalHeader>
-          <form onSubmit={handleOfferLetterSubmit}>
+          <form onSubmit={offerLetterForm.handleSubmit(onSubmitOfferLetter)}>
             <ModalBody>
               <div className="space-y-4">
                 <div>
@@ -1110,8 +1165,7 @@ export default function LettersPage() {
                     Template *
                   </label>
                   <select
-                    required
-                    value={offerFormData.templateId}
+                    {...offerLetterForm.register('templateId')}
                     onChange={(e) => handleOfferTemplateSelect(e.target.value)}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
@@ -1124,6 +1178,9 @@ export default function LettersPage() {
                         </option>
                       ))}
                   </select>
+                  {offerLetterForm.formState.errors.templateId && (
+                    <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.templateId.message}</p>
+                  )}
                   {selectedTemplate && (
                     <p className="mt-1 text-xs text-surface-500">{selectedTemplate.description}</p>
                   )}
@@ -1134,8 +1191,7 @@ export default function LettersPage() {
                     Candidate *
                   </label>
                   <select
-                    required
-                    value={offerFormData.candidateId}
+                    {...offerLetterForm.register('candidateId')}
                     onChange={(e) => handleCandidateSelect(e.target.value)}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
@@ -1146,6 +1202,9 @@ export default function LettersPage() {
                       </option>
                     ))}
                   </select>
+                  {offerLetterForm.formState.errors.candidateId && (
+                    <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.candidateId.message}</p>
+                  )}
                   {candidates.length === 0 && (
                     <p className="mt-1 text-xs text-amber-600">No eligible candidates. Candidates must be in SELECTED status.</p>
                   )}
@@ -1157,8 +1216,7 @@ export default function LettersPage() {
                   </label>
                   <input
                     type="text"
-                    value={offerFormData.letterTitle}
-                    onChange={(e) => setOfferFormData({ ...offerFormData, letterTitle: e.target.value })}
+                    {...offerLetterForm.register('letterTitle')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Offer Letter (optional)"
                   />
@@ -1171,12 +1229,13 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={offerFormData.offeredDesignation}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, offeredDesignation: e.target.value })}
+                      {...offerLetterForm.register('offeredDesignation')}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="e.g., Senior Software Engineer"
                     />
+                    {offerLetterForm.formState.errors.offeredDesignation && (
+                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredDesignation.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -1184,13 +1243,14 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="number"
-                      required
                       min="0"
-                      value={offerFormData.offeredCtc || ''}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, offeredCtc: parseFloat(e.target.value) || 0 })}
+                      {...offerLetterForm.register('offeredCtc', { valueAsNumber: true })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="e.g., 1500000"
                     />
+                    {offerLetterForm.formState.errors.offeredCtc && (
+                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.offeredCtc.message}</p>
+                    )}
                   </div>
                 </div>
 
@@ -1201,11 +1261,12 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="date"
-                      required
-                      value={offerFormData.proposedJoiningDate}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, proposedJoiningDate: e.target.value })}
+                      {...offerLetterForm.register('proposedJoiningDate')}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {offerLetterForm.formState.errors.proposedJoiningDate && (
+                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.proposedJoiningDate.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -1213,10 +1274,12 @@ export default function LettersPage() {
                     </label>
                     <input
                       type="date"
-                      value={offerFormData.letterDate}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, letterDate: e.target.value })}
+                      {...offerLetterForm.register('letterDate')}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {offerLetterForm.formState.errors.letterDate && (
+                      <p className="text-red-500 text-xs mt-1">{offerLetterForm.formState.errors.letterDate.message}</p>
+                    )}
                   </div>
                 </div>
 
@@ -1226,8 +1289,7 @@ export default function LettersPage() {
                   </label>
                   <input
                     type="date"
-                    value={offerFormData.expiryDate}
-                    onChange={(e) => setOfferFormData({ ...offerFormData, expiryDate: e.target.value })}
+                    {...offerLetterForm.register('expiryDate')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
@@ -1238,8 +1300,7 @@ export default function LettersPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={offerFormData.additionalNotes}
-                    onChange={(e) => setOfferFormData({ ...offerFormData, additionalNotes: e.target.value })}
+                    {...offerLetterForm.register('additionalNotes')}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Any additional notes or special conditions..."
                   />
@@ -1249,8 +1310,7 @@ export default function LettersPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={offerFormData.submitForApproval}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, submitForApproval: e.target.checked })}
+                      {...offerLetterForm.register('submitForApproval')}
                       className="rounded border-surface-300 dark:border-surface-600 text-primary-600 focus:ring-primary-500"
                     />
                     <span className="text-sm text-surface-700 dark:text-surface-300">Submit for approval</span>
@@ -1258,8 +1318,7 @@ export default function LettersPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={offerFormData.sendForESign}
-                      onChange={(e) => setOfferFormData({ ...offerFormData, sendForESign: e.target.checked })}
+                      {...offerLetterForm.register('sendForESign')}
                       className="rounded border-surface-300 dark:border-surface-600 text-primary-600 focus:ring-primary-500"
                     />
                     <span className="text-sm text-surface-700 dark:text-surface-300">Send for e-signature</span>

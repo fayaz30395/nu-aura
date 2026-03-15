@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Title, Text, Container, Tabs, Card, Table, Group, Badge, Button, Grid, ThemeIcon, Select, Loader, Alert } from '@mantine/core';
 import { IconBuildingBank, IconFirstAidKit, IconReceiptTax, IconSettings, IconCalendar, IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { AppLayout } from '@/components/layout';
-import { statutoryService } from '@/lib/services/statutory.service';
-import { ProvidentFundConfig, ESIConfig, ProfessionalTaxSlab, MonthlyStatutoryContribution } from '@/lib/types/statutory';
+import { MonthlyStatutoryContribution } from '@/lib/types/statutory';
 import { notifications } from '@mantine/notifications';
+import { useActivePFConfigs, useActiveESIConfigs, usePTSlabsByState, useMonthlyStatutoryContributions } from '@/lib/hooks/queries/useStatutory';
 
 const MONTHS = [
     { value: '1', label: 'January' }, { value: '2', label: 'February' },
@@ -24,80 +24,28 @@ function fmt(n?: number | null): string {
 
 export default function StatutoryPage() {
     const [activeTab, setActiveTab] = useState<string | null>('pf');
-    const [pfConfigs, setPfConfigs] = useState<ProvidentFundConfig[]>([]);
-    const [esiConfigs, setEsiConfigs] = useState<ESIConfig[]>([]);
-    const [ptSlabs, setPtSlabs] = useState<ProfessionalTaxSlab[]>([]);
-    const [loading, setLoading] = useState(false);
 
     // Monthly report state
     const now = new Date();
     const [reportMonth, setReportMonth] = useState<string>(String(now.getMonth() + 1));
     const [reportYear, setReportYear] = useState<string>(String(now.getFullYear()));
-    const [contributions, setContributions] = useState<MonthlyStatutoryContribution[]>([]);
-    const [reportLoading, setReportLoading] = useState(false);
-    const [reportError, setReportError] = useState<string | null>(null);
     const [reportFetched, setReportFetched] = useState(false);
 
-    useEffect(() => {
-        if (activeTab === 'pf') fetchPfConfigs();
-        if (activeTab === 'esi') fetchEsiConfigs();
-        if (activeTab === 'pt') fetchPtSlabs('MH'); // Defaulting to Maharashtra for demo
-    }, [activeTab]);
+    // React Query hooks
+    const { data: pfConfigs = [], isLoading: pfLoading } = useActivePFConfigs(activeTab === 'pf');
+    const { data: esiConfigs = [], isLoading: esiLoading } = useActiveESIConfigs(activeTab === 'esi');
+    const { data: ptSlabs = [], isLoading: ptLoading } = usePTSlabsByState('MH', activeTab === 'pt');
+    const { data: contributions = [], isLoading: reportLoading, error: reportError, refetch } = useMonthlyStatutoryContributions(
+        Number(reportMonth),
+        Number(reportYear),
+        activeTab === 'report' && reportFetched
+    );
 
-    const fetchPfConfigs = async () => {
-        try {
-            setLoading(true);
-            const data = await statutoryService.getActivePFConfigs();
-            setPfConfigs(data);
-        } catch (error) {
-            console.error('Error fetching PF configs:', error);
-            // Fallback for demo
-            setPfConfigs([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchEsiConfigs = async () => {
-        try {
-            setLoading(true);
-            const data = await statutoryService.getActiveESIConfigs();
-            setEsiConfigs(data);
-        } catch (error) {
-            console.error('Error fetching ESI configs:', error);
-            setEsiConfigs([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchPtSlabs = async (stateCode: string) => {
-        try {
-            setLoading(true);
-            const data = await statutoryService.getPTSlabsByState(stateCode);
-            setPtSlabs(data);
-        } catch (error) {
-            console.error('Error fetching PT slabs:', error);
-            setPtSlabs([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const loading = pfLoading || esiLoading || ptLoading;
 
     const fetchMonthlyReport = async () => {
-        setReportLoading(true);
-        setReportError(null);
-        try {
-            const data = await statutoryService.getMonthlyContributions(Number(reportMonth), Number(reportYear));
-            setContributions(data);
-            setReportFetched(true);
-        } catch (error) {
-            console.error('Error fetching monthly contributions:', error);
-            setReportError('Failed to load monthly contributions. Please try again.');
-            setContributions([]);
-        } finally {
-            setReportLoading(false);
-        }
+        setReportFetched(true);
+        refetch();
     };
 
     const exportContributionsCSV = () => {
@@ -313,7 +261,7 @@ export default function StatutoryPage() {
 
                         {reportError && (
                             <Alert icon={<IconInfoCircle size={16} />} color="red" mb="md">
-                                {reportError}
+                                {typeof reportError === 'object' && reportError ? (reportError as any).message : String(reportError)}
                             </Alert>
                         )}
 

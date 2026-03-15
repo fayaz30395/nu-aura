@@ -58,7 +58,7 @@ public class PSATimesheetController {
 
     @PostMapping("/{id}/approve")
     @RequiresPermission(TIMESHEET_APPROVE)
-    public ResponseEntity<PSATimesheet> approveTimesheet(@PathVariable UUID id, @NotNull @RequestBody UUID approverId) {
+    public ResponseEntity<PSATimesheet> approveTimesheet(@PathVariable UUID id, @NotNull @Valid @RequestBody UUID approverId) {
         return psaService.approveTimesheet(id, approverId)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -66,7 +66,7 @@ public class PSATimesheetController {
 
     @PostMapping("/{id}/reject")
     @RequiresPermission(TIMESHEET_APPROVE)
-    public ResponseEntity<PSATimesheet> rejectTimesheet(@PathVariable UUID id, @NotBlank @RequestBody String reason) {
+    public ResponseEntity<PSATimesheet> rejectTimesheet(@PathVariable UUID id, @NotBlank @Valid @RequestBody String reason) {
         return psaService.rejectTimesheet(id, reason)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());

@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for aggregating monitoring metrics for frontend display
@@ -42,6 +43,7 @@ public class MonitoringService {
     /**
      * Get system health status
      */
+    @Transactional(readOnly = true)
     public SystemHealthResponse getSystemHealth() {
         HealthComponent healthComponent = healthEndpoint.health();
         Status status = healthComponent.getStatus();
@@ -62,6 +64,7 @@ public class MonitoringService {
     /**
      * Get comprehensive metrics
      */
+    @Transactional(readOnly = true)
     public MetricsResponse getMetrics() {
         return MetricsResponse.builder()
                 .timestamp(Instant.now())

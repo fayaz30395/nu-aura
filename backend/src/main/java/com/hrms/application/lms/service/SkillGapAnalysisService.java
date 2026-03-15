@@ -8,6 +8,7 @@ import com.hrms.infrastructure.employee.repository.EmployeeRepository;
 import com.hrms.infrastructure.employee.repository.EmployeeSkillRepository;
 import com.hrms.infrastructure.lms.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -134,7 +135,7 @@ public class SkillGapAnalysisService {
 
                 // Find courses that cover this skill
                 List<Course> suggestedCourses = courseRepository
-                                .findAllByTenantId(tenantId, org.springframework.data.domain.Pageable.unpaged())
+                                .findAllByTenantId(tenantId, PageRequest.of(0, 1_000))
                                 .getContent().stream()
                                 .filter(c -> c.getSkillsCovered() != null
                                                 && c.getSkillsCovered().toLowerCase().contains(skillName.toLowerCase()))

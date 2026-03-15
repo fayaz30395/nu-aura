@@ -200,6 +200,7 @@ public class EmailService {
 
     // Helper methods for common email types - all return EmailSendResult for explicit error handling
 
+    @Transactional
     public EmailSendResult sendLeaveApprovalEmail(String employeeEmail, String employeeName, String leaveType,
                                        String startDate, String endDate, String duration, String reason) {
         Map<String, String> vars = Map.of(
@@ -214,6 +215,7 @@ public class EmailService {
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_APPROVAL, vars);
     }
 
+    @Transactional
     public EmailSendResult sendLeaveRejectionEmail(String employeeEmail, String employeeName, String leaveType,
                                         String startDate, String endDate, String reason, String rejectionReason) {
         Map<String, String> vars = Map.of(
@@ -228,11 +230,13 @@ public class EmailService {
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.LEAVE_REJECTION, vars);
     }
 
+    @Transactional
     public EmailSendResult sendBirthdayEmail(String employeeEmail, String employeeName) {
         Map<String, String> vars = Map.of("employeeName", employeeName);
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.BIRTHDAY_REMINDER, vars);
     }
 
+    @Transactional
     public EmailSendResult sendAnniversaryEmail(String employeeEmail, String employeeName, String years) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,
@@ -241,6 +245,7 @@ public class EmailService {
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.ANNIVERSARY_REMINDER, vars);
     }
 
+    @Transactional
     public EmailSendResult sendPayslipReadyEmail(String employeeEmail, String employeeName, String month,
                                       String netSalary, String paymentDate) {
         Map<String, String> vars = Map.of(
@@ -253,6 +258,7 @@ public class EmailService {
         return sendEmail(employeeEmail, employeeName, EmailNotification.EmailType.PAYSLIP_READY, vars);
     }
 
+    @Transactional
     public EmailSendResult sendWelcomeEmail(String employeeEmail, String employeeName, String department, String joiningDate) {
         Map<String, String> vars = Map.of(
             "employeeName", employeeName,

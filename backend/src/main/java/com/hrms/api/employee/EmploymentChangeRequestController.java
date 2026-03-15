@@ -95,7 +95,7 @@ public class EmploymentChangeRequestController {
     @Operation(summary = "Approve change request", description = "Approves an employment change request and applies the changes")
     public ResponseEntity<EmploymentChangeRequestDto> approveChangeRequest(
             @PathVariable UUID id,
-            @RequestBody(required = false) ApproveRejectChangeRequest request) {
+            @Valid @RequestBody(required = false) ApproveRejectChangeRequest request) {
         if (request == null) {
             request = new ApproveRejectChangeRequest();
         }

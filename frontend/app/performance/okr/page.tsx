@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Plus,
   Pencil,
@@ -16,7 +16,17 @@ import {
   User,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
-import { okrService, Objective, KeyResult, ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
+import {
+  useMyObjectives,
+  useCompanyObjectives,
+  useCreateObjective,
+  useUpdateObjective,
+  useDeleteObjective,
+  useAddKeyResult,
+  useUpdateKeyResultProgress,
+  useDeleteKeyResult,
+} from '@/lib/hooks/queries/usePerformance';
+import type { Objective, KeyResult, ObjectiveRequest, KeyResultRequest } from '@/lib/services/okr.service';
 
 const OBJECTIVE_LEVELS = ['COMPANY', 'DEPARTMENT', 'TEAM', 'INDIVIDUAL'] as const;
 const OBJECTIVE_STATUSES = ['DRAFT', 'ACTIVE', 'ON_TRACK', 'AT_RISK', 'BEHIND', 'COMPLETED', 'CANCELLED'] as const;
@@ -81,10 +91,17 @@ const getKeyResultStatusIcon = (status: string) => {
 };
 
 export default function OKRPage() {
-  const [objectives, setObjectives] = useState<Objective[]>([]);
-  const [companyObjectives, setCompanyObjectives] = useState<Objective[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // React Query hooks
+  const myObjectivesQuery = useMyObjectives();
+  const companyObjectivesQuery = useCompanyObjectives();
+  const createObjectiveMutation = useCreateObjective();
+  const updateObjectiveMutation = useUpdateObjective();
+  const deleteObjectiveMutation = useDeleteObjective();
+  const addKeyResultMutation = useAddKeyResult();
+  const updateKeyResultProgressMutation = useUpdateKeyResultProgress();
+  const deleteKeyResultMutation = useDeleteKeyResult();
+
+  // Local state
   const [expandedObjectives, setExpandedObjectives] = useState<Set<string>>(new Set());
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
   const [showKeyResultModal, setShowKeyResultModal] = useState(false);
@@ -114,28 +131,6 @@ export default function OKRPage() {
     weight: 1,
   });
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [myOkrs, companyOkrs] = await Promise.all([
-        okrService.getMyObjectives(),
-        okrService.getCompanyObjectives(),
-      ]);
-      setObjectives(myOkrs || []);
-      setCompanyObjectives(companyOkrs || []);
-    } catch (err) {
-      console.error('Error fetching OKRs:', err);
-      setError('Failed to load OKRs');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const toggleExpanded = (id: string) => {
     setExpandedObjectives((prev) => {
       const newSet = new Set(prev);
@@ -149,75 +144,39 @@ export default function OKRPage() {
   };
 
   const handleCreateObjective = async () => {
-    try {
-      await okrService.createObjective(objectiveForm);
-      setShowObjectiveModal(false);
-      resetObjectiveForm();
-      fetchData();
-    } catch (err) {
-      console.error('Error creating objective:', err);
-      setError('Failed to create objective');
-    }
+    await createObjectiveMutation.mutateAsync(objectiveForm);
+    setShowObjectiveModal(false);
+    resetObjectiveForm();
   };
 
   const handleUpdateObjective = async () => {
     if (!editingObjective) return;
-    try {
-      await okrService.updateObjective(editingObjective.id, objectiveForm);
-      setShowObjectiveModal(false);
-      setEditingObjective(null);
-      resetObjectiveForm();
-      fetchData();
-    } catch (err) {
-      console.error('Error updating objective:', err);
-      setError('Failed to update objective');
-    }
+    await updateObjectiveMutation.mutateAsync({ id: editingObjective.id, data: objectiveForm });
+    setShowObjectiveModal(false);
+    setEditingObjective(null);
+    resetObjectiveForm();
   };
 
   const handleDeleteObjective = async (id: string) => {
     if (!confirm('Are you sure you want to delete this objective?')) return;
-    try {
-      await okrService.deleteObjective(id);
-      fetchData();
-    } catch (err) {
-      console.error('Error deleting objective:', err);
-      setError('Failed to delete objective');
-    }
+    await deleteObjectiveMutation.mutateAsync(id);
   };
 
   const handleAddKeyResult = async () => {
     if (!selectedObjectiveId) return;
-    try {
-      await okrService.addKeyResult(selectedObjectiveId, keyResultForm);
-      setShowKeyResultModal(false);
-      setSelectedObjectiveId(null);
-      resetKeyResultForm();
-      fetchData();
-    } catch (err) {
-      console.error('Error adding key result:', err);
-      setError('Failed to add key result');
-    }
+    await addKeyResultMutation.mutateAsync({ objectiveId: selectedObjectiveId, data: keyResultForm });
+    setShowKeyResultModal(false);
+    setSelectedObjectiveId(null);
+    resetKeyResultForm();
   };
 
   const handleUpdateKeyResultProgress = async (krId: string, newValue: number) => {
-    try {
-      await okrService.updateKeyResultProgress(krId, newValue);
-      fetchData();
-    } catch (err) {
-      console.error('Error updating key result:', err);
-      setError('Failed to update progress');
-    }
+    await updateKeyResultProgressMutation.mutateAsync({ id: krId, value: newValue });
   };
 
   const handleDeleteKeyResult = async (id: string) => {
     if (!confirm('Are you sure you want to delete this key result?')) return;
-    try {
-      await okrService.deleteKeyResult(id);
-      fetchData();
-    } catch (err) {
-      console.error('Error deleting key result:', err);
-      setError('Failed to delete key result');
-    }
+    await deleteKeyResultMutation.mutateAsync(id);
   };
 
   const resetObjectiveForm = () => {
@@ -264,14 +223,18 @@ export default function OKRPage() {
     setShowKeyResultModal(true);
   };
 
+  const objectives = myObjectivesQuery.data || [];
+  const companyObjectives = companyObjectivesQuery.data || [];
+  const isLoading = myObjectivesQuery.isLoading || companyObjectivesQuery.isLoading;
+
   const displayedObjectives = activeTab === 'my' ? objectives : companyObjectives;
-  const filteredObjectives = displayedObjectives.filter((obj) => {
+  const filteredObjectives = displayedObjectives.filter((obj: Objective) => {
     if (filterLevel !== 'ALL' && obj.objectiveLevel !== filterLevel) return false;
     if (filterStatus !== 'ALL' && obj.status !== filterStatus) return false;
     return true;
   });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-screen">
@@ -303,12 +266,6 @@ export default function OKRPage() {
           New Objective
         </button>
       </div>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
-      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
@@ -375,7 +332,7 @@ export default function OKRPage() {
             </p>
           </div>
         ) : (
-          filteredObjectives.map((objective) => (
+          filteredObjectives.map((objective: Objective) => (
             <div
               key={objective.id}
               className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
@@ -474,7 +431,7 @@ export default function OKRPage() {
                   </div>
                   {objective.keyResults && objective.keyResults.length > 0 ? (
                     <div className="space-y-3">
-                      {objective.keyResults.map((kr) => (
+                      {objective.keyResults.map((kr: KeyResult) => (
                         <div
                           key={kr.id}
                           className="bg-white rounded-md border border-gray-200 p-3"

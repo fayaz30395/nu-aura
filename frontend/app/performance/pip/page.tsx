@@ -3,6 +3,9 @@ import { AppLayout } from '@/components/layout';
 
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   ChevronDown,
   Plus,
@@ -25,7 +28,39 @@ import type {
   CreatePIPRequest,
   PIPStatus,
   PIPCheckInRequest,
+  PIPCheckInFrequency,
 } from '@/lib/types/performance';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const createPIPSchema = z.object({
+  employeeId: z.string().min(1, 'Employee is required'),
+  managerId: z.string().min(1, 'Manager is required'),
+  reason: z.string().min(1, 'Reason is required'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  goals: z.string().min(1, 'Goals & Objectives are required'),
+  checkInFrequency: z.enum(['WEEKLY', 'BIWEEKLY', 'MONTHLY']),
+}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
+  message: 'End date must be after start date',
+  path: ['endDate'],
+});
+
+type CreatePIPFormData = z.infer<typeof createPIPSchema>;
+
+const checkInSchema = z.object({
+  progressNotes: z.string().min(1, 'Progress notes are required'),
+  managerComments: z.string().min(1, 'Manager comments are required'),
+});
+
+type CheckInFormData = z.infer<typeof checkInSchema>;
+
+const closePIPSchema = z.object({
+  status: z.enum(['COMPLETED', 'EXTENDED', 'TERMINATED']),
+  notes: z.string().optional(),
+});
+
+type ClosePIPFormData = z.infer<typeof closePIPSchema>;
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -153,40 +188,45 @@ function formatDate(dateStr: string): string {
 // ─── Components ────────────────────────────────────────────────────────────────
 
 function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
-  const [formData, setFormData] = useState<CreatePIPRequest>({
-    employeeId: '',
-    managerId: '',
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    reason: '',
-    goals: '',
-    checkInFrequency: 'WEEKLY',
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<CreatePIPFormData>({
+    resolver: zodResolver(createPIPSchema),
+    defaultValues: {
+      employeeId: '',
+      managerId: '',
+      reason: '',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      goals: '',
+      checkInFrequency: 'WEEKLY',
+    },
   });
 
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+
   const createMutation = useMutation({
-    mutationFn: createPIP,
+    mutationFn: (data: CreatePIPFormData) => createPIP(data as CreatePIPRequest),
     onSuccess: () => {
       onSuccess();
-      setFormData({
-        employeeId: '',
-        managerId: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        reason: '',
-        goals: '',
-        checkInFrequency: 'WEEKLY',
-      });
+      reset();
     },
   });
 
   if (!open) return null;
 
   const setDuration = (days: number) => {
-    const endDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-    setFormData(prev => ({
-      ...prev,
-      endDate: endDate.toISOString().split('T')[0],
-    }));
+    const newEndDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+    const dateInput = document.querySelector('input[type="date"][value*="' + endDate + '"]') as HTMLInputElement;
+    if (dateInput) {
+      dateInput.value = newEndDate.toISOString().split('T')[0];
+      dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   };
 
   return (
@@ -204,13 +244,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            createMutation.mutate(formData);
-          }}
-          className="p-6 space-y-4"
-        >
+        <form onSubmit={handleSubmit(data => createMutation.mutate(data))} className="p-6 space-y-4">
           {/* Employee & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -220,11 +254,12 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               <input
                 type="text"
                 placeholder="Employee name or ID"
-                value={formData.employeeId}
-                onChange={e => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
+                {...register('employeeId')}
                 className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                required
               />
+              {errors.employeeId && (
+                <p className="text-red-500 text-sm mt-1">{errors.employeeId.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
@@ -233,11 +268,12 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               <input
                 type="text"
                 placeholder="Manager name or ID"
-                value={formData.managerId}
-                onChange={e => setFormData(prev => ({ ...prev, managerId: e.target.value }))}
+                {...register('managerId')}
                 className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                required
               />
+              {errors.managerId && (
+                <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>
+              )}
             </div>
           </div>
 
@@ -247,8 +283,7 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               Reason
             </label>
             <select
-              value={formData.reason || ''}
-              onChange={e => setFormData(prev => ({ ...prev, reason: e.target.value }))}
+              {...register('reason')}
               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="">Select a reason</option>
@@ -258,6 +293,9 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 </option>
               ))}
             </select>
+            {errors.reason && (
+              <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>
+            )}
           </div>
 
           {/* Dates */}
@@ -282,21 +320,23 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
                 <label className="block text-xs text-surface-500 mb-1">Start Date</label>
                 <input
                   type="date"
-                  value={formData.startDate}
-                  onChange={e => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                  {...register('startDate')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  required
                 />
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs text-surface-500 mb-1">End Date</label>
                 <input
                   type="date"
-                  value={formData.endDate}
-                  onChange={e => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                  {...register('endDate')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-                  required
                 />
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
+                )}
               </div>
             </div>
           </div>
@@ -307,12 +347,14 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               Goals & Objectives
             </label>
             <textarea
-              value={formData.goals || ''}
-              onChange={e => setFormData(prev => ({ ...prev, goals: e.target.value }))}
               placeholder="Describe the specific goals and success criteria..."
               rows={4}
+              {...register('goals')}
               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             />
+            {errors.goals && (
+              <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
+            )}
           </div>
 
           {/* Check-in Frequency */}
@@ -321,14 +363,16 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
               Check-in Frequency
             </label>
             <select
-              value={formData.checkInFrequency || 'WEEKLY'}
-              onChange={e => setFormData(prev => ({ ...prev, checkInFrequency: e.target.value as any }))}
+              {...register('checkInFrequency')}
               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
             >
               <option value="WEEKLY">Weekly</option>
               <option value="BIWEEKLY">Bi-weekly</option>
               <option value="MONTHLY">Monthly</option>
             </select>
+            {errors.checkInFrequency && (
+              <p className="text-red-500 text-sm mt-1">{errors.checkInFrequency.message}</p>
+            )}
           </div>
 
           {/* Actions */}
@@ -342,10 +386,10 @@ function CreatePIPModal({ open, onClose, onSuccess }: { open: boolean; onClose: 
             </button>
             <button
               type="submit"
-              disabled={createMutation.isPending}
+              disabled={isSubmitting}
               className="px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2"
             >
-              {createMutation.isPending ? (
+              {isSubmitting ? (
                 <>
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   Creating...
@@ -375,24 +419,49 @@ function PIPDetailModal({
   onClose: () => void;
   onUpdated: () => void;
 }) {
-  const [checkInNotes, setCheckInNotes] = useState('');
-  const [managerComments, setManagerComments] = useState('');
-  const [closingNotes, setClosingNotes] = useState('');
-  const [closingStatus, setClosingStatus] = useState<'COMPLETED' | 'EXTENDED' | 'TERMINATED'>('COMPLETED');
+  const {
+    register: registerCheckIn,
+    handleSubmit: handleCheckInSubmit,
+    reset: resetCheckIn,
+    formState: { errors: checkInErrors, isSubmitting: checkInSubmitting },
+  } = useForm<CheckInFormData>({
+    resolver: zodResolver(checkInSchema),
+    defaultValues: {
+      progressNotes: '',
+      managerComments: '',
+    },
+  });
+
+  const {
+    register: registerClose,
+    handleSubmit: handleCloseSubmit,
+    watch,
+    formState: { errors: closeErrors, isSubmitting: closeSubmitting },
+  } = useForm<ClosePIPFormData>({
+    resolver: zodResolver(closePIPSchema),
+    defaultValues: {
+      status: 'COMPLETED',
+      notes: '',
+    },
+  });
+
+  const closingStatus = watch('status');
 
   const addCheckInMutation = useMutation({
-    mutationFn: (data: PIPCheckInRequest) => addCheckIn(pip!.id, data),
+    mutationFn: (data: CheckInFormData) => addCheckIn(pip!.id, {
+      checkInDate: new Date().toISOString().split('T')[0],
+      progressNotes: data.progressNotes,
+      managerComments: data.managerComments,
+    }),
     onSuccess: () => {
-      setCheckInNotes('');
-      setManagerComments('');
+      resetCheckIn();
       onUpdated();
     },
   });
 
   const closeMutation = useMutation({
-    mutationFn: () => closePIP(pip!.id, closingStatus, closingNotes),
+    mutationFn: (data: ClosePIPFormData) => closePIP(pip!.id, data.status, data.notes),
     onSuccess: () => {
-      setClosingNotes('');
       onUpdated();
     },
   });
@@ -515,68 +584,70 @@ function PIPDetailModal({
             )}
 
             {pip.status === 'ACTIVE' && (
-              <div className="space-y-3 border-t border-surface-200 dark:border-surface-700 pt-4">
+              <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))} className="space-y-3 border-t border-surface-200 dark:border-surface-700 pt-4">
                 <textarea
-                  value={checkInNotes}
-                  onChange={e => setCheckInNotes(e.target.value)}
                   placeholder="Employee progress notes..."
                   rows={2}
+                  {...registerCheckIn('progressNotes')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
+                {checkInErrors.progressNotes && (
+                  <p className="text-red-500 text-sm">{checkInErrors.progressNotes.message}</p>
+                )}
                 <textarea
-                  value={managerComments}
-                  onChange={e => setManagerComments(e.target.value)}
                   placeholder="Manager comments..."
                   rows={2}
+                  {...registerCheckIn('managerComments')}
                   className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 />
+                {checkInErrors.managerComments && (
+                  <p className="text-red-500 text-sm">{checkInErrors.managerComments.message}</p>
+                )}
                 <button
-                  onClick={() =>
-                    addCheckInMutation.mutate({
-                      checkInDate: new Date().toISOString().split('T')[0],
-                      progressNotes: checkInNotes,
-                      managerComments,
-                    })
-                  }
-                  disabled={addCheckInMutation.isPending}
+                  type="submit"
+                  disabled={checkInSubmitting}
                   className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
                 >
                   <Clock size={16} />
                   Add Check-in
                 </button>
-              </div>
+              </form>
             )}
           </div>
 
           {/* Status Actions */}
           {pip.status === 'ACTIVE' && (
-            <div className="border-t border-surface-200 dark:border-surface-700 pt-4 space-y-3">
+            <form onSubmit={handleCloseSubmit(data => closeMutation.mutate(data))} className="border-t border-surface-200 dark:border-surface-700 pt-4 space-y-3">
               <p className="text-sm font-medium text-surface-700 dark:text-surface-300">Update Status</p>
               <select
-                value={closingStatus}
-                onChange={e => setClosingStatus(e.target.value as any)}
+                {...registerClose('status')}
                 className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="COMPLETED">Mark Complete</option>
                 <option value="EXTENDED">Extend PIP</option>
                 <option value="TERMINATED">Terminate</option>
               </select>
+              {closeErrors.status && (
+                <p className="text-red-500 text-sm">{closeErrors.status.message}</p>
+              )}
               <textarea
-                value={closingNotes}
-                onChange={e => setClosingNotes(e.target.value)}
                 placeholder="Closing notes..."
                 rows={2}
+                {...registerClose('notes')}
                 className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-white dark:bg-surface-700 text-surface-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               />
+              {closeErrors.notes && (
+                <p className="text-red-500 text-sm">{closeErrors.notes.message}</p>
+              )}
               <button
-                onClick={() => closeMutation.mutate()}
-                disabled={closeMutation.isPending}
+                type="submit"
+                disabled={closeSubmitting}
                 className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
               >
                 <CheckCircle2 size={16} />
                 Update Status
               </button>
-            </div>
+            </form>
           )}
         </div>
       </div>

@@ -196,7 +196,7 @@ export function useBlogCategory(id: string, enabled: boolean = true) {
 
 // ─── Template Queries ───────────────────────────────────────────────────────
 
-export function useTemplates(
+export function useFluenceTemplates(
   page: number = 0,
   size: number = 20,
   categoryId?: string,
@@ -210,7 +210,7 @@ export function useTemplates(
   });
 }
 
-export function useTemplate(id: string, enabled: boolean = true) {
+export function useFluenceTemplate(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.templateDetail(id),
     queryFn: () => fluenceService.getTemplate(id),
@@ -409,7 +409,7 @@ export function useCreateBlogCategory() {
 
 // ─── Template Mutations ─────────────────────────────────────────────────────
 
-export function useCreateTemplate() {
+export function useCreateFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -420,7 +420,7 @@ export function useCreateTemplate() {
   });
 }
 
-export function useUpdateTemplate() {
+export function useUpdateFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -432,7 +432,7 @@ export function useUpdateTemplate() {
   });
 }
 
-export function useDeleteTemplate() {
+export function useDeleteFluenceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({

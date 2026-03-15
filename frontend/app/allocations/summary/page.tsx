@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Download, XCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -13,9 +13,12 @@ import {
   TablePagination,
 } from '@/components/ui';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-allocation.service';
 import { AllocationSummaryItem } from '@/lib/types/hrms-allocation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useAllocationSummary,
+  useExportAllocationSummary,
+} from '@/lib/hooks/queries/useProjects';
 
 type AllocationScope = 'SELF' | 'TEAM' | 'DEPARTMENT' | 'ORG';
 
@@ -75,15 +78,10 @@ const buildEmployeeLabel = (employee: AllocationSummaryItem) => {
 
 export default function AllocationSummaryPage() {
   const { user } = useAuth();
-  const [allocations, setAllocations] = useState<AllocationSummaryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [exporting, setExporting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [errorDetails, setErrorDetails] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string[]>([]);
 
   const initialRange = useMemo(() => getCurrentMonthRange(), []);
   const [startDate, setStartDate] = useState(initialRange.startDate);
@@ -115,7 +113,7 @@ export default function AllocationSummaryPage() {
 
   const [selectedScope, setSelectedScope] = useState<AllocationScope>(defaultScope);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!allowedScopes.includes(selectedScope)) {
       setSelectedScope(defaultScope);
     }
@@ -123,7 +121,7 @@ export default function AllocationSummaryPage() {
 
   const isEmployeeSearchEnabled = selectedScope === 'ORG' || selectedScope === 'DEPARTMENT';
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isEmployeeSearchEnabled && selectedEmployee) {
       setSelectedEmployee(null);
     }
@@ -131,63 +129,44 @@ export default function AllocationSummaryPage() {
 
   const activeEmployeeId = isEmployeeSearchEnabled ? selectedEmployee?.id : undefined;
 
-  const fetchSummary = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    setErrorDetails([]);
-    try {
-      const response = await hrmsProjectAllocationService.listAllocationSummary(
-        selectedScope,
-        startDate,
-        endDate,
-        currentPage,
-        pageSize,
-        undefined,
-        activeEmployeeId
-      );
-      setAllocations(response.content ?? []);
-      setTotalPages(response.totalPages ?? 0);
-      setTotalElements(response.totalElements ?? 0);
-    } catch (err) {
-      const apiError = parseApiError(err);
-      setError(apiError.message || 'Failed to load allocation summary.');
-      setErrorDetails(apiError.details || []);
-      setAllocations([]);
-      setTotalPages(0);
-      setTotalElements(0);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeEmployeeId, currentPage, endDate, pageSize, selectedScope, startDate]);
+  // Queries
+  const { data, isLoading, error: queryError } = useAllocationSummary(
+    selectedScope,
+    startDate,
+    endDate,
+    currentPage,
+    pageSize,
+    undefined,
+    activeEmployeeId
+  );
 
-  useEffect(() => {
-    fetchSummary();
-  }, [fetchSummary]);
+  const allocations = data?.content ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const totalElements = data?.totalElements ?? 0;
+  const loading = isLoading;
+
+  const exportMutation = useExportAllocationSummary();
 
   const handleExport = async () => {
-    setExporting(true);
-    setError(null);
-    setErrorDetails([]);
     try {
-      const blob = await hrmsProjectAllocationService.exportAllocationSummary(
-        selectedScope,
+      const result = await exportMutation.mutateAsync({
+        scope: selectedScope,
         startDate,
         endDate,
-        undefined,
-        activeEmployeeId
-      );
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'allocation_summary.csv';
-      link.click();
-      URL.revokeObjectURL(url);
+        employeeId: activeEmployeeId,
+      });
+      if (result instanceof Blob) {
+        const url = URL.createObjectURL(result);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'allocation_summary.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
     } catch (err) {
       const apiError = parseApiError(err);
       setError(apiError.message || 'Failed to export allocation summary.');
       setErrorDetails(apiError.details || []);
-    } finally {
-      setExporting(false);
     }
   };
 
@@ -255,10 +234,10 @@ export default function AllocationSummaryPage() {
           <Button
             variant="outline"
             leftIcon={<Download className="h-4 w-4" />}
-            isLoading={exporting}
+            isLoading={exportMutation.isPending}
             onClick={handleExport}
           >
-            {exporting ? 'Exporting...' : 'Export'}
+            {exportMutation.isPending ? 'Exporting...' : 'Export'}
           </Button>
         </div>
 
@@ -322,12 +301,14 @@ export default function AllocationSummaryPage() {
           </CardContent>
         </Card>
 
-        {error && (
+        {(error || queryError) && (
           <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/20">
             <CardContent className="flex items-center gap-2">
               <XCircle className="h-4 w-4 text-danger-500" />
               <div>
-                <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
+                <p className="text-sm text-danger-700 dark:text-danger-300">
+                  {error || (queryError instanceof Error ? queryError.message : 'Failed to load data')}
+                </p>
                 {errorDetails.length ? (
                   <p className="text-xs text-danger-600 dark:text-danger-300">
                     {errorDetails.join(' ')}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
 import {
   Title,
   Text,
@@ -57,6 +58,15 @@ interface FnFResponse {
   approvalDate?: string;
 }
 
+interface FnFAdjustments {
+  loanRecovery?: number;
+  taxDeduction?: number;
+  otherDeductions?: number;
+  reimbursements?: number;
+  paymentMode?: string;
+  remarks?: string;
+}
+
 const STATUS_COLORS: Record<string, string> = {
   DRAFT: 'gray',
   PENDING_APPROVAL: 'yellow',
@@ -67,29 +77,18 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 async function fetchFnF(exitProcessId: string): Promise<FnFResponse> {
-  const res = await fetch(`/api/v1/exit/${exitProcessId}/fnf`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load FnF');
-  return res.json();
+  const response = await apiClient.get<FnFResponse>(`/exit/${exitProcessId}/fnf`);
+  return response.data;
 }
 
-async function adjustFnF(exitProcessId: string, data: object): Promise<FnFResponse> {
-  const res = await fetch(`/api/v1/exit/${exitProcessId}/fnf/adjustments`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error('Failed to save adjustments');
-  return res.json();
+async function adjustFnF(exitProcessId: string, data: FnFAdjustments): Promise<FnFResponse> {
+  const response = await apiClient.put<FnFResponse>(`/exit/${exitProcessId}/fnf/adjustments`, data);
+  return response.data;
 }
 
 async function approveFnF(exitProcessId: string): Promise<FnFResponse> {
-  const res = await fetch(`/api/v1/exit/${exitProcessId}/fnf/approve`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Failed to approve FnF');
-  return res.json();
+  const response = await apiClient.post<FnFResponse>(`/exit/${exitProcessId}/fnf/approve`);
+  return response.data;
 }
 
 const fmt = (v?: number) =>

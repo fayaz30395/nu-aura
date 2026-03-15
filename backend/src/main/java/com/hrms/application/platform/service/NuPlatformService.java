@@ -139,6 +139,7 @@ public class NuPlatformService {
     /**
      * Create a role for an application
      */
+    @Transactional
     public AppRole createRole(String appCode, String roleCode, String name, String description,
                               int level, Set<String> permissionCodes) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -195,6 +196,7 @@ public class NuPlatformService {
     /**
      * Update role permissions
      */
+    @Transactional
     public AppRole updateRolePermissions(UUID roleId, Set<String> permissionCodes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         AppRole role = roleRepository.findByIdAndTenantIdWithPermissions(roleId, tenantId)
@@ -282,6 +284,7 @@ public class NuPlatformService {
     /**
      * Revoke user access to an application
      */
+    @Transactional
     public void revokeAccess(UUID userId, String appCode) {
         NuApplication app = applicationRepository.findByCode(appCode.toUpperCase())
             .orElseThrow(() -> new IllegalArgumentException("Application not found: " + appCode));

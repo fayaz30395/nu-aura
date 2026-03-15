@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -21,16 +21,18 @@ import {
   Button,
   StatCard,
 } from '@/components/ui';
+import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { lmsService, CourseEnrollment } from '@/lib/services/lms.service';
+import type { CourseEnrollment } from '@/lib/services/lms.service';
+import { useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-function statusBadgeVariant(status: CourseEnrollment['status']): string {
+function statusBadgeVariant(status: CourseEnrollment['status']): BadgeVariant {
   switch (status) {
     case 'COMPLETED':   return 'success';
     case 'IN_PROGRESS': return 'warning';
-    case 'ENROLLED':    return 'info';
+    case 'ENROLLED':    return 'primary';
     default:            return 'secondary';
   }
 }
@@ -67,11 +69,18 @@ export default function MyLearningPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
 
-  const [enrollments, setEnrollments] = useState<CourseEnrollment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+  }, []);
+
+  // Queries
+  const { data: enrollments = [], isLoading, refetch } = useMyEnrollments();
+  const updateProgressMutation = useUpdateCourseProgress();
 
   const showNotification = (message: string, type: 'success' | 'error') => {
     if (type === 'success') {
@@ -81,34 +90,17 @@ export default function MyLearningPage() {
       setError(message);
       setSuccessMsg(null);
     }
-    setTimeout(() => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    notifTimerRef.current = setTimeout(() => {
       setSuccessMsg(null);
       setError(null);
     }, 5000);
   };
 
-  const loadEnrollments = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await lmsService.getMyEnrollments();
-      setEnrollments(data);
-    } catch (err) {
-      console.error('Failed to load enrollments:', err);
-      setError('Failed to load your courses. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadEnrollments();
-  }, [isAuthenticated, hasHydrated, router, loadEnrollments]);
+  // Auth check
+  if (hasHydrated && !isAuthenticated) {
+    router.push('/login');
+  }
 
   const handleContinue = async (enrollment: CourseEnrollment) => {
     if (enrollment.status === 'COMPLETED') return;
@@ -118,15 +110,14 @@ export default function MyLearningPage() {
 
     setUpdatingId(enrollment.id);
     try {
-      const updated = await lmsService.updateEnrollmentProgress(enrollment.id, newProgress);
-      setEnrollments((prev) =>
-        prev.map((e) => (e.id === enrollment.id ? { ...e, ...updated } : e))
-      );
+      await updateProgressMutation.mutateAsync({ enrollmentId: enrollment.id, progressPercent: newProgress });
       if (newProgress >= 100) {
         showNotification('Congratulations! Course completed.', 'success');
       } else {
         showNotification(`Progress updated to ${newProgress}%`, 'success');
       }
+      // Refetch to get updated enrollments
+      await refetch();
     } catch (err) {
       console.error('Failed to update progress:', err);
       showNotification('Failed to update progress. Please try again.', 'error');
@@ -161,8 +152,8 @@ export default function MyLearningPage() {
           </div>
           <Button
             variant="outline"
-            onClick={loadEnrollments}
-            disabled={loading}
+            onClick={() => refetch()}
+            disabled={isLoading}
             className="flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -209,7 +200,7 @@ export default function MyLearningPage() {
         </div>
 
         {/* Course list */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-20 text-gray-400">
             <Loader2 className="h-8 w-8 animate-spin mr-3" />
             <span>Loading your courses…</span>
@@ -246,7 +237,7 @@ export default function MyLearningPage() {
                           <span className="font-semibold text-gray-900 truncate">
                             Course ID: {enrollment.courseId}
                           </span>
-                          <Badge variant={statusBadgeVariant(enrollment.status) as any}>
+                          <Badge variant={statusBadgeVariant(enrollment.status)}>
                             {statusLabel(enrollment.status)}
                           </Badge>
                         </div>
@@ -293,10 +284,10 @@ export default function MyLearningPage() {
                           <Button
                             size="sm"
                             onClick={() => handleContinue(enrollment)}
-                            disabled={isUpdating}
+                            disabled={isUpdating || updateProgressMutation.isPending}
                             className="flex items-center gap-1"
                           >
-                            {isUpdating ? (
+                            {isUpdating || updateProgressMutation.isPending ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
                               <ChevronRight className="h-4 w-4" />

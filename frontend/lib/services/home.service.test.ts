@@ -1,25 +1,26 @@
 /**
  * Unit Tests for Home Service
  * Run with: npx vitest run lib/services/home.service.test.ts
- * Or with Jest: npm test -- home.service.test.ts
  */
 
-import { homeService } from './home.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Mock the API client
-jest.mock('@/lib/api/client', () => ({
+vi.mock('@/lib/api/client', () => ({
   apiClient: {
-    get: jest.fn(),
+    get: vi.fn(),
   },
 }));
 
+import { homeService } from './home.service';
 import { apiClient } from '@/lib/api/client';
 
-const mockedApiClient = apiClient as jest.Mocked<typeof apiClient>;
+const mockedApiClient = apiClient as any;
 
 describe('HomeService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    vi.stubGlobal('process', { env: { NODE_ENV: 'test', NEXT_PUBLIC_API_URL: 'http://localhost:8080' } });
   });
 
   describe('getUpcomingBirthdays', () => {

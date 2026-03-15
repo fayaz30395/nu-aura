@@ -1,13 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { attendanceService } from '@/lib/services/attendance.service';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Holiday, HolidayRequest, HolidayType } from '@/lib/types/attendance';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useHolidaysByYear, useCreateHoliday, useUpdateHoliday, useDeleteHoliday } from '@/lib/hooks/queries/useAttendance';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
+const holidayFormSchema = z.object({
+  holidayName: z.string().min(1, 'Holiday name required'),
+  holidayDate: z.string().min(1, 'Date required'),
+  holidayType: z.enum(['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT']),
+  description: z.string().optional().or(z.literal('')),
+  isOptional: z.boolean().default(false),
+  isRestricted: z.boolean().default(false),
+  applicableLocations: z.string().optional().or(z.literal('')),
+  applicableDepartments: z.string().optional().or(z.literal('')),
+});
+
+type HolidayFormData = z.infer<typeof holidayFormSchema>;
 
 export default function HolidayCalendarManagementPage() {
   const router = useRouter();
@@ -16,91 +32,95 @@ export default function HolidayCalendarManagementPage() {
   const currentYear = new Date().getFullYear();
 
   const [selectedYear, setSelectedYear] = useState(currentYear);
-  const [holidays, setHolidays] = useState<Holiday[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [uiError, setUiError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<HolidayRequest>({
-    holidayName: '',
-    holidayDate: '',
-    holidayType: 'NATIONAL',
-    description: '',
-    isOptional: false,
-    isRestricted: false,
-    applicableLocations: '',
-    applicableDepartments: '',
+  // React Query hooks
+  const { data: holidays = [], isLoading, error: queryError } = useHolidaysByYear(selectedYear);
+  const createMutation = useCreateHoliday();
+  const updateMutation = useUpdateHoliday();
+  const deleteMutation = useDeleteHoliday();
+
+  const loading = isLoading;
+
+  // Form hook
+  const form = useForm<HolidayFormData>({
+    resolver: zodResolver(holidayFormSchema),
+    defaultValues: {
+      holidayName: '',
+      holidayDate: '',
+      holidayType: 'NATIONAL',
+      description: '',
+      isOptional: false,
+      isRestricted: false,
+      applicableLocations: '',
+      applicableDepartments: '',
+    },
   });
 
-  useEffect(() => {
-    if (!hasHydrated || !isReady) return;
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/home');
+    return null;
+  }
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
 
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
-      return;
-    }
+  const handleSubmit = async (data: HolidayFormData) => {
+    setUiError(null);
 
-    loadHolidays();
-  }, [selectedYear, hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
+    const submitData: HolidayRequest = {
+      holidayName: data.holidayName,
+      holidayDate: data.holidayDate,
+      holidayType: data.holidayType,
+      description: data.description || undefined,
+      isOptional: data.isOptional || false,
+      isRestricted: data.isRestricted || false,
+      applicableLocations: data.applicableLocations || undefined,
+      applicableDepartments: data.applicableDepartments || undefined,
+    };
 
-  const loadHolidays = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await attendanceService.getHolidaysByYear(selectedYear);
-      setHolidays(data);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load holidays');
-      console.error('Error loading holidays:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setSubmitting(true);
-      setError(null);
-
-      const submitData: HolidayRequest = {
-        holidayName: formData.holidayName,
-        holidayDate: formData.holidayDate,
-        holidayType: formData.holidayType,
-        description: formData.description || undefined,
-        isOptional: formData.isOptional || false,
-        isRestricted: formData.isRestricted || false,
-        applicableLocations: formData.applicableLocations || undefined,
-        applicableDepartments: formData.applicableDepartments || undefined,
-      };
-
-      if (editingHoliday) {
-        await attendanceService.updateHoliday(editingHoliday.id, submitData);
-      } else {
-        await attendanceService.createHoliday(submitData);
-      }
-
-      await loadHolidays();
-      resetForm();
-      setShowModal(false);
-      setEditingHoliday(null);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingHoliday ? 'update' : 'create'} holiday`);
-      console.error('Error saving holiday:', err);
-    } finally {
-      setSubmitting(false);
+    if (editingHoliday) {
+      updateMutation.mutate(
+        { id: editingHoliday.id, data: submitData },
+        {
+          onSuccess: () => {
+            resetForm();
+            setShowModal(false);
+            setEditingHoliday(null);
+          },
+          onError: (err: unknown) => {
+            setUiError(
+              (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+              'Failed to update holiday'
+            );
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(submitData, {
+        onSuccess: () => {
+          resetForm();
+          setShowModal(false);
+          setEditingHoliday(null);
+        },
+        onError: (err: unknown) => {
+          setUiError(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to create holiday'
+          );
+        },
+      });
     }
   };
 
   const resetForm = () => {
-    setFormData({
+    form.reset({
       holidayName: '',
       holidayDate: '',
       holidayType: 'NATIONAL',
@@ -114,7 +134,7 @@ export default function HolidayCalendarManagementPage() {
 
   const handleEdit = (holiday: Holiday) => {
     setEditingHoliday(holiday);
-    setFormData({
+    form.reset({
       holidayName: holiday.holidayName,
       holidayDate: holiday.holidayDate,
       holidayType: holiday.holidayType,
@@ -127,17 +147,18 @@ export default function HolidayCalendarManagementPage() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Are you sure you want to delete this holiday? This action cannot be undone.')) return;
 
-    try {
-      setError(null);
-      await attendanceService.deleteHoliday(id);
-      await loadHolidays();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete holiday');
-      console.error('Error deleting holiday:', err);
-    }
+    setUiError(null);
+    deleteMutation.mutate(id, {
+      onError: (err: unknown) => {
+        setUiError(
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to delete holiday'
+        );
+      },
+    });
   };
 
   const holidayTypes: HolidayType[] = ['NATIONAL', 'REGIONAL', 'OPTIONAL', 'RESTRICTED', 'FESTIVAL', 'COMPANY_EVENT'];
@@ -202,8 +223,8 @@ export default function HolidayCalendarManagementPage() {
             <button
               onClick={() => {
                 resetForm();
+                form.reset({ ...form.getValues(), holidayDate: `${selectedYear}-01-01` });
                 setEditingHoliday(null);
-                setFormData({ ...formData, holidayDate: `${selectedYear}-01-01` });
                 setShowModal(true);
               }}
               className="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 transition-colors"
@@ -214,11 +235,11 @@ export default function HolidayCalendarManagementPage() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {(uiError || queryError) && (
           <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
+            <span className="block sm:inline">{uiError || (queryError as any)?.message || 'An error occurred'}</span>
             <button
-              onClick={() => setError(null)}
+              onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
             >
               <span className="text-red-500 dark:text-red-400 text-xl">&times;</span>
@@ -361,7 +382,7 @@ export default function HolidayCalendarManagementPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div>
                     <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Holiday Information</h3>
@@ -372,12 +393,13 @@ export default function HolidayCalendarManagementPage() {
                         </label>
                         <input
                           type="text"
-                          required
-                          value={formData.holidayName}
-                          onChange={(e) => setFormData({ ...formData, holidayName: e.target.value })}
+                          {...form.register('holidayName')}
                           className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="New Year's Day, Independence Day"
                         />
+                        {form.formState.errors.holidayName && (
+                          <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayName.message}</p>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -387,19 +409,19 @@ export default function HolidayCalendarManagementPage() {
                           </label>
                           <input
                             type="date"
-                            required
-                            value={formData.holidayDate}
-                            onChange={(e) => setFormData({ ...formData, holidayDate: e.target.value })}
+                            {...form.register('holidayDate')}
                             className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
+                          {form.formState.errors.holidayDate && (
+                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.holidayDate.message}</p>
+                          )}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                             Holiday Type *
                           </label>
                           <select
-                            value={formData.holidayType}
-                            onChange={(e) => setFormData({ ...formData, holidayType: e.target.value as HolidayType })}
+                            {...form.register('holidayType')}
                             className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           >
                             {holidayTypes.map((type) => (
@@ -416,8 +438,7 @@ export default function HolidayCalendarManagementPage() {
                           Description
                         </label>
                         <textarea
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          {...form.register('description')}
                           rows={2}
                           className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="Brief description of the holiday..."
@@ -433,8 +454,7 @@ export default function HolidayCalendarManagementPage() {
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.isOptional}
-                          onChange={(e) => setFormData({ ...formData, isOptional: e.target.checked })}
+                          {...form.register('isOptional')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Optional Holiday</span>
@@ -444,8 +464,7 @@ export default function HolidayCalendarManagementPage() {
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.isRestricted}
-                          onChange={(e) => setFormData({ ...formData, isRestricted: e.target.checked })}
+                          {...form.register('isRestricted')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Restricted Holiday</span>
@@ -464,8 +483,7 @@ export default function HolidayCalendarManagementPage() {
                         </label>
                         <input
                           type="text"
-                          value={formData.applicableLocations}
-                          onChange={(e) => setFormData({ ...formData, applicableLocations: e.target.value })}
+                          {...form.register('applicableLocations')}
                           className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., New York, California (comma-separated)"
                         />
@@ -478,8 +496,7 @@ export default function HolidayCalendarManagementPage() {
                         </label>
                         <input
                           type="text"
-                          value={formData.applicableDepartments}
-                          onChange={(e) => setFormData({ ...formData, applicableDepartments: e.target.value })}
+                          {...form.register('applicableDepartments')}
                           className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="e.g., Engineering, Sales (comma-separated)"
                         />
@@ -503,10 +520,10 @@ export default function HolidayCalendarManagementPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={submitting}
+                      disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
                       className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {submitting ? 'Saving...' : (editingHoliday ? 'Update' : 'Create')} Holiday
+                      {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingHoliday ? 'Update' : 'Create')} Holiday
                     </button>
                   </div>
                 </form>

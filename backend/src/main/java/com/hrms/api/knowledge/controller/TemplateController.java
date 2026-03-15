@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/templates")
@@ -34,7 +35,7 @@ public class TemplateController {
     @Operation(summary = "Create template")
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_TEMPLATE_CREATE)
-    public ResponseEntity<DocumentTemplateDto> createTemplate(@RequestBody CreateTemplateRequest request) {
+    public ResponseEntity<DocumentTemplateDto> createTemplate(@Valid @RequestBody CreateTemplateRequest request) {
         DocumentTemplate template = DocumentTemplate.builder()
                 .name(request.getName())
                 .slug(request.getSlug())
@@ -121,7 +122,7 @@ public class TemplateController {
     @RequiresPermission(Permission.KNOWLEDGE_TEMPLATE_UPDATE)
     public ResponseEntity<DocumentTemplateDto> updateTemplate(
             @PathVariable UUID templateId,
-            @RequestBody CreateTemplateRequest request) {
+            @Valid @RequestBody CreateTemplateRequest request) {
         DocumentTemplate templateData = DocumentTemplate.builder()
                 .name(request.getName())
                 .slug(request.getSlug())

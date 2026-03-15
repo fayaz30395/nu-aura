@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Package,
   Search,
@@ -38,10 +41,40 @@ import {
   ModalFooter,
   EmptyState,
 } from '@/components/ui';
-import { assetService } from '@/lib/services/asset.service';
 import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/asset';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import {
+  useAllAssets,
+  useCreateAsset,
+  useUpdateAsset,
+  useDeleteAsset,
+  useAssignAsset,
+  useReturnAsset,
+} from '@/lib/hooks/queries';
+
+const assetFormSchema = z.object({
+  assetCode: z.string().min(1, 'Asset code required'),
+  assetName: z.string().min(1, 'Asset name required'),
+  category: z.string().min(1, 'Category required'),
+  brand: z.string().optional().or(z.literal('')),
+  model: z.string().optional().or(z.literal('')),
+  serialNumber: z.string().optional().or(z.literal('')),
+  purchaseDate: z.string().optional().or(z.literal('')),
+  purchaseCost: z.number({ coerce: true }).optional(),
+  currentValue: z.number({ coerce: true }).optional(),
+  status: z.string().min(1, 'Status required'),
+  location: z.string().optional().or(z.literal('')),
+  warrantyExpiry: z.string().optional().or(z.literal('')),
+  notes: z.string().optional().or(z.literal('')),
+});
+
+const assignAssetFormSchema = z.object({
+  assignEmployeeId: z.string().min(1, 'Employee ID required'),
+});
+
+type AssetFormData = z.infer<typeof assetFormSchema>;
+type AssignAssetFormData = z.infer<typeof assignAssetFormSchema>;
 
 const getCategoryIcon = (category: AssetCategory) => {
   switch (category) {
@@ -128,15 +161,19 @@ const formatCurrency = (amount: number | undefined) => {
 export default function AssetManagementPage() {
   const router = useRouter();
   const { isAuthenticated, user, hasHydrated } = useAuth();
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+
+  // Initialize React Query hooks
+  const assetsQuery = useAllAssets(currentPage, 20);
+  const createMutation = useCreateAsset();
+  const updateMutation = useUpdateAsset();
+  const deleteMutation = useDeleteAsset();
+  const assignMutation = useAssignAsset();
+  const returnMutation = useReturnAsset();
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -149,80 +186,17 @@ export default function AssetManagementPage() {
   const [deleting, setDeleting] = useState(false);
   const [assignEmployeeId, setAssignEmployeeId] = useState('');
 
-  // Form state
-  const [formData, setFormData] = useState<CreateAssetRequest>({
-    assetCode: '',
-    assetName: '',
-    category: AssetCategory.LAPTOP,
-    brand: '',
-    model: '',
-    serialNumber: '',
-    purchaseDate: '',
-    purchaseCost: undefined,
-    currentValue: undefined,
-    status: AssetStatus.AVAILABLE,
-    location: '',
-    warrantyExpiry: '',
-    notes: '',
-  });
-
-  const fetchAssets = useCallback(async () => {
-    if (!hasHydrated || !isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await assetService.getAllAssets(currentPage, 20);
-      let filteredAssets = response.content;
-
-      // Client-side filtering
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        filteredAssets = filteredAssets.filter(
-          (a) =>
-            a.assetName.toLowerCase().includes(query) ||
-            a.assetCode.toLowerCase().includes(query) ||
-            a.brand?.toLowerCase().includes(query) ||
-            a.model?.toLowerCase().includes(query)
-        );
-      }
-      if (statusFilter) {
-        filteredAssets = filteredAssets.filter((a) => a.status === statusFilter);
-      }
-      if (categoryFilter) {
-        filteredAssets = filteredAssets.filter((a) => a.category === categoryFilter);
-      }
-
-      setAssets(filteredAssets);
-      setTotalElements(response.totalElements);
-      setTotalPages(response.totalPages);
-    } catch (err: unknown) {
-      console.error('Error fetching assets:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load assets');
-      setAssets([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchQuery, statusFilter, categoryFilter, currentPage, isAuthenticated, hasHydrated]);
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      try {
-        router.push('/auth/login');
-      } catch (err) {
-        console.error('Navigation error:', err);
-        window.location.href = '/auth/login';
-      }
-      return;
-    }
-    fetchAssets();
-  }, [fetchAssets, isAuthenticated, hasHydrated, router]);
-
-  const resetForm = () => {
-    setFormData({
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    reset: resetAssetForm,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+  } = useForm<AssetFormData>({
+    resolver: zodResolver(assetFormSchema),
+    defaultValues: {
       assetCode: '',
       assetName: '',
       category: AssetCategory.LAPTOP,
@@ -236,7 +210,48 @@ export default function AssetManagementPage() {
       location: '',
       warrantyExpiry: '',
       notes: '',
-    });
+    },
+  });
+
+  const {
+    register: registerAssign,
+    handleSubmit: handleSubmitAssign,
+    reset: resetAssignForm,
+    formState: { errors: assignErrors, isSubmitting: isAssigning },
+  } = useForm<AssignAssetFormData>({
+    resolver: zodResolver(assignAssetFormSchema),
+    defaultValues: {
+      assignEmployeeId: '',
+    },
+  });
+
+  // Apply client-side filtering to assets
+  const filteredAssets = React.useMemo(() => {
+    let result = assetsQuery.data?.content || [];
+
+    // Client-side filtering
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (a) =>
+          a.assetName.toLowerCase().includes(query) ||
+          a.assetCode.toLowerCase().includes(query) ||
+          a.brand?.toLowerCase().includes(query) ||
+          a.model?.toLowerCase().includes(query)
+      );
+    }
+    if (statusFilter) {
+      result = result.filter((a) => a.status === statusFilter);
+    }
+    if (categoryFilter) {
+      result = result.filter((a) => a.category === categoryFilter);
+    }
+
+    return result;
+  }, [assetsQuery.data?.content, searchQuery, statusFilter, categoryFilter]);
+
+  const resetForm = () => {
+    resetAssetForm();
     setIsEditing(false);
     setSelectedAsset(null);
   };
@@ -249,21 +264,19 @@ export default function AssetManagementPage() {
   const handleOpenEditModal = (asset: Asset) => {
     setSelectedAsset(asset);
     setIsEditing(true);
-    setFormData({
-      assetCode: asset.assetCode,
-      assetName: asset.assetName,
-      category: asset.category,
-      brand: asset.brand || '',
-      model: asset.model || '',
-      serialNumber: asset.serialNumber || '',
-      purchaseDate: asset.purchaseDate || '',
-      purchaseCost: asset.purchaseCost,
-      currentValue: asset.currentValue,
-      status: asset.status,
-      location: asset.location || '',
-      warrantyExpiry: asset.warrantyExpiry || '',
-      notes: asset.notes || '',
-    });
+    setValue('assetCode', asset.assetCode);
+    setValue('assetName', asset.assetName);
+    setValue('category', asset.category as unknown as string);
+    setValue('brand', asset.brand || '');
+    setValue('model', asset.model || '');
+    setValue('serialNumber', asset.serialNumber || '');
+    setValue('purchaseDate', asset.purchaseDate || '');
+    setValue('purchaseCost', asset.purchaseCost);
+    setValue('currentValue', asset.currentValue);
+    setValue('status', asset.status as unknown as string);
+    setValue('location', asset.location || '');
+    setValue('warrantyExpiry', asset.warrantyExpiry || '');
+    setValue('notes', asset.notes || '');
     setShowAddModal(true);
   };
 
@@ -279,28 +292,36 @@ export default function AssetManagementPage() {
 
   const handleAssignClick = (asset: Asset) => {
     setSelectedAsset(asset);
-    setAssignEmployeeId('');
+    resetAssignForm();
     setShowAssignModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const onAssetSubmit = async (data: AssetFormData) => {
     try {
       if (isEditing && selectedAsset) {
-        const updateData: UpdateAssetRequest = { ...formData };
-        await assetService.updateAsset(selectedAsset.id, updateData);
+        const updateData: UpdateAssetRequest = { ...data } as UpdateAssetRequest;
+        await updateMutation.mutateAsync({ id: selectedAsset.id, data: updateData });
       } else {
-        await assetService.createAsset(formData);
+        await createMutation.mutateAsync(data as CreateAssetRequest);
       }
       setShowAddModal(false);
       resetForm();
-      fetchAssets();
     } catch (err: unknown) {
       console.error('Error saving asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save asset');
-    } finally {
-      setSaving(false);
+    }
+  };
+
+  const onAssignSubmit = async (data: AssignAssetFormData) => {
+    if (!selectedAsset) return;
+    try {
+      await assignMutation.mutateAsync({ assetId: selectedAsset.id, employeeId: data.assignEmployeeId });
+      setShowAssignModal(false);
+      resetAssignForm();
+      setSelectedAsset(null);
+    } catch (err: unknown) {
+      console.error('Error assigning asset:', err);
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
     }
   };
 
@@ -308,10 +329,9 @@ export default function AssetManagementPage() {
     if (!selectedAsset) return;
     setDeleting(true);
     try {
-      await assetService.deleteAsset(selectedAsset.id);
+      await deleteMutation.mutateAsync(selectedAsset.id);
       setShowDeleteModal(false);
       setSelectedAsset(null);
-      fetchAssets();
     } catch (err: unknown) {
       console.error('Error deleting asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete asset');
@@ -324,11 +344,10 @@ export default function AssetManagementPage() {
     if (!selectedAsset || !assignEmployeeId) return;
     setSaving(true);
     try {
-      await assetService.assignAsset(selectedAsset.id, assignEmployeeId);
+      await assignMutation.mutateAsync({ assetId: selectedAsset.id, employeeId: assignEmployeeId });
       setShowAssignModal(false);
       setSelectedAsset(null);
       setAssignEmployeeId('');
-      fetchAssets();
     } catch (err: unknown) {
       console.error('Error assigning asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
@@ -339,8 +358,7 @@ export default function AssetManagementPage() {
 
   const handleReturn = async (asset: Asset) => {
     try {
-      await assetService.returnAsset(asset.id);
-      fetchAssets();
+      await returnMutation.mutateAsync(asset.id);
     } catch (err: unknown) {
       console.error('Error returning asset:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to return asset');
@@ -349,10 +367,10 @@ export default function AssetManagementPage() {
 
   // Stats
   const stats = {
-    total: totalElements,
-    available: assets.filter((a) => a.status === AssetStatus.AVAILABLE).length,
-    assigned: assets.filter((a) => a.status === AssetStatus.ASSIGNED).length,
-    maintenance: assets.filter((a) => a.status === AssetStatus.IN_MAINTENANCE).length,
+    total: assetsQuery.data?.totalElements || 0,
+    available: filteredAssets.filter((a) => a.status === AssetStatus.AVAILABLE).length,
+    assigned: filteredAssets.filter((a) => a.status === AssetStatus.ASSIGNED).length,
+    maintenance: filteredAssets.filter((a) => a.status === AssetStatus.IN_MAINTENANCE).length,
   };
 
   const breadcrumbs = [
@@ -360,7 +378,7 @@ export default function AssetManagementPage() {
     { label: 'Asset Management' },
   ];
 
-  if (loading && assets.length === 0) {
+  if (assetsQuery.isLoading && !assetsQuery.data) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
         <div className="flex items-center justify-center h-64">
@@ -397,7 +415,7 @@ export default function AssetManagementPage() {
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
-                <Button size="sm" variant="outline" onClick={fetchAssets} className="ml-auto">
+                <Button size="sm" variant="outline" onClick={() => assetsQuery.refetch()} className="ml-auto">
                   Retry
                 </Button>
               </div>
@@ -504,7 +522,7 @@ export default function AssetManagementPage() {
         </div>
 
         {/* Assets Table */}
-        {assets.length > 0 ? (
+        {filteredAssets.length > 0 ? (
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -535,7 +553,7 @@ export default function AssetManagementPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {assets.map((asset) => (
+                    {filteredAssets.map((asset) => (
                       <tr key={asset.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
@@ -629,7 +647,7 @@ export default function AssetManagementPage() {
             </CardContent>
           </Card>
         ) : (
-          !loading && (
+          !assetsQuery.isLoading && (
             <EmptyState
               icon={<Package className="h-12 w-12" />}
               title="No Assets Found"
@@ -639,7 +657,7 @@ export default function AssetManagementPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {(assetsQuery.data?.totalPages || 0) > 1 && (
           <div className="flex items-center justify-center gap-2">
             <Button
               variant="outline"
@@ -650,12 +668,12 @@ export default function AssetManagementPage() {
               Previous
             </Button>
             <span className="text-sm text-surface-600 dark:text-surface-400">
-              Page {currentPage + 1} of {totalPages}
+              Page {currentPage + 1} of {assetsQuery.data?.totalPages || 0}
             </span>
             <Button
               variant="outline"
               size="sm"
-              disabled={currentPage >= totalPages - 1}
+              disabled={currentPage >= (assetsQuery.data?.totalPages || 1) - 1}
               onClick={() => setCurrentPage((p) => p + 1)}
             >
               Next
@@ -670,7 +688,7 @@ export default function AssetManagementPage() {
               {isEditing ? 'Edit Asset' : 'Add New Asset'}
             </h2>
           </ModalHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onAssetSubmit)}>
             <ModalBody>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -680,12 +698,11 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={formData.assetCode}
-                      onChange={(e) => setFormData({ ...formData, assetCode: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="AST001"
+                      {...register('assetCode')}
                     />
+                    {errors.assetCode && <span className="text-red-500 text-sm">{errors.assetCode.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -693,12 +710,11 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={formData.assetName}
-                      onChange={(e) => setFormData({ ...formData, assetName: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16"
+                      {...register('assetName')}
                     />
+                    {errors.assetName && <span className="text-red-500 text-sm">{errors.assetName.message}</span>}
                   </div>
                 </div>
 
@@ -708,10 +724,8 @@ export default function AssetManagementPage() {
                       Category *
                     </label>
                     <select
-                      required
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value as AssetCategory })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('category')}
                     >
                       <option value={AssetCategory.LAPTOP}>Laptop</option>
                       <option value={AssetCategory.DESKTOP}>Desktop</option>
@@ -723,15 +737,15 @@ export default function AssetManagementPage() {
                       <option value={AssetCategory.SOFTWARE_LICENSE}>Software License</option>
                       <option value={AssetCategory.OTHER}>Other</option>
                     </select>
+                    {errors.category && <span className="text-red-500 text-sm">{errors.category.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Status
                     </label>
                     <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value as AssetStatus })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('status')}
                     >
                       <option value={AssetStatus.AVAILABLE}>Available</option>
                       <option value={AssetStatus.ASSIGNED}>Assigned</option>
@@ -739,6 +753,7 @@ export default function AssetManagementPage() {
                       <option value={AssetStatus.RETIRED}>Retired</option>
                       <option value={AssetStatus.LOST}>Lost</option>
                     </select>
+                    {errors.status && <span className="text-red-500 text-sm">{errors.status.message}</span>}
                   </div>
                 </div>
 
@@ -749,10 +764,9 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.brand}
-                      onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Apple"
+                      {...register('brand')}
                     />
                   </div>
                   <div>
@@ -761,10 +775,9 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.model}
-                      onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="MacBook Pro 16 M3"
+                      {...register('model')}
                     />
                   </div>
                 </div>
@@ -775,10 +788,9 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.serialNumber}
-                    onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="C02XG2JHH7JY"
+                    {...register('serialNumber')}
                   />
                 </div>
 
@@ -789,9 +801,8 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.purchaseDate}
-                      onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('purchaseDate')}
                     />
                   </div>
                   <div>
@@ -800,9 +811,8 @@ export default function AssetManagementPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.warrantyExpiry}
-                      onChange={(e) => setFormData({ ...formData, warrantyExpiry: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('warrantyExpiry')}
                     />
                   </div>
                 </div>
@@ -815,10 +825,9 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      value={formData.purchaseCost || ''}
-                      onChange={(e) => setFormData({ ...formData, purchaseCost: e.target.value ? parseFloat(e.target.value) : undefined })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
+                      {...register('purchaseCost')}
                     />
                   </div>
                   <div>
@@ -828,10 +837,9 @@ export default function AssetManagementPage() {
                     <input
                       type="number"
                       step="0.01"
-                      value={formData.currentValue || ''}
-                      onChange={(e) => setFormData({ ...formData, currentValue: e.target.value ? parseFloat(e.target.value) : undefined })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="0.00"
+                      {...register('currentValue')}
                     />
                   </div>
                 </div>
@@ -842,10 +850,9 @@ export default function AssetManagementPage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Main Office - Floor 3"
+                    {...register('location')}
                   />
                 </div>
 
@@ -855,10 +862,9 @@ export default function AssetManagementPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
+                    {...register('notes')}
                   />
                 </div>
               </div>
@@ -867,7 +873,7 @@ export default function AssetManagementPage() {
               <Button variant="outline" type="button" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={saving}>
+              <Button type="submit" disabled={isSubmitting}>
                 {saving ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1078,41 +1084,43 @@ export default function AssetManagementPage() {
               Assign Asset
             </h2>
           </ModalHeader>
-          <ModalBody>
-            <p className="text-surface-600 dark:text-surface-400 mb-4">
-              Assign <strong>{selectedAsset?.assetName}</strong> to an employee.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                Employee ID
-              </label>
-              <input
-                type="text"
-                value={assignEmployeeId}
-                onChange={(e) => setAssignEmployeeId(e.target.value)}
-                className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Enter employee ID"
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowAssignModal(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAssign} disabled={saving || !assignEmployeeId}>
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Assigning...
-                </>
-              ) : (
-                <>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Assign
-                </>
-              )}
-            </Button>
-          </ModalFooter>
+          <form onSubmit={handleSubmitAssign(onAssignSubmit)}>
+            <ModalBody>
+              <p className="text-surface-600 dark:text-surface-400 mb-4">
+                Assign <strong>{selectedAsset?.assetName}</strong> to an employee.
+              </p>
+              <div>
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  Employee ID
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  placeholder="Enter employee ID"
+                  {...registerAssign('assignEmployeeId')}
+                />
+                {assignErrors.assignEmployeeId && <span className="text-red-500 text-sm">{assignErrors.assignEmployeeId.message}</span>}
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button type="button" variant="outline" onClick={() => setShowAssignModal(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isAssigning}>
+                {isAssigning ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Assigning...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Assign
+                  </>
+                )}
+              </Button>
+            </ModalFooter>
+          </form>
         </Modal>
       </div>
     </AppLayout>

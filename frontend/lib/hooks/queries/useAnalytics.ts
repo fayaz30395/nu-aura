@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { analyticsService } from '@/lib/services/analytics.service';
-import type { AnalyticsSummary } from '@/lib/types/analytics';
+import type { AnalyticsSummary, OrganizationHealth } from '@/lib/types/analytics';
 
 // Query keys for cache management
 export const analyticsKeys = {
@@ -37,5 +37,18 @@ export function useDashboardAnalytics(enabled: boolean = true) {
     queryFn: () => analyticsService.getDashboardAnalytics(),
     enabled,
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch organization health metrics.
+ * Returns: healthScore, turnover, diversity, tenure, engagement, training.
+ */
+export function useOrganizationHealth(enabled: boolean = true) {
+  return useQuery<OrganizationHealth>({
+    queryKey: analyticsKeys.orgHealth(),
+    queryFn: () => analyticsService.getOrganizationHealth(),
+    enabled,
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }

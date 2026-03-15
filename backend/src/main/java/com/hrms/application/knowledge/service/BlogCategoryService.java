@@ -23,6 +23,7 @@ public class BlogCategoryService {
     private final BlogCategoryRepository blogCategoryRepository;
     private final BlogPostRepository blogPostRepository;
 
+    @Transactional
     public BlogCategory createCategory(BlogCategory category) {
         UUID tenantId = TenantContext.getCurrentTenant();
         category.setTenantId(tenantId);
@@ -32,6 +33,7 @@ public class BlogCategoryService {
         return saved;
     }
 
+    @Transactional
     public BlogCategory updateCategory(UUID categoryId, BlogCategory categoryData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -78,6 +80,7 @@ public class BlogCategoryService {
         return blogCategoryRepository.findCategoriesByTenantOrderByIndex(tenantId);
     }
 
+    @Transactional
     public void deleteCategory(UUID categoryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

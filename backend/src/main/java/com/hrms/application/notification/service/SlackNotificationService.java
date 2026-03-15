@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for sending notifications to Slack channels and users.
@@ -61,6 +62,7 @@ public class SlackNotificationService {
      * Send a simple text message to the default channel via webhook.
      */
     @Async
+    @Transactional
     public void sendMessage(String message) {
         sendToWebhook(defaultWebhookUrl, message, null, null);
     }
@@ -69,6 +71,7 @@ public class SlackNotificationService {
      * Send a message with optional attachments to the default channel via webhook.
      */
     @Async
+    @Transactional
     public void sendMessage(String message, List<SlackAttachment> attachments) {
         sendToWebhook(defaultWebhookUrl, message, attachments, null);
     }
@@ -78,6 +81,7 @@ public class SlackNotificationService {
      * Uses circuit breaker to prevent cascading failures.
      */
     @Async
+    @Transactional
     public void sendToWebhook(String webhookUrl, String message,
                                List<SlackAttachment> attachments, List<SlackBlock> blocks) {
         if (!slackEnabled || webhookUrl == null || webhookUrl.isEmpty()) {
@@ -124,6 +128,7 @@ public class SlackNotificationService {
      * Send a message to a specific channel using Slack Web API.
      */
     @Async
+    @Transactional
     public void sendToChannel(String channel, String message, List<SlackBlock> blocks) {
         if (!slackEnabled || botToken == null || botToken.isEmpty()) {
             log.debug("Slack bot not configured");
@@ -169,6 +174,7 @@ public class SlackNotificationService {
      * Send a direct message to a Slack user by their email.
      */
     @Async
+    @Transactional
     public void sendDirectMessage(String userEmail, String message, List<SlackBlock> blocks) {
         if (!slackEnabled || botToken == null || botToken.isEmpty()) {
             log.debug("Slack bot not configured");
@@ -348,6 +354,7 @@ public class SlackNotificationService {
     /**
      * Send a company-wide announcement.
      */
+    @Transactional
     public void sendAnnouncement(String title, String content, String priority) {
         String emoji = "HIGH".equalsIgnoreCase(priority) ? ":rotating_light:" : ":loudspeaker:";
         String message = String.format("%s *%s*\n%s", emoji, title, content);

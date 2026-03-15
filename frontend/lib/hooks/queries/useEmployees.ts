@@ -16,6 +16,8 @@ export const employeeKeys = {
   detail: (id: string) => [...employeeKeys.details(), id] as const,
   hierarchy: (id: string) => [...employeeKeys.all, 'hierarchy', id] as const,
   subordinates: (id: string) => [...employeeKeys.all, 'subordinates', id] as const,
+  // BUG-013 FIX: dedicated key for the manager-picker list
+  managers: () => [...employeeKeys.all, 'managers'] as const,
 };
 
 // Get paginated list of employees
@@ -29,6 +31,21 @@ export function useEmployees(
     queryKey: employeeKeys.list(page, size, sortBy, sortDirection),
     queryFn: () => employeeService.getAllEmployees(page, size, sortBy, sortDirection),
     staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
+/**
+ * BUG-013 FIX: Fetch employees eligible to be a manager (LEAD level and above).
+ * Use this hook for manager-picker dropdowns instead of useEmployees(0, 100),
+ * which would load ALL employees regardless of whether they can manage others.
+ *
+ * Cache is long-lived (10 min) because the manager list changes infrequently.
+ */
+export function useManagers() {
+  return useQuery({
+    queryKey: employeeKeys.managers(),
+    queryFn: () => employeeService.getManagers(),
+    staleTime: 10 * 60 * 1000, // 10 minutes — manager list rarely changes
   });
 }
 

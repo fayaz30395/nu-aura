@@ -1,5 +1,6 @@
 package com.hrms.application.contract.service;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.contract.Contract;
 import com.hrms.domain.contract.ContractReminder;
 import com.hrms.domain.contract.ReminderType;
@@ -32,7 +33,9 @@ public class ContractReminderService {
     /**
      * Create or update expiry reminder for contract
      */
+    @Transactional
     public void createOrUpdateExpiryReminder(UUID contractId, LocalDate expiryDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<ContractReminder> existing = reminderRepository.findPendingReminder(contractId, ReminderType.EXPIRY);
 
         if (existing.isPresent()) {
@@ -41,7 +44,9 @@ public class ContractReminderService {
             reminderRepository.save(reminder);
             log.debug("Updated expiry reminder for contract: {}", contractId);
         } else {
+            // BUG-010 FIX: stamp tenantId so the reminder is properly scoped
             ContractReminder reminder = ContractReminder.builder()
+                    .tenantId(tenantId)
                     .contractId(contractId)
                     .reminderDate(expiryDate)
                     .reminderType(ReminderType.EXPIRY)
@@ -55,7 +60,9 @@ public class ContractReminderService {
     /**
      * Create or update renewal reminder
      */
+    @Transactional
     public void createOrUpdateRenewalReminder(UUID contractId, LocalDate renewalDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<ContractReminder> existing = reminderRepository.findPendingReminder(contractId, ReminderType.RENEWAL);
 
         if (existing.isPresent()) {
@@ -64,7 +71,9 @@ public class ContractReminderService {
             reminderRepository.save(reminder);
             log.debug("Updated renewal reminder for contract: {}", contractId);
         } else {
+            // BUG-010 FIX: stamp tenantId so the reminder is properly scoped
             ContractReminder reminder = ContractReminder.builder()
+                    .tenantId(tenantId)
                     .contractId(contractId)
                     .reminderDate(renewalDate)
                     .reminderType(ReminderType.RENEWAL)
@@ -78,7 +87,9 @@ public class ContractReminderService {
     /**
      * Create or update review reminder
      */
+    @Transactional
     public void createOrUpdateReviewReminder(UUID contractId, LocalDate reviewDate) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<ContractReminder> existing = reminderRepository.findPendingReminder(contractId, ReminderType.REVIEW);
 
         if (existing.isPresent()) {
@@ -87,7 +98,9 @@ public class ContractReminderService {
             reminderRepository.save(reminder);
             log.debug("Updated review reminder for contract: {}", contractId);
         } else {
+            // BUG-010 FIX: stamp tenantId so the reminder is properly scoped
             ContractReminder reminder = ContractReminder.builder()
+                    .tenantId(tenantId)
                     .contractId(contractId)
                     .reminderDate(reviewDate)
                     .reminderType(ReminderType.REVIEW)
@@ -101,6 +114,7 @@ public class ContractReminderService {
     /**
      * Mark reminder as completed
      */
+    @Transactional
     public void markReminderAsCompleted(UUID reminderId) {
         Optional<ContractReminder> reminder = reminderRepository.findById(reminderId);
         reminder.ifPresent(r -> {
@@ -113,6 +127,7 @@ public class ContractReminderService {
     /**
      * Get reminders due today
      */
+    @Transactional(readOnly = true)
     public List<ContractReminder> getRemindersForToday() {
         return reminderRepository.findRemindersForToday();
     }
@@ -120,6 +135,7 @@ public class ContractReminderService {
     /**
      * Get overdue reminders
      */
+    @Transactional(readOnly = true)
     public List<ContractReminder> getOverdueReminders() {
         return reminderRepository.findOverdueReminders();
     }
@@ -127,6 +143,7 @@ public class ContractReminderService {
     /**
      * Get reminders in date range
      */
+    @Transactional(readOnly = true)
     public List<ContractReminder> getRemindersInDateRange(LocalDate startDate, LocalDate endDate) {
         return reminderRepository.findRemindersInDateRange(startDate, endDate);
     }

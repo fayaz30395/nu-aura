@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Clock,
@@ -29,8 +29,8 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { timesheetService } from '@/lib/services/timesheet.service';
-import { projectService } from '@/lib/services/project.service';
+import { useEmployeeTimesheets, useTimesheetEntries, useCreateTimesheet, useSubmitTimesheet, useAddTimeEntry } from '@/lib/hooks/queries/useTimesheets';
+import { useProjects } from '@/lib/hooks/queries/useProjects';
 import { Timesheet, TimeEntry, ActivityType, CreateTimeEntryRequest } from '@/lib/types/timesheet';
 import { Project } from '@/lib/types/project';
 
@@ -78,17 +78,31 @@ export default function TimesheetsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
 
-  const [timesheets, setTimesheets] = useState<Timesheet[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // React Query hooks
+  const { data: timesheets = [], isLoading, error: queryError } = useEmployeeTimesheets(
+    user?.employeeId || '',
+    isAuthenticated && hasHydrated && !!user?.employeeId
+  );
+
+  const { data: projectsResponse } = useProjects(0, 100);
+  const projects = projectsResponse?.content ?? [];
+
+  // Mutations
+  const createTimesheetMutation = useCreateTimesheet();
+  const submitTimesheetMutation = useSubmitTimesheet();
+  const addTimeEntryMutation = useAddTimeEntry();
+
+  const [error, setError] = useState<string | null>(queryError?.message || null);
 
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [selectedTimesheet, setSelectedTimesheet] = useState<Timesheet | null>(null);
-  const [timesheetEntries, setTimesheetEntries] = useState<TimeEntry[]>([]);
+  // R2-014 FIX: Removed useState<TimeEntry[]> + useEffect that was syncing
+  // React Query's entriesData into local state. Every re-fetch returned a new
+  // array reference → useEffect fired → setState → re-render → potential loop.
+  // entriesData from React Query is now used directly (see below).
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -111,39 +125,13 @@ export default function TimesheetsPage() {
     isOvertime: false,
   });
 
-  // Authentication check
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [hasHydrated, isAuthenticated, router]);
+  // Fetch timesheet entries when a timesheet is selected
+  const { data: entriesData = [] } = useTimesheetEntries(
+    selectedTimesheet?.id || '',
+    showDetailModal && !!selectedTimesheet?.id
+  );
 
-  const fetchData = useCallback(async () => {
-    if (!user?.employeeId) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const [timesheetData, projectData] = await Promise.all([
-        timesheetService.getEmployeeTimesheets(user.employeeId),
-        projectService.getAllProjects(0, 100),
-      ]);
-      setTimesheets(timesheetData);
-      setProjects(projectData.content);
-    } catch (err: unknown) {
-      console.error('Error fetching data:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load timesheets');
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.employeeId]);
-
-  useEffect(() => {
-    if (user?.employeeId) {
-      fetchData();
-    }
-  }, [user?.employeeId, fetchData]);
+  // R2-014 FIX: useEffect removed — entriesData is used directly below.
 
   const getWeekDates = () => {
     const dates = [];
@@ -170,11 +158,12 @@ export default function TimesheetsPage() {
     if (!user?.employeeId) return;
 
     setSaving(true);
+    setError(null);
     try {
       const weekEnd = new Date(currentWeekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
 
-      await timesheetService.createTimesheet({
+      await createTimesheetMutation.mutateAsync({
         employeeId: user.employeeId,
         weekStartDate: currentWeekStart.toISOString().split('T')[0],
         weekEndDate: weekEnd.toISOString().split('T')[0],
@@ -183,7 +172,6 @@ export default function TimesheetsPage() {
         nonBillableHours: 0,
       });
 
-      fetchData();
       setShowCreateModal(false);
     } catch (err: unknown) {
       console.error('Error creating timesheet:', err);
@@ -193,15 +181,8 @@ export default function TimesheetsPage() {
     }
   };
 
-  const handleViewTimesheet = async (timesheet: Timesheet) => {
+  const handleViewTimesheet = (timesheet: Timesheet) => {
     setSelectedTimesheet(timesheet);
-    try {
-      const entries = await timesheetService.getTimesheetEntries(timesheet.id);
-      setTimesheetEntries(entries);
-    } catch (err) {
-      console.error('Error fetching entries:', err);
-      setTimesheetEntries([]);
-    }
     setShowDetailModal(true);
   };
 
@@ -209,9 +190,9 @@ export default function TimesheetsPage() {
     if (!selectedTimesheet) return;
 
     setSubmitting(true);
+    setError(null);
     try {
-      await timesheetService.submitTimesheet(selectedTimesheet.id);
-      fetchData();
+      await submitTimesheetMutation.mutateAsync(selectedTimesheet.id);
       setShowDetailModal(false);
     } catch (err: unknown) {
       console.error('Error submitting timesheet:', err);
@@ -240,19 +221,20 @@ export default function TimesheetsPage() {
     if (!selectedTimesheet || !entryForm.projectId) return;
 
     setSaving(true);
+    setError(null);
     try {
-      await timesheetService.addTimeEntry(selectedTimesheet.id, entryForm);
-      const entries = await timesheetService.getTimesheetEntries(selectedTimesheet.id);
-      setTimesheetEntries(entries);
+      await addTimeEntryMutation.mutateAsync({
+        timesheetId: selectedTimesheet.id,
+        entry: entryForm,
+      });
       setShowEntryModal(false);
-      fetchData();
     } catch (err: unknown) {
       console.error('Error adding entry:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to add time entry');
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   const currentWeekTimesheet = getCurrentWeekTimesheet();
   const weekDates = getWeekDates();
@@ -273,7 +255,7 @@ export default function TimesheetsPage() {
     return null;
   }
 
-  if (loading && timesheets.length === 0 && user?.employeeId) {
+  if (isLoading && timesheets.length === 0 && user?.employeeId) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
         <div className="flex items-center justify-center h-64">
@@ -319,9 +301,6 @@ export default function TimesheetsPage() {
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
-                <Button size="sm" variant="outline" onClick={fetchData} className="ml-auto">
-                  Retry
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -588,9 +567,9 @@ export default function TimesheetsPage() {
                     )}
                   </div>
 
-                  {timesheetEntries.length > 0 ? (
+                  {entriesData.length > 0 ? (
                     <div className="space-y-2">
-                      {timesheetEntries.map((entry) => (
+                      {entriesData.map((entry) => (
                         <div
                           key={entry.id}
                           className="p-3 bg-surface-50 dark:bg-surface-800 rounded-lg"

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/blogs/categories")
@@ -34,7 +35,7 @@ public class BlogCategoryController {
     @Operation(summary = "Create blog category")
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_CREATE)
-    public ResponseEntity<BlogCategoryDto> createCategory(@RequestBody CreateBlogCategoryRequest request) {
+    public ResponseEntity<BlogCategoryDto> createCategory(@Valid @RequestBody CreateBlogCategoryRequest request) {
         BlogCategory category = BlogCategory.builder()
                 .name(request.getName())
                 .slug(request.getSlug())
@@ -85,7 +86,7 @@ public class BlogCategoryController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_UPDATE)
     public ResponseEntity<BlogCategoryDto> updateCategory(
             @PathVariable UUID categoryId,
-            @RequestBody CreateBlogCategoryRequest request) {
+            @Valid @RequestBody CreateBlogCategoryRequest request) {
         BlogCategory categoryData = BlogCategory.builder()
                 .name(request.getName())
                 .slug(request.getSlug())

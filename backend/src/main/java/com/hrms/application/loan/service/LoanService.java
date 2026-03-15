@@ -28,6 +28,7 @@ public class LoanService {
 
     private final EmployeeLoanRepository loanRepository;
 
+    @Transactional
     public EmployeeLoanDto applyForLoan(CreateLoanRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
@@ -56,6 +57,7 @@ public class LoanService {
         return EmployeeLoanDto.fromEntity(saved);
     }
 
+    @Transactional
     public EmployeeLoanDto approveLoan(UUID loanId, BigDecimal approvedAmount) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -81,6 +83,7 @@ public class LoanService {
         return EmployeeLoanDto.fromEntity(saved);
     }
 
+    @Transactional
     public EmployeeLoanDto rejectLoan(UUID loanId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -165,6 +168,7 @@ public class LoanService {
         return EmployeeLoanDto.fromEntity(saved);
     }
 
+    @Transactional
     public EmployeeLoanDto cancelLoan(UUID loanId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

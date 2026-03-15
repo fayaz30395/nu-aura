@@ -36,6 +36,14 @@ public interface WebhookDeliveryRepository extends JpaRepository<WebhookDelivery
     Page<WebhookDelivery> findByWebhookIdOrderByCreatedAtDesc(UUID webhookId, Pageable pageable);
 
     /**
+     * BUG-016 FIX: Find deliveries for a webhook with an explicit tenant guard.
+     * Use this in preference to the tenant-blind variant above so the delivery
+     * query has its own isolation check independent of the webhook lookup.
+     */
+    Page<WebhookDelivery> findByWebhookIdAndTenantIdOrderByCreatedAtDesc(
+            UUID webhookId, UUID tenantId, Pageable pageable);
+
+    /**
      * Find deliveries for a tenant.
      */
     Page<WebhookDelivery> findByTenantIdOrderByCreatedAtDesc(UUID tenantId, Pageable pageable);

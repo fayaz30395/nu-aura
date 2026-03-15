@@ -42,7 +42,7 @@ public class FnFController {
     @RequiresPermission(Permission.EXIT_MANAGE)
     public ResponseEntity<FnFCalculationResponse> adjust(
             @PathVariable UUID exitProcessId,
-            @RequestBody FnFAdjustmentRequest request) {
+            @Valid @RequestBody FnFAdjustmentRequest request) {
         return ResponseEntity.ok(fnfService.addAdjustment(exitProcessId, request));
     }
 

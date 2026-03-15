@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { spotlightService } from '@/lib/services/spotlight.service';
 import type { Spotlight } from '@/lib/types/spotlight';
@@ -107,8 +108,8 @@ export function CompanySpotlight() {
           )}
         </div>
         {current.imageUrl && (
-          <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden">
-            <img src={current.imageUrl} alt={current.title} className="w-full h-full object-cover" />
+          <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden relative">
+            <Image src={current.imageUrl} alt={current.title} fill className="object-cover" sizes="96px" />
           </div>
         )}
       </div>

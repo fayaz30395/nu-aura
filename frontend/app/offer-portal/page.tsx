@@ -1,10 +1,15 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { publicOfferService, PublicOfferResponse } from '@/lib/services/public-offer.service';
+import {
+  usePublicOffer,
+  useAcceptPublicOffer,
+  useDeclinePublicOffer,
+} from '@/lib/hooks/queries/usePublicOffer';
+import { type PublicOfferResponse } from '@/lib/services/public-offer.service';
 import {
   FileText,
   CheckCircle,
@@ -42,56 +47,44 @@ function OfferPortalPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
+  const { data: initialOffer, isLoading, error: queryError } = usePublicOffer(token, !!token);
+  const acceptMutation = useAcceptPublicOffer();
+  const declineMutation = useDeclinePublicOffer();
+
   const [offer, setOffer] = useState<PublicOfferResponse | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [processing, setProcessing] = useState(false);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
   const [declineReason, setDeclineReason] = useState('');
 
-  useEffect(() => {
-    if (token) {
-      loadOfferDetails();
+  // Update local offer state when query data arrives
+  if (initialOffer && initialOffer !== offer) {
+    if (!initialOffer.tokenValid) {
+      setError(initialOffer.errorMessage || 'Invalid or expired offer link');
+      setOffer(null);
     } else {
-      setError('Invalid offer link. Please use the link provided in your email.');
-      setLoading(false);
-    }
-  }, [token]);
-
-  const loadOfferDetails = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Use public endpoint - no authentication required
-      const offerData = await publicOfferService.getOfferByToken(token!);
-
-      if (!offerData.tokenValid) {
-        setError(offerData.errorMessage || 'Invalid or expired offer link');
-        setOffer(null);
-      } else {
-        setOffer(offerData);
-        // Set default joining date
-        if (offerData.proposedJoiningDate) {
-          setConfirmedJoiningDate(offerData.proposedJoiningDate);
-        }
+      setOffer(initialOffer);
+      if (!confirmedJoiningDate && initialOffer.proposedJoiningDate) {
+        setConfirmedJoiningDate(initialOffer.proposedJoiningDate);
       }
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load offer details. The link may be invalid or expired.');
-    } finally {
-      setLoading(false);
     }
-  };
+  }
+
+  // Handle query errors
+  if (queryError && !offer) {
+    setError('Failed to load offer details. The link may be invalid or expired.');
+  }
 
   const handleAcceptOffer = async () => {
-    if (!offer || !offer.email) return;
-    setProcessing(true);
+    if (!offer || !offer.email || !token) return;
     try {
-      const response = await publicOfferService.acceptOffer(token!, {
-        email: offer.email,
-        confirmedJoiningDate: confirmedJoiningDate || undefined,
+      const response = await acceptMutation.mutateAsync({
+        token,
+        data: {
+          email: offer.email,
+          confirmedJoiningDate: confirmedJoiningDate || undefined,
+        },
       });
       setOffer({
         ...offer,
@@ -100,19 +93,22 @@ function OfferPortalPage() {
       });
       setShowAcceptModal(false);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to accept offer');
-    } finally {
-      setProcessing(false);
+      setError(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to accept offer'
+      );
     }
   };
 
   const handleDeclineOffer = async () => {
-    if (!offer || !offer.email) return;
-    setProcessing(true);
+    if (!offer || !offer.email || !token) return;
     try {
-      await publicOfferService.declineOffer(token!, {
-        email: offer.email,
-        declineReason: declineReason || undefined,
+      await declineMutation.mutateAsync({
+        token,
+        data: {
+          email: offer.email,
+          declineReason: declineReason || undefined,
+        },
       });
       setOffer({
         ...offer,
@@ -121,9 +117,10 @@ function OfferPortalPage() {
       });
       setShowDeclineModal(false);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to decline offer');
-    } finally {
-      setProcessing(false);
+      setError(
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to decline offer'
+      );
     }
   };
 
@@ -146,7 +143,7 @@ function OfferPortalPage() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return <OfferPortalLoading />;
   }
 
@@ -351,6 +348,7 @@ function OfferPortalPage() {
                 <Button
                   onClick={() => setShowAcceptModal(true)}
                   className="flex-1 bg-green-600 hover:bg-green-700"
+                  disabled={acceptMutation.isPending || declineMutation.isPending}
                 >
                   <CheckCircle className="h-5 w-5 mr-2" />
                   Accept Offer
@@ -359,6 +357,7 @@ function OfferPortalPage() {
                   variant="outline"
                   onClick={() => setShowDeclineModal(true)}
                   className="flex-1 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+                  disabled={acceptMutation.isPending || declineMutation.isPending}
                 >
                   <XCircle className="h-5 w-5 mr-2" />
                   Decline Offer
@@ -419,16 +418,16 @@ function OfferPortalPage() {
                   variant="outline"
                   onClick={() => setShowAcceptModal(false)}
                   className="flex-1"
-                  disabled={processing}
+                  disabled={acceptMutation.isPending}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAcceptOffer}
-                  disabled={processing}
+                  disabled={acceptMutation.isPending}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
-                  {processing ? (
+                  {acceptMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Processing...
@@ -478,17 +477,17 @@ function OfferPortalPage() {
                   variant="outline"
                   onClick={() => setShowDeclineModal(false)}
                   className="flex-1"
-                  disabled={processing}
+                  disabled={declineMutation.isPending}
                 >
                   Cancel
                 </Button>
                 <Button
                   variant="destructive"
                   onClick={handleDeclineOffer}
-                  disabled={processing}
+                  disabled={declineMutation.isPending}
                   className="flex-1"
                 >
-                  {processing ? (
+                  {declineMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                       Processing...

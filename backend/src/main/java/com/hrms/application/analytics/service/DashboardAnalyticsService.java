@@ -41,6 +41,7 @@ public class DashboardAnalyticsService {
     /**
      * Legacy method for backward compatibility - returns admin view
      */
+    @Transactional(readOnly = true)
     public DashboardAnalyticsResponse getDashboardAnalytics(UUID tenantId) {
         DashboardContext context = DashboardContext.builder()
                 .tenantId(tenantId)
@@ -56,6 +57,7 @@ public class DashboardAnalyticsService {
      * - MANAGER: See only team/reportee data
      * - EMPLOYEE: See only personal data
      */
+    @Transactional(readOnly = true)
     public DashboardAnalyticsResponse getDashboardAnalytics(DashboardContext context) {
         LocalDate today = LocalDate.now();
         UUID tenantId = context.getTenantId();
@@ -94,6 +96,7 @@ public class DashboardAnalyticsService {
     /**
      * Build DashboardContext for a user based on their role
      */
+    @Transactional(readOnly = true)
     public DashboardContext buildContext(UUID tenantId, UUID userId, UUID employeeId, boolean isAdmin, boolean isManager) {
         DashboardContext.ViewType viewType;
         List<UUID> targetEmployeeIds = null;

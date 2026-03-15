@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Clock,
@@ -40,64 +39,57 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { attendanceService } from '@/lib/services/attendance.service';
 import { AttendanceRecord } from '@/lib/types/attendance';
 import { getLocalDateString, getDateOffsetString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { motion } from 'framer-motion';
+import {
+  useAttendanceByDateRange,
+  useCheckIn,
+  useCheckOut,
+  useHolidaysByYear,
+} from '@/lib/hooks/queries/useAttendance';
 
 export default function AttendancePage() {
-  const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null);
-  const [weeklyRecords, setWeeklyRecords] = useState<AttendanceRecord[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    } else {
-      loadData();
-    }
-  }, [hasHydrated, isAuthenticated, router]);
+  // Use local date strings
+  const todayStr = getLocalDateString();
+  const lastWeekStr = getDateOffsetString(-6);
+
+  // Fetch today's attendance
+  const { data: todayData, isLoading: todayLoading } = useAttendanceByDateRange(
+    todayStr,
+    todayStr,
+    isAuthenticated && hasHydrated
+  );
+
+  // Fetch weekly attendance
+  const { data: weeklyData, isLoading: weeklyLoading } = useAttendanceByDateRange(
+    lastWeekStr,
+    todayStr,
+    isAuthenticated && hasHydrated
+  );
+
+  // Fetch holidays for this year
+  const currentYear = new Date().getFullYear();
+  const { data: holidaysData } = useHolidaysByYear(currentYear);
+
+  // Mutations
+  const checkInMutation = useCheckIn();
+  const checkOutMutation = useCheckOut();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const loadData = async () => {
-    try {
-      setDataLoading(true);
-      if (!user?.employeeId) return;
-
-      // Use local date to avoid timezone issues (e.g., 4 AM local = previous day UTC)
-      const todayStr = getLocalDateString();
-      const lastWeekStr = getDateOffsetString(-6);
-
-      const [todayData, weeklyData] = await Promise.all([
-        attendanceService.getAttendanceByDateRange(todayStr, todayStr),
-        attendanceService.getAttendanceByDateRange(lastWeekStr, todayStr)
-      ]);
-
-      if (todayData.length > 0) {
-        setTodayRecord(todayData[0]);
-      }
-      setWeeklyRecords(weeklyData);
-    } catch (error) {
-      console.error('Error loading attendance data:', error);
-      setError('Failed to load attendance data');
-    } finally {
-      setDataLoading(false);
-    }
-  };
+  const todayRecord: AttendanceRecord | null = todayData && todayData.length > 0 ? todayData[0] : null;
+  const weeklyRecords: AttendanceRecord[] = weeklyData || [];
 
   const handleCheckIn = async () => {
     try {
-      setLoading(true);
       setError(null);
 
       if (!user?.employeeId) {
@@ -117,31 +109,23 @@ export default function AttendancePage() {
         // Location not available
       }
 
-      // IP is resolved server-side from the HTTP request headers (X-Forwarded-For / RemoteAddr).
-      // Never call external third-party IP services from the client — privacy risk + external dependency.
-
       // Use local date-time string to ensure correct timezone handling
       const localTimeString = getLocalDateTimeString();
 
-      await attendanceService.checkIn({
+      await checkInMutation.mutateAsync({
         employeeId: user.employeeId,
         checkInTime: localTimeString,
         source: 'WEB',
         location,
       });
-
-      await loadData();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to check in. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleCheckOut = async () => {
     try {
-      setLoading(true);
       setError(null);
 
       if (!user?.employeeId) {
@@ -161,28 +145,18 @@ export default function AttendancePage() {
         // Location not available
       }
 
-      // IP is resolved server-side from the HTTP request headers (X-Forwarded-For / RemoteAddr).
-      const now = new Date();
-      const localTimeString = now.getFullYear() + '-' +
-        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-        String(now.getDate()).padStart(2, '0') + 'T' +
-        String(now.getHours()).padStart(2, '0') + ':' +
-        String(now.getMinutes()).padStart(2, '0') + ':' +
-        String(now.getSeconds()).padStart(2, '0');
+      // Use local date-time string to ensure correct timezone handling
+      const localTimeString = getLocalDateTimeString();
 
-      await attendanceService.checkOut({
+      await checkOutMutation.mutateAsync({
         employeeId: user.employeeId,
         checkOutTime: localTimeString,
         source: 'WEB',
         location,
       });
-
-      await loadData();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || 'Failed to check out. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -273,6 +247,8 @@ export default function AttendancePage() {
       </div>
     </div>
   );
+
+  const dataLoading = todayLoading || weeklyLoading;
 
   if (dataLoading) {
     return (
@@ -392,7 +368,7 @@ export default function AttendancePage() {
                     ) : !isCheckedIn ? (
                       <Button
                         onClick={handleCheckIn}
-                        isLoading={loading}
+                        isLoading={checkInMutation.isPending}
                         className="h-12 px-6 text-base font-semibold bg-white text-indigo-600 hover:bg-white/95 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogIn className="h-5 w-5 mr-2" />
@@ -401,7 +377,7 @@ export default function AttendancePage() {
                     ) : (
                       <Button
                         onClick={handleCheckOut}
-                        isLoading={loading}
+                        isLoading={checkOutMutation.isPending}
                         className="h-12 px-6 text-base font-semibold bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all rounded-xl"
                       >
                         <LogOut className="h-5 w-5 mr-2" />

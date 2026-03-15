@@ -120,7 +120,7 @@ public class RecruitmentController {
     @PostMapping("/candidates/{id}/accept-offer")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> acceptOffer(@PathVariable UUID id,
-            @RequestBody(required = false) OfferResponseRequest request) {
+            @Valid @RequestBody(required = false) OfferResponseRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.acceptOffer(id,
                 request != null ? request.getConfirmedJoiningDate() : null));
     }
@@ -128,7 +128,7 @@ public class RecruitmentController {
     @PostMapping("/candidates/{id}/decline-offer")
     @RequiresPermission(Permission.RECRUITMENT_UPDATE)
     public ResponseEntity<CandidateResponse> declineOffer(@PathVariable UUID id,
-            @RequestBody(required = false) OfferResponseRequest request) {
+            @Valid @RequestBody(required = false) OfferResponseRequest request) {
         return ResponseEntity.ok(recruitmentManagementService.declineOffer(id,
                 request != null ? request.getDeclineReason() : "No reason provided"));
     }

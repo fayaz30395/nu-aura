@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to compute implicit roles based on employee relationships.
@@ -25,6 +26,7 @@ public class ImplicitRoleService {
     /**
      * Get implicit roles for an employee based on their relationships.
      */
+    @Transactional(readOnly = true)
     public Set<String> getImplicitRoles(UUID employeeId, UUID tenantId) {
         Set<String> implicitRoles = new HashSet<>();
 
@@ -52,6 +54,7 @@ public class ImplicitRoleService {
     /**
      * Get all permissions for an employee including implicit role permissions.
      */
+    @Transactional(readOnly = true)
     public Set<String> getImplicitPermissions(UUID employeeId, UUID tenantId) {
         Set<String> permissions = new HashSet<>();
         Set<String> implicitRoles = getImplicitRoles(employeeId, tenantId);

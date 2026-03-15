@@ -51,6 +51,7 @@ public class SelfServiceService {
 
     // ==================== Profile Update Request Operations ====================
 
+    @Transactional
     public ProfileUpdateResponse createProfileUpdateRequest(UUID employeeId, ProfileUpdateRequestDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -113,6 +114,7 @@ public class SelfServiceService {
                 .map(e -> enrichProfileUpdateResponse(ProfileUpdateResponse.fromEntity(e), tenantId));
     }
 
+    @Transactional
     public ProfileUpdateResponse approveProfileUpdateRequest(UUID requestId, UUID reviewerId, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ProfileUpdateRequest entity = profileUpdateRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -132,6 +134,7 @@ public class SelfServiceService {
         return enrichProfileUpdateResponse(ProfileUpdateResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public ProfileUpdateResponse rejectProfileUpdateRequest(UUID requestId, UUID reviewerId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ProfileUpdateRequest entity = profileUpdateRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -148,6 +151,7 @@ public class SelfServiceService {
         return enrichProfileUpdateResponse(ProfileUpdateResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public void cancelProfileUpdateRequest(UUID requestId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ProfileUpdateRequest entity = profileUpdateRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -168,6 +172,7 @@ public class SelfServiceService {
 
     // ==================== Document Request Operations ====================
 
+    @Transactional
     public DocumentRequestResponse createDocumentRequest(UUID employeeId, DocumentRequestDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -262,6 +267,7 @@ public class SelfServiceService {
         return enrichDocumentRequestResponse(DocumentRequestResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public DocumentRequestResponse markDocumentDelivered(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         DocumentRequest entity = documentRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -278,6 +284,7 @@ public class SelfServiceService {
         return enrichDocumentRequestResponse(DocumentRequestResponse.fromEntity(saved), tenantId);
     }
 
+    @Transactional
     public DocumentRequestResponse rejectDocumentRequest(UUID requestId, UUID rejectedBy, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         DocumentRequest entity = documentRequestRepository.findByIdAndTenantId(requestId, tenantId)

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ClipboardList,
   Plus,
@@ -31,10 +31,17 @@ import {
   Badge,
   Textarea,
 } from '@/components/ui';
-import { surveyService } from '@/lib/services/survey.service';
 import type { Survey, SurveyRequest } from '@/lib/types/survey';
 import { SurveyType, SurveyStatus } from '@/lib/types/survey';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
+import {
+  useAllSurveys,
+  useCreateSurvey,
+  useUpdateSurvey,
+  useLaunchSurvey,
+  useCompleteSurvey,
+  useDeleteSurvey,
+} from '@/lib/hooks/queries/useSurveys';
 
 const surveyTypeOptions = [
   { value: SurveyType.ENGAGEMENT, label: 'Engagement' },
@@ -88,8 +95,15 @@ const getTypeColor = (type: SurveyType) => {
 };
 
 export default function SurveysPage() {
-  const [surveys, setSurveys] = useState<Survey[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: surveysResponse, isLoading } = useAllSurveys();
+  const surveys = surveysResponse?.content || [];
+
+  const createMutation = useCreateSurvey();
+  const updateMutation = useUpdateSurvey();
+  const launchMutation = useLaunchSurvey();
+  const completeMutation = useCompleteSurvey();
+  const deleteMutation = useDeleteSurvey();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<string>('');
@@ -112,23 +126,6 @@ export default function SurveysPage() {
     status: SurveyStatus.DRAFT,
     targetAudience: 'ALL',
   });
-
-  useEffect(() => {
-    fetchSurveys();
-  }, []);
-
-  const fetchSurveys = async () => {
-    try {
-      setLoading(true);
-      const response = await surveyService.getAllSurveys();
-      setSurveys(response.content || []);
-    } catch (error) {
-      console.error('Error fetching surveys:', error);
-      setSurveys([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCreateSurvey = () => {
     setEditingSurvey(null);
@@ -168,60 +165,39 @@ export default function SurveysPage() {
   };
 
   const handleSubmitSurvey = async () => {
-    try {
-      const submitData = {
-        ...formData,
-        startDate: formData.startDate ? `${formData.startDate}T00:00:00` : undefined,
-        endDate: formData.endDate ? `${formData.endDate}T23:59:59` : undefined,
-      };
+    const submitData = {
+      ...formData,
+      startDate: formData.startDate ? `${formData.startDate}T00:00:00` : undefined,
+      endDate: formData.endDate ? `${formData.endDate}T23:59:59` : undefined,
+    };
 
-      if (editingSurvey) {
-        await surveyService.updateSurvey(editingSurvey.id, submitData as SurveyRequest);
-      } else {
-        await surveyService.createSurvey(submitData as SurveyRequest);
-      }
-      setIsModalOpen(false);
-      fetchSurveys();
-    } catch (error) {
-      console.error('Error saving survey:', error);
+    if (editingSurvey) {
+      updateMutation.mutate({ surveyId: editingSurvey.id, data: submitData as SurveyRequest });
+    } else {
+      createMutation.mutate(submitData as SurveyRequest);
     }
+    setIsModalOpen(false);
   };
 
-  const handleLaunchSurvey = async (surveyId: string) => {
-    try {
-      await surveyService.launchSurvey(surveyId);
-      fetchSurveys();
-    } catch (error) {
-      console.error('Error launching survey:', error);
-    }
+  const handleLaunchSurvey = (surveyId: string) => {
+    launchMutation.mutate(surveyId);
   };
 
   const handlePauseSurvey = async (surveyId: string) => {
-    try {
-      await surveyService.updateStatus(surveyId, SurveyStatus.PAUSED);
-      fetchSurveys();
-    } catch (error) {
-      console.error('Error pausing survey:', error);
+    // Pause uses updateStatus with PAUSED status
+    const survey = surveys.find(s => s.id === surveyId);
+    if (survey) {
+      updateMutation.mutate({ surveyId, data: { ...survey, status: SurveyStatus.PAUSED } as SurveyRequest });
     }
   };
 
-  const handleCompleteSurvey = async (surveyId: string) => {
-    try {
-      await surveyService.completeSurvey(surveyId);
-      fetchSurveys();
-    } catch (error) {
-      console.error('Error completing survey:', error);
-    }
+  const handleCompleteSurvey = (surveyId: string) => {
+    completeMutation.mutate(surveyId);
   };
 
-  const handleDeleteSurvey = async (surveyId: string) => {
+  const handleDeleteSurvey = (surveyId: string) => {
     if (confirm('Are you sure you want to delete this survey?')) {
-      try {
-        await surveyService.deleteSurvey(surveyId);
-        fetchSurveys();
-      } catch (error) {
-        console.error('Error deleting survey:', error);
-      }
+      deleteMutation.mutate(surveyId);
     }
   };
 
@@ -379,7 +355,7 @@ export default function SurveysPage() {
         </Card>
 
         {/* Surveys Grid */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
           </div>

@@ -17,10 +17,12 @@ public class SkillService {
 
     private final EmployeeSkillRepository skillRepository;
 
+    @Transactional(readOnly = true)
     public List<EmployeeSkill> getEmployeeSkills(UUID tenantId, UUID employeeId) {
         return skillRepository.findByEmployeeIdAndTenantId(employeeId, tenantId);
     }
 
+    @Transactional
     public EmployeeSkill addOrUpdateSkill(UUID tenantId, UUID employeeId, String skillName, String category,
             Integer level, String source) {
         Optional<EmployeeSkill> existing = skillRepository.findByEmployeeIdAndSkillNameAndTenantId(employeeId,
@@ -58,6 +60,7 @@ public class SkillService {
         });
     }
 
+    @Transactional
     public void removeSkill(UUID tenantId, UUID skillId) {
         skillRepository.findById(skillId).ifPresent(skill -> {
             if (skill.getTenantId().equals(tenantId)) {

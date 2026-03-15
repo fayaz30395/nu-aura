@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,14 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 
 export default function SettingsProfilePage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [isAuthenticated, hasHydrated, router]);
+  const { user } = useAuth();
 
   return (
     <AppLayout>

@@ -20,6 +20,7 @@ public class OrganizationHealthService {
 
     private final EmployeeRepository employeeRepository;
 
+    @Transactional(readOnly = true)
     public OrganizationHealthResponse getOrganizationHealth(UUID tenantId) {
         List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId);
         List<Employee> activeEmployees = allEmployees.stream()

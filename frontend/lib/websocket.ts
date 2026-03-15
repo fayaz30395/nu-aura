@@ -224,7 +224,13 @@ class WebSocketService {
       if (!document.hidden && (this.status === WebSocketStatus.DISCONNECTED ||
           this.status === WebSocketStatus.FAILED)) {
         this.logInfo('Tab became visible. Attempting to reconnect.');
-        this.reconnectAttempts = 0;
+        // R2-016 FIX: Do NOT reset reconnectAttempts here. Resetting on every
+        // visibility-change event (i.e. every time the user switches tabs) was
+        // causing a "thundering herd": after the backend recovers, all open tabs
+        // simultaneously reset their backoff counters and hammered the server with
+        // connection attempts. The counter should only be reset on a successful
+        // connect (see onConnect callback) or on an explicit disconnect() call.
+        // We still attempt a reconnect, but we honour the current backoff position.
         this.setStatus(WebSocketStatus.DISCONNECTED);
         if (this.credentials) {
           this.connect(this.credentials.userId, this.credentials.tenantId, this.credentials.token)
@@ -316,7 +322,9 @@ class WebSocketService {
   }
 
   private logInfo(message: string, data?: unknown): void {
-    console.info(`[WebSocket] ${message}`, data || '');
+    if (process.env.NODE_ENV === 'development') {
+      console.info(`[WebSocket] ${message}`, data || '');
+    }
   }
 
   private logWarning(message: string, data?: unknown): void {

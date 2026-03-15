@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   GraduationCap,
   Plus,
@@ -43,7 +43,6 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { trainingService } from '@/lib/services/training.service';
 import type {
   TrainingProgram,
   TrainingProgramRequest,
@@ -57,6 +56,16 @@ import {
   EnrollmentStatus,
 } from '@/lib/types/training';
 import { toBadgeVariant } from '@/lib/utils/type-guards';
+import {
+  useAllPrograms,
+  useEnrollmentsByEmployee,
+  useEnrollmentsByProgram,
+  useCreateTrainingProgram,
+  useUpdateTrainingProgram,
+  useDeleteTrainingProgram,
+  useEnrollInTraining as useEnrollEmployee,
+  useUpdateEnrollmentStatus,
+} from '@/lib/hooks/queries/useTraining';
 
 type TabType = 'my-trainings' | 'catalog' | 'growth-roadmap' | 'manage';
 
@@ -148,14 +157,29 @@ const getCategoryColor = (category: TrainingCategory) => {
 export default function TrainingPage() {
   const { user, hasHydrated } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('my-trainings');
-  const [programs, setPrograms] = useState<TrainingProgram[]>([]);
-  const [myEnrollments, setMyEnrollments] = useState<TrainingEnrollment[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // React Query hooks
+  const { data: programsResponse, isLoading: programsLoading } = useAllPrograms();
+  const { data: enrollmentsResponse, isLoading: enrollmentsLoading } = useEnrollmentsByEmployee(user?.id || '');
+  const createProgramMutation = useCreateTrainingProgram();
+  const updateProgramMutation = useUpdateTrainingProgram();
+  const deleteProgramMutation = useDeleteTrainingProgram();
+  const enrollMutation = useEnrollEmployee();
+  const updateEnrollmentMutation = useUpdateEnrollmentStatus();
+
+  const programs = programsResponse?.content || [];
+  const myEnrollments = enrollmentsResponse || [];
+  const loading = programsLoading || enrollmentsLoading;
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+  }, []);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -163,8 +187,11 @@ export default function TrainingPage() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<TrainingProgram | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<TrainingProgram | null>(null);
-  const [enrollments, setEnrollments] = useState<TrainingEnrollment[]>([]);
+  const [selectedProgramId, setSelectedProgramId] = useState<string>('');
   const [enrolling, setEnrolling] = useState(false);
+
+  // Fetch enrollments for the selected program via React Query (replaces imperative service call)
+  const { data: enrollments = [] } = useEnrollmentsByProgram(selectedProgramId);
 
   // Form state
   const [formData, setFormData] = useState<Partial<TrainingProgramRequest>>({
@@ -202,36 +229,13 @@ export default function TrainingPage() {
       setError(message);
       setSuccess(null);
     }
-    setTimeout(() => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    notifTimerRef.current = setTimeout(() => {
       setSuccess(null);
       setError(null);
     }, 5000);
   };
 
-  const fetchData = useCallback(async () => {
-    if (!user?.employeeId) return;
-
-    setLoading(true);
-    try {
-      if (activeTab === 'my-trainings') {
-        const enrollmentList = await trainingService.getEnrollmentsByEmployee(user.employeeId);
-        setMyEnrollments(enrollmentList);
-      } else {
-        const response = await trainingService.getAllPrograms();
-        setPrograms(response.content || []);
-      }
-    } catch (err) {
-      console.error('Error fetching data:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.employeeId, activeTab]);
-
-  useEffect(() => {
-    if (hasHydrated && user?.employeeId) {
-      fetchData();
-    }
-  }, [hasHydrated, user?.employeeId, fetchData]);
 
   const handleCreateProgram = () => {
     setEditingProgram(null);
@@ -281,15 +285,9 @@ export default function TrainingPage() {
     setIsModalOpen(true);
   };
 
-  const handleViewProgram = async (program: TrainingProgram) => {
+  const handleViewProgram = (program: TrainingProgram) => {
     setSelectedProgram(program);
-    try {
-      const enrollmentList = await trainingService.getEnrollmentsByProgram(program.id);
-      setEnrollments(enrollmentList);
-    } catch (err) {
-      console.error('Error fetching enrollments:', err);
-      setEnrollments([]);
-    }
+    setSelectedProgramId(program.id); // triggers useEnrollmentsByProgram
     setIsViewModalOpen(true);
   };
 
@@ -303,7 +301,7 @@ export default function TrainingPage() {
     setIsEnrollModalOpen(true);
   };
 
-  const handleSelfEnroll = async (program: TrainingProgram) => {
+  const handleSelfEnroll = (program: TrainingProgram) => {
     if (!user?.employeeId) {
       showNotification('You must be logged in to enroll', 'error');
       return;
@@ -316,66 +314,54 @@ export default function TrainingPage() {
       return;
     }
 
-    setEnrolling(true);
-    try {
-      await trainingService.enrollEmployee({
+    enrollMutation.mutate(
+      {
         programId: program.id,
         employeeId: user.employeeId,
         enrollmentDate: new Date().toISOString().split('T')[0],
+      },
+      {
+        onSuccess: () => {
+          showNotification(`Successfully enrolled in ${program.programName}!`, 'success');
+          setActiveTab('my-trainings');
+        },
+      }
+    );
+  };
+
+  const handleSubmitProgram = () => {
+    if (editingProgram) {
+      updateProgramMutation.mutate(
+        { programId: editingProgram.id, data: formData as TrainingProgramRequest },
+        {
+          onSuccess: () => {
+            showNotification('Program updated successfully', 'success');
+            setIsModalOpen(false);
+          },
+        }
+      );
+    } else {
+      createProgramMutation.mutate(formData as TrainingProgramRequest, {
+        onSuccess: () => {
+          showNotification('Program created successfully', 'success');
+          setIsModalOpen(false);
+        },
       });
-      showNotification(`Successfully enrolled in ${program.programName}!`, 'success');
-      setActiveTab('my-trainings');
-      fetchData();
-    } catch (err: unknown) {
-      console.error('Error enrolling:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
-    } finally {
-      setEnrolling(false);
     }
   };
 
-  const handleSubmitProgram = async () => {
-    try {
-      if (editingProgram) {
-        await trainingService.updateProgram(editingProgram.id, formData as TrainingProgramRequest);
-        showNotification('Program updated successfully', 'success');
-      } else {
-        await trainingService.createProgram(formData as TrainingProgramRequest);
-        showNotification('Program created successfully', 'success');
-      }
-      setIsModalOpen(false);
-      fetchData();
-    } catch (err: unknown) {
-      console.error('Error saving training program:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save program', 'error');
-    }
+  const handleSubmitEnrollment = () => {
+    enrollMutation.mutate(enrollFormData as TrainingEnrollmentRequest, {
+      onSuccess: () => {
+        setIsEnrollModalOpen(false);
+        showNotification('Employee enrolled successfully', 'success');
+      },
+    });
   };
 
-  const handleSubmitEnrollment = async () => {
-    try {
-      await trainingService.enrollEmployee(enrollFormData as TrainingEnrollmentRequest);
-      setIsEnrollModalOpen(false);
-      showNotification('Employee enrolled successfully', 'success');
-      if (selectedProgram) {
-        const enrollmentList = await trainingService.getEnrollmentsByProgram(selectedProgram.id);
-        setEnrollments(enrollmentList);
-      }
-    } catch (err: unknown) {
-      console.error('Error enrolling employee:', err);
-      showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll employee', 'error');
-    }
-  };
-
-  const handleDeleteProgram = async (programId: string) => {
+  const handleDeleteProgram = (programId: string) => {
     if (confirm('Are you sure you want to delete this training program?')) {
-      try {
-        await trainingService.deleteProgram(programId);
-        showNotification('Program deleted successfully', 'success');
-        fetchData();
-      } catch (err: unknown) {
-        console.error('Error deleting training program:', err);
-        showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete program', 'error');
-      }
+      deleteProgramMutation.mutate(programId);
     }
   };
 

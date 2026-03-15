@@ -82,6 +82,7 @@ public class QuizAssessmentService {
     /**
      * Submit quiz attempt and grade it
      */
+    @Transactional
     public QuizResultResponse submitQuizAttempt(UUID attemptId, QuizAttemptRequest request, UUID tenantId) {
         // Verify and load attempt
         QuizAttempt attempt = attemptRepository.findByIdAndTenantId(attemptId, tenantId)
@@ -313,6 +314,7 @@ public class QuizAssessmentService {
     /**
      * Get quiz details for student view (without correct answers)
      */
+    @Transactional(readOnly = true)
     public QuizDetailResponse getQuizDetails(UUID quizId, UUID tenantId) {
         Quiz quiz = quizRepository.findByIdAndTenantId(quizId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz not found"));
@@ -342,6 +344,7 @@ public class QuizAssessmentService {
     /**
      * Get attempt history for a quiz
      */
+    @Transactional(readOnly = true)
     public List<QuizAttemptResponse> getAttemptHistory(UUID quizId, UUID employeeId, UUID tenantId) {
         List<QuizAttempt> attempts = attemptRepository.findByQuizIdAndEmployeeIdAndTenantId(quizId, employeeId, tenantId);
         return attempts.stream()
@@ -352,6 +355,7 @@ public class QuizAssessmentService {
     /**
      * Generate certificate after successful completion
      */
+    @Transactional(readOnly = true)
     public Certificate generateCertificate(UUID enrollmentId, UUID employeeId, UUID tenantId) {
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment not found"));

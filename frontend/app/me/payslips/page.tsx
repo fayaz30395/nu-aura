@@ -18,28 +18,38 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { payrollService } from '@/lib/services/payroll.service';
+import { usePayslipsByEmployee, usePayslips, useDownloadPayslipPdf } from '@/lib/hooks/queries/usePayroll';
 import { Payslip } from '@/lib/types/payroll';
 
 export default function MyPayslipsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [payslips, setPayslips] = useState<Payslip[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminView, setIsAdminView] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Check if user is admin/HR
-  // Since roles are not populated from the backend currently, we check if the user has no employeeId
-  // which indicates an admin-only account (pure admin accounts don't have employee profiles)
   const isAdmin = !user?.employeeId || user?.roles?.some(role => {
     if (typeof role === 'string') {
       return ['ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_HR'].includes(role);
     }
     return ['ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_HR'].includes(role?.code || '');
   });
+
+  // React Query hooks
+  const employeePayslipsQuery = usePayslipsByEmployee(
+    user?.employeeId || '',
+    0,
+    100,
+    hasHydrated && !!user?.employeeId && !isAdminView
+  );
+
+  const allPayslipsQuery = usePayslips(0, 100, undefined, undefined, hasHydrated && isAdminView);
+
+  // Determine which data to use
+  const { data: payslipsData, isLoading } = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
+  const payslips = payslipsData?.content ?? [];
 
   useEffect(() => {
     // Wait for auth store to hydrate before checking authentication
@@ -48,47 +58,16 @@ export default function MyPayslipsPage() {
     if (!isAuthenticated) {
       router.push('/auth/login');
     } else if (user) {
-      if (user.employeeId) {
-        // User has employee profile - load their payslips
-        loadPayslips(false);
-      } else if (isAdmin) {
-        // Admin without employee profile - show all payslips
-        setIsAdminView(true);
-        loadPayslips(true);
-      } else {
+      if (!user.employeeId && !isAdmin) {
         // Regular user without employee profile
-        setIsLoading(false);
         setError('No employee profile found for your account. Please contact your administrator.');
       }
     }
   }, [hasHydrated, isAuthenticated, user, router, isAdmin]);
 
-  const loadPayslips = async (loadAll: boolean = false) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      if (loadAll || isAdminView) {
-        // Load all payslips for admin
-        const data = await payrollService.getAllPayslips(0, 100);
-        setPayslips(data?.content || []);
-      } else {
-        // Load only employee's payslips
-        const data = await payrollService.getPayslipsByEmployee(user!.employeeId!, 0, 100);
-        setPayslips(data?.content || []);
-      }
-    } catch (err: unknown) {
-      console.error('Failed to load payslips:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
-      setPayslips([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const toggleView = () => {
     if (isAdmin && user?.employeeId) {
       setIsAdminView(!isAdminView);
-      loadPayslips(!isAdminView);
     }
   };
 
@@ -118,12 +97,14 @@ export default function MyPayslipsPage() {
 
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
+  const downloadMutation = useDownloadPayslipPdf();
+
   const downloadPayslipPDF = async (payslip: Payslip) => {
     try {
       setDownloadingId(payslip.id);
 
       // Use backend PDF generation for professional payslip
-      const blob = await payrollService.downloadPayslipPdf(payslip.id);
+      const blob = await downloadMutation.mutateAsync(payslip.id);
 
       // Create download link
       const url = window.URL.createObjectURL(blob);

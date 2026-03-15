@@ -27,6 +27,7 @@ public class SalaryStructureService {
     private final SalaryStructureRepository salaryStructureRepository;
     private final AuditLogService auditLogService;
 
+    @Transactional
     public SalaryStructure createSalaryStructure(SalaryStructure salaryStructure) {
         UUID tenantId = TenantContext.getCurrentTenant();
         salaryStructure.setTenantId(tenantId);
@@ -57,6 +58,7 @@ public class SalaryStructureService {
         return saved;
     }
 
+    @Transactional
     public SalaryStructure updateSalaryStructure(UUID id, SalaryStructure salaryStructureData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -136,6 +138,7 @@ public class SalaryStructureService {
         return salaryStructureRepository.findAllByTenantIdAndIsActive(tenantId, true, pageable);
     }
 
+    @Transactional
     public void deleteSalaryStructure(UUID id) {
         SalaryStructure salaryStructure = getSalaryStructureById(id);
 
@@ -175,6 +178,7 @@ public class SalaryStructureService {
      *
      * @param employee the employee to assign default structure to
      */
+    @Transactional
     public void assignDefaultStructureIfAvailable(com.hrms.domain.employee.Employee employee) {
         // Optional: Implement default structure assignment based on:
         // - Employee designation

@@ -1,49 +1,39 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Title, Text, Button, Group, Card, Table, Badge, ActionIcon, Menu, Container, SimpleGrid, RingProgress, Center, ThemeIcon } from '@mantine/core';
 import { IconPlus, IconDotsVertical, IconBriefcase, IconClock, IconCurrencyDollar, IconChartPie } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { psaService } from '@/lib/services/psa.service';
 import { PSAProject, ProjectStatus } from '@/lib/types/psa';
 import { notifications } from '@mantine/notifications';
+import { usePsaProjects } from '@/lib/hooks/queries/usePsa';
 
 export default function PsaProjectsPage() {
     const router = useRouter();
-    const [projects, setProjects] = useState<PSAProject[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState({ active: 0, planned: 0, completed: 0, totalBudget: 0 });
+    const { data, isLoading, error } = usePsaProjects();
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
+    const projects = data ?? [];
+    const loading = isLoading;
 
-    const fetchProjects = async () => {
-        try {
-            setLoading(true);
-            const data = await psaService.getAllProjects();
-            setProjects(data);
-            calculateStats(data);
-        } catch (error) {
-            console.error('Error fetching projects:', error);
-            notifications.show({
-                title: 'Error',
-                message: 'Failed to load projects',
-                color: 'red',
-            });
-        } finally {
-            setLoading(false);
+    const stats = useMemo(() => {
+        if (!projects.length) {
+            return { active: 0, planned: 0, completed: 0, totalBudget: 0 };
         }
-    };
+        const active = projects.filter(p => p.status === ProjectStatus.ACTIVE).length;
+        const planned = projects.filter(p => p.status === ProjectStatus.PLANNED).length;
+        const completed = projects.filter(p => p.status === ProjectStatus.COMPLETED).length;
+        const totalBudget = projects.reduce((acc, p) => acc + (p.budget || 0), 0);
+        return { active, planned, completed, totalBudget };
+    }, [projects]);
 
-    const calculateStats = (data: PSAProject[]) => {
-        const active = data.filter(p => p.status === ProjectStatus.ACTIVE).length;
-        const planned = data.filter(p => p.status === ProjectStatus.PLANNED).length;
-        const completed = data.filter(p => p.status === ProjectStatus.COMPLETED).length;
-        const totalBudget = data.reduce((acc, p) => acc + (p.budget || 0), 0);
-        setStats({ active, planned, completed, totalBudget });
-    };
+    if (error) {
+        notifications.show({
+            title: 'Error',
+            message: 'Failed to load projects',
+            color: 'red',
+        });
+    }
 
     const statusColor = (status: ProjectStatus) => {
         switch (status) {

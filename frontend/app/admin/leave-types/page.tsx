@@ -1,121 +1,69 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { leaveService } from '@/lib/services/leave.service';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { LeaveType, LeaveTypeRequest, AccrualType, GenderSpecific } from '@/lib/types/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {
+  useLeaveTypes,
+  useCreateLeaveType,
+  useUpdateLeaveType,
+  useDeleteLeaveType,
+  useActivateLeaveType,
+  useDeactivateLeaveType,
+} from '@/lib/hooks/queries/useLeaves';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
+const leaveTypeFormSchema = z.object({
+  leaveCode: z.string().min(1, 'Leave code required'),
+  leaveName: z.string().min(1, 'Leave name required'),
+  description: z.string().optional().or(z.literal('')),
+  isPaid: z.boolean().default(true),
+  colorCode: z.string().default('#3B82F6'),
+  annualQuota: z.number({ coerce: true }).min(0).default(0),
+  maxConsecutiveDays: z.number({ coerce: true }).optional(),
+  minDaysNotice: z.number({ coerce: true }).min(0).default(0),
+  maxDaysPerRequest: z.number({ coerce: true }).optional(),
+  isCarryForwardAllowed: z.boolean().default(false),
+  maxCarryForwardDays: z.number({ coerce: true }).optional(),
+  isEncashable: z.boolean().default(false),
+  requiresDocument: z.boolean().default(false),
+  applicableAfterDays: z.number({ coerce: true }).min(0).default(0),
+  accrualType: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY', 'NO_ACCRUAL']).optional(),
+  accrualRate: z.number({ coerce: true }).optional(),
+  genderSpecific: z.enum(['ALL', 'MALE', 'FEMALE']).default('ALL'),
+});
+
+type LeaveTypeFormData = z.infer<typeof leaveTypeFormSchema>;
 
 export default function LeaveTypesManagementPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingLeaveType, setEditingLeaveType] = useState<LeaveType | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [uiError, setUiError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<LeaveTypeRequest>({
-    leaveCode: '',
-    leaveName: '',
-    description: '',
-    isPaid: true,
-    colorCode: '#3B82F6',
-    annualQuota: 0,
-    maxConsecutiveDays: undefined,
-    minDaysNotice: 0,
-    maxDaysPerRequest: undefined,
-    isCarryForwardAllowed: false,
-    maxCarryForwardDays: undefined,
-    isEncashable: false,
-    requiresDocument: false,
-    applicableAfterDays: 0,
-    accrualType: undefined,
-    accrualRate: undefined,
-    genderSpecific: undefined,
-  });
+  // React Query hooks
+  const { data: page, isLoading, error: queryError } = useLeaveTypes(0, 100);
+  const createMutation = useCreateLeaveType();
+  const updateMutation = useUpdateLeaveType();
+  const deleteMutation = useDeleteLeaveType();
+  const activateMutation = useActivateLeaveType();
+  const deactivateMutation = useDeactivateLeaveType();
 
-  useEffect(() => {
-    if (!hasHydrated || !isReady) return;
+  const leaveTypes = page?.content || [];
+  const loading = isLoading;
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
-
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
-      return;
-    }
-
-    loadLeaveTypes();
-  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
-
-  const loadLeaveTypes = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await leaveService.getAllLeaveTypes(0, 100);
-      setLeaveTypes(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave types');
-      console.error('Error loading leave types:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setSubmitting(true);
-      setError(null);
-
-      const submitData: LeaveTypeRequest = {
-        leaveCode: formData.leaveCode,
-        leaveName: formData.leaveName,
-        description: formData.description || undefined,
-        isPaid: formData.isPaid,
-        colorCode: formData.colorCode || undefined,
-        annualQuota: formData.annualQuota || undefined,
-        maxConsecutiveDays: formData.maxConsecutiveDays || undefined,
-        minDaysNotice: formData.minDaysNotice || 0,
-        maxDaysPerRequest: formData.maxDaysPerRequest || undefined,
-        isCarryForwardAllowed: formData.isCarryForwardAllowed,
-        maxCarryForwardDays: formData.maxCarryForwardDays || undefined,
-        isEncashable: formData.isEncashable,
-        requiresDocument: formData.requiresDocument,
-        applicableAfterDays: formData.applicableAfterDays || 0,
-        accrualType: formData.accrualType || undefined,
-        accrualRate: formData.accrualRate || undefined,
-        genderSpecific: formData.genderSpecific || undefined,
-      };
-
-      if (editingLeaveType) {
-        await leaveService.updateLeaveType(editingLeaveType.id, submitData);
-      } else {
-        await leaveService.createLeaveType(submitData);
-      }
-
-      await loadLeaveTypes();
-      resetForm();
-      setShowModal(false);
-      setEditingLeaveType(null);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingLeaveType ? 'update' : 'create'} leave type`);
-      console.error('Error saving leave type:', err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
+  // Form hook
+  const form = useForm<LeaveTypeFormData>({
+    resolver: zodResolver(leaveTypeFormSchema),
+    defaultValues: {
       leaveCode: '',
       leaveName: '',
       description: '',
@@ -132,13 +80,104 @@ export default function LeaveTypesManagementPage() {
       applicableAfterDays: 0,
       accrualType: undefined,
       accrualRate: undefined,
-      genderSpecific: undefined,
+      genderSpecific: 'ALL',
+    },
+  });
+
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/home');
+    return null;
+  }
+
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
+
+  const handleSubmit = async (data: LeaveTypeFormData) => {
+    setUiError(null);
+
+    const submitData: LeaveTypeRequest = {
+      leaveCode: data.leaveCode,
+      leaveName: data.leaveName,
+      description: data.description || undefined,
+      isPaid: data.isPaid,
+      colorCode: data.colorCode || undefined,
+      annualQuota: data.annualQuota || undefined,
+      maxConsecutiveDays: data.maxConsecutiveDays || undefined,
+      minDaysNotice: data.minDaysNotice || 0,
+      maxDaysPerRequest: data.maxDaysPerRequest || undefined,
+      isCarryForwardAllowed: data.isCarryForwardAllowed,
+      maxCarryForwardDays: data.maxCarryForwardDays || undefined,
+      isEncashable: data.isEncashable,
+      requiresDocument: data.requiresDocument,
+      applicableAfterDays: data.applicableAfterDays || 0,
+      accrualType: data.accrualType || undefined,
+      accrualRate: data.accrualRate || undefined,
+      genderSpecific: data.genderSpecific || undefined,
+    };
+
+    if (editingLeaveType) {
+      updateMutation.mutate(
+        { id: editingLeaveType.id, data: submitData },
+        {
+          onSuccess: () => {
+            resetForm();
+            setShowModal(false);
+            setEditingLeaveType(null);
+          },
+          onError: (err: unknown) => {
+            setUiError(
+              (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+              'Failed to update leave type'
+            );
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(submitData, {
+        onSuccess: () => {
+          resetForm();
+          setShowModal(false);
+          setEditingLeaveType(null);
+        },
+        onError: (err: unknown) => {
+          setUiError(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to create leave type'
+          );
+        },
+      });
+    }
+  };
+
+  const resetForm = () => {
+    form.reset({
+      leaveCode: '',
+      leaveName: '',
+      description: '',
+      isPaid: true,
+      colorCode: '#3B82F6',
+      annualQuota: 0,
+      maxConsecutiveDays: undefined,
+      minDaysNotice: 0,
+      maxDaysPerRequest: undefined,
+      isCarryForwardAllowed: false,
+      maxCarryForwardDays: undefined,
+      isEncashable: false,
+      requiresDocument: false,
+      applicableAfterDays: 0,
+      accrualType: undefined,
+      accrualRate: undefined,
+      genderSpecific: 'ALL',
     });
   };
 
   const handleEdit = (leaveType: LeaveType) => {
     setEditingLeaveType(leaveType);
-    setFormData({
+    form.reset({
       leaveCode: leaveType.leaveCode,
       leaveName: leaveType.leaveName,
       description: leaveType.description || '',
@@ -155,36 +194,45 @@ export default function LeaveTypesManagementPage() {
       applicableAfterDays: leaveType.applicableAfterDays || 0,
       accrualType: leaveType.accrualType,
       accrualRate: leaveType.accrualRate,
-      genderSpecific: leaveType.genderSpecific,
+      genderSpecific: leaveType.genderSpecific || 'ALL',
     });
     setShowModal(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Are you sure you want to delete this leave type? This action cannot be undone.')) return;
 
-    try {
-      setError(null);
-      await leaveService.deleteLeaveType(id);
-      await loadLeaveTypes();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete leave type');
-      console.error('Error deleting leave type:', err);
-    }
+    setUiError(null);
+    deleteMutation.mutate(id, {
+      onError: (err: unknown) => {
+        setUiError(
+          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to delete leave type'
+        );
+      },
+    });
   };
 
-  const handleToggleActive = async (leaveType: LeaveType) => {
-    try {
-      setError(null);
-      if (leaveType.isActive) {
-        await leaveService.deactivateLeaveType(leaveType.id);
-      } else {
-        await leaveService.activateLeaveType(leaveType.id);
-      }
-      await loadLeaveTypes();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update leave type status');
-      console.error('Error toggling leave type status:', err);
+  const handleToggleActive = (leaveType: LeaveType) => {
+    setUiError(null);
+    if (leaveType.isActive) {
+      deactivateMutation.mutate(leaveType.id, {
+        onError: (err: unknown) => {
+          setUiError(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to update leave type status'
+          );
+        },
+      });
+    } else {
+      activateMutation.mutate(leaveType.id, {
+        onError: (err: unknown) => {
+          setUiError(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to update leave type status'
+          );
+        },
+      });
     }
   };
 
@@ -215,11 +263,11 @@ export default function LeaveTypesManagementPage() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {(uiError || queryError) && (
           <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
+            <span className="block sm:inline">{uiError || (queryError as any)?.message || 'An error occurred'}</span>
             <button
-              onClick={() => setError(null)}
+              onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-3"
             >
               <span className="text-red-500 text-xl">&times;</span>
@@ -363,7 +411,7 @@ export default function LeaveTypesManagementPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div className="border-b pb-4">
                     <h3 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">Basic Information</h3>
@@ -374,12 +422,13 @@ export default function LeaveTypesManagementPage() {
                         </label>
                         <input
                           type="text"
-                          required
-                          value={formData.leaveCode}
-                          onChange={(e) => setFormData({ ...formData, leaveCode: e.target.value })}
+                          {...form.register('leaveCode')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="AL, SL, CL"
                         />
+                        {form.formState.errors.leaveCode && (
+                          <p className="mt-1 text-xs text-red-500">{form.formState.errors.leaveCode.message}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -387,12 +436,13 @@ export default function LeaveTypesManagementPage() {
                         </label>
                         <input
                           type="text"
-                          required
-                          value={formData.leaveName}
-                          onChange={(e) => setFormData({ ...formData, leaveName: e.target.value })}
+                          {...form.register('leaveName')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           placeholder="Annual Leave, Sick Leave"
                         />
+                        {form.formState.errors.leaveName && (
+                          <p className="mt-1 text-xs text-red-500">{form.formState.errors.leaveName.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -401,8 +451,7 @@ export default function LeaveTypesManagementPage() {
                         Description
                       </label>
                       <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        {...form.register('description')}
                         rows={2}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="Brief description of this leave type..."
@@ -416,8 +465,7 @@ export default function LeaveTypesManagementPage() {
                         </label>
                         <input
                           type="color"
-                          value={formData.colorCode}
-                          onChange={(e) => setFormData({ ...formData, colorCode: e.target.value })}
+                          {...form.register('colorCode')}
                           className="w-full h-10 px-1 py-1 border border-surface-300 dark:border-surface-600 rounded-md"
                         />
                       </div>
@@ -425,8 +473,7 @@ export default function LeaveTypesManagementPage() {
                         <label className="flex items-center cursor-pointer">
                           <input
                             type="checkbox"
-                            checked={formData.isPaid}
-                            onChange={(e) => setFormData({ ...formData, isPaid: e.target.checked })}
+                            {...form.register('isPaid')}
                             className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                           />
                           <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Paid Leave</span>
@@ -437,8 +484,7 @@ export default function LeaveTypesManagementPage() {
                           Gender Specific
                         </label>
                         <select
-                          value={formData.genderSpecific || 'ALL'}
-                          onChange={(e) => setFormData({ ...formData, genderSpecific: e.target.value as GenderSpecific })}
+                          {...form.register('genderSpecific')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           {genderOptions.map(option => (
@@ -461,8 +507,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           step="0.5"
                           min="0"
-                          value={formData.annualQuota}
-                          onChange={(e) => setFormData({ ...formData, annualQuota: parseFloat(e.target.value) || 0 })}
+                          {...form.register('annualQuota')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -473,8 +518,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="number"
                           min="1"
-                          value={formData.maxConsecutiveDays || ''}
-                          onChange={(e) => setFormData({ ...formData, maxConsecutiveDays: e.target.value ? parseInt(e.target.value) : undefined })}
+                          {...form.register('maxConsecutiveDays')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -485,8 +529,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="number"
                           min="1"
-                          value={formData.maxDaysPerRequest || ''}
-                          onChange={(e) => setFormData({ ...formData, maxDaysPerRequest: e.target.value ? parseInt(e.target.value) : undefined })}
+                          {...form.register('maxDaysPerRequest')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -500,8 +543,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="number"
                           min="0"
-                          value={formData.minDaysNotice}
-                          onChange={(e) => setFormData({ ...formData, minDaysNotice: parseInt(e.target.value) || 0 })}
+                          {...form.register('minDaysNotice')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -512,8 +554,7 @@ export default function LeaveTypesManagementPage() {
                         <input
                           type="number"
                           min="0"
-                          value={formData.applicableAfterDays}
-                          onChange={(e) => setFormData({ ...formData, applicableAfterDays: parseInt(e.target.value) || 0 })}
+                          {...form.register('applicableAfterDays')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -529,8 +570,7 @@ export default function LeaveTypesManagementPage() {
                           Accrual Type
                         </label>
                         <select
-                          value={formData.accrualType || ''}
-                          onChange={(e) => setFormData({ ...formData, accrualType: e.target.value as AccrualType || undefined })}
+                          {...form.register('accrualType')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">No Accrual</option>
@@ -547,8 +587,7 @@ export default function LeaveTypesManagementPage() {
                           type="number"
                           step="0.1"
                           min="0"
-                          value={formData.accrualRate || ''}
-                          onChange={(e) => setFormData({ ...formData, accrualRate: e.target.value ? parseFloat(e.target.value) : undefined })}
+                          {...form.register('accrualRate')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
@@ -562,14 +601,13 @@ export default function LeaveTypesManagementPage() {
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.isCarryForwardAllowed}
-                          onChange={(e) => setFormData({ ...formData, isCarryForwardAllowed: e.target.checked })}
+                          {...form.register('isCarryForwardAllowed')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Allow Carry Forward</span>
                       </label>
 
-                      {formData.isCarryForwardAllowed && (
+                      {form.watch('isCarryForwardAllowed') && (
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                             Max Carry Forward Days
@@ -578,8 +616,7 @@ export default function LeaveTypesManagementPage() {
                             type="number"
                             step="0.5"
                             min="0"
-                            value={formData.maxCarryForwardDays || ''}
-                            onChange={(e) => setFormData({ ...formData, maxCarryForwardDays: e.target.value ? parseFloat(e.target.value) : undefined })}
+                            {...form.register('maxCarryForwardDays')}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
@@ -588,8 +625,7 @@ export default function LeaveTypesManagementPage() {
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.isEncashable}
-                          onChange={(e) => setFormData({ ...formData, isEncashable: e.target.checked })}
+                          {...form.register('isEncashable')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Encashable</span>
@@ -598,8 +634,7 @@ export default function LeaveTypesManagementPage() {
                       <label className="flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.requiresDocument}
-                          onChange={(e) => setFormData({ ...formData, requiresDocument: e.target.checked })}
+                          {...form.register('requiresDocument')}
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                         />
                         <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Requires Supporting Document</span>
@@ -622,10 +657,10 @@ export default function LeaveTypesManagementPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={submitting}
+                      disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
                       className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {submitting ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave Type
+                      {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingLeaveType ? 'Update' : 'Create')} Leave Type
                     </button>
                   </div>
                 </form>

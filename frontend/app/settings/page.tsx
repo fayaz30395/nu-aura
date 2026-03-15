@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Settings as SettingsIcon,
@@ -44,6 +44,11 @@ export default function SettingsPage() {
   const [isSavingNotifications, setIsSavingNotifications] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (successTimerRef.current) clearTimeout(successTimerRef.current);
+  }, []);
   const [activeNotificationTab, setActiveNotificationTab] = useState<'channels' | 'categories'>('channels');
 
   // Notification Channel Settings
@@ -83,9 +88,9 @@ export default function SettingsPage() {
 
   // Load notification preferences on mount
   React.useEffect(() => {
-    const loadPreferences = async () => {
-      if (!isAuthenticated || !hasHydrated) return;
+    if (!isAuthenticated || !hasHydrated) return;
 
+    const loadPreferences = async () => {
       try {
         const prefs = await notificationsApi.getPreferences();
         // Channel settings
@@ -141,7 +146,8 @@ export default function SettingsPage() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setTimeout(() => setSuccess(false), 3000);
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to change password:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to change password');
@@ -173,7 +179,8 @@ export default function SettingsPage() {
       });
 
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      successTimerRef.current = setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to save notification preferences:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save preferences');

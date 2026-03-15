@@ -33,6 +33,7 @@ public class LeaveRequestService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
+    @Transactional
     public LeaveRequest createLeaveRequest(LeaveRequest leaveRequest) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -64,6 +65,7 @@ public class LeaveRequestService {
         return saved;
     }
 
+    @Transactional
     public LeaveRequest approveLeaveRequest(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -77,11 +79,17 @@ public class LeaveRequestService {
         request.approve(approverId);
         LeaveRequest saved = leaveRequestRepository.save(request);
 
-        // Deduct from balance
+        // R2-006 FIX: Half-day requests must deduct only 0.5 days regardless of
+        // what totalDays stores. Without this check a half-day would deduct a full
+        // day (or whatever totalDays evaluates to) from the employee's balance.
+        java.math.BigDecimal daysToDeduct = Boolean.TRUE.equals(saved.getIsHalfDay())
+                ? new java.math.BigDecimal("0.5")
+                : saved.getTotalDays();
+
         leaveBalanceService.deductLeave(
                 saved.getEmployeeId(),
                 saved.getLeaveTypeId(),
-                saved.getTotalDays());
+                daysToDeduct);
 
         // Send WebSocket notification to employee
         notifyLeaveApproved(saved);
@@ -89,6 +97,7 @@ public class LeaveRequestService {
         return saved;
     }
 
+    @Transactional
     public LeaveRequest rejectLeaveRequest(UUID id, UUID approverId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -125,6 +134,7 @@ public class LeaveRequestService {
         }
     }
 
+    @Transactional
     public LeaveRequest cancelLeaveRequest(UUID id, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -147,6 +157,7 @@ public class LeaveRequestService {
         return saved;
     }
 
+    @Transactional
     public LeaveRequest updateLeaveRequest(UUID id, LeaveRequest leaveRequestData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

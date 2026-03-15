@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Calendar,
@@ -23,8 +23,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { dashboardService } from '@/lib/services/dashboard.service';
-import { EmployeeDashboardData } from '@/lib/types/dashboard';
+import { useEmployeeDashboard } from '@/lib/hooks/queries';
 import {
   LineChart,
   Line,
@@ -37,27 +36,7 @@ import {
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<EmployeeDashboardData | null>(null);
-
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
-  const loadDashboard = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const dashboardData = await dashboardService.getEmployeeDashboard();
-      setData(dashboardData);
-    } catch (err: unknown) {
-      console.error('Error loading employee dashboard:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isLoading: loading, error } = useEmployeeDashboard();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -179,9 +158,9 @@ export default function EmployeeDashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-surface-600 dark:text-surface-400 mb-4">
-                {error || 'Unable to load dashboard data'}
+                {error instanceof Error ? error.message : 'Unable to load dashboard data'}
               </p>
-              <Button variant="primary" onClick={loadDashboard} className="w-full">
+              <Button variant="primary" onClick={() => window.location.reload()} className="w-full">
                 Try Again
               </Button>
             </CardContent>

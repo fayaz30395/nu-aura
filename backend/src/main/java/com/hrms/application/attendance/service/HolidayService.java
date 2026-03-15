@@ -24,6 +24,7 @@ public class HolidayService {
     private final HolidayRepository holidayRepository;
 
     @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
+    @Transactional
     public Holiday createHoliday(Holiday holiday) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -36,6 +37,7 @@ public class HolidayService {
     }
 
     @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
+    @Transactional
     public Holiday updateHoliday(UUID id, Holiday holidayData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -83,6 +85,7 @@ public class HolidayService {
     }
 
     @CacheEvict(value = CacheConfig.HOLIDAYS, allEntries = true)
+    @Transactional
     public void deleteHoliday(UUID id) {
         Holiday holiday = getHolidayById(id);
         holidayRepository.delete(holiday);

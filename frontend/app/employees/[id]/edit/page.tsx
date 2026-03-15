@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
@@ -14,6 +17,53 @@ import { customFieldsApi } from '@/lib/api/custom-fields';
 import { AppLayout } from '@/components/layout';
 import { AlertCircle, Clock } from 'lucide-react';
 
+// Zod schema for employee form validation
+const updateEmployeeFormSchema = z.object({
+  employeeCode: z.string().min(1, 'Employee code required'),
+  firstName: z.string().min(1, 'First name required'),
+  middleName: z.string().optional().or(z.literal('')),
+  lastName: z.string().min(1, 'Last name required'),
+  personalEmail: z.string().email('Invalid email').optional().or(z.literal('')),
+  phoneNumber: z.string().optional().or(z.literal('')),
+  emergencyContactNumber: z.string().optional().or(z.literal('')),
+  dateOfBirth: z.string().optional().or(z.literal('')),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']).optional(),
+  address: z.string().optional().or(z.literal('')),
+  city: z.string().optional().or(z.literal('')),
+  state: z.string().optional().or(z.literal('')),
+  postalCode: z.string().optional().or(z.literal('')),
+  country: z.string().optional().or(z.literal('')),
+  designation: z.string().min(1, 'Designation required'),
+  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
+  jobRole: z.enum([
+    'SOFTWARE_ENGINEER', 'FRONTEND_DEVELOPER', 'BACKEND_DEVELOPER', 'FULLSTACK_DEVELOPER', 'DEVOPS_ENGINEER',
+    'QA_ENGINEER', 'DATA_ENGINEER', 'MOBILE_DEVELOPER', 'SYSTEM_ARCHITECT', 'TECH_LEAD', 'ENGINEERING_MANAGER',
+    'PRODUCT_MANAGER', 'PRODUCT_OWNER', 'PRODUCT_ANALYST',
+    'UI_DESIGNER', 'UX_DESIGNER', 'GRAPHIC_DESIGNER', 'PRODUCT_DESIGNER',
+    'DATA_ANALYST', 'DATA_SCIENTIST', 'BUSINESS_ANALYST',
+    'MARKETING_MANAGER', 'CONTENT_WRITER', 'SEO_SPECIALIST', 'SOCIAL_MEDIA_MANAGER', 'DIGITAL_MARKETER',
+    'SALES_REPRESENTATIVE', 'SALES_MANAGER', 'ACCOUNT_MANAGER', 'BUSINESS_DEVELOPMENT',
+    'OPERATIONS_MANAGER', 'PROJECT_MANAGER', 'SCRUM_MASTER', 'PROGRAM_MANAGER',
+    'HR_MANAGER', 'HR_GENERALIST', 'RECRUITER', 'TALENT_ACQUISITION',
+    'ACCOUNTANT', 'FINANCIAL_ANALYST', 'FINANCE_MANAGER',
+    'ADMIN_ASSISTANT', 'OFFICE_MANAGER', 'CUSTOMER_SUPPORT', 'TECH_SUPPORT',
+    'LEGAL_COUNSEL', 'COMPLIANCE_OFFICER',
+    'CONSULTANT', 'INTERN', 'OTHER'
+  ]).optional(),
+  departmentId: z.string().optional().or(z.literal('')),
+  employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN', 'CONSULTANT']).optional(),
+  managerId: z.string().optional().or(z.literal('')),
+  status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional(),
+  confirmationDate: z.string().optional().or(z.literal('')),
+  bankAccountNumber: z.string().optional().or(z.literal('')),
+  bankName: z.string().optional().or(z.literal('')),
+  bankIfscCode: z.string().optional().or(z.literal('')),
+  taxId: z.string().optional().or(z.literal('')),
+  changeRequestReason: z.string().optional().or(z.literal('')),
+});
+
+type UpdateEmployeeFormData = z.infer<typeof updateEmployeeFormSchema>;
+
 export default function EditEmployeePage() {
   const router = useRouter();
   const params = useParams();
@@ -23,40 +73,19 @@ export default function EditEmployeePage() {
   const [managers, setManagers] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTab, setCurrentTab] = useState('basic');
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, CustomFieldValueRequest>>({});
   const [changeRequestCreated, setChangeRequestCreated] = useState(false);
-  const [changeRequestReason, setChangeRequestReason] = useState('');
 
-  const [formData, setFormData] = useState<UpdateEmployeeRequest>({
-    employeeCode: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    personalEmail: '',
-    phoneNumber: '',
-    emergencyContactNumber: '',
-    dateOfBirth: '',
-    gender: undefined,
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
-    designation: '',
-    level: undefined,
-    jobRole: undefined,
-    departmentId: undefined,
-    employmentType: undefined,
-    confirmationDate: '',
-    managerId: '',
-    status: undefined,
-    bankAccountNumber: '',
-    bankName: '',
-    bankIfscCode: '',
-    taxId: '',
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<UpdateEmployeeFormData>({
+    resolver: zodResolver(updateEmployeeFormSchema),
   });
 
   useEffect(() => {
@@ -73,7 +102,7 @@ export default function EditEmployeePage() {
       setEmployee(data);
 
       // Pre-populate form data
-      setFormData({
+      reset({
         employeeCode: data.employeeCode,
         firstName: data.firstName,
         middleName: data.middleName || '',
@@ -100,6 +129,7 @@ export default function EditEmployeePage() {
         bankName: data.bankName || '',
         bankIfscCode: data.bankIfscCode || '',
         taxId: data.taxId || '',
+        changeRequestReason: '',
       });
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
@@ -128,7 +158,7 @@ export default function EditEmployeePage() {
   };
 
   // Check if employment fields have changed (these require HR approval)
-  const hasEmploymentFieldChanges = (): boolean => {
+  const hasEmploymentFieldChanges = (formData: UpdateEmployeeFormData): boolean => {
     if (!employee) return false;
     return (
       formData.designation !== employee.designation ||
@@ -142,21 +172,19 @@ export default function EditEmployeePage() {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (formData: UpdateEmployeeFormData) => {
     try {
-      setSaving(true);
       setError(null);
       setChangeRequestCreated(false);
 
       // Check if employment fields have changed
-      const employmentChanges = hasEmploymentFieldChanges();
+      const employmentChanges = hasEmploymentFieldChanges(formData);
 
       // Build employment change request if needed
       if (employmentChanges && employee) {
         const changeRequest: CreateEmploymentChangeRequest = {
           employeeId: employeeId,
-          reason: changeRequestReason || 'Employment details update',
+          reason: formData.changeRequestReason || 'Employment details update',
         };
 
         // Only include fields that have changed
@@ -237,16 +265,12 @@ export default function EditEmployeePage() {
         });
       }
 
-      if (employmentChanges) {
-        // Show success message for change request, don't navigate away
-        setSaving(false);
-      } else {
+      if (!employmentChanges) {
         router.push(`/employees/${employeeId}`);
       }
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update employee');
       console.error('Error updating employee:', err);
-      setSaving(false);
     }
   };
 
@@ -432,7 +456,7 @@ export default function EditEmployeePage() {
             </nav>
           </div>
 
-          <form className="p-6 space-y-6" onSubmit={handleSubmit}>
+          <form className="p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Basic Info Tab */}
             {currentTab === 'basic' && (
               <div className="space-y-4">
@@ -449,11 +473,11 @@ export default function EditEmployeePage() {
                   <input
                     type="text"
                     required
-                    value={formData.employeeCode}
-                    onChange={(e) => setFormData({ ...formData, employeeCode: e.target.value })}
+                    {...register('employeeCode')}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
                     placeholder="EMP001"
                   />
+                  {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
                   <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
                     Unique identifier for this employee. Changing this may affect integrations.
                   </p>
@@ -467,10 +491,10 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       required
-                      value={formData.firstName}
-                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      {...register('firstName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -478,10 +502,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.middleName}
-                      onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                      {...register('middleName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -489,10 +513,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.lastName}
-                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      {...register('lastName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                   </div>
                 </div>
 
@@ -500,19 +524,27 @@ export default function EditEmployeePage() {
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Status *
                   </label>
-                  <select
-                    required
-                    value={formData.status || ''}
-                    onChange={(e) => setFormData({ ...formData, status: toEmployeeStatus(e.target.value) })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select Status</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="ON_LEAVE">On Leave</option>
-                    <option value="ON_NOTICE">On Notice</option>
-                    <option value="TERMINATED">Terminated</option>
-                    <option value="RESIGNED">Resigned</option>
-                  </select>
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        required
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(toEmployeeStatus(e.target.value) || undefined)}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select Status</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="ON_LEAVE">On Leave</option>
+                        <option value="ON_NOTICE">On Notice</option>
+                        <option value="TERMINATED">Terminated</option>
+                        <option value="RESIGNED">Resigned</option>
+                      </select>
+                    )}
+                  />
+                  {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
                 </div>
               </div>
             )}
@@ -527,11 +559,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="email"
-                      value={formData.personalEmail}
-                      onChange={(e) => setFormData({ ...formData, personalEmail: e.target.value })}
+                      {...register('personalEmail')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="personal@email.com"
                     />
+                    {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -539,11 +571,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="tel"
-                      value={formData.phoneNumber}
-                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      {...register('phoneNumber')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="+1 234 567 8900"
                     />
+                    {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
                   </div>
                 </div>
 
@@ -554,11 +586,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="tel"
-                      value={formData.emergencyContactNumber}
-                      onChange={(e) => setFormData({ ...formData, emergencyContactNumber: e.target.value })}
+                      {...register('emergencyContactNumber')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="+1 234 567 8900"
                     />
+                    {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -566,10 +598,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.dateOfBirth}
-                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                      {...register('dateOfBirth')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                   </div>
                 </div>
 
@@ -577,17 +609,25 @@ export default function EditEmployeePage() {
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Gender
                   </label>
-                  <select
-                    value={formData.gender || ''}
-                    onChange={(e) => setFormData({ ...formData, gender: toGender(e.target.value) })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="OTHER">Other</option>
-                    <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
-                  </select>
+                  <Controller
+                    name="gender"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(toGender(e.target.value) || undefined)}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                        <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+                      </select>
+                    )}
+                  />
+                  {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
                 </div>
 
                 <div>
@@ -596,11 +636,11 @@ export default function EditEmployeePage() {
                   </label>
                   <textarea
                     rows={2}
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    {...register('address')}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Street address"
                   />
+                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -610,10 +650,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      {...register('city')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -621,10 +661,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                      {...register('state')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
                   </div>
                 </div>
 
@@ -635,10 +675,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.postalCode}
-                      onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                      {...register('postalCode')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -646,10 +686,10 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.country}
-                      onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      {...register('country')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
                   </div>
                 </div>
               </div>
@@ -680,12 +720,12 @@ export default function EditEmployeePage() {
                     Reason for Changes
                   </label>
                   <textarea
-                    value={changeRequestReason}
-                    onChange={(e) => setChangeRequestReason(e.target.value)}
+                    {...register('changeRequestReason')}
                     rows={2}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Please provide a reason for the employment changes (e.g., Promotion, Role change, Transfer)"
                   />
+                  {errors.changeRequestReason && <p className="text-red-500 text-sm mt-1">{errors.changeRequestReason.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -696,29 +736,37 @@ export default function EditEmployeePage() {
                     <input
                       type="text"
                       required
-                      value={formData.designation}
-                      onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                      {...register('designation')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Senior Software Engineer"
                     />
+                    {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Employment Type *
                     </label>
-                    <select
-                      required
-                      value={formData.employmentType || ''}
-                      onChange={(e) => setFormData({ ...formData, employmentType: toEmploymentType(e.target.value) })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="">Select Type</option>
-                      <option value="FULL_TIME">Full Time</option>
-                      <option value="PART_TIME">Part Time</option>
-                      <option value="CONTRACT">Contract</option>
-                      <option value="INTERN">Intern</option>
-                      <option value="CONSULTANT">Consultant</option>
-                    </select>
+                    <Controller
+                      name="employmentType"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          required
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(toEmploymentType(e.target.value) || undefined)}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">Select Type</option>
+                          <option value="FULL_TIME">Full Time</option>
+                          <option value="PART_TIME">Part Time</option>
+                          <option value="CONTRACT">Contract</option>
+                          <option value="INTERN">Intern</option>
+                          <option value="CONSULTANT">Consultant</option>
+                        </select>
+                      )}
+                    />
+                    {errors.employmentType && <p className="text-red-500 text-sm mt-1">{errors.employmentType.message}</p>}
                   </div>
                 </div>
 
@@ -726,18 +774,25 @@ export default function EditEmployeePage() {
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Department
                   </label>
-                  <select
-                    value={formData.departmentId || ''}
-                    onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                    className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select Department</option>
-                    {departments.map((dept) => (
-                      <option key={dept.id} value={dept.id}>
-                        {dept.name} ({dept.code})
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="departmentId"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        value={field.value || ''}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      >
+                        <option value="">Select Department</option>
+                        {departments.map((dept) => (
+                          <option key={dept.id} value={dept.id}>
+                            {dept.name} ({dept.code})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.departmentId && <p className="text-red-500 text-sm mt-1">{errors.departmentId.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -745,33 +800,46 @@ export default function EditEmployeePage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Employee Level
                     </label>
-                    <select
-                      value={formData.level || ''}
-                      onChange={(e) => setFormData({ ...formData, level: toEmployeeLevel(e.target.value) })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="">Select Level</option>
-                      <option value="ENTRY">Entry (Junior/Associate)</option>
-                      <option value="MID">Mid-Level</option>
-                      <option value="SENIOR">Senior</option>
-                      <option value="LEAD">Lead/Principal</option>
-                      <option value="MANAGER">Manager</option>
-                      <option value="SENIOR_MANAGER">Senior Manager</option>
-                      <option value="DIRECTOR">Director</option>
-                      <option value="VP">Vice President</option>
-                      <option value="SVP">Senior Vice President</option>
-                      <option value="CXO">C-Level Executive</option>
-                    </select>
+                    <Controller
+                      name="level"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(toEmployeeLevel(e.target.value) || undefined)}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">Select Level</option>
+                          <option value="ENTRY">Entry (Junior/Associate)</option>
+                          <option value="MID">Mid-Level</option>
+                          <option value="SENIOR">Senior</option>
+                          <option value="LEAD">Lead/Principal</option>
+                          <option value="MANAGER">Manager</option>
+                          <option value="SENIOR_MANAGER">Senior Manager</option>
+                          <option value="DIRECTOR">Director</option>
+                          <option value="VP">Vice President</option>
+                          <option value="SVP">Senior Vice President</option>
+                          <option value="CXO">C-Level Executive</option>
+                        </select>
+                      )}
+                    />
+                    {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Job Role
                     </label>
-                    <select
-                      value={formData.jobRole || ''}
-                      onChange={(e) => setFormData({ ...formData, jobRole: toJobRole(e.target.value) })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
+                    <Controller
+                      name="jobRole"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(e) => field.onChange(toJobRole(e.target.value) || undefined)}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        >
                       <option value="">Select Role</option>
                       <optgroup label="Engineering">
                         <option value="SOFTWARE_ENGINEER">Software Engineer</option>
@@ -847,7 +915,10 @@ export default function EditEmployeePage() {
                         <option value="INTERN">Intern</option>
                         <option value="OTHER">Other</option>
                       </optgroup>
-                    </select>
+                        </select>
+                      )}
+                    />
+                    {errors.jobRole && <p className="text-red-500 text-sm mt-1">{errors.jobRole.message}</p>}
                   </div>
                 </div>
 
@@ -858,29 +929,35 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.confirmationDate}
-                      onChange={(e) => setFormData({ ...formData, confirmationDate: e.target.value })}
+                      {...register('confirmationDate')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Reporting Manager *
                     </label>
-                    <select
-                      required
-                      value={formData.managerId}
-                      onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
-                    >
-                      <option value="">Select Manager</option>
-                      <option value={employeeId}>Self (No Reporting Manager)</option>
-                      {managers.filter(m => m.id !== employeeId).map((manager) => (
-                        <option key={manager.id} value={manager.id}>
-                          {manager.fullName} ({manager.employeeCode})
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="managerId"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          required
+                          {...field}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-0 dark:bg-surface-800 text-surface-900 dark:text-surface-100"
+                        >
+                          <option value="">Select Manager</option>
+                          <option value={employeeId}>Self (No Reporting Manager)</option>
+                          {managers.filter(m => m.id !== employeeId).map((manager) => (
+                            <option key={manager.id} value={manager.id}>
+                              {manager.fullName} ({manager.employeeCode})
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
                     <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
                       Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
                     </p>
@@ -899,11 +976,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.bankAccountNumber}
-                      onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                      {...register('bankAccountNumber')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="1234567890"
                     />
+                    {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -911,11 +988,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.bankName}
-                      onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                      {...register('bankName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Bank of America"
                     />
+                    {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
                   </div>
                 </div>
 
@@ -926,11 +1003,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.bankIfscCode}
-                      onChange={(e) => setFormData({ ...formData, bankIfscCode: e.target.value })}
+                      {...register('bankIfscCode')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="HDFC0001234"
                     />
+                    {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -938,11 +1015,11 @@ export default function EditEmployeePage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.taxId}
-                      onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
+                      {...register('taxId')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="XXX-XX-XXXX"
                     />
+                    {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
                   </div>
                 </div>
 
@@ -972,17 +1049,17 @@ export default function EditEmployeePage() {
               <button
                 type="button"
                 onClick={() => router.push(`/employees/${employeeId}`)}
-                disabled={saving}
+                disabled={isSubmitting}
                 className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={saving}
+                disabled={isSubmitting}
                 className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {isSubmitting ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </form>

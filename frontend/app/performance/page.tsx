@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import {
   Flag,
@@ -17,9 +17,12 @@ import {
   Sliders,
   AlertCircle,
 } from 'lucide-react';
-import { goalService, reviewCycleService } from '@/lib/services/performance.service';
-import { okrService, OkrSummary } from '@/lib/services/okr.service';
-import { feedback360Service } from '@/lib/services/feedback360.service';
+import {
+  useAllGoals,
+  usePerformanceActiveCycles,
+  useOkrDashboardSummary,
+  useMyPending360Reviews,
+} from '@/lib/hooks/queries/usePerformance';
 import { AppLayout } from '@/components/layout';
 
 interface DashboardStats {
@@ -155,57 +158,37 @@ const StatCard = ({
 );
 
 export default function PerformancePage() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalGoals: 0,
-    activeGoals: 0,
-    completedGoals: 0,
-    averageProgress: 0,
-    activeReviewCycles: 0,
-    pendingReviews: 0,
-    okrObjectives: 0,
-    okrProgress: 0,
-    pending360Reviews: 0,
-  });
-  const [loading, setLoading] = useState(true);
+  const goalsQuery = useAllGoals(0, 1000);
+  const cyclesQuery = usePerformanceActiveCycles();
+  const okrQuery = useOkrDashboardSummary();
+  const pending360Query = useMyPending360Reviews();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [goals, cycles, okrSummary, pending360] = await Promise.all([
-          goalService.getAllGoals().then(r => r.content || []).catch(() => [] as any[]),
-          reviewCycleService.getAllCycles().catch(() => ({ content: [] } as any)),
-          okrService.getDashboardSummary().catch(() => null as any),
-          feedback360Service.getMyPendingReviews().catch(() => [] as any[]),
-        ]);
+  const stats: DashboardStats = useMemo(() => {
+    const goals = goalsQuery.data?.content || [];
+    const cycles = cyclesQuery.data || [];
+    const okrSummary = okrQuery.data;
+    const pending360 = pending360Query.data || [];
 
-        const activeGoals = goals.filter((g: any) => g.status === 'ACTIVE' || g.status === 'IN_PROGRESS');
-        const completedGoals = goals.filter((g: any) => g.status === 'COMPLETED');
-        const avgProgress = goals.length > 0
-          ? Math.round(goals.reduce((acc: number, g: any) => acc + (g.progressPercentage || 0), 0) / goals.length)
-          : 0;
+    const activeGoals = goals.filter((g) => g.status === 'ACTIVE' || g.status === 'IN_PROGRESS');
+    const completedGoals = goals.filter((g) => g.status === 'COMPLETED');
+    const avgProgress = goals.length > 0
+      ? Math.round(goals.reduce((acc: number, g) => acc + (g.progressPercentage || 0), 0) / goals.length)
+      : 0;
 
-        const activeCycles = (cycles.content || []).filter((c: any) => c.status === 'ACTIVE');
-
-        setStats({
-          totalGoals: goals.length,
-          activeGoals: activeGoals.length,
-          completedGoals: completedGoals.length,
-          averageProgress: avgProgress,
-          activeReviewCycles: activeCycles.length,
-          pendingReviews: 0,
-          okrObjectives: okrSummary?.totalObjectives || 0,
-          okrProgress: Math.round(okrSummary?.averageProgress || 0),
-          pending360Reviews: pending360.length,
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setLoading(false);
-      }
+    return {
+      totalGoals: goals.length,
+      activeGoals: activeGoals.length,
+      completedGoals: completedGoals.length,
+      averageProgress: avgProgress,
+      activeReviewCycles: cycles.length,
+      pendingReviews: 0,
+      okrObjectives: okrSummary?.totalObjectives || 0,
+      okrProgress: Math.round(okrSummary?.averageProgress || 0),
+      pending360Reviews: pending360.length,
     };
+  }, [goalsQuery.data, cyclesQuery.data, okrQuery.data, pending360Query.data]);
 
-    fetchStats();
-  }, []);
+  const loading = goalsQuery.isLoading || cyclesQuery.isLoading || okrQuery.isLoading || pending360Query.isLoading;
 
   return (
     <AppLayout activeMenuItem="performance">

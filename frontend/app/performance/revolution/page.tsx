@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Target,
@@ -30,33 +30,17 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { performanceRevolutionService } from '@/lib/services/performance.service';
+import { useOKRGraph, usePerformanceSpider } from '@/lib/hooks/queries/usePerformance';
 import { OKRGraphResponse, PerformanceSpiderResponse } from '@/lib/types/performance';
 
 export default function PerformanceRevolutionPage() {
-    const [loading, setLoading] = useState(true);
-    const [graphData, setGraphData] = useState<OKRGraphResponse | null>(null);
-    const [spiderData, setSpiderData] = useState<PerformanceSpiderResponse | null>(null);
+    const [currentUserId] = useState('me');
+    const okrGraphQuery = useOKRGraph();
+    const performanceSpiderQuery = usePerformanceSpider(currentUserId);
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const [graph, spider] = await Promise.all([
-                performanceRevolutionService.getOKRGraph(),
-                performanceRevolutionService.getPerformanceSpider('me') // Current user placeholder
-            ]);
-            setGraphData(graph);
-            setSpiderData(spider);
-        } catch (err) {
-            console.error('Failed to load performance data:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const loading = okrGraphQuery.isLoading || performanceSpiderQuery.isLoading;
+    const graphData = okrGraphQuery.data || null;
+    const spiderData = performanceSpiderQuery.data || null;
 
     return (
         <AppLayout activeMenuItem="performance">
@@ -70,7 +54,7 @@ export default function PerformanceRevolutionPage() {
                         <p className="text-surface-600 dark:text-surface-400 mt-1">Advanced OKR visualization and 360° performance insights</p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={loadData} leftIcon={<RefreshCw className="h-4 w-4" />}>
+                        <Button variant="outline" size="sm" onClick={() => { okrGraphQuery.refetch(); performanceSpiderQuery.refetch(); }} leftIcon={<RefreshCw className="h-4 w-4" />}>
                             Refresh
                         </Button>
                         <Button variant="primary" size="sm" leftIcon={<Share2 className="h-4 w-4" />}>

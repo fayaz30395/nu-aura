@@ -463,8 +463,8 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-surface-200/80',
-        'dark:bg-surface-950/80 dark:border-surface-800/80',
+        'sticky top-0 z-40 glass-midnight border-b border-white/10',
+        'shadow-[0_4px_20px_rgba(0,0,0,0.3)]',
         'transition-all duration-300',
         className
       )}
@@ -475,7 +475,7 @@ const Header: React.FC<HeaderProps> = ({
           {showMenuButton && (
             <button
               onClick={onMenuClick}
-              className="p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-all md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
               <Menu className="h-5 w-5" />
@@ -495,7 +495,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="lg:hidden p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 dark:hover:text-surface-300 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="lg:hidden p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Search"
           >
             <Search className="h-5 w-5" />
@@ -506,7 +506,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1 sm:gap-2">
           {/* Help */}
           <button
-            className="hidden sm:flex p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100 transition-all"
+            className="hidden sm:flex p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
             aria-label="Help"
           >
             <HelpCircle className="h-5 w-5" />
@@ -515,7 +515,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleDarkMode}
-            className="p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100 transition-all"
+            className="p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
             aria-label="Toggle dark mode"
           >
             {isDark ? (
@@ -529,7 +529,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="notification-btn relative p-2.5 rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 dark:text-surface-300 dark:hover:bg-surface-800 dark:hover:text-surface-100 transition-all"
+              className="notification-btn relative p-2.5 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all"
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
@@ -545,21 +545,21 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Notification Dropdown */}
             {isNotificationsOpen && (
-              <div className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl border border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-900 shadow-xl shadow-surface-900/5 dark:shadow-surface-950/50 animate-fade-in-down overflow-hidden z-50">
+              <div className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl glass-midnight shadow-xl shadow-black/20 animate-fade-in-down overflow-hidden z-50">
                 {/* Tabs */}
-                <div className="flex border-b border-surface-100 dark:border-surface-800">
+                <div className="flex border-b border-white/10">
                   <button
                     onClick={() => setNotificationTab('google')}
                     className={cn(
-                      "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+                      "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
                       notificationTab === 'google'
-                        ? "text-primary-600 border-b-2 border-primary-600 dark:text-primary-400"
-                        : "text-surface-500 hover:text-surface-700 dark:text-surface-300 dark:hover:text-surface-200"
+                        ? "text-primary-400 border-b-2 border-primary-500"
+                        : "text-white/60 hover:text-white"
                     )}
                   >
                     Google
                     {googleNotifications.length > 0 && (
-                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 rounded-full">
+                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/20 text-primary-300 rounded-full">
                         {googleNotifications.length}
                       </span>
                     )}
@@ -567,15 +567,15 @@ const Header: React.FC<HeaderProps> = ({
                   <button
                     onClick={() => setNotificationTab('system')}
                     className={cn(
-                      "flex-1 px-4 py-3 text-sm font-medium transition-colors",
+                      "flex-1 px-4 py-3 text-sm font-medium transition-all duration-200",
                       notificationTab === 'system'
-                        ? "text-primary-600 border-b-2 border-primary-600 dark:text-primary-400"
-                        : "text-surface-500 hover:text-surface-700 dark:text-surface-300 dark:hover:text-surface-200"
+                        ? "text-primary-400 border-b-2 border-primary-500"
+                        : "text-white/60 hover:text-white"
                     )}
                   >
                     System
                     {systemUnreadCount > 0 && (
-                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 rounded-full">
+                      <span className="ml-1.5 px-1.5 py-0.5 text-xs bg-primary-500/20 text-primary-300 rounded-full">
                         {systemUnreadCount}
                       </span>
                     )}
@@ -828,13 +828,13 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl border border-surface-200 bg-white dark:border-surface-700 dark:bg-surface-900 shadow-xl shadow-surface-900/5 dark:shadow-surface-950/50 animate-fade-in-down overflow-hidden">
+              <div className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-xl glass-midnight shadow-xl shadow-black/20 animate-fade-in-down overflow-hidden">
                 {/* User Info Header */}
-                <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-surface-50 dark:bg-surface-800/50">
-                  <p className="text-sm font-semibold text-surface-900 dark:text-surface-50">
+                <div className="p-4 border-b border-white/10 bg-white/5">
+                  <p className="text-sm font-semibold text-white">
                     {userName}
                   </p>
-                  <p className="text-xs text-surface-500 dark:text-surface-300 mt-0.5">
+                  <p className="text-xs text-white/50 mt-0.5">
                     {userRole}
                   </p>
                 </div>
@@ -846,10 +846,10 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onProfile?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-surface-700 hover:bg-surface-100 dark:text-surface-200 dark:hover:bg-surface-800 transition-colors"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-surface-100 dark:bg-surface-800">
-                      <User className="h-4 w-4 text-surface-500 dark:text-surface-300" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5">
+                      <User className="h-4 w-4 text-white/60" />
                     </div>
                     <span>View Profile</span>
                   </button>
@@ -859,24 +859,24 @@ const Header: React.FC<HeaderProps> = ({
                       setIsDropdownOpen(false);
                       onSettings?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-surface-700 hover:bg-surface-100 dark:text-surface-200 dark:hover:bg-surface-800 transition-colors"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-surface-100 dark:bg-surface-800">
-                      <Settings className="h-4 w-4 text-surface-500 dark:text-surface-300" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/5">
+                      <Settings className="h-4 w-4 text-white/60" />
                     </div>
                     <span>Settings</span>
                   </button>
                 </div>
 
-                <div className="border-t border-surface-100 dark:border-surface-800 p-2">
+                <div className="border-t border-white/10 p-2">
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
                       onLogout?.();
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-accent-400 hover:bg-accent-500/10 transition-all duration-200"
                   >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/30">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-500/10">
                       <LogOut className="h-4 w-4" />
                     </div>
                     <span>Sign out</span>

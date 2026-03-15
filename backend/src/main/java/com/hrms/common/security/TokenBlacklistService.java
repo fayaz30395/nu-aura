@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing JWT token revocation.
@@ -119,6 +120,7 @@ public class TokenBlacklistService {
      * @param userId    The user ID
      * @param timestamp All tokens issued before this time are considered revoked
      */
+    @Transactional
     public void revokeAllTokensBefore(String userId, Instant timestamp) {
         if (userId == null || userId.isBlank()) {
             return;

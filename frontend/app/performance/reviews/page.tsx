@@ -1,129 +1,65 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { performanceReviewService } from '@/lib/services/performance.service';
+import {
+  useEmployeeReviews,
+  useCreateReview,
+  useUpdateReview,
+  useDeleteReview,
+} from '@/lib/hooks/queries/usePerformance';
 import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const reviewFormSchema = z.object({
+  employeeId: z.string().min(1, 'Employee ID is required'),
+  reviewerId: z.string().min(1, 'Reviewer ID is required'),
+  cycleId: z.string().optional().or(z.literal('')),
+  reviewType: z.enum(['SELF', 'MANAGER', 'PEER', 'SUBORDINATE', 'SKIP_LEVEL'] as const) as z.ZodType<ReviewType>,
+  status: z.enum(['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'COMPLETED', 'APPROVED', 'REJECTED'] as const) as z.ZodType<ReviewStatus>,
+  reviewPeriodStart: z.string().min(1, 'Review period start is required'),
+  reviewPeriodEnd: z.string().min(1, 'Review period end is required'),
+  overallRating: z.number({ coerce: true }).min(0, 'Min 0').max(5, 'Max 5'),
+  strengths: z.string().optional().or(z.literal('')),
+  areasForImprovement: z.string().optional().or(z.literal('')),
+  goals: z.string().optional().or(z.literal('')),
+  reviewerComments: z.string().optional().or(z.literal('')),
+  employeeComments: z.string().optional().or(z.literal('')),
+}).refine(data => new Date(data.reviewPeriodEnd) > new Date(data.reviewPeriodStart), {
+  message: 'Review period end must be after start',
+  path: ['reviewPeriodEnd'],
+});
+
+type ReviewFormData = z.infer<typeof reviewFormSchema>;
 
 export default function PerformanceReviewsPage() {
+  const toast = useToast();
   const { user, hasHydrated } = useAuth();
-  const [reviews, setReviews] = useState<PerformanceReview[]>([]);
-  const [loading, setLoading] = useState(false);
+  const reviewsQuery = useEmployeeReviews(user?.employeeId || '');
+  const createReviewMutation = useCreateReview();
+  const updateReviewMutation = useUpdateReview();
+  const deleteReviewMutation = useDeleteReview();
+
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedReview, setSelectedReview] = useState<PerformanceReview | null>(null);
   const [filterType, setFilterType] = useState<ReviewType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<ReviewStatus | 'ALL'>('ALL');
-  const [formData, setFormData] = useState<ReviewRequest>({
-    employeeId: '',
-    reviewerId: '',
-    cycleId: '',
-    reviewType: 'SELF',
-    status: 'DRAFT',
-    reviewPeriodStart: '',
-    reviewPeriodEnd: '',
-    overallRating: 0,
-    strengths: '',
-    areasForImprovement: '',
-    goals: '',
-    reviewerComments: '',
-    employeeComments: '',
-    submittedAt: undefined,
-    completedAt: undefined,
-  });
 
-  useEffect(() => {
-    if (hasHydrated && user?.employeeId) {
-      loadReviews();
-    }
-  }, [hasHydrated, user?.employeeId]);
-
-  const loadReviews = async () => {
-    if (!user?.employeeId) return;
-    try {
-      setLoading(true);
-      const response = await performanceReviewService.getByEmployee(user.employeeId);
-      setReviews(response);
-    } catch (error) {
-      console.error('Error loading reviews:', error);
-      alert('Failed to load reviews');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const reviewData = {
-        ...formData,
-        employeeId: user?.employeeId || '',
-        reviewerId: formData.reviewerId || user?.employeeId || ''
-      };
-
-      if (selectedReview) {
-        await performanceReviewService.update(selectedReview.id, reviewData);
-      } else {
-        await performanceReviewService.create(reviewData);
-      }
-
-      setShowModal(false);
-      resetForm();
-      await loadReviews();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save review');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedReview) return;
-    try {
-      setLoading(true);
-      await performanceReviewService.delete(selectedReview.id);
-      setShowDeleteConfirm(false);
-      setSelectedReview(null);
-      await loadReviews();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete review');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openEditModal = (review: PerformanceReview) => {
-    setSelectedReview(review);
-    setFormData({
-      employeeId: review.employeeId,
-      reviewerId: review.reviewerId,
-      cycleId: review.cycleId || '',
-      reviewType: review.reviewType,
-      status: review.status,
-      reviewPeriodStart: review.reviewPeriodStart,
-      reviewPeriodEnd: review.reviewPeriodEnd,
-      overallRating: review.overallRating,
-      strengths: review.strengths || '',
-      areasForImprovement: review.areasForImprovement || '',
-      goals: review.goals || '',
-      reviewerComments: review.reviewerComments || '',
-      employeeComments: review.employeeComments || '',
-      submittedAt: review.submittedAt,
-      completedAt: review.completedAt,
-    });
-    setShowModal(true);
-  };
-
-  const openDeleteConfirm = (review: PerformanceReview) => {
-    setSelectedReview(review);
-    setShowDeleteConfirm(true);
-  };
-
-  const resetForm = () => {
-    setSelectedReview(null);
-    setFormData({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewFormSchema),
+    defaultValues: {
       employeeId: '',
       reviewerId: '',
       cycleId: '',
@@ -137,8 +73,91 @@ export default function PerformanceReviewsPage() {
       goals: '',
       reviewerComments: '',
       employeeComments: '',
-      submittedAt: undefined,
-      completedAt: undefined,
+    },
+  });
+
+  const reviews = reviewsQuery.data || [];
+  const loading = reviewsQuery.isLoading || createReviewMutation.isPending || updateReviewMutation.isPending || deleteReviewMutation.isPending;
+
+  const handleFormSubmit = async (formData: ReviewFormData) => {
+    try {
+      const reviewData = {
+        ...formData,
+        cycleId: formData.cycleId || '',
+        employeeId: user?.employeeId || '',
+        reviewerId: formData.reviewerId || user?.employeeId || '',
+        strengths: formData.strengths || '',
+        areasForImprovement: formData.areasForImprovement || '',
+        goals: formData.goals || '',
+        reviewerComments: formData.reviewerComments || '',
+        employeeComments: formData.employeeComments || '',
+      };
+
+      if (selectedReview) {
+        await updateReviewMutation.mutateAsync({ id: selectedReview.id, data: reviewData as ReviewRequest });
+      } else {
+        await createReviewMutation.mutateAsync(reviewData as ReviewRequest);
+      }
+
+      setShowModal(false);
+      resetFormHandler();
+    } catch (error: unknown) {
+      console.error('Error saving review:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedReview) return;
+    try {
+      await deleteReviewMutation.mutateAsync(selectedReview.id);
+      setShowDeleteConfirm(false);
+      setSelectedReview(null);
+    } catch (error: unknown) {
+      console.error('Error deleting review:', error);
+    }
+  };
+
+  const openEditModal = (review: PerformanceReview) => {
+    setSelectedReview(review);
+    reset({
+      employeeId: review.employeeId,
+      reviewerId: review.reviewerId,
+      cycleId: review.cycleId || '',
+      reviewType: review.reviewType,
+      status: review.status,
+      reviewPeriodStart: review.reviewPeriodStart,
+      reviewPeriodEnd: review.reviewPeriodEnd,
+      overallRating: review.overallRating,
+      strengths: review.strengths || '',
+      areasForImprovement: review.areasForImprovement || '',
+      goals: review.goals || '',
+      reviewerComments: review.reviewerComments || '',
+      employeeComments: review.employeeComments || '',
+    });
+    setShowModal(true);
+  };
+
+  const openDeleteConfirm = (review: PerformanceReview) => {
+    setSelectedReview(review);
+    setShowDeleteConfirm(true);
+  };
+
+  const resetFormHandler = () => {
+    setSelectedReview(null);
+    reset({
+      employeeId: '',
+      reviewerId: '',
+      cycleId: '',
+      reviewType: 'SELF',
+      status: 'DRAFT',
+      reviewPeriodStart: '',
+      reviewPeriodEnd: '',
+      overallRating: 0,
+      strengths: '',
+      areasForImprovement: '',
+      goals: '',
+      reviewerComments: '',
+      employeeComments: '',
     });
   };
 
@@ -215,7 +234,7 @@ export default function PerformanceReviewsPage() {
           <h1 className="text-3xl font-bold">Performance Reviews</h1>
           <button
             onClick={() => {
-              resetForm();
+              resetFormHandler();
               setShowModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -273,7 +292,7 @@ export default function PerformanceReviewsPage() {
             <div className="text-surface-600 dark:text-surface-400 mb-4">No reviews found</div>
             <button
               onClick={() => {
-                resetForm();
+                resetFormHandler();
                 setShowModal(true);
               }}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -347,7 +366,7 @@ export default function PerformanceReviewsPage() {
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedReview ? 'Edit Review' : 'Create Review'}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -355,9 +374,7 @@ export default function PerformanceReviewsPage() {
                           Review Type *
                         </label>
                         <select
-                          required
-                          value={formData.reviewType}
-                          onChange={(e) => setFormData({ ...formData, reviewType: e.target.value as ReviewType })}
+                          {...register('reviewType')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="SELF">Self Review</option>
@@ -366,6 +383,9 @@ export default function PerformanceReviewsPage() {
                           <option value="SUBORDINATE">Subordinate Review</option>
                           <option value="SKIP_LEVEL">Skip Level</option>
                         </select>
+                        {errors.reviewType && (
+                          <p className="text-red-500 text-sm mt-1">{errors.reviewType.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -373,9 +393,7 @@ export default function PerformanceReviewsPage() {
                           Status *
                         </label>
                         <select
-                          required
-                          value={formData.status}
-                          onChange={(e) => setFormData({ ...formData, status: e.target.value as ReviewStatus })}
+                          {...register('status')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="DRAFT">Draft</option>
@@ -385,6 +403,9 @@ export default function PerformanceReviewsPage() {
                           <option value="APPROVED">Approved</option>
                           <option value="REJECTED">Rejected</option>
                         </select>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -395,11 +416,12 @@ export default function PerformanceReviewsPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.reviewPeriodStart}
-                          onChange={(e) => setFormData({ ...formData, reviewPeriodStart: e.target.value })}
+                          {...register('reviewPeriodStart')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.reviewPeriodStart && (
+                          <p className="text-red-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -408,11 +430,12 @@ export default function PerformanceReviewsPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.reviewPeriodEnd}
-                          onChange={(e) => setFormData({ ...formData, reviewPeriodEnd: e.target.value })}
+                          {...register('reviewPeriodEnd')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.reviewPeriodEnd && (
+                          <p className="text-red-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -422,14 +445,15 @@ export default function PerformanceReviewsPage() {
                       </label>
                       <input
                         type="number"
-                        required
                         min="0"
                         max="5"
                         step="0.1"
-                        value={formData.overallRating}
-                        onChange={(e) => setFormData({ ...formData, overallRating: parseFloat(e.target.value) })}
+                        {...register('overallRating')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.overallRating && (
+                        <p className="text-red-500 text-sm mt-1">{errors.overallRating.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -437,11 +461,13 @@ export default function PerformanceReviewsPage() {
                         Strengths
                       </label>
                       <textarea
-                        value={formData.strengths}
-                        onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
                         rows={3}
+                        {...register('strengths')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.strengths && (
+                        <p className="text-red-500 text-sm mt-1">{errors.strengths.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -449,11 +475,13 @@ export default function PerformanceReviewsPage() {
                         Areas for Improvement
                       </label>
                       <textarea
-                        value={formData.areasForImprovement}
-                        onChange={(e) => setFormData({ ...formData, areasForImprovement: e.target.value })}
                         rows={3}
+                        {...register('areasForImprovement')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.areasForImprovement && (
+                        <p className="text-red-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -461,11 +489,13 @@ export default function PerformanceReviewsPage() {
                         Goals
                       </label>
                       <textarea
-                        value={formData.goals}
-                        onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
                         rows={3}
+                        {...register('goals')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.goals && (
+                        <p className="text-red-500 text-sm mt-1">{errors.goals.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -473,11 +503,13 @@ export default function PerformanceReviewsPage() {
                         Reviewer Comments
                       </label>
                       <textarea
-                        value={formData.reviewerComments}
-                        onChange={(e) => setFormData({ ...formData, reviewerComments: e.target.value })}
                         rows={3}
+                        {...register('reviewerComments')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.reviewerComments && (
+                        <p className="text-red-500 text-sm mt-1">{errors.reviewerComments.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -485,11 +517,13 @@ export default function PerformanceReviewsPage() {
                         Employee Comments
                       </label>
                       <textarea
-                        value={formData.employeeComments}
-                        onChange={(e) => setFormData({ ...formData, employeeComments: e.target.value })}
                         rows={3}
+                        {...register('employeeComments')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.employeeComments && (
+                        <p className="text-red-500 text-sm mt-1">{errors.employeeComments.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -498,7 +532,7 @@ export default function PerformanceReviewsPage() {
                       type="button"
                       onClick={() => {
                         setShowModal(false);
-                        resetForm();
+                        resetFormHandler();
                       }}
                       className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                     >
@@ -506,10 +540,10 @@ export default function PerformanceReviewsPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSubmitting}
                       className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {loading ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
+                      {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
                     </button>
                   </div>
                 </form>

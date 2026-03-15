@@ -40,6 +40,7 @@ public class ExecutiveDashboardService {
     /**
      * Get comprehensive executive dashboard
      */
+    @Transactional(readOnly = true)
     public ExecutiveDashboardResponse getExecutiveDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();

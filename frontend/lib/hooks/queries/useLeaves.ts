@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { leaveService } from '@/lib/services/leave.service';
-import { LeaveRequestRequest, LeaveRequestStatus } from '@/lib/types/leave';
+import { LeaveRequestRequest, LeaveRequestStatus, LeaveType, LeaveTypeRequest } from '@/lib/types/leave';
 
 // Query keys for cache management
 export const leaveKeys = {
@@ -210,6 +210,69 @@ export function useCancelLeaveRequest() {
           queryKey: leaveKeys.employeeBalances(result.employeeId),
         });
       }
+    },
+  });
+}
+
+// ========== Leave Type Mutations ==========
+
+// Create leave type
+export function useCreateLeaveType() {
+  const queryClient = useQueryClient();
+
+  return useMutation<LeaveType, Error, LeaveTypeRequest>({
+    mutationFn: (data) => leaveService.createLeaveType(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+    },
+  });
+}
+
+// Update leave type
+export function useUpdateLeaveType() {
+  const queryClient = useQueryClient();
+
+  return useMutation<LeaveType, Error, { id: string; data: LeaveTypeRequest }>({
+    mutationFn: ({ id, data }) =>
+      leaveService.updateLeaveType(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+    },
+  });
+}
+
+// Delete leave type
+export function useDeleteLeaveType() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => leaveService.deleteLeaveType(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+    },
+  });
+}
+
+// Activate leave type
+export function useActivateLeaveType() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => leaveService.activateLeaveType(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
+    },
+  });
+}
+
+// Deactivate leave type
+export function useDeactivateLeaveType() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => leaveService.deactivateLeaveType(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: leaveKeys.types() });
     },
   });
 }

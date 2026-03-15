@@ -355,6 +355,7 @@ public class AIRecruitmentService {
     /**
      * Calculate match score between a candidate and a job opening using AI
      */
+    @Transactional(readOnly = true)
     public CandidateMatchResponse calculateMatchScore(UUID candidateId, UUID jobOpeningId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Calculating match score for candidate {} and job {}", candidateId, jobOpeningId);
@@ -380,6 +381,7 @@ public class AIRecruitmentService {
      * Generate a structured screening summary for a candidate against a job opening.
      * This is intended as human guidance only and must not be used for automated decisions.
      */
+    @Transactional(readOnly = true)
     public CandidateScreeningSummaryResponse generateScreeningSummary(UUID candidateId, UUID jobOpeningId, String context) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Generating screening summary for candidate {} and job {}", candidateId, jobOpeningId);
@@ -660,6 +662,7 @@ public class AIRecruitmentService {
     /**
      * Generate a job description using AI
      */
+    @Transactional(readOnly = true)
     public JobDescriptionResponse generateJobDescription(JobDescriptionRequest request) {
         log.info("Generating job description for: {}", request.getJobTitle());
 
@@ -738,6 +741,7 @@ public class AIRecruitmentService {
     /**
      * Generate interview questions based on job and candidate
      */
+    @Transactional(readOnly = true)
     public InterviewQuestionsResponse generateInterviewQuestions(UUID jobOpeningId, UUID candidateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Generating interview questions for job {} and candidate {}", jobOpeningId, candidateId);
@@ -759,6 +763,7 @@ public class AIRecruitmentService {
     /**
      * Generate interview questions for a job (generic, not candidate-specific)
      */
+    @Transactional(readOnly = true)
     public InterviewQuestionsResponse generateInterviewQuestions(UUID jobOpeningId) {
         return generateInterviewQuestions(jobOpeningId, null);
     }

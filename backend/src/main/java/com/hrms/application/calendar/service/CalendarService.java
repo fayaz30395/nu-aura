@@ -30,6 +30,7 @@ public class CalendarService {
     @Value("${calendar.sync.mock-mode:true}")
     private boolean mockMode;
 
+    @Transactional
     public CalendarEventDto createEvent(CreateCalendarEventRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
@@ -74,6 +75,7 @@ public class CalendarService {
         return CalendarEventDto.fromEntity(saved);
     }
 
+    @Transactional
     public CalendarEventDto updateEvent(UUID eventId, CreateCalendarEventRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -115,6 +117,7 @@ public class CalendarService {
         return CalendarEventDto.fromEntity(saved);
     }
 
+    @Transactional
     public CalendarEventDto updateEventStatus(UUID eventId, EventStatus newStatus) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -128,6 +131,7 @@ public class CalendarService {
         return CalendarEventDto.fromEntity(saved);
     }
 
+    @Transactional
     public void deleteEvent(UUID eventId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -250,6 +254,7 @@ public class CalendarService {
         );
     }
 
+    @Transactional
     public Map<String, Object> importFromGoogle(String externalEventId) {
         if (!mockMode) {
             log.warn("Google Calendar import integration is not configured; using mock import response");
@@ -257,6 +262,7 @@ public class CalendarService {
         return createMockImportResponse(SyncProvider.GOOGLE, externalEventId);
     }
 
+    @Transactional
     public Map<String, Object> importFromOutlook(String externalEventId) {
         if (!mockMode) {
             log.warn("Outlook Calendar import integration is not configured; using mock import response");

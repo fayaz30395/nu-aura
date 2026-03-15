@@ -205,7 +205,7 @@ public class BudgetPlanningController {
     @RequiresPermission(Permission.BUDGET_VIEW)
     @Operation(summary = "Compare scenarios", description = "Returns comparison data for multiple scenarios")
     public ResponseEntity<List<BudgetScenarioResponse>> compareScenarios(
-            @RequestBody List<UUID> scenarioIds) {
+            @Valid @RequestBody List<UUID> scenarioIds) {
         return ResponseEntity.ok(budgetService.compareScenarios(scenarioIds));
     }
 

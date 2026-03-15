@@ -30,6 +30,7 @@ public class OnboardingManagementService {
     private final OnboardingTemplateTaskRepository templateTaskRepository;
     private final OnboardingTaskRepository taskRepository;
 
+    @Transactional
     public OnboardingProcessResponse createProcess(OnboardingProcessRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating onboarding process for employee {} in tenant {}", request.getEmployeeId(), tenantId);
@@ -94,6 +95,7 @@ public class OnboardingManagementService {
 
     // --- Template Management ---
 
+    @Transactional
     public OnboardingChecklistTemplateResponse createTemplate(OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = OnboardingChecklistTemplate.builder()
@@ -110,6 +112,7 @@ public class OnboardingManagementService {
         return mapToTemplateResponse(templateRepository.save(template));
     }
 
+    @Transactional(readOnly = true)
     public List<OnboardingChecklistTemplateResponse> getAllTemplates() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return templateRepository.findByTenantId(tenantId).stream()
@@ -117,6 +120,7 @@ public class OnboardingManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public OnboardingChecklistTemplateResponse getTemplateById(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
@@ -124,6 +128,7 @@ public class OnboardingManagementService {
         return mapToTemplateResponse(template);
     }
 
+    @Transactional
     public OnboardingChecklistTemplateResponse updateTemplate(UUID templateId,
             OnboardingChecklistTemplateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -144,6 +149,7 @@ public class OnboardingManagementService {
         return mapToTemplateResponse(templateRepository.save(template));
     }
 
+    @Transactional
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingChecklistTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
@@ -157,6 +163,7 @@ public class OnboardingManagementService {
         templateRepository.delete(template);
     }
 
+    @Transactional
     public OnboardingTemplateTaskResponse addTemplateTask(UUID templateId, OnboardingTemplateTaskRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingTemplateTask task = OnboardingTemplateTask.builder()
@@ -173,6 +180,7 @@ public class OnboardingManagementService {
         return mapToTemplateTaskResponse(templateTaskRepository.save(task));
     }
 
+    @Transactional(readOnly = true)
     public List<OnboardingTemplateTaskResponse> getTemplateTasks(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return templateTaskRepository.findByTemplateIdAndTenantIdOrderByOrderSequenceAsc(templateId, tenantId).stream()
@@ -180,6 +188,7 @@ public class OnboardingManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public OnboardingTemplateTaskResponse updateTemplateTask(UUID templateId, UUID taskId,
             OnboardingTemplateTaskRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -200,6 +209,7 @@ public class OnboardingManagementService {
         return mapToTemplateTaskResponse(templateTaskRepository.save(task));
     }
 
+    @Transactional
     public void deleteTemplateTask(UUID templateId, UUID taskId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingTemplateTask task = templateTaskRepository.findById(taskId)
@@ -210,6 +220,7 @@ public class OnboardingManagementService {
 
     // --- Task Management ---
 
+    @Transactional(readOnly = true)
     public List<OnboardingTaskResponse> getProcessTasks(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return taskRepository.findByProcessIdAndTenantId(processId, tenantId).stream()
@@ -217,6 +228,7 @@ public class OnboardingManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public OnboardingTaskResponse updateTaskStatus(UUID taskId, OnboardingTask.TaskStatus status, String remarks) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingTask task = taskRepository.findByIdAndTenantId(taskId, tenantId)
@@ -231,6 +243,7 @@ public class OnboardingManagementService {
         return mapToTaskResponse(taskRepository.save(task));
     }
 
+    @Transactional
     public OnboardingProcessResponse updateProcess(UUID processId, OnboardingProcessRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating onboarding process {} for tenant {}", processId, tenantId);
@@ -247,6 +260,7 @@ public class OnboardingManagementService {
         return mapToResponse(updatedProcess);
     }
 
+    @Transactional
     public OnboardingProcessResponse updateStatus(UUID processId, OnboardingProcess.ProcessStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating onboarding process {} status to {} for tenant {}", processId, status, tenantId);
@@ -264,6 +278,7 @@ public class OnboardingManagementService {
         return mapToResponse(updatedProcess);
     }
 
+    @Transactional
     public OnboardingProcessResponse updateProgress(UUID processId, Integer completionPercentage) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating onboarding process {} progress to {}% for tenant {}", processId, completionPercentage,
@@ -325,6 +340,7 @@ public class OnboardingManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteProcess(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)

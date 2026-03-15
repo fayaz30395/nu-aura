@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Download, Loader2, Plus, Search, X } from 'lucide-react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
   Badge,
@@ -18,15 +21,20 @@ import {
   TablePagination,
   Textarea,
 } from '@/components/ui';
-import { hrmsProjectService } from '@/lib/services/hrms-project.service';
 import {
   HrmsProject,
   ProjectCreateRequest,
   ProjectStatus,
   ProjectType,
+  ProjectPriority,
 } from '@/lib/types/hrms-project';
 import { apiClient } from '@/lib/api/client';
 import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useHrmsProjects,
+  useCreateHrmsProject,
+  useExportHrmsProjects,
+} from '@/lib/hooks/queries/useProjects';
 
 interface PageResponse<T> {
   content: T[];
@@ -105,6 +113,21 @@ const buildEmployeeName = (employee?: EmployeeSummary | null) => {
   if (!last) return employee.firstName;
   return `${employee.firstName} ${last}`;
 };
+
+// Zod schema for project creation form
+const projectFormSchema = z.object({
+  projectCode: z.string().min(1, 'Project code is required'),
+  name: z.string().min(1, 'Project name is required'),
+  type: z.enum(['CLIENT', 'INTERNAL']),
+  status: z.enum(['PLANNED', 'IN_PROGRESS', 'ON_HOLD']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  startDate: z.string().min(1, 'Start date is required'),
+  expectedEndDate: z.string().optional().or(z.literal('')),
+  clientName: z.string().optional().or(z.literal('')),
+  description: z.string().optional().or(z.literal('')),
+});
+
+type ProjectFormData = z.infer<typeof projectFormSchema>;
 
 const parseApiError = (error: unknown): ApiErrorPayload => {
   const response = (error as { response?: { data?: ApiErrorPayload } })?.response?.data;
@@ -239,15 +262,8 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
 
 export default function ProjectsPage() {
   const { user } = useAuth();
-  const [projects, setProjects] = useState<HrmsProject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [exporting, setExporting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
-
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | ''>('IN_PROGRESS');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<ProjectType | ''>('');
@@ -256,21 +272,28 @@ export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [formErrorDetails, setFormErrorDetails] = useState<string[]>([]);
   const [ownerSelection, setOwnerSelection] = useState<EmployeeSummary | null>(null);
 
-  const [formData, setFormData] = useState({
-    projectCode: '',
-    name: '',
-    type: 'INTERNAL' as ProjectType,
-    status: 'PLANNED' as ProjectStatus,
-    priority: 'MEDIUM',
-    startDate: new Date().toISOString().split('T')[0],
-    expectedEndDate: '',
-    clientName: '',
-    description: '',
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ProjectFormData>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: {
+      projectCode: '',
+      name: '',
+      type: 'INTERNAL',
+      status: 'PLANNED',
+      priority: 'MEDIUM',
+      startDate: new Date().toISOString().split('T')[0],
+      expectedEndDate: '',
+      clientName: '',
+      description: '',
+    },
   });
 
   const roleCodes = useMemo(() => new Set(user?.roles?.map((role) => role.code) ?? []), [user]);
@@ -290,50 +313,44 @@ export default function ProjectsPage() {
     };
   }, [user]);
 
-  const activeFilters = useMemo(() => ({
-    status: statusFilter || undefined,
-    priority: priorityFilter || undefined,
-    type: typeFilter || undefined,
-    ownerId: ownerFilter?.id || undefined,
-    search: searchTerm || undefined,
-  }), [ownerFilter, searchTerm, statusFilter, typeFilter, priorityFilter]);
-
-  useEffect(() => {
+  // Search debounce
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  React.useEffect(() => {
     const handle = setTimeout(() => {
-      setSearchTerm(searchInput.trim());
+      setDebouncedSearchTerm(searchInput.trim());
       setCurrentPage(0);
     }, 300);
     return () => clearTimeout(handle);
   }, [searchInput]);
 
-  const fetchProjects = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await hrmsProjectService.listProjects(currentPage, pageSize, activeFilters);
-      setProjects(response.content ?? []);
-      setTotalPages(response.totalPages ?? 0);
-      setTotalElements(response.totalElements ?? 0);
-    } catch (err) {
-      const apiError = parseApiError(err);
-      setError(apiError.message || 'Failed to load projects. Please try again.');
-      setProjects([]);
-      setTotalPages(0);
-      setTotalElements(0);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeFilters, currentPage, pageSize]);
+  const activeFilters = useMemo(() => ({
+    status: statusFilter || undefined,
+    priority: priorityFilter || undefined,
+    type: typeFilter || undefined,
+    ownerId: ownerFilter?.id || undefined,
+    search: debouncedSearchTerm || undefined,
+  }), [ownerFilter, debouncedSearchTerm, statusFilter, typeFilter, priorityFilter]);
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  // Query with filters
+  const { data, isLoading, error: queryError, refetch } = useHrmsProjects(
+    currentPage,
+    pageSize,
+    activeFilters
+  );
+
+  const createMutation = useCreateHrmsProject();
+  const exportMutation = useExportHrmsProjects();
+
+  const projects = data?.content ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const totalElements = data?.totalElements ?? 0;
+  const loading = isLoading;
+  const error = queryError ? parseApiError(queryError) : null;
+  const exporting = exportMutation.isPending;
 
   const handleExport = async () => {
-    setError(null);
-    setExporting(true);
     try {
-      const blob = await hrmsProjectService.exportProjects(activeFilters);
+      const blob = await exportMutation.mutateAsync(activeFilters) as Blob;
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -342,85 +359,54 @@ export default function ProjectsPage() {
       URL.revokeObjectURL(url);
     } catch (err) {
       const apiError = parseApiError(err);
-      setError(apiError.message || 'Failed to export projects. Please try again.');
-    } finally {
-      setExporting(false);
+      // Error already shown by mutation
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      projectCode: '',
-      name: '',
-      type: 'INTERNAL',
-      status: 'PLANNED',
-      priority: 'MEDIUM',
-      startDate: new Date().toISOString().split('T')[0],
-      expectedEndDate: '',
-      clientName: '',
-      description: '',
-    });
-    setOwnerSelection(canChooseOwner ? null : defaultOwner);
-    setFormError(null);
-    setFormErrorDetails([]);
   };
 
   const handleOpenCreate = () => {
-    resetForm();
+    reset();
+    setOwnerSelection(canChooseOwner ? null : defaultOwner);
+    setFormErrorDetails([]);
     setShowCreateModal(true);
   };
 
-  const handleCreateProject = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setFormError(null);
-    setFormErrorDetails([]);
-
+  const handleCreateProject = async (data: ProjectFormData) => {
     if (!canCreateProject) {
-      setFormError('You do not have permission to create projects.');
+      setFormErrorDetails(['You do not have permission to create projects.']);
       return;
     }
-    if (!formData.name.trim()) {
-      setFormError('Project name is required');
-      return;
-    }
+
     const ownerId = ownerSelection?.id?.trim();
     if (!ownerId) {
-      setFormError('Project owner is required');
+      setFormErrorDetails(['Project owner is required']);
       return;
     }
-    if (!formData.startDate) {
-      setFormError('Start date is required');
-      return;
-    }
-    if (formData.type === 'CLIENT' && !formData.clientName.trim()) {
-      setFormError('Client name is required for client projects');
+
+    if (data.type === 'CLIENT' && !data.clientName?.trim()) {
+      setFormErrorDetails(['Client name is required for client projects']);
       return;
     }
 
     const payload: ProjectCreateRequest = {
-      projectCode: formData.projectCode.trim().toUpperCase(),
-      name: formData.name.trim(),
-      status: formData.status,
-      priority: formData.priority as any,
+      projectCode: data.projectCode.trim().toUpperCase(),
+      name: data.name.trim(),
+      status: data.status,
+      priority: data.priority as ProjectPriority,
       projectManagerId: ownerId,
-      startDate: formData.startDate,
-      expectedEndDate: formData.expectedEndDate ? formData.expectedEndDate : undefined,
-      clientName: formData.type === 'CLIENT' ? formData.clientName.trim() : undefined,
-      description: formData.description?.trim() || undefined,
+      startDate: data.startDate,
+      expectedEndDate: data.expectedEndDate ? data.expectedEndDate : undefined,
+      clientName: data.type === 'CLIENT' ? data.clientName?.trim() : undefined,
+      description: data.description?.trim() || undefined,
     };
 
-    setSaving(true);
     try {
-      await hrmsProjectService.createProject(payload);
+      await createMutation.mutateAsync(payload);
       setShowCreateModal(false);
       setCurrentPage(0);
-      fetchProjects();
+      refetch();
     } catch (err) {
       const apiError = parseApiError(err);
-      setFormError(apiError.message || 'Failed to create project. Please try again.');
-      setFormErrorDetails(apiError.details || []);
-    } finally {
-      setSaving(false);
+      setFormErrorDetails([apiError.message || 'Failed to create project. Please try again.', ...(apiError.details || [])]);
     }
   };
 
@@ -536,8 +522,8 @@ export default function ProjectsPage() {
         {error && (
           <Card className="border-danger-200 dark:border-danger-800 bg-danger-50 dark:bg-danger-950/20">
             <CardContent className="flex items-center justify-between gap-3">
-              <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
-              <Button variant="outline" size="sm" onClick={fetchProjects}>
+              <p className="text-sm text-danger-700 dark:text-danger-300">{error?.message ?? String(error)}</p>
+              <Button variant="outline" size="sm" onClick={() => { void refetch(); }}>
                 Retry
               </Button>
             </CardContent>
@@ -638,47 +624,45 @@ export default function ProjectsPage() {
         <ModalHeader onClose={() => setShowCreateModal(false)}>
           Create Project
         </ModalHeader>
-        <form onSubmit={handleCreateProject}>
+        <form onSubmit={handleSubmit(handleCreateProject)}>
           <ModalBody className="space-y-4">
-            {formError && (
+            {formErrorDetails.length > 0 && (
               <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
-                <p>{formError}</p>
-                {formErrorDetails.length > 0 && (
-                  <ul className="mt-2 list-disc space-y-1 pl-5">
-                    {formErrorDetails.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
-                  </ul>
-                )}
+                <ul className="space-y-1">
+                  {formErrorDetails.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
               </div>
             )}
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label="Project code"
-                value={formData.projectCode}
-                onChange={(event) => setFormData((prev) => ({ ...prev, projectCode: event.target.value }))}
-                placeholder="e.g. PRJ-2024-001"
-                required
-              />
-              <Input
-                label="Project name"
-                value={formData.name}
-                onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
-                placeholder="e.g. Mobile app revamp"
-                required
-              />
+              <div>
+                <Input
+                  label="Project code"
+                  placeholder="e.g. PRJ-2024-001"
+                  {...register('projectCode')}
+                />
+                {errors.projectCode && <p className="text-red-500 text-sm mt-1">{errors.projectCode.message}</p>}
+              </div>
+              <div>
+                <Input
+                  label="Project name"
+                  placeholder="e.g. Mobile app revamp"
+                  {...register('name')}
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Select
-                label="Type"
-                value={formData.type}
-                onChange={(event) => setFormData((prev) => ({ ...prev, type: event.target.value as ProjectType }))}
-              >
-                <option value="CLIENT">Client</option>
-                <option value="INTERNAL">Internal</option>
-              </Select>
+              <div>
+                <Select label="Type" {...register('type')}>
+                  <option value="CLIENT">Client</option>
+                  <option value="INTERNAL">Internal</option>
+                </Select>
+                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
+              </div>
               <OwnerTypeahead
                 label="Owner"
                 value={ownerSelection}
@@ -689,71 +673,54 @@ export default function ProjectsPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label="Start date"
-                type="date"
-                value={formData.startDate}
-                onChange={(event) => setFormData((prev) => ({ ...prev, startDate: event.target.value }))}
-                required
-              />
-              <Input
-                label="Expected end date"
-                type="date"
-                value={formData.expectedEndDate}
-                onChange={(event) => setFormData((prev) => ({ ...prev, expectedEndDate: event.target.value }))}
-              />
+              <div>
+                <Input label="Start date" type="date" {...register('startDate')} />
+                {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
+              </div>
+              <div>
+                <Input label="Expected end date" type="date" {...register('expectedEndDate')} />
+                {errors.expectedEndDate && <p className="text-red-500 text-sm mt-1">{errors.expectedEndDate.message}</p>}
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Select
-                label="Status"
-                value={formData.status}
-                onChange={(event) => setFormData((prev) => ({ ...prev, status: event.target.value as ProjectStatus }))}
-                required
-              >
-                <option value="PLANNED">Planned</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="ON_HOLD">On Hold</option>
-              </Select>
-              <Select
-                label="Priority"
-                value={formData.priority}
-                onChange={(event) => setFormData((prev) => ({ ...prev, priority: event.target.value }))}
-                required
-              >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="CRITICAL">Critical</option>
-              </Select>
+              <div>
+                <Select label="Status" {...register('status')}>
+                  <option value="PLANNED">Planned</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="ON_HOLD">On Hold</option>
+                </Select>
+                {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>}
+              </div>
+              <div>
+                <Select label="Priority" {...register('priority')}>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="CRITICAL">Critical</option>
+                </Select>
+                {errors.priority && <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>}
+              </div>
             </div>
 
-            {formData.type === 'CLIENT' && (
-              <Input
-                label="Client name"
-                value={formData.clientName}
-                onChange={(event) => setFormData((prev) => ({ ...prev, clientName: event.target.value }))}
-                placeholder="e.g. Acme Corp"
-                required
-              />
-            )}
+            <div>
+              <Input label="Client name" placeholder="e.g. Acme Corp" {...register('clientName')} />
+              {errors.clientName && <p className="text-red-500 text-sm mt-1">{errors.clientName.message}</p>}
+            </div>
 
             <div>
               <label className="mb-1.5 block text-sm font-medium text-surface-700 dark:text-surface-200">
                 Description (optional)
               </label>
-              <Textarea
-                value={formData.description}
-                onChange={(event) => setFormData((prev) => ({ ...prev, description: event.target.value }))}
-                placeholder="Add a short description or scope notes"
-              />
+              <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
+              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
             </div>
           </ModalBody>
           <ModalFooter>
             <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)}>
               Cancel
             </Button>
-            <Button type="submit" isLoading={saving}>
+            <Button type="submit" isLoading={isSubmitting || createMutation.isPending}>
               Create Project
             </Button>
           </ModalFooter>

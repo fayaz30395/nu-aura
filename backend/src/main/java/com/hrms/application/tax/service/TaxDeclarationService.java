@@ -34,6 +34,7 @@ public class TaxDeclarationService {
 
     // ==================== Tax Declaration Operations ====================
 
+    @Transactional
     public TaxDeclarationResponse createTaxDeclaration(TaxDeclarationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating tax declaration for employee {} for FY {}", request.getEmployeeId(), request.getFinancialYear());
@@ -57,6 +58,7 @@ public class TaxDeclarationService {
         return mapToResponse(saved);
     }
 
+    @Transactional
     public TaxDeclarationResponse updateTaxDeclaration(UUID id, TaxDeclarationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating tax declaration {}", id);
@@ -75,6 +77,7 @@ public class TaxDeclarationService {
         return mapToResponse(updated);
     }
 
+    @Transactional
     public TaxDeclarationResponse submitTaxDeclaration(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Submitting tax declaration {}", id);
@@ -94,6 +97,7 @@ public class TaxDeclarationService {
         return mapToResponse(updated);
     }
 
+    @Transactional
     public TaxDeclarationResponse approveTaxDeclaration(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Approving tax declaration {} by {}", id, approverId);
@@ -113,6 +117,7 @@ public class TaxDeclarationService {
         return mapToResponse(updated);
     }
 
+    @Transactional
     public TaxDeclarationResponse rejectTaxDeclaration(UUID id, UUID rejectedBy, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Rejecting tax declaration {} by {}", id, rejectedBy);
@@ -154,6 +159,7 @@ public class TaxDeclarationService {
         ).map(this::mapToResponse);
     }
 
+    @Transactional
     public void deleteTaxDeclaration(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(id, tenantId)
@@ -168,6 +174,7 @@ public class TaxDeclarationService {
 
     // ==================== Tax Proof Operations ====================
 
+    @Transactional
     public TaxProofResponse addTaxProof(UUID employeeId, TaxProofRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding tax proof for declaration {}", request.getTaxDeclarationId());

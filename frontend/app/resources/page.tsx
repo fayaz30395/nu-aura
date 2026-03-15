@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import Link from 'next/link';
 import {
@@ -18,54 +18,32 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { resourceManagementService, ResourceManagementApiError } from '@/lib/services/resource-management.service';
-import { WorkloadSummary, AllocationApprovalRequest } from '@/lib/types/resource-management';
+import { ResourceManagementApiError } from '@/lib/services/resource-management.service';
+import { useWorkloadDashboard, useMyPendingApprovals } from '@/lib/hooks/queries/useResources';
 import { CreateAllocationModal } from '@/components/resources/CreateAllocationModal';
 
-interface QuickStats {
-  summary: WorkloadSummary | null;
-  pendingApprovals: AllocationApprovalRequest[];
-}
-
-interface ApiState {
-  loading: boolean;
-  error: string | null;
-  isApiNotAvailable: boolean;
-}
-
 export default function ResourcesPage() {
-  const [stats, setStats] = useState<QuickStats>({ summary: null, pendingApprovals: [] });
-  const [apiState, setApiState] = useState<ApiState>({ loading: true, error: null, isApiNotAvailable: false });
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  const fetchStats = async () => {
-    setApiState({ loading: true, error: null, isApiNotAvailable: false });
-    try {
-      const [dashboardData, pendingData] = await Promise.all([
-        resourceManagementService.getWorkloadDashboard({}),
-        resourceManagementService.getMyPendingApprovals(0, 5),
-      ]);
-      setStats({
-        summary: dashboardData.summary,
-        pendingApprovals: pendingData.content,
-      });
-      setApiState({ loading: false, error: null, isApiNotAvailable: false });
-    } catch (err) {
-      console.error('Error fetching resource stats:', err);
-      const isApiError = err instanceof ResourceManagementApiError;
-      setApiState({
-        loading: false,
-        error: err instanceof Error ? err.message : 'Failed to load data',
-        isApiNotAvailable: isApiError && err.isApiNotAvailable,
-      });
-    }
-  };
+  const { data: dashboardData, isLoading: dashboardLoading, error: dashboardError, refetch: refetchDashboard } = useWorkloadDashboard({});
+  const { data: pendingData, isLoading: pendingLoading, error: pendingError } = useMyPendingApprovals(0, 5);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  const isApiNotAvailable = (dashboardError instanceof Error &&
+    (dashboardError as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
+  const isLoading = dashboardLoading || pendingLoading;
+  const error = dashboardError || pendingError;
 
-  const navigationCards = [
+  const summary = dashboardData?.summary ?? null;
+  const pendingApprovals = pendingData?.content ?? [];
+
+  const navigationCards: Array<{
+    title: string;
+    description: string;
+    icon: React.ElementType;
+    href: string;
+    color: string;
+    badge?: number;
+  }> = [
     {
       title: 'Workload Dashboard',
       description: 'View employee allocation heatmaps and utilization metrics',
@@ -100,12 +78,12 @@ export default function ResourcesPage() {
       icon: Clock,
       href: '/resources/approvals',
       color: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
-      badge: stats.pendingApprovals.length > 0 ? stats.pendingApprovals.length : undefined,
+      badge: pendingApprovals.length > 0 ? pendingApprovals.length : undefined,
     },
   ];
 
   // API Not Available State
-  if (apiState.isApiNotAvailable) {
+  if (isApiNotAvailable) {
     return (
       <AppLayout>
         <div className="space-y-6 p-6">
@@ -134,7 +112,7 @@ export default function ResourcesPage() {
                 calendar functionality.
               </p>
               <div className="mt-6 flex gap-3">
-                <Button variant="outline" onClick={fetchStats}>
+                <Button variant="outline" onClick={() => refetchDashboard()}>
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Retry Connection
                 </Button>
@@ -207,20 +185,22 @@ export default function ResourcesPage() {
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           onSuccess={() => {
-            fetchStats();
+            refetchDashboard();
           }}
         />
 
         {/* Error State */}
-        {apiState.error && !apiState.isApiNotAvailable && (
+        {error && !isApiNotAvailable && (
           <Card className="border-red-200 dark:border-red-800">
             <CardContent className="flex items-center gap-4 p-4">
               <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
               <div className="flex-1">
                 <p className="font-medium text-red-600 dark:text-red-400">Error Loading Data</p>
-                <p className="text-sm text-surface-600 dark:text-surface-400">{apiState.error}</p>
+                <p className="text-sm text-surface-600 dark:text-surface-400">
+                  {error instanceof Error ? error.message : 'Failed to load data'}
+                </p>
               </div>
-              <Button variant="outline" size="sm" onClick={fetchStats}>
+              <Button variant="outline" size="sm" onClick={() => refetchDashboard()}>
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Retry
               </Button>
@@ -229,39 +209,39 @@ export default function ResourcesPage() {
         )}
 
         {/* Quick Stats */}
-        {apiState.loading ? (
+        {isLoading ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[...Array(4)].map((_, i) => (
               <Skeleton key={i} className="h-24 rounded-xl" />
             ))}
           </div>
-        ) : stats.summary ? (
+        ) : summary ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <QuickStatCard
               label="Total Employees"
-              value={stats.summary.totalEmployees}
+              value={summary.totalEmployees}
               icon={Users}
               color="text-primary-600 dark:text-primary-400"
             />
             <QuickStatCard
               label="Avg Allocation"
-              value={`${Math.round(stats.summary.averageAllocation)}%`}
+              value={`${Math.round(summary.averageAllocation)}%`}
               icon={TrendingUp}
               color="text-blue-600 dark:text-blue-400"
             />
             <QuickStatCard
               label="Over-Allocated"
-              value={stats.summary.overAllocatedCount}
+              value={summary.overAllocatedCount}
               icon={AlertTriangle}
               color="text-red-600 dark:text-red-400"
-              highlight={stats.summary.overAllocatedCount > 0}
+              highlight={summary.overAllocatedCount > 0}
             />
             <QuickStatCard
               label="Pending Approvals"
-              value={stats.summary.pendingApprovals}
+              value={summary.pendingApprovals}
               icon={Clock}
               color="text-amber-600 dark:text-amber-400"
-              highlight={stats.summary.pendingApprovals > 0}
+              highlight={summary.pendingApprovals > 0}
             />
           </div>
         ) : null}
@@ -304,7 +284,7 @@ export default function ResourcesPage() {
         </div>
 
         {/* Pending Approvals Preview */}
-        {stats.pendingApprovals.length > 0 && (
+        {pendingApprovals.length > 0 && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -320,7 +300,7 @@ export default function ResourcesPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {stats.pendingApprovals.slice(0, 3).map((approval) => (
+                {pendingApprovals.slice(0, 3).map((approval) => (
                   <div
                     key={approval.id}
                     className="flex items-center justify-between rounded-lg border border-surface-200 p-3 dark:border-surface-700"
@@ -354,7 +334,7 @@ export default function ResourcesPage() {
         )}
 
         {/* Alerts - Over-allocated employees */}
-        {stats.summary && stats.summary.overAllocatedCount > 0 && (
+        {summary && summary.overAllocatedCount > 0 && (
           <Card className="border-red-200 dark:border-red-800">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-red-600 dark:text-red-400">
@@ -364,7 +344,7 @@ export default function ResourcesPage() {
             </CardHeader>
             <CardContent>
               <p className="text-surface-600 dark:text-surface-400">
-                <strong>{stats.summary.overAllocatedCount}</strong> employee(s) are currently
+                <strong>{summary.overAllocatedCount}</strong> employee(s) are currently
                 allocated above 100%. Review their workload to prevent burnout and ensure
                 quality delivery.
               </p>

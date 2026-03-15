@@ -3,9 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { travelService } from '@/lib/services/travel.service';
-import { TravelRequest, TravelExpense, TravelStatus } from '@/lib/types/travel';
+import { TravelStatus } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  useTravelRequest,
+  useTravelExpensesByRequest,
+  useApproveTravelRequest,
+  useRejectTravelRequest,
+  useCancelTravelRequest,
+  useCompleteTravelRequest,
+} from '@/lib/hooks/queries/useTravel';
 import {
   ArrowLeft,
   MapPin,
@@ -31,14 +39,11 @@ import {
 } from 'lucide-react';
 
 export default function TravelRequestDetailsPage() {
+  const toast = useToast();
   const router = useRouter();
   const params = useParams();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [travelRequest, setTravelRequest] = useState<TravelRequest | null>(null);
-  const [expenses, setExpenses] = useState<TravelExpense[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actionLoading, setActionLoading] = useState(false);
 
   const travelId = params?.id as string;
 
@@ -46,99 +51,78 @@ export default function TravelRequestDetailsPage() {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/login');
-      return;
     }
-    if (travelId) {
-      loadTravelRequestDetails();
-    }
-  }, [isAuthenticated, hasHydrated, router, travelId]);
+  }, [isAuthenticated, hasHydrated, router]);
 
-  const loadTravelRequestDetails = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // React Query hooks
+  const { data: travelRequest, isLoading } = useTravelRequest(travelId, !!travelId);
+  const { data: expensesData } = useTravelExpensesByRequest(travelId, 0, 100);
+  const expenses = expensesData?.content || [];
 
-      const [requestData, expensesData] = await Promise.all([
-        travelService.getTravelRequestById(travelId),
-        travelService.getTravelExpensesByRequest(travelId, 0, 100),
-      ]);
+  const approveMutation = useApproveTravelRequest();
+  const rejectMutation = useRejectTravelRequest();
+  const cancelMutation = useCancelTravelRequest();
+  const completeMutation = useCompleteTravelRequest();
 
-      setTravelRequest(requestData);
-      setExpenses(expensesData.content);
-    } catch (error) {
-      console.error('Error loading travel request details:', error);
-      setError('Failed to load travel request details');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApprove = async () => {
+  const handleApprove = () => {
     if (!user?.employeeId || !travelRequest) return;
 
-    try {
-      setActionLoading(true);
-      await travelService.approveTravelRequest(travelRequest.id, user.employeeId);
-      await loadTravelRequestDetails();
-    } catch (error: unknown) {
-      console.error('Error approving travel request:', error);
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve travel request');
-    } finally {
-      setActionLoading(false);
-    }
+    approveMutation.mutate(
+      { id: travelRequest.id, approverId: user.employeeId },
+      {
+        onError: (error: unknown) => {
+          console.error('Error approving travel request:', error);
+          toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve travel request');
+        },
+      }
+    );
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
     if (!user?.employeeId || !travelRequest) return;
 
     const reason = prompt('Please enter rejection reason:');
     if (!reason) return;
 
-    try {
-      setActionLoading(true);
-      await travelService.rejectTravelRequest(travelRequest.id, user.employeeId, reason);
-      await loadTravelRequestDetails();
-    } catch (error: unknown) {
-      console.error('Error rejecting travel request:', error);
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject travel request');
-    } finally {
-      setActionLoading(false);
-    }
+    rejectMutation.mutate(
+      { id: travelRequest.id, approverId: user.employeeId, reason },
+      {
+        onError: (error: unknown) => {
+          console.error('Error rejecting travel request:', error);
+          toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject travel request');
+        },
+      }
+    );
   };
 
-  const handleCancel = async () => {
+  const handleCancel = () => {
     if (!travelRequest) return;
 
     const reason = prompt('Please enter cancellation reason:');
     if (!reason) return;
 
-    try {
-      setActionLoading(true);
-      await travelService.cancelTravelRequest(travelRequest.id, reason);
-      await loadTravelRequestDetails();
-    } catch (error: unknown) {
-      console.error('Error cancelling travel request:', error);
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel travel request');
-    } finally {
-      setActionLoading(false);
-    }
+    cancelMutation.mutate(
+      { id: travelRequest.id, reason },
+      {
+        onError: (error: unknown) => {
+          console.error('Error cancelling travel request:', error);
+          toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel travel request');
+        },
+      }
+    );
   };
 
-  const handleComplete = async () => {
+  const handleComplete = () => {
     if (!travelRequest) return;
 
     if (!confirm('Mark this travel request as completed?')) return;
 
-    try {
-      setActionLoading(true);
-      await travelService.completeTravelRequest(travelRequest.id);
-      await loadTravelRequestDetails();
-    } catch (error: unknown) {
-      console.error('Error completing travel request:', error);
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete travel request');
-    } finally {
-      setActionLoading(false);
-    }
+    completeMutation.mutate(travelRequest.id, {
+      onError: (error: unknown) => {
+        console.error('Error completing travel request:', error);
+        toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to complete travel request');
+      },
+    });
   };
 
   const getStatusConfig = (status: TravelStatus) => {
@@ -207,7 +191,7 @@ export default function TravelRequestDetailsPage() {
     }).format(amount);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -296,7 +280,7 @@ export default function TravelRequestDetailsPage() {
             {canCancel && (
               <button
                 onClick={handleCancel}
-                disabled={actionLoading}
+                disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-900 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
               >
                 <XCircle className="h-4 w-4" />
@@ -306,7 +290,7 @@ export default function TravelRequestDetailsPage() {
             {canComplete && (
               <button
                 onClick={handleComplete}
-                disabled={actionLoading}
+                disabled={approveMutation.isPending || rejectMutation.isPending || cancelMutation.isPending || completeMutation.isPending}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-colors disabled:opacity-50"
               >
                 <CheckCircle className="h-4 w-4" />

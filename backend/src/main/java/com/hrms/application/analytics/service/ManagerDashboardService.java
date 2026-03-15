@@ -41,6 +41,7 @@ public class ManagerDashboardService {
     /**
      * Get manager dashboard for the currently logged-in manager
      */
+    @Transactional(readOnly = true)
     public ManagerDashboardResponse getManagerDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID managerId = SecurityContext.getCurrentEmployeeId();
@@ -55,6 +56,7 @@ public class ManagerDashboardService {
     /**
      * Get manager dashboard for a specific manager
      */
+    @Transactional(readOnly = true)
     public ManagerDashboardResponse getManagerDashboard(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();

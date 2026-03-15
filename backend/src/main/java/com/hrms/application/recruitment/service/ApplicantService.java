@@ -61,6 +61,7 @@ public class ApplicantService {
     private final JobOpeningRepository jobOpeningRepository;
     private final DataScopeService dataScopeService;
 
+    @Transactional
     public ApplicantResponse createApplicant(ApplicantRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating applicant for candidate {} and job opening {} for tenant {}",
@@ -119,6 +120,7 @@ public class ApplicantService {
                 .map(this::mapToApplicantResponse);
     }
 
+    @Transactional
     public ApplicantResponse updateStatus(UUID id, ApplicantStatusUpdateRequest request) {
         Applicant applicant = getApplicantByIdAndTenant(id);
         ApplicationStatus newStatus = request.getStatus();
@@ -204,6 +206,7 @@ public class ApplicantService {
                 .toList();
     }
 
+    @Transactional
     public void deleteApplicant(UUID id) {
         Applicant applicant = getApplicantByIdAndTenant(id);
         applicantRepository.delete(applicant);

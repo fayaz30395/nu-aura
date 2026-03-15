@@ -21,6 +21,7 @@ public class PayrollRunService {
 
     private final PayrollRunRepository payrollRunRepository;
 
+    @Transactional
     public PayrollRun createPayrollRun(PayrollRun payrollRun) {
         UUID tenantId = TenantContext.getCurrentTenant();
         payrollRun.setTenantId(tenantId);
@@ -35,6 +36,7 @@ public class PayrollRunService {
         return payrollRunRepository.save(payrollRun);
     }
 
+    @Transactional
     public PayrollRun updatePayrollRun(UUID id, PayrollRun payrollRunData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -87,24 +89,46 @@ public class PayrollRunService {
         return payrollRunRepository.findAllByTenantIdAndStatus(tenantId, status, pageable);
     }
 
+    /**
+     * Transition a payroll run from DRAFT → PROCESSED.
+     * R2-011: State guard is enforced in {@link PayrollRun#process}
+     * (throws IllegalStateException if not in DRAFT).
+     */
+    @Transactional
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunById(id);
         payrollRun.process(processedBy);
         return payrollRunRepository.save(payrollRun);
     }
 
+    /**
+     * Transition a payroll run from PROCESSED → APPROVED.
+     * R2-011: State guard is enforced in {@link PayrollRun#approve}
+     * (throws IllegalStateException if not in PROCESSED).
+     */
+    @Transactional
     public PayrollRun approvePayrollRun(UUID id, UUID approvedBy) {
         PayrollRun payrollRun = getPayrollRunById(id);
         payrollRun.approve(approvedBy);
         return payrollRunRepository.save(payrollRun);
     }
 
+    /**
+     * Transition a payroll run from APPROVED → LOCKED.
+     * R2-011 FIX: Added missing {@code @Transactional} annotation — without it the
+     * {@code save()} call ran outside a transaction and was silently ignored on
+     * read-only connections, leaving the payroll run in APPROVED status.
+     * State guard is enforced in {@link PayrollRun#lock}
+     * (throws IllegalStateException if not in APPROVED).
+     */
+    @Transactional
     public PayrollRun lockPayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunById(id);
         payrollRun.lock();
         return payrollRunRepository.save(payrollRun);
     }
 
+    @Transactional
     public void deletePayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunById(id);
 

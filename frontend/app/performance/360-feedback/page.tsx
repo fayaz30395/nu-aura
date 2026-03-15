@@ -19,13 +19,19 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import {
-  feedback360Service,
   Feedback360Cycle,
   Feedback360Request,
   Feedback360Summary,
   CycleRequest,
   FeedbackResponse,
 } from '@/lib/services/feedback360.service';
+import {
+  useActiveFeedback360Cycles,
+  useMyPending360Reviews,
+  useMyFeedback360Summaries,
+} from '@/lib/hooks/queries/usePerformance';
+import { useQueryClient } from '@tanstack/react-query';
+import { feedback360Service } from '@/lib/services/feedback360.service';
 
 const CYCLE_STATUSES = ['DRAFT', 'ACTIVE', 'NOMINATION', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'] as const;
 const REVIEWER_TYPES = ['SELF', 'MANAGER', 'PEER', 'DIRECT_REPORT', 'EXTERNAL'] as const;
@@ -85,10 +91,23 @@ const RatingStars = ({ rating, onChange }: { rating: number; onChange?: (r: numb
 
 export default function Feedback360Page() {
   const [activeTab, setActiveTab] = useState<'cycles' | 'pending' | 'summaries'>('cycles');
-  const [cycles, setCycles] = useState<Feedback360Cycle[]>([]);
-  const [pendingReviews, setPendingReviews] = useState<Feedback360Request[]>([]);
-  const [summaries, setSummaries] = useState<Feedback360Summary[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // React Query hooks
+  const queryClient = useQueryClient();
+  const { data: cyclesData, isLoading: cyclesLoading, refetch: refetchCycles } = useActiveFeedback360Cycles();
+  const { data: pendingData, isLoading: pendingLoading, refetch: refetchPending } = useMyPending360Reviews();
+  const { data: summariesData, isLoading: summariesLoading, refetch: refetchSummaries } = useMyFeedback360Summaries();
+
+  const fetchData = () => {
+    void refetchCycles();
+    void refetchPending();
+    void refetchSummaries();
+  };
+
+  const cycles = cyclesData || [];
+  const pendingReviews = pendingData || [];
+  const summaries = summariesData || [];
+  const loading = cyclesLoading || pendingLoading || summariesLoading;
   const [error, setError] = useState<string | null>(null);
 
   const [showCycleModal, setShowCycleModal] = useState(false);
@@ -124,29 +143,6 @@ export default function Feedback360Page() {
     additionalComments: '',
   });
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [cyclesData, pendingData, summariesData] = await Promise.all([
-        feedback360Service.getCycles(),
-        feedback360Service.getMyPendingReviews(),
-        feedback360Service.getMySummaries(),
-      ]);
-      setCycles(cyclesData?.content || []);
-      setPendingReviews(pendingData || []);
-      setSummaries(summariesData || []);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-      setError('Failed to load 360 feedback data');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const handleCreateCycle = async () => {
     try {

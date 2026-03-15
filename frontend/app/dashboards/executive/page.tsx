@@ -49,42 +49,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { dashboardService } from '@/lib/services/dashboard.service';
-import { ExecutiveDashboardData, KpiCard, StrategicAlert } from '@/lib/types/dashboard';
+import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
+import { StrategicAlert } from '@/lib/types/dashboard';
 
 const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
 export default function ExecutiveDashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<ExecutiveDashboardData | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+  const { data, isLoading: loading, error, refetch } = useExecutiveDashboard(
+    isAuthenticated && hasHydrated
+  );
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
     } else {
-      loadDashboard();
+      setLastUpdated(new Date());
     }
   }, [hasHydrated, isAuthenticated, router]);
-
-  const loadDashboard = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const dashboardData = await dashboardService.getExecutiveDashboard();
-      setData(dashboardData);
-      setLastUpdated(new Date());
-    } catch (err: unknown) {
-      console.error('Error loading executive dashboard:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -209,8 +195,8 @@ export default function ExecutiveDashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-surface-600 dark:text-surface-400 mb-4">{error || 'Unable to load dashboard data'}</p>
-              <Button variant="primary" onClick={loadDashboard} className="w-full">
+              <p className="text-surface-600 dark:text-surface-400 mb-4">{error?.message || 'Unable to load dashboard data'}</p>
+              <Button variant="primary" onClick={() => refetch()} className="w-full">
                 Try Again
               </Button>
             </CardContent>
@@ -238,7 +224,10 @@ export default function ExecutiveDashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={loadDashboard}
+              onClick={() => {
+                refetch();
+                setLastUpdated(new Date());
+              }}
               leftIcon={<RefreshCw className="h-4 w-4" />}
             >
               Refresh

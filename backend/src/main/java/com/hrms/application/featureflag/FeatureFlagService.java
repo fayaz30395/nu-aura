@@ -51,6 +51,7 @@ public class FeatureFlagService {
     /**
      * Get all feature flags for current tenant
      */
+    @Transactional(readOnly = true)
     public List<FeatureFlag> getAllFlags() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return featureFlagRepository.findByTenantId(tenantId);
@@ -59,6 +60,7 @@ public class FeatureFlagService {
     /**
      * Get all enabled features for current tenant
      */
+    @Transactional(readOnly = true)
     public List<String> getEnabledFeatures() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return featureFlagRepository.findByTenantIdAndEnabled(tenantId, true)
@@ -70,6 +72,7 @@ public class FeatureFlagService {
     /**
      * Get feature flags by category
      */
+    @Transactional(readOnly = true)
     public List<FeatureFlag> getFlagsByCategory(String category) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return featureFlagRepository.findByTenantIdAndCategory(tenantId, category);
@@ -160,6 +163,7 @@ public class FeatureFlagService {
     /**
      * Get feature flags as a map for frontend consumption
      */
+    @Transactional(readOnly = true)
     public Map<String, Boolean> getFlagsAsMap() {
         Map<String, Boolean> flagsMap = new HashMap<>();
         getAllFlags().forEach(flag -> flagsMap.put(flag.getFeatureKey(), flag.isEnabled()));

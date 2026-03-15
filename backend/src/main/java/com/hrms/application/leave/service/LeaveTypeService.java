@@ -25,6 +25,7 @@ public class LeaveTypeService {
     private final LeaveTypeRepository leaveTypeRepository;
 
     @CacheEvict(value = CacheConfig.LEAVE_TYPES, allEntries = true)
+    @Transactional
     public LeaveType createLeaveType(LeaveType leaveType) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -37,6 +38,7 @@ public class LeaveTypeService {
     }
 
     @CacheEvict(value = CacheConfig.LEAVE_TYPES, allEntries = true)
+    @Transactional
     public LeaveType updateLeaveType(UUID id, LeaveType leaveTypeData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -101,6 +103,7 @@ public class LeaveTypeService {
     }
 
     @CacheEvict(value = CacheConfig.LEAVE_TYPES, allEntries = true)
+    @Transactional
     public void deleteLeaveType(UUID id) {
         LeaveType leaveType = getLeaveTypeById(id);
         leaveTypeRepository.delete(leaveType);

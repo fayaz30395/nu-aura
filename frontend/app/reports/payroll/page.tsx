@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -12,15 +13,34 @@ import {
   X,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { reportService, ReportRequest } from '@/lib/services/report.service';
+import { ReportRequest } from '@/lib/services/report.service';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { useDownloadPayrollReport } from '@/lib/hooks/queries/useReports';
 
 export default function PayrollReportsPage() {
+
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.REPORT_VIEW)) {
+      router.replace('/reports');
+    }
+  }, [permReady, hasPermission, router]);
+
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
+
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  const downloadMutation = useDownloadPayrollReport();
 
   const handleDownload = async () => {
     if (!startDate || !endDate) {
@@ -28,7 +48,6 @@ export default function PayrollReportsPage() {
       return;
     }
 
-    setLoading(true);
     setError('');
     setSuccessMessage('');
 
@@ -39,13 +58,11 @@ export default function PayrollReportsPage() {
         endDate,
       };
 
-      await reportService.downloadPayrollReport(request);
+      await downloadMutation.mutateAsync(request);
       setSuccessMessage(`Payroll report downloaded successfully in ${format} format!`);
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download report. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -160,10 +177,10 @@ export default function PayrollReportsPage() {
               {/* Download Button */}
               <button
                 onClick={handleDownload}
-                disabled={loading}
+                disabled={downloadMutation.isPending}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? (
+                {downloadMutation.isPending ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     Generating Report...

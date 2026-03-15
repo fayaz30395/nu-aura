@@ -33,6 +33,7 @@ public class TrainingManagementService {
 
     // ==================== Training Program Operations ====================
 
+    @Transactional
     public TrainingProgramResponse createProgram(TrainingProgramRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating training program {} for tenant {}", request.getProgramCode(), tenantId);
@@ -64,6 +65,7 @@ public class TrainingManagementService {
         return mapToProgramResponse(savedProgram);
     }
 
+    @Transactional
     public TrainingProgramResponse updateProgram(UUID programId, TrainingProgramRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating training program {} for tenant {}", programId, tenantId);
@@ -115,6 +117,7 @@ public class TrainingManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteProgram(UUID programId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TrainingProgram program = programRepository.findByIdAndTenantId(programId, tenantId)
@@ -167,6 +170,7 @@ public class TrainingManagementService {
         return mapToEnrollmentResponse(savedEnrollment);
     }
 
+    @Transactional
     public TrainingEnrollmentResponse updateEnrollmentStatus(UUID enrollmentId, TrainingEnrollment.EnrollmentStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)

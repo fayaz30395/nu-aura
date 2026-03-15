@@ -1,11 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { calendarService } from '@/lib/services/calendar.service';
-import { CalendarEvent, EventStatus } from '@/lib/types/calendar';
+import { EventStatus } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useCalendarEvent,
+  useDeleteCalendarEvent,
+  useSyncEventToGoogle,
+} from '@/lib/hooks/queries/useCalendar';
 import {
   ArrowLeft,
   Loader2,
@@ -28,60 +33,37 @@ export default function EventDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [event, setEvent] = useState<CalendarEvent | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [syncing, setSyncing] = useState(false);
+  const eventId = params.id as string;
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadEvent();
-  }, [isAuthenticated, hasHydrated, router, params.id]);
+  // React Query hooks
+  const { data: event, isLoading, error } = useCalendarEvent(eventId);
+  const deleteEventMutation = useDeleteCalendarEvent();
+  const syncToGoogleMutation = useSyncEventToGoogle();
 
-  const loadEvent = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await calendarService.getEventById(params.id as string);
-      setEvent(data);
-    } catch (error) {
-      console.error('Error loading event:', error);
-      setError('Failed to load event');
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!hasHydrated) {
+    return null;
+  }
 
-  const handleSyncToGoogle = async () => {
+  if (!isAuthenticated) {
+    router.push('/login');
+    return null;
+  }
+
+  const handleSyncToGoogle = () => {
     if (!event) return;
-    try {
-      setSyncing(true);
-      await calendarService.syncToGoogle(event.id);
-      await loadEvent();
-    } catch (error) {
-      console.error('Error syncing to Google:', error);
-      setError('Failed to sync to Google Calendar');
-    } finally {
-      setSyncing(false);
-    }
+    syncToGoogleMutation.mutate(event.id);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!event) return;
 
     if (!confirm('Are you sure you want to delete this event?')) return;
 
-    try {
-      await calendarService.deleteEvent(event.id);
-      router.push('/calendar');
-    } catch (error) {
-      console.error('Error deleting event:', error);
-      setError('Failed to delete event');
-    }
+    deleteEventMutation.mutate(event.id, {
+      onSuccess: () => {
+        router.push('/calendar');
+      },
+    });
   };
 
   const getStatusConfig = (status: EventStatus) => {
@@ -115,7 +97,7 @@ export default function EventDetailPage() {
     return configs[status] || configs.SCHEDULED;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="calendar">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -134,7 +116,9 @@ export default function EventDetailPage() {
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
-            <p className="text-surface-600 dark:text-surface-400">{error || 'Event not found'}</p>
+            <p className="text-surface-600 dark:text-surface-400">
+              {error instanceof Error ? error.message : 'Event not found'}
+            </p>
             <button
               onClick={() => router.push('/calendar')}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
@@ -390,10 +374,10 @@ export default function EventDetailPage() {
             <>
               <button
                 onClick={handleSyncToGoogle}
-                disabled={syncing}
+                disabled={syncToGoogleMutation.isPending}
                 className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-xl font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors disabled:opacity-50"
               >
-                {syncing ? (
+                {syncToGoogleMutation.isPending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <RefreshCw className="h-5 w-5" />
