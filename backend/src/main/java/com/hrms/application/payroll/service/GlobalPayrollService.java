@@ -41,6 +41,7 @@ public class GlobalPayrollService {
 
         // ==================== CURRENCY MANAGEMENT ====================
 
+        @Transactional
         public CurrencyDto createCurrency(CurrencyDto request) {
                 UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -94,6 +95,7 @@ public class GlobalPayrollService {
 
         // ==================== EXCHANGE RATE MANAGEMENT ====================
 
+        @Transactional
         public ExchangeRateDto createExchangeRate(ExchangeRateDto request) {
                 UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -154,6 +156,7 @@ public class GlobalPayrollService {
 
         // ==================== PAYROLL LOCATION MANAGEMENT ====================
 
+        @Transactional
         public PayrollLocationDto createLocation(PayrollLocationDto request) {
                 UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -212,6 +215,7 @@ public class GlobalPayrollService {
 
         // ==================== PAYROLL RUN MANAGEMENT ====================
 
+        @Transactional
         public GlobalPayrollRunDto createPayrollRun(LocalDate periodStart, LocalDate periodEnd,
                         LocalDate paymentDate, String description) {
                 UUID tenantId = TenantContext.getCurrentTenant();
@@ -243,6 +247,7 @@ public class GlobalPayrollService {
                 return GlobalPayrollRunDto.fromEntity(run);
         }
 
+        @Transactional
         public GlobalPayrollRunDto processPayrollRun(UUID runId) {
                 UUID tenantId = TenantContext.getCurrentTenant();
                 UUID currentUserId = SecurityContext.getCurrentUserId();
@@ -322,6 +327,7 @@ public class GlobalPayrollService {
                 return GlobalPayrollRunDto.fromEntity(run);
         }
 
+        @Transactional
         public GlobalPayrollRunDto approvePayrollRun(UUID runId) {
                 UUID tenantId = TenantContext.getCurrentTenant();
                 UUID currentUserId = SecurityContext.getCurrentUserId();
@@ -394,6 +400,7 @@ public class GlobalPayrollService {
 
         // ==================== EMPLOYEE PAYROLL RECORDS ====================
 
+        @Transactional
         public EmployeePayrollRecordDto addEmployeeToPayroll(UUID runId, EmployeePayrollRecordDto request) {
                 UUID tenantId = TenantContext.getCurrentTenant();
 

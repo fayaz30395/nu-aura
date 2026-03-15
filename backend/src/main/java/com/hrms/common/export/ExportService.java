@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Generic export service for generating CSV, Excel, and PDF files.
@@ -36,6 +37,7 @@ public class ExportService {
     /**
      * Export data to CSV format
      */
+    @Transactional(readOnly = true)
     public byte[] exportToCsv(List<String> headers, List<List<Object>> data) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -59,6 +61,7 @@ public class ExportService {
     /**
      * Export data to Excel format
      */
+    @Transactional(readOnly = true)
     public byte[] exportToExcel(String sheetName, List<String> headers, List<List<Object>> data) throws IOException {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -113,6 +116,7 @@ public class ExportService {
     /**
      * Export data to PDF format
      */
+    @Transactional(readOnly = true)
     public byte[] exportToPdf(String title, List<String> headers, List<List<Object>> data) throws DocumentException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4.rotate());
@@ -170,6 +174,7 @@ public class ExportService {
     /**
      * Export a map-based dataset (useful for dynamic columns)
      */
+    @Transactional(readOnly = true)
     public byte[] export(ExportFormat format, String title, List<String> headers,
                          List<Map<String, Object>> data, List<String> columnKeys)
             throws IOException, DocumentException {

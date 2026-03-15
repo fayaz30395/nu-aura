@@ -23,6 +23,7 @@ public class DocumentTemplateService {
     private final DocumentTemplateRepository documentTemplateRepository;
     private final TemplateInstantiationRepository templateInstantiationRepository;
 
+    @Transactional
     public DocumentTemplate createTemplate(DocumentTemplate template) {
         UUID tenantId = TenantContext.getCurrentTenant();
         template.setTenantId(tenantId);
@@ -35,6 +36,7 @@ public class DocumentTemplateService {
         return saved;
     }
 
+    @Transactional
     public DocumentTemplate updateTemplate(UUID templateId, DocumentTemplate templateData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -133,6 +135,7 @@ public class DocumentTemplateService {
         return documentTemplateRepository.save(template);
     }
 
+    @Transactional
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

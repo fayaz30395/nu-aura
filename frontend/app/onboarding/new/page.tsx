@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -23,18 +23,21 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { EmployeeSearchAutocomplete } from '@/components/ui/EmployeeSearchAutocomplete';
-import { onboardingService } from '@/lib/services/onboarding.service';
+import { useOnboardingTemplates, useCreateOnboardingProcess } from '@/lib/hooks/queries/useOnboarding';
 import { OnboardingProcessRequest, OnboardingChecklistTemplate } from '@/lib/types/onboarding';
 
 export default function NewOnboardingPage() {
     const router = useRouter();
     const { hasHydrated } = useAuth();
+    const { data: templates = [] } = useOnboardingTemplates();
+    const createProcessMutation = useCreateOnboardingProcess();
+
     const [currentStep, setCurrentStep] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [templates, setTemplates] = useState<OnboardingChecklistTemplate[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<{ id: string; name: string } | null>(null);
     const [selectedBuddy, setSelectedBuddy] = useState<{ id: string; name: string } | null>(null);
-    const [selectedTemplate, setSelectedTemplate] = useState<OnboardingChecklistTemplate | null>(null);
+    const [selectedTemplate, setSelectedTemplate] = useState<OnboardingChecklistTemplate | null>(
+        templates.length > 0 ? (templates.find(t => t.isDefault) || templates[0]) : null
+    );
 
     const [formData, setFormData] = useState({
         startDate: new Date().toISOString().split('T')[0],
@@ -42,22 +45,6 @@ export default function NewOnboardingPage() {
         notes: ''
     });
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const loadTemplates = async () => {
-            try {
-                const data = await onboardingService.getAllTemplates();
-                setTemplates(data);
-                if (data.length > 0) {
-                    const defaultTemplate = data.find(t => t.isDefault) || data[0];
-                    setSelectedTemplate(defaultTemplate);
-                }
-            } catch (err) {
-                console.error('Failed to load templates:', err);
-            }
-        };
-        loadTemplates();
-    }, []);
 
     const handleNext = () => {
         if (currentStep === 1 && !selectedEmployee) {
@@ -87,7 +74,6 @@ export default function NewOnboardingPage() {
         }
 
         try {
-            setLoading(true);
             setError(null);
 
             const payload: OnboardingProcessRequest = {
@@ -100,13 +86,11 @@ export default function NewOnboardingPage() {
                 templateId: selectedTemplate.id
             };
 
-            const result = await onboardingService.createProcess(payload);
+            const result = await createProcessMutation.mutateAsync(payload);
             router.push(`/onboarding/${result.id}`);
         } catch (err: unknown) {
             console.error('Failed to create onboarding process:', err);
             setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to initiate onboarding');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -345,7 +329,7 @@ export default function NewOnboardingPage() {
                             <Button
                                 variant="primary"
                                 onClick={handleSubmit}
-                                isLoading={loading}
+                                isLoading={createProcessMutation.isPending}
                                 size="lg"
                                 className="px-10 rounded-2xl font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20"
                                 leftIcon={<Zap className="h-4 w-4" />}

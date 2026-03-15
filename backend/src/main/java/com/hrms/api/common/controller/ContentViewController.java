@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.hrms.common.security.Permission.EMPLOYEE_VIEW_SELF;
+import jakarta.validation.Valid;
 
 /**
  * REST controller for content view tracking.
@@ -123,7 +124,7 @@ public class ContentViewController {
     @RequiresPermission(EMPLOYEE_VIEW_SELF)
     public ResponseEntity<Map<UUID, Long>> getBatchViewCounts(
             @PathVariable String contentType,
-            @RequestBody List<UUID> contentIds) {
+            @Valid @RequestBody List<UUID> contentIds) {
 
         ContentType type = ContentType.valueOf(contentType.toUpperCase());
         Map<UUID, Long> counts = contentViewService.getViewCounts(type, contentIds);

@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Distributed idempotency service for Kafka event processing.
@@ -56,6 +57,7 @@ public class IdempotencyService {
      *
      * @param eventId the unique event identifier
      */
+    @Transactional
     public void markProcessed(String eventId) {
         try {
             String key = PREFIX + eventId;

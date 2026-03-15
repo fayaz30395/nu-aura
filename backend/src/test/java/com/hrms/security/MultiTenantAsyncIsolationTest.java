@@ -96,14 +96,15 @@ public class MultiTenantAsyncIsolationTest {
 
         // Publish a leave request event for Tenant A
         LeaveRequestedEvent eventA = new LeaveRequestedEvent(
-                UUID.randomUUID(), // leaveRequestId
+                this,
                 tenantA,
+                UUID.randomUUID(), // leaveRequestId
                 userA2, // employeeId
-                userA1, // managerId
                 "John Doe",
                 "Annual Leave",
                 LocalDate.now(),
-                LocalDate.now().plusDays(5)
+                LocalDate.now().plusDays(5),
+                userA1 // managerId
         );
 
         eventPublisher.publishEvent(eventA);
@@ -113,14 +114,15 @@ public class MultiTenantAsyncIsolationTest {
 
         // Publish a leave request event for Tenant B
         LeaveRequestedEvent eventB = new LeaveRequestedEvent(
-                UUID.randomUUID(),
+                this,
                 tenantB,
+                UUID.randomUUID(),
                 userB2,
-                userB1,
                 "Jane Smith",
                 "Sick Leave",
                 LocalDate.now(),
-                LocalDate.now().plusDays(2)
+                LocalDate.now().plusDays(2),
+                userB1
         );
 
         eventPublisher.publishEvent(eventB);
@@ -174,13 +176,14 @@ public class MultiTenantAsyncIsolationTest {
         TenantContext.setCurrentTenant(tenantA);
 
         ExpenseSubmittedEvent expenseA = new ExpenseSubmittedEvent(
-                UUID.randomUUID(),
+                this,
                 tenantA,
+                UUID.randomUUID(),
                 userA2, // requester
-                userA1, // approver
                 "John Doe",
                 BigDecimal.valueOf(1500.00),
-                "USD"
+                "USD",
+                userA1 // approver
         );
 
         eventPublisher.publishEvent(expenseA);
@@ -189,13 +192,14 @@ public class MultiTenantAsyncIsolationTest {
         TenantContext.setCurrentTenant(tenantB);
 
         ExpenseSubmittedEvent expenseB = new ExpenseSubmittedEvent(
-                UUID.randomUUID(),
+                this,
                 tenantB,
+                UUID.randomUUID(),
                 userB2,
-                userB1,
                 "Jane Smith",
                 BigDecimal.valueOf(2500.00),
-                "USD"
+                "USD",
+                userB1
         );
 
         eventPublisher.publishEvent(expenseB);

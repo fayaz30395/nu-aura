@@ -73,7 +73,7 @@ public class TimeTrackingController {
     @PostMapping("/entries/submit-bulk")
     @RequiresPermission(Permission.TIME_TRACKING_CREATE)
     @Operation(summary = "Submit multiple entries", description = "Submit multiple time entries for approval")
-    public ResponseEntity<List<TimeEntryDto>> submitMultiple(@RequestBody List<UUID> entryIds) {
+    public ResponseEntity<List<TimeEntryDto>> submitMultiple(@Valid @RequestBody List<UUID> entryIds) {
         return ResponseEntity.ok(timeTrackingService.submitMultiple(entryIds));
     }
 
@@ -87,7 +87,7 @@ public class TimeTrackingController {
     @PostMapping("/entries/approve-bulk")
     @RequiresPermission(Permission.TIME_TRACKING_APPROVE)
     @Operation(summary = "Approve multiple entries", description = "Approve multiple time entries")
-    public ResponseEntity<List<TimeEntryDto>> approveMultiple(@RequestBody List<UUID> entryIds) {
+    public ResponseEntity<List<TimeEntryDto>> approveMultiple(@Valid @RequestBody List<UUID> entryIds) {
         return ResponseEntity.ok(timeTrackingService.approveMultiple(entryIds));
     }
 
@@ -96,7 +96,7 @@ public class TimeTrackingController {
     @Operation(summary = "Reject time entry", description = "Reject a submitted time entry")
     public ResponseEntity<TimeEntryDto> rejectEntry(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> body
+            @Valid @RequestBody Map<String, String> body
     ) {
         String reason = body.get("reason");
         return ResponseEntity.ok(timeTrackingService.rejectEntry(id, reason));

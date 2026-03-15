@@ -47,12 +47,11 @@ const MockLoginForm = () => {
     const password = formData.get('password') as string;
 
     try {
-      const result = await authApi.login({ email, password });
+      await authApi.login({ email, password });
       // Success - would trigger redirect in real app
       mockPush('/dashboard');
     } catch {
-      // Error handled by form
-      throw new Error('Login failed');
+      // Error is intentionally swallowed — failure state handled by UI, not re-thrown
     }
   };
 

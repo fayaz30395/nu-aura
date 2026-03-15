@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -24,6 +24,7 @@ import {
   Button,
   Input,
 } from '@/components/ui';
+import type { BadgeVariant } from '@/components/ui/types';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { lmsService, CourseSummaryDto } from '@/lib/services/lms.service';
 
@@ -44,8 +45,9 @@ const DIFFICULTY_COLORS: Record<string, string> = {
 };
 
 function DifficultyBadge({ level }: { level: string }) {
+  const variant = (DIFFICULTY_COLORS[level] ?? 'secondary') as BadgeVariant;
   return (
-    <Badge variant={(DIFFICULTY_COLORS[level] ?? 'secondary') as any} className="text-xs">
+    <Badge variant={variant} className="text-xs">
       {DIFFICULTY_LABELS[level] ?? level}
     </Badge>
   );
@@ -63,6 +65,11 @@ export default function CourseCatalogPage() {
   const [enrolledIds, setEnrolledIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMandatory, setFilterMandatory] = useState(false);
 
@@ -79,7 +86,8 @@ export default function CourseCatalogPage() {
       setError(message);
       setSuccessMsg(null);
     }
-    setTimeout(() => {
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    notifTimerRef.current = setTimeout(() => {
       setSuccessMsg(null);
       setError(null);
     }, 5000);
@@ -126,7 +134,8 @@ export default function CourseCatalogPage() {
       showNotification(`Successfully enrolled in "${course.title}"`, 'success');
     } catch (err: unknown) {
       console.error('Failed to enroll:', err);
-      const msg = err?.response?.status === 409
+      const errStatus = (err as { response?: { status?: number } })?.response?.status;
+      const msg = errStatus === 409
         ? `You are already enrolled in "${course.title}"`
         : `Failed to enroll in "${course.title}". Please try again.`;
       showNotification(msg, 'error');

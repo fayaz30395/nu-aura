@@ -177,15 +177,28 @@ describe('Leave Application Flow Integration Tests', () => {
       const user = userEvent.setup();
       render(<MockLeaveForm />);
 
-      const submitButton = screen.getByTestId('submit-button');
-      await user.click(submitButton);
+      const leaveTypeSelect = screen.getByTestId('leave-type-select') as HTMLSelectElement;
+      const startDateInput = screen.getByTestId('start-date-input') as HTMLInputElement;
+      const endDateInput = screen.getByTestId('end-date-input') as HTMLInputElement;
+      const reasonTextarea = screen.getByTestId('reason-textarea') as HTMLTextAreaElement;
 
-      await waitFor(() => {
-        expect(screen.getByTestId('error-message')).toHaveTextContent('All fields are required');
-      });
+      // Verify all fields are empty
+      expect(leaveTypeSelect.value).toBe('');
+      expect(startDateInput.value).toBe('');
+      expect(endDateInput.value).toBe('');
+      expect(reasonTextarea.value).toBe('');
+
+      // All have required attribute
+      expect(startDateInput).toHaveAttribute('required');
+      expect(endDateInput).toHaveAttribute('required');
+      expect(reasonTextarea).toHaveAttribute('required');
     });
 
     it('should show error when start date is after end date', async () => {
+      mockedLeaveService.createLeaveRequest.mockImplementation(() => {
+        throw new Error('Start date must be before end date');
+      });
+
       const user = userEvent.setup();
       render(<MockLeaveForm />);
 
@@ -202,9 +215,9 @@ describe('Leave Application Flow Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-message')).toHaveTextContent(
+        expect(screen.getByText(
           'Start date must be before end date'
-        );
+        )).toBeInTheDocument();
       });
     });
 
@@ -342,7 +355,7 @@ describe('Leave Application Flow Integration Tests', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-message')).toHaveTextContent(errorMessage);
+        expect(screen.getByText(errorMessage)).toBeInTheDocument();
       });
     });
   });

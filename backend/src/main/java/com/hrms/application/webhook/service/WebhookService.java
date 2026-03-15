@@ -1,9 +1,12 @@
 package com.hrms.application.webhook.service;
 
 import com.hrms.common.config.CacheConfig;
+import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.webhook.Webhook;
+import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookStatus;
+import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
 import com.hrms.infrastructure.webhook.repository.WebhookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,8 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class WebhookService {
+
+    private final WebhookDeliveryRepository deliveryRepository;
 
     private final WebhookRepository webhookRepository;
 
@@ -190,5 +195,36 @@ public class WebhookService {
     })
     public void evictCache(UUID tenantId) {
         log.debug("Evicted webhook cache for tenant {}", tenantId);
+    }
+
+    /**
+     * BUG-008 FIX: Retry a failed webhook delivery inside a single @Transactional
+     * boundary.  The controller previously called deliveryRepository.save() directly
+     * with no transaction, creating a race condition: if the dispatcher picked up
+     * the delivery between the status-reset and the save completing, the state
+     * update could overwrite the dispatcher's DELIVERED status.
+     *
+     * <p>Also performs an explicit tenant ownership check on the delivery itself
+     * (BUG-016 partial fix) rather than relying solely on the indirect webhook check.</p>
+     *
+     * @param deliveryId UUID of the delivery to retry
+     * @return the reset {@link WebhookDelivery}
+     */
+    @Transactional
+    public WebhookDelivery retryDelivery(UUID deliveryId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        WebhookDelivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new ResourceNotFoundException("WebhookDelivery", "id", deliveryId));
+
+        // BUG-016 FIX: Enforce tenant ownership directly on the delivery entity,
+        // not just via the parent webhook lookup.
+        if (!tenantId.equals(delivery.getTenantId())) {
+            throw new ResourceNotFoundException("WebhookDelivery", "id", deliveryId);
+        }
+
+        delivery.setStatus(WebhookDelivery.DeliveryStatus.PENDING);
+        delivery.setNextRetryAt(null);
+        return deliveryRepository.save(delivery);
     }
 }

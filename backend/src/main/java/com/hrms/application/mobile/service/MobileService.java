@@ -32,6 +32,7 @@ public class MobileService {
     /**
      * Get aggregated mobile dashboard data
      */
+    @Transactional(readOnly = true)
     public MobileDashboardResponse getMobileDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();

@@ -16,13 +16,13 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useTemplates } from '@/lib/hooks/queries/useFluence';
+import { useFluenceTemplates } from '@/lib/hooks/queries/useFluence';
 
 export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: templatesData, isLoading } = useTemplates(0, 20);
+  const { data: templatesData, isLoading } = useFluenceTemplates(0, 20);
 
   const templates = templatesData?.content || [];
 

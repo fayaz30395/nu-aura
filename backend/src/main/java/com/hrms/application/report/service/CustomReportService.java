@@ -70,6 +70,7 @@ public class CustomReportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<ReportTemplateDto> listTemplates(String module) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<ReportTemplate> templates = StringUtils.hasText(module)
@@ -78,6 +79,7 @@ public class CustomReportService {
         return templates.stream().map(this::toDto).toList();
     }
 
+    @Transactional(readOnly = true)
     public ReportTemplateDto getTemplate(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return toDto(templateRepository
@@ -98,6 +100,7 @@ public class CustomReportService {
     /**
      * Execute a custom report query and return up to 100 rows as key-value maps.
      */
+    @Transactional
     public List<Map<String, Object>> executeReport(ReportTemplateDto query) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<String> columns = query.getSelectedColumns();

@@ -196,6 +196,7 @@ public class EmployeeImportService {
     /**
      * Get CSV template for download.
      */
+    @Transactional(readOnly = true)
     public byte[] getCsvTemplate() {
         return parserService.generateCsvTemplate();
     }
@@ -203,6 +204,7 @@ public class EmployeeImportService {
     /**
      * Get Excel template for download.
      */
+    @Transactional(readOnly = true)
     public byte[] getExcelTemplate() throws IOException {
         return parserService.generateExcelTemplate();
     }

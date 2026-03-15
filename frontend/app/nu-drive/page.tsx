@@ -49,6 +49,20 @@ interface DriveFile {
   mimeType: string;
   size?: string;
   modifiedTime?: string;
+  starred?: boolean;
+  shared?: boolean;
+  webViewLink?: string;
+  webContentLink?: string;
+  sharingUser?: { displayName: string; emailAddress?: string };
+  owners?: { displayName: string; emailAddress?: string; photoLink?: string }[];
+  iconLink?: string;
+}
+
+interface DriveFileMetadata {
+  name: string;
+  mimeType: string;
+  parents?: string[];
+  modifiedTime?: string;
   iconLink?: string;
   webViewLink?: string;
   webContentLink?: string;
@@ -163,7 +177,7 @@ function DriveContent() {
 
     try {
       setUploading(true);
-      const metadata: any = {
+      const metadata: DriveFileMetadata = {
         name: file.name,
         mimeType: file.type,
       };
@@ -211,7 +225,7 @@ function DriveContent() {
     try {
       setCreatingFolder(true);
 
-      const metadata: any = {
+      const metadata: DriveFileMetadata = {
         name: newFolderName.trim(),
         mimeType: 'application/vnd.google-apps.folder',
       };

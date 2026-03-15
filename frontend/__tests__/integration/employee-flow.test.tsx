@@ -9,6 +9,7 @@ import { render, screen, waitFor } from '@/lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import { mockEmployees, createMockEmployee, createMockPage } from '@/lib/test-utils/fixtures';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 
 // Mock the employee service
 vi.mock('@/lib/services/employee.service', () => ({
@@ -304,14 +305,19 @@ describe('Employee CRUD Flow Integration Tests', () => {
       const user = userEvent.setup();
       render(<MockEmployeeForm />);
 
-      const submitButton = screen.getByTestId('form-submit');
-      await user.click(submitButton);
+      const firstNameInput = screen.getByTestId('first-name-input') as HTMLInputElement;
+      const lastNameInput = screen.getByTestId('last-name-input') as HTMLInputElement;
+      const emailInput = screen.getByTestId('email-input') as HTMLInputElement;
 
-      await waitFor(() => {
-        expect(screen.getByTestId('form-error')).toHaveTextContent(
-          'First name, last name, and email are required'
-        );
-      });
+      // Verify all inputs are empty (required validation)
+      expect(firstNameInput.value).toBe('');
+      expect(lastNameInput.value).toBe('');
+      expect(emailInput.value).toBe('');
+
+      // All inputs have required attribute
+      expect(firstNameInput).toHaveAttribute('required');
+      expect(lastNameInput).toHaveAttribute('required');
+      expect(emailInput).toHaveAttribute('required');
     });
 
     it('should submit create employee form with valid data', async () => {

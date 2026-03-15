@@ -25,6 +25,7 @@ public class WikiSpaceService {
     private final WikiSpaceRepository wikiSpaceRepository;
     private final WikiPageRepository wikiPageRepository;
 
+    @Transactional
     public WikiSpace createSpace(WikiSpace space) {
         UUID tenantId = TenantContext.getCurrentTenant();
         space.setTenantId(tenantId);
@@ -35,6 +36,7 @@ public class WikiSpaceService {
         return saved;
     }
 
+    @Transactional
     public WikiSpace updateSpace(UUID spaceId, WikiSpace spaceData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -99,6 +101,7 @@ public class WikiSpaceService {
         return updated;
     }
 
+    @Transactional
     public void deleteSpace(UUID spaceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

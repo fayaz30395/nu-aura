@@ -292,31 +292,37 @@ public class AuditLogService {
 
     // ==================== Legacy Methods (Backward Compatibility) ====================
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogs(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return auditLogRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogsByEntityType(String entityType, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return auditLogRepository.findByEntityTypeOrderByCreatedAtDesc(entityType, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogsByEntity(String entityType, UUID entityId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return auditLogRepository.findByEntityTypeAndEntityIdOrderByCreatedAtDesc(entityType, entityId, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogsByActor(UUID actorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return auditLogRepository.findByActorIdOrderByCreatedAtDesc(actorId, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogsByAction(AuditAction action, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return auditLogRepository.findByActionOrderByCreatedAtDesc(action, pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<AuditLog> getAuditLogsByDateRange(LocalDateTime startDate, LocalDateTime endDate, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return auditLogRepository.findByDateRange(startDate, endDate, pageable);

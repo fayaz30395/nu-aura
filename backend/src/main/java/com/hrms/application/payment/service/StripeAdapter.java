@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Stripe payment gateway adapter
@@ -56,6 +57,7 @@ public class StripeAdapter implements PaymentGatewayAdapter {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentStatusResponse checkStatus(String externalPaymentId) {
         try {
             // Integration point: Call Stripe API to fetch payment intent status
@@ -71,6 +73,7 @@ public class StripeAdapter implements PaymentGatewayAdapter {
     }
 
     @Override
+    @Transactional
     public PaymentGatewayResponse processRefund(PaymentRefund refund) {
         try {
             // Integration point: Call Stripe API to create refund

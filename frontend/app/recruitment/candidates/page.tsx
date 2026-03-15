@@ -9,16 +9,15 @@ import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, JobOpening, CreateCandidateRequest } from '@/lib/types/recruitment';
+import { Candidate, CandidateStatus, CandidateSource, RecruitmentStage, CandidateStage, JobOpening, CreateCandidateRequest } from '@/lib/types/recruitment';
 import {
   Users, Search, Plus, Mail, Phone, Building, MapPin, Calendar, FileText, Edit2, Trash2, X,
   Eye, ChevronRight, DollarSign, Send, CheckCircle, XCircle, Loader2, Sparkles, Brain, MessageSquare,
   AlertTriangle, ShieldAlert
 } from 'lucide-react';
-import { letterService } from '@/lib/services/letter.service';
-import { recruitmentService } from '@/lib/services/recruitment.service';
 import { GenerateOfferLetterRequest, LetterTemplate, LetterCategory } from '@/lib/types/letter';
 import { CreateOfferRequest } from '@/lib/types/recruitment';
+import { recruitmentService } from '@/lib/services/recruitment.service';
 import {
   useCandidates,
   useJobOpenings,
@@ -31,6 +30,8 @@ import {
   useGenerateScreeningSummary,
   useSynthesizeFeedback,
 } from '@/lib/hooks/queries/useRecruitment';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+import { useActiveLetterTemplates } from '@/lib/hooks/queries/useLetter';
 import {
   createCandidateSchema,
   createOfferSchema,
@@ -39,7 +40,6 @@ import {
   CreateOfferFormData,
   ResumeParseFormData,
 } from '@/lib/validations/recruitment';
-import { employeeService } from '@/lib/services/employee.service';
 import {
   CandidateMatchResponse,
   CandidateScreeningSummaryResponse,
@@ -95,8 +95,6 @@ function CandidatesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [selectedJobFilter, setSelectedJobFilter] = useState<string>(jobIdFilter || '');
   const [searchQuery, setSearchQuery] = useState('');
-  const [recruiters, setRecruiters] = useState<any[]>([]);
-  const [templates, setTemplates] = useState<LetterTemplate[]>([]);
   const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
   const [declineReason, setDeclineReason] = useState('');
 
@@ -121,20 +119,13 @@ function CandidatesPage() {
   const synthesizeFeedbackMutation = useSynthesizeFeedback();
 
   // Load initial data
+  const { data: employeesData } = useEmployees(0, 100);
+  const { data: letterTemplatesData } = useActiveLetterTemplates(true);
+
   const candidates = candidatesData?.content || [];
   const jobOpenings = jobOpeningsData?.content || [];
-
-  // Load recruiters and templates
-  const loadRecruitersAndTemplates = async () => {
-    try {
-      const response = await employeeService.getAllEmployees(0, 100);
-      setRecruiters(response.content);
-      const activeTemplates = await letterService.getActiveTemplates();
-      setTemplates(activeTemplates.filter(t => t.category === LetterCategory.OFFER));
-    } catch (err) {
-      console.error('Error loading recruiters/templates:', err);
-    }
-  };
+  const recruiters = employeesData?.content || [];
+  const templates = (letterTemplatesData || []).filter(t => t.category === LetterCategory.OFFER);
 
   // React Hook Form setup
   const candidateForm = useForm<CreateCandidateFormData>({
@@ -202,9 +193,9 @@ function CandidatesPage() {
         expectedCtc: formData.expectedCtc,
         noticePeriodDays: formData.noticePeriodDays,
         resumeUrl: formData.resumeUrl,
-        source: formData.source as any,
-        status: formData.status as any,
-        currentStage: formData.currentStage as any,
+        source: formData.source as CandidateSource,
+        status: formData.status as CandidateStatus,
+        currentStage: formData.currentStage as CandidateStage,
         appliedDate: formData.appliedDate,
         notes: formData.notes,
         assignedRecruiterId: formData.assignedRecruiterId,
@@ -570,10 +561,6 @@ function CandidatesPage() {
     selected: candidates.filter(c => c.status === 'SELECTED' || c.status === 'OFFER_ACCEPTED').length,
   };
 
-  // Load initial data on mount
-  React.useEffect(() => {
-    loadRecruitersAndTemplates();
-  }, []);
 
   return (
     <AppLayout activeMenuItem="recruitment">

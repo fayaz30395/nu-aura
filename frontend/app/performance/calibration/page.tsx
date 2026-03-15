@@ -1,8 +1,7 @@
 'use client';
 import { AppLayout } from '@/components/layout';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
 import {
   Download,
   Info,
@@ -15,8 +14,8 @@ import {
   Target,
   BarChart3,
 } from 'lucide-react';
-import { reviewCycleService, reviewService } from '@/lib/services/performance.service';
-import type { ReviewCycle, PerformanceReview } from '@/lib/types/performance';
+import { usePerformanceAllCycles, useAllReviews, useUpdateReview } from '@/lib/hooks/queries/usePerformance';
+import type { ReviewCycle, PerformanceReview, ReviewRequest } from '@/lib/types/performance';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -134,52 +133,38 @@ function getBellCurveWarning({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CalibrationPage() {
-  const [cycles, setCycles] = useState<ReviewCycle[]>([]);
+  // React Query hooks
+  const cyclesQuery = usePerformanceAllCycles(0, 100);
+  const allReviewsQuery = useAllReviews(0, 500);
+  const updateReviewMutation = useUpdateReview();
+
+  // Local state
   const [selectedCycleId, setSelectedCycleId] = useState('');
-  const [reviews, setReviews] = useState<PerformanceReview[]>([]);
-  const [cyclesLoading, setCyclesLoading] = useState(true);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
-
-  // Local final rating overrides
   const [finalOverrides, setFinalOverrides] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState<string | null>(null);
 
-  // Load cycles on mount
-  useEffect(() => {
-    setCyclesLoading(true);
-    reviewCycleService
-      .getAll(0, 100)
-      .then(res => {
-        const all = res.content;
-        setCycles(all);
-        const active = all.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
-        if (active) setSelectedCycleId(active.id);
-        else if (all.length > 0) setSelectedCycleId(all[0].id);
-      })
-      .catch(() => {})
-      .finally(() => setCyclesLoading(false));
-  }, []);
+  // Initialize selected cycle
+  if (!selectedCycleId && cyclesQuery.data?.content?.length > 0) {
+    const cycles = cyclesQuery.data.content;
+    const active = cycles.find(c => c.status === 'ACTIVE' || c.status === 'CALIBRATION');
+    if (active) {
+      setSelectedCycleId(active.id);
+    } else if (cycles.length > 0) {
+      setSelectedCycleId(cycles[0].id);
+    }
+  }
 
-  // Load reviews when cycle changes
-  useEffect(() => {
-    if (!selectedCycleId) return;
-    setReviewsLoading(true);
-    reviewService
-      .getAllReviews(0, 500)
-      .then(res => {
-        const filtered = res.content.filter(
-          r => (r.reviewCycleId || r.cycleId) === selectedCycleId
-        );
-        setReviews(filtered);
-        setFinalOverrides({});
-      })
-      .catch(() => {})
-      .finally(() => setReviewsLoading(false));
-  }, [selectedCycleId]);
+  // Filter reviews by selected cycle
+  const reviews = useMemo(() => {
+    if (!selectedCycleId || !allReviewsQuery.data?.content) return [];
+    return allReviewsQuery.data.content.filter(
+      r => (r.reviewCycleId || r.cycleId) === selectedCycleId
+    );
+  }, [selectedCycleId, allReviewsQuery.data]);
 
   // Build per-employee rows
   const rows = useMemo<EmployeeRatingRow[]>(() => {
@@ -290,16 +275,15 @@ export default function CalibrationPage() {
         r => r.employeeId === row.employeeId && r.reviewType === 'MANAGER'
       );
       if (managerReview) {
-        await reviewService.update(managerReview.id, {
+        const updateData: ReviewRequest = {
           ...managerReview,
           overallRating: final,
           reviewerId: managerReview.reviewerId,
           employeeId: managerReview.employeeId,
           reviewType: managerReview.reviewType,
-        } as any);
+        };
+        await updateReviewMutation.mutateAsync({ id: managerReview.id, data: updateData });
       }
-    } catch {
-      // Handle error silently
     } finally {
       setSaving(null);
     }
@@ -342,7 +326,10 @@ export default function CalibrationPage() {
     }
   };
 
+  const cycles = cyclesQuery.data?.content || [];
   const selectedCycle = cycles.find(c => c.id === selectedCycleId);
+  const cyclesLoading = cyclesQuery.isLoading;
+  const reviewsLoading = allReviewsQuery.isLoading;
 
   return (
     <AppLayout>

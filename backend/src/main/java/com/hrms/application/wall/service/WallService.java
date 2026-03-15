@@ -53,8 +53,16 @@ public class WallService {
 
     // ==================== POSTS ====================
 
+    @Transactional
     public WallPostResponse createPost(CreatePostRequest request, UUID authorId) {
-        Employee author = employeeRepository.findById(authorId)
+        // BUG-005 FIX: Use findByIdAndTenantId for both the author and the praise
+        // recipient to prevent cross-tenant employee references.  Previously
+        // findById() was called without a tenant filter, allowing an attacker who
+        // knows (or enumerates) a UUID from Tenant B to embed that employee in a
+        // post created on Tenant A.
+        UUID tenantId = TenantContext.requireCurrentTenant();
+
+        Employee author = employeeRepository.findByIdAndTenantId(authorId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Author not found"));
 
         WallPost post = new WallPost(request.getType(), request.getContent(), author);
@@ -63,7 +71,7 @@ public class WallService {
 
         // Handle praise recipient
         if (request.getType() == WallPost.PostType.PRAISE && request.getPraiseRecipientId() != null) {
-            Employee recipient = employeeRepository.findById(request.getPraiseRecipientId())
+            Employee recipient = employeeRepository.findByIdAndTenantId(request.getPraiseRecipientId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Praise recipient not found"));
             post.setPraiseRecipient(recipient);
         }
@@ -94,6 +102,7 @@ public class WallService {
         return posts.map(post -> mapToResponse(post, currentUserId));
     }
 
+    @Transactional(readOnly = true)
     public WallPostResponse getPostById(UUID postId, UUID currentUserId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
@@ -107,6 +116,7 @@ public class WallService {
         return mapToResponse(post, currentUserId);
     }
 
+    @Transactional
     public void deletePost(UUID postId, UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
@@ -132,6 +142,7 @@ public class WallService {
 
     // ==================== REACTIONS ====================
 
+    @Transactional
     public void addReaction(UUID postId, UUID employeeId, PostReaction.ReactionType reactionType) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
@@ -160,6 +171,7 @@ public class WallService {
         }
     }
 
+    @Transactional
     public void removeReaction(UUID postId, UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         Optional<PostReaction> existingReaction = postReactionRepository
@@ -179,6 +191,7 @@ public class WallService {
 
     // ==================== COMMENTS ====================
 
+    @Transactional
     public CommentResponse addComment(UUID postId, CreateCommentRequest request, UUID authorId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
@@ -210,6 +223,7 @@ public class WallService {
         return comments.map(this::mapCommentToResponse);
     }
 
+    @Transactional
     public void deleteComment(UUID commentId, UUID userId) {
         PostComment comment = postCommentRepository.findByIdAndActiveTrue(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
@@ -267,6 +281,7 @@ public class WallService {
         return mapToResponse(post, employeeId);
     }
 
+    @Transactional
     public void removeVote(UUID postId, UUID employeeId) {
         pollVoteRepository.deleteByPollOptionPostIdAndEmployeeId(postId, employeeId);
     }

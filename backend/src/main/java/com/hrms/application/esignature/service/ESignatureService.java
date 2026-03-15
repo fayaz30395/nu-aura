@@ -39,6 +39,7 @@ public class ESignatureService {
 
     // ==================== Signature Request Operations ====================
 
+    @Transactional
     public SignatureRequestResponse createSignatureRequest(SignatureRequestRequest request, UUID createdBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating signature request '{}' by user {}", request.getTitle(), createdBy);
@@ -87,6 +88,7 @@ public class ESignatureService {
         return mapToSignatureRequestResponse(savedRequest);
     }
 
+    @Transactional
     public SignatureRequestResponse updateSignatureRequest(UUID requestId, SignatureRequestRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating signature request {}", requestId);
@@ -114,6 +116,7 @@ public class ESignatureService {
         return mapToSignatureRequestResponse(updatedRequest);
     }
 
+    @Transactional
     public SignatureRequestResponse sendForSignature(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Sending signature request {} for signing", requestId);
@@ -146,6 +149,7 @@ public class ESignatureService {
         return mapToSignatureRequestResponse(updatedRequest);
     }
 
+    @Transactional
     public SignatureRequestResponse cancelSignatureRequest(UUID requestId, UUID cancelledBy, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Cancelling signature request {} by user {}", requestId, cancelledBy);
@@ -211,6 +215,7 @@ public class ESignatureService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteSignatureRequest(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
@@ -267,6 +272,7 @@ public class ESignatureService {
         return signatureApprovalRepository.save(approval);
     }
 
+    @Transactional
     public SignatureApprovalResponse addSigner(UUID requestId, SignatureApprovalRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding signer {} to signature request {}", request.getSignerId(), requestId);
@@ -391,6 +397,7 @@ public class ESignatureService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void removeSigner(UUID approvalId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)

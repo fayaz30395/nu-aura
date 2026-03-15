@@ -30,6 +30,7 @@ public class ApprovalService {
      * @param userId the user to check pending approvals for
      * @return count of pending approvals (currently returns 0)
      */
+    @Transactional(readOnly = true)
     public Integer getPendingApprovalsCount(java.util.UUID userId) {
         log.debug("getPendingApprovalsCount called for user {} - returning 0 (stub)", userId);
         return 0;

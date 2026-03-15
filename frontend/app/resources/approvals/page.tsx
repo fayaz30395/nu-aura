@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout';
 import {
   Clock,
@@ -21,86 +21,74 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { EmployeeCapacityDisplay } from '@/components/resource-management';
 import {
   AllocationApprovalRequest,
-  EmployeeCapacity,
   formatAllocationPercentage,
 } from '@/lib/types/resource-management';
-import { resourceManagementService } from '@/lib/services/resource-management.service';
+import {
+  useMyPendingApprovals,
+  useEmployeeCapacity,
+  useApproveAllocationRequest,
+  useRejectAllocationRequest,
+} from '@/lib/hooks/queries/useResources';
 import { format, parseISO } from 'date-fns';
 
 type TabKey = 'pending' | 'approved' | 'rejected';
 
 export default function ApprovalsPage() {
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabKey>('pending');
-  const [requests, setRequests] = useState<AllocationApprovalRequest[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<AllocationApprovalRequest | null>(null);
-  const [employeeCapacity, setEmployeeCapacity] = useState<EmployeeCapacity | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [approveComment, setApproveComment] = useState('');
   const [rejectReason, setRejectReason] = useState('');
-  const [processing, setProcessing] = useState(false);
 
-  const fetchRequests = async () => {
-    setLoading(true);
-    try {
-      const response = await resourceManagementService.getMyPendingApprovals(0, 50);
-      setRequests(response.content);
-    } catch (err) {
-      console.error('Error fetching approval requests:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // React Query hooks
+  const { data: pendingData, isLoading, refetch: refetchRequests } = useMyPendingApprovals(0, 50);
+  const { data: employeeCapacity } = useEmployeeCapacity(selectedRequest?.employeeId ?? '');
+  const approveMutation = useApproveAllocationRequest();
+  const rejectMutation = useRejectAllocationRequest();
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+  const requests = pendingData?.content ?? [];
 
-  const handleSelectRequest = async (request: AllocationApprovalRequest) => {
+  const handleSelectRequest = (request: AllocationApprovalRequest) => {
     setSelectedRequest(request);
-    try {
-      const capacity = await resourceManagementService.getEmployeeCapacity(request.employeeId);
-      setEmployeeCapacity(capacity);
-    } catch (err) {
-      console.error('Error fetching employee capacity:', err);
-    }
   };
 
-  const handleApprove = async () => {
+  const handleApprove = () => {
     if (!selectedRequest) return;
-    setProcessing(true);
-    try {
-      await resourceManagementService.approveAllocationRequest(selectedRequest.id, {
-        comment: approveComment || undefined,
-      });
-      setShowApproveModal(false);
-      setApproveComment('');
-      setSelectedRequest(null);
-      fetchRequests();
-    } catch (err) {
-      console.error('Error approving request:', err);
-    } finally {
-      setProcessing(false);
-    }
+    approveMutation.mutate(
+      {
+        requestId: selectedRequest.id,
+        data: {
+          comment: approveComment || undefined,
+        },
+      },
+      {
+        onSuccess: () => {
+          setShowApproveModal(false);
+          setApproveComment('');
+          setSelectedRequest(null);
+          refetchRequests();
+        },
+      }
+    );
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
     if (!selectedRequest || !rejectReason.trim()) return;
-    setProcessing(true);
-    try {
-      await resourceManagementService.rejectAllocationRequest(selectedRequest.id, {
-        reason: rejectReason,
-      });
-      setShowRejectModal(false);
-      setRejectReason('');
-      setSelectedRequest(null);
-      fetchRequests();
-    } catch (err) {
-      console.error('Error rejecting request:', err);
-    } finally {
-      setProcessing(false);
-    }
+    rejectMutation.mutate(
+      {
+        requestId: selectedRequest.id,
+        data: { reason: rejectReason },
+      },
+      {
+        onSuccess: () => {
+          setShowRejectModal(false);
+          setRejectReason('');
+          setSelectedRequest(null);
+          refetchRequests();
+        },
+      }
+    );
   };
 
   const pendingRequests = requests.filter((r) => r.status === 'PENDING');
@@ -127,8 +115,8 @@ export default function ApprovalsPage() {
               Review and approve over-allocation requests
             </p>
           </div>
-          <Button variant="ghost" onClick={fetchRequests} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          <Button variant="ghost" onClick={() => refetchRequests()} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
 
@@ -169,7 +157,7 @@ export default function ApprovalsPage() {
         </div>
 
         {/* Content */}
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-32 rounded-xl" />
@@ -333,11 +321,11 @@ export default function ApprovalsPage() {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setShowApproveModal(false)} disabled={processing}>
+          <Button variant="ghost" onClick={() => setShowApproveModal(false)} disabled={approveMutation.isPending}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleApprove} disabled={processing}>
-            {processing ? 'Approving...' : 'Approve'}
+          <Button variant="primary" onClick={handleApprove} disabled={approveMutation.isPending}>
+            {approveMutation.isPending ? 'Approving...' : 'Approve'}
           </Button>
         </ModalFooter>
       </Modal>
@@ -370,16 +358,16 @@ export default function ApprovalsPage() {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={() => setShowRejectModal(false)} disabled={processing}>
+          <Button variant="ghost" onClick={() => setShowRejectModal(false)} disabled={rejectMutation.isPending}>
             Cancel
           </Button>
           <Button
             variant="primary"
             className="bg-red-600 hover:bg-red-700"
             onClick={handleReject}
-            disabled={processing || !rejectReason.trim()}
+            disabled={rejectMutation.isPending || !rejectReason.trim()}
           >
-            {processing ? 'Rejecting...' : 'Reject Request'}
+            {rejectMutation.isPending ? 'Rejecting...' : 'Reject Request'}
           </Button>
         </ModalFooter>
       </Modal>

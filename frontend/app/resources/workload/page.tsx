@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
 import { Users, Download, RefreshCw, AlertCircle, Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -13,14 +13,16 @@ import {
 } from '@/components/resource-management';
 import { AllocationEditData } from '@/components/resource-management/EmployeeAllocationDetailModal';
 import {
-  WorkloadDashboardData,
-  WorkloadFilterOptions,
   EmployeeWorkload,
   DepartmentWorkload,
   AllocationStatus,
-  AllocationApprovalRequest,
 } from '@/lib/types/resource-management';
-import { resourceManagementService } from '@/lib/services/resource-management.service';
+import {
+  useWorkloadDashboard,
+  useEmployeeAllocationHistory,
+  useUpdateAllocation,
+  useExportWorkloadReport,
+} from '@/lib/hooks/queries/useResources';
 import { cn } from '@/lib/utils';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
@@ -73,8 +75,6 @@ const calculateDynamicStatus = (activeAllocation: number): AllocationStatus => {
 };
 
 export default function WorkloadDashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ViewTab>('overview');
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>('thisMonth');
   const [selectedStatus, setSelectedStatus] = useState<AllocationStatus[]>([]);
@@ -85,10 +85,6 @@ export default function WorkloadDashboardPage() {
   // Employee detail modal state
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeWorkload | null>(null);
   const [showEmployeeModal, setShowEmployeeModal] = useState(false);
-  const [allocationHistory, setAllocationHistory] = useState<AllocationApprovalRequest[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-
-  const [dashboardData, setDashboardData] = useState<WorkloadDashboardData | null>(null);
 
   // Calculate date range
   const dateRange = useMemo(() => {
@@ -125,29 +121,28 @@ export default function WorkloadDashboardPage() {
     }
   }, [selectedDateRange]);
 
-  // Fetch dashboard data
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const filters: WorkloadFilterOptions = {
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
-      };
-      const data = await resourceManagementService.getWorkloadDashboard(filters);
-      setDashboardData(data);
-    } catch (err: unknown) {
-      console.error('Error fetching workload data:', err);
-      setError('Failed to load workload data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // React Query hooks
+  const {
+    data: dashboardData,
+    isLoading,
+    error: queryError,
+    refetch: refetchData,
+  } = useWorkloadDashboard({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+    allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [dateRange, selectedStatus]);
+  const { data: allocationHistory, isLoading: loadingHistory } = useEmployeeAllocationHistory(
+    selectedEmployee?.employeeId ?? '',
+    0,
+    20
+  );
+
+  const updateAllocationMutation = useUpdateAllocation();
+  const exportMutation = useExportWorkloadReport();
+
+  const error = queryError;
 
   // Filter employees by search, status, and allocation range
   const filteredEmployees = useMemo(() => {
@@ -188,26 +183,27 @@ export default function WorkloadDashboardPage() {
     });
   }, [dashboardData, searchQuery, selectedStatus, selectedRanges]);
 
-  const handleExport = async () => {
-    try {
-      setError(null);
-      const blob = await resourceManagementService.exportWorkloadReport('csv', {
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `workload-report-${dateRange.startDate}-${dateRange.endDate}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (err: unknown) {
-      console.error('Export failed:', err);
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to export workload report. Please try again.';
-      setError(errorMessage);
-    }
+  const handleExport = () => {
+    exportMutation.mutate(
+      {
+        format: 'csv',
+        filters: {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+          allocationStatus: selectedStatus.length > 0 ? selectedStatus : undefined,
+        },
+      },
+      {
+        onSuccess: (blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `workload-report-${dateRange.startDate}-${dateRange.endDate}.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+        },
+      }
+    );
   };
 
   const toggleStatusFilter = (status: AllocationStatus) => {
@@ -227,57 +223,33 @@ export default function WorkloadDashboardPage() {
   };
 
   // Handle employee click to show details modal
-  const handleEmployeeClick = async (employee: EmployeeWorkload) => {
+  const handleEmployeeClick = (employee: EmployeeWorkload) => {
     setSelectedEmployee(employee);
     setShowEmployeeModal(true);
-    setLoadingHistory(true);
-    setAllocationHistory([]);
-    try {
-      const history = await resourceManagementService.getEmployeeAllocationHistory(employee.employeeId);
-      setAllocationHistory(history.content);
-    } catch (err) {
-      console.error('Error fetching allocation history:', err);
-    } finally {
-      setLoadingHistory(false);
-    }
   };
 
   // Close employee detail modal
   const handleCloseEmployeeModal = () => {
     setShowEmployeeModal(false);
     setSelectedEmployee(null);
-    setAllocationHistory([]);
   };
 
   // Handle edit allocation
-  const handleEditAllocation = async (employeeId: string, data: AllocationEditData) => {
-    if (!dashboardData || !selectedEmployee) {
-      return;
-    }
-
-    try {
-      const updatedEmployee = await resourceManagementService.updateAllocation({
+  const handleEditAllocation = (employeeId: string, data: AllocationEditData) => {
+    updateAllocationMutation.mutate(
+      {
         employeeId,
         projectId: data.projectId,
         allocationPercentage: data.allocationPercentage,
         startDate: data.startDate,
         endDate: data.endDate || undefined,
-      });
-
-      setSelectedEmployee(updatedEmployee);
-
-      const updatedEmployeeWorkloads = dashboardData.employeeWorkloads?.map((emp) =>
-        emp.employeeId === employeeId ? updatedEmployee : emp
-      );
-
-      setDashboardData({
-        ...dashboardData,
-        employeeWorkloads: updatedEmployeeWorkloads,
-      });
-    } catch (err: unknown) {
-      console.error('Failed to update allocation:', err);
-      setError('Failed to update allocation. Please try again.');
-    }
+      },
+      {
+        onSuccess: (updatedEmployee) => {
+          setSelectedEmployee(updatedEmployee);
+        },
+      }
+    );
   };
 
   return (
@@ -295,11 +267,11 @@ export default function WorkloadDashboardPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={fetchData}
-              disabled={loading}
+              onClick={() => refetchData()}
+              disabled={isLoading}
               className="rounded-md p-2 text-surface-500 hover:bg-surface-100 hover:text-surface-700 dark:hover:bg-surface-800 dark:hover:text-surface-300"
             >
-              <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+              <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
             </button>
             <button
               onClick={handleExport}
@@ -395,15 +367,15 @@ export default function WorkloadDashboardPage() {
         {error && (
           <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
-            <span className="flex-1">{error}</span>
-            <button onClick={fetchData} className="font-medium hover:underline">
+            <span className="flex-1">{error instanceof Error ? error.message : 'Error loading data'}</span>
+            <button onClick={() => refetchData()} className="font-medium hover:underline">
               Retry
             </button>
           </div>
         )}
 
         {/* Loading state */}
-        {loading && !dashboardData && (
+        {isLoading && !dashboardData && (
           <div className="space-y-6">
             <Skeleton className="h-10 w-full rounded-lg" />
             <Skeleton className="h-64 rounded-lg" />
@@ -622,7 +594,7 @@ export default function WorkloadDashboardPage() {
         isOpen={showEmployeeModal}
         onClose={handleCloseEmployeeModal}
         employee={selectedEmployee}
-        allocationHistory={allocationHistory}
+        allocationHistory={allocationHistory?.content ?? []}
         loadingHistory={loadingHistory}
         onEditAllocation={handleEditAllocation}
       />

@@ -16,11 +16,20 @@ import {
   X,
   Key,
 } from 'lucide-react';
-import { rolesApi, permissionsApi } from '@/lib/api/roles';
-import { usersApi, User } from '@/lib/api/users';
 import { Permission, RoleWithDetails } from '@/lib/types/roles';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {
+  useRoles,
+  usePermissions as useQueryPermissions,
+  useRoleAdminUsers as useAdminUsers,
+  useUpdateRole,
+  useCreateRole,
+  useDeleteRole,
+  useAssignPermissions,
+  useAssignRolesToUser,
+} from '@/lib/hooks/queries/useRoles';
+import type { User } from '@/lib/api/users';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -29,11 +38,12 @@ export default function PermissionsPage() {
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
   const [activeTab, setActiveTab] = useState<'roles' | 'users'>('roles');
-  const [roles, setRoles] = useState<RoleWithDetails[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Query hooks
+  const rolesQuery = useRoles();
+  const permissionsQuery = useQueryPermissions();
+  const usersQuery = useAdminUsers();
 
   // Selection states
   const [selectedRole, setSelectedRole] = useState<RoleWithDetails | null>(null);
@@ -43,6 +53,13 @@ export default function PermissionsPage() {
   const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false);
   const [isCreateRoleModalOpen, setIsCreateRoleModalOpen] = useState(false);
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
+
+  // Mutation hooks
+  const createRoleMutation = useCreateRole();
+  const updateRoleMutation = useUpdateRole(selectedRole?.id || '');
+  const deleteRoleMutation = useDeleteRole();
+  const assignPermissionsMutation = useAssignPermissions(selectedRole?.id || '');
+  const assignRoleMutation = useAssignRolesToUser(selectedUser?.id || '');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -56,39 +73,28 @@ export default function PermissionsPage() {
       router.push('/home');
       return;
     }
-
-    loadData();
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [rolesData, permissionsData, usersData] = await Promise.all([
-        rolesApi.getAllRoles(),
-        permissionsApi.getAllPermissions(),
-        usersApi.getAllUsers(),
-      ]);
+  // Transform roles data with details
+  const roles: RoleWithDetails[] = (rolesQuery.data || []).map(r => ({
+    ...r,
+    expanded: false,
+    permissionCount: r.permissions.length
+  }));
+  const permissions = permissionsQuery.data || [];
+  const users = usersQuery.data || [];
+  const isLoading = rolesQuery.isLoading || permissionsQuery.isLoading || usersQuery.isLoading;
 
-      const rolesWithDetails: RoleWithDetails[] = rolesData.map(r => ({
-        ...r,
-        expanded: false,
-        permissionCount: r.permissions.length
-      }));
-
-      setRoles(rolesWithDetails);
-      setPermissions(permissionsData);
-      setUsers(usersData);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [expandedRoles, setExpandedRoles] = useState<Set<string>>(new Set());
 
   const toggleRoleExpanded = (roleId: string) => {
-    setRoles(roles.map(r =>
-      r.id === roleId ? { ...r, expanded: !r.expanded } : r
-    ));
+    const newSet = new Set(expandedRoles);
+    if (newSet.has(roleId)) {
+      newSet.delete(roleId);
+    } else {
+      newSet.add(roleId);
+    }
+    setExpandedRoles(newSet);
   };
 
   const openEditRoleModal = (role: RoleWithDetails) => {
@@ -103,19 +109,16 @@ export default function PermissionsPage() {
 
   const handleDeleteRole = async (roleId: string, roleName: string) => {
     if (!confirm(`Are you sure you want to delete the role "${roleName}"?`)) return;
-    try {
-      await rolesApi.deleteRole(roleId);
-      await loadData();
-    } catch (error) {
-      console.error('Failed to delete role:', error);
-      alert('Failed to delete role. It might be assigned to users.');
-    }
+    deleteRoleMutation.mutate(roleId);
   };
 
   const filteredRoles = roles.filter(r =>
     r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     r.code.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).map(r => ({
+    ...r,
+    expanded: expandedRoles.has(r.id)
+  }));
 
   const filteredUsers = users.filter(u =>
     u.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -197,7 +200,7 @@ export default function PermissionsPage() {
         </div>
 
         {/* Content */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500" />
           </div>
@@ -410,14 +413,13 @@ export default function PermissionsPage() {
             }}
             onSave={async (roleData, permissionCodes) => {
               try {
-                await rolesApi.updateRole(selectedRole.id, {
+                await updateRoleMutation.mutateAsync({
                   name: roleData.name,
                   description: roleData.description,
                 });
-                await rolesApi.assignPermissions(selectedRole.id, {
+                await assignPermissionsMutation.mutateAsync({
                   permissionCodes: permissionCodes
                 });
-                await loadData();
                 setIsEditRoleModalOpen(false);
                 setSelectedRole(null);
               } catch (error) {
@@ -436,13 +438,12 @@ export default function PermissionsPage() {
             onClose={() => setIsCreateRoleModalOpen(false)}
             onSave={async (data) => {
               try {
-                await rolesApi.createRole({
+                await createRoleMutation.mutateAsync({
                   code: data.code,
                   name: data.name,
                   description: data.description,
                   permissionCodes: data.permissionCodes
                 });
-                await loadData();
                 setIsCreateRoleModalOpen(false);
               } catch (error) {
                 console.error('Failed to create role:', error);
@@ -464,8 +465,7 @@ export default function PermissionsPage() {
             }}
             onSave={async (roleCodes) => {
               try {
-                await usersApi.assignRoles(selectedUser.id, roleCodes);
-                await loadData();
+                await assignRoleMutation.mutateAsync(roleCodes);
                 setIsEditUserModalOpen(false);
                 setSelectedUser(null);
               } catch (error) {

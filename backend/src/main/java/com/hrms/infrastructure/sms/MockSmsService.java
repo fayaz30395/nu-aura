@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Mock implementation of SMS service for development/testing
@@ -23,6 +24,7 @@ public class MockSmsService implements SmsService {
     private boolean enabled;
 
     @Override
+    @Transactional
     public String sendSms(String phoneNumber, String message) {
         String messageId = "SMS_" + UUID.randomUUID().toString().substring(0, 8);
         log.info("[MOCK SMS] Sending to {}: {} (ID: {})", phoneNumber, message, messageId);
@@ -30,12 +32,14 @@ public class MockSmsService implements SmsService {
     }
 
     @Override
+    @Transactional
     public String sendTemplatedSms(String phoneNumber, String templateId, Map<String, String> variables) {
         String message = smsTemplate.renderTemplate(templateId, variables);
         return sendSms(phoneNumber, message);
     }
 
     @Override
+    @Transactional
     public Map<String, String> sendBulkSms(String[] phoneNumbers, String message) {
         Map<String, String> results = new HashMap<>();
         for (String phoneNumber : phoneNumbers) {
@@ -46,6 +50,7 @@ public class MockSmsService implements SmsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SmsStatus getMessageStatus(String messageId) {
         log.info("[MOCK SMS] Getting status for message: {}", messageId);
         return SmsStatus.DELIVERED;

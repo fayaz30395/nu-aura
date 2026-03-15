@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Bell, Mail, MessageSquare, Smartphone } from 'lucide-react';
+import { Bell, Mail, MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/hooks/queries/useNotifications';
+import type { NotificationPreferences as NotificationPreferencesType } from '@/lib/types/notifications';
 
 interface NotificationPreference {
   key: string;
@@ -17,7 +19,7 @@ interface NotificationPreference {
   inApp: boolean;
 }
 
-const defaultPreferences: NotificationPreference[] = [
+const preferenceCategories: NotificationPreference[] = [
   {
     key: 'leave',
     label: 'Leave Requests',
@@ -59,7 +61,15 @@ const defaultPreferences: NotificationPreference[] = [
 export default function NotificationSettingsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [preferences, setPreferences] = useState<NotificationPreference[]>(defaultPreferences);
+  const [preferences, setPreferences] = useState<NotificationPreference[]>(preferenceCategories);
+  const [saving, setSaving] = useState(false);
+
+  // Fetch notification preferences from backend
+  const { data: backendPreferences, isLoading } = useNotificationPreferences(
+    isAuthenticated && hasHydrated
+  );
+
+  const updatePreferencesMutation = useUpdateNotificationPreferences();
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -68,13 +78,56 @@ export default function NotificationSettingsPage() {
     }
   }, [isAuthenticated, hasHydrated, router]);
 
-  const togglePreference = (key: string, channel: 'email' | 'push' | 'inApp') => {
-    setPreferences(prev =>
-      prev.map(p =>
-        p.key === key ? { ...p, [channel]: !p[channel] } : p
-      )
+  // Update local state when backend preferences are loaded
+  useEffect(() => {
+    if (backendPreferences) {
+      const updatedPreferences = preferenceCategories.map((pref) => {
+        const prefs = backendPreferences as unknown as Record<string, boolean>;
+        return {
+          ...pref,
+          email: prefs[`${pref.key}_email`] ?? (pref.key === 'leave' || pref.key === 'approvals' ? backendPreferences.emailEnabled : pref.email),
+          push: prefs[`${pref.key}_push`] ?? (pref.key === 'leave' || pref.key === 'approvals' ? backendPreferences.pushEnabled : pref.push),
+          inApp: prefs[`${pref.key}_inApp`] ?? true,
+        };
+      });
+      setPreferences(updatedPreferences);
+    }
+  }, [backendPreferences]);
+
+  const togglePreference = async (key: string, channel: 'email' | 'push' | 'inApp') => {
+    const updatedPreferences = preferences.map((p) =>
+      p.key === key ? { ...p, [channel]: !p[channel] } : p
     );
+    setPreferences(updatedPreferences);
+
+    // Save to backend
+    setSaving(true);
+    try {
+      const prefsToSave: Partial<NotificationPreferencesType> = {};
+      updatedPreferences.forEach((pref) => {
+        const typeKey = `${pref.key}Notifications` as keyof NotificationPreferencesType;
+        (prefsToSave as Record<string, unknown>)[typeKey] = pref.email || pref.push || pref.inApp;
+      });
+      await updatePreferencesMutation.mutateAsync(prefsToSave);
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+      // Revert on error
+      setPreferences(preferences);
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+          <span className="ml-2 text-surface-600 dark:text-surface-400">Loading preferences...</span>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -104,8 +157,11 @@ export default function NotificationSettingsPage() {
               </div>
 
               {/* Preference rows */}
-              {preferences.map(pref => (
-                <div key={pref.key} className="grid grid-cols-12 gap-4 py-4 border-b last:border-b-0 items-center">
+              {preferences.map((pref) => (
+                <div
+                  key={pref.key}
+                  className="grid grid-cols-12 gap-4 py-4 border-b last:border-b-0 items-center"
+                >
                   <div className="col-span-6 flex items-start gap-3">
                     {pref.icon}
                     <div>
@@ -116,33 +172,57 @@ export default function NotificationSettingsPage() {
                   <div className="col-span-2 flex justify-center">
                     <button
                       onClick={() => togglePreference(pref.key, 'email')}
-                      className={`w-10 h-6 rounded-full transition-colors ${pref.email ? 'bg-primary' : 'bg-gray-300'} relative`}
+                      disabled={saving}
+                      className={`w-10 h-6 rounded-full transition-colors ${
+                        pref.email ? 'bg-primary' : 'bg-gray-300'
+                      } relative disabled:opacity-50`}
                     >
-                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${pref.email ? 'left-5' : 'left-1'}`} />
+                      <span
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                          pref.email ? 'left-5' : 'left-1'
+                        }`}
+                      />
                     </button>
                   </div>
                   <div className="col-span-2 flex justify-center">
                     <button
                       onClick={() => togglePreference(pref.key, 'push')}
-                      className={`w-10 h-6 rounded-full transition-colors ${pref.push ? 'bg-primary' : 'bg-gray-300'} relative`}
+                      disabled={saving}
+                      className={`w-10 h-6 rounded-full transition-colors ${
+                        pref.push ? 'bg-primary' : 'bg-gray-300'
+                      } relative disabled:opacity-50`}
                     >
-                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${pref.push ? 'left-5' : 'left-1'}`} />
+                      <span
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                          pref.push ? 'left-5' : 'left-1'
+                        }`}
+                      />
                     </button>
                   </div>
                   <div className="col-span-2 flex justify-center">
                     <button
                       onClick={() => togglePreference(pref.key, 'inApp')}
-                      className={`w-10 h-6 rounded-full transition-colors ${pref.inApp ? 'bg-primary' : 'bg-gray-300'} relative`}
+                      disabled={saving}
+                      className={`w-10 h-6 rounded-full transition-colors ${
+                        pref.inApp ? 'bg-primary' : 'bg-gray-300'
+                      } relative disabled:opacity-50`}
                     >
-                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${pref.inApp ? 'left-5' : 'left-1'}`} />
+                      <span
+                        className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                          pref.inApp ? 'left-5' : 'left-1'
+                        }`}
+                      />
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-4">
-              Note: Notification preferences are saved locally. Backend integration for persistent preferences is coming soon.
-            </p>
+            {saving && (
+              <p className="text-xs text-muted-foreground mt-4">
+                <Loader2 className="h-3 w-3 animate-spin inline mr-1" />
+                Saving preferences...
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

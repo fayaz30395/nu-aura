@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailTemplateService {
@@ -45,6 +46,7 @@ public class EmailTemplateService {
             </html>
             """;
 
+    @Transactional(readOnly = true)
     public String generateEmail(EmailNotification.EmailType type, Map<String, String> variables) {
         String title = getEmailTitle(type);
         String body = getEmailBody(type, variables);

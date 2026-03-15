@@ -33,6 +33,7 @@ public class BenefitEnhancedService {
 
     // ==================== BENEFIT PLANS ====================
 
+    @Transactional
     public BenefitPlanEnhancedResponse createPlan(BenefitPlanEnhancedRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -92,6 +93,7 @@ public class BenefitEnhancedService {
         return BenefitPlanEnhancedResponse.from(plan);
     }
 
+    @Transactional
     public BenefitPlanEnhancedResponse updatePlan(UUID planId, BenefitPlanEnhancedRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -279,6 +281,7 @@ public class BenefitEnhancedService {
         enrollment.addDependent(dependent);
     }
 
+    @Transactional
     public EnrollmentResponse approveEnrollment(UUID enrollmentId, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -365,6 +368,7 @@ public class BenefitEnhancedService {
 
     // ==================== CLAIMS ====================
 
+    @Transactional
     public ClaimResponse submitClaim(ClaimRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -428,6 +432,7 @@ public class BenefitEnhancedService {
         return ClaimResponse.from(claim);
     }
 
+    @Transactional
     public ClaimResponse processClaim(UUID claimId, BigDecimal approvedAmount, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -467,6 +472,7 @@ public class BenefitEnhancedService {
         return ClaimResponse.from(claim);
     }
 
+    @Transactional
     public ClaimResponse rejectClaim(UUID claimId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -551,6 +557,7 @@ public class BenefitEnhancedService {
 
     // ==================== FLEX BENEFITS ====================
 
+    @Transactional
     public FlexAllocationResponse createFlexAllocation(FlexAllocationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();

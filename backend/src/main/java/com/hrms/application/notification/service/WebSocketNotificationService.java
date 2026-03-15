@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for sending real-time notifications via WebSocket.
@@ -25,6 +26,7 @@ public class WebSocketNotificationService {
     /**
      * Send notification to a specific user.
      */
+    @Transactional
     public void sendToUser(UUID userId, NotificationMessage notification) {
         String destination = "/queue/notifications";
         notification.setTimestamp(LocalDateTime.now());
@@ -42,6 +44,7 @@ public class WebSocketNotificationService {
     /**
      * Send notification to all users in a tenant.
      */
+    @Transactional
     public void sendToTenant(UUID tenantId, NotificationMessage notification) {
         String destination = "/topic/tenant." + tenantId + ".notifications";
         notification.setTimestamp(LocalDateTime.now());
@@ -55,6 +58,7 @@ public class WebSocketNotificationService {
     /**
      * Send notification to all users in current tenant.
      */
+    @Transactional
     public void sendToCurrentTenant(NotificationMessage notification) {
         UUID tenantId = TenantContext.getCurrentTenant();
         if (tenantId != null) {
@@ -65,6 +69,7 @@ public class WebSocketNotificationService {
     /**
      * Send notification to a specific department.
      */
+    @Transactional
     public void sendToDepartment(UUID departmentId, NotificationMessage notification) {
         String destination = "/topic/department." + departmentId + ".notifications";
         notification.setTimestamp(LocalDateTime.now());
@@ -168,6 +173,7 @@ public class WebSocketNotificationService {
     /**
      * Send announcement to entire tenant.
      */
+    @Transactional
     public void sendAnnouncement(String title, String message, NotificationMessage.Priority priority) {
         NotificationMessage notification = NotificationMessage.builder()
                 .type(NotificationMessage.NotificationType.ANNOUNCEMENT)
@@ -182,6 +188,7 @@ public class WebSocketNotificationService {
     /**
      * Send system alert (admin only).
      */
+    @Transactional
     public void sendSystemAlert(UUID adminId, String title, String message) {
         NotificationMessage notification = NotificationMessage.builder()
                 .type(NotificationMessage.NotificationType.SYSTEM_ALERT)

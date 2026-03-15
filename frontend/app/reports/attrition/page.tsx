@@ -37,7 +37,11 @@ export default function AttritionReportPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [markingAction, setMarkingAction] = useState<string | null>(null);
 
-  useEffect(() => { load(); }, []);
+  // R2-013 FIX: Add minScore to the dependency array. Without it, load() captures
+  // the initial minScore=50 in a stale closure — changing the slider would update
+  // the input visually but re-fetching with the stale value (always 50).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, [minScore]);
 
   async function load() {
     setLoading(true);

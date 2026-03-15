@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
@@ -20,8 +20,10 @@ import {
   Download,
   AlertCircle,
 } from 'lucide-react';
-import { lmsService, Course, CourseEnrollment } from '@/lib/services/lms.service';
+import { Course } from '@/lib/services/lms.service';
 import { apiClient } from '@/lib/api/client';
+import { useToast } from '@/components/notifications/ToastProvider';
+import { useCourseDetail, useCourseEnrollment, useMyEnrollments, useEnrollCourse } from '@/lib/hooks/queries/useLearning';
 
 const DIFFICULTY_COLOR = {
   BEGINNER: 'bg-green-100 text-green-700',
@@ -40,57 +42,50 @@ interface Quiz {
 }
 
 export default function CourseDetailPage() {
+  const toast = useToast();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [course, setCourse] = useState<Course | null>(null);
-  const [enrollment, setEnrollment] = useState<CourseEnrollment | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
-  const [error, setError] = useState<string | null>(null);
   const [downloadingCert, setDownloadingCert] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [id]);
+  // Queries
+  const { data: course, isLoading: courseLoading } = useCourseDetail(id);
+  const { data: allEnrollments, isLoading: enrollmentsLoading } = useMyEnrollments();
+  const enrollMutation = useEnrollCourse();
 
-  async function loadData() {
-    try {
-      setLoading(true);
-      const [courseData, enrollments, quizzesData] = await Promise.all([
-        lmsService.getCourse(id),
-        lmsService.getMyEnrollments().catch(() => [] as CourseEnrollment[]),
-        apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`).catch(() => ({ data: [] as Quiz[] })),
-      ]);
-      setCourse(courseData);
-      const enroll = enrollments.find(e => e.courseId === id) ?? null;
-      setEnrollment(enroll);
-      setQuizzes(quizzesData.data || []);
-      
-      // Expand first module by default
-      if (courseData.modules?.[0]) {
-        setExpandedModules(new Set([courseData.modules[0].id]));
-      }
-    } catch {
-      setError('Failed to load course');
-    } finally {
-      setLoading(false);
-    }
+  // Expand first module when course loads
+  if (course?.modules?.[0] && expandedModules.size === 0) {
+    setExpandedModules(new Set([course.modules[0].id]));
   }
 
-  async function handleEnroll() {
-    setEnrolling(true);
+  // Load quizzes
+  const loadQuizzes = async () => {
     try {
-      const enroll = await lmsService.enrollSelf(id);
-      setEnrollment(enroll as CourseEnrollment);
+      const response = await apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`);
+      setQuizzes(response.data || []);
+    } catch {
+      setQuizzes([]);
+    }
+  };
+
+  // Load quizzes once course is loaded
+  if (course && quizzes.length === 0) {
+    loadQuizzes();
+  }
+
+  // Find current enrollment
+  const enrollment = allEnrollments?.find(e => e.courseId === id) ?? null;
+
+  async function handleEnroll() {
+    try {
+      await enrollMutation.mutateAsync(id);
       router.push(`/learning/courses/${id}/play`);
     } catch (err: unknown) {
-      const error = err as any;
-      setError(error?.response?.data?.message || 'Failed to enroll');
-    } finally {
-      setEnrolling(false);
+      const apiError = err as unknown as { response?: { data?: { message?: string } } };
+      setError(apiError?.response?.data?.message || 'Failed to enroll');
     }
   }
 
@@ -109,7 +104,7 @@ export default function CourseDetailPage() {
       link.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Failed to download certificate');
+      toast.error('Failed to download certificate');
     } finally {
       setDownloadingCert(false);
     }
@@ -125,8 +120,9 @@ export default function CourseDetailPage() {
   };
 
   const totalContents = course?.modules?.reduce((acc, m) => acc + (m.contents?.length ?? 0), 0) ?? 0;
+  const isLoading = courseLoading || enrollmentsLoading;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
@@ -431,10 +427,10 @@ export default function CourseDetailPage() {
             ) : (
               <button
                 onClick={handleEnroll}
-                disabled={enrolling}
+                disabled={enrollMutation.isPending}
                 className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                {enrolling ? (
+                {enrollMutation.isPending ? (
                   <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Enrolling...</>
                 ) : (
                   <><Play className="h-4 w-4" /> Enroll &amp; Start</>

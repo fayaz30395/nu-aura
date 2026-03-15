@@ -27,6 +27,7 @@ public class AssetManagementService {
     private final AssetRepository assetRepository;
     private final EmployeeRepository employeeRepository;
 
+    @Transactional
     public AssetResponse createAsset(AssetRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating asset {} for tenant {}", request.getAssetCode(), tenantId);
@@ -57,6 +58,7 @@ public class AssetManagementService {
         return mapToAssetResponse(savedAsset);
     }
 
+    @Transactional
     public AssetResponse updateAsset(UUID assetId, AssetRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating asset {} for tenant {}", assetId, tenantId);
@@ -82,6 +84,7 @@ public class AssetManagementService {
         return mapToAssetResponse(updatedAsset);
     }
 
+    @Transactional
     public AssetResponse assignAsset(UUID assetId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Assigning asset {} to employee {} for tenant {}", assetId, employeeId, tenantId);
@@ -93,8 +96,11 @@ public class AssetManagementService {
             throw new IllegalArgumentException("Asset is not available for assignment");
         }
 
-        // Verify employee exists
-        employeeRepository.findById(employeeId)
+        // R2-002 FIX: Verify employee exists AND belongs to the same tenant.
+        // Using findById() would allow assigning an asset to an employee from a
+        // different tenant — a cross-tenant data leak. findByIdAndTenantId() enforces
+        // the tenant boundary before the assignment is persisted.
+        employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         asset.setAssignedTo(employeeId);
@@ -157,6 +163,7 @@ public class AssetManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteAsset(UUID assetId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)

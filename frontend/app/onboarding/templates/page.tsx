@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,31 +20,13 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { onboardingService } from '@/lib/services/onboarding.service';
-import { OnboardingChecklistTemplate } from '@/lib/types/onboarding';
+import { useOnboardingTemplates } from '@/lib/hooks/queries/useOnboarding';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function TemplatesPage() {
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
-    const [templates, setTemplates] = useState<OnboardingChecklistTemplate[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
-
-    useEffect(() => {
-        loadTemplates();
-    }, []);
-
-    const loadTemplates = async () => {
-        try {
-            setLoading(true);
-            const data = await onboardingService.getAllTemplates();
-            setTemplates(data || []);
-        } catch (error) {
-            console.error('Failed to load templates:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data: templates = [], isLoading } = useOnboardingTemplates();
 
     const filteredTemplates = templates.filter(t =>
         t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -102,7 +84,7 @@ export default function TemplatesPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-6 gap-6">
-                            {loading ? (
+                            {isLoading ? (
                                 Array.from({ length: 6 }).map((_, i) => (
                                     <Skeleton key={i} className="h-48 rounded-3xl" />
                                 ))

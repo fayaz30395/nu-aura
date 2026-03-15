@@ -30,7 +30,7 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className={`${outfit.variable} font-outfit dark:bg-surface-950`}>
+      <body className={`${outfit.variable} font-outfit bg-midnight-deep dark:bg-midnight-deep`}>
         <Providers>{children}</Providers>
       </body>
     </html>

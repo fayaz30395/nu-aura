@@ -133,6 +133,7 @@ public class PaymentService {
     /**
      * Check payment status
      */
+    @Transactional(readOnly = true)
     public PaymentTransaction checkPaymentStatus(UUID paymentId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -166,6 +167,7 @@ public class PaymentService {
     /**
      * Process refund for a payment
      */
+    @Transactional
     public PaymentRefund processRefund(UUID paymentId, String reason) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -275,6 +277,7 @@ public class PaymentService {
     /**
      * Save payment configuration
      */
+    @Transactional
     public PaymentConfig savePaymentConfig(PaymentConfig config) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         config.setTenantId(tenantId);
@@ -288,6 +291,7 @@ public class PaymentService {
     /**
      * Get active payment configuration for a provider
      */
+    @Transactional(readOnly = true)
     public PaymentConfig getActivePaymentConfig(UUID tenantId, PaymentConfig.PaymentProvider provider) {
         return paymentConfigRepository.findByTenantIdAndProviderAndIsActiveTrueAndIsDeletedFalse(tenantId, provider)
             .orElse(null);

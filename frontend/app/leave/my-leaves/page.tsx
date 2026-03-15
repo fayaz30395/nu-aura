@@ -1,63 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CalendarOff } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
-import { leaveService } from '@/lib/services/leave.service';
-import { LeaveRequest, LeaveType, LeaveRequestStatus } from '@/lib/types/leave';
+import { useLeaveRequestsByStatus, useEmployeeLeaveRequests, useActiveLeaveTypes, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { LeaveRequestStatus, LeaveRequest } from '@/lib/types/leave';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 export default function MyLeavesPage() {
+  const toast = useToast();
   const router = useRouter();
-  const [requests, setRequests] = useState<LeaveRequest[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const cancelLeaveRequest = useCancelLeaveRequest();
 
-  useEffect(() => {
-    loadData();
-  }, [filterStatus, currentPage]);
+  const employeeRequests = useEmployeeLeaveRequests(user?.employeeId || '', currentPage, 10, Boolean(user?.employeeId && !filterStatus));
+  const statusRequests = useLeaveRequestsByStatus(filterStatus as LeaveRequestStatus, currentPage, 10);
+  const { data: leaveTypes = [] } = useActiveLeaveTypes();
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-      const [requestsData, typesData] = await Promise.all([
-        filterStatus
-          ? leaveService.getLeaveRequestsByStatus(filterStatus as LeaveRequestStatus, currentPage, 10)
-          : leaveService.getLeaveRequestsByEmployee(user.employeeId, currentPage, 10),
-        leaveService.getActiveLeaveTypes(),
-      ]);
-
-      setRequests(requestsData.content);
-      setTotalPages(requestsData.totalPages);
-      setLeaveTypes(typesData);
-    } catch (err) {
-      console.error('Error loading leaves:', err);
-      setError('Failed to load leave requests. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const requestsData = filterStatus ? statusRequests.data : employeeRequests.data;
+  const requests = requestsData?.content ?? [];
+  const totalPages = requestsData?.totalPages ?? 0;
+  const loading = !requestsData;
 
   const handleCancel = async (id: string) => {
     if (!confirm('Are you sure you want to cancel this leave request?')) return;
-    
+
     const reason = prompt('Please provide a reason for cancellation:');
     if (!reason) return;
 
     try {
-      await leaveService.cancelLeaveRequest(id, reason);
-      alert('Leave request cancelled successfully');
-      loadData();
+      await cancelLeaveRequest.mutateAsync({ id, reason });
+      toast.success('Leave request cancelled successfully');
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
     }
   };
 
@@ -128,7 +109,7 @@ export default function MyLeavesPage() {
               <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
             </div>
             <button
-              onClick={loadData}
+              onClick={() => setError(null)}
               className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
             >
               <RefreshCw className="w-4 h-4" />
@@ -138,7 +119,7 @@ export default function MyLeavesPage() {
 
         {/* Leave Requests Table */}
         <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
-          {loading ? (
+          {!requestsData ? (
             <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">
@@ -173,7 +154,7 @@ export default function MyLeavesPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {requests.map((request) => (
+                    {requests.map((request: LeaveRequest) => (
                       <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                           {request.requestNumber}
@@ -209,7 +190,7 @@ export default function MyLeavesPage() {
                           )}
                           {request.status === 'REJECTED' && request.rejectionReason && (
                             <button
-                              onClick={() => alert(`Rejection Reason: ${request.rejectionReason}`)}
+                              onClick={() => toast.error(`Rejection Reason: ${request.rejectionReason}`)}
                               className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                             >
                               View Reason
@@ -248,6 +229,5 @@ export default function MyLeavesPage() {
           )}
         </div>
       </motion.div>
-    </AppLayout>
-  );
+    </AppLayout>);
 }

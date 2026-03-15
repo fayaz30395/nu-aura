@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -26,45 +26,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { onboardingService } from '@/lib/services/onboarding.service';
-import { OnboardingProcess } from '@/lib/types/onboarding';
+import { useOnboardingProcesses } from '@/lib/hooks/queries/useOnboarding';
+import type { BadgeVariant } from '@/components/ui/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function OnboardingPage() {
     const router = useRouter();
     const { user, hasHydrated } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [processes, setProcesses] = useState<OnboardingProcess[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
-    useEffect(() => {
-        if (hasHydrated) {
-            loadProcesses();
-        }
-    }, [hasHydrated]);
+    const { data, isLoading } = useOnboardingProcesses(0, 100);
 
-    const loadProcesses = async () => {
-        try {
-            setLoading(true);
-            const data = await onboardingService.getAllProcesses();
-            setProcesses(data.content || []);
-        } catch (error) {
-            console.error('Failed to load onboarding processes:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const getStatusVariant = (status: string): any => {
+    const getStatusVariant = (status: string): BadgeVariant => {
         switch (status) {
             case 'COMPLETED': return 'success';
             case 'IN_PROGRESS': return 'primary';
             case 'NOT_STARTED': return 'default';
-            case 'CANCELLED': return 'danger';
+            case 'CANCELLED': return 'destructive';
             default: return 'default';
         }
     };
+
+    const processes = data?.content || [];
 
     const filteredProcesses = (processes || []).filter(proc => {
         const matchesSearch = (proc.employeeName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -174,7 +158,7 @@ export default function OnboardingPage() {
                         </div>
 
                         <div className="divide-y divide-surface-200/50 dark:divide-surface-700/50">
-                            {loading ? (
+                            {isLoading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <div key={i} className="p-8 flex items-center gap-6">
                                         <Skeleton className="h-16 w-16 rounded-3xl" />

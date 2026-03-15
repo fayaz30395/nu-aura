@@ -1,11 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
 import { Banknote, FileText, Layers } from 'lucide-react';
 import { EmptyState } from '@/components/ui';
-import { payrollService } from '@/lib/services/payroll.service';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import {
+  usePayrollRuns,
+  usePayslips,
+  useSalaryStructures,
+  useCreatePayrollRun,
+  useUpdatePayrollRun,
+  useDeletePayrollRun,
+  useProcessPayrollRun,
+  useApprovePayrollRun,
+  useCreatePayslip,
+  useUpdatePayslip,
+  useDeletePayslip,
+  useCreateSalaryStructure,
+  useUpdateSalaryStructure,
+  useDeleteSalaryStructure,
+} from '@/lib/hooks/queries/usePayroll';
 import {
   PayrollRun,
   PayrollRunRequest,
@@ -17,51 +37,117 @@ import {
   SalaryComponent,
 } from '@/lib/types/payroll';
 
+// ============ ZOD SCHEMAS ============
+const payrollRunSchema = z.object({
+  runName: z.string().min(1, 'Run name is required'),
+  payrollPeriodStart: z.string().min(1, 'Period start is required'),
+  payrollPeriodEnd: z.string().min(1, 'Period end is required'),
+  paymentDate: z.string().min(1, 'Payment date is required'),
+  notes: z.string().optional().or(z.literal('')),
+});
+type PayrollRunFormData = z.infer<typeof payrollRunSchema>;
+
+const payslipFormSchema = z.object({
+  employeeId: z.string().min(1, 'Employee ID is required'),
+  payrollRunId: z.string().min(1, 'Payroll run ID is required'),
+  paymentDate: z.string().min(1, 'Payment date is required'),
+  payrollPeriodStart: z.string().min(1, 'Period start is required'),
+  payrollPeriodEnd: z.string().min(1, 'Period end is required'),
+  baseSalary: z.number({ coerce: true }).positive('Base salary must be positive'),
+  allowances: z.number({ coerce: true }).min(0).optional(),
+  deductions: z.number({ coerce: true }).min(0).optional(),
+});
+type PayslipFormData = z.infer<typeof payslipFormSchema>;
+
+const salaryComponentSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  amount: z.number({ coerce: true }).min(0),
+  type: z.enum(['FIXED', 'VARIABLE'] as const) as z.ZodType<'FIXED' | 'VARIABLE'>,
+  description: z.string().optional().or(z.literal('')),
+});
+
+const salaryStructureSchema = z.object({
+  employeeId: z.string().min(1, 'Employee ID is required'),
+  effectiveDate: z.string().min(1, 'Effective date is required'),
+  baseSalary: z.number({ coerce: true }).positive('Base salary must be positive'),
+  allowances: z.array(salaryComponentSchema).default([]),
+  deductions: z.array(salaryComponentSchema).default([]),
+});
+type SalaryStructureFormData = z.infer<typeof salaryStructureSchema>;
+
 type TabType = 'runs' | 'payslips' | 'structures';
 
 interface FormModalState {
   isOpen: boolean;
   mode: 'create' | 'edit';
-  item?: any;
+  item?: PayrollRun | Payslip | SalaryStructure;
 }
 
 export default function PayrollPage() {
+
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.PAYROLL_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
+
+  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+    return null;
+  }
   const [activeTab, setActiveTab] = useState<TabType>('runs');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // React Query hooks for data fetching
+  const runsQuery = usePayrollRuns(0, 100);
+  const payslipsQuery = usePayslips(0, 100);
+  const structuresQuery = useSalaryStructures(0, 100);
+
+  // ============ FORM HOOKS ============
+  const runFormHook = useForm<PayrollRunFormData>({
+    resolver: zodResolver(payrollRunSchema),
+    defaultValues: { runName: '', payrollPeriodStart: '', payrollPeriodEnd: '', paymentDate: '', notes: '' },
+  });
+
+  const payslipFormHook = useForm<PayslipFormData>({
+    resolver: zodResolver(payslipFormSchema),
+    defaultValues: { employeeId: '', payrollRunId: '', paymentDate: '', payrollPeriodStart: '', payrollPeriodEnd: '', baseSalary: 0, allowances: 0, deductions: 0 },
+  });
+
+  const structureFormHook = useForm<SalaryStructureFormData>({
+    resolver: zodResolver(salaryStructureSchema),
+    defaultValues: { employeeId: '', effectiveDate: '', baseSalary: 0, allowances: [], deductions: [] },
+  });
+
+  const { fields: allowanceFields, append: appendAllowance, remove: removeAllowance } = useFieldArray({
+    control: structureFormHook.control,
+    name: 'allowances',
+  });
+
+  const { fields: deductionFields, append: appendDeduction, remove: removeDeduction } = useFieldArray({
+    control: structureFormHook.control,
+    name: 'deductions',
+  });
+
   // Payroll Runs State
-  const [payrollRuns, setPayrollRuns] = useState<PayrollRun[]>([]);
+  const payrollRuns = runsQuery.data?.content || [];
   const [payrollRunModal, setPayrollRunModal] = useState<FormModalState>({
     isOpen: false,
     mode: 'create',
-  });
-  const [payrollRunForm, setPayrollRunForm] = useState<PayrollRunRequest>({
-    runName: '',
-    payrollPeriodStart: '',
-    payrollPeriodEnd: '',
-    paymentDate: '',
-    notes: '',
   });
   const [payrollRunFilter, setPayrollRunFilter] = useState<PayrollRunStatus | 'ALL'>('ALL');
   const [selectedPayrollRun, setSelectedPayrollRun] = useState<PayrollRun | null>(null);
   const [showRunDeleteConfirm, setShowRunDeleteConfirm] = useState(false);
 
   // Payslips State
-  const [payslips, setPayslips] = useState<Payslip[]>([]);
+  const payslips = payslipsQuery.data?.content || [];
   const [payslipModal, setPayslipModal] = useState<FormModalState>({
     isOpen: false,
     mode: 'create',
-  });
-  const [payslipForm, setPayslipForm] = useState<PayslipRequest>({
-    employeeId: '',
-    payrollRunId: '',
-    paymentDate: '',
-    payrollPeriodStart: '',
-    payrollPeriodEnd: '',
-    baseSalary: 0,
-    allowances: 0,
-    deductions: 0,
   });
   const [payslipSearchMonth, setPayslipSearchMonth] = useState<string>(
     new Date().toISOString().substring(0, 7)
@@ -71,63 +157,58 @@ export default function PayrollPage() {
   const [showPayslipDeleteConfirm, setShowPayslipDeleteConfirm] = useState(false);
 
   // Salary Structures State
-  const [salaryStructures, setSalaryStructures] = useState<SalaryStructure[]>([]);
+  const salaryStructures = structuresQuery.data?.content || [];
   const [structureModal, setStructureModal] = useState<FormModalState>({
     isOpen: false,
     mode: 'create',
-  });
-  const [structureForm, setStructureForm] = useState<SalaryStructureRequest>({
-    employeeId: '',
-    effectiveDate: '',
-    baseSalary: 0,
-    allowances: [],
-    deductions: [],
   });
   const [structureFilter, setStructureFilter] = useState<'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL'>('ACTIVE');
   const [selectedStructure, setSelectedStructure] = useState<SalaryStructure | null>(null);
   const [showStructureDeleteConfirm, setShowStructureDeleteConfirm] = useState(false);
 
-  // Load data on mount and when tab changes
-  useEffect(() => {
-    if (activeTab === 'runs') {
-      loadPayrollRuns();
-    } else if (activeTab === 'payslips') {
-      loadPayslips();
-    } else if (activeTab === 'structures') {
-      loadSalaryStructures();
-    }
-  }, [activeTab]);
-
   // ============ PAYROLL RUNS ============
-  const loadPayrollRuns = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await payrollService.getAllPayrollRuns(0, 100);
-      setPayrollRuns(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payroll runs');
-      console.error('Error loading payroll runs:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createRunMutation = useCreatePayrollRun();
+  const updateRunMutation = useUpdatePayrollRun();
+  const deleteRunMutation = useDeletePayrollRun();
+  const processRunMutation = useProcessPayrollRun();
+  const approveRunMutation = useApprovePayrollRun();
+
+  // ============ PAYSLIPS ============
+  const createPayslipMutation = useCreatePayslip();
+  const updatePayslipMutation = useUpdatePayslip();
+  const deletePayslipMutation = useDeletePayslip();
+
+  // ============ SALARY STRUCTURES ============
+  const createStructureMutation = useCreateSalaryStructure();
+  const updateStructureMutation = useUpdateSalaryStructure();
+  const deleteStructureMutation = useDeleteSalaryStructure();
+
+  // Compute loading state from queries and mutations
+  const loading =
+    runsQuery.isLoading ||
+    payslipsQuery.isLoading ||
+    structuresQuery.isLoading ||
+    createRunMutation.isPending ||
+    updateRunMutation.isPending ||
+    deleteRunMutation.isPending ||
+    processRunMutation.isPending ||
+    approveRunMutation.isPending ||
+    createPayslipMutation.isPending ||
+    updatePayslipMutation.isPending ||
+    deletePayslipMutation.isPending ||
+    createStructureMutation.isPending ||
+    updateStructureMutation.isPending ||
+    deleteStructureMutation.isPending;
 
   const handleCreatePayrollRun = () => {
-    setPayrollRunForm({
-      runName: '',
-      payrollPeriodStart: '',
-      payrollPeriodEnd: '',
-      paymentDate: '',
-      notes: '',
-    });
+    runFormHook.reset({ runName: '', payrollPeriodStart: '', payrollPeriodEnd: '', paymentDate: '', notes: '' });
     setSelectedPayrollRun(null);
     setPayrollRunModal({ isOpen: true, mode: 'create' });
   };
 
   const handleEditPayrollRun = (run: PayrollRun) => {
     setSelectedPayrollRun(run);
-    setPayrollRunForm({
+    runFormHook.reset({
       runName: run.runName,
       payrollPeriodStart: run.payrollPeriodStart,
       payrollPeriodEnd: run.payrollPeriodEnd,
@@ -137,96 +218,65 @@ export default function PayrollPage() {
     setPayrollRunModal({ isOpen: true, mode: 'edit' });
   };
 
-  const handleSubmitPayrollRun = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (selectedPayrollRun) {
-        await payrollService.updatePayrollRun(selectedPayrollRun.id, payrollRunForm);
-      } else {
-        await payrollService.createPayrollRun(payrollRunForm);
-      }
-      await loadPayrollRuns();
-      setPayrollRunModal({ isOpen: false, mode: 'create' });
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payroll run');
-    } finally {
-      setLoading(false);
+  const onSubmitPayrollRun = (data: PayrollRunFormData) => {
+    if (selectedPayrollRun) {
+      updateRunMutation.mutate(
+        { id: selectedPayrollRun.id, data: data as PayrollRunRequest },
+        {
+          onSuccess: () => { setPayrollRunModal({ isOpen: false, mode: 'create' }); },
+          onError: (err: unknown) => {
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payroll run');
+          },
+        }
+      );
+    } else {
+      createRunMutation.mutate(data as PayrollRunRequest, {
+        onSuccess: () => { setPayrollRunModal({ isOpen: false, mode: 'create' }); },
+        onError: (err: unknown) => {
+          setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payroll run');
+        },
+      });
     }
   };
 
-  const handleDeletePayrollRun = async () => {
+  const handleDeletePayrollRun = () => {
     if (!selectedPayrollRun) return;
-    try {
-      setLoading(true);
-      await payrollService.deletePayrollRun(selectedPayrollRun.id);
-      await loadPayrollRuns();
-      setShowRunDeleteConfirm(false);
-      setSelectedPayrollRun(null);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payroll run');
-    } finally {
-      setLoading(false);
-    }
+    deleteRunMutation.mutate(selectedPayrollRun.id, {
+      onSuccess: () => {
+        setShowRunDeleteConfirm(false);
+        setSelectedPayrollRun(null);
+      },
+      onError: (err: unknown) => {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payroll run');
+      },
+    });
   };
 
-  const handleProcessPayrollRun = async (run: PayrollRun) => {
-    try {
-      setLoading(true);
-      await payrollService.processPayrollRun(run.id);
-      await loadPayrollRuns();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to process payroll run');
-    } finally {
-      setLoading(false);
-    }
+  const handleProcessPayrollRun = (run: PayrollRun) => {
+    processRunMutation.mutate(run.id, {
+      onError: (err: unknown) => {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to process payroll run');
+      },
+    });
   };
 
-  const handleApprovePayrollRun = async (run: PayrollRun) => {
-    try {
-      setLoading(true);
-      await payrollService.approvePayrollRun(run.id);
-      await loadPayrollRuns();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve payroll run');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ============ PAYSLIPS ============
-  const loadPayslips = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await payrollService.getAllPayslips(0, 100);
-      setPayslips(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
-      console.error('Error loading payslips:', err);
-    } finally {
-      setLoading(false);
-    }
+  const handleApprovePayrollRun = (run: PayrollRun) => {
+    approveRunMutation.mutate(run.id, {
+      onError: (err: unknown) => {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve payroll run');
+      },
+    });
   };
 
   const handleCreatePayslip = () => {
-    setPayslipForm({
-      employeeId: '',
-      payrollRunId: '',
-      paymentDate: '',
-      payrollPeriodStart: '',
-      payrollPeriodEnd: '',
-      baseSalary: 0,
-      allowances: 0,
-      deductions: 0,
-    });
+    payslipFormHook.reset({ employeeId: '', payrollRunId: '', paymentDate: '', payrollPeriodStart: '', payrollPeriodEnd: '', baseSalary: 0, allowances: 0, deductions: 0 });
     setSelectedPayslip(null);
     setPayslipModal({ isOpen: true, mode: 'create' });
   };
 
   const handleEditPayslip = (payslip: Payslip) => {
     setSelectedPayslip(payslip);
-    setPayslipForm({
+    payslipFormHook.reset({
       employeeId: payslip.employeeId,
       payrollRunId: payslip.payrollRunId,
       paymentDate: payslip.paymentDate,
@@ -239,160 +289,90 @@ export default function PayrollPage() {
     setPayslipModal({ isOpen: true, mode: 'edit' });
   };
 
-  const handleSubmitPayslip = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (selectedPayslip) {
-        await payrollService.updatePayslip(selectedPayslip.id, payslipForm);
-      } else {
-        await payrollService.createPayslip(payslipForm);
-      }
-      await loadPayslips();
-      setPayslipModal({ isOpen: false, mode: 'create' });
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payslip');
-    } finally {
-      setLoading(false);
+  const onSubmitPayslip = (data: PayslipFormData) => {
+    if (selectedPayslip) {
+      updatePayslipMutation.mutate(
+        { id: selectedPayslip.id, data: data as PayslipRequest },
+        {
+          onSuccess: () => { setPayslipModal({ isOpen: false, mode: 'create' }); },
+          onError: (err: unknown) => {
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payslip');
+          },
+        }
+      );
+    } else {
+      createPayslipMutation.mutate(data as PayslipRequest, {
+        onSuccess: () => { setPayslipModal({ isOpen: false, mode: 'create' }); },
+        onError: (err: unknown) => {
+          setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save payslip');
+        },
+      });
     }
   };
 
-  const handleDeletePayslip = async () => {
+  const handleDeletePayslip = () => {
     if (!selectedPayslip) return;
-    try {
-      setLoading(true);
-      await payrollService.deletePayslip(selectedPayslip.id);
-      await loadPayslips();
-      setShowPayslipDeleteConfirm(false);
-      setSelectedPayslip(null);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payslip');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // ============ SALARY STRUCTURES ============
-  const loadSalaryStructures = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await payrollService.getAllSalaryStructures(0, 100);
-      setSalaryStructures(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load salary structures');
-      console.error('Error loading salary structures:', err);
-    } finally {
-      setLoading(false);
-    }
+    deletePayslipMutation.mutate(selectedPayslip.id, {
+      onSuccess: () => {
+        setShowPayslipDeleteConfirm(false);
+        setSelectedPayslip(null);
+      },
+      onError: (err: unknown) => {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete payslip');
+      },
+    });
   };
 
   const handleCreateStructure = () => {
-    setStructureForm({
-      employeeId: '',
-      effectiveDate: '',
-      baseSalary: 0,
-      allowances: [],
-      deductions: [],
-    });
+    structureFormHook.reset({ employeeId: '', effectiveDate: '', baseSalary: 0, allowances: [], deductions: [] });
     setSelectedStructure(null);
     setStructureModal({ isOpen: true, mode: 'create' });
   };
 
   const handleEditStructure = (structure: SalaryStructure) => {
     setSelectedStructure(structure);
-    setStructureForm({
+    structureFormHook.reset({
       employeeId: structure.employeeId,
       effectiveDate: structure.effectiveDate,
       baseSalary: structure.baseSalary,
-      allowances: structure.allowances,
-      deductions: structure.deductions,
+      allowances: structure.allowances.map(a => ({ name: a.name, amount: a.amount, type: a.type, description: a.description || '' })),
+      deductions: structure.deductions.map(d => ({ name: d.name, amount: d.amount, type: d.type, description: d.description || '' })),
     });
     setStructureModal({ isOpen: true, mode: 'edit' });
   };
 
-  const handleAddComponent = (type: 'allowances' | 'deductions') => {
-    const newComponent: SalaryComponent = {
-      name: '',
-      amount: 0,
-      type: 'FIXED',
-      description: '',
-    };
-    if (type === 'allowances') {
-      setStructureForm({
-        ...structureForm,
-        allowances: [...(structureForm.allowances || []), newComponent],
-      });
+  const onSubmitStructure = (data: SalaryStructureFormData) => {
+    if (selectedStructure) {
+      updateStructureMutation.mutate(
+        { id: selectedStructure.id, data: data as SalaryStructureRequest },
+        {
+          onSuccess: () => { setStructureModal({ isOpen: false, mode: 'create' }); },
+          onError: (err: unknown) => {
+            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save salary structure');
+          },
+        }
+      );
     } else {
-      setStructureForm({
-        ...structureForm,
-        deductions: [...(structureForm.deductions || []), newComponent],
+      createStructureMutation.mutate(data as SalaryStructureRequest, {
+        onSuccess: () => { setStructureModal({ isOpen: false, mode: 'create' }); },
+        onError: (err: unknown) => {
+          setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save salary structure');
+        },
       });
     }
   };
 
-  const handleRemoveComponent = (type: 'allowances' | 'deductions', index: number) => {
-    if (type === 'allowances') {
-      setStructureForm({
-        ...structureForm,
-        allowances: structureForm.allowances?.filter((_, i) => i !== index),
-      });
-    } else {
-      setStructureForm({
-        ...structureForm,
-        deductions: structureForm.deductions?.filter((_, i) => i !== index),
-      });
-    }
-  };
-
-  const handleUpdateComponent = (
-    type: 'allowances' | 'deductions',
-    index: number,
-    field: string,
-    value: any
-  ) => {
-    if (type === 'allowances' && structureForm.allowances) {
-      const updated = [...structureForm.allowances];
-      updated[index] = { ...updated[index], [field]: value };
-      setStructureForm({ ...structureForm, allowances: updated });
-    } else if (type === 'deductions' && structureForm.deductions) {
-      const updated = [...structureForm.deductions];
-      updated[index] = { ...updated[index], [field]: value };
-      setStructureForm({ ...structureForm, deductions: updated });
-    }
-  };
-
-  const handleSubmitStructure = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (selectedStructure) {
-        await payrollService.updateSalaryStructure(selectedStructure.id, structureForm);
-      } else {
-        await payrollService.createSalaryStructure(structureForm);
-      }
-      await loadSalaryStructures();
-      setStructureModal({ isOpen: false, mode: 'create' });
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save salary structure');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteStructure = async () => {
+  const handleDeleteStructure = () => {
     if (!selectedStructure) return;
-    try {
-      setLoading(true);
-      await payrollService.deleteSalaryStructure(selectedStructure.id);
-      await loadSalaryStructures();
-      setShowStructureDeleteConfirm(false);
-      setSelectedStructure(null);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete salary structure');
-    } finally {
-      setLoading(false);
-    }
+    deleteStructureMutation.mutate(selectedStructure.id, {
+      onSuccess: () => {
+        setShowStructureDeleteConfirm(false);
+        setSelectedStructure(null);
+      },
+      onError: (err: unknown) => {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete salary structure');
+      },
+    });
   };
 
   // ============ HELPER FUNCTIONS ============
@@ -908,7 +888,7 @@ export default function PayrollPage() {
               <h2 className="text-2xl font-bold mb-6">
                 {payrollRunModal.mode === 'create' ? 'Create Payroll Run' : 'Edit Payroll Run'}
               </h2>
-              <form onSubmit={handleSubmitPayrollRun}>
+              <form onSubmit={runFormHook.handleSubmit(onSubmitPayrollRun)}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -916,14 +896,13 @@ export default function PayrollPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={payrollRunForm.runName}
-                      onChange={(e) =>
-                        setPayrollRunForm({ ...payrollRunForm, runName: e.target.value })
-                      }
+                      {...runFormHook.register('runName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="e.g., November 2024 Payroll"
                     />
+                    {runFormHook.formState.errors.runName && (
+                      <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.runName.message}</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -933,16 +912,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="date"
-                        required
-                        value={payrollRunForm.payrollPeriodStart}
-                        onChange={(e) =>
-                          setPayrollRunForm({
-                            ...payrollRunForm,
-                            payrollPeriodStart: e.target.value,
-                          })
-                        }
+                        {...runFormHook.register('payrollPeriodStart')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {runFormHook.formState.errors.payrollPeriodStart && (
+                        <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.payrollPeriodStart.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -950,16 +925,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="date"
-                        required
-                        value={payrollRunForm.payrollPeriodEnd}
-                        onChange={(e) =>
-                          setPayrollRunForm({
-                            ...payrollRunForm,
-                            payrollPeriodEnd: e.target.value,
-                          })
-                        }
+                        {...runFormHook.register('payrollPeriodEnd')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {runFormHook.formState.errors.payrollPeriodEnd && (
+                        <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.payrollPeriodEnd.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -969,22 +940,18 @@ export default function PayrollPage() {
                     </label>
                     <input
                       type="date"
-                      required
-                      value={payrollRunForm.paymentDate}
-                      onChange={(e) =>
-                        setPayrollRunForm({ ...payrollRunForm, paymentDate: e.target.value })
-                      }
+                      {...runFormHook.register('paymentDate')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {runFormHook.formState.errors.paymentDate && (
+                      <p className="text-red-500 text-xs mt-1">{runFormHook.formState.errors.paymentDate.message}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Notes</label>
                     <textarea
-                      value={payrollRunForm.notes}
-                      onChange={(e) =>
-                        setPayrollRunForm({ ...payrollRunForm, notes: e.target.value })
-                      }
+                      {...runFormHook.register('notes')}
                       rows={3}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="Additional notes..."
@@ -1002,10 +969,10 @@ export default function PayrollPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={createRunMutation.isPending || updateRunMutation.isPending}
                     className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                   >
-                    {loading ? 'Saving...' : 'Save'}
+                    {createRunMutation.isPending || updateRunMutation.isPending ? 'Saving...' : 'Save'}
                   </button>
                 </div>
               </form>
@@ -1022,7 +989,7 @@ export default function PayrollPage() {
               <h2 className="text-2xl font-bold mb-6">
                 {payslipModal.mode === 'create' ? 'Create Payslip' : 'Edit Payslip'}
               </h2>
-              <form onSubmit={handleSubmitPayslip}>
+              <form onSubmit={payslipFormHook.handleSubmit(onSubmitPayslip)}>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -1031,13 +998,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={payslipForm.employeeId}
-                        onChange={(e) =>
-                          setPayslipForm({ ...payslipForm, employeeId: e.target.value })
-                        }
+                        {...payslipFormHook.register('employeeId')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {payslipFormHook.formState.errors.employeeId && (
+                        <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.employeeId.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -1045,13 +1011,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={payslipForm.payrollRunId}
-                        onChange={(e) =>
-                          setPayslipForm({ ...payslipForm, payrollRunId: e.target.value })
-                        }
+                        {...payslipFormHook.register('payrollRunId')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {payslipFormHook.formState.errors.payrollRunId && (
+                        <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollRunId.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -1062,16 +1027,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="date"
-                        required
-                        value={payslipForm.payrollPeriodStart}
-                        onChange={(e) =>
-                          setPayslipForm({
-                            ...payslipForm,
-                            payrollPeriodStart: e.target.value,
-                          })
-                        }
+                        {...payslipFormHook.register('payrollPeriodStart')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {payslipFormHook.formState.errors.payrollPeriodStart && (
+                        <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollPeriodStart.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -1079,16 +1040,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="date"
-                        required
-                        value={payslipForm.payrollPeriodEnd}
-                        onChange={(e) =>
-                          setPayslipForm({
-                            ...payslipForm,
-                            payrollPeriodEnd: e.target.value,
-                          })
-                        }
+                        {...payslipFormHook.register('payrollPeriodEnd')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {payslipFormHook.formState.errors.payrollPeriodEnd && (
+                        <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.payrollPeriodEnd.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -1098,13 +1055,12 @@ export default function PayrollPage() {
                     </label>
                     <input
                       type="date"
-                      required
-                      value={payslipForm.paymentDate}
-                      onChange={(e) =>
-                        setPayslipForm({ ...payslipForm, paymentDate: e.target.value })
-                      }
+                      {...payslipFormHook.register('paymentDate')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {payslipFormHook.formState.errors.paymentDate && (
+                      <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.paymentDate.message}</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
@@ -1115,16 +1071,12 @@ export default function PayrollPage() {
                       <input
                         type="number"
                         step="0.01"
-                        required
-                        value={payslipForm.baseSalary}
-                        onChange={(e) =>
-                          setPayslipForm({
-                            ...payslipForm,
-                            baseSalary: parseFloat(e.target.value),
-                          })
-                        }
+                        {...payslipFormHook.register('baseSalary', { valueAsNumber: true })}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {payslipFormHook.formState.errors.baseSalary && (
+                        <p className="text-red-500 text-xs mt-1">{payslipFormHook.formState.errors.baseSalary.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -1133,13 +1085,7 @@ export default function PayrollPage() {
                       <input
                         type="number"
                         step="0.01"
-                        value={payslipForm.allowances}
-                        onChange={(e) =>
-                          setPayslipForm({
-                            ...payslipForm,
-                            allowances: parseFloat(e.target.value),
-                          })
-                        }
+                        {...payslipFormHook.register('allowances', { valueAsNumber: true })}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                     </div>
@@ -1150,13 +1096,7 @@ export default function PayrollPage() {
                       <input
                         type="number"
                         step="0.01"
-                        value={payslipForm.deductions}
-                        onChange={(e) =>
-                          setPayslipForm({
-                            ...payslipForm,
-                            deductions: parseFloat(e.target.value),
-                          })
-                        }
+                        {...payslipFormHook.register('deductions', { valueAsNumber: true })}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                     </div>
@@ -1173,10 +1113,10 @@ export default function PayrollPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={createPayslipMutation.isPending || updatePayslipMutation.isPending}
                     className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                   >
-                    {loading ? 'Saving...' : 'Save'}
+                    {createPayslipMutation.isPending || updatePayslipMutation.isPending ? 'Saving...' : 'Save'}
                   </button>
                 </div>
               </form>
@@ -1195,7 +1135,7 @@ export default function PayrollPage() {
                   ? 'Create Salary Structure'
                   : 'Edit Salary Structure'}
               </h2>
-              <form onSubmit={handleSubmitStructure}>
+              <form onSubmit={structureFormHook.handleSubmit(onSubmitStructure)}>
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -1204,13 +1144,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={structureForm.employeeId}
-                        onChange={(e) =>
-                          setStructureForm({ ...structureForm, employeeId: e.target.value })
-                        }
+                        {...structureFormHook.register('employeeId')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {structureFormHook.formState.errors.employeeId && (
+                        <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.employeeId.message}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -1218,13 +1157,12 @@ export default function PayrollPage() {
                       </label>
                       <input
                         type="date"
-                        required
-                        value={structureForm.effectiveDate}
-                        onChange={(e) =>
-                          setStructureForm({ ...structureForm, effectiveDate: e.target.value })
-                        }
+                        {...structureFormHook.register('effectiveDate')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {structureFormHook.formState.errors.effectiveDate && (
+                        <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.effectiveDate.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -1235,16 +1173,12 @@ export default function PayrollPage() {
                     <input
                       type="number"
                       step="0.01"
-                      required
-                      value={structureForm.baseSalary}
-                      onChange={(e) =>
-                        setStructureForm({
-                          ...structureForm,
-                          baseSalary: parseFloat(e.target.value),
-                        })
-                      }
+                      {...structureFormHook.register('baseSalary', { valueAsNumber: true })}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
+                    {structureFormHook.formState.errors.baseSalary && (
+                      <p className="text-red-500 text-xs mt-1">{structureFormHook.formState.errors.baseSalary.message}</p>
+                    )}
                   </div>
 
                   {/* Allowances */}
@@ -1253,23 +1187,20 @@ export default function PayrollPage() {
                       <h3 className="font-semibold text-green-700">Allowances</h3>
                       <button
                         type="button"
-                        onClick={() => handleAddComponent('allowances')}
+                        onClick={() => appendAllowance({ name: '', amount: 0, type: 'FIXED', description: '' })}
                         className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
                       >
                         Add Allowance
                       </button>
                     </div>
                     <div className="space-y-3">
-                      {structureForm.allowances?.map((allowance, idx) => (
-                        <div key={idx} className="flex gap-3 pb-3 border-b">
+                      {allowanceFields.map((field, idx) => (
+                        <div key={field.id} className="flex gap-3 pb-3 border-b">
                           <div className="flex-1">
                             <input
                               type="text"
                               placeholder="Name"
-                              value={allowance.name}
-                              onChange={(e) =>
-                                handleUpdateComponent('allowances', idx, 'name', e.target.value)
-                              }
+                              {...structureFormHook.register(`allowances.${idx}.name`)}
                               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
@@ -1278,21 +1209,13 @@ export default function PayrollPage() {
                               type="number"
                               step="0.01"
                               placeholder="Amount"
-                              value={allowance.amount}
-                              onChange={(e) =>
-                                handleUpdateComponent(
-                                  'allowances',
-                                  idx,
-                                  'amount',
-                                  parseFloat(e.target.value)
-                                )
-                              }
+                              {...structureFormHook.register(`allowances.${idx}.amount`, { valueAsNumber: true })}
                               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <button
                             type="button"
-                            onClick={() => handleRemoveComponent('allowances', idx)}
+                            onClick={() => removeAllowance(idx)}
                             className="px-2 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
                           >
                             Remove
@@ -1308,23 +1231,20 @@ export default function PayrollPage() {
                       <h3 className="font-semibold text-red-700">Deductions</h3>
                       <button
                         type="button"
-                        onClick={() => handleAddComponent('deductions')}
+                        onClick={() => appendDeduction({ name: '', amount: 0, type: 'FIXED', description: '' })}
                         className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                       >
                         Add Deduction
                       </button>
                     </div>
                     <div className="space-y-3">
-                      {structureForm.deductions?.map((deduction, idx) => (
-                        <div key={idx} className="flex gap-3 pb-3 border-b">
+                      {deductionFields.map((field, idx) => (
+                        <div key={field.id} className="flex gap-3 pb-3 border-b">
                           <div className="flex-1">
                             <input
                               type="text"
                               placeholder="Name"
-                              value={deduction.name}
-                              onChange={(e) =>
-                                handleUpdateComponent('deductions', idx, 'name', e.target.value)
-                              }
+                              {...structureFormHook.register(`deductions.${idx}.name`)}
                               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
@@ -1333,21 +1253,13 @@ export default function PayrollPage() {
                               type="number"
                               step="0.01"
                               placeholder="Amount"
-                              value={deduction.amount}
-                              onChange={(e) =>
-                                handleUpdateComponent(
-                                  'deductions',
-                                  idx,
-                                  'amount',
-                                  parseFloat(e.target.value)
-                                )
-                              }
+                              {...structureFormHook.register(`deductions.${idx}.amount`, { valueAsNumber: true })}
                               className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                             />
                           </div>
                           <button
                             type="button"
-                            onClick={() => handleRemoveComponent('deductions', idx)}
+                            onClick={() => removeDeduction(idx)}
                             className="px-2 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
                           >
                             Remove
@@ -1368,10 +1280,10 @@ export default function PayrollPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={createStructureMutation.isPending || updateStructureMutation.isPending}
                     className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                   >
-                    {loading ? 'Saving...' : 'Save'}
+                    {createStructureMutation.isPending || updateStructureMutation.isPending ? 'Saving...' : 'Save'}
                   </button>
                 </div>
               </form>

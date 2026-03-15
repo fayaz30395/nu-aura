@@ -31,6 +31,15 @@ public class AutoRegularizationScheduler {
 
     /** Default: regularize INCOMPLETE records that are >= 3 days old. */
     private static final int DEFAULT_REGULARIZE_AFTER_DAYS = 3;
+    /**
+     * BUG-004 FIX: Maximum look-back window when scanning for INCOMPLETE records.
+     * Previously the lower bound was hardcoded to {@code LocalDate.of(2020,1,1)},
+     * meaning the query window grew unboundedly with time (6+ years by 2026),
+     * loading millions of stale records into heap on every nightly run.
+     * One year is sufficient — records older than MAX_LOOK_BACK_DAYS + DEFAULT_REGULARIZE_AFTER_DAYS
+     * were already regularized in a prior run.
+     */
+    private static final int MAX_LOOK_BACK_DAYS = 365;
     /** Default: auto-approve comp-off requests >= 7 days old. */
     private static final int DEFAULT_COMP_OFF_AUTO_APPROVE_DAYS = 7;
 
@@ -97,27 +106,29 @@ public class AutoRegularizationScheduler {
             int afterDays = getTenantRegularizeAfterDays(tenantId);
             LocalDate cutoffDate = LocalDate.now().minusDays(afterDays);
 
-            // Find INCOMPLETE records older than cutoff date
+            // BUG-004 FIX: Use a dynamic rolling window instead of a hardcoded
+            // 2020-01-01 floor.  We only need to look back MAX_LOOK_BACK_DAYS
+            // because any older INCOMPLETE record was already regularized in a
+            // previous nightly run.  This prevents the query from loading an
+            // ever-growing slab of historical rows into heap each night.
+            LocalDate windowStart = cutoffDate.minusDays(MAX_LOOK_BACK_DAYS);
+
             List<AttendanceRecord> incompleteRecords = attendanceRecordRepository
-                    .findAllByTenantIdAndAttendanceDateBetween(tenantId, LocalDate.of(2020, 1, 1), cutoffDate)
+                    .findAllByTenantIdAndAttendanceDateBetween(tenantId, windowStart, cutoffDate)
                     .stream()
                     .filter(r -> r.getStatus() == AttendanceRecord.AttendanceStatus.INCOMPLETE)
                     .toList();
 
-            int count = 0;
-            for (AttendanceRecord record : incompleteRecords) {
-                try {
-                    record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
-                    record.setRegularizationRequested(false);
-                    record.setRegularizationApproved(true);
-                    attendanceRecordRepository.save(record);
-                    count++;
-                } catch (Exception e) {
-                    log.warn("Failed to regularize record {} for tenant {}: {}",
-                            record.getId(), tenantId, e.getMessage());
-                }
-            }
+            // BUG-004 FIX: Batch-update all records in a single saveAll() call
+            // instead of issuing N individual UPDATE statements inside a loop.
+            incompleteRecords.forEach(record -> {
+                record.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
+                record.setRegularizationRequested(false);
+                record.setRegularizationApproved(true);
+            });
+            attendanceRecordRepository.saveAll(incompleteRecords);
 
+            int count = incompleteRecords.size();
             log.debug("Regularized {} INCOMPLETE records for tenant {}", count, tenantId);
             return count;
         } finally {

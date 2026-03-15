@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import jakarta.validation.Valid;
 
 /**
  * REST controller for KEKA HRMS data import
@@ -50,7 +51,7 @@ public class KekaImportController {
      */
     @PostMapping("/preview")
     @RequiresPermission("system.admin")
-    public ResponseEntity<KekaImportPreview> previewKekaImport(@RequestBody KekaImportPreviewRequest request) {
+    public ResponseEntity<KekaImportPreview> previewKekaImport(@Valid @RequestBody KekaImportPreviewRequest request) {
         log.info("Previewing KEKA import for file: {}", request.getFileId());
 
         KekaImportPreview preview = kekaImportService.previewKekaImport(request);
@@ -63,7 +64,7 @@ public class KekaImportController {
      */
     @PostMapping("/execute")
     @RequiresPermission("system.admin")
-    public ResponseEntity<KekaImportResult> executeKekaImport(@RequestBody KekaImportExecuteRequest request) {
+    public ResponseEntity<KekaImportResult> executeKekaImport(@Valid @RequestBody KekaImportExecuteRequest request) {
         log.info("Executing KEKA import for file: {}", request.getFileId());
 
         KekaImportResult result = kekaImportService.executeKekaImport(request);

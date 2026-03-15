@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { usePublicJobs, type CareersFilters } from '@/lib/hooks/queries/useCareers';
 import {
   Search,
   MapPin,
@@ -37,6 +41,17 @@ interface Job {
   salaryRange?: string;
   experience: 'Entry-level' | 'Mid-level' | 'Senior' | 'Lead';
 }
+
+// Zod schema for job application form
+const applicationFormSchema = z.object({
+  fullName: z.string().min(1, 'Full name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(7, 'Invalid phone number'),
+  coverLetter: z.string().optional().or(z.literal('')),
+  linkedInUrl: z.string().optional().or(z.literal('')),
+});
+
+type ApplicationFormData = z.infer<typeof applicationFormSchema>;
 
 interface JobCardProps {
   job: Job;
@@ -228,24 +243,27 @@ const ApplicationModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ job, isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    coverLetter: '',
-    linkedInUrl: '',
-  });
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
 
-  if (!job) return null;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ApplicationFormData>({
+    resolver: zodResolver(applicationFormSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      phone: '',
+      coverLetter: '',
+      linkedInUrl: '',
+    },
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  if (!job) return null;
 
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -254,18 +272,16 @@ const ApplicationModal: React.FC<{
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const handleFormSubmit = async (data: ApplicationFormData) => {
     setSubmitStatus('idle');
 
     try {
       const formDataObj = new FormData();
-      formDataObj.append('name', formData.name);
-      formDataObj.append('email', formData.email);
-      formDataObj.append('phone', formData.phone);
-      formDataObj.append('coverLetter', formData.coverLetter);
-      formDataObj.append('linkedInUrl', formData.linkedInUrl);
+      formDataObj.append('name', data.fullName);
+      formDataObj.append('email', data.email);
+      formDataObj.append('phone', data.phone);
+      formDataObj.append('coverLetter', data.coverLetter || '');
+      formDataObj.append('linkedInUrl', data.linkedInUrl || '');
       formDataObj.append('jobId', job.id);
       if (resumeFile) {
         formDataObj.append('resume', resumeFile);
@@ -283,13 +299,7 @@ const ApplicationModal: React.FC<{
       setSubmitStatus('success');
       setSubmitMessage('Your application has been submitted successfully!');
       setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          coverLetter: '',
-          linkedInUrl: '',
-        });
+        reset();
         setResumeFile(null);
         onClose();
         setSubmitStatus('idle');
@@ -297,8 +307,6 @@ const ApplicationModal: React.FC<{
     } catch (error) {
       setSubmitStatus('error');
       setSubmitMessage(error instanceof Error ? error.message : 'Failed to submit application');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -327,20 +335,18 @@ const ApplicationModal: React.FC<{
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
               Full Name *
             </label>
             <Input
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
               placeholder="John Doe"
-              required
               className="w-full"
+              {...register('fullName')}
             />
+            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
           </div>
 
           <div>
@@ -349,13 +355,11 @@ const ApplicationModal: React.FC<{
             </label>
             <Input
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
               placeholder="john@example.com"
-              required
               className="w-full"
+              {...register('email')}
             />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -364,13 +368,11 @@ const ApplicationModal: React.FC<{
             </label>
             <Input
               type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
               placeholder="+1 (555) 123-4567"
-              required
               className="w-full"
+              {...register('phone')}
             />
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
           </div>
 
           <div>
@@ -410,13 +412,12 @@ const ApplicationModal: React.FC<{
               Cover Letter
             </label>
             <textarea
-              name="coverLetter"
-              value={formData.coverLetter}
-              onChange={handleInputChange}
               placeholder="Tell us why you're interested in this position..."
               rows={4}
               className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-600"
+              {...register('coverLetter')}
             />
+            {errors.coverLetter && <p className="text-red-500 text-sm mt-1">{errors.coverLetter.message}</p>}
           </div>
 
           <div>
@@ -425,12 +426,11 @@ const ApplicationModal: React.FC<{
             </label>
             <Input
               type="url"
-              name="linkedInUrl"
-              value={formData.linkedInUrl}
-              onChange={handleInputChange}
               placeholder="https://linkedin.com/in/johndoe"
               className="w-full"
+              {...register('linkedInUrl')}
             />
+            {errors.linkedInUrl && <p className="text-red-500 text-sm mt-1">{errors.linkedInUrl.message}</p>}
           </div>
         </form>
       </ModalBody>
@@ -440,7 +440,7 @@ const ApplicationModal: React.FC<{
           Cancel
         </Button>
         <Button
-          onClick={handleSubmit}
+          onClick={handleSubmit(handleFormSubmit)}
           disabled={isSubmitting}
           className="bg-primary-600 hover:bg-primary-700 text-white"
         >
@@ -475,9 +475,6 @@ const JobSkeletonCard: React.FC = () => (
 );
 
 export default function CareersPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showJobDetail, setShowJobDetail] = useState(false);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
@@ -491,36 +488,15 @@ export default function CareersPage() {
   const [selectedType, setSelectedType] = useState('');
   const [selectedExperience, setSelectedExperience] = useState('');
 
-  // Fetch jobs
-  const fetchJobs = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedDepartment) params.append('department', selectedDepartment);
-      if (selectedLocation) params.append('location', selectedLocation);
-      if (selectedType) params.append('type', selectedType);
-      if (searchQuery) params.append('q', searchQuery);
+  // React Query - automatically refetches when filters change
+  const filters: CareersFilters = {
+    department: selectedDepartment || undefined,
+    location: selectedLocation || undefined,
+    type: selectedType || undefined,
+    q: searchQuery || undefined,
+  };
 
-      const response = await fetch(`/api/public/careers/jobs?${params.toString()}`);
-      if (response.ok) {
-        const data = await response.json();
-        setJobs(data.jobs || []);
-        setCurrentPage(1);
-      }
-    } catch (error) {
-      console.error('Failed to fetch jobs:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedDepartment, selectedLocation, selectedType, searchQuery]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchJobs();
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [fetchJobs]);
+  const { data: jobs = [], isLoading } = usePublicJobs(filters);
 
   // Get unique values for filters
   const departments = Array.from(new Set(jobs.map((j) => j.department)));

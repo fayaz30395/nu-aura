@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import {
@@ -16,11 +16,11 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isAdmin } from '@/lib/utils';
-import { spotlightService } from '@/lib/services/spotlight.service';
 import { Spotlight, CreateSpotlightRequest, UpdateSpotlightRequest } from '@/lib/types/spotlight';
 import { useToast } from '@/components/notifications/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { useAllSpotlights, useDeleteSpotlight, useCreateSpotlight, useUpdateSpotlight } from '@/lib/hooks/queries/useSpotlight';
 import { createLogger } from '@/lib/utils/logger';
 
 const logger = createLogger('CompanySpotlight');
@@ -55,33 +55,18 @@ const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
 export default function CompanySpotlightPage() {
   const { user } = useAuth();
   const toast = useToast();
-  const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingSpotlight, setEditingSpotlight] = useState<Spotlight | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const loadSpotlights = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await spotlightService.getAllSpotlights(0, 100);
-      // Sort by displayOrder
-      const sorted = (response.content || []).sort(
-        (a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)
-      );
-      setSpotlights(sorted);
-    } catch (error) {
-      logger.error('Error loading spotlights:', error);
-      toast.error('Load Failed', 'Unable to load spotlights. Please refresh the page.');
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  // React Query - fetch spotlights
+  const { data: spotlightResponse, isLoading: loading } = useAllSpotlights(0, 100);
+  const deleteSpotlightMutation = useDeleteSpotlight();
 
-  useEffect(() => {
-    loadSpotlights();
-  }, [loadSpotlights]);
+  // Sort by displayOrder
+  const spotlights = (spotlightResponse?.content || []).sort(
+    (a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)
+  );
 
   const handleEditSpotlight = (spotlight: Spotlight) => {
     setEditingSpotlight(spotlight);
@@ -92,16 +77,12 @@ export default function CompanySpotlightPage() {
     if (!showDeleteConfirm) return;
 
     try {
-      setIsDeleting(true);
-      await spotlightService.deleteSpotlight(showDeleteConfirm);
+      await deleteSpotlightMutation.mutateAsync(showDeleteConfirm);
       setShowDeleteConfirm(null);
       toast.success('Spotlight Deleted', 'The spotlight slide has been deleted.');
-      loadSpotlights();
     } catch (error) {
       logger.error('Failed to delete spotlight:', error);
       toast.error('Delete Failed', 'Unable to delete the spotlight. Please try again.');
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -319,7 +300,7 @@ export default function CompanySpotlightPage() {
             onSuccess={() => {
               setShowCreateModal(false);
               setEditingSpotlight(null);
-              loadSpotlights();
+              // React Query automatically refetches on mutation success
             }}
           />
         )}
@@ -335,7 +316,7 @@ export default function CompanySpotlightPage() {
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
-        loading={isDeleting}
+        loading={deleteSpotlightMutation.isPending}
       />
     </AppLayout>
   );
@@ -350,8 +331,9 @@ interface CreateSpotlightModalProps {
 function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlightModalProps) {
   const toast = useToast();
   const isEditing = !!spotlight;
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const createMutation = useCreateSpotlight();
+  const updateMutation = useUpdateSpotlight();
   const [formData, setFormData] = useState<CreateSpotlightRequest>({
     title: spotlight?.title || '',
     description: spotlight?.description || '',
@@ -375,7 +357,6 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
       return;
     }
 
-    setLoading(true);
     setError('');
 
     try {
@@ -384,7 +365,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           ...formData,
           bgGradient: formData.bgGradient || 'indigo-purple',
         };
-        await spotlightService.updateSpotlight(spotlight.id, updatePayload);
+        await updateMutation.mutateAsync({ id: spotlight.id, data: updatePayload });
         toast.success('Spotlight Updated', 'The spotlight slide has been updated.');
       } else {
         const createPayload: CreateSpotlightRequest = {
@@ -392,7 +373,7 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           bgGradient: formData.bgGradient || 'indigo-purple',
           displayOrder: formData.displayOrder || 0,
         };
-        await spotlightService.createSpotlight(createPayload);
+        await createMutation.mutateAsync(createPayload);
         toast.success('Spotlight Created', 'The spotlight slide has been created.');
       }
       onSuccess();
@@ -401,8 +382,6 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} spotlight`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -616,10 +595,10 @@ function CreateSpotlightModal({ spotlight, onClose, onSuccess }: CreateSpotlight
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={createMutation.isPending || updateMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {createMutation.isPending || updateMutation.isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 {isEditing ? 'Updating...' : 'Creating...'}

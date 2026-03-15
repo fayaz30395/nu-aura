@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Plus,
   Calendar,
@@ -21,45 +24,76 @@ import {
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { leaveService } from '@/lib/services/leave.service';
+import { useEmployeeLeaveRequests, useEmployeeBalances, useActiveLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import {
   LeaveRequest,
-  LeaveBalance,
   LeaveType,
   LeaveRequestRequest,
   LeaveRequestStatus,
 } from '@/lib/types/leave';
 
+const leaveFormSchema = z.object({
+  leaveTypeId: z.string().min(1, 'Please select a leave type'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  isHalfDay: z.boolean().default(false),
+  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must not exceed 1000 characters'),
+});
+
+type LeaveFormData = z.infer<typeof leaveFormSchema>;
+
+const cancelFormSchema = z.object({
+  reason: z.string().min(1, 'Please provide a reason for cancellation'),
+});
+
+type CancelFormData = z.infer<typeof cancelFormSchema>;
+
 export default function MyLeavesPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
-  const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('Leave request submitted successfully!');
   const [showApplyModal, setShowApplyModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingRequest, setEditingRequest] = useState<LeaveRequest | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancellingRequest, setCancellingRequest] = useState<LeaveRequest | null>(null);
-  const [cancelReason, setCancelReason] = useState('');
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState<LeaveRequestStatus | 'ALL'>('ALL');
   const [leaveTypeFilter, setLeaveTypeFilter] = useState<string>('ALL');
 
-  const [formData, setFormData] = useState<LeaveRequestRequest>({
-    employeeId: user?.employeeId || '',
-    leaveTypeId: '',
-    startDate: '',
-    endDate: '',
-    totalDays: 1,
-    isHalfDay: false,
-    reason: '',
+  // Leave form
+  const { register: registerLeave, handleSubmit: handleLeaveSubmit, watch: watchLeave, formState: { errors: leaveErrors, isSubmitting: leaveSubmitting }, reset: resetLeave } = useForm<LeaveFormData>({
+    resolver: zodResolver(leaveFormSchema),
+    defaultValues: {
+      leaveTypeId: '',
+      startDate: '',
+      endDate: '',
+      isHalfDay: false,
+      reason: '',
+    },
   });
+
+  // Cancel form
+  const { register: registerCancel, handleSubmit: handleCancelSubmit, formState: { errors: cancelErrors, isSubmitting: cancelSubmitting }, reset: resetCancel } = useForm<CancelFormData>({
+    resolver: zodResolver(cancelFormSchema),
+    defaultValues: {
+      reason: '',
+    },
+  });
+
+  const { data: leaveRequestsData } = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId));
+  const { data: balancesData = [] } = useEmployeeBalances(user?.employeeId || '', Boolean(hasHydrated && user?.employeeId));
+  const { data: leaveTypesData = [] } = useActiveLeaveTypes();
+  const createLeaveRequest = useCreateLeaveRequest();
+  const updateLeaveRequest = useUpdateLeaveRequest();
+  const cancelLeaveRequest = useCancelLeaveRequest();
+
+  const leaveRequests = leaveRequestsData?.content ?? [];
+  const leaveTypes = leaveTypesData;
+  const leaveBalances = balancesData;
+  const isLoading = !leaveRequestsData;
 
   useEffect(() => {
     // Wait for auth store to hydrate before checking authentication
@@ -67,118 +101,67 @@ export default function MyLeavesPage() {
 
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else if (user) {
-      if (user.employeeId) {
-        loadData();
-      } else {
-        // User is authenticated but doesn't have an employee record
-        setIsLoading(false);
-        setError('No employee profile found for your account. Please contact your administrator.');
-      }
+    } else if (user && !user.employeeId) {
+      // User is authenticated but doesn't have an employee record
+      setError('No employee profile found for your account. Please contact your administrator.');
     }
   }, [hasHydrated, isAuthenticated, user, router]);
 
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const [requests, balances, types] = await Promise.all([
-        leaveService.getEmployeeLeaveRequests(user!.employeeId!),
-        leaveService.getEmployeeBalances(user!.employeeId!),
-        leaveService.getActiveLeaveTypes(),
-      ]);
-
-      setLeaveRequests(requests.content);
-      setLeaveBalances(balances);
-      setLeaveTypes(types);
-    } catch (err: unknown) {
-      console.error('Failed to load leave data:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave data');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const startDate = watchLeave('startDate');
+  const endDate = watchLeave('endDate');
+  const isHalfDay = watchLeave('isHalfDay');
 
   const calculateDays = () => {
-    if (!formData.startDate || !formData.endDate) return 1;
-
-    const start = new Date(formData.startDate);
-    const end = new Date(formData.endDate);
+    if (!startDate || !endDate) return 1;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    return formData.isHalfDay ? 0.5 : diffDays;
+    return isHalfDay ? 0.5 : diffDays;
   };
 
-  useEffect(() => {
-    const days = calculateDays();
-    setFormData((prev) => ({ ...prev, totalDays: days }));
-  }, [formData.startDate, formData.endDate, formData.isHalfDay]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.leaveTypeId || !formData.startDate || !formData.endDate || !formData.reason) {
-      setError('Please fill all required fields');
-      return;
-    }
-
+  const onLeaveSubmit = async (data: LeaveFormData) => {
     try {
-      setIsSubmitting(true);
-      setError(null);
+      const totalDays = calculateDays();
+      const leaveRequestData: LeaveRequestRequest = {
+        employeeId: user!.employeeId!,
+        leaveTypeId: data.leaveTypeId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        totalDays,
+        isHalfDay: data.isHalfDay,
+        reason: data.reason,
+      };
 
       if (editingRequest) {
-        // Update existing request
-        await leaveService.updateLeaveRequest(editingRequest.id, {
-          ...formData,
-          employeeId: user!.employeeId!,
+        await updateLeaveRequest.mutateAsync({
+          id: editingRequest.id,
+          data: leaveRequestData,
         });
         setSuccessMessage('Leave request updated successfully!');
       } else {
-        // Create new request
-        await leaveService.createLeaveRequest({
-          ...formData,
-          employeeId: user!.employeeId!,
-        });
+        await createLeaveRequest.mutateAsync(leaveRequestData);
         setSuccessMessage('Leave request submitted successfully!');
       }
 
       setSuccess(true);
       setShowApplyModal(false);
       setEditingRequest(null);
-      await loadData();
-
-      // Reset form
-      setFormData({
-        employeeId: user!.employeeId || '',
-        leaveTypeId: '',
-        startDate: '',
-        endDate: '',
-        totalDays: 1,
-        isHalfDay: false,
-        reason: '',
-      });
-
+      resetLeave();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to submit leave request:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleEdit = (request: LeaveRequest) => {
     setEditingRequest(request);
-    setFormData({
-      employeeId: request.employeeId,
+    resetLeave({
       leaveTypeId: request.leaveTypeId,
       startDate: request.startDate,
       endDate: request.endDate,
-      totalDays: request.totalDays,
       isHalfDay: request.isHalfDay,
-      halfDayPeriod: request.halfDayPeriod,
       reason: request.reason,
     });
     setShowApplyModal(true);
@@ -187,52 +170,36 @@ export default function MyLeavesPage() {
   const handleCloseModal = () => {
     setShowApplyModal(false);
     setEditingRequest(null);
-    setFormData({
-      employeeId: user?.employeeId || '',
-      leaveTypeId: '',
-      startDate: '',
-      endDate: '',
-      totalDays: 1,
-      isHalfDay: false,
-      reason: '',
-    });
+    resetLeave();
   };
 
   const handleCancelClick = (request: LeaveRequest) => {
     setCancellingRequest(request);
-    setCancelReason('');
+    resetCancel();
     setShowCancelModal(true);
   };
 
-  const handleCancelConfirm = async () => {
-    if (!cancellingRequest || !cancelReason.trim()) {
-      setError('Please provide a reason for cancellation');
-      return;
-    }
+  const onCancelSubmit = async (data: CancelFormData) => {
+    if (!cancellingRequest) return;
 
     try {
-      setIsSubmitting(true);
-      setError(null);
-      await leaveService.cancelLeaveRequest(cancellingRequest.id, cancelReason);
+      await cancelLeaveRequest.mutateAsync({ id: cancellingRequest.id, reason: data.reason });
       setSuccessMessage('Leave request cancelled successfully!');
       setSuccess(true);
       setShowCancelModal(false);
       setCancellingRequest(null);
-      setCancelReason('');
-      await loadData();
+      resetCancel();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to cancel leave request:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to cancel leave request');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleCloseCancelModal = () => {
     setShowCancelModal(false);
     setCancellingRequest(null);
-    setCancelReason('');
+    resetCancel();
   };
 
   const getStatusColor = (status: LeaveRequestStatus) => {
@@ -625,18 +592,14 @@ export default function MyLeavesPage() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleLeaveSubmit(onLeaveSubmit)} className="p-6 space-y-4">
                   {/* Leave Type */}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Leave Type *
                     </label>
                     <select
-                      value={formData.leaveTypeId}
-                      onChange={(e) =>
-                        setFormData({ ...formData, leaveTypeId: e.target.value })
-                      }
-                      required
+                      {...registerLeave('leaveTypeId')}
                       className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
                     >
                       <option value="">Select leave type</option>
@@ -646,6 +609,7 @@ export default function MyLeavesPage() {
                         </option>
                       ))}
                     </select>
+                    {leaveErrors.leaveTypeId && <p className="text-red-500 text-sm mt-1">{leaveErrors.leaveTypeId.message}</p>}
                   </div>
 
                   {/* Dates */}
@@ -656,13 +620,10 @@ export default function MyLeavesPage() {
                       </label>
                       <input
                         type="date"
-                        value={formData.startDate}
-                        onChange={(e) =>
-                          setFormData({ ...formData, startDate: e.target.value })
-                        }
-                        required
+                        {...registerLeave('startDate')}
                         className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
                       />
+                      {leaveErrors.startDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -670,12 +631,11 @@ export default function MyLeavesPage() {
                       </label>
                       <input
                         type="date"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                        required
-                        min={formData.startDate}
+                        {...registerLeave('endDate')}
+                        min={startDate}
                         className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
                       />
+                      {leaveErrors.endDate && <p className="text-red-500 text-sm mt-1">{leaveErrors.endDate.message}</p>}
                     </div>
                   </div>
 
@@ -684,10 +644,7 @@ export default function MyLeavesPage() {
                     <input
                       type="checkbox"
                       id="halfDay"
-                      checked={formData.isHalfDay}
-                      onChange={(e) =>
-                        setFormData({ ...formData, isHalfDay: e.target.checked })
-                      }
+                      {...registerLeave('isHalfDay')}
                       className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                     />
                     <label
@@ -701,7 +658,7 @@ export default function MyLeavesPage() {
                   {/* Total Days */}
                   <div className="p-4 bg-primary-50 dark:bg-primary-950/30 rounded-lg">
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Total Days: <span className="font-bold text-primary-600">{formData.totalDays}</span>
+                      Total Days: <span className="font-bold text-primary-600">{calculateDays()}</span>
                     </p>
                   </div>
 
@@ -711,13 +668,12 @@ export default function MyLeavesPage() {
                       Reason *
                     </label>
                     <textarea
-                      value={formData.reason}
-                      onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                      required
+                      {...registerLeave('reason')}
                       rows={4}
                       placeholder="Please provide a reason for your leave..."
                       className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-slate-800"
                     />
+                    {leaveErrors.reason && <p className="text-red-500 text-sm mt-1">{leaveErrors.reason.message}</p>}
                   </div>
 
                   {/* Actions */}
@@ -725,17 +681,17 @@ export default function MyLeavesPage() {
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      disabled={isSubmitting}
+                      disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
                       className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting}
                       className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
                     >
-                      {isSubmitting ? (
+                      {createLeaveRequest.isPending || updateLeaveRequest.isPending || leaveSubmitting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           {editingRequest ? 'Updating...' : 'Submitting...'}
@@ -769,7 +725,7 @@ export default function MyLeavesPage() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-4">
+              <form onSubmit={handleCancelSubmit(onCancelSubmit)} className="p-6 space-y-4">
                 <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
                   <p className="text-sm text-red-800 dark:text-red-200">
                     Are you sure you want to cancel your{' '}
@@ -787,31 +743,29 @@ export default function MyLeavesPage() {
                     Reason for cancellation *
                   </label>
                   <textarea
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    required
+                    {...registerCancel('reason')}
                     rows={3}
                     placeholder="Please provide a reason for cancelling this leave request..."
                     className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-800"
                   />
+                  {cancelErrors.reason && <p className="text-red-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-4">
                   <button
                     type="button"
                     onClick={handleCloseCancelModal}
-                    disabled={isSubmitting}
+                    disabled={cancelLeaveRequest.isPending || cancelSubmitting}
                     className="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                   >
                     Keep Request
                   </button>
                   <button
-                    type="button"
-                    onClick={handleCancelConfirm}
-                    disabled={isSubmitting || !cancelReason.trim()}
+                    type="submit"
+                    disabled={cancelLeaveRequest.isPending || cancelSubmitting}
                     className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
-                    {isSubmitting ? (
+                    {cancelLeaveRequest.isPending || cancelSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         Cancelling...
@@ -824,7 +778,7 @@ export default function MyLeavesPage() {
                     )}
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         )}

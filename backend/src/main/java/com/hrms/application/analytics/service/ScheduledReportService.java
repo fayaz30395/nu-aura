@@ -43,6 +43,7 @@ public class ScheduledReportService {
     private final DepartmentRepository departmentRepository;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public ScheduledReportResponse createScheduledReport(ScheduledReportRequest request, UUID createdBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID reportDefinitionId = resolveReportDefinitionId(request, tenantId);
@@ -71,6 +72,7 @@ public class ScheduledReportService {
         return enrichResponse(saved);
     }
 
+    @Transactional
     public ScheduledReportResponse updateScheduledReport(UUID reportId, ScheduledReportRequest request, UUID updatedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -125,6 +127,7 @@ public class ScheduledReportService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteScheduledReport(UUID reportId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -168,6 +171,7 @@ public class ScheduledReportService {
     /**
      * Update last run time and calculate next run time after execution.
      */
+    @Transactional
     public void markAsExecuted(UUID reportId) {
         ScheduledReport report = scheduledReportRepository.findById(reportId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scheduled report not found: " + reportId));

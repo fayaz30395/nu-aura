@@ -34,6 +34,7 @@ public class ContractSignatureService {
     /**
      * Send contract for signing
      */
+    @Transactional
     public ContractSignatureDto sendForSigning(UUID contractId, SendForSigningRequest request) {
         ContractSignature signature = ContractSignature.builder()
                 .contractId(contractId)
@@ -79,6 +80,7 @@ public class ContractSignatureService {
     /**
      * Get all signatures for contract
      */
+    @Transactional(readOnly = true)
     public List<ContractSignatureDto> getContractSignatures(UUID contractId) {
         return signatureRepository.findByContractId(contractId)
                 .stream()
@@ -89,6 +91,7 @@ public class ContractSignatureService {
     /**
      * Get pending signatures for contract
      */
+    @Transactional(readOnly = true)
     public List<ContractSignatureDto> getPendingSignatures(UUID contractId) {
         return signatureRepository.findPendingSignatures(contractId)
                 .stream()
@@ -106,6 +109,7 @@ public class ContractSignatureService {
     /**
      * Get signature count and signed count
      */
+    @Transactional(readOnly = true)
     public Map<String, Integer> getSignatureSummary(UUID contractId) {
         int total = signatureRepository.countTotalSignatures(contractId);
         int signed = signatureRepository.countSignedSignatures(contractId);

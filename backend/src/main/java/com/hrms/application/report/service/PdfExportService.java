@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -25,6 +26,7 @@ public class PdfExportService {
     private static final Font HEADER_FONT = new Font(Font.HELVETICA, 10, Font.BOLD, Color.WHITE);
     private static final Font CELL_FONT = new Font(Font.HELVETICA, 9, Font.NORMAL, Color.BLACK);
 
+    @Transactional(readOnly = true)
     public byte[] exportEmployeeDirectoryToPdf(List<EmployeeDirectoryReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -70,6 +72,7 @@ public class PdfExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportAttendanceToPdf(List<AttendanceReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -112,6 +115,7 @@ public class PdfExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportLeaveToPdf(List<LeaveReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -154,6 +158,7 @@ public class PdfExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPayrollToPdf(List<PayrollReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -198,6 +203,7 @@ public class PdfExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportDepartmentHeadcountToPdf(List<DepartmentHeadcountReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -235,6 +241,7 @@ public class PdfExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPerformanceToPdf(List<PerformanceReportRow> data) throws DocumentException {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();

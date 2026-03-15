@@ -16,11 +16,18 @@ import {
   Calendar,
   User,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@mantine/core';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import ContentViewer from '@/components/fluence/ContentViewer';
 import { useWikiPage, useComments } from '@/lib/hooks/queries/useFluence';
+
+// Dynamically import Tiptap viewer to keep it out of the initial bundle
+const ContentViewer = dynamic(
+  () => import('@/components/fluence/ContentViewer'),
+  { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
+);
 
 export default function WikiPageDetailPage() {
   const router = useRouter();

@@ -1,19 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
-import { payrollService } from '@/lib/services/payroll.service';
 import { Payslip } from '@/lib/types/payroll';
 import { PayslipCard } from '@/components/payroll/PayslipCard';
 import { Button } from '@/components/ui/Button';
 import { Download, Filter, Search } from 'lucide-react';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
+import { usePayslips } from '@/lib/hooks/queries/usePayroll';
+import { payrollService } from '@/lib/services/payroll.service';
 
 type PayslipStatus = 'ALL' | 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 
 export default function PayslipsPage() {
-  const [payslips, setPayslips] = useState<Payslip[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
+  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+    return null;
+  }
 
   // Filters
   const [selectedMonth, setSelectedMonth] = useState<string>(
@@ -27,33 +34,19 @@ export default function PayslipsPage() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const pageSize = 12;
 
-  useEffect(() => {
-    loadPayslips();
-  }, [currentPage, selectedMonth, selectedYear, statusFilter]);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
-  const loadPayslips = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await payrollService.getAllPayslips(currentPage, pageSize);
-      setPayslips(response.content);
-      setTotalPages(response.totalPages);
-      setTotalElements(response.totalElements);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load payslips');
-      console.error('Error loading payslips:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: response, isLoading: loading, error: fetchError } = usePayslips(currentPage, pageSize);
+  const payslips = response?.content || [];
+  const totalPages = response?.totalPages || 0;
+  const totalElements = response?.totalElements || 0;
 
   const handleDownloadPdf = async (payslip: Payslip) => {
     try {
-      setLoading(true);
+      setDownloadLoading(true);
       const blob = await payrollService.downloadPayslipPdf(payslip.id);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -64,26 +57,24 @@ export default function PayslipsPage() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip');
+      setDownloadError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to download payslip');
     } finally {
-      setLoading(false);
+      setDownloadLoading(false);
     }
   };
 
   const handleBulkDownload = async () => {
     try {
-      setLoading(true);
-      setError(null);
-
+      setDownloadLoading(true);
+      setDownloadError(null);
       for (const payslip of filteredPayslips) {
         await handleDownloadPdf(payslip);
-        // Add a small delay to avoid overwhelming the browser
         await new Promise(resolve => setTimeout(resolve, 200));
       }
-    } catch (err: unknown) {
-      setError('Failed to download some payslips');
+    } catch {
+      setDownloadError('Failed to download some payslips');
     } finally {
-      setLoading(false);
+      setDownloadLoading(false);
     }
   };
 
@@ -133,7 +124,7 @@ export default function PayslipsPage() {
                   variant="outline"
                   leftIcon={<Download className="h-4 w-4" />}
                   onClick={handleBulkDownload}
-                  disabled={loading || filteredPayslips.length === 0}
+                  disabled={loading || downloadLoading || filteredPayslips.length === 0}
                 >
                   Download All
                 </Button>
@@ -142,11 +133,11 @@ export default function PayslipsPage() {
           </div>
 
           {/* Error Message */}
-          {error && (
+          {(fetchError || downloadError) && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
-              {error}
+              {downloadError ?? fetchError?.message ?? 'An error occurred'}
               <button
-                onClick={() => setError(null)}
+                onClick={() => setDownloadError(null)}
                 className="ml-4 text-sm underline hover:no-underline"
               >
                 Dismiss

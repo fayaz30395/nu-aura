@@ -30,69 +30,44 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { onboardingService } from '@/lib/services/onboarding.service';
-import { OnboardingProcess, OnboardingTask } from '@/lib/types/onboarding';
+import { useOnboardingProcess, useOnboardingProcessTasks, useUpdateOnboardingTaskStatus } from '@/lib/hooks/queries/useOnboarding';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 export default function OnboardingDetailPage() {
+  const toast = useToast();
     const router = useRouter();
     const params = useParams();
     const { user } = useAuth();
     const processId = params.id as string;
 
-    const [process, setProcess] = useState<OnboardingProcess | null>(null);
-    const [tasks, setTasks] = useState<OnboardingTask[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [updating, setUpdating] = useState<string | null>(null);
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     // Google Drive State
     const [driveToken, setDriveToken] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
 
+    // React Query hooks
+    const { data: process, isLoading } = useOnboardingProcess(processId);
+    const { data: tasks = [] } = useOnboardingProcessTasks(processId);
+    const { mutate: updateTaskStatus, isPending: isUpdating } = useUpdateOnboardingTaskStatus();
+
     useEffect(() => {
-        loadData();
         const token = localStorage.getItem('nu_drive_token');
         if (token) setDriveToken(token);
-    }, []);
 
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const [pData, tData] = await Promise.all([
-                onboardingService.getProcessById(processId),
-                onboardingService.getProcessTasks(processId)
-            ]);
-            setProcess(pData);
-            setTasks(tData);
-
-            // Auto-expand first category
-            const categories = Array.from(new Set(tData.map(t => t.category)));
-            if (categories.length > 0) setExpandedCategories([categories[0]]);
-        } catch (err: unknown) {
-            setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load process details');
-        } finally {
-            setLoading(false);
+        // Auto-expand first category
+        if (tasks && tasks.length > 0) {
+            const categories = Array.from(new Set(tasks.map(t => t.category)));
+            if (categories.length > 0 && expandedCategories.length === 0) {
+                setExpandedCategories([categories[0]]);
+            }
         }
-    };
+    }, [tasks]);
 
-    const handleTaskStatusUpdate = async (taskId: string, newStatus: string) => {
-        try {
-            setUpdating(taskId);
-            await onboardingService.updateTaskStatus(taskId, newStatus);
-            // Reload data to get updated progress and task list
-            const [pData, tData] = await Promise.all([
-                onboardingService.getProcessById(processId),
-                onboardingService.getProcessTasks(processId)
-            ]);
-            setProcess(pData);
-            setTasks(tData);
-        } catch (err) {
-            console.error('Failed to update task status', err);
-        } finally {
-            setUpdating(null);
-        }
+    const handleTaskStatusUpdate = (taskId: string, newStatus: string) => {
+        updateTaskStatus({ taskId, status: newStatus });
     };
 
     const toggleCategory = (category: string) => {
@@ -132,16 +107,16 @@ export default function OnboardingDetailPage() {
             });
 
             if (!response.ok) throw new Error('Upload failed');
-            alert('File uploaded to Google Drive successfully!');
+            toast.success('File uploaded to Google Drive successfully!');
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Failed to upload file to Google Drive');
+            toast.error('Failed to upload file to Google Drive');
         } finally {
             setUploading(false);
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <AppLayout activeMenuItem="recruitment">
                 <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
@@ -158,7 +133,7 @@ export default function OnboardingDetailPage() {
         if (!acc[task.category]) acc[task.category] = [];
         acc[task.category].push(task);
         return acc;
-    }, {} as Record<string, OnboardingTask[]>);
+    }, {} as Record<string, typeof tasks>);
 
     return (
         <AppLayout
@@ -303,7 +278,7 @@ export default function OnboardingDetailPage() {
                                                                     <option value="SKIPPED">Skipped</option>
                                                                     <option value="BLOCKED">Blocked</option>
                                                                 </select>
-                                                                {updating === task.id && <Loader2 className="h-4 w-4 animate-spin text-primary-500" />}
+                                                                {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-primary-500" />}
                                                             </div>
                                                         </div>
                                                     ))}

@@ -38,6 +38,7 @@ public class AnnouncementService {
     private final EmployeeRepository employeeRepository;
     private final ContentViewService contentViewService;
 
+    @Transactional
     public AnnouncementDto createAnnouncement(CreateAnnouncementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -75,6 +76,7 @@ public class AnnouncementService {
         return AnnouncementDto.fromEntity(announcement);
     }
 
+    @Transactional
     public AnnouncementDto updateAnnouncement(UUID announcementId, CreateAnnouncementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -232,6 +234,7 @@ public class AnnouncementService {
         return dto;
     }
 
+    @Transactional
     public void markAsRead(UUID announcementId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -307,6 +310,7 @@ public class AnnouncementService {
         log.info("Announcement {} accepted by employee {}", announcementId, employeeId);
     }
 
+    @Transactional
     public void deleteAnnouncement(UUID announcementId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

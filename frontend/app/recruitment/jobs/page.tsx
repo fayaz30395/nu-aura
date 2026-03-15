@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,10 +9,16 @@ import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { departmentService } from '@/lib/services/department.service';
-import { employeeService } from '@/lib/services/employee.service';
 import { createJobOpeningSchema, CreateJobOpeningFormData } from '@/lib/validations/recruitment';
-import { useJobOpenings, useCreateJobOpening, useUpdateJobOpening, useDeleteJobOpening, useGenerateJobDescription } from '@/lib/hooks/queries/useRecruitment';
+import {
+  useJobOpenings,
+  useCreateJobOpening,
+  useUpdateJobOpening,
+  useDeleteJobOpening,
+  useGenerateJobDescription,
+} from '@/lib/hooks/queries/useRecruitment';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { JobOpening, JobStatus, EmploymentType, Priority, CreateJobOpeningRequest } from '@/lib/types/recruitment';
 import { Department, Employee } from '@/lib/types/employee';
 import { JobDescriptionResponse } from '@/lib/types/ai-recruitment';
@@ -21,8 +27,6 @@ import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [managers, setManagers] = useState<Employee[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<JobOpening | null>(null);
@@ -32,12 +36,17 @@ export default function JobOpeningsPage() {
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiGeneratedJD, setAiGeneratedJD] = useState<JobDescriptionResponse | null>(null);
 
-  // React Query hooks
+  // React Query hooks (already being used)
   const jobOpeningsQuery = useJobOpenings(0, 100);
+  const { data: departments } = useActiveDepartments();
+  const { data: employeesData } = useEmployees(0, 100);
   const createMutation = useCreateJobOpening();
   const updateMutation = useUpdateJobOpening();
   const deleteMutation = useDeleteJobOpening();
   const generateJDMutation = useGenerateJobDescription();
+
+  const isLoading = jobOpeningsQuery.isLoading;
+  const managers = employeesData?.content || [];
 
   // React Hook Form setup
   const form = useForm<CreateJobOpeningFormData>({
@@ -66,30 +75,6 @@ export default function JobOpeningsPage() {
   });
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = form;
-
-  // Load departments and managers on mount
-  useEffect(() => {
-    loadDepartments();
-    loadManagers();
-  }, []);
-
-  const loadDepartments = async () => {
-    try {
-      const response = await departmentService.getActiveDepartments();
-      setDepartments(response);
-    } catch (err) {
-      console.error('Error loading departments:', err);
-    }
-  };
-
-  const loadManagers = async () => {
-    try {
-      const response = await employeeService.getAllEmployees(0, 100);
-      setManagers(response.content);
-    } catch (err) {
-      console.error('Error loading managers:', err);
-    }
-  };
 
   const onSubmit = async (data: CreateJobOpeningFormData) => {
     try {
@@ -185,9 +170,9 @@ export default function JobOpeningsPage() {
       setShowAiModal(true);
       const result = await generateJDMutation.mutateAsync({
         jobTitle,
-        department: departments.find(d => d.id === department)?.name,
+        department: (departments || []).find((d: Department) => d.id === department)?.name,
         experienceRange: experienceRequired,
-        keySkills: skillsRequired?.split(',').map(s => s.trim()).filter(s => s),
+        keySkills: skillsRequired?.split(',').map((s: string) => s.trim()).filter((s: string) => s),
       });
       setAiGeneratedJD(result);
     } catch (err: unknown) {
@@ -554,7 +539,7 @@ export default function JobOpeningsPage() {
                         className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       >
                         <option value="">Select Department</option>
-                        {departments.map((dept) => (
+                        {(departments || []).map((dept: Department) => (
                           <option key={dept.id} value={dept.id}>{dept.name}</option>
                         ))}
                       </select>

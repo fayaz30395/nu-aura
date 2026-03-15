@@ -10,7 +10,7 @@ const BASE_URL = '/tax-declarations';
 
 export const taxService = {
     // Create a new tax declaration
-    createval: async (data: TaxDeclarationRequest): Promise<TaxDeclarationResponse> => {
+    create: async (data: TaxDeclarationRequest): Promise<TaxDeclarationResponse> => {
         const response = await apiClient.post<TaxDeclarationResponse>(BASE_URL, data);
         return response.data;
     },

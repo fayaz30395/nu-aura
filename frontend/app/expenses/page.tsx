@@ -1,14 +1,38 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { Plus, DollarSign, FileText, CheckCircle, XCircle, Receipt, AlertCircle, Filter, ChevronDown, Search, Calendar } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { expenseService } from '@/lib/services/expense.service';
 import { ExpenseClaim, ExpenseCategory, CurrencyCode, CreateExpenseClaimRequest } from '@/lib/types/expense';
 import { StatCard, Badge, Button, Modal, ModalHeader, ModalBody, ModalFooter, EmptyState } from '@/components/ui';
 import { ExpenseAnalytics } from '@/components/expenses';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
+import {
+  useMyExpenseClaims,
+  usePendingExpenseClaims,
+  useAllExpenseClaims,
+  useCreateExpenseClaim,
+  useSubmitExpenseClaim,
+  useApproveExpenseClaim,
+  useRejectExpenseClaim,
+  useDeleteExpenseClaim,
+} from '@/lib/hooks/queries';
+
+const expenseClaimSchema = z.object({
+  claimDate: z.string().min(1, 'Claim date required'),
+  category: z.string().min(1, 'Category required'),
+  description: z.string().min(1, 'Description required'),
+  amount: z.number({ coerce: true }).positive('Amount must be positive'),
+  currency: z.string().length(3, 'Invalid currency code'),
+  receiptUrl: z.string().url().optional().or(z.literal('')),
+  notes: z.string().optional().or(z.literal('')),
+});
+
+type ExpenseClaimFormData = z.infer<typeof expenseClaimSchema>;
 
 type TabType = 'my-claims' | 'pending' | 'all' | 'analytics';
 
@@ -23,12 +47,20 @@ interface Filters {
 
 export default function ExpenseClaims() {
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [claims, setClaims] = useState<ExpenseClaim[]>([]);
-  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-claims');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Initialize React Query hooks
+  const myClaimsQuery = useMyExpenseClaims(0, 50);
+  const pendingClaimsQuery = usePendingExpenseClaims(0, 50);
+  const allClaimsQuery = useAllExpenseClaims(0, 20);
+  const createMutation = useCreateExpenseClaim();
+  const submitMutation = useSubmitExpenseClaim();
+  const approveMutation = useApproveExpenseClaim();
+  const rejectMutation = useRejectExpenseClaim();
+  const deleteMutation = useDeleteExpenseClaim();
 
   // Bulk selection
   const [selectedClaims, setSelectedClaims] = useState<Set<string>>(new Set());
@@ -47,22 +79,23 @@ export default function ExpenseClaims() {
     search: '',
   });
 
-  const [formData, setFormData] = useState<{
-    claimDate: string;
-    category: ExpenseCategory;
-    description: string;
-    amount: string;
-    currency: CurrencyCode;
-    receiptUrl: string;
-    notes: string;
-  }>({
-    claimDate: new Date().toISOString().split('T')[0],
-    category: 'TRAVEL',
-    description: '',
-    amount: '',
-    currency: 'USD',
-    receiptUrl: '',
-    notes: ''
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    reset: resetForm,
+    formState: { errors, isSubmitting },
+  } = useForm<ExpenseClaimFormData>({
+    resolver: zodResolver(expenseClaimSchema),
+    defaultValues: {
+      claimDate: new Date().toISOString().split('T')[0],
+      category: 'TRAVEL',
+      description: '',
+      amount: 0,
+      currency: 'USD',
+      receiptUrl: '',
+      notes: '',
+    },
   });
 
   const showNotification = (message: string, type: 'success' | 'error') => {
@@ -79,9 +112,17 @@ export default function ExpenseClaims() {
     }, 5000);
   };
 
+  // Get current claims based on active tab
+  const currentClaimsData = useMemo(() => {
+    if (activeTab === 'my-claims') return myClaimsQuery.data?.content || [];
+    if (activeTab === 'pending') return pendingClaimsQuery.data?.content || [];
+    if (activeTab === 'all') return allClaimsQuery.data?.content || [];
+    return [];
+  }, [activeTab, myClaimsQuery.data, pendingClaimsQuery.data, allClaimsQuery.data]);
+
   // Filter claims
   const filteredClaims = useMemo(() => {
-    return claims.filter((claim) => {
+    return currentClaimsData.filter((claim) => {
       // Category filter
       if (filters.category !== 'ALL' && claim.category !== filters.category) return false;
 
@@ -106,12 +147,13 @@ export default function ExpenseClaims() {
 
       return true;
     });
-  }, [claims, filters]);
+  }, [currentClaimsData, filters]);
 
   // Statistics
   const statistics = useMemo(() => {
-    const pending = claims.filter((c) => c.status === 'SUBMITTED');
-    const approved = claims.filter((c) => c.status === 'APPROVED');
+    const allClaims = currentClaimsData;
+    const pending = allClaims.filter((c) => c.status === 'SUBMITTED');
+    const approved = allClaims.filter((c) => c.status === 'APPROVED');
     const totalPendingAmount = pending.reduce((sum, c) => sum + c.amount, 0);
     const totalApprovedAmount = approved.reduce((sum, c) => sum + c.amount, 0);
 
@@ -120,9 +162,9 @@ export default function ExpenseClaims() {
       approvedCount: approved.length,
       totalPendingAmount,
       totalApprovedAmount,
-      totalClaims: claims.length,
+      totalClaims: allClaims.length,
     };
-  }, [claims]);
+  }, [currentClaimsData]);
 
   // Bulk selection handlers
   const handleSelectAll = () => {
@@ -150,11 +192,10 @@ export default function ExpenseClaims() {
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        expenseService.processApproval(claimId, { action: 'APPROVE' })
+        approveMutation.mutateAsync(claimId)
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
-      loadClaims();
       showNotification(`${selectedClaims.size} claims approved successfully!`, 'success');
     } catch (err) {
       console.error('Bulk approve error:', err);
@@ -170,16 +211,12 @@ export default function ExpenseClaims() {
     setBulkProcessing(true);
     try {
       const promises = Array.from(selectedClaims).map((claimId) =>
-        expenseService.processApproval(claimId, {
-          action: 'REJECT',
-          rejectionReason: bulkRejectReason,
-        })
+        rejectMutation.mutateAsync({ claimId, reason: bulkRejectReason })
       );
       await Promise.all(promises);
       setSelectedClaims(new Set());
       setShowBulkRejectModal(false);
       setBulkRejectReason('');
-      loadClaims();
       showNotification(`${selectedClaims.size} claims rejected`, 'success');
     } catch (err) {
       console.error('Bulk reject error:', err);
@@ -200,37 +237,8 @@ export default function ExpenseClaims() {
     });
   };
 
-  const loadClaims = useCallback(async () => {
-    if (!user?.employeeId) return;
 
-    setLoading(true);
-    setError(null);
-    try {
-      let data;
-      if (activeTab === 'my-claims') {
-        data = await expenseService.getMyClaims(user.employeeId);
-      } else if (activeTab === 'pending') {
-        data = await expenseService.getPendingClaims();
-      } else {
-        data = await expenseService.getAllClaims();
-      }
-      setClaims(data.content || []);
-    } catch (err) {
-      console.error('Error loading claims:', err);
-      showNotification('Failed to load expense claims', 'error');
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab, user?.employeeId]);
-
-  useEffect(() => {
-    if (hasHydrated && isAuthenticated && user?.employeeId) {
-      loadClaims();
-    }
-  }, [hasHydrated, isAuthenticated, user?.employeeId, loadClaims]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ExpenseClaimFormData) => {
     if (!user?.employeeId) {
       showNotification('You must be logged in to create an expense claim', 'error');
       return;
@@ -238,28 +246,19 @@ export default function ExpenseClaims() {
 
     try {
       const request: CreateExpenseClaimRequest = {
-        claimDate: formData.claimDate,
-        category: formData.category,
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        currency: formData.currency,
-        receiptUrl: formData.receiptUrl || undefined,
-        notes: formData.notes || undefined,
+        claimDate: data.claimDate,
+        category: data.category as ExpenseCategory,
+        description: data.description,
+        amount: data.amount,
+        currency: data.currency as CurrencyCode,
+        receiptUrl: data.receiptUrl || undefined,
+        notes: data.notes || undefined,
       };
 
-      await expenseService.createClaim(user.employeeId, request);
+      await createMutation.mutateAsync({ employeeId: user.employeeId, data: request });
 
-      setFormData({
-        claimDate: new Date().toISOString().split('T')[0],
-        category: 'TRAVEL',
-        description: '',
-        amount: '',
-        currency: 'USD',
-        receiptUrl: '',
-        notes: ''
-      });
+      resetForm();
       setShowForm(false);
-      loadClaims();
       showNotification('Expense claim created successfully!', 'success');
     } catch (err) {
       console.error('Error creating claim:', err);
@@ -269,8 +268,7 @@ export default function ExpenseClaims() {
 
   const handleSubmitClaim = async (claimId: string) => {
     try {
-      await expenseService.submitClaim(claimId);
-      loadClaims();
+      await submitMutation.mutateAsync(claimId);
       showNotification('Expense claim submitted successfully!', 'success');
     } catch (err) {
       console.error('Error submitting claim:', err);
@@ -282,8 +280,7 @@ export default function ExpenseClaims() {
     if (!user?.employeeId) return;
 
     try {
-      await expenseService.processApproval(claimId, { action: 'APPROVE' });
-      loadClaims();
+      await approveMutation.mutateAsync(claimId);
       showNotification('Expense claim approved successfully!', 'success');
     } catch (err) {
       console.error('Error approving claim:', err);
@@ -298,11 +295,7 @@ export default function ExpenseClaims() {
     if (!reason) return;
 
     try {
-      await expenseService.processApproval(claimId, {
-        action: 'REJECT',
-        rejectionReason: reason
-      });
-      loadClaims();
+      await rejectMutation.mutateAsync({ claimId, reason });
       showNotification('Expense claim rejected', 'success');
     } catch (err) {
       console.error('Error rejecting claim:', err);
@@ -314,8 +307,7 @@ export default function ExpenseClaims() {
     if (!confirm('Are you sure you want to delete this claim?')) return;
 
     try {
-      await expenseService.deleteClaim(claimId);
-      loadClaims();
+      await deleteMutation.mutateAsync(claimId);
       showNotification('Expense claim deleted', 'success');
     } catch (err) {
       console.error('Error deleting claim:', err);
@@ -549,26 +541,24 @@ export default function ExpenseClaims() {
         {showForm && (
           <div className="bg-surface-50 dark:bg-surface-800 rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Create New Expense Claim</h2>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Claim Date</label>
                 <input
                   type="date"
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={formData.claimDate}
-                  onChange={(e) => setFormData({ ...formData, claimDate: e.target.value })}
-                  required
+                  {...register('claimDate')}
                 />
+                {errors.claimDate && <span className="text-red-500 text-sm">{errors.claimDate.message}</span>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Category</label>
                 <select
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as ExpenseCategory })}
-                  required
+                  {...register('category')}
                 >
+                  <option value="">Select category</option>
                   <option value="TRAVEL">Travel</option>
                   <option value="ACCOMMODATION">Accommodation</option>
                   <option value="MEALS">Meals</option>
@@ -581,6 +571,7 @@ export default function ExpenseClaims() {
                   <option value="MEDICAL">Medical</option>
                   <option value="OTHER">Other</option>
                 </select>
+                {errors.category && <span className="text-red-500 text-sm">{errors.category.message}</span>}
               </div>
 
               <div className="md:col-span-2">
@@ -588,11 +579,10 @@ export default function ExpenseClaims() {
                 <textarea
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   rows={3}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  required
                   placeholder="Describe your expense..."
+                  {...register('description')}
                 />
+                {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
               </div>
 
               <div>
@@ -602,19 +592,17 @@ export default function ExpenseClaims() {
                   step="0.01"
                   min="0"
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  required
                   placeholder="0.00"
+                  {...register('amount')}
                 />
+                {errors.amount && <span className="text-red-500 text-sm">{errors.amount.message}</span>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Currency</label>
                 <select
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value as CurrencyCode })}
+                  {...register('currency')}
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -628,10 +616,10 @@ export default function ExpenseClaims() {
                 <input
                   type="url"
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={formData.receiptUrl}
-                  onChange={(e) => setFormData({ ...formData, receiptUrl: e.target.value })}
                   placeholder="https://..."
+                  {...register('receiptUrl')}
                 />
+                {errors.receiptUrl && <span className="text-red-500 text-sm">{errors.receiptUrl.message}</span>}
               </div>
 
               <div className="md:col-span-2">
@@ -639,18 +627,18 @@ export default function ExpenseClaims() {
                 <textarea
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   rows={2}
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Additional notes..."
+                  {...register('notes')}
                 />
               </div>
 
               <div className="md:col-span-2 flex gap-4">
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Claim
+                  {isSubmitting ? 'Creating...' : 'Create Claim'}
                 </button>
                 <button
                   type="button"
@@ -759,7 +747,7 @@ export default function ExpenseClaims() {
         {/* Content Area */}
         {activeTab === 'analytics' ? (
           <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
-            <ExpenseAnalytics claims={claims} />
+            <ExpenseAnalytics claims={currentClaimsData} />
           </div>
         ) : (
         <div className="bg-surface-50 dark:bg-surface-800 rounded-b-lg shadow-sm p-6">
@@ -778,7 +766,7 @@ export default function ExpenseClaims() {
             </div>
           )}
 
-          {loading ? (
+          {(myClaimsQuery.isLoading || pendingClaimsQuery.isLoading || allClaimsQuery.isLoading) ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
             </div>

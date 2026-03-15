@@ -287,7 +287,7 @@ class WorkflowServiceTest {
                     new Object[]{StepExecution.ApprovalAction.APPROVE, 3L},
                     new Object[]{StepExecution.ApprovalAction.REJECT, 1L}
             );
-            when(stepExecutionRepository.countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(LocalDateTime.class)))
+            when(stepExecutionRepository.countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(LocalDateTime.class), anyCollection()))
                     .thenReturn(todayActions);
 
             // When
@@ -304,7 +304,7 @@ class WorkflowServiceTest {
         void shouldReturnZerosWhenNoActions() {
             // Given
             when(stepExecutionRepository.countPendingForUser(TENANT_ID, USER_ID)).thenReturn(0L);
-            when(stepExecutionRepository.countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(LocalDateTime.class)))
+            when(stepExecutionRepository.countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(LocalDateTime.class), anyCollection()))
                     .thenReturn(Collections.emptyList());
 
             // When
@@ -321,7 +321,7 @@ class WorkflowServiceTest {
         void shouldUseTenantAndUserContext() {
             // Given
             when(stepExecutionRepository.countPendingForUser(any(), any())).thenReturn(0L);
-            when(stepExecutionRepository.countTodayActionsByUser(any(), any(), any()))
+            when(stepExecutionRepository.countTodayActionsByUser(any(), any(), any(), any()))
                     .thenReturn(Collections.emptyList());
 
             // When
@@ -329,7 +329,7 @@ class WorkflowServiceTest {
 
             // Then
             verify(stepExecutionRepository).countPendingForUser(TENANT_ID, USER_ID);
-            verify(stepExecutionRepository).countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any());
+            verify(stepExecutionRepository).countTodayActionsByUser(eq(TENANT_ID), eq(USER_ID), any(), any());
         }
     }
 

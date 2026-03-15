@@ -1,13 +1,18 @@
 package com.hrms.application.notification.service;
 
+import com.hrms.common.security.TenantContext;
 import com.hrms.domain.employee.Employee;
+import com.hrms.domain.tenant.Tenant;
 import com.hrms.infrastructure.employee.repository.EmployeeRepository;
+import com.hrms.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -17,75 +22,108 @@ public class EmailSchedulerService {
 
     private final EmailService emailService;
     private final EmployeeRepository employeeRepository;
+    // R2-003 FIX: Inject TenantRepository so scheduled jobs can iterate over all
+    // active tenants and set the correct TenantContext for each query instead of
+    // passing null (which caused the birthday/anniversary queries to return 0 rows
+    // or throw a SQL error, silently sending no emails).
+    private final TenantRepository tenantRepository;
 
     /**
-     * Send birthday wishes at 9 AM every day
+     * Send birthday wishes at 9 AM every day.
+     *
+     * <p>R2-003 FIX: Iterates over all ACTIVE tenants and sets TenantContext per
+     * iteration so that the employee query is scoped to the correct tenant.</p>
      */
     @Scheduled(cron = "0 0 9 * * *")
+    @Transactional(readOnly = true)
     public void sendBirthdayEmails() {
         log.info("Starting birthday email job");
 
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
+        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
 
-        // Find employees with birthdays today
-        List<Employee> birthdayEmployees = employeeRepository.findUpcomingBirthdays(
-                null, // Will be handled by tenant context in production
-                today,
-                tomorrow);
-
-        log.info("Found {} employees with birthdays today", birthdayEmployees.size());
-
-        for (Employee employee : birthdayEmployees) {
+        for (Tenant tenant : activeTenants) {
+            TenantContext.setCurrentTenant(tenant.getId());
             try {
-                String email = employee.getUser() != null ? employee.getUser().getEmail() : employee.getPersonalEmail();
-                if (email != null && !email.isEmpty()) {
-                    emailService.sendBirthdayEmail(email, employee.getFullName());
+                List<Employee> birthdayEmployees = employeeRepository.findUpcomingBirthdays(
+                        tenant.getId(), today, tomorrow);
+                log.debug("Tenant {}: found {} employees with birthdays today",
+                        tenant.getCode(), birthdayEmployees.size());
+
+                for (Employee employee : birthdayEmployees) {
+                    try {
+                        String email = employee.getUser() != null
+                                ? employee.getUser().getEmail()
+                                : employee.getPersonalEmail();
+                        if (email != null && !email.isEmpty()) {
+                            emailService.sendBirthdayEmail(email, employee.getFullName());
+                        }
+                    } catch (Exception e) {
+                        log.error("Failed to send birthday email to {} (tenant {}): {}",
+                                employee.getFullName(), tenant.getCode(), e.getMessage());
+                    }
                 }
-            } catch (Exception e) {
-                log.error("Failed to send birthday email to {}: {}", employee.getFullName(), e.getMessage());
+            } finally {
+                TenantContext.clear();
             }
         }
 
-        log.info("Birthday email job completed");
+        log.info("Birthday email job completed for {} tenant(s)", activeTenants.size());
     }
 
     /**
-     * Send work anniversary emails at 9 AM every day
+     * Send work anniversary emails at 9 AM every day.
+     *
+     * <p>R2-003 FIX: Iterates over all ACTIVE tenants with proper TenantContext.</p>
+     * <p>R2-017 FIX: Use {@link ChronoUnit#YEARS#between} instead of raw year subtraction
+     * to correctly compute full elapsed years regardless of leap years or the calendar
+     * boundary (e.g. joining on Dec 31 checked on Jan 1 would incorrectly show 1 year).</p>
      */
     @Scheduled(cron = "0 0 9 * * *")
+    @Transactional(readOnly = true)
     public void sendAnniversaryEmails() {
         log.info("Starting work anniversary email job");
 
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
+        List<Tenant> activeTenants = tenantRepository.findByStatus(Tenant.TenantStatus.ACTIVE);
 
-        // Find employees with work anniversaries today
-        List<Employee> anniversaryEmployees = employeeRepository.findUpcomingAnniversaries(
-                null, // Will be handled by tenant context in production
-                today,
-                tomorrow);
-
-        log.info("Found {} employees with work anniversaries today", anniversaryEmployees.size());
-
-        for (Employee employee : anniversaryEmployees) {
+        for (Tenant tenant : activeTenants) {
+            TenantContext.setCurrentTenant(tenant.getId());
             try {
-                int years = today.getYear() - employee.getJoiningDate().getYear();
-                String email = employee.getUser() != null ? employee.getUser().getEmail() : employee.getPersonalEmail();
+                List<Employee> anniversaryEmployees = employeeRepository.findUpcomingAnniversaries(
+                        tenant.getId(), today, tomorrow);
+                log.debug("Tenant {}: found {} employees with work anniversaries today",
+                        tenant.getCode(), anniversaryEmployees.size());
 
-                if (email != null && !email.isEmpty() && years > 0) {
-                    emailService.sendAnniversaryEmail(email, employee.getFullName(), String.valueOf(years));
+                for (Employee employee : anniversaryEmployees) {
+                    try {
+                        // R2-017 FIX: ChronoUnit.YEARS correctly handles leap years and
+                        // day-of-month boundaries; raw getYear() subtraction does not.
+                        long years = ChronoUnit.YEARS.between(employee.getJoiningDate(), today);
+                        String email = employee.getUser() != null
+                                ? employee.getUser().getEmail()
+                                : employee.getPersonalEmail();
+
+                        if (email != null && !email.isEmpty() && years > 0) {
+                            emailService.sendAnniversaryEmail(email, employee.getFullName(), String.valueOf(years));
+                        }
+                    } catch (Exception e) {
+                        log.error("Failed to send anniversary email to {} (tenant {}): {}",
+                                employee.getFullName(), tenant.getCode(), e.getMessage());
+                    }
                 }
-            } catch (Exception e) {
-                log.error("Failed to send anniversary email to {}: {}", employee.getFullName(), e.getMessage());
+            } finally {
+                TenantContext.clear();
             }
         }
 
-        log.info("Work anniversary email job completed");
+        log.info("Work anniversary email job completed for {} tenant(s)", activeTenants.size());
     }
 
     /**
-     * Retry failed emails every hour
+     * Retry failed emails every hour.
      */
     @Scheduled(cron = "0 0 * * * *")
     public void retryFailedEmails() {
@@ -99,9 +137,10 @@ public class EmailSchedulerService {
     }
 
     /**
-     * Send scheduled emails every 15 minutes
+     * Send scheduled emails every 15 minutes.
      */
     @Scheduled(cron = "0 */15 * * * *")
+    @Transactional
     public void sendScheduledEmails() {
         log.info("Starting scheduled email job");
         try {

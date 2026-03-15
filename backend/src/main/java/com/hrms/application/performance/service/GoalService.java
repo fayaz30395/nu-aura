@@ -166,6 +166,20 @@ public class GoalService {
     }
 
     @Transactional(readOnly = true)
+    public Page<GoalResponse> getEmployeeGoalsPaged(UUID employeeId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return goalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GoalResponse> getTeamGoalsPaged(UUID managerId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return goalRepository.findTeamGoals(tenantId, managerId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Transactional(readOnly = true)
     public Map<String, Object> getGoalAnalytics() {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -1,104 +1,98 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw } from 'lucide-react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { leaveService } from '@/lib/services/leave.service';
-import { LeaveType, LeaveBalance, HalfDayPeriod } from '@/lib/types/leave';
+import { useActiveLeaveTypes, useEmployeeBalancesForYear, useCreateLeaveRequest } from '@/lib/hooks/queries/useLeaves';
+import { HalfDayPeriod } from '@/lib/types/leave';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+const leaveFormSchema = z.object({
+  leaveTypeId: z.string().min(1, 'Please select a leave type'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  isHalfDay: z.boolean().default(false),
+  halfDayPeriod: z.enum(['MORNING', 'AFTERNOON']).optional(),
+  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must not exceed 1000 characters'),
+  documentPath: z.string().optional(),
+});
+
+type LeaveFormData = z.infer<typeof leaveFormSchema>;
 
 export default function ApplyLeavePage() {
+  const toast = useToast();
   const router = useRouter();
   const { user, hasHydrated } = useAuth();
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [balances, setBalances] = useState<LeaveBalance[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    leaveTypeId: '',
-    startDate: '',
-    endDate: '',
-    isHalfDay: false,
-    halfDayPeriod: '',
-    reason: '',
-    documentPath: '',
+  const year = new Date().getFullYear();
+
+  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const { data: balances = [] } = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
+  const createLeaveRequest = useCreateLeaveRequest();
+
+  const { register, handleSubmit, watch, control, formState: { errors, isSubmitting }, reset } = useForm<LeaveFormData>({
+    resolver: zodResolver(leaveFormSchema),
+    defaultValues: {
+      leaveTypeId: '',
+      startDate: '',
+      endDate: '',
+      isHalfDay: false,
+      halfDayPeriod: undefined,
+      reason: '',
+      documentPath: '',
+    },
   });
 
-  useEffect(() => {
-    if (hasHydrated) {
-      loadData();
-    }
-  }, [hasHydrated]);
-
-  const loadData = async () => {
-    try {
-      setDataLoading(true);
-      setError(null);
-      if (!user?.employeeId) {
-        setError('No employee profile linked to your account. Leave application requires an employee profile.');
-        setDataLoading(false);
-        return;
-      }
-      const year = new Date().getFullYear();
-      const [types, bal] = await Promise.all([
-        leaveService.getActiveLeaveTypes(),
-        leaveService.getEmployeeBalancesForYear(user.employeeId, year),
-      ]);
-      setLeaveTypes(types);
-      setBalances(bal);
-    } catch (err) {
-      console.error('Error loading data:', err);
-      setError('Failed to load leave types and balances. Please try again.');
-    } finally {
-      setDataLoading(false);
-    }
-  };
+  const dataLoading = !hasHydrated;
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+  const isHalfDay = watch('isHalfDay');
+  const leaveTypeId = watch('leaveTypeId');
 
   const calculateDays = () => {
-    if (!formData.startDate || !formData.endDate) return 0;
-    const start = new Date(formData.startDate);
-    const end = new Date(formData.endDate);
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    return formData.isHalfDay ? 0.5 : diffDays;
+    return isHalfDay ? 0.5 : diffDays;
   };
 
   const getAvailableBalance = () => {
-    if (!formData.leaveTypeId) return null;
-    return balances.find(b => b.leaveTypeId === formData.leaveTypeId);
+    if (!leaveTypeId) return null;
+    return balances.find(b => b.leaveTypeId === leaveTypeId);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LeaveFormData) => {
     try {
-      setLoading(true);
       if (!user?.employeeId) {
-        alert('No employee profile linked to your account');
+        toast.error('No employee profile linked to your account');
         return;
       }
+
       const totalDays = calculateDays();
 
-      await leaveService.createLeaveRequest({
+      await createLeaveRequest.mutateAsync({
         employeeId: user.employeeId,
-        leaveTypeId: formData.leaveTypeId,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
+        leaveTypeId: data.leaveTypeId,
+        startDate: data.startDate,
+        endDate: data.endDate,
         totalDays,
-        isHalfDay: formData.isHalfDay,
-        halfDayPeriod: formData.isHalfDay ? (formData.halfDayPeriod as HalfDayPeriod) : undefined,
-        reason: formData.reason,
-        documentPath: formData.documentPath || undefined,
+        isHalfDay: data.isHalfDay,
+        halfDayPeriod: data.isHalfDay ? (data.halfDayPeriod as HalfDayPeriod) : undefined,
+        reason: data.reason,
+        documentPath: data.documentPath || undefined,
       });
 
-      alert('Leave request submitted successfully!');
+      toast.success('Leave request submitted successfully!');
+      reset();
       router.push('/leave');
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
-    } finally {
-      setLoading(false);
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit leave request');
     }
   };
 
@@ -124,22 +118,7 @@ export default function ApplyLeavePage() {
 
         <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Apply for Leave</h1>
 
-        {error && (
-          <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-            </div>
-            <button
-              onClick={loadData}
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-surface-900 rounded-lg shadow-md p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
@@ -147,10 +126,8 @@ export default function ApplyLeavePage() {
                 Leave Type *
               </label>
               <select
-                value={formData.leaveTypeId}
-                onChange={(e) => setFormData({ ...formData, leaveTypeId: e.target.value })}
+                {...register('leaveTypeId')}
                 className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
-                required
               >
                 <option value="">Select Leave Type</option>
                 {leaveTypes.map((type) => (
@@ -159,6 +136,7 @@ export default function ApplyLeavePage() {
                   </option>
                 ))}
               </select>
+              {errors.leaveTypeId && <p className="text-red-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
               {balance && (
                 <div className="mt-2 text-sm text-surface-600 dark:text-surface-400">
                   Available Balance: <span className="font-semibold">{balance.available} days</span>
@@ -173,11 +151,10 @@ export default function ApplyLeavePage() {
               </label>
               <input
                 type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                {...register('startDate')}
                 className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
-                required
               />
+              {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             {/* End Date */}
@@ -187,12 +164,11 @@ export default function ApplyLeavePage() {
               </label>
               <input
                 type="date"
-                value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                min={formData.startDate}
+                {...register('endDate')}
+                min={startDate}
                 className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
-                required
               />
+              {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
 
             {/* Half Day */}
@@ -200,8 +176,7 @@ export default function ApplyLeavePage() {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={formData.isHalfDay}
-                  onChange={(e) => setFormData({ ...formData, isHalfDay: e.target.checked })}
+                  {...register('isHalfDay')}
                   className="w-4 h-4 text-primary-600"
                 />
                 <span className="text-sm font-medium text-surface-700 dark:text-surface-300">Half Day Leave</span>
@@ -209,7 +184,7 @@ export default function ApplyLeavePage() {
             </div>
 
             {/* Half Day Period */}
-            {formData.isHalfDay && (
+            {isHalfDay && (
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                   Half Day Period *
@@ -219,8 +194,7 @@ export default function ApplyLeavePage() {
                     <input
                       type="radio"
                       value="MORNING"
-                      checked={formData.halfDayPeriod === 'MORNING'}
-                      onChange={(e) => setFormData({ ...formData, halfDayPeriod: e.target.value })}
+                      {...register('halfDayPeriod')}
                       className="w-4 h-4 text-primary-600"
                     />
                     <span className="text-sm text-surface-700 dark:text-surface-300">First Half (Morning)</span>
@@ -229,13 +203,13 @@ export default function ApplyLeavePage() {
                     <input
                       type="radio"
                       value="AFTERNOON"
-                      checked={formData.halfDayPeriod === 'AFTERNOON'}
-                      onChange={(e) => setFormData({ ...formData, halfDayPeriod: e.target.value })}
+                      {...register('halfDayPeriod')}
                       className="w-4 h-4 text-primary-600"
                     />
                     <span className="text-sm text-surface-700 dark:text-surface-300">Second Half (Afternoon)</span>
                   </label>
                 </div>
+                {errors.halfDayPeriod && <p className="text-red-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
               </div>
             )}
 
@@ -251,13 +225,12 @@ export default function ApplyLeavePage() {
                 Reason *
               </label>
               <textarea
-                value={formData.reason}
-                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                {...register('reason')}
                 rows={4}
                 className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white dark:bg-surface-900 text-gray-900 dark:text-white"
                 placeholder="Please provide a reason for your leave..."
-                required
               />
+              {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}
             </div>
           </div>
 
@@ -265,10 +238,10 @@ export default function ApplyLeavePage() {
           <div className="flex gap-4 mt-6">
             <button
               type="submit"
-              disabled={loading || !formData.leaveTypeId}
+              disabled={createLeaveRequest.isPending || isSubmitting || !leaveTypeId}
               className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 font-semibold"
             >
-              {loading ? 'Submitting...' : 'Submit Leave Request'}
+              {createLeaveRequest.isPending || isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
             </button>
             <button
               type="button"

@@ -50,6 +50,15 @@ interface CalendarEvent {
   creator?: { email: string; displayName?: string };
   organizer?: { email: string; displayName?: string };
   status?: string;
+  conferenceData?: {
+    entryPoints?: { entryPointType: string; uri: string; label?: string }[];
+    conferenceSolution?: { name: string; iconUri?: string };
+    conferenceId?: string;
+    createRequest?: {
+      requestId: string;
+      conferenceSolutionKey?: { type: string };
+    };
+  };
 }
 
 interface CalendarList {

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { travelService } from '@/lib/services/travel.service';
-import { TravelRequest, TravelStatus, TravelType } from '@/lib/types/travel';
+import { TravelStatus, TravelType, TransportMode } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useTravelRequests } from '@/lib/hooks/queries/useTravel';
 import { EmptyState } from '@/components/ui/EmptyState';
 import {
   Plane,
@@ -33,46 +33,28 @@ import {
 export default function TravelPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [travelRequests, setTravelRequests] = useState<TravelRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TravelStatus | 'ALL'>('ALL');
   const [typeFilter, setTypeFilter] = useState<TravelType | 'ALL'>('ALL');
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/login');
-      return;
     }
-    loadTravelRequests();
-  }, [isAuthenticated, hasHydrated, router, currentPage, statusFilter, typeFilter, searchTerm]);
+  }, [isAuthenticated, hasHydrated, router]);
 
-  const loadTravelRequests = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const filters: any = {};
-      if (statusFilter !== 'ALL') filters.status = statusFilter;
-      if (typeFilter !== 'ALL') filters.travelType = typeFilter;
-      if (searchTerm) filters.search = searchTerm;
-
-      const response = await travelService.getAllTravelRequests(currentPage, 10, filters);
-      setTravelRequests(response.content);
-      setTotalPages(response.totalPages);
-      setTotalElements(response.totalElements);
-    } catch (error) {
-      console.error('Error loading travel requests:', error);
-      setError('Failed to load travel requests');
-    } finally {
-      setLoading(false);
-    }
+  const filters = {
+    ...(statusFilter !== 'ALL' && { status: statusFilter }),
+    ...(typeFilter !== 'ALL' && { travelType: typeFilter }),
+    ...(searchTerm && { search: searchTerm }),
   };
+
+  const { data, isLoading, error, refetch } = useTravelRequests(currentPage, 10, filters);
+  const travelRequests = data?.content || [];
+  const totalPages = data?.totalPages || 0;
+  const totalElements = data?.totalElements || 0;
 
   const getStatusConfig = (status: TravelStatus) => {
     const configs = {
@@ -137,12 +119,13 @@ export default function TravelPage() {
     return icons[type] || Briefcase;
   };
 
-  const getTransportIcon = (mode: string) => {
-    const icons: any = {
+  const getTransportIcon = (mode: TransportMode | string) => {
+    const icons: Record<string, typeof Plane> = {
       FLIGHT: Plane,
       TRAIN: Train,
       CAR: Car,
       BUS: Car,
+      SELF_ARRANGED: Car,
     };
     return icons[mode] || Car;
   };
@@ -162,7 +145,7 @@ export default function TravelPage() {
     }).format(amount);
   };
 
-  if (loading && travelRequests.length === 0) {
+  if (isLoading && travelRequests.length === 0) {
     return (
       <AppLayout activeMenuItem="travel">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -271,9 +254,9 @@ export default function TravelPage() {
         {error ? (
           <div className="flex flex-col items-center justify-center py-12 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
             <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-            <p className="text-surface-600 dark:text-surface-400 mb-4">{error}</p>
+            <p className="text-surface-600 dark:text-surface-400 mb-4">{error instanceof Error ? error.message : String(error)}</p>
             <button
-              onClick={loadTravelRequests}
+              onClick={() => void refetch()}
               className="px-4 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors"
             >
               Retry

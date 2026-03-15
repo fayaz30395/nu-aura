@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
 import {
   Calendar,
@@ -17,14 +17,10 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ResourceAvailabilityCalendar } from '@/components/resource-management/ResourceAvailabilityCalendar';
 import {
-  TeamAvailabilityView,
-  ResourceCalendarFilter,
-  EmployeeAvailability,
   AVAILABILITY_COLORS,
   getAvailabilityStatusLabel,
-  AvailabilityStatus,
 } from '@/lib/types/resource-management';
-import { resourceManagementService } from '@/lib/services/resource-management.service';
+import { useTeamAvailability } from '@/lib/hooks/queries/useResources';
 import {
   format,
   startOfMonth,
@@ -40,15 +36,12 @@ import {
 type ViewMode = 'month' | 'week';
 
 export default function AvailabilityCalendarPage() {
-  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDepartment, setSelectedDepartment] = useState<string | undefined>();
   const [showFilters, setShowFilters] = useState(false);
   const [includeLeaves, setIncludeLeaves] = useState(true);
   const [includeHolidays, setIncludeHolidays] = useState(true);
-
-  const [teamAvailability, setTeamAvailability] = useState<TeamAvailabilityView | null>(null);
 
   // Calculate date range based on view mode
   const dateRange = useMemo(() => {
@@ -65,28 +58,13 @@ export default function AvailabilityCalendarPage() {
     }
   }, [currentDate, viewMode]);
 
-  const fetchAvailability = async () => {
-    setLoading(true);
-    try {
-      const filter: ResourceCalendarFilter = {
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        departmentIds: selectedDepartment ? [selectedDepartment] : undefined,
-        includeLeaves,
-        includeHolidays,
-      };
-      const data = await resourceManagementService.getTeamAvailability(filter);
-      setTeamAvailability(data);
-    } catch (err) {
-      console.error('Error fetching availability:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAvailability();
-  }, [dateRange, selectedDepartment, includeLeaves, includeHolidays]);
+  const { data: teamAvailability, isLoading } = useTeamAvailability({
+    startDate: dateRange.startDate,
+    endDate: dateRange.endDate,
+    departmentIds: selectedDepartment ? [selectedDepartment] : undefined,
+    includeLeaves,
+    includeHolidays,
+  });
 
   const navigatePrevious = () => {
     if (viewMode === 'month') {
@@ -108,12 +86,13 @@ export default function AvailabilityCalendarPage() {
     setCurrentDate(new Date());
   };
 
-  const handleDayClick = (employeeId: string, date: string) => {
-    // TODO: Open a detail modal here
+  const handleDayClick = (_employeeId: string, _date: string) => {
+    // Detail modal not yet implemented — placeholder for future sprint
   };
 
   const handleEmployeeClick = (employeeId: string) => {
-    // TODO: Navigate to employee detail or open modal
+    // Navigate to employee detail page
+    window.location.href = `/employees/${employeeId}`;
   };
 
   // Calculate summary stats
@@ -155,8 +134,8 @@ export default function AvailabilityCalendarPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={fetchAvailability} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <Button variant="ghost" disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             <Button
               variant="outline"
@@ -291,7 +270,7 @@ export default function AvailabilityCalendarPage() {
         {/* Calendar */}
         <Card>
           <CardContent className="p-4">
-            {loading ? (
+            {isLoading ? (
               <div className="space-y-4">
                 <Skeleton className="h-12 w-full" />
                 {[...Array(5)].map((_, i) => (

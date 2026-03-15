@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to generate JPA Specifications based on User's RoleScope.
@@ -27,6 +28,7 @@ public class DataScopeService {
      * @param <T>        The entity type
      * @return Specification to filter query results
      */
+    @Transactional(readOnly = true)
     public <T> Specification<T> getScopeSpecification(String permission) {
         return (root, query, cb) -> {
             // 0. SuperAdmin role bypasses ALL permission checks (per CLAUDE.md non-negotiable rule).
@@ -63,6 +65,7 @@ public class DataScopeService {
      * Creates a specification that filters by both scope AND additional conditions.
      * Useful when you need to combine scope filtering with other business logic.
      */
+    @Transactional(readOnly = true)
     public <T> Specification<T> getScopeSpecificationWith(String permission, Specification<T> additionalSpec) {
         Specification<T> scopeSpec = getScopeSpecification(permission);
         return Specification.where(scopeSpec).and(additionalSpec);

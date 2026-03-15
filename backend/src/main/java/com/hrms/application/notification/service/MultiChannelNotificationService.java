@@ -34,6 +34,7 @@ public class MultiChannelNotificationService {
 
     // ==================== TEMPLATE MANAGEMENT ====================
 
+    @Transactional
     public NotificationTemplateDto createTemplate(NotificationTemplateDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -75,6 +76,7 @@ public class MultiChannelNotificationService {
         return NotificationTemplateDto.fromEntity(templateRepository.save(template));
     }
 
+    @Transactional
     public NotificationTemplateDto updateTemplate(UUID templateId, NotificationTemplateDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         NotificationTemplate template = templateRepository.findById(templateId)
@@ -113,12 +115,14 @@ public class MultiChannelNotificationService {
         return NotificationTemplateDto.fromEntity(templateRepository.save(template));
     }
 
+    @Transactional(readOnly = true)
     public Page<NotificationTemplateDto> searchTemplates(String category, String search, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return templateRepository.searchTemplates(tenantId, category, search, pageable)
                 .map(NotificationTemplateDto::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     public NotificationTemplateDto getTemplateByCode(String code) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return templateRepository.findByCodeAndTenantId(code, tenantId)
@@ -126,6 +130,7 @@ public class MultiChannelNotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
     }
 
+    @Transactional(readOnly = true)
     public List<NotificationTemplateDto> getTemplatesByCategory(String category) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return templateRepository.findByCategoryAndIsActiveAndTenantId(category, true, tenantId).stream()
@@ -135,6 +140,7 @@ public class MultiChannelNotificationService {
 
     // ==================== SEND NOTIFICATIONS ====================
 
+    @Transactional
     public List<MultiChannelNotificationDto> sendNotification(SendNotificationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<MultiChannelNotification> notifications = new ArrayList<>();
@@ -384,6 +390,7 @@ public class MultiChannelNotificationService {
 
     // ==================== USER NOTIFICATIONS ====================
 
+    @Transactional(readOnly = true)
     public Page<MultiChannelNotificationDto> getUserNotifications(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -391,12 +398,14 @@ public class MultiChannelNotificationService {
                 .map(MultiChannelNotificationDto::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     public Long getUnreadCount() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
         return notificationRepository.countUnreadInAppNotifications(userId, tenantId);
     }
 
+    @Transactional
     public void markAsRead(UUID notificationId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -410,6 +419,7 @@ public class MultiChannelNotificationService {
         notificationRepository.save(notification);
     }
 
+    @Transactional
     public void markAllAsRead() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -418,6 +428,7 @@ public class MultiChannelNotificationService {
 
     // ==================== USER PREFERENCES ====================
 
+    @Transactional(readOnly = true)
     public List<UserNotificationPreferenceDto> getUserPreferences() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -426,6 +437,7 @@ public class MultiChannelNotificationService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public UserNotificationPreferenceDto updatePreference(UserNotificationPreferenceDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -496,6 +508,7 @@ public class MultiChannelNotificationService {
         return NotificationChannelConfigDto.fromEntity(channelConfigRepository.save(config));
     }
 
+    @Transactional(readOnly = true)
     public List<NotificationChannelConfigDto> getChannelConfigs() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return channelConfigRepository.findByTenantId(tenantId).stream()
@@ -505,6 +518,7 @@ public class MultiChannelNotificationService {
 
     // ==================== DASHBOARD ====================
 
+    @Transactional(readOnly = true)
     public NotificationDashboard getDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDateTime startDate = LocalDateTime.now().minusDays(30);

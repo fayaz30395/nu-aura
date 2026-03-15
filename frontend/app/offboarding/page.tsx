@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   UserMinus,
   Search,
@@ -31,11 +34,33 @@ import {
   ModalBody,
   ModalFooter,
 } from '@/components/ui';
-import { exitService } from '@/lib/services/exit.service';
+import {
+  useExitProcesses,
+  useCreateExitProcess,
+  useUpdateExitProcess,
+  useDeleteExitProcess,
+  useUpdateExitStatus,
+} from '@/lib/hooks/queries/useExit';
 import { ExitProcess, CreateExitProcessRequest, UpdateExitProcessRequest, ExitType, ExitStatus } from '@/lib/types/exit';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { extractContent, extractPaginationMeta, isPageResponse } from '@/lib/utils/type-guards';
+import { extractContent } from '@/lib/utils/type-guards';
+
+const exitProcessFormSchema = z.object({
+  employeeId: z.string().min(1, 'Employee ID required'),
+  exitType: z.string().min(1, 'Exit type required'),
+  resignationDate: z.string().optional().or(z.literal('')),
+  lastWorkingDate: z.string().optional().or(z.literal('')),
+  noticePeriodDays: z.number({ coerce: true }).min(0, 'Notice period must be non-negative'),
+  reasonForLeaving: z.string().optional().or(z.literal('')),
+  newCompany: z.string().optional().or(z.literal('')),
+  newDesignation: z.string().optional().or(z.literal('')),
+  status: z.string().min(1, 'Status required'),
+  rehireEligible: z.boolean().default(true),
+  notes: z.string().optional().or(z.literal('')),
+});
+
+type ExitProcessFormData = z.infer<typeof exitProcessFormSchema>;
 
 const getExitTypeLabel = (type: ExitType | string | null | undefined) => {
   if (!type) {
@@ -126,15 +151,19 @@ const formatCurrency = (amount: number | undefined) => {
 export default function OffboardingPage() {
   const router = useRouter();
   const { isAuthenticated, user, hasHydrated } = useAuth();
-  const [exitProcesses, setExitProcesses] = useState<ExitProcess[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: exitResponse } = useExitProcesses(0, 20);
+  const createMutation = useCreateExitProcess();
+  const updateMutation = useUpdateExitProcess();
+  const deleteMutation = useDeleteExitProcess();
+  const updateStatusMutation = useUpdateExitStatus();
+
+  // Extract content from paginated response
+  const exitProcessesData = extractContent<ExitProcess>(exitResponse) || [];
+
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
-  const [totalElements, setTotalElements] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -142,83 +171,17 @@ export default function OffboardingPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<ExitProcess | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
-  // Form state
-  const [formData, setFormData] = useState<CreateExitProcessRequest>({
-    employeeId: '',
-    exitType: ExitType.RESIGNATION,
-    resignationDate: '',
-    lastWorkingDate: '',
-    noticePeriodDays: 30,
-    reasonForLeaving: '',
-    newCompany: '',
-    newDesignation: '',
-    status: ExitStatus.INITIATED,
-    rehireEligible: true,
-    notes: '',
-  });
-
-  const fetchExitProcesses = useCallback(async () => {
-    if (!hasHydrated || !isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await exitService.getAllExitProcesses(currentPage, 20);
-      // Use type-safe extraction utilities
-      const content = extractContent<ExitProcess>(response);
-      let filteredProcesses = content.filter((item): item is ExitProcess => Boolean(item));
-
-      // Client-side filtering
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        filteredProcesses = filteredProcesses.filter(
-          (p: ExitProcess) =>
-            p.employeeName?.toLowerCase().includes(query) ||
-            p.reasonForLeaving?.toLowerCase().includes(query) ||
-            p.newCompany?.toLowerCase().includes(query)
-        );
-      }
-      if (statusFilter) {
-        filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.status === statusFilter);
-      }
-      if (typeFilter) {
-        filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.exitType === typeFilter);
-      }
-
-      setExitProcesses(filteredProcesses);
-      const paginationMeta = extractPaginationMeta(response);
-      setTotalElements(paginationMeta.totalElements || content.length);
-      setTotalPages(paginationMeta.totalPages || 1);
-    } catch (err: unknown) {
-      console.error('Error fetching exit processes:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load exit processes');
-      setExitProcesses([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [searchQuery, statusFilter, typeFilter, currentPage, isAuthenticated, hasHydrated]);
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      try {
-        router.push('/auth/login');
-      } catch (err) {
-        console.error('Navigation error:', err);
-        window.location.href = '/auth/login';
-      }
-      return;
-    }
-    fetchExitProcesses();
-  }, [fetchExitProcesses, isAuthenticated, hasHydrated, router]);
-
-  const resetForm = () => {
-    setFormData({
+  // Form setup
+  const {
+    register,
+    handleSubmit,
+    reset: resetForm,
+    formState: { errors, isSubmitting },
+    setValue,
+  } = useForm<ExitProcessFormData>({
+    resolver: zodResolver(exitProcessFormSchema),
+    defaultValues: {
       employeeId: '',
       exitType: ExitType.RESIGNATION,
       resignationDate: '',
@@ -230,32 +193,65 @@ export default function OffboardingPage() {
       status: ExitStatus.INITIATED,
       rehireEligible: true,
       notes: '',
-    });
+    },
+  });
+
+  // Client-side filtering
+  let filteredProcesses = exitProcessesData.filter((item): item is ExitProcess => Boolean(item));
+
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    filteredProcesses = filteredProcesses.filter(
+      (p: ExitProcess) =>
+        p.employeeName?.toLowerCase().includes(query) ||
+        p.reasonForLeaving?.toLowerCase().includes(query) ||
+        p.newCompany?.toLowerCase().includes(query)
+    );
+  }
+  if (statusFilter) {
+    filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.status === statusFilter);
+  }
+  if (typeFilter) {
+    filteredProcesses = filteredProcesses.filter((p: ExitProcess) => p.exitType === typeFilter);
+  }
+
+  React.useEffect(() => {
+    if (!hasHydrated) return;
+    if (!isAuthenticated) {
+      try {
+        router.push('/auth/login');
+      } catch (err) {
+        console.error('Navigation error:', err);
+        window.location.href = '/auth/login';
+      }
+    }
+  }, [isAuthenticated, hasHydrated, router]);
+
+  const resetFormState = () => {
+    resetForm();
     setIsEditing(false);
     setSelectedProcess(null);
   };
 
   const handleOpenAddModal = () => {
-    resetForm();
+    resetFormState();
     setShowAddModal(true);
   };
 
   const handleOpenEditModal = (process: ExitProcess) => {
     setSelectedProcess(process);
     setIsEditing(true);
-    setFormData({
-      employeeId: process.employeeId,
-      exitType: process.exitType,
-      resignationDate: process.resignationDate || '',
-      lastWorkingDate: process.lastWorkingDate || '',
-      noticePeriodDays: process.noticePeriodDays,
-      reasonForLeaving: process.reasonForLeaving || '',
-      newCompany: process.newCompany || '',
-      newDesignation: process.newDesignation || '',
-      status: process.status,
-      rehireEligible: process.rehireEligible,
-      notes: process.notes || '',
-    });
+    setValue('employeeId', process.employeeId);
+    setValue('exitType', process.exitType as unknown as string);
+    setValue('resignationDate', process.resignationDate || '');
+    setValue('lastWorkingDate', process.lastWorkingDate || '');
+    setValue('noticePeriodDays', process.noticePeriodDays);
+    setValue('reasonForLeaving', process.reasonForLeaving || '');
+    setValue('newCompany', process.newCompany || '');
+    setValue('newDesignation', process.newDesignation || '');
+    setValue('status', process.status as unknown as string);
+    setValue('rehireEligible', process.rehireEligible);
+    setValue('notes', process.notes || '');
     setShowAddModal(true);
   };
 
@@ -269,47 +265,63 @@ export default function OffboardingPage() {
     setShowDeleteModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const onSubmit = async (data: ExitProcessFormData) => {
     try {
       if (isEditing && selectedProcess) {
-        const updateData: UpdateExitProcessRequest = { ...formData };
-        await exitService.updateExitProcess(selectedProcess.id, updateData);
+        const updateData: UpdateExitProcessRequest = {
+          exitType: data.exitType as ExitType,
+          resignationDate: data.resignationDate || undefined,
+          lastWorkingDate: data.lastWorkingDate || undefined,
+          noticePeriodDays: data.noticePeriodDays,
+          reasonForLeaving: data.reasonForLeaving || undefined,
+          newCompany: data.newCompany || undefined,
+          newDesignation: data.newDesignation || undefined,
+          status: data.status as ExitStatus,
+          rehireEligible: data.rehireEligible,
+          notes: data.notes || undefined,
+        };
+        await updateMutation.mutateAsync({ id: selectedProcess.id, data: updateData });
       } else {
-        await exitService.createExitProcess(formData);
+        const createData: CreateExitProcessRequest = {
+          employeeId: data.employeeId,
+          exitType: data.exitType as ExitType,
+          resignationDate: data.resignationDate || undefined,
+          lastWorkingDate: data.lastWorkingDate || undefined,
+          noticePeriodDays: data.noticePeriodDays,
+          reasonForLeaving: data.reasonForLeaving || undefined,
+          newCompany: data.newCompany || undefined,
+          newDesignation: data.newDesignation || undefined,
+          status: data.status as ExitStatus,
+          rehireEligible: data.rehireEligible,
+          notes: data.notes || undefined,
+        };
+        await createMutation.mutateAsync(createData);
       }
       setShowAddModal(false);
-      resetForm();
-      fetchExitProcesses();
+      resetFormState();
     } catch (err: unknown) {
       console.error('Error saving exit process:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save exit process');
-    } finally {
-      setSaving(false);
     }
   };
 
+  // Removed fetchExitProcesses call - React Query handles this automatically
+
   const handleDelete = async () => {
     if (!selectedProcess) return;
-    setDeleting(true);
     try {
-      await exitService.deleteExitProcess(selectedProcess.id);
+      await deleteMutation.mutateAsync(selectedProcess.id);
       setShowDeleteModal(false);
       setSelectedProcess(null);
-      fetchExitProcesses();
     } catch (err: unknown) {
       console.error('Error deleting exit process:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete exit process');
-    } finally {
-      setDeleting(false);
     }
   };
 
   const handleStatusChange = async (process: ExitProcess, newStatus: ExitStatus) => {
     try {
-      await exitService.updateExitStatus(process.id, newStatus);
-      fetchExitProcesses();
+      await updateStatusMutation.mutateAsync({ id: process.id, status: newStatus });
     } catch (err: unknown) {
       console.error('Error updating status:', err);
       setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update status');
@@ -318,11 +330,11 @@ export default function OffboardingPage() {
 
   // Stats
   const stats = {
-    total: totalElements,
-    initiated: exitProcesses.filter((p) => p.status === ExitStatus.INITIATED).length,
-    inProgress: exitProcesses.filter((p) => p.status === ExitStatus.IN_PROGRESS).length,
-    clearancePending: exitProcesses.filter((p) => p.status === ExitStatus.CLEARANCE_PENDING).length,
-    completed: exitProcesses.filter((p) => p.status === ExitStatus.COMPLETED).length,
+    total: filteredProcesses.length,
+    initiated: filteredProcesses.filter((p) => p.status === ExitStatus.INITIATED).length,
+    inProgress: filteredProcesses.filter((p) => p.status === ExitStatus.IN_PROGRESS).length,
+    clearancePending: filteredProcesses.filter((p) => p.status === ExitStatus.CLEARANCE_PENDING).length,
+    completed: filteredProcesses.filter((p) => p.status === ExitStatus.COMPLETED).length,
   };
 
   const breadcrumbs = [
@@ -330,7 +342,7 @@ export default function OffboardingPage() {
     { label: 'Offboarding' },
   ];
 
-  if (loading && exitProcesses.length === 0) {
+  if (!exitResponse && filteredProcesses.length === 0) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
         <div className="flex items-center justify-center h-64">
@@ -367,9 +379,6 @@ export default function OffboardingPage() {
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
                 <span>{error}</span>
-                <Button size="sm" variant="outline" onClick={fetchExitProcesses} className="ml-auto">
-                  Retry
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -483,7 +492,7 @@ export default function OffboardingPage() {
         </div>
 
         {/* Exit Processes Table */}
-        {exitProcesses.length > 0 ? (
+        {filteredProcesses.length > 0 ? (
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -514,7 +523,7 @@ export default function OffboardingPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {exitProcesses.map((process) => (
+                    {filteredProcesses.map((process: ExitProcess) => (
                       <tr key={process.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50">
                         <td className="px-4 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
@@ -623,7 +632,7 @@ export default function OffboardingPage() {
             </CardContent>
           </Card>
         ) : (
-          !loading && (
+          exitResponse && (
             <Card>
               <CardContent className="p-12 text-center">
                 <UserMinus className="h-12 w-12 mx-auto text-surface-400 mb-4" />
@@ -646,30 +655,6 @@ export default function OffboardingPage() {
           )
         )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={currentPage === 0}
-              onClick={() => setCurrentPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-surface-600 dark:text-surface-400">
-              Page {currentPage + 1} of {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={currentPage >= totalPages - 1}
-              onClick={() => setCurrentPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        )}
 
         {/* Add/Edit Exit Process Modal */}
         <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} size="lg">
@@ -678,7 +663,7 @@ export default function OffboardingPage() {
               {isEditing ? 'Edit Exit Process' : 'Initiate Exit Process'}
             </h2>
           </ModalHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody>
               <div className="space-y-4">
                 <div>
@@ -687,13 +672,12 @@ export default function OffboardingPage() {
                   </label>
                   <input
                     type="text"
-                    required
                     disabled={isEditing}
-                    value={formData.employeeId}
-                    onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50"
                     placeholder="Enter employee ID"
+                    {...register('employeeId')}
                   />
+                  {errors.employeeId && <span className="text-red-500 text-sm">{errors.employeeId.message}</span>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -702,10 +686,8 @@ export default function OffboardingPage() {
                       Exit Type *
                     </label>
                     <select
-                      required
-                      value={formData.exitType}
-                      onChange={(e) => setFormData({ ...formData, exitType: e.target.value as ExitType })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('exitType')}
                     >
                       <option value={ExitType.RESIGNATION}>Resignation</option>
                       <option value={ExitType.TERMINATION}>Termination</option>
@@ -713,15 +695,15 @@ export default function OffboardingPage() {
                       <option value={ExitType.END_OF_CONTRACT}>End of Contract</option>
                       <option value={ExitType.ABSCONDING}>Absconding</option>
                     </select>
+                    {errors.exitType && <span className="text-red-500 text-sm">{errors.exitType.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Status
                     </label>
                     <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value as ExitStatus })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('status')}
                     >
                       <option value={ExitStatus.INITIATED}>Initiated</option>
                       <option value={ExitStatus.IN_PROGRESS}>In Progress</option>
@@ -729,6 +711,7 @@ export default function OffboardingPage() {
                       <option value={ExitStatus.COMPLETED}>Completed</option>
                       <option value={ExitStatus.CANCELLED}>Cancelled</option>
                     </select>
+                    {errors.status && <span className="text-red-500 text-sm">{errors.status.message}</span>}
                   </div>
                 </div>
 
@@ -739,9 +722,8 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.resignationDate}
-                      onChange={(e) => setFormData({ ...formData, resignationDate: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('resignationDate')}
                     />
                   </div>
                   <div>
@@ -750,9 +732,8 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="date"
-                      value={formData.lastWorkingDate}
-                      onChange={(e) => setFormData({ ...formData, lastWorkingDate: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      {...register('lastWorkingDate')}
                     />
                   </div>
                 </div>
@@ -763,11 +744,11 @@ export default function OffboardingPage() {
                   </label>
                   <input
                     type="number"
-                    value={formData.noticePeriodDays || ''}
-                    onChange={(e) => setFormData({ ...formData, noticePeriodDays: e.target.value ? parseInt(e.target.value) : undefined })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="30"
+                    {...register('noticePeriodDays')}
                   />
+                  {errors.noticePeriodDays && <span className="text-red-500 text-sm">{errors.noticePeriodDays.message}</span>}
                 </div>
 
                 <div>
@@ -776,10 +757,9 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={3}
-                    value={formData.reasonForLeaving}
-                    onChange={(e) => setFormData({ ...formData, reasonForLeaving: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Reason for leaving..."
+                    {...register('reasonForLeaving')}
                   />
                 </div>
 
@@ -790,10 +770,9 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.newCompany}
-                      onChange={(e) => setFormData({ ...formData, newCompany: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New company name"
+                      {...register('newCompany')}
                     />
                   </div>
                   <div>
@@ -802,10 +781,9 @@ export default function OffboardingPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.newDesignation}
-                      onChange={(e) => setFormData({ ...formData, newDesignation: e.target.value })}
                       className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       placeholder="New designation"
+                      {...register('newDesignation')}
                     />
                   </div>
                 </div>
@@ -814,9 +792,8 @@ export default function OffboardingPage() {
                   <input
                     type="checkbox"
                     id="rehireEligible"
-                    checked={formData.rehireEligible}
-                    onChange={(e) => setFormData({ ...formData, rehireEligible: e.target.checked })}
                     className="w-4 h-4 text-primary-600 border-surface-300 rounded focus:ring-primary-500"
+                    {...register('rehireEligible')}
                   />
                   <label htmlFor="rehireEligible" className="text-sm text-surface-700 dark:text-surface-300">
                     Eligible for Rehire
@@ -829,10 +806,9 @@ export default function OffboardingPage() {
                   </label>
                   <textarea
                     rows={2}
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     className="w-full px-3 py-2 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Additional notes..."
+                    {...register('notes')}
                   />
                 </div>
               </div>
@@ -841,8 +817,8 @@ export default function OffboardingPage() {
               <Button variant="outline" type="button" onClick={() => setShowAddModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? (
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Saving...
@@ -1010,8 +986,8 @@ export default function OffboardingPage() {
             <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-              {deleting ? (
+            <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   Deleting...

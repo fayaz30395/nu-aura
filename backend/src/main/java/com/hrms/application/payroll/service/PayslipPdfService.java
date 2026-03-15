@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for generating individual payslip PDFs
@@ -46,6 +47,7 @@ public class PayslipPdfService {
     /**
      * Generate PDF for a specific payslip
      */
+    @Transactional(readOnly = true)
     public byte[] generatePayslipPdf(UUID payslipId) throws DocumentException {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -62,6 +64,7 @@ public class PayslipPdfService {
     /**
      * Generate PDF for an employee's payslip for a specific month/year
      */
+    @Transactional(readOnly = true)
     public byte[] generatePayslipPdf(UUID employeeId, int year, int month) throws DocumentException {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -53,6 +53,7 @@ public class RecruitmentManagementService {
 
     // ==================== Job Opening Operations ====================
 
+    @Transactional
     public JobOpeningResponse createJobOpening(JobOpeningRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating job opening {} for tenant {}", request.getJobCode(), tenantId);
@@ -98,6 +99,7 @@ public class RecruitmentManagementService {
         return mapToJobOpeningResponse(savedJobOpening);
     }
 
+    @Transactional
     public JobOpeningResponse updateJobOpening(UUID jobOpeningId, JobOpeningRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating job opening {} for tenant {}", jobOpeningId, tenantId);
@@ -176,6 +178,7 @@ public class RecruitmentManagementService {
                 pageable).map(this::mapToJobOpeningResponse);
     }
 
+    @Transactional
     public void deleteJobOpening(UUID jobOpeningId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)
@@ -196,6 +199,7 @@ public class RecruitmentManagementService {
 
     // ==================== Candidate Operations ====================
 
+    @Transactional
     public CandidateResponse createCandidate(CandidateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating candidate {} for tenant {}", request.getEmail(), tenantId);
@@ -243,6 +247,7 @@ public class RecruitmentManagementService {
         return mapToCandidateResponse(savedCandidate);
     }
 
+    @Transactional
     public CandidateResponse updateCandidate(UUID candidateId, CandidateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating candidate {} for tenant {}", candidateId, tenantId);
@@ -321,6 +326,7 @@ public class RecruitmentManagementService {
                 pageable).map(this::mapToCandidateResponse);
     }
 
+    @Transactional
     public void deleteCandidate(UUID candidateId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Candidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
@@ -484,6 +490,7 @@ public class RecruitmentManagementService {
      * tracks the approval decision. On approval the status remains OFFER_EXTENDED
      * (awaiting candidate acceptance). On rejection the caller should revert status.
      */
+    @Transactional
     public CandidateResponse createOffer(UUID candidateId, CreateOfferRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating offer for candidate {} for tenant {}", candidateId, tenantId);
@@ -546,7 +553,9 @@ public class RecruitmentManagementService {
 
     private void updateStatusFromStage(Candidate candidate, Candidate.RecruitmentStage stage) {
         switch (stage) {
+            case APPLICATION_RECEIVED:
             case RECRUITERS_PHONE_CALL:
+            case SCREENING:
                 candidate.setStatus(Candidate.CandidateStatus.NEW);
                 break;
             case PANEL_REVIEW:
@@ -560,10 +569,15 @@ public class RecruitmentManagementService {
             case CLIENT_INTERVIEW_SCHEDULED:
             case CLIENT_INTERVIEW_COMPLETED:
             case HR_FINAL_INTERVIEW_COMPLETED:
+            case INTERVIEW:
                 candidate.setStatus(Candidate.CandidateStatus.INTERVIEW);
                 break;
             case OFFER_NDA_TO_BE_RELEASED:
+            case OFFER:
                 candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
+                break;
+            case JOINED:
+                candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
                 break;
             case PANEL_REJECT:
             case CANDIDATE_REJECTED:
@@ -664,6 +678,7 @@ public class RecruitmentManagementService {
         return mapToInterviewResponse(savedInterview);
     }
 
+    @Transactional
     public InterviewResponse updateInterview(UUID interviewId, InterviewRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating interview {} for tenant {}", interviewId, tenantId);
@@ -743,6 +758,7 @@ public class RecruitmentManagementService {
                 pageable).map(this::mapToInterviewResponse);
     }
 
+    @Transactional
     public void deleteInterview(UUID interviewId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)

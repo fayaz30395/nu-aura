@@ -201,7 +201,7 @@ public class LmsController {
 
     @PostMapping("/quizzes/{quizId}/reorder-questions")
     @RequiresPermission(Permission.LMS_COURSE_MANAGE)
-    public ResponseEntity<Void> reorderQuestions(@PathVariable UUID quizId, @RequestBody List<UUID> questionIds) {
+    public ResponseEntity<Void> reorderQuestions(@PathVariable UUID quizId, @Valid @RequestBody List<UUID> questionIds) {
         UUID tenantId = TenantContext.getCurrentTenant();
         quizManagementService.reorderQuestions(quizId, questionIds, tenantId);
         return ResponseEntity.ok().build();

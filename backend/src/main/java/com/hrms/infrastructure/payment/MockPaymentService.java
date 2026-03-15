@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Mock implementation of Payment Gateway for development/testing
@@ -23,6 +24,7 @@ public class MockPaymentService implements PaymentGatewayService {
     private boolean enabled;
 
     @Override
+    @Transactional
     public PaymentResponse createPayment(PaymentRequest request) {
         String paymentId = "pay_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16);
 
@@ -89,6 +91,7 @@ public class MockPaymentService implements PaymentGatewayService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentResponse getPaymentStatus(String paymentId) {
         PaymentResponse payment = payments.get(paymentId);
         if (payment == null) {
@@ -102,6 +105,7 @@ public class MockPaymentService implements PaymentGatewayService {
     }
 
     @Override
+    @Transactional
     public PaymentResponse cancelPayment(String paymentId) {
         PaymentResponse payment = payments.get(paymentId);
         if (payment == null) {
@@ -131,6 +135,7 @@ public class MockPaymentService implements PaymentGatewayService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String[] getSupportedPaymentMethods() {
         return new String[]{"card", "bank_transfer", "upi", "netbanking"};
     }

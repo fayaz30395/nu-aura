@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   BarChart,
@@ -39,19 +39,31 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { analyticsService } from '@/lib/services/analytics.service';
-import { DashboardAnalytics, TrendData } from '@/lib/types/analytics';
+import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
+import { TrendData } from '@/lib/types/analytics';
 
 // Chart colors
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4'];
 
+interface TooltipPayloadEntry {
+  name: string;
+  value: number | string;
+  color: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadEntry[];
+  label?: string | number;
+}
+
 // Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
             {entry.name}: {entry.value}
           </p>
@@ -65,33 +77,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function AnalyticsPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
 
-  useEffect(() => {
+  const { data: analytics, isLoading, error, refetch } = useDashboardAnalytics(
+    isAuthenticated && hasHydrated
+  );
+
+  React.useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else {
-      loadAnalytics();
     }
   }, [hasHydrated, isAuthenticated, router]);
-
-  const loadAnalytics = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await analyticsService.getDashboardAnalytics();
-      setAnalytics(data);
-    } catch (err: unknown) {
-      console.error('Analytics error:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load analytics data');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-IN', {
@@ -124,8 +121,8 @@ export default function AnalyticsPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-surface-600 dark:text-surface-400 mb-4">{error || 'Unable to load analytics data'}</p>
-              <Button variant="primary" onClick={loadAnalytics} className="w-full">
+              <p className="text-surface-600 dark:text-surface-400 mb-4">{error?.message || 'Unable to load analytics data'}</p>
+              <Button variant="primary" onClick={() => refetch()} className="w-full">
                 Try Again
               </Button>
             </CardContent>
@@ -189,7 +186,7 @@ export default function AnalyticsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={loadAnalytics}
+              onClick={() => refetch()}
               leftIcon={<RefreshCw className="h-4 w-4" />}
             >
               Refresh

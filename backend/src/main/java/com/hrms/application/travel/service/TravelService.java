@@ -27,6 +27,7 @@ public class TravelService {
 
     private final TravelRequestRepository travelRequestRepository;
 
+    @Transactional
     public TravelRequestDto createRequest(CreateTravelRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentUserId();
@@ -65,6 +66,7 @@ public class TravelService {
         return TravelRequestDto.fromEntity(saved);
     }
 
+    @Transactional
     public TravelRequestDto updateRequest(UUID requestId, CreateTravelRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -103,6 +105,7 @@ public class TravelService {
         return TravelRequestDto.fromEntity(saved);
     }
 
+    @Transactional
     public TravelRequestDto submitRequest(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -121,6 +124,7 @@ public class TravelService {
         return TravelRequestDto.fromEntity(saved);
     }
 
+    @Transactional
     public TravelRequestDto approveRequest(UUID requestId, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -142,6 +146,7 @@ public class TravelService {
         return TravelRequestDto.fromEntity(saved);
     }
 
+    @Transactional
     public TravelRequestDto rejectRequest(UUID requestId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
@@ -163,6 +168,7 @@ public class TravelService {
         return TravelRequestDto.fromEntity(saved);
     }
 
+    @Transactional
     public TravelRequestDto cancelRequest(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

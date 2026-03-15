@@ -1,5 +1,6 @@
 package com.hrms.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -10,11 +11,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * Comma-separated list of allowed origins for WebSocket connections.
+     * Must match the CORS policy defined in SecurityConfig.
+     * NEVER use "*" in production — Cross-Site WebSocket Hijacking (CSWSH) risk.
+     */
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001}")
+    private String allowedOriginsStr;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // Enable a simple memory-based message broker to carry messages back to the
-        // client
-        // on destinations prefixed with "/topic"
+        // client on destinations prefixed with "/topic"
         config.enableSimpleBroker("/topic");
 
         // Designate the prefix for messages that are bound for methods annotated with
@@ -24,8 +32,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Register the "/ws" endpoint, enabling the SockJS protocol options
-        // Allow all origins for simplicity in development
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+        // Register the "/ws" endpoint with SockJS fallback.
+        // Allowed origins are driven by config — no wildcard "*" permitted.
+        String[] allowedOrigins = allowedOriginsStr.split(",");
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns(allowedOrigins)
+                .withSockJS();
     }
 }

@@ -16,6 +16,7 @@ import { useApprovalInboxCount } from '@/lib/hooks/queries/useApprovals';
 import { useActiveApp } from '@/lib/hooks/useActiveApp';
 import { APP_SIDEBAR_SECTIONS } from '@/lib/config/apps';
 import { buildMenuSections } from './menuSections';
+import { ErrorBoundary } from '@/components/errors';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -205,7 +206,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   );
 
   return (
-    <div className={cn('flex h-screen overflow-hidden bg-surface-50 dark:bg-surface-950', className)}>
+    <div className={cn('flex h-screen overflow-hidden bg-white dark:bg-midnight-deep transition-colors duration-300', className)}>
       {/* Sidebar */}
       <aside className="hidden md:block">
         <Sidebar
@@ -225,7 +226,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <>
           <div
             onClick={() => setIsMobileMenuOpen(false)}
-            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden transition-opacity duration-300"
+            className="fixed inset-0 z-30 bg-black/70 backdrop-blur-md md:hidden transition-opacity duration-300"
           />
           <aside
             className="fixed inset-y-0 left-0 z-40 w-72 md:hidden transform transition-transform duration-300 ease-out animate-slide-in-left"
@@ -263,28 +264,30 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* Breadcrumbs */}
         {showBreadcrumbs && breadcrumbs.length > 0 && (
-          <div className="border-b border-surface-200 bg-white/50 backdrop-blur-sm px-4 py-3 dark:border-surface-800 dark:bg-surface-900/50 sm:px-6">
+          <div className="border-b border-white/10 bg-midnight-obsidian/60 backdrop-blur-xl px-4 py-3 sm:px-6">
             <Breadcrumbs items={breadcrumbs} />
           </div>
         )}
 
         {/* Content Area - Wrapped in AuthGuard for route-level permission enforcement */}
-        <main className="flex-1 overflow-auto bg-surface-50 dark:bg-surface-950">
+        <main className="flex-1 overflow-auto bg-gray-50/50 dark:bg-midnight-deep transition-colors duration-300">
           <AuthGuard>
-            <motion.div
-              key={appCode}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-              className={cn(
-                'p-4 sm:p-6 lg:p-8',
-                // Add bottom padding for mobile bottom nav
-                'pb-24 md:pb-4 lg:pb-8'
-              )}
-            >
-              {children}
-            </motion.div>
+            <ErrorBoundary>
+              <motion.div
+                key={appCode}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className={cn(
+                  'p-4 sm:p-6 lg:p-8',
+                  // Add bottom padding for mobile bottom nav
+                  'pb-24 md:pb-4 lg:pb-8'
+                )}
+              >
+                {children}
+              </motion.div>
+            </ErrorBoundary>
           </AuthGuard>
         </main>
 

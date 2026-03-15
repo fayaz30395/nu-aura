@@ -64,6 +64,7 @@ public class DocumentWorkflowService {
     /**
      * Create approval task for workflow
      */
+    @Transactional
     public DocumentApprovalTask createApprovalTask(UUID workflowId, UUID approverId, int approvalLevel) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -93,6 +94,7 @@ public class DocumentWorkflowService {
     /**
      * Approve document
      */
+    @Transactional
     public DocumentApprovalWorkflow approveDocument(UUID workflowId, String comments) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -137,6 +139,7 @@ public class DocumentWorkflowService {
     /**
      * Reject document
      */
+    @Transactional
     public DocumentApprovalWorkflow rejectDocument(UUID workflowId, String rejectionReason) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -207,6 +210,7 @@ public class DocumentWorkflowService {
     /**
      * Revoke document access
      */
+    @Transactional
     public void revokeAccess(UUID accessId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
 
@@ -253,6 +257,7 @@ public class DocumentWorkflowService {
     /**
      * Get documents expiring soon
      */
+    @Transactional(readOnly = true)
     public List<DocumentExpiryTracking> getExpiringDocuments(UUID tenantId, LocalDate beforeDate) {
         return expiryTrackingRepository.findByTenantIdAndExpiryDateBefore(tenantId, beforeDate);
     }
@@ -260,6 +265,7 @@ public class DocumentWorkflowService {
     /**
      * Get expired documents
      */
+    @Transactional(readOnly = true)
     public List<DocumentExpiryTracking> getExpiredDocuments(UUID tenantId) {
         return expiryTrackingRepository.findExpiredDocuments(tenantId);
     }
@@ -267,6 +273,7 @@ public class DocumentWorkflowService {
     /**
      * Mark expiry reminder as sent
      */
+    @Transactional
     public void markReminderSent(UUID expiryTrackingId) {
         DocumentExpiryTracking tracking = expiryTrackingRepository.findById(expiryTrackingId)
             .orElseThrow(() -> new ResourceNotFoundException("Expiry tracking not found"));
@@ -279,6 +286,7 @@ public class DocumentWorkflowService {
     /**
      * List approval workflows for tenant
      */
+    @Transactional(readOnly = true)
     public Page<DocumentApprovalWorkflow> listApprovalWorkflows(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return approvalWorkflowRepository.findByTenantId(tenantId, pageable);
@@ -287,6 +295,7 @@ public class DocumentWorkflowService {
     /**
      * List pending approvals for current user
      */
+    @Transactional(readOnly = true)
     public Page<DocumentApprovalWorkflow> listPendingApprovalsForUser(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -298,6 +307,7 @@ public class DocumentWorkflowService {
     /**
      * Get document access for user
      */
+    @Transactional(readOnly = true)
     public List<DocumentAccess> getDocumentAccessForUser(UUID documentId, UUID userId, List<UUID> roleIds, UUID departmentId) {
         return documentAccessRepository.findAccessibleByUserOrRoleOrDepartment(documentId, userId, roleIds, departmentId);
     }

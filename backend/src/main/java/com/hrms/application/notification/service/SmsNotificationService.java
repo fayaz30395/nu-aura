@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * SMS Notification Service using Twilio.
@@ -66,6 +67,7 @@ public class SmsNotificationService {
      * @param message       Message content
      * @return SmsResult with status and message SID
      */
+    @Transactional
     public SmsResult sendSms(String toPhoneNumber, String message) {
         return sendSms(toPhoneNumber, message, null);
     }
@@ -78,6 +80,7 @@ public class SmsNotificationService {
      * @param fromPhoneNumber Custom sender phone number (optional, uses default if null)
      * @return SmsResult with status and message SID
      */
+    @Transactional
     public SmsResult sendSms(String toPhoneNumber, String message, String fromPhoneNumber) {
         // Validate phone number
         if (!isValidPhoneNumber(toPhoneNumber)) {
@@ -169,6 +172,7 @@ public class SmsNotificationService {
      * @param message      Message content
      * @return Map of phone number to SmsResult
      */
+    @Transactional
     public Map<String, SmsResult> sendBulkSms(Iterable<String> phoneNumbers, String message) {
         Map<String, SmsResult> results = new HashMap<>();
         for (String phoneNumber : phoneNumbers) {
@@ -214,6 +218,7 @@ public class SmsNotificationService {
     /**
      * Get mock message store for testing purposes.
      */
+    @Transactional(readOnly = true)
     public Map<String, MockSmsRecord> getMockMessageStore() {
         return new HashMap<>(mockMessageStore);
     }
@@ -235,6 +240,7 @@ public class SmsNotificationService {
     /**
      * Get service status.
      */
+    @Transactional(readOnly = true)
     public ServiceStatus getStatus() {
         return new ServiceStatus(
                 initialized,

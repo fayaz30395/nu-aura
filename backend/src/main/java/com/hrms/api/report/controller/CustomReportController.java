@@ -55,13 +55,13 @@ public class CustomReportController {
     @PostMapping("/execute")
     @RequiresPermission(Permission.REPORT_CREATE)
     public ResponseEntity<List<Map<String, Object>>> execute(
-            @RequestBody ReportTemplateDto query) {
+            @Valid @RequestBody ReportTemplateDto query) {
         return ResponseEntity.ok(customReportService.executeReport(query));
     }
 
     @PostMapping("/export")
     @RequiresPermission(Permission.REPORT_CREATE)
-    public ResponseEntity<byte[]> export(@RequestBody ReportTemplateDto query) {
+    public ResponseEntity<byte[]> export(@Valid @RequestBody ReportTemplateDto query) {
         String csv = customReportService.toCsv(query);
         String filename = "custom-report-" + query.getModule().toLowerCase() + "-"
                 + LocalDate.now() + ".csv";

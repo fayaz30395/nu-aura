@@ -55,6 +55,7 @@ public class WorkflowService {
 
     // ==================== Workflow Definition Management ====================
 
+    @Transactional
     public WorkflowDefinitionResponse createWorkflowDefinition(WorkflowDefinitionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -149,6 +150,7 @@ public class WorkflowService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public WorkflowDefinitionResponse getWorkflowDefinition(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WorkflowDefinition definition = workflowDefinitionRepository.findByIdAndTenantId(id, tenantId)
@@ -156,12 +158,14 @@ public class WorkflowService {
         return WorkflowDefinitionResponse.from(definition);
     }
 
+    @Transactional(readOnly = true)
     public Page<WorkflowDefinitionResponse> getAllWorkflowDefinitions(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return workflowDefinitionRepository.findByTenantId(tenantId, pageable)
                 .map(WorkflowDefinitionResponse::from);
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowDefinitionResponse> getWorkflowsByEntityType(WorkflowDefinition.EntityType entityType) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return workflowDefinitionRepository.findByEntityType(tenantId, entityType).stream()
@@ -169,6 +173,7 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public WorkflowDefinitionResponse updateWorkflowDefinition(UUID id, WorkflowDefinitionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -469,6 +474,7 @@ public class WorkflowService {
         return originalApprover;
     }
 
+    @Transactional
     public WorkflowExecutionResponse processApprovalAction(UUID executionId, ApprovalActionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -671,6 +677,7 @@ public class WorkflowService {
         }
     }
 
+    @Transactional(readOnly = true)
     public WorkflowExecutionResponse getWorkflowExecution(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WorkflowExecution execution = workflowExecutionRepository.findByIdAndTenantId(id, tenantId)
@@ -678,12 +685,14 @@ public class WorkflowService {
         return WorkflowExecutionResponse.from(execution);
     }
 
+    @Transactional(readOnly = true)
     public WorkflowExecutionResponse getWorkflowByReferenceNumber(String referenceNumber) {
         WorkflowExecution execution = workflowExecutionRepository.findByReferenceNumber(referenceNumber)
                 .orElseThrow(() -> new BusinessException("Workflow execution not found"));
         return WorkflowExecutionResponse.from(execution);
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getPendingApprovalsForUser(UUID userId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<StepExecution> pendingSteps = stepExecutionRepository.findPendingForUser(tenantId, userId);
@@ -694,10 +703,12 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getMyPendingApprovals() {
         return getPendingApprovalsForUser(SecurityContext.getCurrentUserId());
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getMyRequests() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -712,6 +723,7 @@ public class WorkflowService {
     /**
      * Paginated approval inbox with server-side filters.
      */
+    @Transactional(readOnly = true)
     public Page<WorkflowExecutionResponse> getApprovalInbox(
             String status,
             String module,
@@ -753,6 +765,7 @@ public class WorkflowService {
      * Returns inbox summary counts for the current user:
      * pending, approvedToday, rejectedToday.
      */
+    @Transactional(readOnly = true)
     public Map<String, Long> getInboxCounts() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -782,6 +795,7 @@ public class WorkflowService {
         return counts;
     }
 
+    @Transactional
     public void cancelWorkflow(UUID executionId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -817,6 +831,7 @@ public class WorkflowService {
 
     // ==================== Delegation Management ====================
 
+    @Transactional
     public ApprovalDelegateResponse createDelegation(ApprovalDelegateRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -854,6 +869,7 @@ public class WorkflowService {
         return ApprovalDelegateResponse.from(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<ApprovalDelegateResponse> getMyDelegations() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -863,6 +879,7 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<ApprovalDelegateResponse> getDelegationsToMe() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -872,6 +889,7 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void revokeDelegation(UUID delegationId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -891,6 +909,7 @@ public class WorkflowService {
 
     // ==================== Dashboard & Analytics ====================
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getWorkflowDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
@@ -932,6 +951,7 @@ public class WorkflowService {
         return dashboard;
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getOverdueExecutions() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return workflowExecutionRepository.findOverdueExecutions(tenantId, LocalDateTime.now()).stream()
@@ -939,6 +959,7 @@ public class WorkflowService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<WorkflowExecutionResponse> getExecutionsDueForEscalation() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return workflowExecutionRepository.findDueForEscalation(tenantId, LocalDateTime.now()).stream()

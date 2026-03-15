@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { employeeService } from '@/lib/services/employee.service';
-import { departmentService } from '@/lib/services/department.service';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useEmployees, useManagers, useCreateEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { Employee, CreateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole } from '@/lib/types/employee';
 import { toGender, toEmploymentType, toEmployeeLevel, toJobRole } from '@/lib/utils/type-guards';
 import { AppLayout } from '@/components/layout';
@@ -11,134 +14,84 @@ import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
 
+// Zod schema for create employee form
+const createEmployeeFormSchema = z.object({
+  employeeCode: z.string().min(1, 'Employee Code is required'),
+  firstName: z.string().min(1, 'First Name is required'),
+  middleName: z.string().optional().or(z.literal('')),
+  lastName: z.string().optional().or(z.literal('')),
+  workEmail: z.string().email('Invalid work email').min(1, 'Work Email is required'),
+  personalEmail: z.string().email('Invalid personal email').optional().or(z.literal('')),
+  phoneNumber: z.string().optional().or(z.literal('')),
+  emergencyContactNumber: z.string().optional().or(z.literal('')),
+  dateOfBirth: z.string().optional().or(z.literal('')),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']).optional(),
+  address: z.string().optional().or(z.literal('')),
+  city: z.string().optional().or(z.literal('')),
+  state: z.string().optional().or(z.literal('')),
+  postalCode: z.string().optional().or(z.literal('')),
+  country: z.string().optional().or(z.literal('')),
+  designation: z.string().min(1, 'Designation is required'),
+  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
+  jobRole: z.string().optional().or(z.literal('')),
+  departmentId: z.string().min(1, 'Department is required'),
+  employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN']).default('FULL_TIME'),
+  status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).default('ACTIVE'),
+  joiningDate: z.string().min(1, 'Joining Date is required'),
+  confirmationDate: z.string().optional().or(z.literal('')),
+  managerId: z.string().optional().or(z.literal('')),
+  bankAccountNumber: z.string().optional().or(z.literal('')),
+  bankName: z.string().optional().or(z.literal('')),
+  bankIfscCode: z.string().optional().or(z.literal('')),
+  taxId: z.string().optional().or(z.literal('')),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
+
 export default function EmployeesPage() {
   const router = useRouter();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [managers, setManagers] = useState<Employee[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentTab, setCurrentTab] = useState('basic'); // basic, personal, employment, bank
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  const [deleting, setDeleting] = useState(false);
+  // BUG-006 FIX: paginate the employee list instead of hard-coding page=0, size=100
+  const [currentPage, setCurrentPage] = useState(0);
+  const PAGE_SIZE = 20;
 
-  const [formData, setFormData] = useState<CreateEmployeeRequest>({
-    employeeCode: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    workEmail: '',
-    personalEmail: '',
-    phoneNumber: '',
-    emergencyContactNumber: '',
-    dateOfBirth: '',
-    gender: undefined,
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
-    designation: '',
-    level: undefined,
-    jobRole: undefined,
-    departmentId: undefined,
-    employmentType: 'FULL_TIME',
-    status: 'ACTIVE',
-    joiningDate: new Date().toISOString().split('T')[0],
-    confirmationDate: '',
-    managerId: '',
-    bankAccountNumber: '',
-    bankName: '',
-    bankIfscCode: '',
-    taxId: '',
-    password: '',
-  });
+  // React Query - fetch employees, managers, and departments
+  // BUG-006 FIX: pass currentPage so navigation actually changes the query
+  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(currentPage, PAGE_SIZE);
+  // BUG-013 FIX: use useManagers() instead of useEmployees(0,100) so the dropdown
+  // only lists employees who are eligible to be assigned as managers (LEAD and above)
+  const { data: managers = [], isLoading: managersLoading } = useManagers();
+  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
 
-  useEffect(() => {
-    loadEmployees();
-    loadManagers();
-    loadDepartments();
-  }, [statusFilter]);
+  const employees = employeeResponse?.content ?? [];
+  const totalPages = employeeResponse?.totalPages ?? 1;
+  const totalElements = employeeResponse?.totalElements ?? 0;
+  const loading = employeesLoading || managersLoading || departmentsLoading;
+  const error = employeesError
+    ? employeesError instanceof Error
+      ? employeesError.message
+      : 'Failed to load employees'
+    : null;
 
-  const loadEmployees = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await employeeService.getAllEmployees(0, 100, statusFilter || undefined);
-      setEmployees(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employees');
-      console.error('Error loading employees:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createEmployeeMutation = useCreateEmployee();
+  const deleteEmployeeMutation = useDeleteEmployee();
 
-  const loadManagers = async () => {
-    try {
-      const response = await employeeService.getAllEmployees(0, 100);
-      setManagers(response.content);
-    } catch (err: unknown) {
-      console.error('Error loading managers:', err);
-    }
-  };
-
-  const loadDepartments = async () => {
-    try {
-      const response = await departmentService.getActiveDepartments();
-      setDepartments(response);
-    } catch (err: unknown) {
-      console.error('Error loading departments:', err);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setError(null);
-
-      // Clean up empty optional fields
-      // Handle SELF manager - set selfManaged flag for backend to set managerId to employee's own ID
-      const isSelfManaged = formData.managerId === 'SELF';
-
-      const submitData: CreateEmployeeRequest = {
-        ...formData,
-        middleName: formData.middleName || undefined,
-        lastName: formData.lastName || undefined,
-        personalEmail: formData.personalEmail || undefined,
-        phoneNumber: formData.phoneNumber || undefined,
-        emergencyContactNumber: formData.emergencyContactNumber || undefined,
-        dateOfBirth: formData.dateOfBirth || undefined,
-        address: formData.address || undefined,
-        city: formData.city || undefined,
-        state: formData.state || undefined,
-        postalCode: formData.postalCode || undefined,
-        country: formData.country || undefined,
-        confirmationDate: formData.confirmationDate || undefined,
-        managerId: isSelfManaged ? undefined : (formData.managerId || undefined),
-        selfManaged: isSelfManaged,
-        bankAccountNumber: formData.bankAccountNumber || undefined,
-        bankName: formData.bankName || undefined,
-        bankIfscCode: formData.bankIfscCode || undefined,
-        taxId: formData.taxId || undefined,
-      };
-
-      await employeeService.createEmployee(submitData);
-      setShowAddModal(false);
-      resetForm();
-      loadEmployees();
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create employee');
-      console.error('Error creating employee:', err);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateEmployeeFormData>({
+    resolver: zodResolver(createEmployeeFormSchema),
+    defaultValues: {
       employeeCode: '',
       firstName: '',
       middleName: '',
@@ -157,7 +110,7 @@ export default function EmployeesPage() {
       designation: '',
       level: undefined,
       jobRole: undefined,
-      departmentId: undefined,
+      departmentId: '',
       employmentType: 'FULL_TIME',
       status: 'ACTIVE',
       joiningDate: new Date().toISOString().split('T')[0],
@@ -168,41 +121,67 @@ export default function EmployeesPage() {
       bankIfscCode: '',
       taxId: '',
       password: '',
-    });
-    setCurrentTab('basic');
+    },
+  });
+
+  const onSubmit = async (data: CreateEmployeeFormData) => {
+    // Clean up empty optional fields
+    // Handle SELF manager - set selfManaged flag for backend to set managerId to employee's own ID
+    const isSelfManaged = data.managerId === 'SELF';
+
+    const submitData = {
+      ...data,
+      middleName: data.middleName || undefined,
+      lastName: data.lastName || undefined,
+      personalEmail: data.personalEmail || undefined,
+      phoneNumber: data.phoneNumber || undefined,
+      emergencyContactNumber: data.emergencyContactNumber || undefined,
+      dateOfBirth: data.dateOfBirth || undefined,
+      address: data.address || undefined,
+      city: data.city || undefined,
+      state: data.state || undefined,
+      postalCode: data.postalCode || undefined,
+      country: data.country || undefined,
+      confirmationDate: data.confirmationDate || undefined,
+      managerId: isSelfManaged ? undefined : (data.managerId || undefined),
+      selfManaged: isSelfManaged,
+      bankAccountNumber: data.bankAccountNumber || undefined,
+      bankName: data.bankName || undefined,
+      bankIfscCode: data.bankIfscCode || undefined,
+      taxId: data.taxId || undefined,
+      gender: data.gender,
+      level: data.level,
+      jobRole: data.jobRole || undefined,
+      departmentId: data.departmentId,
+      employmentType: data.employmentType,
+      status: data.status,
+    } as CreateEmployeeRequest;
+
+    try {
+      await createEmployeeMutation.mutateAsync(submitData);
+      setShowAddModal(false);
+      reset();
+      setCurrentTab('basic');
+    } catch (err: unknown) {
+      // Error handling is done by the mutation
+      console.error('Error creating employee:', err);
+    }
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      loadEmployees();
-      return;
-    }
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await employeeService.searchEmployees(searchQuery);
-      setEmployees(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Search failed');
-      console.error('Error searching employees:', err);
-    } finally {
-      setLoading(false);
-    }
+    // Search is handled by React Query - just update searchQuery state
+    // The query will automatically refetch with updated filters
   };
 
   const handleDelete = async () => {
     if (!employeeToDelete) return;
 
     try {
-      setDeleting(true);
-      await employeeService.deleteEmployee(employeeToDelete.id);
+      await deleteEmployeeMutation.mutateAsync(employeeToDelete.id);
       setShowDeleteModal(false);
       setEmployeeToDelete(null);
-      loadEmployees();
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee');
       console.error('Error deleting employee:', err);
-      setDeleting(false);
       setShowDeleteModal(false);
     }
   };
@@ -302,6 +281,7 @@ export default function EmployeesPage() {
               action={{ label: 'Add Employee', onClick: () => setShowAddModal(true) }}
             />
           ) : (
+            <>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-surface-200 dark:divide-surface-800">
                 <thead className="bg-surface-50 dark:bg-surface-800/50">
@@ -396,6 +376,42 @@ export default function EmployeesPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* BUG-006 FIX: Pagination controls */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between">
+                <p className="text-sm text-surface-600 dark:text-surface-400">
+                  Showing{' '}
+                  <span className="font-medium">{currentPage * PAGE_SIZE + 1}</span>
+                  {' '}–{' '}
+                  <span className="font-medium">
+                    {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)}
+                  </span>
+                  {' '}of{' '}
+                  <span className="font-medium">{totalElements}</span> employees
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                    disabled={currentPage === 0}
+                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <span className="px-3 py-1.5 text-sm text-surface-600 dark:text-surface-400">
+                    Page {currentPage + 1} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+                    disabled={currentPage >= totalPages - 1}
+                    className="px-3 py-1.5 text-sm rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+            </>
           )}
         </div>
 
@@ -409,7 +425,8 @@ export default function EmployeesPage() {
                   <button
                     onClick={() => {
                       setShowAddModal(false);
-                      resetForm();
+                      reset();
+                      setCurrentTab('basic');
                     }}
                     className="text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
                   >
@@ -465,7 +482,7 @@ export default function EmployeesPage() {
                   </nav>
                 </div>
 
-                <form className="space-y-6" onSubmit={handleSubmit}>
+                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                   {/* Basic Info Tab */}
                   {currentTab === 'basic' && (
                     <div className="space-y-4">
@@ -476,12 +493,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            required
-                            value={formData.employeeCode}
-                            onChange={(e) => setFormData({ ...formData, employeeCode: e.target.value })}
+                            {...register('employeeCode')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="EMP001"
                           />
+                          {errors.employeeCode && <p className="text-red-500 text-sm mt-1">{errors.employeeCode.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -489,12 +505,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="email"
-                            required
-                            value={formData.workEmail}
-                            onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
+                            {...register('workEmail')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="employee@company.com"
                           />
+                          {errors.workEmail && <p className="text-red-500 text-sm mt-1">{errors.workEmail.message}</p>}
                         </div>
                       </div>
 
@@ -505,11 +520,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            required
-                            value={formData.firstName}
-                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            {...register('firstName')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -517,10 +531,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.middleName}
-                            onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                            {...register('middleName')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.middleName && <p className="text-red-500 text-sm mt-1">{errors.middleName.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -528,10 +542,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.lastName}
-                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            {...register('lastName')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                         </div>
                       </div>
 
@@ -541,12 +555,11 @@ export default function EmployeesPage() {
                         </label>
                         <input
                           type="password"
-                          required
-                          value={formData.password}
-                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          {...register('password')}
                           className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           placeholder="Employee will change on first login"
                         />
+                        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
                       </div>
                     </div>
                   )}
@@ -561,11 +574,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="email"
-                            value={formData.personalEmail}
-                            onChange={(e) => setFormData({ ...formData, personalEmail: e.target.value })}
+                            {...register('personalEmail')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="personal@email.com"
                           />
+                          {errors.personalEmail && <p className="text-red-500 text-sm mt-1">{errors.personalEmail.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -573,11 +586,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="tel"
-                            value={formData.phoneNumber}
-                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                            {...register('phoneNumber')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="+1 234 567 8900"
                           />
+                          {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>}
                         </div>
                       </div>
 
@@ -588,11 +601,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="tel"
-                            value={formData.emergencyContactNumber}
-                            onChange={(e) => setFormData({ ...formData, emergencyContactNumber: e.target.value })}
+                            {...register('emergencyContactNumber')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="+1 234 567 8900"
                           />
+                          {errors.emergencyContactNumber && <p className="text-red-500 text-sm mt-1">{errors.emergencyContactNumber.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -600,10 +613,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="date"
-                            value={formData.dateOfBirth}
-                            onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                            {...register('dateOfBirth')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
                       </div>
 
@@ -611,17 +624,24 @@ export default function EmployeesPage() {
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Gender
                         </label>
-                        <select
-                          value={formData.gender || ''}
-                          onChange={(e) => setFormData({ ...formData, gender: toGender(e.target.value) })}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="MALE">Male</option>
-                          <option value="FEMALE">Female</option>
-                          <option value="OTHER">Other</option>
-                          <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
-                        </select>
+                        <Controller
+                          name="gender"
+                          control={control}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              value={field.value || ''}
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            >
+                              <option value="">Select Gender</option>
+                              <option value="MALE">Male</option>
+                              <option value="FEMALE">Female</option>
+                              <option value="OTHER">Other</option>
+                              <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+                            </select>
+                          )}
+                        />
+                        {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
                       </div>
 
                       <div>
@@ -630,11 +650,11 @@ export default function EmployeesPage() {
                         </label>
                         <textarea
                           rows={2}
-                          value={formData.address}
-                          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                          {...register('address')}
                           className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           placeholder="Street address"
                         />
+                        {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -644,10 +664,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.city}
-                            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                            {...register('city')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -655,10 +675,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.state}
-                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                            {...register('state')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
                         </div>
                       </div>
 
@@ -669,10 +689,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.postalCode}
-                            onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                            {...register('postalCode')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -680,10 +700,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.country}
-                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                            {...register('country')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
                         </div>
                       </div>
                     </div>
@@ -699,48 +719,57 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            required
-                            value={formData.designation}
-                            onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                            {...register('designation')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="Senior Software Engineer"
                           />
+                          {errors.designation && <p className="text-red-500 text-sm mt-1">{errors.designation.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                             Employment Type *
                           </label>
-                          <select
-                            required
-                            value={formData.employmentType}
-                            onChange={(e) => setFormData({ ...formData, employmentType: toEmploymentType(e.target.value) })}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                          >
-                            <option value="FULL_TIME">Full Time</option>
-                            <option value="PART_TIME">Part Time</option>
-                            <option value="CONTRACT">Contract</option>
-                            <option value="INTERN">Intern</option>
-                            <option value="CONSULTANT">Consultant</option>
-                          </select>
+                          <Controller
+                            name="employmentType"
+                            control={control}
+                            render={({ field }) => (
+                              <select
+                                {...field}
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              >
+                                <option value="FULL_TIME">Full Time</option>
+                                <option value="PART_TIME">Part Time</option>
+                                <option value="CONTRACT">Contract</option>
+                                <option value="INTERN">Intern</option>
+                              </select>
+                            )}
+                          />
+                          {errors.employmentType && <p className="text-red-500 text-sm mt-1">{errors.employmentType.message}</p>}
                         </div>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Department
+                          Department *
                         </label>
-                        <select
-                          value={formData.departmentId || ''}
-                          onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                        >
-                          <option value="">Select Department</option>
-                          {departments.map((dept) => (
-                            <option key={dept.id} value={dept.id}>
-                              {dept.name} ({dept.code})
-                            </option>
-                          ))}
-                        </select>
+                        <Controller
+                          name="departmentId"
+                          control={control}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            >
+                              <option value="">Select Department</option>
+                              {departments.map((dept) => (
+                                <option key={dept.id} value={dept.id}>
+                                  {dept.name} ({dept.code})
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        />
+                        {errors.departmentId && <p className="text-red-500 text-sm mt-1">{errors.departmentId.message}</p>}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -748,109 +777,57 @@ export default function EmployeesPage() {
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                             Employee Level
                           </label>
-                          <select
-                            value={formData.level || ''}
-                            onChange={(e) => setFormData({ ...formData, level: toEmployeeLevel(e.target.value) })}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                          >
-                            <option value="">Select Level</option>
-                            <option value="ENTRY">Entry (Junior/Associate)</option>
-                            <option value="MID">Mid-Level</option>
-                            <option value="SENIOR">Senior</option>
-                            <option value="LEAD">Lead/Principal</option>
-                            <option value="MANAGER">Manager</option>
-                            <option value="SENIOR_MANAGER">Senior Manager</option>
-                            <option value="DIRECTOR">Director</option>
-                            <option value="VP">Vice President</option>
-                            <option value="SVP">Senior Vice President</option>
-                            <option value="CXO">C-Level Executive</option>
-                          </select>
+                          <Controller
+                            name="level"
+                            control={control}
+                            render={({ field }) => (
+                              <select
+                                {...field}
+                                value={field.value || ''}
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              >
+                                <option value="">Select Level</option>
+                                <option value="JUNIOR">Junior</option>
+                                <option value="SENIOR">Senior</option>
+                                <option value="LEAD">Lead</option>
+                                <option value="MANAGER">Manager</option>
+                                <option value="SENIOR_MANAGER">Senior Manager</option>
+                                <option value="DIRECTOR">Director</option>
+                                <option value="EXECUTIVE">Executive</option>
+                              </select>
+                            )}
+                          />
+                          {errors.level && <p className="text-red-500 text-sm mt-1">{errors.level.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                             Job Role
                           </label>
-                          <select
-                            value={formData.jobRole || ''}
-                            onChange={(e) => setFormData({ ...formData, jobRole: toJobRole(e.target.value) })}
-                            className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                          >
-                            <option value="">Select Role</option>
-                            <optgroup label="Engineering">
-                              <option value="SOFTWARE_ENGINEER">Software Engineer</option>
-                              <option value="FRONTEND_DEVELOPER">Frontend Developer</option>
-                              <option value="BACKEND_DEVELOPER">Backend Developer</option>
-                              <option value="FULLSTACK_DEVELOPER">Fullstack Developer</option>
-                              <option value="DEVOPS_ENGINEER">DevOps Engineer</option>
-                              <option value="QA_ENGINEER">QA Engineer</option>
-                              <option value="DATA_ENGINEER">Data Engineer</option>
-                              <option value="MOBILE_DEVELOPER">Mobile Developer</option>
-                              <option value="SYSTEM_ARCHITECT">System Architect</option>
-                              <option value="TECH_LEAD">Tech Lead</option>
-                              <option value="ENGINEERING_MANAGER">Engineering Manager</option>
-                            </optgroup>
-                            <optgroup label="Product">
-                              <option value="PRODUCT_MANAGER">Product Manager</option>
-                              <option value="PRODUCT_OWNER">Product Owner</option>
-                              <option value="PRODUCT_ANALYST">Product Analyst</option>
-                            </optgroup>
-                            <optgroup label="Design">
-                              <option value="UI_DESIGNER">UI Designer</option>
-                              <option value="UX_DESIGNER">UX Designer</option>
-                              <option value="GRAPHIC_DESIGNER">Graphic Designer</option>
-                              <option value="PRODUCT_DESIGNER">Product Designer</option>
-                            </optgroup>
-                            <optgroup label="Data & Analytics">
-                              <option value="DATA_ANALYST">Data Analyst</option>
-                              <option value="DATA_SCIENTIST">Data Scientist</option>
-                              <option value="BUSINESS_ANALYST">Business Analyst</option>
-                            </optgroup>
-                            <optgroup label="Marketing">
-                              <option value="MARKETING_MANAGER">Marketing Manager</option>
-                              <option value="CONTENT_WRITER">Content Writer</option>
-                              <option value="SEO_SPECIALIST">SEO Specialist</option>
-                              <option value="SOCIAL_MEDIA_MANAGER">Social Media Manager</option>
-                              <option value="DIGITAL_MARKETER">Digital Marketer</option>
-                            </optgroup>
-                            <optgroup label="Sales">
-                              <option value="SALES_REPRESENTATIVE">Sales Representative</option>
-                              <option value="SALES_MANAGER">Sales Manager</option>
-                              <option value="ACCOUNT_MANAGER">Account Manager</option>
-                              <option value="BUSINESS_DEVELOPMENT">Business Development</option>
-                            </optgroup>
-                            <optgroup label="Operations">
-                              <option value="OPERATIONS_MANAGER">Operations Manager</option>
-                              <option value="PROJECT_MANAGER">Project Manager</option>
-                              <option value="SCRUM_MASTER">Scrum Master</option>
-                              <option value="PROGRAM_MANAGER">Program Manager</option>
-                            </optgroup>
-                            <optgroup label="HR">
-                              <option value="HR_MANAGER">HR Manager</option>
-                              <option value="HR_GENERALIST">HR Generalist</option>
-                              <option value="RECRUITER">Recruiter</option>
-                              <option value="TALENT_ACQUISITION">Talent Acquisition</option>
-                            </optgroup>
-                            <optgroup label="Finance">
-                              <option value="ACCOUNTANT">Accountant</option>
-                              <option value="FINANCIAL_ANALYST">Financial Analyst</option>
-                              <option value="FINANCE_MANAGER">Finance Manager</option>
-                            </optgroup>
-                            <optgroup label="Admin & Support">
-                              <option value="ADMIN_ASSISTANT">Admin Assistant</option>
-                              <option value="OFFICE_MANAGER">Office Manager</option>
-                              <option value="CUSTOMER_SUPPORT">Customer Support</option>
-                              <option value="TECH_SUPPORT">Tech Support</option>
-                            </optgroup>
-                            <optgroup label="Legal">
-                              <option value="LEGAL_COUNSEL">Legal Counsel</option>
-                              <option value="COMPLIANCE_OFFICER">Compliance Officer</option>
-                            </optgroup>
-                            <optgroup label="Other">
-                              <option value="CONSULTANT">Consultant</option>
-                              <option value="INTERN">Intern</option>
-                              <option value="OTHER">Other</option>
-                            </optgroup>
-                          </select>
+                          <Controller
+                            name="jobRole"
+                            control={control}
+                            render={({ field }) => (
+                              <select
+                                {...field}
+                                value={field.value || ''}
+                                className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                              >
+                                <option value="">Select Role</option>
+                                <option value="ENGINEER">Engineer</option>
+                                <option value="MANAGER">Manager</option>
+                                <option value="ANALYST">Analyst</option>
+                                <option value="DESIGNER">Designer</option>
+                                <option value="SUPPORT">Support</option>
+                                <option value="SALES">Sales</option>
+                                <option value="MARKETING">Marketing</option>
+                                <option value="HR">HR</option>
+                                <option value="FINANCE">Finance</option>
+                                <option value="OPERATIONS">Operations</option>
+                                <option value="OTHER">Other</option>
+                              </select>
+                            )}
+                          />
+                          {errors.jobRole && <p className="text-red-500 text-sm mt-1">{errors.jobRole.message}</p>}
                         </div>
                       </div>
 
@@ -861,11 +838,10 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="date"
-                            required
-                            value={formData.joiningDate}
-                            onChange={(e) => setFormData({ ...formData, joiningDate: e.target.value })}
+                            {...register('joiningDate')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.joiningDate && <p className="text-red-500 text-sm mt-1">{errors.joiningDate.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -873,34 +849,39 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="date"
-                            value={formData.confirmationDate}
-                            onChange={(e) => setFormData({ ...formData, confirmationDate: e.target.value })}
+                            {...register('confirmationDate')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                           />
+                          {errors.confirmationDate && <p className="text-red-500 text-sm mt-1">{errors.confirmationDate.message}</p>}
                         </div>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
-                          Reporting Manager *
+                          Reporting Manager
                         </label>
-                        <select
-                          required
-                          value={formData.managerId}
-                          onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
-                          className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
-                        >
-                          <option value="">Select Manager</option>
-                          <option value="SELF">Self (No Reporting Manager)</option>
-                          {managers.map((manager) => (
-                            <option key={manager.id} value={manager.id}>
-                              {manager.fullName} ({manager.employeeCode})
-                            </option>
-                          ))}
-                        </select>
+                        <Controller
+                          name="managerId"
+                          control={control}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+                            >
+                              <option value="">Select Manager</option>
+                              <option value="SELF">Self (No Reporting Manager)</option>
+                              {managers.map((manager) => (
+                                <option key={manager.id} value={manager.id}>
+                                  {manager.fullName} ({manager.employeeCode})
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        />
                         <p className="mt-1 text-xs text-surface-500 dark:text-surface-400">
-                          Select &quot;Self&quot; for top-level employees who don&apos;t report to anyone.
+                          Select "Self" for top-level employees who don't report to anyone.
                         </p>
+                        {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
                       </div>
                     </div>
                   )}
@@ -915,11 +896,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.bankAccountNumber}
-                            onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                            {...register('bankAccountNumber')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="1234567890"
                           />
+                          {errors.bankAccountNumber && <p className="text-red-500 text-sm mt-1">{errors.bankAccountNumber.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -927,11 +908,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.bankName}
-                            onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                            {...register('bankName')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="Bank of America"
                           />
+                          {errors.bankName && <p className="text-red-500 text-sm mt-1">{errors.bankName.message}</p>}
                         </div>
                       </div>
 
@@ -942,11 +923,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.bankIfscCode}
-                            onChange={(e) => setFormData({ ...formData, bankIfscCode: e.target.value })}
+                            {...register('bankIfscCode')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="HDFC0001234"
                           />
+                          {errors.bankIfscCode && <p className="text-red-500 text-sm mt-1">{errors.bankIfscCode.message}</p>}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -954,11 +935,11 @@ export default function EmployeesPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.taxId}
-                            onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
+                            {...register('taxId')}
                             className="w-full px-3 py-2.5 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
                             placeholder="XXX-XX-XXXX"
                           />
+                          {errors.taxId && <p className="text-red-500 text-sm mt-1">{errors.taxId.message}</p>}
                         </div>
                       </div>
 
@@ -975,7 +956,8 @@ export default function EmployeesPage() {
                       type="button"
                       onClick={() => {
                         setShowAddModal(false);
-                        resetForm();
+                        reset();
+                        setCurrentTab('basic');
                       }}
                       className="flex-1 px-4 py-2.5 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors"
                     >
@@ -983,9 +965,10 @@ export default function EmployeesPage() {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 px-4 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 shadow-md shadow-primary-500/25 transition-all"
+                      disabled={isSubmitting}
+                      className="flex-1 px-4 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 shadow-md shadow-primary-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Add Employee
+                      {isSubmitting ? 'Adding...' : 'Add Employee'}
                     </button>
                   </div>
                 </form>
@@ -1015,17 +998,17 @@ export default function EmployeesPage() {
                     setShowDeleteModal(false);
                     setEmployeeToDelete(null);
                   }}
-                  disabled={deleting}
+                  disabled={deleteEmployeeMutation.isPending}
                   className="flex-1 px-4 py-2.5 border border-surface-300 dark:border-surface-600 rounded-xl text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800 disabled:opacity-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  disabled={deleting}
+                  disabled={deleteEmployeeMutation.isPending}
                   className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50 shadow-md shadow-red-500/25 transition-all"
                 >
-                  {deleting ? 'Deleting...' : 'Delete'}
+                  {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

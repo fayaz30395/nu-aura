@@ -1,79 +1,132 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { officeLocationService, OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-location.service';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { OfficeLocation, OfficeLocationRequest } from '@/lib/services/office-location.service';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  useOfficeLocations,
+  useCreateOfficeLocation,
+  useUpdateOfficeLocation,
+  useDeleteOfficeLocation,
+} from '@/lib/hooks/queries/useOfficeLocations';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
+const officeLocationSchema = z.object({
+  name: z.string().min(1, 'Location name required'),
+  address: z.string().min(1, 'Address required'),
+  city: z.string().min(1, 'City required'),
+  state: z.string().min(1, 'State required'),
+  country: z.string().min(1, 'Country required'),
+  postalCode: z.string().optional().or(z.literal('')),
+  latitude: z.number({ coerce: true }).finite('Valid latitude required'),
+  longitude: z.number({ coerce: true }).finite('Valid longitude required'),
+  geofenceRadius: z.number({ coerce: true }).int().min(10, 'Minimum 10 meters').max(10000, 'Maximum 10000 meters'),
+  isDefault: z.boolean().default(false),
+  timezone: z.string().optional().or(z.literal('')),
+});
+
+type OfficeLocationFormData = z.infer<typeof officeLocationSchema>;
+
 export default function OfficeLocationsPage() {
+  const toast = useToast();
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [locations, setLocations] = useState<OfficeLocation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<OfficeLocationRequest>({
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    latitude: 0,
-    longitude: 0,
-    geofenceRadius: 100,
+
+  // Form state
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<OfficeLocationFormData>({
+    resolver: zodResolver(officeLocationSchema),
+    defaultValues: {
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      postalCode: '',
+      latitude: 0,
+      longitude: 0,
+      geofenceRadius: 100,
+      isDefault: false,
+      timezone: '',
+    },
   });
 
-  useEffect(() => {
-    if (!hasHydrated || !isReady) return;
+  // Local UI state
+  const [showForm, setShowForm] = React.useState(false);
+  const [editingId, setEditingId] = React.useState<string | null>(null);
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
+  // React Query hooks
+  const { data: locations = [], isLoading } = useOfficeLocations();
+  const createMutation = useCreateOfficeLocation();
+  const updateMutation = useUpdateOfficeLocation();
+  const deleteMutation = useDeleteOfficeLocation();
 
-    if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.push('/home');
-      return;
-    }
+  const loading = isLoading;
 
-    loadLocations();
-  }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/home');
+    return null;
+  }
 
-  const loadLocations = async () => {
-    try {
-      setLoading(true);
-      const data = await officeLocationService.getAllLocations();
-      setLocations(data);
-    } catch (error) {
-      console.error('Error loading locations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await officeLocationService.updateLocation(editingId, formData);
-      } else {
-        await officeLocationService.createLocation(formData);
-      }
-      setShowForm(false);
-      setEditingId(null);
-      resetForm();
-      loadLocations();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save location');
+  const onSubmit = async (data: OfficeLocationFormData) => {
+    if (editingId) {
+      updateMutation.mutate(
+        { id: editingId, data: data as OfficeLocationRequest },
+        {
+          onSuccess: () => {
+            setShowForm(false);
+            setEditingId(null);
+            reset();
+            toast.success('Location updated successfully');
+          },
+          onError: (error: unknown) => {
+            toast.error(
+              (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+              'Failed to update location'
+            );
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(data as OfficeLocationRequest, {
+        onSuccess: () => {
+          setShowForm(false);
+          setEditingId(null);
+          reset();
+          toast.success('Location created successfully');
+        },
+        onError: (error: unknown) => {
+          toast.error(
+            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to create location'
+          );
+        },
+      });
     }
   };
 
   const handleEdit = (location: OfficeLocation) => {
-    setFormData({
+    reset({
       name: location.name,
       address: location.address,
       city: location.city,
@@ -90,33 +143,22 @@ export default function OfficeLocationsPage() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Are you sure you want to delete this location?')) return;
-    try {
-      await officeLocationService.deleteLocation(id);
-      loadLocations();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete location');
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      latitude: 0,
-      longitude: 0,
-      geofenceRadius: 100,
+    deleteMutation.mutate(id, {
+      onError: (error: unknown) => {
+        toast.error(
+          (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+          'Failed to delete location'
+        );
+      },
     });
   };
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        setFormData(prev => ({
+        reset(prev => ({
           ...prev,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -131,7 +173,11 @@ export default function OfficeLocationsPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Office Locations & Geofencing</h1>
           <button
-            onClick={() => { setShowForm(true); setEditingId(null); resetForm(); }}
+            onClick={() => {
+              reset();
+              setEditingId(null);
+              setShowForm(true);
+            }}
             className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
           >
             Add Location
@@ -143,99 +189,91 @@ export default function OfficeLocationsPage() {
             <h2 className="text-xl font-semibold mb-4">
               {editingId ? 'Edit Location' : 'Add New Location'}
             </h2>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Name *</label>
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  {...register('name')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Address *</label>
                 <input
                   type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  {...register('address')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">City *</label>
                 <input
                   type="text"
-                  value={formData.city}
-                  onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                  {...register('city')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">State *</label>
                 <input
                   type="text"
-                  value={formData.state}
-                  onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
+                  {...register('state')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Country *</label>
                 <input
                   type="text"
-                  value={formData.country}
-                  onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                  {...register('country')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Postal Code</label>
                 <input
                   type="text"
-                  value={formData.postalCode || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, postalCode: e.target.value }))}
+                  {...register('postalCode')}
                   className="w-full p-2 border rounded-lg"
                 />
+                {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Latitude *</label>
                 <input
                   type="number"
                   step="any"
-                  value={formData.latitude}
-                  onChange={(e) => setFormData(prev => ({ ...prev, latitude: parseFloat(e.target.value) }))}
+                  {...register('latitude')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.latitude && <p className="text-red-500 text-sm mt-1">{errors.latitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Longitude *</label>
                 <input
                   type="number"
                   step="any"
-                  value={formData.longitude}
-                  onChange={(e) => setFormData(prev => ({ ...prev, longitude: parseFloat(e.target.value) }))}
+                  {...register('longitude')}
                   className="w-full p-2 border rounded-lg"
-                  required
                 />
+                {errors.longitude && <p className="text-red-500 text-sm mt-1">{errors.longitude.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Geofence Radius (meters) *</label>
                 <input
                   type="number"
-                  value={formData.geofenceRadius}
-                  onChange={(e) => setFormData(prev => ({ ...prev, geofenceRadius: parseInt(e.target.value) }))}
+                  {...register('geofenceRadius')}
                   className="w-full p-2 border rounded-lg"
-                  required
                   min="10"
                   max="10000"
                 />
+                {errors.geofenceRadius && <p className="text-red-500 text-sm mt-1">{errors.geofenceRadius.message}</p>}
               </div>
               <div className="flex items-end">
                 <button
@@ -249,13 +287,18 @@ export default function OfficeLocationsPage() {
               <div className="col-span-2 flex gap-4 mt-4">
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                  disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
+                  className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                 >
-                  {editingId ? 'Update' : 'Create'}
+                  {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setShowForm(false); setEditingId(null); }}
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditingId(null);
+                    reset();
+                  }}
                   className="px-6 py-2 bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                 >
                   Cancel

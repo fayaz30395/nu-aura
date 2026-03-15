@@ -85,6 +85,16 @@ const AUTHENTICATED_ROUTES = [
   '/training',
   '/app',
   '/fluence',
+  // QA3-002: Routes present in /app directory but previously missing from protection list
+  '/approvals',
+  '/company-spotlight',
+  '/contracts',
+  '/dashboard',
+  '/letters',
+  '/linkedin-posts',
+  '/loans',
+  '/org-chart',
+  '/payments',
 ];
 
 // API routes and static assets to skip
@@ -98,13 +108,17 @@ const SKIP_PATTERNS = [
 ];
 
 /**
- * Decode JWT token and extract simple role information.
+ * Decode JWT token and extract payload information.
  * This runs only in middleware (edge/runtime) and never on the client.
  */
-function decodeJwtRoles(token: string): { role?: string; roles: string[] } {
+function decodeJwt(token: string): {
+  role?: string;
+  roles: string[];
+  isExpired: boolean;
+} {
   try {
     const [, base64Url] = token.split('.');
-    if (!base64Url) return { roles: [] };
+    if (!base64Url) return { roles: [], isExpired: true };
 
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload =
@@ -123,13 +137,20 @@ function decodeJwtRoles(token: string): { role?: string; roles: string[] } {
     const singleRole: string | undefined = payload.role;
     const roles: string[] = Array.isArray(payload.roles) ? payload.roles : [];
 
-    return {
-      role: singleRole,
-      roles,
-    };
+    // Check token expiry — exp is Unix timestamp in seconds
+    const exp: number | undefined = payload.exp;
+    const isExpired = exp !== undefined ? Date.now() / 1000 > exp : false;
+
+    return { role: singleRole, roles, isExpired };
   } catch {
-    return { roles: [] };
+    return { roles: [], isExpired: true };
   }
+}
+
+/** @deprecated Use decodeJwt instead */
+function decodeJwtRoles(token: string): { role?: string; roles: string[] } {
+  const { role, roles } = decodeJwt(token);
+  return { role, roles };
 }
 
 /**
@@ -242,12 +263,19 @@ export function middleware(request: NextRequest) {
 
   // Allow public routes
   if (isPublicRoute(pathname)) {
-    // TEMPORARY: Disabled to prevent redirect loop with AuthGuard
-    // If user is already authenticated and tries to access login, redirect to home
-    // const accessToken = request.cookies.get(ACCESS_TOKEN_COOKIE);
-    // if (accessToken && pathname === '/auth/login') {
-    //   return NextResponse.redirect(new URL('/home', request.url));
-    // }
+    // If a valid (non-expired) token exists and user hits the login page, send them to
+    // the dashboard directly. We check expiry to avoid a redirect loop where an expired
+    // cookie keeps bouncing between middleware→dashboard→AuthGuard→login→middleware.
+    if (pathname === '/auth/login' || pathname === '/auth/register') {
+      const accessTokenCookie = request.cookies.get(ACCESS_TOKEN_COOKIE);
+      const token = accessTokenCookie?.value;
+      if (token) {
+        const { isExpired } = decodeJwt(token);
+        if (!isExpired) {
+          return NextResponse.redirect(new URL('/me/dashboard', request.url));
+        }
+      }
+    }
     const response = NextResponse.next();
     return addSecurityHeaders(response);
   }
@@ -270,7 +298,7 @@ export function middleware(request: NextRequest) {
   }
 
   // SUPER_ADMIN bypass: if JWT contains SUPER_ADMIN, skip all further route checks
-  const { role, roles } = decodeJwtRoles(accessToken);
+  const { role, roles } = decodeJwt(accessToken);
   if (role === 'SUPER_ADMIN' || roles.includes('SUPER_ADMIN')) {
     const response = NextResponse.next();
     return addSecurityHeaders(response);

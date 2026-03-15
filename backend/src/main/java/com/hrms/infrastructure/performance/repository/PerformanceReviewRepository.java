@@ -21,6 +21,8 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
 
     List<PerformanceReview> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId);
 
+    Page<PerformanceReview> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
+
     List<PerformanceReview> findAllByTenantIdAndReviewerId(UUID tenantId, UUID reviewerId);
 
     List<PerformanceReview> findAllByTenantIdAndReviewCycleId(UUID tenantId, UUID reviewCycleId);
@@ -40,6 +42,12 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
            "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
     List<PerformanceReview> findPendingReviews(@Param("tenantId") UUID tenantId,
                                                 @Param("reviewerId") UUID reviewerId);
+
+    @Query("SELECT pr FROM PerformanceReview pr WHERE pr.tenantId = :tenantId " +
+           "AND pr.status IN ('DRAFT', 'SUBMITTED') AND pr.reviewerId = :reviewerId")
+    Page<PerformanceReview> findPendingReviews(@Param("tenantId") UUID tenantId,
+                                               @Param("reviewerId") UUID reviewerId,
+                                               Pageable pageable);
 
     @Query("SELECT AVG(pr.overallRating) FROM PerformanceReview pr " +
            "WHERE pr.tenantId = :tenantId AND pr.employeeId = :employeeId AND pr.status = 'COMPLETED'")

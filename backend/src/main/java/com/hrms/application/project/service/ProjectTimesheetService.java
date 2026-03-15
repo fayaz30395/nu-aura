@@ -34,6 +34,7 @@ public class ProjectTimesheetService {
 
     // ==================== Time Entry Operations ====================
 
+    @Transactional
     public TimeEntryResponse createTimeEntry(TimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating time entry for employee {} on project {} for date {}",
@@ -90,6 +91,7 @@ public class ProjectTimesheetService {
         return mapToTimeEntryResponse(savedEntry);
     }
 
+    @Transactional
     public TimeEntryResponse updateTimeEntry(UUID entryId, TimeEntryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating time entry {}", entryId);
@@ -137,6 +139,7 @@ public class ProjectTimesheetService {
         return mapToTimeEntryResponse(updatedEntry);
     }
 
+    @Transactional
     public TimeEntryResponse submitTimeEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Submitting time entry {}", entryId);
@@ -156,6 +159,7 @@ public class ProjectTimesheetService {
         return mapToTimeEntryResponse(updatedEntry);
     }
 
+    @Transactional
     public TimeEntryResponse approveTimeEntry(UUID entryId, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Approving time entry {} by approver {}", entryId, approverId);
@@ -175,6 +179,7 @@ public class ProjectTimesheetService {
         return mapToTimeEntryResponse(updatedEntry);
     }
 
+    @Transactional
     public TimeEntryResponse rejectTimeEntry(UUID entryId, UUID approverId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Rejecting time entry {} by approver {}", entryId, approverId);
@@ -245,6 +250,7 @@ public class ProjectTimesheetService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteTimeEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
@@ -261,6 +267,7 @@ public class ProjectTimesheetService {
     /**
      * Calculate overtime hours for an employee on a specific date
      */
+    @Transactional(readOnly = true)
     public BigDecimal calculateOvertimeForDate(UUID employeeId, LocalDate workDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return timeEntryValidator.calculateOvertimeHours(employeeId, workDate, tenantId);
@@ -268,6 +275,7 @@ public class ProjectTimesheetService {
 
     // ==================== Project Member Operations ====================
 
+    @Transactional
     public ProjectMemberResponse addProjectMember(ProjectMemberRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding member {} to project {}", request.getEmployeeId(), request.getProjectId());
@@ -302,6 +310,7 @@ public class ProjectTimesheetService {
         return mapToProjectMemberResponse(savedMember);
     }
 
+    @Transactional
     public ProjectMemberResponse updateProjectMember(UUID memberId, ProjectMemberRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating project member {}", memberId);
@@ -355,6 +364,7 @@ public class ProjectTimesheetService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void removeProjectMember(UUID memberId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ProjectMember member = projectMemberRepository.findByIdAndTenantId(memberId, tenantId)

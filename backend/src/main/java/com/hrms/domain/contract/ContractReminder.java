@@ -1,6 +1,6 @@
 package com.hrms.domain.contract;
 
-import com.hrms.common.entity.BaseEntity;
+import com.hrms.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ContractReminder extends BaseEntity {
+public class ContractReminder extends TenantAware {
 
     @Column(nullable = false)
     private UUID contractId;

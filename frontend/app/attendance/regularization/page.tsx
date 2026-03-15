@@ -1,13 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { ClipboardCheck, Clock, CheckCircle, XCircle, AlertCircle, Plus, Info, RefreshCw } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { attendanceService } from '@/lib/services/attendance.service';
+import {
+  usePendingRegularizations,
+  useRequestRegularization,
+} from '@/lib/hooks/queries/useAttendance';
 import { AttendanceRecord } from '@/lib/types/attendance';
 
 interface RegularizationRequest {
@@ -17,8 +23,6 @@ interface RegularizationRequest {
   attendanceDate: string;
   originalCheckIn?: string;
   originalCheckOut?: string;
-  requestedCheckIn: string;
-  requestedCheckOut: string;
   reason: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   requestedOn: string;
@@ -27,56 +31,63 @@ interface RegularizationRequest {
   remarks?: string;
 }
 
+const regularizationFormSchema = z.object({
+  attendanceDate: z.string().min(1, 'Attendance date is required'),
+  requestedCheckIn: z.string().regex(/^\d{2}:\d{2}$/, 'Check-in time must be HH:MM format'),
+  requestedCheckOut: z.string().regex(/^\d{2}:\d{2}$/, 'Check-out time must be HH:MM format'),
+  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must not exceed 1000 characters'),
+});
+
+type RegularizationFormData = z.infer<typeof regularizationFormSchema>;
+
 export default function RegularizationPage() {
   const router = useRouter();
-  const [requests, setRequests] = useState<RegularizationRequest[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [formData, setFormData] = useState({
-    attendanceDate: '',
-    requestedCheckIn: '',
-    requestedCheckOut: '',
-    reason: '',
+
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<RegularizationFormData>({
+    resolver: zodResolver(regularizationFormSchema),
+    defaultValues: {
+      attendanceDate: '',
+      requestedCheckIn: '',
+      requestedCheckOut: '',
+      reason: '',
+    },
   });
 
-  useEffect(() => {
-    loadRequests();
-  }, []);
+  const { data: regularizationsData, isLoading: loading } = usePendingRegularizations(0, 20);
+  const requestMutation = useRequestRegularization();
 
-  const loadRequests = async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      // Mock data - in real implementation, fetch from API
-      setRequests([]);
-    } catch (error) {
-      console.error('Error loading regularization requests:', error);
-      setError('Failed to load regularization requests.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // The hook returns AttendanceRecord[], filter for regularization-related ones
+  const requests: RegularizationRequest[] = (regularizationsData?.content || [])
+    .filter((record: AttendanceRecord) => record.regularizationRequested || record.isRegularization)
+    .map((record: AttendanceRecord) => ({
+      id: record.id,
+      employeeId: record.employeeId,
+      attendanceDate: record.attendanceDate,
+      originalCheckIn: record.checkInTime,
+      originalCheckOut: record.checkOutTime,
+      reason: record.regularizationReason || '',
+      status: record.regularizationApproved ? 'APPROVED' : (record.regularizationRequested ? 'PENDING' : 'REJECTED'),
+      requestedOn: record.updatedAt,
+      approvedBy: record.approvedBy,
+      approvedOn: record.approvedAt,
+      remarks: record.remarks,
+    })) as RegularizationRequest[];
 
-  const handleSubmitRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegularizationFormData) => {
     try {
-      setLoading(true);
-      // In real implementation, call regularization API
-      alert('Regularization request submitted successfully');
-      setShowCreateModal(false);
-      setFormData({
-        attendanceDate: '',
-        requestedCheckIn: '',
-        requestedCheckOut: '',
-        reason: '',
+      await requestMutation.mutateAsync({
+        id: data.attendanceDate,
+        data: {
+          reason: data.reason,
+        },
       });
-      loadRequests();
+
+      setShowCreateModal(false);
+      reset();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      alert(msg || 'Failed to submit request');
-    } finally {
-      setLoading(false);
+      console.error('Failed to submit request:', err);
     }
   };
 
@@ -121,18 +132,6 @@ export default function RegularizationPage() {
           </Button>
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <div className="mb-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
-            </div>
-            <button onClick={loadRequests} className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-        )}
 
         {/* Info Card */}
         <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
@@ -161,7 +160,7 @@ export default function RegularizationPage() {
                 <div>
                   <p className="text-sm text-surface-500 dark:text-surface-400">Pending</p>
                   <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-                    {requests.filter(r => r.status === 'PENDING').length}
+                    {requests.filter((r: RegularizationRequest) => r.status === 'PENDING').length}
                   </p>
                 </div>
               </div>
@@ -177,7 +176,7 @@ export default function RegularizationPage() {
                 <div>
                   <p className="text-sm text-surface-500 dark:text-surface-400">Approved</p>
                   <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-                    {requests.filter(r => r.status === 'APPROVED').length}
+                    {requests.filter((r: RegularizationRequest) => r.status === 'APPROVED').length}
                   </p>
                 </div>
               </div>
@@ -193,7 +192,7 @@ export default function RegularizationPage() {
                 <div>
                   <p className="text-sm text-surface-500 dark:text-surface-400">Rejected</p>
                   <p className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-                    {requests.filter(r => r.status === 'REJECTED').length}
+                    {requests.filter((r: RegularizationRequest) => r.status === 'REJECTED').length}
                   </p>
                 </div>
               </div>
@@ -239,7 +238,7 @@ export default function RegularizationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                    {requests.map((request) => (
+                    {requests.map((request: RegularizationRequest) => (
                       <tr key={request.id} className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
                         <td className="px-6 py-4 text-sm font-medium text-surface-900 dark:text-surface-50">
                           {new Date(request.attendanceDate).toLocaleDateString()}
@@ -249,8 +248,8 @@ export default function RegularizationPage() {
                           <div>Out: {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}</div>
                         </td>
                         <td className="px-6 py-4 text-sm text-primary-600 dark:text-primary-400 font-medium">
-                          <div>In: {formatTime(request.requestedCheckIn)}</div>
-                          <div>Out: {formatTime(request.requestedCheckOut)}</div>
+                          <div>In: --:--</div>
+                          <div>Out: --:--</div>
                         </td>
                         <td className="px-6 py-4 text-sm text-surface-600 dark:text-surface-400 max-w-xs">
                           <div className="truncate" title={request.reason}>
@@ -298,7 +297,7 @@ export default function RegularizationPage() {
                 Request Attendance Regularization
               </h2>
 
-              <form onSubmit={handleSubmitRequest}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -306,12 +305,11 @@ export default function RegularizationPage() {
                     </label>
                     <input
                       type="date"
-                      required
-                      value={formData.attendanceDate}
-                      onChange={(e) => setFormData({ ...formData, attendanceDate: e.target.value })}
+                      {...register('attendanceDate')}
                       max={new Date().toISOString().split('T')[0]}
                       className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                     />
+                    {errors.attendanceDate && <p className="text-red-500 text-sm mt-1">{errors.attendanceDate.message}</p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -321,11 +319,10 @@ export default function RegularizationPage() {
                       </label>
                       <input
                         type="time"
-                        required
-                        value={formData.requestedCheckIn}
-                        onChange={(e) => setFormData({ ...formData, requestedCheckIn: e.target.value })}
+                        {...register('requestedCheckIn')}
                         className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errors.requestedCheckIn && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckIn.message}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -333,11 +330,10 @@ export default function RegularizationPage() {
                       </label>
                       <input
                         type="time"
-                        required
-                        value={formData.requestedCheckOut}
-                        onChange={(e) => setFormData({ ...formData, requestedCheckOut: e.target.value })}
+                        {...register('requestedCheckOut')}
                         className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       />
+                      {errors.requestedCheckOut && <p className="text-red-500 text-sm mt-1">{errors.requestedCheckOut.message}</p>}
                     </div>
                   </div>
 
@@ -346,13 +342,12 @@ export default function RegularizationPage() {
                       Reason for Regularization *
                     </label>
                     <textarea
-                      required
-                      value={formData.reason}
-                      onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                      {...register('reason')}
                       rows={4}
                       className="w-full px-4 py-2 border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                       placeholder="Please explain why you need attendance regularization..."
                     />
+                    {errors.reason && <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>}
                   </div>
                 </div>
 
@@ -360,17 +355,20 @@ export default function RegularizationPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setShowCreateModal(false)}
+                    onClick={() => {
+                      setShowCreateModal(false);
+                      reset();
+                    }}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={loading}
+                    disabled={requestMutation.isPending || isSubmitting}
                     className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
                   >
-                    {loading ? 'Submitting...' : 'Submit Request'}
+                    {requestMutation.isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}
                   </Button>
                 </div>
               </form>

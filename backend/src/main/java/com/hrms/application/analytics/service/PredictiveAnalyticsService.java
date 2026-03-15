@@ -12,6 +12,7 @@ import com.hrms.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,6 +132,7 @@ public class PredictiveAnalyticsService {
         return AttritionPredictionDto.fromEntity(prediction);
     }
 
+    @Transactional
     public void markActionTaken(UUID predictionId, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -185,6 +187,7 @@ public class PredictiveAnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public WorkforceTrendDto generateTrend(Integer year, Integer month, UUID departmentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -226,6 +229,7 @@ public class PredictiveAnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public AnalyticsInsightDto updateInsightStatus(UUID insightId, String status, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -244,6 +248,7 @@ public class PredictiveAnalyticsService {
         return AnalyticsInsightDto.fromEntity(insight);
     }
 
+    @Transactional
     public AnalyticsInsightDto assignInsight(UUID insightId, UUID assigneeId, LocalDate dueDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -260,6 +265,7 @@ public class PredictiveAnalyticsService {
         return AnalyticsInsightDto.fromEntity(insight);
     }
 
+    @Transactional
     public AnalyticsInsightDto createInsight(String title, String description, String category,
                                               String severity, String recommendation) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -528,7 +534,7 @@ public class PredictiveAnalyticsService {
             if (basicSalary != null && basicSalary.compareTo(BigDecimal.ZERO) > 0) {
                 // Get all active salary structures for the tenant to compute percentile
                 List<SalaryStructure> allSalaries = salaryStructureRepository
-                        .findAllByTenantId(tenantId, org.springframework.data.domain.Pageable.unpaged())
+                        .findAllByTenantId(tenantId, PageRequest.of(0, 50_000))
                         .getContent();
 
                 long belowCount = allSalaries.stream()
@@ -651,8 +657,7 @@ public class PredictiveAnalyticsService {
         LocalDate periodEnd = periodStart.withDayOfMonth(periodStart.lengthOfMonth());
 
         // Get employees for this tenant
-        List<Employee> allEmployees = employeeRepository.findAllByTenantId(tenantId,
-                org.springframework.data.domain.Pageable.unpaged()).getContent();
+        List<Employee> allEmployees = employeeRepository.findByTenantId(tenantId);
 
         // Filter by department if specified
         List<Employee> scopedEmployees = departmentId != null
@@ -692,7 +697,7 @@ public class PredictiveAnalyticsService {
         // Average salary from salary structures
         BigDecimal avgSalary = BigDecimal.ZERO;
         List<SalaryStructure> salaryStructures = salaryStructureRepository
-                .findAllByTenantId(tenantId, org.springframework.data.domain.Pageable.unpaged()).getContent();
+                .findAllByTenantId(tenantId, PageRequest.of(0, 50_000)).getContent();
         if (!salaryStructures.isEmpty()) {
             BigDecimal totalSalary = salaryStructures.stream()
                     .filter(s -> Boolean.TRUE.equals(s.getIsActive()) && s.getBasicSalary() != null)

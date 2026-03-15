@@ -36,6 +36,7 @@ public class WellnessService {
 
     // ==================== Program Management ====================
 
+    @Transactional
     public WellnessProgramDto createProgram(WellnessProgramDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating wellness program {} for tenant {}", request.getName(), tenantId);
@@ -60,6 +61,7 @@ public class WellnessService {
         return mapToDto(programRepository.save(program));
     }
 
+    @Transactional(readOnly = true)
     public List<WellnessProgramDto> getActivePrograms() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return programRepository.findActivePrograms(tenantId, LocalDate.now()).stream()
@@ -67,6 +69,7 @@ public class WellnessService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<WellnessProgramDto> getFeaturedPrograms() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return programRepository.findFeaturedPrograms(tenantId).stream()
@@ -76,6 +79,7 @@ public class WellnessService {
 
     // ==================== Challenge Management ====================
 
+    @Transactional
     public WellnessChallengeDto createChallenge(UUID programId, WellnessChallengeDto request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating challenge {} for program {}", request.getName(), programId);
@@ -111,6 +115,7 @@ public class WellnessService {
         return mapToDto(challengeRepository.save(challenge));
     }
 
+    @Transactional(readOnly = true)
     public List<WellnessChallengeDto> getActiveChallenges() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return challengeRepository.findActiveChallenges(tenantId, LocalDate.now()).stream()
@@ -118,6 +123,7 @@ public class WellnessService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<WellnessChallengeDto> getUpcomingChallenges() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return challengeRepository.findUpcomingChallenges(tenantId, LocalDate.now()).stream()
@@ -209,6 +215,7 @@ public class WellnessService {
         return mapToDto(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<HealthLogDto> getHealthLogs(UUID employeeId, LocalDate startDate, LocalDate endDate) {
         return healthLogRepository.findByEmployeeAndDateRange(employeeId, startDate, endDate).stream()
                 .map(this::mapToDto)
@@ -217,6 +224,7 @@ public class WellnessService {
 
     // ==================== Points & Leaderboard ====================
 
+    @Transactional(readOnly = true)
     public WellnessPointsDto getMyPoints(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         WellnessPoints points = getOrCreateWellnessPoints(employeeId, tenantId);
@@ -261,6 +269,7 @@ public class WellnessService {
 
     // ==================== Dashboard ====================
 
+    @Transactional(readOnly = true)
     public WellnessDashboard getDashboard(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

@@ -71,7 +71,7 @@ public class PSAProjectController {
 
     @PostMapping("/{id}/allocate")
     @RequiresPermission(PROJECT_CREATE)
-    public ResponseEntity<PSAProject> allocateResources(@PathVariable UUID id, @RequestBody Map<String, Object> allocation) {
+    public ResponseEntity<PSAProject> allocateResources(@PathVariable UUID id, @Valid @RequestBody Map<String, Object> allocation) {
         return psaService.allocateResources(id, allocation)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());

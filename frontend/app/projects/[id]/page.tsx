@@ -1,7 +1,10 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { ArrowLeft, Download, Loader2, Plus, Search, X, XCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -19,11 +22,18 @@ import {
   Select,
   TablePagination,
 } from '@/components/ui';
-import { hrmsProjectService } from '@/lib/services/hrms-project.service';
-import { hrmsProjectAllocationService } from '@/lib/services/hrms-project-allocation.service';
 import { HrmsProject, ProjectStatus, ProjectType } from '@/lib/types/hrms-project';
 import { ProjectAllocation } from '@/lib/types/hrms-allocation';
 import { apiClient } from '@/lib/api/client';
+import {
+  useHrmsProject,
+  useActivateHrmsProject,
+  useCloseHrmsProject,
+  useProjectAllocations,
+  useAssignToProject,
+  useEndAllocation,
+  useExportAllocations,
+} from '@/lib/hooks/queries/useProjects';
 
 interface PageResponse<T> {
   content: T[];
@@ -101,6 +111,19 @@ const buildEmployeeName = (employee?: EmployeeSummary | null) => {
   if (!last) return employee.firstName;
   return `${employee.firstName} ${last}`;
 };
+
+// Zod schema for add member form
+const addMemberFormSchema = z.object({
+  role: z.string().min(1, 'Role is required'),
+  allocationPercentage: z
+    .union([z.string(), z.number()])
+    .transform((v) => typeof v === 'string' ? Number(v) : v)
+    .refine((n) => !Number.isNaN(n) && n >= 1 && n <= 100, 'Allocation % must be between 1 and 100'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().optional().or(z.literal('')),
+});
+
+type AddMemberFormData = z.infer<typeof addMemberFormSchema>;
 
 interface EmployeeTypeaheadProps {
   label: string;
@@ -234,193 +257,138 @@ export default function ProjectDetailPage() {
   const router = useRouter();
   const projectId = params.id as string;
 
-  const [project, setProject] = useState<HrmsProject | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [allocations, setAllocations] = useState<ProjectAllocation[]>([]);
-  const [allocationsLoading, setAllocationsLoading] = useState(true);
-  const [allocationsError, setAllocationsError] = useState<string | null>(null);
   const [allocationsPage, setAllocationsPage] = useState(0);
   const [allocationsSize, setAllocationsSize] = useState(20);
-  const [allocationsTotal, setAllocationsTotal] = useState(0);
-  const [allocationsTotalPages, setAllocationsTotalPages] = useState(0);
-  const [exportingRoster, setExportingRoster] = useState(false);
-
-  const [actionLoading, setActionLoading] = useState(false);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
 
   // Add Member modal state
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
-  const [addMemberSaving, setAddMemberSaving] = useState(false);
-  const [addMemberError, setAddMemberError] = useState<string | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeSummary | null>(null);
-  const [addMemberForm, setAddMemberForm] = useState({
-    role: 'MEMBER',
-    allocationPercentage: '',
-    startDate: '',
-    endDate: '',
+
+  // React Hook Form setup for add member
+  const {
+    register: registerAddMember,
+    handleSubmit: handleSubmitAddMember,
+    reset: resetAddMember,
+    formState: { errors: addMemberErrors },
+  } = useForm<AddMemberFormData>({
+    resolver: zodResolver(addMemberFormSchema),
+    defaultValues: {
+      role: 'MEMBER',
+      allocationPercentage: 100,
+      startDate: '',
+      endDate: '',
+    },
   });
 
   // End Allocation dialog state
   const [endAllocationTarget, setEndAllocationTarget] = useState<ProjectAllocation | null>(null);
-  const [endAllocationLoading, setEndAllocationLoading] = useState(false);
 
-  const fetchProject = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await hrmsProjectService.getProject(projectId);
-      setProject(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load project';
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [projectId]);
+  // Queries
+  const { data: project, isLoading, error, refetch: refetchProject } = useHrmsProject(projectId, !!projectId);
+  const {
+    data: allocationsData,
+    isLoading: allocationsLoading,
+    error: allocationsError,
+    refetch: refetchAllocations,
+  } = useProjectAllocations(projectId, allocationsPage, allocationsSize, !!projectId);
 
-  const fetchAllocations = useCallback(async () => {
-    setAllocationsLoading(true);
-    setAllocationsError(null);
-    try {
-      const response = await hrmsProjectAllocationService.listProjectAllocations(
-        projectId,
-        allocationsPage,
-        allocationsSize
-      );
-      setAllocations(response.content ?? []);
-      setAllocationsTotal(response.totalElements ?? 0);
-      setAllocationsTotalPages(response.totalPages ?? 0);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load roster';
-      setAllocationsError(message);
-      setAllocations([]);
-      setAllocationsTotal(0);
-      setAllocationsTotalPages(0);
-    } finally {
-      setAllocationsLoading(false);
-    }
-  }, [allocationsPage, allocationsSize, projectId]);
+  // Mutations
+  const activateMutation = useActivateHrmsProject();
+  const closeMutation = useCloseHrmsProject();
+  const assignMutation = useAssignToProject();
+  const endAllocationMutation = useEndAllocation();
+  const exportMutation = useExportAllocations();
 
-  useEffect(() => {
-    fetchProject();
-  }, [fetchProject]);
-
-  useEffect(() => {
-    fetchAllocations();
-  }, [fetchAllocations]);
+  const allocations = allocationsData?.content ?? [];
+  const allocationsTotal = allocationsData?.totalElements ?? 0;
+  const allocationsTotalPages = allocationsData?.totalPages ?? 0;
+  const loading = isLoading;
+  const exportingRoster = exportMutation.isPending;
+  const addMemberSaving = assignMutation.isPending;
+  const endAllocationLoading = endAllocationMutation.isPending;
+  const actionLoading = activateMutation.isPending || closeMutation.isPending;
 
   const handleExportRoster = async () => {
-    setExportingRoster(true);
     try {
-      const blob = await hrmsProjectAllocationService.exportProjectAllocations(projectId);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'project_roster.csv';
-      link.click();
-      URL.revokeObjectURL(url);
+      const result = await exportMutation.mutateAsync(projectId);
+      if (result instanceof Blob) {
+        const url = URL.createObjectURL(result);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'project_roster.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to export roster';
-      setAllocationsError(message);
-    } finally {
-      setExportingRoster(false);
+      // Error handled by mutation
     }
   };
 
   const handleActivate = async () => {
-    setActionLoading(true);
     try {
-      await hrmsProjectService.activateProject(projectId);
+      await activateMutation.mutateAsync(projectId);
       setShowActivateDialog(false);
-      fetchProject();
+      await refetchProject();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to activate project';
-      setError(message);
-    } finally {
-      setActionLoading(false);
+      // Error handled by mutation
     }
   };
 
   const handleClose = async () => {
-    setActionLoading(true);
     try {
-      await hrmsProjectService.closeProject(projectId);
+      await closeMutation.mutateAsync({ id: projectId });
       setShowCloseDialog(false);
-      fetchProject();
-      fetchAllocations();
+      await refetchProject();
+      await refetchAllocations();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to close project';
-      setError(message);
-    } finally {
-      setActionLoading(false);
+      // Error handled by mutation
     }
   };
 
   const handleOpenAddMember = () => {
     setSelectedEmployee(null);
-    setAddMemberForm({
-      role: 'MEMBER',
-      allocationPercentage: '',
-      startDate: '',
-      endDate: '',
-    });
-    setAddMemberError(null);
+    resetAddMember();
     setShowAddMemberModal(true);
   };
 
-  const handleAddMemberSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setAddMemberError(null);
-
+  const handleAddMemberSubmit = async (data: AddMemberFormData) => {
     if (!selectedEmployee) {
-      setAddMemberError('Please select an employee.');
-      return;
-    }
-    const allocationPct = Number(addMemberForm.allocationPercentage);
-    if (!addMemberForm.allocationPercentage || Number.isNaN(allocationPct) || allocationPct < 1 || allocationPct > 100) {
-      setAddMemberError('Allocation % must be between 1 and 100.');
-      return;
-    }
-    if (!addMemberForm.startDate) {
-      setAddMemberError('Start date is required.');
+      // Show error via toast or error state
       return;
     }
 
-    setAddMemberSaving(true);
     try {
-      await hrmsProjectAllocationService.assignEmployee(projectId, {
-        employeeId: selectedEmployee.id,
-        role: addMemberForm.role,
-        allocationPercentage: allocationPct,
-        startDate: addMemberForm.startDate,
-        endDate: addMemberForm.endDate || undefined,
+      await assignMutation.mutateAsync({
+        projectId,
+        data: {
+          employeeId: selectedEmployee.id,
+          role: data.role,
+          allocationPercentage: data.allocationPercentage,
+          startDate: data.startDate,
+          endDate: data.endDate || undefined,
+        },
       });
       setShowAddMemberModal(false);
-      fetchAllocations();
+      await refetchAllocations();
     } catch (err) {
-      const response = (err as { response?: { data?: { message?: string } } })?.response?.data;
-      setAddMemberError(response?.message || (err instanceof Error ? err.message : 'Failed to allocate member.'));
-    } finally {
-      setAddMemberSaving(false);
+      // Error handled by mutation
     }
   };
 
   const handleEndAllocation = async () => {
     if (!endAllocationTarget) return;
-    setEndAllocationLoading(true);
     try {
-      await hrmsProjectAllocationService.endAllocation(projectId, endAllocationTarget.id);
+      await endAllocationMutation.mutateAsync({
+        projectId,
+        allocationId: endAllocationTarget.id,
+      });
       setEndAllocationTarget(null);
-      fetchAllocations();
+      await refetchAllocations();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to end allocation';
-      setAllocationsError(message);
+      // Error handled by mutation
       setEndAllocationTarget(null);
-    } finally {
-      setEndAllocationLoading(false);
     }
   };
 
@@ -508,6 +476,9 @@ export default function ProjectDetailPage() {
     );
   }
 
+  const projectError = error ? (error instanceof Error ? error.message : String(error)) : null;
+  const allocationsErrorMessage = allocationsError ? (allocationsError instanceof Error ? allocationsError.message : String(allocationsError)) : null;
+
   return (
     <AppLayout breadcrumbs={[{ label: 'Projects', href: '/projects' }, { label: project?.name || 'Project' }]}>
       <div className="space-y-6">
@@ -556,11 +527,11 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        {error && (
+        {projectError && (
           <Card className="border-danger-200 bg-danger-50 dark:border-danger-800 dark:bg-danger-950/20">
             <CardContent className="flex items-center gap-2">
               <XCircle className="h-4 w-4 text-danger-500" />
-              <p className="text-sm text-danger-700 dark:text-danger-300">{error}</p>
+              <p className="text-sm text-danger-700 dark:text-danger-300">{projectError}</p>
             </CardContent>
           </Card>
         )}
@@ -619,9 +590,9 @@ export default function ProjectDetailPage() {
               </div>
             </div>
 
-            {allocationsError && (
+            {allocationsErrorMessage && (
               <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
-                {allocationsError}
+                {allocationsErrorMessage}
               </div>
             )}
 
@@ -655,11 +626,11 @@ export default function ProjectDetailPage() {
         <ModalHeader onClose={() => setShowAddMemberModal(false)}>
           Add Member
         </ModalHeader>
-        <form onSubmit={handleAddMemberSubmit}>
+        <form onSubmit={handleSubmitAddMember(handleAddMemberSubmit)}>
           <ModalBody className="space-y-4">
-            {addMemberError && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
-                {addMemberError}
+            {!selectedEmployee && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                Please select an employee
               </div>
             )}
 
@@ -671,45 +642,39 @@ export default function ProjectDetailPage() {
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Select
-                label="Role"
-                value={addMemberForm.role}
-                onChange={(event) => setAddMemberForm((prev) => ({ ...prev, role: event.target.value }))}
-                required
-              >
-                {ALLOCATION_ROLES.map((role) => (
-                  <option key={role} value={role}>
-                    {role.replace(/_/g, ' ')}
-                  </option>
-                ))}
-              </Select>
+              <div>
+                <Select label="Role" {...registerAddMember('role')}>
+                  {ALLOCATION_ROLES.map((role) => (
+                    <option key={role} value={role}>
+                      {role.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </Select>
+                {addMemberErrors.role && <p className="text-red-500 text-sm mt-1">{addMemberErrors.role.message}</p>}
+              </div>
 
-              <Input
-                label="Allocation %"
-                type="number"
-                min={1}
-                max={100}
-                value={addMemberForm.allocationPercentage}
-                onChange={(event) => setAddMemberForm((prev) => ({ ...prev, allocationPercentage: event.target.value }))}
-                placeholder="e.g. 100"
-                required
-              />
+              <div>
+                <Input
+                  label="Allocation %"
+                  type="number"
+                  min={1}
+                  max={100}
+                  placeholder="e.g. 100"
+                  {...registerAddMember('allocationPercentage')}
+                />
+                {addMemberErrors.allocationPercentage && <p className="text-red-500 text-sm mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label="Start Date"
-                type="date"
-                value={addMemberForm.startDate}
-                onChange={(event) => setAddMemberForm((prev) => ({ ...prev, startDate: event.target.value }))}
-                required
-              />
-              <Input
-                label="End Date (optional)"
-                type="date"
-                value={addMemberForm.endDate}
-                onChange={(event) => setAddMemberForm((prev) => ({ ...prev, endDate: event.target.value }))}
-              />
+              <div>
+                <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
+                {addMemberErrors.startDate && <p className="text-red-500 text-sm mt-1">{addMemberErrors.startDate.message}</p>}
+              </div>
+              <div>
+                <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
+                {addMemberErrors.endDate && <p className="text-red-500 text-sm mt-1">{addMemberErrors.endDate.message}</p>}
+              </div>
             </div>
           </ModalBody>
           <ModalFooter>

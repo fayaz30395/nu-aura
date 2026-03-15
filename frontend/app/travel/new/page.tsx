@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { travelService } from '@/lib/services/travel.service';
 import { TravelType, TransportMode, TravelRequestRequest } from '@/lib/types/travel';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useCreateTravelRequest, useSubmitTravelRequest } from '@/lib/hooks/queries/useTravel';
 import {
   Plane,
   ArrowLeft,
@@ -26,9 +26,12 @@ import {
 export default function NewTravelRequestPage() {
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Mutations
+  const createMutation = useCreateTravelRequest();
+  const submitMutation = useSubmitTravelRequest();
 
   // Form state
   const [formData, setFormData] = useState<Partial<TravelRequestRequest>>({
@@ -84,7 +87,7 @@ export default function NewTravelRequestPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (isDraft: boolean = false) => {
+  const handleSubmit = (isDraft: boolean = false) => {
     if (!isDraft && !validateForm()) {
       setError('Please fix the validation errors before submitting');
       return;
@@ -95,52 +98,55 @@ export default function NewTravelRequestPage() {
       return;
     }
 
-    try {
-      setLoading(true);
-      setError(null);
+    const requestData: TravelRequestRequest = {
+      employeeId: user.employeeId,
+      travelType: formData.travelType || 'BUSINESS',
+      purpose: formData.purpose || '',
+      projectId: formData.projectId,
+      clientName: formData.clientName,
+      originCity: formData.originCity || '',
+      destinationCity: formData.destinationCity || '',
+      departureDate: formData.departureDate || '',
+      returnDate: formData.returnDate || '',
+      departureTime: formData.departureTime,
+      returnTime: formData.returnTime,
+      accommodationRequired: formData.accommodationRequired || false,
+      hotelPreference: formData.hotelPreference,
+      checkInDate: formData.checkInDate,
+      checkOutDate: formData.checkOutDate,
+      transportMode: formData.transportMode || 'FLIGHT',
+      transportClass: formData.transportClass,
+      cabRequired: formData.cabRequired || false,
+      estimatedCost: formData.estimatedCost || 0,
+      advanceRequired: formData.advanceRequired || 0,
+      specialInstructions: formData.specialInstructions,
+      isInternational: formData.isInternational || false,
+      visaRequired: formData.visaRequired || false,
+    };
 
-      const requestData: TravelRequestRequest = {
-        employeeId: user.employeeId,
-        travelType: formData.travelType || 'BUSINESS',
-        purpose: formData.purpose || '',
-        projectId: formData.projectId,
-        clientName: formData.clientName,
-        originCity: formData.originCity || '',
-        destinationCity: formData.destinationCity || '',
-        departureDate: formData.departureDate || '',
-        returnDate: formData.returnDate || '',
-        departureTime: formData.departureTime,
-        returnTime: formData.returnTime,
-        accommodationRequired: formData.accommodationRequired || false,
-        hotelPreference: formData.hotelPreference,
-        checkInDate: formData.checkInDate,
-        checkOutDate: formData.checkOutDate,
-        transportMode: formData.transportMode || 'FLIGHT',
-        transportClass: formData.transportClass,
-        cabRequired: formData.cabRequired || false,
-        estimatedCost: formData.estimatedCost || 0,
-        advanceRequired: formData.advanceRequired || 0,
-        specialInstructions: formData.specialInstructions,
-        isInternational: formData.isInternational || false,
-        visaRequired: formData.visaRequired || false,
-      };
-
-      const response = await travelService.createTravelRequest(requestData);
-
-      if (!isDraft && response.id) {
-        await travelService.submitTravelRequest(response.id);
-      }
-
-      router.push(`/travel/${response.id}`);
-    } catch (error: unknown) {
-      console.error('Error creating travel request:', error);
-      setError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create travel request');
-    } finally {
-      setLoading(false);
-    }
+    createMutation.mutate(requestData, {
+      onSuccess: (response) => {
+        if (!isDraft && response.id) {
+          submitMutation.mutate(response.id, {
+            onSuccess: () => {
+              router.push(`/travel/${response.id}`);
+            },
+            onError: () => {
+              setError('Travel request created but failed to submit');
+            },
+          });
+        } else {
+          router.push(`/travel/${response.id}`);
+        }
+      },
+      onError: (error: unknown) => {
+        console.error('Error creating travel request:', error);
+        setError((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create travel request');
+      },
+    });
   };
 
-  const handleInputChange = (field: keyof TravelRequestRequest, value: any) => {
+  const handleInputChange = (field: keyof TravelRequestRequest, value: string | number | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (validationErrors[field]) {
       setValidationErrors((prev) => {
@@ -619,17 +625,17 @@ export default function NewTravelRequestPage() {
         <div className="flex items-center justify-end gap-4 pb-6">
           <button
             onClick={() => router.back()}
-            disabled={loading}
+            disabled={createMutation.isPending || submitMutation.isPending}
             className="px-6 py-2.5 bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={() => handleSubmit(true)}
-            disabled={loading}
+            disabled={createMutation.isPending || submitMutation.isPending}
             className="flex items-center gap-2 px-6 py-2.5 bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300 rounded-xl hover:bg-surface-300 dark:hover:bg-surface-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {createMutation.isPending || submitMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <Save className="h-5 w-5" />
@@ -638,10 +644,10 @@ export default function NewTravelRequestPage() {
           </button>
           <button
             onClick={() => handleSubmit(false)}
-            disabled={loading}
+            disabled={createMutation.isPending || submitMutation.isPending}
             className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {createMutation.isPending || submitMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <Send className="h-5 w-5" />

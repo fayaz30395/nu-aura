@@ -1,117 +1,62 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { goalService } from '@/lib/services/performance.service';
+import {
+  useEmployeeGoals,
+  useCreateGoal,
+  useUpdateGoal,
+  useDeleteGoal,
+} from '@/lib/hooks/queries/usePerformance';
 import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const goalFormSchema = z.object({
+  employeeId: z.string().min(1, 'Employee ID is required'),
+  title: z.string().min(1, 'Title is required').max(255),
+  description: z.string().optional().or(z.literal('')),
+  goalType: z.enum(['OKR', 'KPI', 'PERSONAL', 'TEAM', 'DEPARTMENT', 'ORGANIZATION'] as const) as z.ZodType<GoalType>,
+  targetValue: z.number({ coerce: true }).min(0, 'Target value must be >= 0'),
+  currentValue: z.number({ coerce: true }).min(0, 'Current value must be >= 0'),
+  unit: z.string().min(1, 'Unit is required'),
+  status: z.enum(['DRAFT', 'ACTIVE', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD'] as const) as z.ZodType<GoalStatus>,
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
+  message: 'End date must be after start date',
+  path: ['endDate'],
+});
+
+type GoalFormData = z.infer<typeof goalFormSchema>;
 
 export default function GoalsPage() {
+  const toast = useToast();
   const { user, hasHydrated } = useAuth();
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [loading, setLoading] = useState(false);
+  const goalsQuery = useEmployeeGoals(user?.employeeId || '');
+  const createGoalMutation = useCreateGoal();
+  const updateGoalMutation = useUpdateGoal();
+  const deleteGoalMutation = useDeleteGoal();
+
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const [filterType, setFilterType] = useState<GoalType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<GoalStatus | 'ALL'>('ALL');
-  const [formData, setFormData] = useState<GoalRequest>({
-    employeeId: '',
-    title: '',
-    description: '',
-    goalType: 'PERSONAL',
-    targetValue: 0,
-    currentValue: 0,
-    unit: '',
-    status: 'DRAFT',
-    startDate: '',
-    endDate: '',
-    parentGoalId: undefined,
-  });
 
-  useEffect(() => {
-    if (hasHydrated && user?.employeeId) {
-      loadGoals();
-    }
-  }, [hasHydrated, user?.employeeId]);
-
-  const loadGoals = async () => {
-    if (!user?.employeeId) return;
-    try {
-      setLoading(true);
-      const response = await goalService.getByEmployee(user.employeeId);
-      setGoals(response);
-    } catch (error) {
-      console.error('Error loading goals:', error);
-      alert('Failed to load goals');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const goalData = { ...formData, employeeId: user?.employeeId || '' };
-
-      if (selectedGoal) {
-        await goalService.update(selectedGoal.id, goalData);
-      } else {
-        await goalService.create(goalData);
-      }
-
-      setShowModal(false);
-      resetForm();
-      await loadGoals();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save goal');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedGoal) return;
-    try {
-      setLoading(true);
-      await goalService.delete(selectedGoal.id);
-      setShowDeleteConfirm(false);
-      setSelectedGoal(null);
-      await loadGoals();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete goal');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const openEditModal = (goal: Goal) => {
-    setSelectedGoal(goal);
-    setFormData({
-      employeeId: goal.employeeId,
-      title: goal.title,
-      description: goal.description || '',
-      goalType: goal.goalType,
-      targetValue: goal.targetValue,
-      currentValue: goal.currentValue,
-      unit: goal.unit,
-      status: goal.status,
-      startDate: goal.startDate,
-      endDate: goal.endDate,
-      parentGoalId: goal.parentGoalId,
-    });
-    setShowModal(true);
-  };
-
-  const openDeleteConfirm = (goal: Goal) => {
-    setSelectedGoal(goal);
-    setShowDeleteConfirm(true);
-  };
-
-  const resetForm = () => {
-    setSelectedGoal(null);
-    setFormData({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<GoalFormData>({
+    resolver: zodResolver(goalFormSchema),
+    defaultValues: {
       employeeId: '',
       title: '',
       description: '',
@@ -122,7 +67,79 @@ export default function GoalsPage() {
       status: 'DRAFT',
       startDate: '',
       endDate: '',
-      parentGoalId: undefined,
+    },
+  });
+
+  const goals = goalsQuery.data || [];
+  const loading = goalsQuery.isLoading || createGoalMutation.isPending || updateGoalMutation.isPending || deleteGoalMutation.isPending;
+
+  const handleFormSubmit = async (formData: GoalFormData) => {
+    try {
+      const goalData = {
+        ...formData,
+        employeeId: user?.employeeId || '',
+        description: formData.description || '',
+      };
+
+      if (selectedGoal) {
+        await updateGoalMutation.mutateAsync({ id: selectedGoal.id, data: goalData as GoalRequest });
+      } else {
+        await createGoalMutation.mutateAsync(goalData as GoalRequest);
+      }
+
+      setShowModal(false);
+      resetFormHandler();
+    } catch (error: unknown) {
+      console.error('Error saving goal:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedGoal) return;
+    try {
+      await deleteGoalMutation.mutateAsync(selectedGoal.id);
+      setShowDeleteConfirm(false);
+      setSelectedGoal(null);
+    } catch (error: unknown) {
+      console.error('Error deleting goal:', error);
+    }
+  };
+
+  const openEditModal = (goal: Goal) => {
+    setSelectedGoal(goal);
+    reset({
+      employeeId: goal.employeeId,
+      title: goal.title,
+      description: goal.description || '',
+      goalType: goal.goalType,
+      targetValue: goal.targetValue,
+      currentValue: goal.currentValue,
+      unit: goal.unit,
+      status: goal.status,
+      startDate: goal.startDate,
+      endDate: goal.endDate,
+    });
+    setShowModal(true);
+  };
+
+  const openDeleteConfirm = (goal: Goal) => {
+    setSelectedGoal(goal);
+    setShowDeleteConfirm(true);
+  };
+
+  const resetFormHandler = () => {
+    setSelectedGoal(null);
+    reset({
+      employeeId: '',
+      title: '',
+      description: '',
+      goalType: 'PERSONAL',
+      targetValue: 0,
+      currentValue: 0,
+      unit: '',
+      status: 'DRAFT',
+      startDate: '',
+      endDate: '',
     });
   };
 
@@ -192,7 +209,7 @@ export default function GoalsPage() {
           <h1 className="text-3xl font-bold">Goals</h1>
           <button
             onClick={() => {
-              resetForm();
+              resetFormHandler();
               setShowModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -251,7 +268,7 @@ export default function GoalsPage() {
             <div className="text-surface-600 dark:text-surface-400 mb-4">No goals found</div>
             <button
               onClick={() => {
-                resetForm();
+                resetFormHandler();
                 setShowModal(true);
               }}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -332,7 +349,7 @@ export default function GoalsPage() {
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedGoal ? 'Edit Goal' : 'Create Goal'}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -340,11 +357,12 @@ export default function GoalsPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        {...register('title')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.title && (
+                        <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -352,11 +370,13 @@ export default function GoalsPage() {
                         Description
                       </label>
                       <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={3}
+                        {...register('description')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.description && (
+                        <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -365,9 +385,7 @@ export default function GoalsPage() {
                           Goal Type *
                         </label>
                         <select
-                          required
-                          value={formData.goalType}
-                          onChange={(e) => setFormData({ ...formData, goalType: e.target.value as GoalType })}
+                          {...register('goalType')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="OKR">OKR</option>
@@ -377,6 +395,9 @@ export default function GoalsPage() {
                           <option value="DEPARTMENT">Department</option>
                           <option value="ORGANIZATION">Organization</option>
                         </select>
+                        {errors.goalType && (
+                          <p className="text-red-500 text-sm mt-1">{errors.goalType.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -384,9 +405,7 @@ export default function GoalsPage() {
                           Status *
                         </label>
                         <select
-                          required
-                          value={formData.status}
-                          onChange={(e) => setFormData({ ...formData, status: e.target.value as GoalStatus })}
+                          {...register('status')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="DRAFT">Draft</option>
@@ -396,6 +415,9 @@ export default function GoalsPage() {
                           <option value="CANCELLED">Cancelled</option>
                           <option value="ON_HOLD">On Hold</option>
                         </select>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -406,11 +428,12 @@ export default function GoalsPage() {
                         </label>
                         <input
                           type="number"
-                          required
-                          value={formData.targetValue}
-                          onChange={(e) => setFormData({ ...formData, targetValue: parseFloat(e.target.value) })}
+                          {...register('targetValue')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.targetValue && (
+                          <p className="text-red-500 text-sm mt-1">{errors.targetValue.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -419,11 +442,12 @@ export default function GoalsPage() {
                         </label>
                         <input
                           type="number"
-                          required
-                          value={formData.currentValue}
-                          onChange={(e) => setFormData({ ...formData, currentValue: parseFloat(e.target.value) })}
+                          {...register('currentValue')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.currentValue && (
+                          <p className="text-red-500 text-sm mt-1">{errors.currentValue.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -432,12 +456,13 @@ export default function GoalsPage() {
                         </label>
                         <input
                           type="text"
-                          required
-                          value={formData.unit}
-                          onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                           placeholder="e.g., tasks, %"
+                          {...register('unit')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.unit && (
+                          <p className="text-red-500 text-sm mt-1">{errors.unit.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -448,11 +473,12 @@ export default function GoalsPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.startDate}
-                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          {...register('startDate')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.startDate && (
+                          <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -461,11 +487,12 @@ export default function GoalsPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.endDate}
-                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          {...register('endDate')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.endDate && (
+                          <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -475,7 +502,7 @@ export default function GoalsPage() {
                       type="button"
                       onClick={() => {
                         setShowModal(false);
-                        resetForm();
+                        resetFormHandler();
                       }}
                       className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                     >
@@ -483,10 +510,10 @@ export default function GoalsPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSubmitting}
                       className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {loading ? 'Saving...' : selectedGoal ? 'Update' : 'Create'}
+                      {isSubmitting ? 'Saving...' : selectedGoal ? 'Update' : 'Create'}
                     </button>
                   </div>
                 </form>

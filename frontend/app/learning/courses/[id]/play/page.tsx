@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -19,7 +19,8 @@ import {
   X,
   Menu,
 } from 'lucide-react';
-import { lmsService, Course, CourseEnrollment, ModuleContent } from '@/lib/services/lms.service';
+import { Course, ModuleContent } from '@/lib/services/lms.service';
+import { useCourseDetail, useMyEnrollments, useUpdateCourseProgress } from '@/lib/hooks/queries/useLearning';
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -51,24 +52,28 @@ export default function CoursePlayerPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [course, setCourse] = useState<Course | null>(null);
-  const [enrollment, setEnrollment] = useState<CourseEnrollment | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
   const [contentStatus, setContentStatus] = useState<ContentState>({});
-  const [savingProgress, setSavingProgress] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoProgressRef = useRef<number>(0);
+
+  // Queries
+  const { data: course, isLoading } = useCourseDetail(id);
+  const { data: allEnrollments } = useMyEnrollments();
+  const updateProgressMutation = useUpdateCourseProgress();
+
+  // Find current enrollment
+  const enrollment = allEnrollments?.find(e => e.courseId === id) ?? null;
 
   // Flatten all contents across modules
   const allContents = course?.modules?.flatMap(m => m.contents ?? []) ?? [];
   const activeContent = allContents.find(c => c.id === activeContentId) ?? null;
   const activeContentIdx = allContents.findIndex(c => c.id === activeContentId);
+
   // Sanitize HTML content to prevent XSS (admin-authored but defense-in-depth)
   const sanitizedTextContent = useMemo(
     () => (activeContent?.textContent ? DOMPurify.sanitize(activeContent.textContent) : ''),
@@ -80,46 +85,15 @@ export default function CoursePlayerPage() {
   const completedCount = Object.values(contentStatus).filter(s => s === 'completed').length;
   const overallProgress = totalContents > 0 ? Math.round((completedCount / totalContents) * 100) : 0;
 
-  useEffect(() => {
-    loadCourse();
-  }, [id]);
-
-  async function loadCourse() {
-    try {
-      setLoading(true);
-      const [courseData, enrollments] = await Promise.all([
-        lmsService.getCourse(id),
-        lmsService.getMyEnrollments().catch(() => [] as CourseEnrollment[]),
-      ]);
-      setCourse(courseData);
-
-      const enroll = enrollments.find(e => e.courseId === id) ?? null;
-      setEnrollment(enroll);
-
-      // If not enrolled, enroll now
-      if (!enroll) {
-        let newEnroll: CourseEnrollment | null = null;
-        try {
-          newEnroll = await lmsService.enrollSelf(id);
-        } catch {
-          newEnroll = null;
-        }
-        setEnrollment(newEnroll);
-      }
-
-      // Set first content as active
-      const firstContent = courseData.modules?.[0]?.contents?.[0];
-      if (firstContent) {
-        setActiveContentId(firstContent.id);
-        setContentStatus(prev => ({
-          ...prev,
-          [firstContent.id]: 'in_progress',
-        }));
-      }
-    } catch (err) {
-      setError('Failed to load course. Please try again.');
-    } finally {
-      setLoading(false);
+  // Set first content as active when course loads
+  if (course && activeContentId === null) {
+    const firstContent = course.modules?.[0]?.contents?.[0];
+    if (firstContent) {
+      setActiveContentId(firstContent.id);
+      setContentStatus(prev => ({
+        ...prev,
+        [firstContent.id]: 'in_progress',
+      }));
     }
   }
 
@@ -128,20 +102,16 @@ export default function CoursePlayerPage() {
 
     // Update enrollment progress via API
     if (enrollment) {
-      setSavingProgress(true);
       const newCompleted = Object.values({ ...contentStatus, [contentId]: 'completed' }).filter(s => s === 'completed').length;
       const pct = totalContents > 0 ? Math.round((newCompleted / totalContents) * 100) : 0;
       try {
-        const updated = await lmsService.updateEnrollmentProgress(enrollment.id, pct);
-        setEnrollment(updated as any);
+        await updateProgressMutation.mutateAsync({ enrollmentId: enrollment.id, progressPercent: pct });
         if (pct === 100) setShowCompletion(true);
       } catch {
         // Progress save failed silently — local state still updated
-      } finally {
-        setSavingProgress(false);
       }
     }
-  }, [enrollment, contentStatus, totalContents]);
+  }, [enrollment, contentStatus, totalContents, updateProgressMutation]);
 
   const navigateTo = (contentId: string) => {
     setActiveContentId(contentId);
@@ -362,7 +332,7 @@ export default function CoursePlayerPage() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-surface-50">
         <div className="text-center">
@@ -410,7 +380,7 @@ export default function CoursePlayerPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          {savingProgress && (
+          {updateProgressMutation.isPending && (
             <span className="text-xs text-gray-400 animate-pulse">Saving...</span>
           )}
           {/* Progress bar */}

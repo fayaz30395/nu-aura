@@ -1,113 +1,111 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
-import { leaveService } from '@/lib/services/leave.service';
 import { LeaveRequest, LeaveRequestStatus, LeaveType } from '@/lib/types/leave';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  useActiveLeaveTypes,
+  useLeaveRequests,
+  useLeaveRequestsByStatus,
+  useApproveLeaveRequest,
+  useRejectLeaveRequest,
+} from '@/lib/hooks/queries/useLeaves';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
 export default function AdminLeaveRequestsPage() {
+  const toast = useToast();
   const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
 
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<LeaveRequestStatus | 'ALL'>('PENDING');
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [approvalComments, setApprovalComments] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    // Wait for auth store to hydrate before checking authentication
-    if (!hasHydrated || !isReady) return;
+  // React Query hooks
+  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const allRequests = useLeaveRequests(0, 100);
+  const statusRequests = useLeaveRequestsByStatus(selectedStatus as LeaveRequestStatus, 0, 100);
+  const approveMutation = useApproveLeaveRequest();
+  const rejectMutation = useRejectLeaveRequest();
 
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    } else {
-      if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-        router.push('/home');
-        return;
-      }
-      loadData();
-    }
-  }, [hasHydrated, isReady, isAuthenticated, selectedStatus, router, hasAnyRole]);
+  const requestsQuery = selectedStatus === 'ALL' ? allRequests : statusRequests;
+  const leaveRequests = requestsQuery.data?.content || [];
+  const loading = requestsQuery.isLoading;
+  const error = requestsQuery.error;
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // R2-008 FIX: return null immediately after router.push() so the component
+  // stops rendering and doesn't briefly expose privileged UI before navigation.
+  if (hasHydrated && isReady && isAuthenticated && !hasAnyRole(...ADMIN_ACCESS_ROLES)) {
+    router.push('/home');
+    return null;
+  }
 
-      const [types, requests] = await Promise.all([
-        leaveService.getActiveLeaveTypes(),
-        selectedStatus === 'ALL'
-          ? leaveService.getAllLeaveRequests(0, 100)
-          : leaveService.getLeaveRequestsByStatus(selectedStatus as LeaveRequestStatus, 0, 100)
-      ]);
+  if (hasHydrated && isReady && !isAuthenticated) {
+    router.push('/auth/login');
+    return null;
+  }
 
-      setLeaveTypes(types);
-      setLeaveRequests(Array.isArray(requests) ? requests : requests.content);
-    } catch (err: unknown) {
-      console.error('Error loading leave requests:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load leave requests');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApprove = async () => {
+  const handleApprove = () => {
     if (!selectedRequest || !user?.employeeId) return;
 
-    try {
-      setSubmitting(true);
-      await leaveService.approveLeaveRequest(
-        selectedRequest.id,
-        user.employeeId,
-        approvalComments
-      );
-      setShowApproveModal(false);
-      setApprovalComments('');
-      setSelectedRequest(null);
-      await loadData();
-    } catch (err: unknown) {
-      console.error('Error approving leave:', err);
-      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
-    } finally {
-      setSubmitting(false);
-    }
+    approveMutation.mutate(
+      {
+        id: selectedRequest.id,
+        approverId: user.employeeId,
+        comments: approvalComments,
+      },
+      {
+        onSuccess: () => {
+          setShowApproveModal(false);
+          setApprovalComments('');
+          setSelectedRequest(null);
+          toast.success('Leave request approved');
+        },
+        onError: (err: unknown) => {
+          toast.error(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to approve leave request'
+          );
+        },
+      }
+    );
   };
 
-  const handleReject = async () => {
+  const handleReject = () => {
     if (!selectedRequest || !user?.employeeId || !rejectionReason.trim()) {
-      alert('Rejection reason is required');
+      toast.warning('Rejection reason is required');
       return;
     }
 
-    try {
-      setSubmitting(true);
-      await leaveService.rejectLeaveRequest(
-        selectedRequest.id,
-        user.employeeId,
-        rejectionReason
-      );
-      setShowRejectModal(false);
-      setRejectionReason('');
-      setSelectedRequest(null);
-      await loadData();
-    } catch (err: unknown) {
-      console.error('Error rejecting leave:', err);
-      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
-    } finally {
-      setSubmitting(false);
-    }
+    rejectMutation.mutate(
+      {
+        id: selectedRequest.id,
+        approverId: user.employeeId,
+        reason: rejectionReason,
+      },
+      {
+        onSuccess: () => {
+          setShowRejectModal(false);
+          setRejectionReason('');
+          setSelectedRequest(null);
+          toast.success('Leave request rejected');
+        },
+        onError: (err: unknown) => {
+          toast.error(
+            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to reject leave request'
+          );
+        },
+      }
+    );
   };
 
   const getLeaveTypeName = (leaveTypeId: string) => {
@@ -156,7 +154,7 @@ export default function AdminLeaveRequestsPage() {
 
         {error && (
           <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded">
-            {error}
+            {error instanceof Error ? error.message : 'Failed to load leave requests'}
           </div>
         )}
 
@@ -304,16 +302,16 @@ export default function AdminLeaveRequestsPage() {
                   setApprovalComments('');
                 }}
                 className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
-                disabled={submitting}
+                disabled={approveMutation.isPending}
               >
                 Cancel
               </button>
               <button
                 onClick={handleApprove}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-                disabled={submitting}
+                disabled={approveMutation.isPending}
               >
-                {submitting ? 'Approving...' : 'Approve'}
+                {approveMutation.isPending ? 'Approving...' : 'Approve'}
               </button>
             </div>
           </div>
@@ -349,16 +347,16 @@ export default function AdminLeaveRequestsPage() {
                   setRejectionReason('');
                 }}
                 className="px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-800/50"
-                disabled={submitting}
+                disabled={rejectMutation.isPending}
               >
                 Cancel
               </button>
               <button
                 onClick={handleReject}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
-                disabled={submitting || !rejectionReason.trim()}
+                disabled={rejectMutation.isPending || !rejectionReason.trim()}
               >
-                {submitting ? 'Rejecting...' : 'Reject'}
+                {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
               </button>
             </div>
           </div>

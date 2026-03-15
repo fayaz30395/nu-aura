@@ -13,7 +13,7 @@ import com.hrms.common.security.WebhookScopes;
 import com.hrms.domain.webhook.Webhook;
 import com.hrms.domain.webhook.WebhookDelivery;
 import com.hrms.domain.webhook.WebhookStatus;
-import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;
+import com.hrms.infrastructure.webhook.repository.WebhookDeliveryRepository;  // kept for getDeliveries query
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -189,6 +189,9 @@ public class WebhookController {
 
     /**
      * Get delivery history for a webhook.
+     * BUG-016 FIX: The delivery query now uses a method that includes a tenantId
+     * filter (findByWebhookIdAndTenantIdOrderByCreatedAtDesc) instead of relying
+     * solely on the indirect webhook-existence check for tenant isolation.
      */
     @GetMapping("/{id}/deliveries")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
@@ -198,12 +201,16 @@ public class WebhookController {
             @PathVariable UUID id,
             Pageable pageable) {
 
-        // Verify webhook exists and belongs to tenant
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        // Verify webhook exists and belongs to this tenant
         webhookService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", id));
 
+        // BUG-016 FIX: Pass tenantId explicitly to the repository so the delivery
+        // query has its own tenant guard — not just the webhook ownership check above.
         Page<WebhookDeliveryResponse> deliveries = deliveryRepository
-                .findByWebhookIdOrderByCreatedAtDesc(id, pageable)
+                .findByWebhookIdAndTenantIdOrderByCreatedAtDesc(id, tenantId, pageable)
                 .map(WebhookDeliveryResponse::fromEntity);
 
         return ResponseEntity.ok(deliveries);
@@ -211,24 +218,16 @@ public class WebhookController {
 
     /**
      * Retry a failed delivery.
+     * BUG-008 FIX: All state mutation (status reset + save) now happens inside
+     * WebhookService#retryDelivery which is @Transactional, eliminating the race
+     * condition between the status-reset write and the webhook dispatcher.
      */
     @PostMapping("/deliveries/{deliveryId}/retry")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     @RequiresWebhookScope(WebhookScopes.WEBHOOK_DELIVERIES_RETRY)
     @Operation(summary = "Retry delivery", description = "Retry a failed webhook delivery")
     public ResponseEntity<WebhookDeliveryResponse> retryDelivery(@PathVariable UUID deliveryId) {
-        WebhookDelivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new ResourceNotFoundException("WebhookDelivery", "id", deliveryId));
-
-        // Verify webhook belongs to current tenant
-        webhookService.findById(delivery.getWebhookId())
-                .orElseThrow(() -> new ResourceNotFoundException("Webhook", "id", delivery.getWebhookId()));
-
-        // Reset for retry
-        delivery.setStatus(WebhookDelivery.DeliveryStatus.PENDING);
-        delivery.setNextRetryAt(null);
-        WebhookDelivery saved = deliveryRepository.save(delivery);
-
+        WebhookDelivery saved = webhookService.retryDelivery(deliveryId);
         log.info("Scheduled retry for delivery {}", deliveryId);
         return ResponseEntity.ok(WebhookDeliveryResponse.fromEntity(saved));
     }

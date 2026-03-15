@@ -13,10 +13,10 @@ import {
   useCreatePost,
   useDeletePost,
   usePinPost,
-  useAddReaction,
-  useRemoveReaction,
+  useAddWallReaction,
+  useRemoveWallReaction,
   useAddComment,
-  useDeleteComment,
+  useDeleteWallComment,
   useVote,
   useRemoveVote,
 } from '@/lib/hooks/queries/useWall';
@@ -109,10 +109,10 @@ export default function WallPage(): React.ReactElement {
   const createPost = useCreatePost();
   const deletePost = useDeletePost();
   const pinPost = usePinPost();
-  const addReaction = useAddReaction();
-  const removeReaction = useRemoveReaction();
+  const addReaction = useAddWallReaction();
+  const removeReaction = useRemoveWallReaction();
   const addComment = useAddComment();
-  const deleteComment = useDeleteComment();
+  const deleteComment = useDeleteWallComment();
   const vote = useVote();
   const removeVote = useRemoveVote();
 

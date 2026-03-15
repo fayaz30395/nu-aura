@@ -34,6 +34,7 @@ public class ExitManagementService {
 
     // ==================== Exit Process Operations ====================
 
+    @Transactional
     public ExitProcessResponse createExitProcess(ExitProcessRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit process for employee {} in tenant {}", request.getEmployeeId(), tenantId);
@@ -70,6 +71,7 @@ public class ExitManagementService {
         return mapToExitProcessResponse(savedProcess);
     }
 
+    @Transactional
     public ExitProcessResponse updateExitProcess(UUID processId, ExitProcessRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating exit process {} for tenant {}", processId, tenantId);
@@ -100,6 +102,7 @@ public class ExitManagementService {
         return mapToExitProcessResponse(updatedProcess);
     }
 
+    @Transactional
     public ExitProcessResponse updateExitStatus(UUID processId, ExitProcess.ExitStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating exit process {} status to {} for tenant {}", processId, status, tenantId);
@@ -146,6 +149,7 @@ public class ExitManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteExitProcess(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
@@ -155,6 +159,7 @@ public class ExitManagementService {
 
     // ==================== Exit Clearance Operations ====================
 
+    @Transactional
     public ExitClearanceResponse createExitClearance(ExitClearanceRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit clearance for process {} in tenant {}", request.getExitProcessId(), tenantId);
@@ -175,6 +180,7 @@ public class ExitManagementService {
         return mapToExitClearanceResponse(savedClearance);
     }
 
+    @Transactional
     public ExitClearanceResponse updateExitClearance(UUID clearanceId, ExitClearanceRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating exit clearance {} for tenant {}", clearanceId, tenantId);
@@ -209,6 +215,7 @@ public class ExitManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteExitClearance(UUID clearanceId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
@@ -298,6 +305,7 @@ public class ExitManagementService {
 
     // ==================== Full & Final Settlement Operations ====================
 
+    @Transactional
     public FullAndFinalSettlementResponse createSettlement(FullAndFinalSettlementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
@@ -340,6 +348,7 @@ public class ExitManagementService {
         return mapToSettlementResponse(saved);
     }
 
+    @Transactional
     public FullAndFinalSettlementResponse updateSettlement(UUID id, FullAndFinalSettlementRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
@@ -375,6 +384,7 @@ public class ExitManagementService {
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }
 
+    @Transactional
     public FullAndFinalSettlementResponse submitForApproval(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
@@ -384,6 +394,7 @@ public class ExitManagementService {
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }
 
+    @Transactional
     public FullAndFinalSettlementResponse approveSettlement(UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
@@ -396,6 +407,7 @@ public class ExitManagementService {
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }
 
+    @Transactional
     public FullAndFinalSettlementResponse processPayment(UUID id, FullAndFinalSettlement.PaymentMode paymentMode, String paymentReference) {
         UUID tenantId = TenantContext.getCurrentTenant();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
@@ -440,6 +452,7 @@ public class ExitManagementService {
 
     // ==================== Exit Interview Operations ====================
 
+    @Transactional
     public ExitInterviewResponse createExitInterview(ExitInterviewRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit interview for process {} in tenant {}", request.getExitProcessId(), tenantId);
@@ -559,6 +572,7 @@ public class ExitManagementService {
 
     // ==================== Asset Recovery Operations ====================
 
+    @Transactional
     public AssetRecoveryResponse createAssetRecovery(AssetRecoveryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating asset recovery for exit process {} in tenant {}", request.getExitProcessId(), tenantId);
@@ -605,6 +619,7 @@ public class ExitManagementService {
         return mapToAssetRecoveryResponse(assetRecoveryRepository.save(asset));
     }
 
+    @Transactional
     public AssetRecoveryResponse markAssetAsLost(UUID id, BigDecimal deductionAmount, String remarks) {
         UUID tenantId = TenantContext.getCurrentTenant();
         AssetRecovery asset = assetRecoveryRepository.findByIdAndTenantId(id, tenantId)

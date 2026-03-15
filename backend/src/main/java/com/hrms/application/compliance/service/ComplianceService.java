@@ -29,6 +29,7 @@ public class ComplianceService {
 
     // ==================== Policy Management ====================
 
+    @Transactional
     public CompliancePolicy createPolicy(CompliancePolicy policy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         policy.setTenantId(tenantId);
@@ -46,6 +47,7 @@ public class ComplianceService {
         return saved;
     }
 
+    @Transactional
     public CompliancePolicy updatePolicy(UUID policyId, CompliancePolicy updates) {
         UUID tenantId = TenantContext.getCurrentTenant();
         CompliancePolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
@@ -98,6 +100,7 @@ public class ComplianceService {
         return saved;
     }
 
+    @Transactional
     public CompliancePolicy createNewVersion(UUID policyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         CompliancePolicy existingPolicy = policyRepository.findByIdAndTenantId(policyId, tenantId)
@@ -207,6 +210,7 @@ public class ComplianceService {
 
     // ==================== Compliance Checklists ====================
 
+    @Transactional
     public ComplianceChecklist createChecklist(ComplianceChecklist checklist) {
         UUID tenantId = TenantContext.getCurrentTenant();
         checklist.setTenantId(tenantId);
@@ -218,6 +222,7 @@ public class ComplianceService {
         return saved;
     }
 
+    @Transactional
     public ComplianceChecklist updateChecklist(UUID checklistId, ComplianceChecklist updates) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ComplianceChecklist checklist = checklistRepository.findByIdAndTenantId(checklistId, tenantId)
@@ -360,6 +365,7 @@ public class ComplianceService {
 
     // ==================== Compliance Alerts ====================
 
+    @Transactional
     public ComplianceAlert createAlert(ComplianceAlert alert) {
         UUID tenantId = TenantContext.getCurrentTenant();
         alert.setTenantId(tenantId);
@@ -371,6 +377,7 @@ public class ComplianceService {
         return saved;
     }
 
+    @Transactional
     public ComplianceAlert updateAlertStatus(UUID alertId, ComplianceAlert.AlertStatus newStatus, String resolution) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ComplianceAlert alert = alertRepository.findByIdAndTenantId(alertId, tenantId)
@@ -389,6 +396,7 @@ public class ComplianceService {
         return saved;
     }
 
+    @Transactional
     public ComplianceAlert assignAlert(UUID alertId, UUID assigneeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ComplianceAlert alert = alertRepository.findByIdAndTenantId(alertId, tenantId)

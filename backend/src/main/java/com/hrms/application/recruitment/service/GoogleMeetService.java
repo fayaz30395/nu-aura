@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for creating Google Calendar events with Google Meet
@@ -41,6 +42,7 @@ public class GoogleMeetService {
      * @param location        Optional physical location
      * @return GoogleMeetResult containing the meet link and calendar event ID
      */
+    @Transactional
     public GoogleMeetResult createMeetEvent(
             String accessToken,
             String title,
@@ -132,6 +134,7 @@ public class GoogleMeetService {
     /**
      * Delete a Google Calendar event (e.g., when an interview is cancelled).
      */
+    @Transactional
     public boolean deleteCalendarEvent(String accessToken, String calendarEventId) {
         try {
             Calendar calendarService = buildCalendarService(accessToken);

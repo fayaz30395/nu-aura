@@ -33,6 +33,7 @@ public class ContractTemplateService {
     /**
      * Create a new template
      */
+    @Transactional
     public ContractTemplateDto createTemplate(CreateContractTemplateRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -54,6 +55,7 @@ public class ContractTemplateService {
     /**
      * Get template by ID
      */
+    @Transactional(readOnly = true)
     public ContractTemplateDto getTemplateById(UUID templateId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         ContractTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
@@ -64,6 +66,7 @@ public class ContractTemplateService {
     /**
      * Get all templates
      */
+    @Transactional(readOnly = true)
     public Page<ContractTemplateDto> getAllTemplates(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return templateRepository.findByTenantId(tenantId, pageable)
@@ -73,6 +76,7 @@ public class ContractTemplateService {
     /**
      * Get active templates
      */
+    @Transactional(readOnly = true)
     public Page<ContractTemplateDto> getActiveTemplates(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return templateRepository.findByTenantIdAndIsActive(tenantId, true, pageable)
@@ -82,6 +86,7 @@ public class ContractTemplateService {
     /**
      * Get templates by type
      */
+    @Transactional(readOnly = true)
     public List<ContractTemplateDto> getTemplatesByType(ContractType type) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return templateRepository.findByTenantIdAndType(tenantId, type)
@@ -93,6 +98,7 @@ public class ContractTemplateService {
     /**
      * Search templates
      */
+    @Transactional(readOnly = true)
     public Page<ContractTemplateDto> searchTemplates(String search, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return templateRepository.searchActiveTemplates(tenantId, search, pageable)
@@ -102,6 +108,7 @@ public class ContractTemplateService {
     /**
      * Update template
      */
+    @Transactional
     public ContractTemplateDto updateTemplate(UUID templateId, CreateContractTemplateRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         ContractTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)
@@ -118,6 +125,7 @@ public class ContractTemplateService {
     /**
      * Delete template
      */
+    @Transactional
     public void deleteTemplate(UUID templateId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         ContractTemplate template = templateRepository.findByIdAndTenantId(templateId, tenantId)

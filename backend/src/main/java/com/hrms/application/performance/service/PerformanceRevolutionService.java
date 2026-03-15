@@ -22,6 +22,7 @@ public class PerformanceRevolutionService {
 
     private final ObjectiveRepository objectiveRepository;
 
+    @Transactional(readOnly = true)
     public OKRGraphResponse getOKRGraph(UUID tenantId) {
         List<Objective> objectives = objectiveRepository.findAllByTenantId(tenantId);
 
@@ -49,6 +50,7 @@ public class PerformanceRevolutionService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public PerformanceSpiderResponse getPerformanceSpider(UUID employeeId, UUID tenantId) {
         List<SpiderData> metrics = new ArrayList<>();
         metrics.add(new SpiderData("Leadership", 80, 75, 85, 100));

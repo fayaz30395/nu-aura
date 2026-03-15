@@ -102,7 +102,7 @@ public class ComplianceController {
     @Operation(summary = "Acknowledge a policy")
     public ResponseEntity<PolicyAcknowledgment> acknowledgePolicy(
             @PathVariable UUID policyId,
-            @RequestBody Map<String, String> request) {
+            @Valid @RequestBody Map<String, String> request) {
         String signature = request.get("signature");
         String ipAddress = request.get("ipAddress");
         return ResponseEntity.ok(complianceService.acknowledgePolicy(policyId, signature, ipAddress));
@@ -233,7 +233,7 @@ public class ComplianceController {
     @Operation(summary = "Update alert status")
     public ResponseEntity<ComplianceAlert> updateAlertStatus(
             @PathVariable UUID id,
-            @RequestBody Map<String, String> request) {
+            @Valid @RequestBody Map<String, String> request) {
         ComplianceAlert.AlertStatus status = ComplianceAlert.AlertStatus.valueOf(request.get("status"));
         String resolution = request.get("resolution");
         return ResponseEntity.ok(complianceService.updateAlertStatus(id, status, resolution));
@@ -244,7 +244,7 @@ public class ComplianceController {
     @Operation(summary = "Assign an alert to a user")
     public ResponseEntity<ComplianceAlert> assignAlert(
             @PathVariable UUID id,
-            @RequestBody Map<String, UUID> request) {
+            @Valid @RequestBody Map<String, UUID> request) {
         return ResponseEntity.ok(complianceService.assignAlert(id, request.get("assigneeId")));
     }
 

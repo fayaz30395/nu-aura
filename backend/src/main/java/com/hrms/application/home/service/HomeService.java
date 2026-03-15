@@ -44,6 +44,7 @@ public class HomeService {
     /**
      * Get upcoming birthdays for the next N days (default 7 days)
      */
+    @Transactional(readOnly = true)
     public List<BirthdayResponse> getUpcomingBirthdays(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -96,6 +97,7 @@ public class HomeService {
     /**
      * Get upcoming work anniversaries for the next N days (default 7 days)
      */
+    @Transactional(readOnly = true)
     public List<WorkAnniversaryResponse> getUpcomingWorkAnniversaries(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -151,6 +153,7 @@ public class HomeService {
     /**
      * Get new joinees in the last N days (default 30 days)
      */
+    @Transactional(readOnly = true)
     public List<NewJoineeResponse> getNewJoinees(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -196,6 +199,7 @@ public class HomeService {
     /**
      * Get employees on leave today
      */
+    @Transactional(readOnly = true)
     public List<OnLeaveEmployeeResponse> getEmployeesOnLeaveToday() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -270,6 +274,7 @@ public class HomeService {
     /**
      * Get today's attendance status for an employee
      */
+    @Transactional(readOnly = true)
     public AttendanceTodayResponse getAttendanceToday(UUID employeeId) {
         // Handle null employeeId (SuperAdmin or users without employee record)
         if (employeeId == null) {
@@ -381,6 +386,7 @@ public class HomeService {
     /**
      * Get upcoming holidays for the next N days (default 30 days)
      */
+    @Transactional(readOnly = true)
     public List<UpcomingHolidayResponse> getUpcomingHolidays(int days) {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();

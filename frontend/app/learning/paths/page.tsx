@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 interface LearningPath {
   id: string;
@@ -33,36 +35,36 @@ interface LearningPath {
 }
 
 export default function LearningPathsPage() {
+  const toast = useToast();
   const router = useRouter();
 
-  const [paths, setPaths] = useState<LearningPath[]>([]);
-  const [filteredPaths, setFilteredPaths] = useState<LearningPath[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
-  const [enrolling, setEnrolling] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPaths();
-  }, []);
-
-  async function loadPaths() {
-    try {
-      setLoading(true);
-      // Simulate API call - replace with actual endpoint when available
+  // Query for learning paths
+  const { data: paths = [], isLoading, refetch } = useQuery({
+    queryKey: ['learning-paths'],
+    queryFn: async () => {
       const response = await apiClient.get<{ content: LearningPath[] }>('/lms/learning-paths');
-      setPaths(response.data.content || []);
-    } catch (err) {
-      console.error('Failed to load learning paths:', err);
-      // For now, show empty state
-      setPaths([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+      return response.data.content || [];
+    },
+  });
+
+  // Mutation for enrolling in paths
+  const enrollPathMutation = useMutation({
+    mutationFn: async (pathId: string) => {
+      await apiClient.post(`/lms/learning-paths/${pathId}/enroll`);
+    },
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (err: unknown) => {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in learning path');
+    },
+  });
 
   // Apply filters
-  useEffect(() => {
+  const filteredPaths = (() => {
     let filtered = paths;
 
     // Filter by difficulty
@@ -78,20 +80,14 @@ export default function LearningPathsPage() {
       );
     }
 
-    setFilteredPaths(filtered);
-  }, [paths, searchQuery, selectedDifficulty]);
+    return filtered;
+  })();
 
   const handleEnrollPath = async (pathId: string) => {
     try {
-      setEnrolling(pathId);
-      // Simulate API call to enroll in path
-      await apiClient.post(`/lms/learning-paths/${pathId}/enroll`);
-      // Refresh paths
-      await loadPaths();
-    } catch (err: unknown) {
-      alert((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll in learning path');
-    } finally {
-      setEnrolling(null);
+      await enrollPathMutation.mutateAsync(pathId);
+    } catch {
+      // Error handled by mutation
     }
   };
 
@@ -158,7 +154,7 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Content */}
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3" />
@@ -261,10 +257,10 @@ export default function LearningPathsPage() {
                   ) : (
                     <button
                       onClick={() => handleEnrollPath(path.id)}
-                      disabled={enrolling === path.id}
+                      disabled={enrollPathMutation.isPending}
                       className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
                     >
-                      {enrolling === path.id ? (
+                      {enrollPathMutation.isPending ? (
                         <>
                           <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
                           Enrolling...

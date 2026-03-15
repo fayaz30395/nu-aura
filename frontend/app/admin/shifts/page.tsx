@@ -2,43 +2,82 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { shiftsApi } from '@/lib/api/shifts';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Shift, CreateShiftRequest } from '@/lib/types/shifts';
 import { Clock, Plus, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {
+  useShiftsList,
+  useCreateNewShift,
+  useUpdateShiftDetails,
+  useRemoveShift,
+} from '@/lib/hooks/queries/useShifts';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
+
+const shiftFormSchema = z.object({
+  shiftCode: z.string().min(1, 'Shift code required'),
+  shiftName: z.string().min(1, 'Shift name required'),
+  description: z.string().optional().or(z.literal('')),
+  startTime: z.string().min(1, 'Start time required'),
+  endTime: z.string().min(1, 'End time required'),
+  gracePeriodInMinutes: z.number({ coerce: true }).min(0).default(15),
+  lateMarkAfterMinutes: z.number({ coerce: true }).min(0).default(30),
+  halfDayAfterMinutes: z.number({ coerce: true }).min(0).default(240),
+  fullDayHours: z.number({ coerce: true }).min(0).default(8),
+  breakDurationMinutes: z.number({ coerce: true }).min(0).default(60),
+  isNightShift: z.boolean().default(false),
+  workingDays: z.string().default('MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY'),
+  isActive: z.boolean().default(true),
+  shiftType: z.string().default('REGULAR'),
+  colorCode: z.string().default('#3B82F6'),
+  allowsOvertime: z.boolean().default(true),
+  overtimeMultiplier: z.number({ coerce: true }).min(1).default(1.5),
+});
+
+type ShiftFormData = z.infer<typeof shiftFormSchema>;
 
 export default function ShiftsManagementPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [shifts, setShifts] = useState<Shift[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<CreateShiftRequest>({
-    shiftCode: '',
-    shiftName: '',
-    description: '',
-    startTime: '09:00:00',
-    endTime: '18:00:00',
-    gracePeriodInMinutes: 15,
-    lateMarkAfterMinutes: 30,
-    halfDayAfterMinutes: 240,
-    fullDayHours: 8,
-    breakDurationMinutes: 60,
-    isNightShift: false,
-    workingDays: 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY',
-    isActive: true,
-    shiftType: 'REGULAR',
-    colorCode: '#3B82F6',
-    allowsOvertime: true,
-    overtimeMultiplier: 1.5,
+  // Query hook
+  const shiftsQuery = useShiftsList(0, 100);
+
+  // Mutation hooks
+  const createShiftMutation = useCreateNewShift();
+  const updateShiftMutation = useUpdateShiftDetails(editingShift?.id || '');
+  const deleteShiftMutation = useRemoveShift();
+
+  // Form hook
+  const form = useForm<ShiftFormData>({
+    resolver: zodResolver(shiftFormSchema),
+    defaultValues: {
+      shiftCode: '',
+      shiftName: '',
+      description: '',
+      startTime: '09:00',
+      endTime: '18:00',
+      gracePeriodInMinutes: 15,
+      lateMarkAfterMinutes: 30,
+      halfDayAfterMinutes: 240,
+      fullDayHours: 8,
+      breakDurationMinutes: 60,
+      isNightShift: false,
+      workingDays: 'MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY',
+      isActive: true,
+      shiftType: 'REGULAR',
+      colorCode: '#3B82F6',
+      allowsOvertime: true,
+      overtimeMultiplier: 1.5,
+    },
   });
 
   useEffect(() => {
@@ -53,55 +92,58 @@ export default function ShiftsManagementPage() {
       router.push('/me/dashboard');
       return;
     }
-
-    loadShifts();
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
-  const loadShifts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await shiftsApi.getAllShifts({ page: 0, size: 100 });
-      setShifts(response.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load shifts');
-      console.error('Error loading shifts:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const shifts: Shift[] = (shiftsQuery.data?.content ?? []) as Shift[];
+  const isLoading = shiftsQuery.isLoading;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (data: ShiftFormData) => {
     try {
-      setSubmitting(true);
       setError(null);
+
+      const submitData: CreateShiftRequest = {
+        shiftCode: data.shiftCode,
+        shiftName: data.shiftName,
+        description: data.description || '',
+        startTime: data.startTime + ':00',
+        endTime: data.endTime + ':00',
+        gracePeriodInMinutes: data.gracePeriodInMinutes,
+        lateMarkAfterMinutes: data.lateMarkAfterMinutes,
+        halfDayAfterMinutes: data.halfDayAfterMinutes,
+        fullDayHours: data.fullDayHours,
+        breakDurationMinutes: data.breakDurationMinutes,
+        isNightShift: data.isNightShift,
+        workingDays: data.workingDays,
+        isActive: data.isActive,
+        shiftType: data.shiftType,
+        colorCode: data.colorCode,
+        allowsOvertime: data.allowsOvertime,
+        overtimeMultiplier: data.overtimeMultiplier,
+      };
 
       if (editingShift) {
-        await shiftsApi.updateShift(editingShift.id, formData);
+        await updateShiftMutation.mutateAsync(submitData);
       } else {
-        await shiftsApi.createShift(formData);
+        await createShiftMutation.mutateAsync(submitData);
       }
 
-      await loadShifts();
       resetForm();
       setShowModal(false);
       setEditingShift(null);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingShift ? 'update' : 'create'} shift`);
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingShift ? 'update' : 'create'} shift`;
+      setError(message);
       console.error('Error saving shift:', err);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({
+    form.reset({
       shiftCode: '',
       shiftName: '',
       description: '',
-      startTime: '09:00:00',
-      endTime: '18:00:00',
+      startTime: '09:00',
+      endTime: '18:00',
       gracePeriodInMinutes: 15,
       lateMarkAfterMinutes: 30,
       halfDayAfterMinutes: 240,
@@ -119,12 +161,12 @@ export default function ShiftsManagementPage() {
 
   const handleEdit = (shift: Shift) => {
     setEditingShift(shift);
-    setFormData({
+    form.reset({
       shiftCode: shift.shiftCode,
       shiftName: shift.shiftName,
       description: shift.description || '',
-      startTime: shift.startTime,
-      endTime: shift.endTime,
+      startTime: formatTime(shift.startTime),
+      endTime: formatTime(shift.endTime),
       gracePeriodInMinutes: shift.gracePeriodInMinutes || 0,
       lateMarkAfterMinutes: shift.lateMarkAfterMinutes || 0,
       halfDayAfterMinutes: shift.halfDayAfterMinutes || 0,
@@ -146,10 +188,10 @@ export default function ShiftsManagementPage() {
 
     try {
       setError(null);
-      await shiftsApi.deleteShift(id);
-      await loadShifts();
+      await deleteShiftMutation.mutateAsync(id);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete shift');
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete shift';
+      setError(message);
       console.error('Error deleting shift:', err);
     }
   };
@@ -157,10 +199,10 @@ export default function ShiftsManagementPage() {
   const handleToggleActive = async (shift: Shift) => {
     try {
       setError(null);
-      await shiftsApi.updateShift(shift.id, { isActive: !shift.isActive });
-      await loadShifts();
+      await updateShiftMutation.mutateAsync({ isActive: !shift.isActive });
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update shift status');
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update shift status';
+      setError(message);
       console.error('Error toggling shift status:', err);
     }
   };
@@ -212,7 +254,7 @@ export default function ShiftsManagementPage() {
 
           {/* Shifts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
+            {isLoading ? (
               <div className="col-span-full flex justify-center items-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
               </div>
@@ -335,7 +377,7 @@ export default function ShiftsManagementPage() {
                     </button>
                   </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                     {/* Basic Information */}
                     <div className="border-b border-surface-200 dark:border-surface-700 pb-4">
                       <h3 className="text-lg font-medium text-surface-900 dark:text-white mb-4">Basic Information</h3>
@@ -346,12 +388,13 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="text"
-                            required
-                            value={formData.shiftCode}
-                            onChange={(e) => setFormData({ ...formData, shiftCode: e.target.value })}
+                            {...form.register('shiftCode')}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                             placeholder="DS, NS, GS"
                           />
+                          {form.formState.errors.shiftCode && (
+                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.shiftCode.message}</p>
+                          )}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
@@ -359,12 +402,13 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="text"
-                            required
-                            value={formData.shiftName}
-                            onChange={(e) => setFormData({ ...formData, shiftName: e.target.value })}
+                            {...form.register('shiftName')}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                             placeholder="Day Shift, Night Shift"
                           />
+                          {form.formState.errors.shiftName && (
+                            <p className="mt-1 text-xs text-red-500">{form.formState.errors.shiftName.message}</p>
+                          )}
                         </div>
                       </div>
 
@@ -374,8 +418,7 @@ export default function ShiftsManagementPage() {
                             Shift Type
                           </label>
                           <select
-                            value={formData.shiftType}
-                            onChange={(e) => setFormData({ ...formData, shiftType: e.target.value })}
+                            {...form.register('shiftType')}
                             className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                           >
                             <option value="REGULAR">Regular</option>
@@ -389,8 +432,7 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="color"
-                            value={formData.colorCode}
-                            onChange={(e) => setFormData({ ...formData, colorCode: e.target.value })}
+                            {...form.register('colorCode')}
                             className="w-full h-10 px-2 py-1 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700"
                           />
                         </div>
@@ -401,8 +443,7 @@ export default function ShiftsManagementPage() {
                           Description
                         </label>
                         <textarea
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          {...form.register('description')}
                           rows={2}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                           placeholder="Brief description of this shift..."
@@ -420,9 +461,7 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="time"
-                            required
-                            value={formatTime(formData.startTime)}
-                            onChange={(e) => setFormData({ ...formData, startTime: e.target.value + ':00' })}
+                            {...form.register('startTime')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -432,9 +471,7 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="time"
-                            required
-                            value={formatTime(formData.endTime)}
-                            onChange={(e) => setFormData({ ...formData, endTime: e.target.value + ':00' })}
+                            {...form.register('endTime')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -445,10 +482,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="number"
                             min="0"
-                            value={formData.breakDurationMinutes}
-                            onChange={(e) =>
-                              setFormData({ ...formData, breakDurationMinutes: parseInt(e.target.value) || 0 })
-                            }
+                            {...form.register('breakDurationMinutes')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -463,8 +497,7 @@ export default function ShiftsManagementPage() {
                             type="number"
                             step="0.5"
                             min="0"
-                            value={formData.fullDayHours}
-                            onChange={(e) => setFormData({ ...formData, fullDayHours: parseFloat(e.target.value) || 8 })}
+                            {...form.register('fullDayHours')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -474,8 +507,7 @@ export default function ShiftsManagementPage() {
                           </label>
                           <input
                             type="text"
-                            value={formData.workingDays}
-                            onChange={(e) => setFormData({ ...formData, workingDays: e.target.value })}
+                            {...form.register('workingDays')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                             placeholder="MONDAY,TUESDAY,WEDNESDAY"
                           />
@@ -494,10 +526,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="number"
                             min="0"
-                            value={formData.gracePeriodInMinutes}
-                            onChange={(e) =>
-                              setFormData({ ...formData, gracePeriodInMinutes: parseInt(e.target.value) || 0 })
-                            }
+                            {...form.register('gracePeriodInMinutes')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -508,10 +537,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="number"
                             min="0"
-                            value={formData.lateMarkAfterMinutes}
-                            onChange={(e) =>
-                              setFormData({ ...formData, lateMarkAfterMinutes: parseInt(e.target.value) || 0 })
-                            }
+                            {...form.register('lateMarkAfterMinutes')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -522,10 +548,7 @@ export default function ShiftsManagementPage() {
                           <input
                             type="number"
                             min="0"
-                            value={formData.halfDayAfterMinutes}
-                            onChange={(e) =>
-                              setFormData({ ...formData, halfDayAfterMinutes: parseInt(e.target.value) || 0 })
-                            }
+                            {...form.register('halfDayAfterMinutes')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                           />
                         </div>
@@ -540,8 +563,7 @@ export default function ShiftsManagementPage() {
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={formData.isNightShift}
-                              onChange={(e) => setFormData({ ...formData, isNightShift: e.target.checked })}
+                              {...form.register('isNightShift')}
                               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                             />
                             <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Night Shift</span>
@@ -550,8 +572,7 @@ export default function ShiftsManagementPage() {
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={formData.allowsOvertime}
-                              onChange={(e) => setFormData({ ...formData, allowsOvertime: e.target.checked })}
+                              {...form.register('allowsOvertime')}
                               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                             />
                             <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Allows Overtime</span>
@@ -560,8 +581,7 @@ export default function ShiftsManagementPage() {
                           <label className="flex items-center cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={formData.isActive}
-                              onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                              {...form.register('isActive')}
                               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
                             />
                             <span className="ml-2 text-sm text-surface-700 dark:text-surface-300">Active</span>
@@ -576,12 +596,9 @@ export default function ShiftsManagementPage() {
                             type="number"
                             step="0.1"
                             min="1"
-                            value={formData.overtimeMultiplier}
-                            onChange={(e) =>
-                              setFormData({ ...formData, overtimeMultiplier: parseFloat(e.target.value) || 1.5 })
-                            }
+                            {...form.register('overtimeMultiplier')}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-surface-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
-                            disabled={!formData.allowsOvertime}
+                            disabled={!form.watch('allowsOvertime')}
                           />
                         </div>
                       </div>
@@ -602,10 +619,10 @@ export default function ShiftsManagementPage() {
                       </button>
                       <button
                         type="submit"
-                        disabled={submitting}
+                        disabled={form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending}
                         className="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 disabled:opacity-50"
                       >
-                        {submitting ? 'Saving...' : editingShift ? 'Update' : 'Create'} Shift
+                        {(form.formState.isSubmitting || createShiftMutation.isPending || updateShiftMutation.isPending) ? 'Saving...' : editingShift ? 'Update' : 'Create'} Shift
                       </button>
                     </div>
                   </form>

@@ -46,6 +46,7 @@ public class OvertimeManagementService {
     private final EmployeeRepository employeeRepository;
     private final ShiftRepository shiftRepository;
 
+    @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating overtime record for employee: {}", request.getEmployeeId());
@@ -94,6 +95,7 @@ public class OvertimeManagementService {
         return mapToResponse(record);
     }
 
+    @Transactional
     public OvertimeRecordResponse approveOrRejectOvertime(UUID recordId, UUID approverId,
             OvertimeApprovalRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -153,6 +155,7 @@ public class OvertimeManagementService {
         return records.map(this::mapToResponse);
     }
 
+    @Transactional
     public void deleteOvertimeRecord(UUID recordId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
@@ -168,6 +171,7 @@ public class OvertimeManagementService {
 
     // ==================== COMP TIME MANAGEMENT ====================
 
+    @Transactional(readOnly = true)
     public CompTimeBalance getCompTimeBalance(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         int fiscalYear = java.time.LocalDate.now().getYear();
@@ -175,6 +179,7 @@ public class OvertimeManagementService {
                 .orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public BigDecimal getTotalCompTimeBalance(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         BigDecimal total = compTimeBalanceRepository.getTotalBalance(tenantId, employeeId);

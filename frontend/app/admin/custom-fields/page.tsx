@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { customFieldsApi } from '@/lib/api/custom-fields';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   CustomFieldDefinition,
   CustomFieldDefinitionRequest,
@@ -15,6 +17,14 @@ import {
 } from '@/lib/types/custom-fields';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { usePermissions, Roles } from '@/lib/hooks/usePermissions';
+import {
+  useCustomFieldDefinitions,
+  useCreateCustomFieldDefinition,
+  useUpdateCustomFieldDefinition,
+  useDeleteCustomFieldDefinition,
+  useActivateCustomFieldDefinition,
+  useDeactivateCustomFieldDefinition,
+} from '@/lib/hooks/queries/useCustomFields';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -22,38 +32,80 @@ const ENTITY_TYPES: EntityType[] = ['EMPLOYEE', 'DEPARTMENT', 'PROJECT', 'LEAVE_
 const FIELD_TYPES: FieldType[] = ['TEXT', 'TEXTAREA', 'NUMBER', 'DATE', 'DATETIME', 'DROPDOWN', 'MULTI_SELECT', 'CHECKBOX', 'EMAIL', 'PHONE', 'URL', 'FILE', 'CURRENCY', 'PERCENTAGE'];
 const VISIBILITIES: FieldVisibility[] = ['ALL', 'SELF', 'MANAGER', 'HR', 'ADMIN_HR', 'ADMIN_ONLY'];
 
-const initialFormData: CustomFieldDefinitionRequest = {
-  fieldCode: '',
-  fieldName: '',
-  description: '',
-  entityType: 'EMPLOYEE',
-  fieldType: 'TEXT',
-  fieldGroup: '',
-  displayOrder: 0,
-  isRequired: false,
-  isSearchable: false,
-  showInList: false,
-  defaultValue: '',
-  placeholder: '',
-  options: [],
-  viewVisibility: 'ALL',
-  editVisibility: 'ADMIN_HR',
-};
+const customFieldSchema = z.object({
+  fieldCode: z.string().min(1, 'Field code required'),
+  fieldName: z.string().min(1, 'Display name required'),
+  description: z.string().optional().or(z.literal('')),
+  entityType: z.string().min(1, 'Entity type required'),
+  fieldType: z.string().min(1, 'Field type required'),
+  fieldGroup: z.string().optional().or(z.literal('')),
+  displayOrder: z.number({ coerce: true }).int().min(0).default(0),
+  isRequired: z.boolean().default(false),
+  isSearchable: z.boolean().default(false),
+  showInList: z.boolean().default(false),
+  defaultValue: z.string().optional().or(z.literal('')),
+  placeholder: z.string().optional().or(z.literal('')),
+  viewVisibility: z.string().default('ALL'),
+  editVisibility: z.string().default('ADMIN_HR'),
+  optionsText: z.string().optional().or(z.literal('')),
+});
+
+type CustomFieldFormData = z.infer<typeof customFieldSchema> & { optionsText: string };
 
 export default function CustomFieldsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
   const { hasAnyRole, isReady } = usePermissions();
-  const [definitions, setDefinitions] = useState<CustomFieldDefinition[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedDefinition, setSelectedDefinition] = useState<CustomFieldDefinition | null>(null);
-  const [formData, setFormData] = useState<CustomFieldDefinitionRequest>(initialFormData);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterEntityType, setFilterEntityType] = useState<EntityType | 'ALL'>('ALL');
-  const [optionsText, setOptionsText] = useState('');
-  const [error, setError] = useState<string | null>(null);
+
+  // Query hook
+  const definitionsQuery = useCustomFieldDefinitions(0, 100);
+
+  // Mutation hooks
+  const createMutation = useCreateCustomFieldDefinition();
+  const updateMutation = useUpdateCustomFieldDefinition('');
+  const deleteMutation = useDeleteCustomFieldDefinition();
+  const activateMutation = useActivateCustomFieldDefinition();
+  const deactivateMutation = useDeactivateCustomFieldDefinition();
+
+  // Form state
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<CustomFieldFormData>({
+    resolver: zodResolver(customFieldSchema),
+    defaultValues: {
+      fieldCode: '',
+      fieldName: '',
+      description: '',
+      entityType: 'EMPLOYEE',
+      fieldType: 'TEXT',
+      fieldGroup: '',
+      displayOrder: 0,
+      isRequired: false,
+      isSearchable: false,
+      showInList: false,
+      defaultValue: '',
+      placeholder: '',
+      viewVisibility: 'ALL',
+      editVisibility: 'ADMIN_HR',
+      optionsText: '',
+    },
+  });
+
+  // Local UI state
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  const [selectedDefinition, setSelectedDefinition] = React.useState<CustomFieldDefinition | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [filterEntityType, setFilterEntityType] = React.useState<EntityType | 'ALL'>('ALL');
+  const [error, setError] = React.useState<string | null>(null);
+
+  const fieldType = watch('fieldType');
+  const optionsText = watch('optionsText');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -67,68 +119,54 @@ export default function CustomFieldsPage() {
       router.push('/me/dashboard');
       return;
     }
-
-    loadDefinitions();
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 
-  const loadDefinitions = async () => {
-    try {
-      setLoading(true);
-      const response = await customFieldsApi.getAllDefinitions(0, 100);
-      setDefinitions(response.content);
-    } catch (err) {
-      console.error('Failed to load custom field definitions:', err);
-      setError('Failed to load custom fields. Please check if you are logged in.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const definitions = definitionsQuery.data?.content || [];
+  const isLoading = definitionsQuery.isLoading;
 
-  const handleCreateField = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: CustomFieldFormData) => {
     try {
       setError(null);
-      const request = {
-        ...formData,
-        options: optionsText ? optionsText.split('\n').map(o => o.trim()).filter(o => o) : undefined,
+      const request: CustomFieldDefinitionRequest = {
+        fieldCode: data.fieldCode,
+        fieldName: data.fieldName,
+        description: data.description || '',
+        entityType: data.entityType as EntityType,
+        fieldType: data.fieldType as FieldType,
+        fieldGroup: data.fieldGroup || '',
+        displayOrder: data.displayOrder,
+        isRequired: data.isRequired,
+        isSearchable: data.isSearchable,
+        showInList: data.showInList,
+        defaultValue: data.defaultValue || '',
+        placeholder: data.placeholder || '',
+        options: data.optionsText ? data.optionsText.split('\n').map(o => o.trim()).filter(o => o) : [],
+        viewVisibility: data.viewVisibility as FieldVisibility,
+        editVisibility: data.editVisibility as FieldVisibility,
       };
-      await customFieldsApi.createDefinition(request);
+
+      if (selectedDefinition) {
+        const updateMutationForId = useUpdateCustomFieldDefinition(selectedDefinition.id);
+        await updateMutationForId.mutateAsync(request);
+      } else {
+        await createMutation.mutateAsync(request);
+      }
+
+      reset();
       setShowCreateModal(false);
-      setFormData(initialFormData);
-      setOptionsText('');
-      loadDefinitions();
-    } catch (err: unknown) {
-      console.error('Failed to create custom field:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to create custom field');
-    }
-  };
-
-  const handleUpdateField = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedDefinition) return;
-    try {
-      setError(null);
-      const request = {
-        ...formData,
-        options: optionsText ? optionsText.split('\n').map(o => o.trim()).filter(o => o) : undefined,
-      };
-      await customFieldsApi.updateDefinition(selectedDefinition.id, request);
       setShowEditModal(false);
       setSelectedDefinition(null);
-      setFormData(initialFormData);
-      setOptionsText('');
-      loadDefinitions();
     } catch (err: unknown) {
-      console.error('Failed to update custom field:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update custom field');
+      console.error('Failed to save custom field:', err);
+      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save custom field';
+      setError(message);
     }
   };
 
   const handleDeleteField = async (id: string) => {
     if (!confirm('Are you sure you want to delete this custom field? All associated values will be deleted.')) return;
     try {
-      await customFieldsApi.deleteDefinition(id);
-      loadDefinitions();
+      await deleteMutation.mutateAsync(id);
     } catch (err) {
       console.error('Failed to delete custom field:', err);
       setError('Failed to delete custom field');
@@ -138,11 +176,10 @@ export default function CustomFieldsPage() {
   const handleToggleActive = async (definition: CustomFieldDefinition) => {
     try {
       if (definition.isActive) {
-        await customFieldsApi.deactivateDefinition(definition.id);
+        await deactivateMutation.mutateAsync(definition.id);
       } else {
-        await customFieldsApi.activateDefinition(definition.id);
+        await activateMutation.mutateAsync(definition.id);
       }
-      loadDefinitions();
     } catch (err) {
       console.error('Failed to toggle field status:', err);
     }
@@ -150,7 +187,7 @@ export default function CustomFieldsPage() {
 
   const openEditModal = (definition: CustomFieldDefinition) => {
     setSelectedDefinition(definition);
-    setFormData({
+    reset({
       fieldCode: definition.fieldCode,
       fieldName: definition.fieldName,
       description: definition.description || '',
@@ -163,11 +200,10 @@ export default function CustomFieldsPage() {
       showInList: definition.showInList,
       defaultValue: definition.defaultValue || '',
       placeholder: definition.placeholder || '',
-      options: definition.options || [],
       viewVisibility: definition.viewVisibility,
       editVisibility: definition.editVisibility,
+      optionsText: definition.options?.join('\n') || '',
     });
-    setOptionsText(definition.options?.join('\n') || '');
     setShowEditModal(true);
   };
 
@@ -179,9 +215,9 @@ export default function CustomFieldsPage() {
     return matchesSearch && matchesEntityType;
   });
 
-  const showOptionsField = formData.fieldType === 'DROPDOWN' || formData.fieldType === 'MULTI_SELECT';
+  const showOptionsField = fieldType === 'DROPDOWN' || fieldType === 'MULTI_SELECT';
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <div className="flex items-center justify-center p-8">
@@ -234,8 +270,8 @@ export default function CustomFieldsPage() {
           </div>
           <button
             onClick={() => {
-              setFormData(initialFormData);
-              setOptionsText('');
+              reset();
+              setSelectedDefinition(null);
               setShowCreateModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
@@ -340,7 +376,7 @@ export default function CustomFieldsPage() {
               <h2 className="text-xl font-bold mb-4 text-surface-900 dark:text-surface-100">
                 {showCreateModal ? 'Create Custom Field' : 'Edit Custom Field'}
               </h2>
-              <form onSubmit={showCreateModal ? handleCreateField : handleUpdateField}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -348,15 +384,12 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.fieldCode}
-                      onChange={(e) =>
-                        setFormData({ ...formData, fieldCode: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '_') })
-                      }
+                      {...register('fieldCode')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., blood_group"
-                      required
                       disabled={showEditModal}
                     />
+                    {errors.fieldCode && <p className="text-red-500 text-sm mt-1">{errors.fieldCode.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -364,12 +397,11 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.fieldName}
-                      onChange={(e) => setFormData({ ...formData, fieldName: e.target.value })}
+                      {...register('fieldName')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Blood Group"
-                      required
                     />
+                    {errors.fieldName && <p className="text-red-500 text-sm mt-1">{errors.fieldName.message}</p>}
                   </div>
                 </div>
 
@@ -378,12 +410,12 @@ export default function CustomFieldsPage() {
                     Description
                   </label>
                   <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    {...register('description')}
                     className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
                     placeholder="Optional description..."
                   />
+                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -391,35 +423,47 @@ export default function CustomFieldsPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       Entity Type *
                     </label>
-                    <select
-                      value={formData.entityType}
-                      onChange={(e) => setFormData({ ...formData, entityType: e.target.value as EntityType })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled={showEditModal}
-                    >
-                      {ENTITY_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {ENTITY_TYPE_INFO[type].label}
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="entityType"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          disabled={showEditModal}
+                        >
+                          {ENTITY_TYPES.map((type) => (
+                            <option key={type} value={type}>
+                              {ENTITY_TYPE_INFO[type].label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.entityType && <p className="text-red-500 text-sm mt-1">{errors.entityType.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       Field Type *
                     </label>
-                    <select
-                      value={formData.fieldType}
-                      onChange={(e) => setFormData({ ...formData, fieldType: e.target.value as FieldType })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled={showEditModal}
-                    >
-                      {FIELD_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {FIELD_TYPE_INFO[type].label} - {FIELD_TYPE_INFO[type].description}
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="fieldType"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          disabled={showEditModal}
+                        >
+                          {FIELD_TYPES.map((type) => (
+                            <option key={type} value={type}>
+                              {FIELD_TYPE_INFO[type].label} - {FIELD_TYPE_INFO[type].description}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.fieldType && <p className="text-red-500 text-sm mt-1">{errors.fieldType.message}</p>}
                   </div>
                 </div>
 
@@ -430,11 +474,11 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.fieldGroup}
-                      onChange={(e) => setFormData({ ...formData, fieldGroup: e.target.value })}
+                      {...register('fieldGroup')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Personal, Emergency Contact"
                     />
+                    {errors.fieldGroup && <p className="text-red-500 text-sm mt-1">{errors.fieldGroup.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -442,10 +486,10 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="number"
-                      value={formData.displayOrder}
-                      onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                      {...register('displayOrder')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                    {errors.displayOrder && <p className="text-red-500 text-sm mt-1">{errors.displayOrder.message}</p>}
                   </div>
                 </div>
 
@@ -455,12 +499,12 @@ export default function CustomFieldsPage() {
                       Options (one per line)
                     </label>
                     <textarea
-                      value={optionsText}
-                      onChange={(e) => setOptionsText(e.target.value)}
+                      {...register('optionsText')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       rows={4}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
                     />
+                    {errors.optionsText && <p className="text-red-500 text-sm mt-1">{errors.optionsText.message}</p>}
                   </div>
                 )}
 
@@ -471,11 +515,11 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.placeholder}
-                      onChange={(e) => setFormData({ ...formData, placeholder: e.target.value })}
+                      {...register('placeholder')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Placeholder text..."
                     />
+                    {errors.placeholder && <p className="text-red-500 text-sm mt-1">{errors.placeholder.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -483,10 +527,10 @@ export default function CustomFieldsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.defaultValue}
-                      onChange={(e) => setFormData({ ...formData, defaultValue: e.target.value })}
+                      {...register('defaultValue')}
                       className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                    {errors.defaultValue && <p className="text-red-500 text-sm mt-1">{errors.defaultValue.message}</p>}
                   </div>
                 </div>
 
@@ -495,75 +539,104 @@ export default function CustomFieldsPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       View Visibility
                     </label>
-                    <select
-                      value={formData.viewVisibility}
-                      onChange={(e) => setFormData({ ...formData, viewVisibility: e.target.value as FieldVisibility })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      {VISIBILITIES.map((v) => (
-                        <option key={v} value={v}>
-                          {VISIBILITY_INFO[v].label}
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="viewVisibility"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          {VISIBILITIES.map((v) => (
+                            <option key={v} value={v}>
+                              {VISIBILITY_INFO[v].label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.viewVisibility && <p className="text-red-500 text-sm mt-1">{errors.viewVisibility.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                       Edit Visibility
                     </label>
-                    <select
-                      value={formData.editVisibility}
-                      onChange={(e) => setFormData({ ...formData, editVisibility: e.target.value as FieldVisibility })}
-                      className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      {VISIBILITIES.map((v) => (
-                        <option key={v} value={v}>
-                          {VISIBILITY_INFO[v].label}
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="editVisibility"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-700 text-surface-900 dark:text-surface-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          {VISIBILITIES.map((v) => (
+                            <option key={v} value={v}>
+                              {VISIBILITY_INFO[v].label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.editVisibility && <p className="text-red-500 text-sm mt-1">{errors.editVisibility.message}</p>}
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-6 mb-6">
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.isRequired}
-                      onChange={(e) => setFormData({ ...formData, isRequired: e.target.checked })}
-                      className="rounded text-primary-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Required</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.isSearchable}
-                      onChange={(e) => setFormData({ ...formData, isSearchable: e.target.checked })}
-                      className="rounded text-primary-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Searchable</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.showInList}
-                      onChange={(e) => setFormData({ ...formData, showInList: e.target.checked })}
-                      className="rounded text-primary-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-surface-700 dark:text-surface-300">Show in List View</span>
-                  </label>
+                  <Controller
+                    name="isRequired"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={value}
+                          onChange={(e) => onChange(e.target.checked)}
+                          className="rounded text-primary-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-surface-700 dark:text-surface-300">Required</span>
+                      </label>
+                    )}
+                  />
+                  <Controller
+                    name="isSearchable"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={value}
+                          onChange={(e) => onChange(e.target.checked)}
+                          className="rounded text-primary-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-surface-700 dark:text-surface-300">Searchable</span>
+                      </label>
+                    )}
+                  />
+                  <Controller
+                    name="showInList"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={value}
+                          onChange={(e) => onChange(e.target.checked)}
+                          className="rounded text-primary-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-surface-700 dark:text-surface-300">Show in List View</span>
+                      </label>
+                    )}
+                  />
                 </div>
 
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => {
+                      reset();
                       setShowCreateModal(false);
                       setShowEditModal(false);
                       setSelectedDefinition(null);
-                      setFormData(initialFormData);
-                      setOptionsText('');
                     }}
                     className="px-4 py-2 text-surface-700 dark:text-surface-300 bg-surface-200 dark:bg-surface-800 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
                   >
@@ -571,9 +644,10 @@ export default function CustomFieldsPage() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                    disabled={isSubmitting || createMutation.isPending}
+                    className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                   >
-                    {showCreateModal ? 'Create Field' : 'Update Field'}
+                    {isSubmitting || createMutation.isPending ? 'Saving...' : (showCreateModal ? 'Create Field' : 'Update Field')}
                   </button>
                 </div>
               </form>

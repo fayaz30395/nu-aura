@@ -3,7 +3,9 @@ package com.hrms.application.leave.service;
 import com.hrms.common.config.CacheConfig;
 import com.hrms.common.security.TenantContext;
 import com.hrms.domain.leave.LeaveBalance;
+import com.hrms.domain.leave.LeaveType;
 import com.hrms.infrastructure.leave.repository.LeaveBalanceRepository;
+import com.hrms.infrastructure.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,17 +23,54 @@ import java.util.UUID;
 public class LeaveBalanceService {
 
     private final LeaveBalanceRepository leaveBalanceRepository;
+    // R2-007 FIX: Inject LeaveTypeRepository to seed openingBalance from annualQuota
+    private final LeaveTypeRepository leaveTypeRepository;
 
+    /**
+     * Get or create a leave balance for the given employee / leave-type / year.
+     *
+     * <p>R2-007 FIX: The previous implementation had two related bugs:
+     * <ol>
+     *   <li>{@code @Transactional(readOnly = true)} on a method that calls
+     *       {@code leaveBalanceRepository.save()} — the save was silently
+     *       ignored (Hibernate dirty-check disabled in a read-only transaction),
+     *       so newly-created balances were never persisted.</li>
+     *   <li>The builder always started {@code openingBalance = ZERO}, meaning
+     *       employees began a new leave year with zero opening balance instead
+     *       of the entitlement defined on the {@link LeaveType}.</li>
+     * </ol>
+     * Both are fixed: the method is now a full read-write {@code @Transactional},
+     * and {@code openingBalance} is seeded from {@link LeaveType#getAnnualQuota()}
+     * when the accrual type is {@code YEARLY} (direct grant) or when no accrual
+     * type is configured (legacy data). Monthly/quarterly types accrue over time
+     * so their opening balance stays zero.</p>
+     */
+    @Transactional
     public LeaveBalance getOrCreateBalance(UUID employeeId, UUID leaveTypeId, Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        
+
         return leaveBalanceRepository
             .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(employeeId, leaveTypeId, year, tenantId)
             .orElseGet(() -> {
+                // R2-007 FIX: Seed openingBalance from LeaveType.annualQuota for
+                // yearly / no-accrual types so employees start the year with their
+                // full entitlement already visible.
+                BigDecimal opening = BigDecimal.ZERO;
+                LeaveType leaveType = leaveTypeRepository.findById(leaveTypeId).orElse(null);
+                if (leaveType != null && leaveType.getAnnualQuota() != null) {
+                    LeaveType.AccrualType accrualType = leaveType.getAccrualType();
+                    if (accrualType == null
+                            || accrualType == LeaveType.AccrualType.NONE
+                            || accrualType == LeaveType.AccrualType.YEARLY) {
+                        opening = leaveType.getAnnualQuota();
+                    }
+                }
+
                 LeaveBalance balance = LeaveBalance.builder()
                     .employeeId(employeeId)
                     .leaveTypeId(leaveTypeId)
                     .year(year)
+                    .openingBalance(opening)
                     .build();
                 balance.setTenantId(tenantId);
                 balance.calculateAvailable();

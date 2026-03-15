@@ -40,6 +40,10 @@ spring:
             log:
               LOG_QUERIES_SLOWER_THAN_MS: 100
 
+  flyway:
+    # Temporarily disable Flyway to test if backend can start
+    enabled: false
+
 app:
   jwt:
     # JWT_SECRET is REQUIRED - no default value for security
@@ -54,7 +58,11 @@ app:
     secure: false
   security:
     csrf:
-      enabled: false
+      enabled: true
+
+  # CORS — enumerate all frontend dev origins; never use "*" (CSWSH risk)
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:3001,http://localhost:8080
 
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}

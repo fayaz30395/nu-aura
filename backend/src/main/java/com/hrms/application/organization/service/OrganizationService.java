@@ -32,6 +32,7 @@ public class OrganizationService {
 
     // ==================== Organization Unit Operations ====================
 
+    @Transactional
     public OrganizationUnit createUnit(OrganizationUnit unit) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -83,6 +84,7 @@ public class OrganizationService {
 
     // ==================== Position Operations ====================
 
+    @Transactional
     public Position createPosition(Position position) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -123,6 +125,7 @@ public class OrganizationService {
 
     // ==================== Succession Plan Operations ====================
 
+    @Transactional
     public SuccessionPlan createSuccessionPlan(SuccessionPlan plan) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -166,6 +169,7 @@ public class OrganizationService {
 
     // ==================== Succession Candidate Operations ====================
 
+    @Transactional
     public SuccessionCandidate addCandidate(UUID planId, SuccessionCandidate candidate) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -190,6 +194,7 @@ public class OrganizationService {
         return candidateRepository.findReadyNowCandidates(planId);
     }
 
+    @Transactional
     public void removeCandidate(UUID planId, UUID candidateId) {
         candidateRepository.deleteBySuccessionPlanIdAndCandidateId(planId, candidateId);
         log.info("Succession candidate removed: {} from plan: {}", candidateId, planId);
@@ -197,6 +202,7 @@ public class OrganizationService {
 
     // ==================== Talent Pool Operations ====================
 
+    @Transactional
     public TalentPool createTalentPool(TalentPool pool) {
         UUID tenantId = TenantContext.getCurrentTenant();
         pool.setTenantId(tenantId);
@@ -218,6 +224,7 @@ public class OrganizationService {
         return poolRepository.findByTenantIdAndIsActiveTrue(tenantId);
     }
 
+    @Transactional
     public TalentPoolMember addToPool(UUID poolId, UUID employeeId, UUID addedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -245,6 +252,7 @@ public class OrganizationService {
         return saved;
     }
 
+    @Transactional
     public void removeFromPool(UUID poolId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

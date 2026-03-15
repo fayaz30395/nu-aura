@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationsApi } from '@/lib/api/notifications';
 import type { Notification, PagedNotificationResponse } from '@/lib/types/notifications';
 
+import type { NotificationPreferences } from '@/lib/types/notifications';
+
 // Query keys for cache management
 export const notificationKeys = {
   all: ['notifications'] as const,
@@ -13,6 +15,7 @@ export const notificationKeys = {
   unreadCount: () => [...notificationKeys.all, 'unreadCount'] as const,
   recent: (hours: number) => [...notificationKeys.all, 'recent', hours] as const,
   detail: (id: string) => [...notificationKeys.all, 'detail', id] as const,
+  preferences: () => [...notificationKeys.all, 'preferences'] as const,
 };
 
 /**
@@ -81,6 +84,34 @@ export function useMarkAllNotificationsAsRead() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.unread() });
       queryClient.invalidateQueries({ queryKey: notificationKeys.unreadCount() });
+    },
+  });
+}
+
+/**
+ * Hook to fetch notification preferences.
+ */
+export function useNotificationPreferences(enabled: boolean = true) {
+  return useQuery<NotificationPreferences>({
+    queryKey: notificationKeys.preferences(),
+    queryFn: () => notificationsApi.getPreferences(),
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+/**
+ * Mutation to update notification preferences.
+ * Invalidates preferences query on success.
+ */
+export function useUpdateNotificationPreferences() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (preferences: Partial<NotificationPreferences>) =>
+      notificationsApi.updatePreferences(preferences),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.preferences() });
     },
   });
 }

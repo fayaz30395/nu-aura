@@ -109,7 +109,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse> completeMeeting(
             @PathVariable UUID meetingId,
-            @RequestBody(required = false) Map<String, String> body) {
+            @Valid @RequestBody(required = false) Map<String, String> body) {
         String summary = body != null ? body.get("summary") : null;
         OneOnOneMeeting meeting = meetingService.completeMeeting(meetingId, summary);
         return ResponseEntity.ok(buildResponse(meeting));
@@ -119,7 +119,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse> cancelMeeting(
             @PathVariable UUID meetingId,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         UUID userId = SecurityContext.getCurrentEmployeeId();
         String reason = body.get("reason");
         OneOnOneMeeting meeting = meetingService.cancelMeeting(meetingId, userId, reason);
@@ -130,7 +130,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse> rescheduleMeeting(
             @PathVariable UUID meetingId,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         LocalDate newDate = LocalDate.parse(body.get("date"));
         LocalTime newTime = LocalTime.parse(body.get("time"));
         OneOnOneMeeting meeting = meetingService.rescheduleMeeting(meetingId, newDate, newTime);
@@ -143,7 +143,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_VIEW)
     public ResponseEntity<OneOnOneMeetingResponse> updateNotes(
             @PathVariable UUID meetingId,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         UUID userId = SecurityContext.getCurrentEmployeeId();
         OneOnOneMeeting meeting = meetingService.getMeetingById(meetingId)
                 .orElseThrow(() -> new RuntimeException("Meeting not found"));
@@ -160,7 +160,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_VIEW)
     public ResponseEntity<OneOnOneMeetingResponse> submitFeedback(
             @PathVariable UUID meetingId,
-            @RequestBody Map<String, Object> body) {
+            @Valid @RequestBody Map<String, Object> body) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         Integer rating = (Integer) body.get("rating");
         String feedback = (String) body.get("feedback");
@@ -201,7 +201,7 @@ public class OneOnOneMeetingController {
     public ResponseEntity<OneOnOneMeetingResponse.AgendaItemResponse> markAgendaItemDiscussed(
             @PathVariable UUID meetingId,
             @PathVariable UUID itemId,
-            @RequestBody(required = false) Map<String, String> body) {
+            @Valid @RequestBody(required = false) Map<String, String> body) {
         String notes = body != null ? body.get("notes") : null;
         MeetingAgendaItem item = meetingService.markAgendaItemDiscussed(itemId, notes);
         return ResponseEntity.ok(toAgendaResponse(item));
@@ -222,7 +222,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse.ActionItemResponse> createActionItem(
             @PathVariable UUID meetingId,
-            @RequestBody Map<String, Object> body) {
+            @Valid @RequestBody Map<String, Object> body) {
         String title = (String) body.get("title");
         String description = (String) body.get("description");
         UUID assigneeId = UUID.fromString((String) body.get("assigneeId"));
@@ -266,7 +266,7 @@ public class OneOnOneMeetingController {
     @RequiresPermission(Permission.MEETING_VIEW)
     public ResponseEntity<OneOnOneMeetingResponse.ActionItemResponse> updateActionItemStatus(
             @PathVariable UUID actionId,
-            @RequestBody Map<String, String> body) {
+            @Valid @RequestBody Map<String, String> body) {
         MeetingActionItem.ActionStatus status = MeetingActionItem.ActionStatus.valueOf(body.get("status"));
         String notes = body.get("notes");
         MeetingActionItem action = meetingService.updateActionItemStatus(actionId, status, notes);

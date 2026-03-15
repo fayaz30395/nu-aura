@@ -1,126 +1,142 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Building2, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, Users, MapPin, Search, X } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { departmentService } from '@/lib/services/department.service';
-import { employeeService } from '@/lib/services/employee.service';
 import { Department, DepartmentRequest, Employee, DepartmentType } from '@/lib/types/employee';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
+import {
+  useAllDepartments,
+  useCreateDepartment,
+  useUpdateDepartment,
+  useActivateDepartment,
+  useDeactivateDepartment,
+  useDeleteDepartment,
+} from '@/lib/hooks/queries/useDepartments';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
+
+const departmentSchema = z.object({
+  code: z.string().min(1, 'Code required').max(50),
+  name: z.string().min(1, 'Name required').max(100),
+  description: z.string().optional().or(z.literal('')),
+  parentDepartmentId: z.string().optional().or(z.literal('')),
+  managerId: z.string().optional().or(z.literal('')),
+  location: z.string().optional().or(z.literal('')),
+  costCenter: z.string().optional().or(z.literal('')),
+  type: z.string().optional().or(z.literal('')),
+  isActive: z.boolean().default(true),
+});
+
+type DepartmentFormData = z.infer<typeof departmentSchema>;
 
 export default function DepartmentsPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const toast = useToast();
 
-  const [formData, setFormData] = useState<DepartmentRequest>({
-    code: '',
-    name: '',
-    description: '',
-    parentDepartmentId: undefined,
-    managerId: '',
-    isActive: true,
-    location: '',
-    costCenter: '',
-    type: undefined,
+  // Form state
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<DepartmentFormData>({
+    resolver: zodResolver(departmentSchema),
+    defaultValues: {
+      code: '',
+      name: '',
+      description: '',
+      parentDepartmentId: '',
+      managerId: '',
+      location: '',
+      costCenter: '',
+      type: '',
+      isActive: true,
+    },
   });
+
+  // Local UI state
+  const [showAddModal, setShowAddModal] = React.useState(false);
+  const [editingDepartment, setEditingDepartment] = React.useState<Department | null>(null);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [error, setError] = React.useState<string | null>(null);
+
+  // React Query hooks
+  const { data: deptData, isLoading } = useAllDepartments(0, 100);
+  const { data: empData } = useEmployees(0, 500);
+  const createMutation = useCreateDepartment();
+  const updateMutation = useUpdateDepartment();
+  const activateMutation = useActivateDepartment();
+  const deactivateMutation = useDeactivateDepartment();
+  const deleteMutation = useDeleteDepartment();
+
+  const departments = deptData?.content || [];
+  const employees = empData?.content || [];
+  const loading = isLoading;
 
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
-    } else {
-      loadData();
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [deptResponse, empResponse] = await Promise.all([
-        departmentService.getAllDepartments(0, 100),
-        employeeService.getAllEmployees(0, 500),
-      ]);
-      setDepartments(deptResponse.content);
-      setEmployees(empResponse.content);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load departments');
-      console.error('Error loading departments:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: DepartmentFormData) => {
     try {
       setError(null);
 
       const submitData: DepartmentRequest = {
-        code: formData.code,
-        name: formData.name,
-        description: formData.description || undefined,
-        parentDepartmentId: formData.parentDepartmentId || undefined,
-        managerId: formData.managerId || undefined,
-        isActive: formData.isActive,
-        location: formData.location || undefined,
-        costCenter: formData.costCenter || undefined,
-        type: formData.type || undefined,
+        code: data.code,
+        name: data.name,
+        description: data.description || undefined,
+        parentDepartmentId: data.parentDepartmentId || undefined,
+        managerId: data.managerId || undefined,
+        isActive: data.isActive,
+        location: data.location || undefined,
+        costCenter: data.costCenter || undefined,
+        type: (data.type || undefined) as DepartmentType | undefined,
       };
 
       if (editingDepartment) {
-        await departmentService.updateDepartment(editingDepartment.id, submitData);
+        await updateMutation.mutateAsync({ id: editingDepartment.id, data: submitData });
+        toast.success('Department Updated', 'The department has been updated successfully.');
       } else {
-        await departmentService.createDepartment(submitData);
+        await createMutation.mutateAsync(submitData);
+        toast.success('Department Created', 'The department has been created successfully.');
       }
 
-      await loadData();
-      resetForm();
+      reset();
       setShowAddModal(false);
       setEditingDepartment(null);
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`);
+      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`;
+      setError(errorMsg);
+      toast.error('Error', errorMsg);
       console.error('Error saving department:', err);
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      code: '',
-      name: '',
-      description: '',
-      parentDepartmentId: undefined,
-      managerId: '',
-      isActive: true,
-      location: '',
-      costCenter: '',
-      type: undefined,
-    });
-  };
-
   const handleEdit = (department: Department) => {
     setEditingDepartment(department);
-    setFormData({
+    reset({
       code: department.code,
       name: department.name,
       description: department.description || '',
-      parentDepartmentId: department.parentDepartmentId,
+      parentDepartmentId: department.parentDepartmentId || '',
       managerId: department.managerId || '',
       isActive: department.isActive,
       location: department.location || '',
       costCenter: department.costCenter || '',
-      type: department.type,
+      type: department.type || '',
     });
     setShowAddModal(true);
   };
@@ -130,10 +146,12 @@ export default function DepartmentsPage() {
 
     try {
       setError(null);
-      await departmentService.deleteDepartment(id);
-      await loadData();
+      await deleteMutation.mutateAsync(id);
+      toast.success('Department Deleted', 'The department has been deleted successfully.');
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department');
+      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete department';
+      setError(errorMsg);
+      toast.error('Error', errorMsg);
       console.error('Error deleting department:', err);
     }
   };
@@ -142,13 +160,16 @@ export default function DepartmentsPage() {
     try {
       setError(null);
       if (department.isActive) {
-        await departmentService.deactivateDepartment(department.id);
+        await deactivateMutation.mutateAsync(department.id);
+        toast.success('Department Deactivated', 'The department has been deactivated.');
       } else {
-        await departmentService.activateDepartment(department.id);
+        await activateMutation.mutateAsync(department.id);
+        toast.success('Department Activated', 'The department has been activated.');
       }
-      await loadData();
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status');
+      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to update department status';
+      setError(errorMsg);
+      toast.error('Error', errorMsg);
       console.error('Error toggling department status:', err);
     }
   };
@@ -182,7 +203,7 @@ export default function DepartmentsPage() {
             variant="primary"
             leftIcon={<Plus className="h-4 w-4" />}
             onClick={() => {
-              resetForm();
+              reset();
               setEditingDepartment(null);
               setShowAddModal(true);
             }}
@@ -414,7 +435,7 @@ export default function DepartmentsPage() {
                     onClick={() => {
                       setShowAddModal(false);
                       setEditingDepartment(null);
-                      resetForm();
+                      reset();
                     }}
                     className="p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                   >
@@ -423,7 +444,7 @@ export default function DepartmentsPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
@@ -431,12 +452,11 @@ export default function DepartmentsPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={formData.code}
-                      onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                      {...register('code')}
                       className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
                     />
+                    {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
@@ -444,12 +464,11 @@ export default function DepartmentsPage() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      {...register('name')}
                       className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Engineering"
                     />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                   </div>
                 </div>
 
@@ -458,12 +477,12 @@ export default function DepartmentsPage() {
                     Description
                   </label>
                   <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    {...register('description')}
                     rows={3}
                     className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                     placeholder="Department description..."
                   />
+                  {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -471,35 +490,47 @@ export default function DepartmentsPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
                       Department Type
                     </label>
-                    <select
-                      value={formData.type || ''}
-                      onChange={(e) => setFormData({ ...formData, type: e.target.value as DepartmentType })}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">Select Type</option>
-                      {departmentTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="type"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        >
+                          <option value="">Select Type</option>
+                          {departmentTypes.map(type => (
+                            <option key={type} value={type}>{type}</option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
                       Parent Department
                     </label>
-                    <select
-                      value={formData.parentDepartmentId || ''}
-                      onChange={(e) => setFormData({ ...formData, parentDepartmentId: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">None (Root Department)</option>
-                      {departments
-                        .filter(d => !editingDepartment || d.id !== editingDepartment.id)
-                        .map((dept) => (
-                          <option key={dept.id} value={dept.id}>
-                            {dept.name} ({dept.code})
-                          </option>
-                        ))}
-                    </select>
+                    <Controller
+                      name="parentDepartmentId"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        >
+                          <option value="">None (Root Department)</option>
+                          {departments
+                            .filter(d => !editingDepartment || d.id !== editingDepartment.id)
+                            .map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.name} ({dept.code})
+                              </option>
+                            ))}
+                        </select>
+                      )}
+                    />
+                    {errors.parentDepartmentId && <p className="text-red-500 text-sm mt-1">{errors.parentDepartmentId.message}</p>}
                   </div>
                 </div>
 
@@ -508,18 +539,24 @@ export default function DepartmentsPage() {
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
                       Department Manager
                     </label>
-                    <select
-                      value={formData.managerId || ''}
-                      onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="">Select Manager</option>
-                      {employees.map((emp) => (
-                        <option key={emp.id} value={emp.id}>
-                          {emp.fullName} ({emp.employeeCode})
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="managerId"
+                      control={control}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        >
+                          <option value="">Select Manager</option>
+                          {employees.map((emp) => (
+                            <option key={emp.id} value={emp.id}>
+                              {emp.fullName} ({emp.employeeCode})
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {errors.managerId && <p className="text-red-500 text-sm mt-1">{errors.managerId.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
@@ -527,11 +564,11 @@ export default function DepartmentsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      {...register('location')}
                       className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
                     />
+                    {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location.message}</p>}
                   </div>
                 </div>
 
@@ -542,22 +579,28 @@ export default function DepartmentsPage() {
                     </label>
                     <input
                       type="text"
-                      value={formData.costCenter}
-                      onChange={(e) => setFormData({ ...formData, costCenter: e.target.value })}
+                      {...register('costCenter')}
                       className="w-full px-4 py-2.5 border border-surface-200 dark:border-surface-700 rounded-xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="CC-1001"
                     />
+                    {errors.costCenter && <p className="text-red-500 text-sm mt-1">{errors.costCenter.message}</p>}
                   </div>
                   <div className="flex items-end">
-                    <label className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors">
-                      <input
-                        type="checkbox"
-                        checked={formData.isActive}
-                        onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                        className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
-                      />
-                      <span className="ml-3 text-sm font-medium text-surface-700 dark:text-surface-300">Active Department</span>
-                    </label>
+                    <Controller
+                      name="isActive"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <label className="flex items-center cursor-pointer p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={value}
+                            onChange={(e) => onChange(e.target.checked)}
+                            className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-surface-300 dark:border-surface-600 rounded"
+                          />
+                          <span className="ml-3 text-sm font-medium text-surface-700 dark:text-surface-300">Active Department</span>
+                        </label>
+                      )}
+                    />
                   </div>
                 </div>
 
@@ -568,13 +611,17 @@ export default function DepartmentsPage() {
                     onClick={() => {
                       setShowAddModal(false);
                       setEditingDepartment(null);
-                      resetForm();
+                      reset();
                     }}
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" variant="primary">
-                    {editingDepartment ? 'Update' : 'Create'} Department
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
+                  >
+                    {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingDepartment ? 'Update' : 'Create')} Department
                   </Button>
                 </div>
               </form>

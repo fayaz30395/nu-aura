@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Award,
   Plus,
@@ -31,9 +31,16 @@ import {
   Badge,
   Textarea,
 } from '@/components/ui';
-import { recognitionService } from '@/lib/services/recognition.service';
-import type { Recognition, RecognitionRequest, EmployeePoints } from '@/lib/types/recognition';
+import type { Recognition, RecognitionRequest } from '@/lib/types/recognition';
 import { RecognitionType, RecognitionCategory } from '@/lib/types/recognition';
+import {
+  usePublicFeed,
+  useMyReceivedRecognitions,
+  useMyGivenRecognitions,
+  useLeaderboard,
+  useMyPoints,
+  useGiveRecognition,
+} from '@/lib/hooks/queries/useRecognition';
 
 const recognitionTypeOptions = [
   { value: RecognitionType.KUDOS, label: 'Kudos', icon: ThumbsUp },
@@ -93,11 +100,15 @@ const getTypeColor = (type: RecognitionType) => {
 };
 
 export default function RecognitionPage() {
-  const [recognitions, setRecognitions] = useState<Recognition[]>([]);
-  const [leaderboard, setLeaderboard] = useState<EmployeePoints[]>([]);
-  const [myPoints, setMyPoints] = useState<EmployeePoints | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'feed' | 'received' | 'given'>('feed');
+
+  // Query hooks
+  const feedQuery = usePublicFeed();
+  const receivedQuery = useMyReceivedRecognitions();
+  const givenQuery = useMyGivenRecognitions();
+  const leaderboardQuery = useLeaderboard(5);
+  const myPointsQuery = useMyPoints();
+  const giveRecognitionMutation = useGiveRecognition();
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -114,43 +125,23 @@ export default function RecognitionPage() {
     isAnonymous: false,
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      let recognitionResponse;
-
-      switch (activeTab) {
-        case 'received':
-          recognitionResponse = await recognitionService.getMyReceivedRecognitions();
-          break;
-        case 'given':
-          recognitionResponse = await recognitionService.getMyGivenRecognitions();
-          break;
-        default:
-          recognitionResponse = await recognitionService.getPublicFeed();
-      }
-
-      setRecognitions(recognitionResponse.content || []);
-
-      // Fetch leaderboard and points
-      const [leaderboardData, pointsData] = await Promise.all([
-        recognitionService.getLeaderboard(5),
-        recognitionService.getMyPoints().catch(() => null as EmployeePoints | null),
-      ]);
-
-      setLeaderboard(leaderboardData);
-      setMyPoints(pointsData);
-    } catch (error) {
-      console.error('Error fetching recognition data:', error);
-      setRecognitions([]);
-    } finally {
-      setLoading(false);
+  // Get the active query based on tab
+  const getActiveQuery = () => {
+    switch (activeTab) {
+      case 'received':
+        return receivedQuery;
+      case 'given':
+        return givenQuery;
+      default:
+        return feedQuery;
     }
   };
+
+  const activeQuery = getActiveQuery();
+  const recognitions = activeQuery.data?.content || [];
+  const isLoading = activeQuery.isLoading;
+  const leaderboard = leaderboardQuery.data || [];
+  const myPoints = myPointsQuery.data || null;
 
   const handleGiveRecognition = () => {
     setFormData({
@@ -166,14 +157,12 @@ export default function RecognitionPage() {
     setIsModalOpen(true);
   };
 
-  const handleSubmitRecognition = async () => {
-    try {
-      await recognitionService.giveRecognition(formData as RecognitionRequest);
-      setIsModalOpen(false);
-      fetchData();
-    } catch (error) {
-      console.error('Error giving recognition:', error);
-    }
+  const handleSubmitRecognition = () => {
+    giveRecognitionMutation.mutate(formData as RecognitionRequest, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+      },
+    });
   };
 
   // Stats
@@ -293,7 +282,7 @@ export default function RecognitionPage() {
             </div>
 
             {/* Recognition Feed */}
-            {loading ? (
+            {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
               </div>

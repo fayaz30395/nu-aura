@@ -1,17 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
 import { Users, AlertTriangle, RefreshCw, Search, Download, Info } from 'lucide-react';
 import {
-  resourceManagementService,
   ResourceManagementApiError,
 } from '@/lib/services/resource-management.service';
 import {
   EmployeeWorkload,
   AllocationStatus,
-  WorkloadDashboardData,
 } from '@/lib/types/resource-management';
+import { useWorkloadDashboard } from '@/lib/hooks/queries/useResources';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -46,34 +45,14 @@ function AllocationBar({ value }: { value: number }) {
 type StatusFilter = AllocationStatus | 'ALL';
 
 export default function ResourcePoolPage() {
-  const [data, setData] = useState<WorkloadDashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isApiUnavailable, setIsApiUnavailable] = useState(false);
-
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [deptFilter, setDeptFilter] = useState('ALL');
 
-  const load = async () => {
-    setLoading(true);
-    setError(null);
-    setIsApiUnavailable(false);
-    try {
-      const result = await resourceManagementService.getWorkloadDashboard({});
-      setData(result);
-    } catch (err) {
-      if (err instanceof ResourceManagementApiError && err.isApiNotAvailable) {
-        setIsApiUnavailable(true);
-      } else {
-        setError(err instanceof Error ? err.message : 'Failed to load resource pool');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isLoading, error, refetch } = useWorkloadDashboard({});
 
-  useEffect(() => { load(); }, []);
+  const isApiUnavailable = (error instanceof Error &&
+    (error as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
 
   // Extract employees list
   const employees: EmployeeWorkload[] = data?.employeeWorkloads || [];
@@ -135,9 +114,9 @@ export default function ResourcePoolPage() {
           </div>
           <h2 className="text-lg font-semibold text-surface-800 mb-2">Resource Management API Not Available</h2>
           <p className="text-surface-500 text-sm max-w-md">
-            The backend Resource Management module is not yet deployed in this environment.
+            {error instanceof Error ? error.message : 'The backend Resource Management module is not yet deployed in this environment.'}
           </p>
-          <button onClick={load} className="mt-4 flex items-center gap-2 px-4 py-2 border border-surface-300 rounded-lg text-sm font-medium text-surface-700 hover:bg-surface-50 transition-colors">
+          <button onClick={() => refetch()} className="mt-4 flex items-center gap-2 px-4 py-2 border border-surface-300 rounded-lg text-sm font-medium text-surface-700 hover:bg-surface-50 transition-colors">
             <RefreshCw size={14} /> Retry
           </button>
         </div>
@@ -164,11 +143,11 @@ export default function ResourcePoolPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={load}
-              disabled={loading}
+              onClick={() => refetch()}
+              disabled={isLoading}
               className="flex items-center gap-2 px-3 py-2 border border-surface-300 rounded-lg text-sm font-medium text-surface-700 hover:bg-surface-50 disabled:opacity-50 transition-colors"
             >
-              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
               Refresh
             </button>
             <button
@@ -185,12 +164,12 @@ export default function ResourcePoolPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 flex items-center gap-2">
             <AlertTriangle size={15} />
-            {error}
+            {error instanceof Error ? error.message : String(error)}
           </div>
         )}
 
         {/* Summary Stats */}
-        {!loading && (
+        {!isLoading && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Total Employees', value: summary.total, color: 'bg-surface-100 text-surface-700', filter: 'ALL' as StatusFilter },
@@ -252,7 +231,7 @@ export default function ResourcePoolPage() {
         </div>
 
         {/* Table */}
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-2">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="h-14 bg-surface-100 animate-pulse rounded-xl" />

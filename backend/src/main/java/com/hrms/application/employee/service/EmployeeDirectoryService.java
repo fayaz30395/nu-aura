@@ -34,6 +34,7 @@ public class EmployeeDirectoryService {
     private final DepartmentRepository departmentRepository;
     private final DataScopeService dataScopeService;
 
+    @Transactional(readOnly = true)
     public Page<EmployeeDirectoryResponse> searchEmployees(EmployeeSearchRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Searching employees for tenant: {} with filters: {}", tenantId, request);

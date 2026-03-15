@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for merging permissions from multiple roles for a user.
@@ -77,6 +78,7 @@ public class PermissionScopeMerger {
      * Get all merged custom targets for all CUSTOM-scoped permissions.
      * Key: permission code, Value: merged custom targets
      */
+    @Transactional(readOnly = true)
     public Map<String, MergedCustomTargets> getAllMergedCustomTargets(Set<Role> roles) {
         Map<String, MergedCustomTargets> result = new HashMap<>();
 
@@ -100,6 +102,7 @@ public class PermissionScopeMerger {
      * If any role has a more permissive scope, that wins.
      * If the effective scope is CUSTOM, also merges custom targets.
      */
+    @Transactional(readOnly = true)
     public EffectivePermission computeEffectivePermission(Set<Role> roles, String permissionCode) {
         RoleScope effectiveScope = null;
         boolean hasPermission = false;

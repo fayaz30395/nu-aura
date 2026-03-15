@@ -91,7 +91,7 @@ public class PreboardingController {
 
     @PostMapping("/candidates/{id}/convert")
     @RequiresPermission("PREBOARDING:MANAGE")
-    public ResponseEntity<Void> markConverted(@PathVariable UUID id, @RequestBody Map<String, UUID> body) {
+    public ResponseEntity<Void> markConverted(@PathVariable UUID id, @Valid @RequestBody Map<String, UUID> body) {
         preboardingService.markConverted(id, body.get("employeeId"));
         return ResponseEntity.ok().build();
     }

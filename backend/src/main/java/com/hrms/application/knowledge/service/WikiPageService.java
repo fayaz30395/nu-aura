@@ -26,6 +26,7 @@ public class WikiPageService {
     private final WikiPageRepository wikiPageRepository;
     private final WikiPageVersionRepository wikiPageVersionRepository;
 
+    @Transactional
     public WikiPage createPage(WikiPage page) {
         UUID tenantId = TenantContext.getCurrentTenant();
         page.setTenantId(tenantId);
@@ -44,6 +45,7 @@ public class WikiPageService {
         return saved;
     }
 
+    @Transactional
     public WikiPage updatePage(UUID pageId, WikiPage pageData) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -173,6 +175,7 @@ public class WikiPageService {
         return updated;
     }
 
+    @Transactional
     public void deletePage(UUID pageId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -190,6 +193,7 @@ public class WikiPageService {
         return wikiPageVersionRepository.findVersionHistoryByPage(tenantId, pageId);
     }
 
+    @Transactional(readOnly = true)
     public WikiPageVersion getPageVersion(UUID pageId, Integer versionNumber) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return wikiPageVersionRepository.findByTenantIdAndPageIdAndVersionNumber(tenantId, pageId, versionNumber)

@@ -35,6 +35,7 @@ public class BudgetPlanningService {
 
     // ==================== BUDGET OPERATIONS ====================
 
+    @Transactional
     public HeadcountBudgetResponse createBudget(HeadcountBudgetRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -75,6 +76,7 @@ public class BudgetPlanningService {
         return HeadcountBudgetResponse.fromEntity(budget);
     }
 
+    @Transactional
     public HeadcountBudgetResponse updateBudget(UUID budgetId, HeadcountBudgetRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -160,6 +162,7 @@ public class BudgetPlanningService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteBudget(UUID budgetId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -176,6 +179,7 @@ public class BudgetPlanningService {
 
     // ==================== BUDGET APPROVAL WORKFLOW ====================
 
+    @Transactional
     public HeadcountBudgetResponse submitForApproval(UUID budgetId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -193,6 +197,7 @@ public class BudgetPlanningService {
         return HeadcountBudgetResponse.fromEntity(budget);
     }
 
+    @Transactional
     public HeadcountBudgetResponse approveBudget(UUID budgetId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUserId = SecurityContext.getCurrentUserId();
@@ -213,6 +218,7 @@ public class BudgetPlanningService {
         return HeadcountBudgetResponse.fromEntity(budget);
     }
 
+    @Transactional
     public HeadcountBudgetResponse rejectBudget(UUID budgetId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -233,6 +239,7 @@ public class BudgetPlanningService {
 
     // ==================== POSITION OPERATIONS ====================
 
+    @Transactional
     public HeadcountPositionResponse createPosition(HeadcountPositionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -271,6 +278,7 @@ public class BudgetPlanningService {
         return HeadcountPositionResponse.fromEntity(position);
     }
 
+    @Transactional
     public HeadcountPositionResponse updatePosition(UUID positionId, HeadcountPositionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -305,6 +313,7 @@ public class BudgetPlanningService {
         return HeadcountPositionResponse.fromEntity(position);
     }
 
+    @Transactional
     public HeadcountPositionResponse updatePositionStatus(UUID positionId, String status) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -345,6 +354,7 @@ public class BudgetPlanningService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deletePosition(UUID positionId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -364,6 +374,7 @@ public class BudgetPlanningService {
 
     // ==================== SCENARIO OPERATIONS ====================
 
+    @Transactional
     public BudgetScenarioResponse createScenario(BudgetScenarioRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -394,6 +405,7 @@ public class BudgetPlanningService {
         return BudgetScenarioResponse.fromEntity(scenario);
     }
 
+    @Transactional
     public BudgetScenarioResponse updateScenario(UUID scenarioId, BudgetScenarioRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -459,6 +471,7 @@ public class BudgetPlanningService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteScenario(UUID scenarioId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 

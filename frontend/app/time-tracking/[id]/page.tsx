@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
 import { TimeEntry, TimeEntryStatus } from '@/lib/types/time-tracking';
 import { useAuth } from '@/lib/hooks/useAuth';
+import {
+  useTimeEntry,
+  useSubmitTimeEntry,
+  useDeleteTimeEntry,
+} from '@/lib/hooks/queries/useTimeTracking';
 import {
   ArrowLeft,
   Loader2,
@@ -24,46 +28,19 @@ export default function TimeEntryDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [entry, setEntry] = useState<TimeEntry | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const entryId = params.id as string;
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-    loadEntry();
-  }, [isAuthenticated, hasHydrated, router, params.id]);
-
-  const loadEntry = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await timeTrackingService.getEntryById(params.id as string);
-      setEntry(data);
-    } catch (error) {
-      console.error('Error loading time entry:', error);
-      setError('Failed to load time entry');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: entry, isLoading, error } = useTimeEntry(entryId);
+  const submitMutation = useSubmitTimeEntry();
+  const deleteMutation = useDeleteTimeEntry();
 
   const handleSubmit = async () => {
     if (!entry) return;
 
     try {
-      setSubmitting(true);
-      await timeTrackingService.submitEntry(entry.id);
-      await loadEntry();
+      await submitMutation.mutateAsync(entry.id);
     } catch (error) {
       console.error('Error submitting entry:', error);
-      setError('Failed to submit time entry');
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -73,11 +50,10 @@ export default function TimeEntryDetailPage() {
     if (!confirm('Are you sure you want to delete this time entry?')) return;
 
     try {
-      await timeTrackingService.deleteEntry(entry.id);
+      await deleteMutation.mutateAsync(entry.id);
       router.push('/time-tracking');
     } catch (error) {
       console.error('Error deleting entry:', error);
-      setError('Failed to delete time entry');
     }
   };
 
@@ -107,7 +83,7 @@ export default function TimeEntryDetailPage() {
     return configs[status] || configs.DRAFT;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="time-tracking">
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -127,7 +103,7 @@ export default function TimeEntryDetailPage() {
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-red-500" />
             <p className="text-surface-600 dark:text-surface-400">
-              {error || 'Time entry not found'}
+              {error instanceof Error ? error.message : 'Time entry not found'}
             </p>
             <button
               onClick={() => router.push('/time-tracking')}
@@ -342,16 +318,17 @@ export default function TimeEntryDetailPage() {
             <>
               <button
                 onClick={handleDelete}
-                className="px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                disabled={deleteMutation.isPending}
+                className="px-6 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50"
               >
                 Delete
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={submitting}
+                disabled={submitMutation.isPending}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
               >
-                {submitting ? (
+                {submitMutation.isPending ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     Submitting...

@@ -17,6 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -52,6 +53,7 @@ public class ScheduledReportExecutionJob {
      * Execute due scheduled reports every minute.
      */
     @Scheduled(cron = "0 * * * * *")
+    @Transactional
     public void executeScheduledReports() {
         log.debug("Checking for scheduled reports due for execution...");
 
@@ -64,15 +66,27 @@ public class ScheduledReportExecutionJob {
 
         log.info("Found {} scheduled reports due for execution", dueReports.size());
 
+        // R2-010 FIX: Wrap each report execution in its own try/catch so a single
+        // failing report doesn't abort the entire batch.
         for (ScheduledReport scheduledReport : dueReports) {
-            executeReport(scheduledReport);
+            try {
+                executeReport(scheduledReport);
+            } catch (Exception e) {
+                log.error("Unhandled error executing scheduled report '{}' (id={}): {}",
+                        scheduledReport.getScheduleName(), scheduledReport.getId(), e.getMessage(), e);
+            }
         }
     }
 
     /**
      * Execute a single scheduled report.
+     *
+     * <p>R2-010 FIX: {@code REQUIRES_NEW} propagation ensures each report runs in its own
+     * transaction. Without it, a rollback triggered inside {@code executeReport} would
+     * mark the outer transaction (from {@code executeScheduledReports}) as rollback-only,
+     * silently preventing all subsequent reports in the same batch from being saved.</p>
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void executeReport(ScheduledReport scheduledReport) {
         UUID executionId = UUID.randomUUID();
         long startTime = System.currentTimeMillis();

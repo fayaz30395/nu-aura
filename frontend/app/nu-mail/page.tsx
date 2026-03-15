@@ -48,6 +48,15 @@ interface EmailAttachment {
   size: number;
 }
 
+interface SendAsAddress {
+  sendAsEmail: string;
+  displayName?: string;
+  signature?: string;
+  isPrimary?: boolean;
+  isDefault?: boolean;
+  treatAsAlias?: boolean;
+}
+
 interface EmailMessage {
   id: string;
   threadId: string;
@@ -208,7 +217,7 @@ function MailContent() {
       if (response.ok) {
         const data = await response.json();
         // Find the primary send-as address (usually the default)
-        const primarySendAs = data.sendAs?.find((s: any) => s.isPrimary) || data.sendAs?.[0];
+        const primarySendAs = data.sendAs?.find((s: SendAsAddress) => s.isPrimary) || data.sendAs?.[0];
         if (primarySendAs?.signature) {
           // Clean up the signature HTML
           let cleanedSignature = primarySendAs.signature;
@@ -470,24 +479,26 @@ function MailContent() {
       let bodyHtml = '';
       const attachments: EmailAttachment[] = [];
 
-      const extractBody = (payload: any) => {
-        if (payload.body?.data) {
-          const decoded = atob(payload.body.data.replace(/-/g, '+').replace(/_/g, '/'));
-          if (payload.mimeType === 'text/html') {
+      const extractBody = (payload: unknown): void => {
+        const p = payload as { body?: { data?: string; size?: number; attachmentId?: string }; mimeType?: string; parts?: unknown[]; filename?: string };
+        if (p.body?.data) {
+          const decoded = atob(p.body.data.replace(/-/g, '+').replace(/_/g, '/'));
+          if (p.mimeType === 'text/html') {
             bodyHtml = decoded;
-          } else if (payload.mimeType === 'text/plain') {
+          } else if (p.mimeType === 'text/plain') {
             bodyText = decoded;
           }
         }
 
-        if (payload.parts) {
-          for (const part of payload.parts) {
-            if (part.filename && part.body?.attachmentId) {
+        if (p.parts) {
+          for (const part of p.parts) {
+            const partData = part as { filename?: string; body?: { attachmentId?: string; size?: number }; mimeType?: string };
+            if (partData.filename && partData.body?.attachmentId) {
               attachments.push({
-                id: part.body.attachmentId,
-                filename: part.filename,
-                mimeType: part.mimeType,
-                size: part.body.size || 0,
+                id: partData.body.attachmentId,
+                filename: partData.filename,
+                mimeType: partData.mimeType || 'application/octet-stream',
+                size: partData.body.size || 0,
               });
             } else {
               extractBody(part);

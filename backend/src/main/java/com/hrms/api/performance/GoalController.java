@@ -61,10 +61,30 @@ public class GoalController {
         return ResponseEntity.ok(goals);
     }
 
+    /** Paginated variant — prefer this for employees with large goal histories. */
+    @GetMapping("/employee/{employeeId}/paged")
+    @RequiresPermission(Permission.REVIEW_VIEW)
+    public ResponseEntity<Page<GoalResponse>> getEmployeeGoalsPaged(
+            @PathVariable UUID employeeId,
+            Pageable pageable) {
+        Page<GoalResponse> goals = goalService.getEmployeeGoalsPaged(employeeId, pageable);
+        return ResponseEntity.ok(goals);
+    }
+
     @GetMapping("/team/{managerId}")
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<List<GoalResponse>> getTeamGoals(@PathVariable UUID managerId) {
         List<GoalResponse> goals = goalService.getTeamGoals(managerId);
+        return ResponseEntity.ok(goals);
+    }
+
+    /** Paginated variant — prefer this for managers with large teams. */
+    @GetMapping("/team/{managerId}/paged")
+    @RequiresPermission(Permission.REVIEW_VIEW)
+    public ResponseEntity<Page<GoalResponse>> getTeamGoalsPaged(
+            @PathVariable UUID managerId,
+            Pageable pageable) {
+        Page<GoalResponse> goals = goalService.getTeamGoalsPaged(managerId, pageable);
         return ResponseEntity.ok(goals);
     }
 

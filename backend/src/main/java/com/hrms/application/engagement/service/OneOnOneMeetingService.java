@@ -102,26 +102,32 @@ public class OneOnOneMeetingService {
         return meetingRepository.save(meeting);
     }
 
+    @Transactional(readOnly = true)
     public Optional<OneOnOneMeeting> getMeetingById(UUID meetingId) {
         return meetingRepository.findByIdAndTenantId(meetingId, TenantContext.getCurrentTenant());
     }
 
+    @Transactional(readOnly = true)
     public Page<OneOnOneMeeting> getMeetingsForUser(UUID userId, Pageable pageable) {
         return meetingRepository.findAllByParticipant(userId, TenantContext.getCurrentTenant(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<OneOnOneMeeting> getUpcomingMeetings(UUID userId) {
         return meetingRepository.findUpcomingMeetings(userId, TenantContext.getCurrentTenant(), LocalDate.now());
     }
 
+    @Transactional(readOnly = true)
     public Page<OneOnOneMeeting> getMeetingsAsManager(UUID managerId, Pageable pageable) {
         return meetingRepository.findAllByManagerIdAndTenantId(managerId, TenantContext.getCurrentTenant(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<OneOnOneMeeting> getMeetingsAsEmployee(UUID employeeId, Pageable pageable) {
         return meetingRepository.findAllByEmployeeIdAndTenantId(employeeId, TenantContext.getCurrentTenant(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<OneOnOneMeeting> getMeetingHistory(UUID managerId, UUID employeeId) {
         return meetingRepository.findByManagerEmployeePair(TenantContext.getCurrentTenant(), managerId, employeeId);
     }
@@ -278,6 +284,7 @@ public class OneOnOneMeetingService {
         return createAgendaItem(meetingId, request, addedBy, addedById, null);
     }
 
+    @Transactional(readOnly = true)
     public List<MeetingAgendaItem> getAgendaItems(UUID meetingId) {
         return agendaRepository.findAllByMeetingIdOrderByItemOrder(meetingId);
     }
@@ -326,14 +333,17 @@ public class OneOnOneMeetingService {
         return actionRepository.save(action);
     }
 
+    @Transactional(readOnly = true)
     public List<MeetingActionItem> getActionItems(UUID meetingId) {
         return actionRepository.findAllByMeetingId(meetingId);
     }
 
+    @Transactional(readOnly = true)
     public List<MeetingActionItem> getPendingActionItems(UUID userId) {
         return actionRepository.findPendingByAssignee(TenantContext.getCurrentTenant(), userId);
     }
 
+    @Transactional(readOnly = true)
     public List<MeetingActionItem> getOverdueActionItems(UUID userId) {
         return actionRepository.findOverdueByAssignee(TenantContext.getCurrentTenant(), userId, LocalDate.now());
     }
@@ -385,6 +395,7 @@ public class OneOnOneMeetingService {
 
     // ==================== Analytics ====================
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getMeetingDashboard(UUID userId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Map<String, Object> dashboard = new HashMap<>();
@@ -409,6 +420,7 @@ public class OneOnOneMeetingService {
         return dashboard;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getManagerDashboard(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Map<String, Object> dashboard = getMeetingDashboard(managerId);

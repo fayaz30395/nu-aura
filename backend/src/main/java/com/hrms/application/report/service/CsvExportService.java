@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -19,6 +20,7 @@ public class CsvExportService {
     private static final String SEPARATOR = ",";
     private static final String NEW_LINE = "\n";
 
+    @Transactional(readOnly = true)
     public byte[] exportEmployeeDirectoryToCsv(List<EmployeeDirectoryReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
@@ -55,6 +57,7 @@ public class CsvExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportAttendanceToCsv(List<AttendanceReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
@@ -87,6 +90,7 @@ public class CsvExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportLeaveToCsv(List<LeaveReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
@@ -121,6 +125,7 @@ public class CsvExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPayrollToCsv(List<PayrollReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
@@ -155,6 +160,7 @@ public class CsvExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportDepartmentHeadcountToCsv(List<DepartmentHeadcountReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {
@@ -187,6 +193,7 @@ public class CsvExportService {
         }
     }
 
+    @Transactional(readOnly = true)
     public byte[] exportPerformanceToCsv(List<PerformanceReportRow> data) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (PrintWriter writer = new PrintWriter(out)) {

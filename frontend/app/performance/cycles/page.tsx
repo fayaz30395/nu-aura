@@ -1,17 +1,59 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout';
-import { reviewCycleService } from '@/lib/services/performance.service';
 import { ReviewCycle, ReviewCycleRequest, CycleType, CycleStatus, ScopeType, ActivateCycleRequest, ActivateCycleResponse } from '@/lib/types/performance';
-import { departmentService } from '@/lib/services/department.service';
-import { officeLocationService, OfficeLocation } from '@/lib/services/office-location.service';
+import { OfficeLocation } from '@/lib/services/office-location.service';
 import { Department } from '@/lib/types/employee';
 import { Play, Users, CheckCircle, Building2, MapPin } from 'lucide-react';
+import { useToast } from '@/components/notifications/ToastProvider';
+
+// ─── Validation Schemas ───────────────────────────────────────────────────────
+
+const cycleFormSchema = z.object({
+  name: z.string().min(1, 'Cycle name is required').max(255),
+  description: z.string().max(1000).optional().or(z.literal('')),
+  cycleType: z.enum(['ANNUAL', 'SEMI_ANNUAL', 'QUARTERLY', 'MONTHLY', 'PROBATION', 'PROJECT_END'] as const) as z.ZodType<CycleType>,
+  status: z.enum(['PLANNING', 'ACTIVE', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'] as const) as z.ZodType<CycleStatus>,
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  reviewDeadline: z.string().min(1, 'Review deadline is required'),
+  selfReviewDeadline: z.string().optional().or(z.literal('')),
+}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
+  message: 'End date must be after start date',
+  path: ['endDate'],
+});
+
+type CycleFormData = z.infer<typeof cycleFormSchema>;
+import {
+  usePerformanceAllCycles,
+  useCreatePerformanceCycle,
+  useUpdatePerformanceCycle,
+  useDeletePerformanceCycle,
+  useActivatePerformanceCycle,
+} from '@/lib/hooks/queries/usePerformance';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import { useActiveOfficeLocations } from '@/lib/hooks/queries/useOfficeLocations';
 
 export default function ReviewCyclesPage() {
-  const [cycles, setCycles] = useState<ReviewCycle[]>([]);
-  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+
+  // React Query hooks
+  const { data: cyclesResponse, isLoading: cyclesLoading } = usePerformanceAllCycles();
+  const { data: departmentsData = [] } = useActiveDepartments();
+  const { data: locationsData = [] } = useActiveOfficeLocations();
+  const createMutation = useCreatePerformanceCycle();
+  const updateMutation = useUpdatePerformanceCycle();
+  const deleteMutation = useDeletePerformanceCycle();
+  const activateMutation = useActivatePerformanceCycle();
+
+  const cycles = cyclesResponse?.content || [];
+  const loading = cyclesLoading;
+  const departments = departmentsData;
+  const locations = locationsData;
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
@@ -20,8 +62,6 @@ export default function ReviewCyclesPage() {
   const [selectedCycle, setSelectedCycle] = useState<ReviewCycle | null>(null);
   const [filterType, setFilterType] = useState<CycleType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<CycleStatus | 'ALL'>('ALL');
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [locations, setLocations] = useState<OfficeLocation[]>([]);
   const [activateFormData, setActivateFormData] = useState<ActivateCycleRequest>({
     scopeType: 'ALL',
     departmentIds: [],
@@ -29,87 +69,56 @@ export default function ReviewCyclesPage() {
     createSelfReviews: true,
     createManagerReviews: true,
   });
-  const [formData, setFormData] = useState<ReviewCycleRequest>({
-    name: '',
-    description: '',
-    cycleType: 'ANNUAL',
-    status: 'PLANNING',
-    startDate: '',
-    endDate: '',
-    reviewDeadline: '',
-    selfReviewDeadline: '',
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CycleFormData>({
+    resolver: zodResolver(cycleFormSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      cycleType: 'ANNUAL',
+      status: 'PLANNING',
+      startDate: '',
+      endDate: '',
+      reviewDeadline: '',
+      selfReviewDeadline: '',
+    },
   });
 
-  useEffect(() => {
-    loadCycles();
-    loadDepartmentsAndLocations();
-  }, []);
+  const handleFormSubmit = (data: CycleFormData) => {
+    const cycleData = {
+      ...data,
+      description: data.description || '',
+      selfReviewDeadline: data.selfReviewDeadline || '',
+    };
 
-  const loadDepartmentsAndLocations = async () => {
-    try {
-      const [deptResponse, locResponse] = await Promise.all([
-        departmentService.getActiveDepartments(),
-        officeLocationService.getActiveLocations(),
-      ]);
-      setDepartments(deptResponse);
-      setLocations(locResponse);
-    } catch (error) {
-      console.error('Error loading departments/locations:', error);
+    if (selectedCycle) {
+      updateMutation.mutate({ id: selectedCycle.id, data: cycleData as ReviewCycleRequest });
+    } else {
+      createMutation.mutate(cycleData as ReviewCycleRequest);
     }
+
+    setShowModal(false);
+    resetFormHandler();
   };
 
-  const loadCycles = async () => {
-    try {
-      setLoading(true);
-      const response = await reviewCycleService.getAll();
-      setCycles(response.content);
-    } catch (error) {
-      console.error('Error loading cycles:', error);
-      alert('Failed to load review cycles');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-
-      if (selectedCycle) {
-        await reviewCycleService.update(selectedCycle.id, formData);
-      } else {
-        await reviewCycleService.create(formData);
-      }
-
-      setShowModal(false);
-      resetForm();
-      await loadCycles();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to save review cycle');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedCycle) return;
-    try {
-      setLoading(true);
-      await reviewCycleService.delete(selectedCycle.id);
-      setShowDeleteConfirm(false);
-      setSelectedCycle(null);
-      await loadCycles();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete review cycle');
-    } finally {
-      setLoading(false);
-    }
+    deleteMutation.mutate(selectedCycle.id, {
+      onSuccess: () => {
+        setShowDeleteConfirm(false);
+        setSelectedCycle(null);
+      },
+    });
   };
 
   const openEditModal = (cycle: ReviewCycle) => {
     setSelectedCycle(cycle);
-    setFormData({
+    reset({
       name: cycle.name,
       description: cycle.description || '',
       cycleType: cycle.cycleType,
@@ -139,20 +148,18 @@ export default function ReviewCyclesPage() {
     setShowActivateModal(true);
   };
 
-  const handleActivate = async () => {
+  const handleActivate = () => {
     if (!selectedCycle) return;
-    try {
-      setLoading(true);
-      const result = await reviewCycleService.activateCycle(selectedCycle.id, activateFormData);
-      setActivationResult(result);
-      setShowActivateModal(false);
-      setShowActivationResult(true);
-      await loadCycles();
-    } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to activate review cycle');
-    } finally {
-      setLoading(false);
-    }
+    activateMutation.mutate(
+      { id: selectedCycle.id, data: activateFormData },
+      {
+        onSuccess: (result) => {
+          setActivationResult(result);
+          setShowActivateModal(false);
+          setShowActivationResult(true);
+        },
+      }
+    );
   };
 
   const handleDepartmentToggle = (deptId: string) => {
@@ -173,9 +180,9 @@ export default function ReviewCyclesPage() {
     }));
   };
 
-  const resetForm = () => {
+  const resetFormHandler = () => {
     setSelectedCycle(null);
-    setFormData({
+    reset({
       name: '',
       description: '',
       cycleType: 'ANNUAL',
@@ -236,7 +243,7 @@ export default function ReviewCyclesPage() {
           <h1 className="text-3xl font-bold">Review Cycles</h1>
           <button
             onClick={() => {
-              resetForm();
+              resetFormHandler();
               setShowModal(true);
             }}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -294,7 +301,7 @@ export default function ReviewCyclesPage() {
             <div className="text-surface-600 dark:text-surface-400 mb-4">No review cycles found</div>
             <button
               onClick={() => {
-                resetForm();
+                resetFormHandler();
                 setShowModal(true);
               }}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -388,7 +395,7 @@ export default function ReviewCyclesPage() {
                 <h2 className="text-2xl font-bold mb-6">
                   {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -396,12 +403,13 @@ export default function ReviewCyclesPage() {
                       </label>
                       <input
                         type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="e.g., Annual Review 2024"
+                        {...register('name')}
+                        className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -409,11 +417,13 @@ export default function ReviewCyclesPage() {
                         Description
                       </label>
                       <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={3}
+                        {...register('description')}
                         className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
+                      {errors.description && (
+                        <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -422,9 +432,7 @@ export default function ReviewCyclesPage() {
                           Cycle Type *
                         </label>
                         <select
-                          required
-                          value={formData.cycleType}
-                          onChange={(e) => setFormData({ ...formData, cycleType: e.target.value as CycleType })}
+                          {...register('cycleType')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="ANNUAL">Annual</option>
@@ -434,6 +442,9 @@ export default function ReviewCyclesPage() {
                           <option value="PROBATION">Probation</option>
                           <option value="PROJECT_END">Project End</option>
                         </select>
+                        {errors.cycleType && (
+                          <p className="text-red-500 text-sm mt-1">{errors.cycleType.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -441,9 +452,7 @@ export default function ReviewCyclesPage() {
                           Status *
                         </label>
                         <select
-                          required
-                          value={formData.status}
-                          onChange={(e) => setFormData({ ...formData, status: e.target.value as CycleStatus })}
+                          {...register('status')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="PLANNING">Planning</option>
@@ -452,6 +461,9 @@ export default function ReviewCyclesPage() {
                           <option value="COMPLETED">Completed</option>
                           <option value="CANCELLED">Cancelled</option>
                         </select>
+                        {errors.status && (
+                          <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -462,11 +474,12 @@ export default function ReviewCyclesPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.startDate}
-                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          {...register('startDate')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.startDate && (
+                          <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -475,11 +488,12 @@ export default function ReviewCyclesPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.endDate}
-                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          {...register('endDate')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.endDate && (
+                          <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>
+                        )}
                       </div>
                     </div>
 
@@ -490,11 +504,12 @@ export default function ReviewCyclesPage() {
                         </label>
                         <input
                           type="date"
-                          required
-                          value={formData.reviewDeadline}
-                          onChange={(e) => setFormData({ ...formData, reviewDeadline: e.target.value })}
+                          {...register('reviewDeadline')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.reviewDeadline && (
+                          <p className="text-red-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
+                        )}
                       </div>
 
                       <div>
@@ -503,10 +518,12 @@ export default function ReviewCyclesPage() {
                         </label>
                         <input
                           type="date"
-                          value={formData.selfReviewDeadline}
-                          onChange={(e) => setFormData({ ...formData, selfReviewDeadline: e.target.value })}
+                          {...register('selfReviewDeadline')}
                           className="w-full px-3 py-2 border border-surface-300 dark:border-surface-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
+                        {errors.selfReviewDeadline && (
+                          <p className="text-red-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -516,7 +533,7 @@ export default function ReviewCyclesPage() {
                       type="button"
                       onClick={() => {
                         setShowModal(false);
-                        resetForm();
+                        resetFormHandler();
                       }}
                       className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50"
                     >
@@ -524,10 +541,10 @@ export default function ReviewCyclesPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSubmitting}
                       className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                     >
-                      {loading ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
+                      {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
                     </button>
                   </div>
                 </form>

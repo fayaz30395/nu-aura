@@ -1,17 +1,22 @@
-'use client';
-
-import React from 'react';
+import type { Metadata } from 'next';
 import { DarkModeProvider } from '@/components/layout/DarkModeProvider';
 
+export const metadata: Metadata = {
+  title: 'Careers | NU-AURA',
+  description: 'Explore open positions and join our team. Browse job listings, learn about our culture, and apply today.',
+  openGraph: {
+    title: 'Careers | NU-AURA',
+    description: 'Explore open positions and join our team.',
+    type: 'website',
+  },
+};
+
 /**
- * Careers Layout
- * 
- * This layout is used for public career pages. It does NOT include:
- * - Authenticated app shell
- * - Sidebar navigation
- * - Top navigation bar
- * 
- * It's a standalone marketing page layout.
+ * Careers Layout — Server Component
+ *
+ * Public-facing layout for careers pages. Does NOT include the authenticated
+ * app shell (sidebar/top nav). Rendered as a Server Component so that
+ * metadata can be exported; inner DarkModeProvider is a Client Component.
  */
 export default function CareersLayout({
   children,

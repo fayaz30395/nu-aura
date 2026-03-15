@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppLayout } from '@/components/layout';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
 import {
@@ -9,6 +10,7 @@ import {
   ChangeRequestStatus,
   ChangeType,
 } from '@/lib/types/employment-change-request';
+import { useToast } from '@/components/notifications/ToastProvider';
 import {
   Clock,
   CheckCircle,
@@ -21,68 +23,65 @@ import {
 } from 'lucide-react';
 
 export default function EmploymentChangeRequestsPage() {
+  const toast = useToast();
   const router = useRouter();
-  const [requests, setRequests] = useState<EmploymentChangeRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending'>('pending');
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, [filter]);
+  // React Query hooks
+  const { data: requestsData, isLoading } = useQuery({
+    queryKey: ['change-requests', filter],
+    queryFn: () =>
+      filter === 'pending'
+        ? employmentChangeRequestService.getPendingChangeRequests(0, 50)
+        : employmentChangeRequestService.getAllChangeRequests(0, 50),
+  });
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const response =
-        filter === 'pending'
-          ? await employmentChangeRequestService.getPendingChangeRequests(0, 50)
-          : await employmentChangeRequestService.getAllChangeRequests(0, 50);
-      setRequests(response.content);
-    } catch (error) {
-      console.error('Error loading change requests:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => employmentChangeRequestService.approveChangeRequest(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-requests'] });
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      employmentChangeRequestService.rejectChangeRequest(id, { rejectionReason: reason }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-requests'] });
+    },
+  });
+
+  const requests = requestsData?.content || [];
+  const loading = isLoading;
 
   const handleApprove = async (id: string) => {
     if (!confirm('Are you sure you want to approve this change request? The employee details will be updated.')) return;
 
     try {
-      setProcessing(id);
-      await employmentChangeRequestService.approveChangeRequest(id);
-      alert('Change request approved successfully. Employee details have been updated.');
-      loadData();
+      await approveMutation.mutateAsync(id);
+      toast.success('Change request approved successfully. Employee details have been updated.');
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve change request');
-    } finally {
-      setProcessing(null);
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve change request');
     }
   };
 
   const handleReject = async (id: string) => {
     if (!rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      toast.error('Please provide a rejection reason');
       return;
     }
 
     try {
-      setProcessing(id);
-      await employmentChangeRequestService.rejectChangeRequest(id, {
-        rejectionReason: rejectionReason,
-      });
-      alert('Change request rejected');
+      await rejectMutation.mutateAsync({ id, reason: rejectionReason });
+      toast.success('Change request rejected');
       setShowRejectModal(null);
       setRejectionReason('');
-      loadData();
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject change request');
-    } finally {
-      setProcessing(null);
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject change request');
     }
   };
 
@@ -375,14 +374,14 @@ export default function EmploymentChangeRequestsPage() {
                       <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <button
                           onClick={() => handleApprove(request.id)}
-                          disabled={processing === request.id}
+                          disabled={approveMutation.isPending || rejectMutation.isPending}
                           className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium transition-colors"
                         >
-                          {processing === request.id ? 'Processing...' : 'Approve Changes'}
+                          {approveMutation.isPending ? 'Processing...' : 'Approve Changes'}
                         </button>
                         <button
                           onClick={() => setShowRejectModal(request.id)}
-                          disabled={processing === request.id}
+                          disabled={approveMutation.isPending || rejectMutation.isPending}
                           className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium transition-colors"
                         >
                           Reject
@@ -426,10 +425,10 @@ export default function EmploymentChangeRequestsPage() {
               </button>
               <button
                 onClick={() => handleReject(showRejectModal)}
-                disabled={processing === showRejectModal || !rejectionReason.trim()}
+                disabled={rejectMutation.isPending || !rejectionReason.trim()}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 font-medium"
               >
-                {processing === showRejectModal ? 'Rejecting...' : 'Reject'}
+                {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
               </button>
             </div>
           </div>

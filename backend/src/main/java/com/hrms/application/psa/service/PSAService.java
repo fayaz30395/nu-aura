@@ -42,6 +42,7 @@ public class PSAService {
      * @param project the project to create
      * @return the created project with generated ID and tenant ID set
      */
+    @Transactional
     public PSAProject createProject(PSAProject project) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating PSA project '{}' for tenant {}", project.getProjectName(), tenantId);
@@ -100,6 +101,7 @@ public class PSAService {
      * @param project the updated project data
      * @return Optional containing the updated project if found
      */
+    @Transactional
     public Optional<PSAProject> updateProject(UUID id, PSAProject project) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating PSA project {} for tenant {}", id, tenantId);
@@ -118,6 +120,7 @@ public class PSAService {
      * @param id the project ID to delete
      * @return true if the project was deleted, false if not found
      */
+    @Transactional
     public boolean deleteProject(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Deleting PSA project {} for tenant {}", id, tenantId);
@@ -157,6 +160,7 @@ public class PSAService {
      * @param timesheet the timesheet to create
      * @return the created timesheet with generated ID, tenant ID, and initial status set
      */
+    @Transactional
     public PSATimesheet createTimesheet(PSATimesheet timesheet) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating PSA timesheet for employee {} in tenant {}", timesheet.getEmployeeId(), tenantId);
@@ -204,6 +208,7 @@ public class PSAService {
      * @param id the timesheet ID
      * @return Optional containing the submitted timesheet if found
      */
+    @Transactional
     public Optional<PSATimesheet> submitTimesheet(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Submitting timesheet {} for tenant {}", id, tenantId);
@@ -224,6 +229,7 @@ public class PSAService {
      * @param approverId the ID of the approving user
      * @return Optional containing the approved timesheet if found
      */
+    @Transactional
     public Optional<PSATimesheet> approveTimesheet(UUID id, UUID approverId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving timesheet {} by approver {} for tenant {}", id, approverId, tenantId);
@@ -245,6 +251,7 @@ public class PSAService {
      * @param reason the rejection reason
      * @return Optional containing the rejected timesheet if found
      */
+    @Transactional
     public Optional<PSATimesheet> rejectTimesheet(UUID id, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Rejecting timesheet {} with reason for tenant {}", id, tenantId);
@@ -265,6 +272,7 @@ public class PSAService {
      * @param entry the time entry to add
      * @return the created time entry with generated ID and tenant ID set
      */
+    @Transactional
     public PSATimeEntry addTimeEntry(UUID timesheetId, PSATimeEntry entry) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Adding time entry to timesheet {} for tenant {}", timesheetId, tenantId);
@@ -298,6 +306,7 @@ public class PSAService {
      * @param invoice the invoice to create
      * @return the created invoice with generated ID and tenant ID set
      */
+    @Transactional
     public PSAInvoice createInvoice(PSAInvoice invoice) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating PSA invoice for project {} in tenant {}", invoice.getProjectId(), tenantId);
@@ -373,6 +382,7 @@ public class PSAService {
      * @param invoice the updated invoice data
      * @return Optional containing the updated invoice if found
      */
+    @Transactional
     public Optional<PSAInvoice> updateInvoice(UUID id, PSAInvoice invoice) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating invoice {} for tenant {}", id, tenantId);
@@ -392,6 +402,7 @@ public class PSAService {
      * @param id the invoice ID
      * @return Optional containing the approved invoice if found
      */
+    @Transactional
     public Optional<PSAInvoice> approveInvoice(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving invoice {} for tenant {}", id, tenantId);

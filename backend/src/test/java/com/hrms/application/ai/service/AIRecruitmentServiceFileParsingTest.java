@@ -140,7 +140,7 @@ class AIRecruitmentServiceFileParsingTest {
         when(resumeTextExtractor.extractText(any(byte[].class), eq("resume.pdf")))
                 .thenReturn(extractedText);
 
-        when(objectMapper.readValue(anyString(), any()))
+        when(objectMapper.readValue(anyString(), any(Class.class)))
                 .thenReturn(createMockAIResumeParseDTO());
 
         // Act

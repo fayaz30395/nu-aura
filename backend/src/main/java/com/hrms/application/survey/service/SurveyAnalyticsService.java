@@ -39,6 +39,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Question Management ====================
 
+    @Transactional
     public QuestionResponse addQuestion(UUID surveyId, QuestionRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding question to survey {} for tenant {}", surveyId, tenantId);
@@ -74,6 +75,7 @@ public class SurveyAnalyticsService {
         return mapToQuestionResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<QuestionResponse> getQuestions(UUID surveyId) {
         return questionRepository.findBySurveyIdOrderByQuestionOrderAsc(surveyId).stream()
                 .map(this::mapToQuestionResponse)
@@ -82,6 +84,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Response Submission ====================
 
+    @Transactional
     public SurveyResponseDetailDto submitResponse(SubmitResponseRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Submitting response for survey {} tenant {}", request.getSurveyId(), tenantId);
@@ -201,6 +204,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Engagement Scoring ====================
 
+    @Transactional(readOnly = true)
     public EngagementScoreDto calculateEngagementScore(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Calculating engagement score for survey {} tenant {}", surveyId, tenantId);
@@ -297,6 +301,7 @@ public class SurveyAnalyticsService {
         return mapToEngagementDto(saved);
     }
 
+    @Transactional(readOnly = true)
     public EngagementScoreDto getLatestEngagementScore() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return engagementScoreRepository.findLatestOrganizationScore(tenantId)
@@ -304,6 +309,7 @@ public class SurveyAnalyticsService {
                 .orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public List<EngagementScoreDto> getEngagementTrend(LocalDate startDate, LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return engagementScoreRepository.findByDateRange(tenantId, startDate, endDate).stream()
@@ -311,6 +317,7 @@ public class SurveyAnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<EngagementScoreDto> getDepartmentScores(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return engagementScoreRepository.findBySurvey(tenantId, surveyId).stream()
@@ -321,6 +328,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Insight Generation ====================
 
+    @Transactional(readOnly = true)
     public List<SurveyInsightDto> generateInsights(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Generating insights for survey {} tenant {}", surveyId, tenantId);
@@ -434,6 +442,7 @@ public class SurveyAnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<SurveyInsightDto> getInsights(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return insightRepository.findBySurvey(tenantId, surveyId).stream()
@@ -441,6 +450,7 @@ public class SurveyAnalyticsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<SurveyInsightDto> getHighPriorityInsights() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return insightRepository.findHighPriorityUnacknowledged(tenantId).stream()
@@ -461,6 +471,7 @@ public class SurveyAnalyticsService {
         return mapToInsightDto(insightRepository.save(insight));
     }
 
+    @Transactional
     public SurveyInsightDto updateInsightAction(UUID insightId, SurveyInsight.ActionStatus status,
                                                   UUID assignedTo, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -476,6 +487,7 @@ public class SurveyAnalyticsService {
 
     // ==================== Analytics Summary ====================
 
+    @Transactional(readOnly = true)
     public SurveyAnalyticsSummary getSurveyAnalytics(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Getting analytics for survey {} tenant {}", surveyId, tenantId);

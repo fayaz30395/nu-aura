@@ -44,6 +44,7 @@ public class AnalyticsService {
      * Returns only the 6 top-level numbers needed for overview cards.
      */
     @Cacheable(value = "analyticsSummary", key = "#root.target.getCurrentTenantKey()")
+    @Transactional(readOnly = true)
     public AnalyticsSummary getAnalyticsSummary() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -76,6 +77,7 @@ public class AnalyticsService {
     }
 
     @Cacheable(value = "dashboardMetrics", key = "#root.target.getCurrentTenantKey()")
+    @Transactional(readOnly = true)
     public DashboardMetrics getDashboardMetrics() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -91,6 +93,7 @@ public class AnalyticsService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public EmployeeMetrics getEmployeeMetrics(UUID tenantId) {
         long totalEmployees = employeeRepository.countByTenantId(tenantId);
         long activeEmployees = employeeRepository.countByTenantIdAndStatus(
@@ -127,6 +130,7 @@ public class AnalyticsService {
     /**
      * Attendance metrics from real attendance_records data.
      */
+    @Transactional(readOnly = true)
     public AttendanceMetrics getAttendanceMetrics(UUID tenantId, LocalDate date) {
         long totalActive = employeeRepository.countByTenantIdAndStatus(
                 tenantId, com.hrms.domain.employee.Employee.EmployeeStatus.ACTIVE);
@@ -163,6 +167,7 @@ public class AnalyticsService {
     /**
      * Leave metrics from real leave_requests data.
      */
+    @Transactional(readOnly = true)
     public LeaveMetrics getLeaveMetrics(UUID tenantId, LocalDate startDate, LocalDate endDate) {
         long pending = leaveRequestRepository.countByTenantIdAndStatus(
                 tenantId, LeaveRequest.LeaveRequestStatus.PENDING);
@@ -196,6 +201,7 @@ public class AnalyticsService {
     /**
      * Payroll metrics from real payslip aggregates.
      */
+    @Transactional(readOnly = true)
     public PayrollMetrics getPayrollMetrics(UUID tenantId, int year, int month) {
         Long employeesPaid = payslipRepository.countByTenantIdAndYearAndMonth(tenantId, year, month);
         BigDecimal totalNetSalary = payslipRepository.sumNetSalaryByTenantIdAndYearAndMonth(
@@ -221,6 +227,7 @@ public class AnalyticsService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<HeadcountTrend> getHeadcountTrend(int months) {
         UUID tenantId = TenantContext.getCurrentTenant();
         List<HeadcountTrend> trend = new ArrayList<>();
@@ -239,6 +246,7 @@ public class AnalyticsService {
         return trend;
     }
 
+    @Transactional(readOnly = true)
     public String getCurrentTenantKey() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return tenantId != null ? tenantId.toString() : "default";

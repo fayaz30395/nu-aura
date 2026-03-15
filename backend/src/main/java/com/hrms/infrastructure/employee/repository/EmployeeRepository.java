@@ -235,4 +235,18 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
            "LEFT JOIN FETCH e.user u " +
            "WHERE u.id = :userId AND e.tenantId = :tenantId")
     Optional<Employee> findByUserIdWithUser(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId);
+
+    /**
+     * BUG-013 FIX: Fetch employees whose level is in the supplied collection.
+     * Used by the manager-picker dropdown so only real managers are listed.
+     * Returns ACTIVE employees only to prevent assigning a terminated person as manager.
+     */
+    @Query("SELECT e FROM Employee e " +
+           "WHERE e.tenantId = :tenantId " +
+           "  AND e.level IN :levels " +
+           "  AND e.status = com.hrms.domain.employee.Employee.EmployeeStatus.ACTIVE " +
+           "ORDER BY e.firstName ASC, e.lastName ASC")
+    List<Employee> findManagersByTenantId(
+            @Param("tenantId") UUID tenantId,
+            @Param("levels") Collection<Employee.EmployeeLevel> levels);
 }

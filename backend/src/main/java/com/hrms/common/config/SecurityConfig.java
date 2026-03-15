@@ -148,7 +148,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> allowedOrigins = Arrays.asList(allowedOriginsStr.split(","));
-        configuration.setAllowedOrigins(allowedOrigins);
+        // Use allowedOriginPatterns to support wildcard ports (e.g., http://localhost:*)
+        // This is required when allowCredentials is true and the origin port varies
+        // (e.g., Next.js dev server on random ports, preview servers, etc.)
+        List<String> patterns = new java.util.ArrayList<>(allowedOrigins);
+        patterns.add("http://localhost:*");
+        configuration.setAllowedOriginPatterns(patterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "X-Tenant-ID"));

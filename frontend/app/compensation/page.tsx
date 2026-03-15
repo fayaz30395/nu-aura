@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   DollarSign,
   TrendingUp,
@@ -35,8 +36,15 @@ import {
   ModalFooter,
   Input,
   Select,
+  Textarea,
 } from '@/components/ui';
-import { compensationService } from '@/lib/services/compensation.service';
+import {
+  useApproveRevision,
+  useRejectRevision,
+  useCompensationRevisions,
+  useCompensationCycles,
+} from '@/lib/hooks/queries/useCompensation';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import type {
   CompensationReviewCycle,
   SalaryRevision,
@@ -118,40 +126,47 @@ const getRevisionStatusColor = (status: RevisionStatus) => {
 };
 
 export default function CompensationPage() {
-  const [activeTab, setActiveTab] = useState<'cycles' | 'revisions' | 'pending'>('cycles');
-  const [cycles, setCycles] = useState<CompensationReviewCycle[]>([]);
-  const [revisions, setRevisions] = useState<SalaryRevision[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch compensation data from API
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [cyclesResponse, revisionsResponse] = await Promise.all([
-          compensationService.getAllCycles(0, 100),
-          compensationService.getAllRevisions(0, 100),
-        ]);
-        setCycles(cyclesResponse.content || []);
-        setRevisions(revisionsResponse.content || []);
-      } catch (err) {
-        console.error('Failed to fetch compensation data:', err);
-        setError('Failed to load compensation data. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!permReady) return;
+    if (!hasPermission(Permissions.COMPENSATION_VIEW)) {
+      router.replace('/dashboard');
+    }
+  }, [permReady, hasPermission, router]);
 
-    fetchData();
-  }, []);
+  if (!permReady || !hasPermission(Permissions.COMPENSATION_VIEW)) {
+    return null;
+  }
+  const [activeTab, setActiveTab] = useState<'cycles' | 'revisions' | 'pending'>('cycles');
+
+  // React Query hooks
+  const {
+    data: cyclesData,
+    isLoading: isCyclesLoading,
+    error: cyclesError,
+  } = useCompensationCycles(0, 100);
+  const { data: revisionsData, isLoading: isRevisionsLoading } = useCompensationRevisions(0, 100);
+  const approveRevisionMutation = useApproveRevision();
+  const rejectRevisionMutation = useRejectRevision();
+
+  const cycles = cyclesData?.content || [];
+  const loading = isCyclesLoading || isRevisionsLoading;
+  const error = cyclesError instanceof Error ? cyclesError.message : null;
+
+  const revisions = revisionsData?.content || [];
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCycle, setSelectedCycle] = useState<CompensationReviewCycle | null>(null);
   const [selectedRevision, setSelectedRevision] = useState<SalaryRevision | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [showRejectionReasonInput, setShowRejectionReasonInput] = useState(false);
 
   // Stats
   const activeCycle = cycles.find((c) => c.status === 'IN_PROGRESS');
@@ -177,20 +192,43 @@ export default function CompensationPage() {
   const handleViewRevision = (revision: SalaryRevision) => {
     setSelectedRevision(revision);
     setIsRevisionModalOpen(true);
+    setRejectionReason('');
+    setShowRejectionReasonInput(false);
   };
 
-  const handleApproveRevision = (revisionId: string) => {
-    setRevisions(revisions.map((r) =>
-      r.id === revisionId ? { ...r, status: 'APPROVED' as RevisionStatus } : r
-    ));
-    setIsRevisionModalOpen(false);
+  const handleApproveRevision = async (revisionId: string) => {
+    try {
+      await approveRevisionMutation.mutateAsync({ revisionId });
+      setIsRevisionModalOpen(false);
+      // Update local selected revision with new status
+      const updated = revisions.find((r) => r.id === revisionId);
+      if (updated) {
+        setSelectedRevision({ ...updated, status: 'APPROVED' as RevisionStatus });
+      }
+    } catch (err) {
+      console.error('Failed to approve revision:', err);
+    }
   };
 
-  const handleRejectRevision = (revisionId: string) => {
-    setRevisions(revisions.map((r) =>
-      r.id === revisionId ? { ...r, status: 'REJECTED' as RevisionStatus } : r
-    ));
-    setIsRevisionModalOpen(false);
+  const handleRejectRevision = async (revisionId: string) => {
+    if (!rejectionReason.trim()) {
+      console.warn('Rejection reason is required');
+      return;
+    }
+
+    try {
+      await rejectRevisionMutation.mutateAsync({ revisionId, reason: rejectionReason });
+      setIsRevisionModalOpen(false);
+      setRejectionReason('');
+      setShowRejectionReasonInput(false);
+      // Update local selected revision with new status
+      const updated = revisions.find((r) => r.id === revisionId);
+      if (updated) {
+        setSelectedRevision({ ...updated, status: 'REJECTED' as RevisionStatus });
+      }
+    } catch (err) {
+      console.error('Failed to reject revision:', err);
+    }
   };
 
   const filteredRevisions = revisions.filter((r) =>
@@ -916,24 +954,67 @@ export default function CompensationPage() {
               </div>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsRevisionModalOpen(false)}>
-              Close
-            </Button>
-            {selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
-              <>
-                <Button
-                  variant="outline"
-                  className="text-red-600 border-red-600 hover:bg-red-50"
-                  onClick={() => handleRejectRevision(selectedRevision.id)}
-                >
-                  Reject
-                </Button>
-                <Button onClick={() => handleApproveRevision(selectedRevision.id)}>
-                  Approve
-                </Button>
-              </>
+          <ModalFooter className="flex-col gap-4">
+            {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
+              <div className="w-full space-y-3 border-t border-surface-200 dark:border-surface-700 pt-4">
+                <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+                  Rejection Reason <span className="text-red-600">*</span>
+                </label>
+                <Textarea
+                  placeholder="Please provide a reason for rejecting this revision..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  className="min-h-24"
+                />
+              </div>
             )}
+            <div className="flex gap-2 justify-end w-full">
+              <Button variant="outline" onClick={() => {
+                setIsRevisionModalOpen(false);
+                setRejectionReason('');
+                setShowRejectionReasonInput(false);
+              }}>
+                Close
+              </Button>
+              {selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
+                <>
+                  {showRejectionReasonInput ? (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowRejectionReasonInput(false)}
+                      >
+                        Cancel Rejection
+                      </Button>
+                      <Button
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                        disabled={!rejectionReason.trim() || rejectRevisionMutation.isPending}
+                        onClick={() => handleRejectRevision(selectedRevision.id)}
+                      >
+                        {rejectRevisionMutation.isPending ? 'Rejecting...' : 'Confirm Rejection'}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        className="text-red-600 border-red-600 hover:bg-red-50"
+                        disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
+                        onClick={() => setShowRejectionReasonInput(true)}
+                      >
+                        Reject
+                      </Button>
+                      <Button
+                        disabled={approveRevisionMutation.isPending || rejectRevisionMutation.isPending}
+                        onClick={() => handleApproveRevision(selectedRevision.id)}
+                      >
+                        {approveRevisionMutation.isPending ? 'Approving...' : 'Approve'}
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </ModalFooter>
         </Modal>
 

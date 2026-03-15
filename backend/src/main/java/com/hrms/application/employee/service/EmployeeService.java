@@ -392,6 +392,33 @@ public class EmployeeService {
         return employeePage.map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames));
     }
 
+    /**
+     * BUG-013 FIX: Return only employees whose level is MANAGER or above.
+     * Previously the manager-picker dropdown used getAllEmployees(page=0, size=100)
+     * which returned ALL employees — including ENTRY/MID/SENIOR contributors who
+     * cannot serve as a reporting manager.  This creates confusion during onboarding
+     * and can produce invalid reporting-line data.
+     *
+     * <p>Eligible manager levels: LEAD, MANAGER, SENIOR_MANAGER, DIRECTOR, VP, SVP, CXO.</p>
+     */
+    @Transactional(readOnly = true)
+    public List<EmployeeResponse> getManagerEmployees() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        List<Employee.EmployeeLevel> managerLevels = java.util.Arrays.asList(
+                Employee.EmployeeLevel.LEAD,
+                Employee.EmployeeLevel.MANAGER,
+                Employee.EmployeeLevel.SENIOR_MANAGER,
+                Employee.EmployeeLevel.DIRECTOR,
+                Employee.EmployeeLevel.VP,
+                Employee.EmployeeLevel.SVP,
+                Employee.EmployeeLevel.CXO
+        );
+        List<Employee> managers = employeeRepository.findManagersByTenantId(tenantId, managerLevels);
+        return managers.stream()
+                .map(EmployeeResponse::fromEmployee)
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public List<EmployeeResponse> getSubordinates(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -422,7 +449,18 @@ public class EmployeeService {
         return response;
     }
 
+    /** Maximum depth for recursive org-chart traversal (prevents OOM on circular/deep hierarchies). */
+    private static final int MAX_HIERARCHY_DEPTH = 10;
+
     private List<EmployeeResponse> getSubordinatesRecursive(UUID managerId, UUID tenantId) {
+        return getSubordinatesRecursive(managerId, tenantId, 0);
+    }
+
+    private List<EmployeeResponse> getSubordinatesRecursive(UUID managerId, UUID tenantId, int currentDepth) {
+        if (currentDepth >= MAX_HIERARCHY_DEPTH) {
+            return java.util.Collections.emptyList();
+        }
+
         List<Employee> directSubordinates = new ArrayList<>();
         employeeRepository.findAllByManagerId(tenantId, managerId)
                 .forEach(directSubordinates::add);
@@ -430,7 +468,8 @@ public class EmployeeService {
         return directSubordinates.stream()
                 .map(subordinate -> {
                     EmployeeResponse response = EmployeeResponse.fromEmployee(subordinate);
-                    List<EmployeeResponse> childSubordinates = getSubordinatesRecursive(subordinate.getId(), tenantId);
+                    List<EmployeeResponse> childSubordinates = getSubordinatesRecursive(
+                            subordinate.getId(), tenantId, currentDepth + 1);
                     response.setSubordinates(childSubordinates);
                     return response;
                 })

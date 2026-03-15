@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/blogs")
@@ -36,7 +37,7 @@ public class BlogPostController {
     @Operation(summary = "Create blog post")
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_CREATE)
-    public ResponseEntity<BlogPostDto> createPost(@RequestBody CreateBlogPostRequest request) {
+    public ResponseEntity<BlogPostDto> createPost(@Valid @RequestBody CreateBlogPostRequest request) {
         BlogPost post = BlogPost.builder()
                 .title(request.getTitle())
                 .slug(request.getSlug())
@@ -110,7 +111,7 @@ public class BlogPostController {
     @RequiresPermission(Permission.KNOWLEDGE_BLOG_UPDATE)
     public ResponseEntity<BlogPostDto> updatePost(
             @PathVariable UUID postId,
-            @RequestBody UpdateBlogPostRequest request) {
+            @Valid @RequestBody UpdateBlogPostRequest request) {
         BlogPost postData = BlogPost.builder()
                 .title(request.getTitle())
                 .slug(request.getSlug())

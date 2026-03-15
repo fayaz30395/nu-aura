@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout';
 import { apiClient } from '@/lib/api/client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
 import {
   Box,
   Button,
@@ -80,6 +82,21 @@ const STATE_OPTIONS = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function StatutoryPage() {
+
+  const router = useRouter();
+  const { hasPermission, isReady: permReady } = usePermissions();
+
+  // RBAC guard — redirect if user lacks required permission
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.PAYROLL_PROCESS)) {
+      router.replace('/payroll');
+    }
+  }, [permReady, hasPermission, router]);
+
+  if (!permReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
+    return null;
+  }
   const [result, setResult] = useState<StatutoryDeductions | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,10 +129,10 @@ export default function StatutoryPage() {
       );
       setResult(response.data);
     } catch (err: unknown) {
-      const axiosError = err as any;
+      const error = err as unknown as { response?: { data?: { message?: string } }; message?: string };
       setError(
-        axiosError?.response?.data?.message ||
-          axiosError?.message ||
+        error?.response?.data?.message ||
+          error?.message ||
           'Failed to calculate statutory deductions. Check your inputs and try again.'
       );
     } finally {

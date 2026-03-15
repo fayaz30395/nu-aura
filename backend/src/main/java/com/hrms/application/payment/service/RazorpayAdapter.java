@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Razorpay payment gateway adapter
@@ -56,6 +57,7 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PaymentStatusResponse checkStatus(String externalPaymentId) {
         try {
             // Integration point: Call Razorpay API to fetch payment status
@@ -71,6 +73,7 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
     }
 
     @Override
+    @Transactional
     public PaymentGatewayResponse processRefund(PaymentRefund refund) {
         try {
             // Integration point: Call Razorpay API to initiate refund

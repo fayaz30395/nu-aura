@@ -20,6 +20,7 @@ public class TalentProfileService {
 
     private final EmployeeRepository employeeRepository;
 
+    @Transactional(readOnly = true)
     public TalentProfileResponse getTalentProfile(UUID employeeId, UUID tenantId) {
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));

@@ -2,52 +2,38 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { employeeService } from '@/lib/services/employee.service';
 import { Employee } from '@/lib/types/employee';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType } from '@/lib/types/custom-fields';
 import { AppLayout } from '@/components/layout';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
+import { useEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 export default function EmployeeDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const toast = useToast();
   const employeeId = params.id as string;
 
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentTab, setCurrentTab] = useState('basic');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    loadEmployee();
-  }, [employeeId]);
+  // React Query hooks
+  const { data: employee, isLoading: loading, error: queryError } = useEmployee(employeeId);
+  const deleteEmployeeMutation = useDeleteEmployee();
 
-  const loadEmployee = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await employeeService.getEmployee(employeeId);
-      setEmployee(data);
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee');
-      console.error('Error loading employee:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const error = queryError ? (queryError as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee' : null;
 
   const handleDelete = async () => {
     try {
-      setDeleting(true);
-      await employeeService.deleteEmployee(employeeId);
+      await deleteEmployeeMutation.mutateAsync(employeeId);
+      toast.success('Employee Deleted', 'The employee has been deleted successfully.');
       router.push('/employees');
     } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee');
+      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete employee';
+      toast.error('Error', errorMsg);
       console.error('Error deleting employee:', err);
-      setDeleting(false);
       setShowDeleteModal(false);
     }
   };
@@ -454,17 +440,17 @@ export default function EmployeeDetailPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  disabled={deleting}
+                  disabled={deleteEmployeeMutation.isPending}
                   className="flex-1 px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-md text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  disabled={deleting}
+                  disabled={deleteEmployeeMutation.isPending}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
                 >
-                  {deleting ? 'Deleting...' : 'Delete'}
+                  {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

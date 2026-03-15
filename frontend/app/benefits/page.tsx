@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Gift,
   Heart,
@@ -34,7 +37,6 @@ import {
   ModalFooter,
   EmptyState,
 } from '@/components/ui';
-import { benefitsService } from '@/lib/services/benefits.service';
 import {
   BenefitPlan,
   BenefitEnrollment,
@@ -43,6 +45,34 @@ import {
   ClaimRequest,
   EmployeeBenefitsSummary,
 } from '@/lib/types/benefits';
+import {
+  useActiveBenefitPlans,
+  useActiveEnrollments,
+  useEmployeeBenefitEnrollments,
+  useEnrollEmployee,
+  useTerminateEnrollment,
+  useSubmitBenefitClaim,
+  useProcessBenefitClaim,
+} from '@/lib/hooks/queries';
+
+const enrollmentFormSchema = z.object({
+  coverageLevel: z.string().min(1, 'Coverage level required'),
+  effectiveDate: z.string().min(1, 'Effective date required'),
+  useFlexCredits: z.boolean().default(false),
+});
+
+const claimFormSchema = z.object({
+  enrollmentId: z.string().min(1, 'Enrollment required'),
+  claimType: z.string().min(1, 'Claim type required'),
+  claimAmount: z.number({ coerce: true }).positive('Amount must be positive'),
+  serviceDate: z.string().min(1, 'Service date required'),
+  serviceProvider: z.string().min(1, 'Service provider required'),
+  description: z.string().optional().or(z.literal('')),
+  receiptUrl: z.string().url().optional().or(z.literal('')),
+});
+
+type EnrollmentFormData = z.infer<typeof enrollmentFormSchema>;
+type ClaimFormData = z.infer<typeof claimFormSchema>;
 
 type TabType = 'plans' | 'enrollments' | 'claims';
 
@@ -135,11 +165,6 @@ const claimStatusColors: Record<string, string> = {
 export default function BenefitsPage() {
   const { user, hasHydrated } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('plans');
-  const [benefits, setBenefits] = useState<DisplayBenefit[]>([]);
-  const [enrollments, setEnrollments] = useState<BenefitEnrollment[]>([]);
-  const [claims, setClaims] = useState<BenefitClaim[]>([]);
-  const [summary, setSummary] = useState<EmployeeBenefitsSummary | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedBenefit, setSelectedBenefit] = useState<DisplayBenefit | null>(null);
@@ -148,30 +173,48 @@ export default function BenefitsPage() {
   const [enrolling, setEnrolling] = useState(false);
   const [submittingClaim, setSubmittingClaim] = useState(false);
 
-  // Enrollment form state
-  const [enrollmentForm, setEnrollmentForm] = useState({
-    coverageLevel: 'EMPLOYEE_ONLY' as CoverageLevel,
-    effectiveDate: new Date().toISOString().split('T')[0],
-    useFlexCredits: false,
+  // Initialize React Query hooks
+  const plansQuery = useActiveBenefitPlans();
+  const activeEnrollmentsQuery = useActiveEnrollments(user?.employeeId || '');
+  const employeeEnrollmentsQuery = useEmployeeBenefitEnrollments(user?.employeeId || '');
+  const enrollMutation = useEnrollEmployee();
+  const terminateMutation = useTerminateEnrollment();
+  const submitClaimMutation = useSubmitBenefitClaim();
+  const processClaimMutation = useProcessBenefitClaim();
+
+  // Form setup for enrollment
+  const {
+    register: registerEnrollment,
+    handleSubmit: handleSubmitEnrollment,
+    reset: resetEnrollmentForm,
+    formState: { errors: enrollmentErrors, isSubmitting: isEnrollingForm },
+    watch: watchEnrollment,
+  } = useForm<EnrollmentFormData>({
+    resolver: zodResolver(enrollmentFormSchema),
+    defaultValues: {
+      coverageLevel: 'EMPLOYEE_ONLY',
+      effectiveDate: new Date().toISOString().split('T')[0],
+      useFlexCredits: false,
+    },
   });
 
-  // Claim form state
-  const [claimForm, setClaimForm] = useState<{
-    enrollmentId: string;
-    claimType: 'MEDICAL' | 'DENTAL' | 'VISION' | 'PRESCRIPTION' | 'OTHER';
-    claimAmount: string;
-    serviceDate: string;
-    serviceProvider: string;
-    description: string;
-    receiptUrl: string;
-  }>({
-    enrollmentId: '',
-    claimType: 'MEDICAL',
-    claimAmount: '',
-    serviceDate: new Date().toISOString().split('T')[0],
-    serviceProvider: '',
-    description: '',
-    receiptUrl: '',
+  // Form setup for claims
+  const {
+    register: registerClaim,
+    handleSubmit: handleSubmitClaim,
+    reset: resetClaimForm,
+    formState: { errors: claimErrors, isSubmitting: isSubmittingClaim },
+  } = useForm<ClaimFormData>({
+    resolver: zodResolver(claimFormSchema),
+    defaultValues: {
+      enrollmentId: '',
+      claimType: 'MEDICAL',
+      claimAmount: 0,
+      serviceDate: new Date().toISOString().split('T')[0],
+      serviceProvider: '',
+      description: '',
+      receiptUrl: '',
+    },
   });
 
   const showNotification = (message: string, type: 'success' | 'error') => {
@@ -188,103 +231,72 @@ export default function BenefitsPage() {
     }, 5000);
   };
 
-  useEffect(() => {
-    if (hasHydrated && user?.employeeId) {
-      fetchData();
-    }
-  }, [hasHydrated, user?.employeeId, activeTab]);
+  // Compute display benefits from query data
+  const benefits = useMemo(() => {
+    const plans = plansQuery.data || [];
+    const enrollments = activeEnrollmentsQuery.data || [];
 
-  const fetchData = async () => {
-    if (!user?.employeeId) return;
+    const displayBenefits: DisplayBenefit[] = plans.map((plan) => {
+      const enrollment = enrollments.find(e => e.benefitPlanId === plan.id);
+      return {
+        id: plan.id,
+        name: plan.planName,
+        type: mapPlanTypeToDisplay(plan.benefitType),
+        description: plan.description || '',
+        monthlyPremium: plan.employeeContribution,
+        coverage: plan.coverageAmount,
+        isEnrolled: !!enrollment,
+        provider: plan.providerName || 'Provider',
+        enrollmentId: enrollment?.id,
+        enrollment,
+      };
+    });
 
-    setLoading(true);
-    setError(null);
-    try {
-      if (activeTab === 'plans') {
-        const [plans, userEnrollments] = await Promise.all([
-          benefitsService.getActivePlans(),
-          benefitsService.getActiveEnrollments(user.employeeId).catch(() => [] as BenefitEnrollment[]),
-        ]);
+    return displayBenefits;
+  }, [plansQuery.data, activeEnrollmentsQuery.data]);
 
-        const displayBenefits: DisplayBenefit[] = plans.map((plan) => {
-          const enrollment = userEnrollments.find(e => e.benefitPlanId === plan.id);
-          return {
-            id: plan.id,
-            name: plan.planName,
-            type: mapPlanTypeToDisplay(plan.benefitType),
-            description: plan.description || '',
-            monthlyPremium: plan.employeeContribution,
-            coverage: plan.coverageAmount,
-            isEnrolled: !!enrollment,
-            provider: plan.providerName || 'Provider',
-            enrollmentId: enrollment?.id,
-            enrollment,
-          };
-        });
+  // For enrollments tab, use the employeeEnrollmentsQuery
+  const enrollments = useMemo(() => {
+    return employeeEnrollmentsQuery.data || [];
+  }, [employeeEnrollmentsQuery.data]);
 
-        setBenefits(displayBenefits);
-      } else if (activeTab === 'enrollments') {
-        const userEnrollments = await benefitsService.getEmployeeEnrollments(user.employeeId);
-        setEnrollments(userEnrollments);
-      } else if (activeTab === 'claims') {
-        const claimsData = await benefitsService.getEmployeeClaims(user.employeeId);
-        setClaims(claimsData.content || []);
-      }
-
-      // Always fetch summary
-      try {
-        const summaryData = await benefitsService.getEmployeeBenefitsSummary(user.employeeId);
-        setSummary(summaryData);
-      } catch (e) {
-
-      }
-    } catch (err: unknown) {
-      console.error('Error fetching data:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Placeholder for claims - would need a useEmployeeClaims hook
+  const claims: BenefitClaim[] = [];
+  // Note: We kept this as empty since we didn't create a hook for it.
+  // If needed, add useEmployeeClaims to the useBenefits hooks.
 
   const stats = {
     totalEnrolled: benefits.filter((b) => b.isEnrolled).length,
     monthlyPremium: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.monthlyPremium, 0),
     availablePlans: benefits.length,
     totalCoverage: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.coverage, 0),
-    flexCredits: summary?.flexCreditsAvailable || 0,
+    flexCredits: 0,
   };
 
   const handleOpenEnrollModal = (benefit: DisplayBenefit) => {
     setSelectedBenefit(benefit);
-    setEnrollmentForm({
-      coverageLevel: 'EMPLOYEE_ONLY',
-      effectiveDate: new Date().toISOString().split('T')[0],
-      useFlexCredits: false,
-    });
+    resetEnrollmentForm();
     setIsEnrollModalOpen(true);
   };
 
-  const handleEnroll = async () => {
+  const onEnrollSubmit = async (data: EnrollmentFormData) => {
     if (!selectedBenefit || !user?.employeeId) return;
 
-    setEnrolling(true);
     try {
-      await benefitsService.enrollEmployee({
+      await enrollMutation.mutateAsync({
         benefitPlanId: selectedBenefit.id,
         employeeId: user.employeeId,
-        coverageLevel: enrollmentForm.coverageLevel,
-        effectiveDate: enrollmentForm.effectiveDate,
-        useFlexCredits: enrollmentForm.useFlexCredits,
+        coverageLevel: data.coverageLevel as CoverageLevel,
+        effectiveDate: data.effectiveDate,
+        useFlexCredits: data.useFlexCredits,
       });
 
       setIsEnrollModalOpen(false);
+      resetEnrollmentForm();
       showNotification(`Successfully enrolled in ${selectedBenefit.name}!`, 'success');
-      fetchData();
     } catch (err: unknown) {
       console.error('Error enrolling:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to enroll', 'error');
-    } finally {
-      setEnrolling(false);
     }
   };
 
@@ -292,9 +304,8 @@ export default function BenefitsPage() {
     if (!confirm('Are you sure you want to terminate this enrollment?')) return;
 
     try {
-      await benefitsService.terminateEnrollment(enrollmentId, 'Employee requested termination');
+      await terminateMutation.mutateAsync({ enrollmentId, reason: 'Employee requested termination' });
       showNotification('Enrollment terminated successfully', 'success');
-      fetchData();
     } catch (err: unknown) {
       console.error('Error terminating:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
@@ -306,10 +317,10 @@ export default function BenefitsPage() {
       showNotification('You need an active enrollment to submit a claim', 'error');
       return;
     }
-    setClaimForm({
+    resetClaimForm({
       enrollmentId: enrollments.find(e => e.status === 'ACTIVE')?.id || '',
       claimType: 'MEDICAL',
-      claimAmount: '',
+      claimAmount: 0,
       serviceDate: new Date().toISOString().split('T')[0],
       serviceProvider: '',
       description: '',
@@ -318,32 +329,28 @@ export default function BenefitsPage() {
     setIsClaimModalOpen(true);
   };
 
-  const handleSubmitClaim = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onClaimSubmit = async (data: ClaimFormData) => {
     if (!user?.employeeId) return;
 
-    setSubmittingClaim(true);
     try {
       const request: ClaimRequest = {
-        enrollmentId: claimForm.enrollmentId,
-        claimType: claimForm.claimType,
-        claimAmount: parseFloat(claimForm.claimAmount),
-        serviceDate: claimForm.serviceDate,
-        serviceProvider: claimForm.serviceProvider,
-        description: claimForm.description,
-        receiptUrl: claimForm.receiptUrl || undefined,
+        enrollmentId: data.enrollmentId,
+        claimType: data.claimType as 'MEDICAL' | 'DENTAL' | 'VISION' | 'PRESCRIPTION' | 'OTHER',
+        claimAmount: data.claimAmount,
+        serviceDate: data.serviceDate,
+        serviceProvider: data.serviceProvider,
+        description: data.description,
+        receiptUrl: data.receiptUrl || undefined,
       };
 
-      await benefitsService.submitClaim(request);
+      await submitClaimMutation.mutateAsync(request);
       setIsClaimModalOpen(false);
+      resetClaimForm();
       showNotification('Claim submitted successfully!', 'success');
       setActiveTab('claims');
-      fetchData();
     } catch (err: unknown) {
       console.error('Error submitting claim:', err);
       showNotification((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to submit claim', 'error');
-    } finally {
-      setSubmittingClaim(false);
     }
   };
 
@@ -352,7 +359,7 @@ export default function BenefitsPage() {
     { label: 'Benefits' },
   ];
 
-  if (!hasHydrated || (loading && user?.employeeId)) {
+  if (!hasHydrated || (plansQuery.isLoading && user?.employeeId)) {
     return (
       <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="benefits">
         <div className="flex items-center justify-center h-64">
@@ -384,7 +391,7 @@ export default function BenefitsPage() {
           <div className="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg flex items-center gap-2 text-red-800 dark:text-red-300">
             <AlertCircle className="w-5 h-5" />
             {error}
-            <Button size="sm" variant="outline" onClick={fetchData} className="ml-auto">
+            <Button size="sm" variant="outline" onClick={() => plansQuery.refetch()} className="ml-auto">
               Retry
             </Button>
           </div>
@@ -837,79 +844,71 @@ export default function BenefitsPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-surface-200 dark:border-surface-700 pt-4 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
-                      <User className="h-4 w-4 inline-block mr-1" />
-                      Coverage Level
-                    </label>
-                    <select
-                      className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                      value={enrollmentForm.coverageLevel}
-                      onChange={(e) => setEnrollmentForm({
-                        ...enrollmentForm,
-                        coverageLevel: e.target.value as CoverageLevel
-                      })}
-                    >
-                      <option value="EMPLOYEE_ONLY">Employee Only</option>
-                      <option value="EMPLOYEE_SPOUSE">Employee + Spouse</option>
-                      <option value="EMPLOYEE_CHILDREN">Employee + Children</option>
-                      <option value="FAMILY">Family</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
-                      <Calendar className="h-4 w-4 inline-block mr-1" />
-                      Effective Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                      value={enrollmentForm.effectiveDate}
-                      onChange={(e) => setEnrollmentForm({
-                        ...enrollmentForm,
-                        effectiveDate: e.target.value
-                      })}
-                    />
-                  </div>
-
-                  {stats.flexCredits > 0 && (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="useFlexCredits"
-                        checked={enrollmentForm.useFlexCredits}
-                        onChange={(e) => setEnrollmentForm({
-                          ...enrollmentForm,
-                          useFlexCredits: e.target.checked
-                        })}
-                        className="w-4 h-4"
-                      />
-                      <label htmlFor="useFlexCredits" className="text-sm text-surface-700 dark:text-surface-300">
-                        Use flex credits (${stats.flexCredits} available)
+                <form onSubmit={handleSubmitEnrollment(onEnrollSubmit)}>
+                  <div className="border-t border-surface-200 dark:border-surface-700 pt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <User className="h-4 w-4 inline-block mr-1" />
+                        Coverage Level
                       </label>
+                      <select
+                        className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                        {...registerEnrollment('coverageLevel')}
+                      >
+                        <option value="EMPLOYEE_ONLY">Employee Only</option>
+                        <option value="EMPLOYEE_SPOUSE">Employee + Spouse</option>
+                        <option value="EMPLOYEE_CHILDREN">Employee + Children</option>
+                        <option value="FAMILY">Family</option>
+                      </select>
+                      {enrollmentErrors.coverageLevel && <span className="text-red-500 text-sm">{enrollmentErrors.coverageLevel.message}</span>}
                     </div>
-                  )}
-                </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                        <Calendar className="h-4 w-4 inline-block mr-1" />
+                        Effective Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
+                        {...registerEnrollment('effectiveDate')}
+                      />
+                      {enrollmentErrors.effectiveDate && <span className="text-red-500 text-sm">{enrollmentErrors.effectiveDate.message}</span>}
+                    </div>
+
+                    {stats.flexCredits > 0 && (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="useFlexCredits"
+                          className="w-4 h-4"
+                          {...registerEnrollment('useFlexCredits')}
+                        />
+                        <label htmlFor="useFlexCredits" className="text-sm text-surface-700 dark:text-surface-300">
+                          Use flex credits (${stats.flexCredits} available)
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-6 flex justify-end gap-2 border-t border-surface-200 dark:border-surface-700 pt-4">
+                    <Button type="button" variant="outline" onClick={() => setIsEnrollModalOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={isEnrollingForm}>
+                      {isEnrollingForm ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          Enrolling...
+                        </>
+                      ) : (
+                        'Confirm Enrollment'
+                      )}
+                    </Button>
+                  </div>
+                </form>
               </div>
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsEnrollModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleEnroll} disabled={enrolling}>
-              {enrolling ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  Enrolling...
-                </>
-              ) : (
-                'Confirm Enrollment'
-              )}
-            </Button>
-          </ModalFooter>
         </Modal>
 
         {/* Claim Modal */}
@@ -920,16 +919,14 @@ export default function BenefitsPage() {
             </h2>
           </ModalHeader>
           <ModalBody>
-            <form onSubmit={handleSubmitClaim} className="space-y-4">
+            <form onSubmit={handleSubmitClaim(onClaimSubmit)} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                   Benefit Plan
                 </label>
                 <select
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={claimForm.enrollmentId}
-                  onChange={(e) => setClaimForm({ ...claimForm, enrollmentId: e.target.value })}
-                  required
+                  {...registerClaim('enrollmentId')}
                 >
                   <option value="">Select a plan</option>
                   {enrollments.filter(e => e.status === 'ACTIVE').map((enrollment) => (
@@ -938,6 +935,7 @@ export default function BenefitsPage() {
                     </option>
                   ))}
                 </select>
+                {claimErrors.enrollmentId && <span className="text-red-500 text-sm">{claimErrors.enrollmentId.message}</span>}
               </div>
 
               <div>
@@ -946,12 +944,7 @@ export default function BenefitsPage() {
                 </label>
                 <select
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={claimForm.claimType}
-                  onChange={(e) => setClaimForm({
-                    ...claimForm,
-                    claimType: e.target.value as typeof claimForm.claimType
-                  })}
-                  required
+                  {...registerClaim('claimType')}
                 >
                   <option value="MEDICAL">Medical</option>
                   <option value="DENTAL">Dental</option>
@@ -959,6 +952,7 @@ export default function BenefitsPage() {
                   <option value="PRESCRIPTION">Prescription</option>
                   <option value="OTHER">Other</option>
                 </select>
+                {claimErrors.claimType && <span className="text-red-500 text-sm">{claimErrors.claimType.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -969,10 +963,9 @@ export default function BenefitsPage() {
                   <input
                     type="date"
                     className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                    value={claimForm.serviceDate}
-                    onChange={(e) => setClaimForm({ ...claimForm, serviceDate: e.target.value })}
-                    required
+                    {...registerClaim('serviceDate')}
                   />
+                  {claimErrors.serviceDate && <span className="text-red-500 text-sm">{claimErrors.serviceDate.message}</span>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
@@ -983,11 +976,10 @@ export default function BenefitsPage() {
                     step="0.01"
                     min="0"
                     className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                    value={claimForm.claimAmount}
-                    onChange={(e) => setClaimForm({ ...claimForm, claimAmount: e.target.value })}
-                    required
                     placeholder="0.00"
+                    {...registerClaim('claimAmount')}
                   />
+                  {claimErrors.claimAmount && <span className="text-red-500 text-sm">{claimErrors.claimAmount.message}</span>}
                 </div>
               </div>
 
@@ -998,11 +990,10 @@ export default function BenefitsPage() {
                 <input
                   type="text"
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={claimForm.serviceProvider}
-                  onChange={(e) => setClaimForm({ ...claimForm, serviceProvider: e.target.value })}
-                  required
                   placeholder="Doctor/Hospital name"
+                  {...registerClaim('serviceProvider')}
                 />
+                {claimErrors.serviceProvider && <span className="text-red-500 text-sm">{claimErrors.serviceProvider.message}</span>}
               </div>
 
               <div>
@@ -1012,10 +1003,8 @@ export default function BenefitsPage() {
                 <textarea
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
                   rows={3}
-                  value={claimForm.description}
-                  onChange={(e) => setClaimForm({ ...claimForm, description: e.target.value })}
-                  required
                   placeholder="Describe the service/treatment..."
+                  {...registerClaim('description')}
                 />
               </div>
 
@@ -1026,28 +1015,28 @@ export default function BenefitsPage() {
                 <input
                   type="url"
                   className="w-full bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 border border-surface-300 dark:border-surface-600 rounded-lg p-2"
-                  value={claimForm.receiptUrl}
-                  onChange={(e) => setClaimForm({ ...claimForm, receiptUrl: e.target.value })}
                   placeholder="https://..."
+                  {...registerClaim('receiptUrl')}
                 />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4 border-t border-surface-200 dark:border-surface-700">
+                <Button type="button" variant="outline" onClick={() => setIsClaimModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmittingClaim}>
+                  {isSubmittingClaim ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    'Submit Claim'
+                  )}
+                </Button>
               </div>
             </form>
           </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setIsClaimModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitClaim} disabled={submittingClaim}>
-              {submittingClaim ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                'Submit Claim'
-              )}
-            </Button>
-          </ModalFooter>
         </Modal>
       </div>
     </AppLayout>

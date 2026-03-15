@@ -40,6 +40,7 @@ public class ContractService {
     /**
      * Create a new contract
      */
+    @Transactional
     public ContractDto createContract(CreateContractRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -75,6 +76,7 @@ public class ContractService {
     /**
      * Update an existing contract
      */
+    @Transactional
     public ContractDto updateContract(UUID contractId, UpdateContractRequest request) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
@@ -114,6 +116,7 @@ public class ContractService {
     /**
      * Get contract by ID
      */
+    @Transactional(readOnly = true)
     public ContractDto getContractById(UUID contractId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
@@ -124,6 +127,7 @@ public class ContractService {
     /**
      * Get all contracts for tenant
      */
+    @Transactional(readOnly = true)
     public Page<ContractListDto> getAllContracts(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findByTenantId(tenantId, pageable)
@@ -133,6 +137,7 @@ public class ContractService {
     /**
      * Get contracts by status
      */
+    @Transactional(readOnly = true)
     public Page<ContractListDto> getContractsByStatus(ContractStatus status, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findByTenantIdAndStatus(tenantId, status, pageable)
@@ -142,6 +147,7 @@ public class ContractService {
     /**
      * Get contracts by type
      */
+    @Transactional(readOnly = true)
     public Page<ContractListDto> getContractsByType(ContractType type, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findByTenantIdAndType(tenantId, type, pageable)
@@ -151,6 +157,7 @@ public class ContractService {
     /**
      * Get contracts for an employee
      */
+    @Transactional(readOnly = true)
     public Page<ContractListDto> getEmployeeContracts(UUID employeeId, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
@@ -160,6 +167,7 @@ public class ContractService {
     /**
      * Search contracts
      */
+    @Transactional(readOnly = true)
     public Page<ContractListDto> searchContracts(String search, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.searchContracts(tenantId, search, pageable)
@@ -169,6 +177,7 @@ public class ContractService {
     /**
      * Delete contract
      */
+    @Transactional
     public void deleteContract(UUID contractId) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
@@ -182,6 +191,7 @@ public class ContractService {
     /**
      * Mark contract as pending review
      */
+    @Transactional
     public ContractDto markAsPendingReview(UUID contractId) {
         Contract contract = getContractEntity(contractId);
         contract.setStatus(ContractStatus.PENDING_REVIEW);
@@ -192,6 +202,7 @@ public class ContractService {
     /**
      * Mark contract as pending signatures
      */
+    @Transactional
     public ContractDto markAsPendingSignatures(UUID contractId) {
         Contract contract = getContractEntity(contractId);
         contract.setStatus(ContractStatus.PENDING_SIGNATURES);
@@ -202,6 +213,7 @@ public class ContractService {
     /**
      * Mark contract as active
      */
+    @Transactional
     public ContractDto markAsActive(UUID contractId) {
         Contract contract = getContractEntity(contractId);
         contract.markAsActive();
@@ -240,6 +252,7 @@ public class ContractService {
     /**
      * Get expiring contracts
      */
+    @Transactional(readOnly = true)
     public List<ContractListDto> getExpiringContracts(int days) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         LocalDate today = LocalDate.now();
@@ -254,6 +267,7 @@ public class ContractService {
     /**
      * Get expired contracts
      */
+    @Transactional(readOnly = true)
     public List<ContractListDto> getExpiredContracts() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findExpiredContracts(tenantId)
@@ -265,6 +279,7 @@ public class ContractService {
     /**
      * Get active contracts
      */
+    @Transactional(readOnly = true)
     public List<ContractListDto> getActiveContracts() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         return contractRepository.findActiveContracts(tenantId)
@@ -278,6 +293,7 @@ public class ContractService {
     /**
      * Get version history
      */
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getVersionHistory(UUID contractId) {
         List<ContractVersion> versions = versionRepository.findByContractIdOrderByVersionNumberDesc(contractId);
         return versions.stream()

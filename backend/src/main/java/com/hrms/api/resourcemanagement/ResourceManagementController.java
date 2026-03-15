@@ -55,7 +55,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     @Operation(summary = "Get capacity for multiple employees via POST request")
     public ResponseEntity<List<EmployeeCapacity>> getEmployeesCapacityPost(
-            @RequestBody GetEmployeesCapacityRequest request) {
+            @Valid @RequestBody GetEmployeesCapacityRequest request) {
         return ResponseEntity.ok(resourceManagementService.getEmployeesCapacity(request.getEmployeeIds(),
                 request.getAsOfDate() != null ? request.getAsOfDate() : LocalDate.now()));
     }
@@ -77,7 +77,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.PROJECT_VIEW)
     @Operation(summary = "Validate a proposed allocation via POST request")
     public ResponseEntity<AllocationValidationResult> validateAllocationPost(
-            @RequestBody ValidateAllocationRequest request) {
+            @Valid @RequestBody ValidateAllocationRequest request) {
         return ResponseEntity.ok(resourceManagementService.validateAllocation(request.getEmployeeId(),
                 request.getProjectId(), request.getAllocationPercentage(), LocalDate.now(), null));
     }
@@ -160,7 +160,7 @@ public class ResourceManagementController {
     @Operation(summary = "Approve an allocation request")
     public ResponseEntity<Void> approveAllocationRequest(
             @PathVariable UUID requestId,
-            @RequestBody(required = false) ApproveRequest request) {
+            @Valid @RequestBody(required = false) ApproveRequest request) {
         resourceManagementService.approveAllocationRequest(requestId, request != null ? request.getComment() : null);
         return ResponseEntity.ok().build();
     }
@@ -179,7 +179,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @Operation(summary = "Get workload dashboard data with filters")
     public ResponseEntity<WorkloadDashboardData> getWorkloadDashboard(
-            @RequestBody(required = false) WorkloadFilterOptions filters) {
+            @Valid @RequestBody(required = false) WorkloadFilterOptions filters) {
         return ResponseEntity.ok(resourceManagementService.getWorkloadDashboard(filters));
     }
 
@@ -207,7 +207,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_ALL)
     @Operation(summary = "Get team availability view via POST")
     public ResponseEntity<TeamAvailabilityView> getTeamAvailabilityPost(
-            @RequestBody ResourceCalendarFilter filter) {
+            @Valid @RequestBody ResourceCalendarFilter filter) {
         return ResponseEntity.ok(resourceManagementService.getTeamAvailability(filter));
     }
 
@@ -235,7 +235,7 @@ public class ResourceManagementController {
     @RequiresPermission(Permission.ANALYTICS_VIEW)
     @Operation(summary = "Get employee workloads with filters and pagination")
     public ResponseEntity<Page<EmployeeWorkload>> getEmployeeWorkloads(
-            @RequestBody(required = false) WorkloadFilterOptions filters,
+            @Valid @RequestBody(required = false) WorkloadFilterOptions filters,
             Pageable pageable) {
         return ResponseEntity.ok(resourceManagementService.getEmployeeWorkloads(filters, pageable));
     }

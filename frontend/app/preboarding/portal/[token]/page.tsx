@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   User, Building2, CreditCard, FileText, CheckCircle2,
   Upload, ChevronRight, AlertCircle
@@ -9,6 +12,28 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+
+const personalInfoSchema = z.object({
+  dateOfBirth: z.string().min(1, 'Date of birth required'),
+  address: z.string().min(1, 'Address required'),
+  city: z.string().min(1, 'City required'),
+  state: z.string().min(1, 'State required'),
+  postalCode: z.string().min(1, 'Postal code required'),
+  country: z.string().min(1, 'Country required'),
+  phoneNumber: z.string().optional().or(z.literal('')),
+  emergencyContactName: z.string().optional().or(z.literal('')),
+  emergencyContactNumber: z.string().optional().or(z.literal('')),
+});
+
+const bankDetailsSchema = z.object({
+  bankName: z.string().min(1, 'Bank name required'),
+  bankAccountNumber: z.string().min(1, 'Account number required'),
+  bankIfscCode: z.string().min(1, 'IFSC code required'),
+  taxId: z.string().min(1, 'PAN number required'),
+});
+
+type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
+type BankDetailsFormData = z.infer<typeof bankDetailsSchema>;
 
 interface PreboardingData {
   id: string;
@@ -72,27 +97,32 @@ export default function PreboardingPortalPage() {
     }
   };
 
-  const savePersonalInfo = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSaving(true);
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
+  const {
+    register: registerPersonalInfo,
+    handleSubmit: handleSubmitPersonalInfo,
+    formState: { errors: personalInfoErrors },
+  } = useForm<PersonalInfoFormData>({
+    resolver: zodResolver(personalInfoSchema),
+    defaultValues: {
+      dateOfBirth: data?.dateOfBirth || '',
+      address: data?.address || '',
+      city: data?.city || '',
+      state: data?.state || '',
+      postalCode: data?.postalCode || '',
+      country: data?.country || '',
+      phoneNumber: data?.phoneNumber || '',
+      emergencyContactName: data?.emergencyContactName || '',
+      emergencyContactNumber: data?.emergencyContactNumber || '',
+    },
+  });
 
+  const savePersonalInfo = async (formData: PersonalInfoFormData) => {
+    setSaving(true);
     try {
       const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}/personal-info`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateOfBirth: formData.get('dateOfBirth'),
-          address: formData.get('address'),
-          city: formData.get('city'),
-          state: formData.get('state'),
-          postalCode: formData.get('postalCode'),
-          country: formData.get('country'),
-          phoneNumber: formData.get('phoneNumber'),
-          emergencyContactName: formData.get('emergencyContactName'),
-          emergencyContactNumber: formData.get('emergencyContactNumber'),
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -107,22 +137,27 @@ export default function PreboardingPortalPage() {
     }
   };
 
-  const saveBankDetails = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSaving(true);
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
+  const {
+    register: registerBankDetails,
+    handleSubmit: handleSubmitBankDetails,
+    formState: { errors: bankDetailsErrors },
+  } = useForm<BankDetailsFormData>({
+    resolver: zodResolver(bankDetailsSchema),
+    defaultValues: {
+      bankName: data?.bankName || '',
+      bankAccountNumber: data?.bankAccountNumber || '',
+      bankIfscCode: data?.bankIfscCode || '',
+      taxId: data?.taxId || '',
+    },
+  });
 
+  const saveBankDetails = async (formData: BankDetailsFormData) => {
+    setSaving(true);
     try {
       const response = await fetch(`${API_URL}/api/v1/preboarding/portal/${token}/bank-details`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bankAccountNumber: formData.get('bankAccountNumber'),
-          bankName: formData.get('bankName'),
-          bankIfscCode: formData.get('bankIfscCode'),
-          taxId: formData.get('taxId'),
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -247,42 +282,57 @@ export default function PreboardingPortalPage() {
         <Card>
           <CardContent className="p-6">
             {activeStep === 0 && (
-              <form onSubmit={savePersonalInfo} className="space-y-4">
+              <form onSubmit={handleSubmitPersonalInfo(savePersonalInfo)} className="space-y-4">
                 <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Date of Birth *</label>
-                    <Input name="dateOfBirth" type="date" defaultValue={data.dateOfBirth || ''} required />
+                    <Input type="date" {...registerPersonalInfo('dateOfBirth')} />
+                    {personalInfoErrors.dateOfBirth && <span className="text-red-500 text-sm">{personalInfoErrors.dateOfBirth.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Phone Number</label>
-                    <Input name="phoneNumber" defaultValue={data.phoneNumber || ''} placeholder="+91 9876543210" />
+                    <Input placeholder="+91 9876543210" {...registerPersonalInfo('phoneNumber')} />
+                    {personalInfoErrors.phoneNumber && <span className="text-red-500 text-sm">{personalInfoErrors.phoneNumber.message}</span>}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Address *</label>
                   <textarea
-                    name="address"
-                    defaultValue={data.address || ''}
                     className="w-full px-3 py-2 border rounded-lg dark:bg-surface-800 dark:border-surface-600"
                     rows={2}
-                    required
+                    {...registerPersonalInfo('address')}
                   />
+                  {personalInfoErrors.address && <span className="text-red-500 text-sm">{personalInfoErrors.address.message}</span>}
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Input name="city" placeholder="City" defaultValue={data.city || ''} />
-                  <Input name="state" placeholder="State" defaultValue={data.state || ''} />
-                  <Input name="postalCode" placeholder="Postal Code" defaultValue={data.postalCode || ''} />
-                  <Input name="country" placeholder="Country" defaultValue={data.country || ''} />
+                  <div>
+                    <Input placeholder="City" {...registerPersonalInfo('city')} />
+                    {personalInfoErrors.city && <span className="text-red-500 text-sm">{personalInfoErrors.city.message}</span>}
+                  </div>
+                  <div>
+                    <Input placeholder="State" {...registerPersonalInfo('state')} />
+                    {personalInfoErrors.state && <span className="text-red-500 text-sm">{personalInfoErrors.state.message}</span>}
+                  </div>
+                  <div>
+                    <Input placeholder="Postal Code" {...registerPersonalInfo('postalCode')} />
+                    {personalInfoErrors.postalCode && <span className="text-red-500 text-sm">{personalInfoErrors.postalCode.message}</span>}
+                  </div>
+                  <div>
+                    <Input placeholder="Country" {...registerPersonalInfo('country')} />
+                    {personalInfoErrors.country && <span className="text-red-500 text-sm">{personalInfoErrors.country.message}</span>}
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Emergency Contact Name</label>
-                    <Input name="emergencyContactName" defaultValue={data.emergencyContactName || ''} />
+                    <Input {...registerPersonalInfo('emergencyContactName')} />
+                    {personalInfoErrors.emergencyContactName && <span className="text-red-500 text-sm">{personalInfoErrors.emergencyContactName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Emergency Contact Number</label>
-                    <Input name="emergencyContactNumber" defaultValue={data.emergencyContactNumber || ''} />
+                    <Input {...registerPersonalInfo('emergencyContactNumber')} />
+                    {personalInfoErrors.emergencyContactNumber && <span className="text-red-500 text-sm">{personalInfoErrors.emergencyContactNumber.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-end pt-4">
@@ -295,26 +345,30 @@ export default function PreboardingPortalPage() {
             )}
 
             {activeStep === 1 && (
-              <form onSubmit={saveBankDetails} className="space-y-4">
+              <form onSubmit={handleSubmitBankDetails(saveBankDetails)} className="space-y-4">
                 <h2 className="text-lg font-semibold mb-4">Bank & Tax Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Bank Name *</label>
-                    <Input name="bankName" defaultValue={data.bankName || ''} required />
+                    <Input {...registerBankDetails('bankName')} />
+                    {bankDetailsErrors.bankName && <span className="text-red-500 text-sm">{bankDetailsErrors.bankName.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Account Number *</label>
-                    <Input name="bankAccountNumber" defaultValue={data.bankAccountNumber || ''} required />
+                    <Input {...registerBankDetails('bankAccountNumber')} />
+                    {bankDetailsErrors.bankAccountNumber && <span className="text-red-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">IFSC Code *</label>
-                    <Input name="bankIfscCode" defaultValue={data.bankIfscCode || ''} required />
+                    <Input {...registerBankDetails('bankIfscCode')} />
+                    {bankDetailsErrors.bankIfscCode && <span className="text-red-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">PAN Number *</label>
-                    <Input name="taxId" defaultValue={data.taxId || ''} placeholder="ABCDE1234F" required />
+                    <Input placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
+                    {bankDetailsErrors.taxId && <span className="text-red-500 text-sm">{bankDetailsErrors.taxId.message}</span>}
                   </div>
                 </div>
                 <div className="flex justify-between pt-4">

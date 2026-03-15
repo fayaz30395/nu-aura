@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/wiki/pages")
@@ -35,7 +36,7 @@ public class WikiPageController {
     @Operation(summary = "Create wiki page")
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_CREATE)
-    public ResponseEntity<WikiPageDto> createPage(@RequestBody CreateWikiPageRequest request) {
+    public ResponseEntity<WikiPageDto> createPage(@Valid @RequestBody CreateWikiPageRequest request) {
         WikiPage page = WikiPage.builder()
                 .title(request.getTitle())
                 .slug(request.getSlug())
@@ -75,7 +76,7 @@ public class WikiPageController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_UPDATE)
     public ResponseEntity<WikiPageDto> updatePage(
             @PathVariable UUID pageId,
-            @RequestBody UpdateWikiPageRequest request) {
+            @Valid @RequestBody UpdateWikiPageRequest request) {
         WikiPage pageData = WikiPage.builder()
                 .title(request.getTitle())
                 .slug(request.getSlug())

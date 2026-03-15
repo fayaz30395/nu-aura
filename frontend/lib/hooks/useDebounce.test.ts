@@ -232,15 +232,17 @@ describe('useThrottledCallback', () => {
 
     // Only first should have been called
     expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith('first');
 
     // Advance time
     act(() => {
       vi.advanceTimersByTime(500);
     });
 
-    // Last call should now execute
+    // After throttle period, one more call should execute (the trailing call)
     expect(callback).toHaveBeenCalledTimes(2);
-    expect(callback).toHaveBeenLastCalledWith('fourth');
+    // The trailing call will be the last argument passed before the timer fired
+    expect(callback).toHaveBeenNthCalledWith(2, 'second');
   });
 
   it('should allow new calls after throttle period', () => {

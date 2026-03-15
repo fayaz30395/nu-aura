@@ -1,35 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCreateContract } from '@/lib/hooks/queries/useContracts';
 import type { CreateContractRequest } from '@/lib/types/contract';
 import { Button, Input, Select, Textarea, Card } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
 
+const contractFormSchema = z.object({
+  title: z.string().min(1, 'Contract title is required').max(255, 'Title must not exceed 255 characters'),
+  type: z.enum(['EMPLOYMENT', 'VENDOR', 'NDA', 'SLA', 'FREELANCER', 'OTHER'], { errorMap: () => ({ message: 'Please select a contract type' }) }),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().optional(),
+  description: z.string().optional(),
+  currency: z.string().default('USD'),
+});
+
+type ContractFormData = z.infer<typeof contractFormSchema>;
+
 export default function CreateContractPage() {
   const router = useRouter();
   const createMutation = useCreateContract();
-  const [formData, setFormData] = useState<CreateContractRequest>({
-    title: '',
-    type: 'EMPLOYMENT',
-    startDate: new Date().toISOString().split('T')[0],
-    currency: 'USD',
+  const { register, control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContractFormData>({
+    resolver: zodResolver(contractFormSchema),
+    defaultValues: {
+      title: '',
+      type: 'EMPLOYMENT',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: undefined,
+      description: '',
+      currency: 'USD',
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ContractFormData) => {
     try {
-      await createMutation.mutateAsync(formData);
+      await createMutation.mutateAsync({
+        title: data.title,
+        type: data.type,
+        startDate: data.startDate,
+        endDate: data.endDate || undefined,
+        description: data.description || undefined,
+        currency: data.currency,
+      });
       router.push('/contracts');
     } catch (error) {
       console.error('Error creating contract:', error);
     }
-  };
-
-  const handleInputChange = (field: keyof CreateContractRequest, value: unknown) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const breadcrumbs = [
@@ -49,52 +70,56 @@ export default function CreateContractPage() {
         </div>
 
         <Card>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-sm font-medium mb-1">Contract Title *</label>
               <Input
                 placeholder="Enter contract title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.currentTarget.value)}
-                required
+                {...register('title')}
               />
+              {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Contract Type *</label>
-              <Select
-                placeholder="Select type"
-                data={[
-                  { value: 'EMPLOYMENT', label: 'Employment Contract' },
-                  { value: 'VENDOR', label: 'Vendor Contract' },
-                  { value: 'NDA', label: 'Non-Disclosure Agreement' },
-                  { value: 'SLA', label: 'Service Level Agreement' },
-                  { value: 'FREELANCER', label: 'Freelancer Agreement' },
-                  { value: 'OTHER', label: 'Other' },
-                ]}
-                value={formData.type}
-                onChange={(value) => handleInputChange('type', value)}
-                required
+              <Controller
+                name="type"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Select type"
+                    data={[
+                      { value: 'EMPLOYMENT', label: 'Employment Contract' },
+                      { value: 'VENDOR', label: 'Vendor Contract' },
+                      { value: 'NDA', label: 'Non-Disclosure Agreement' },
+                      { value: 'SLA', label: 'Service Level Agreement' },
+                      { value: 'FREELANCER', label: 'Freelancer Agreement' },
+                      { value: 'OTHER', label: 'Other' },
+                    ]}
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
+                  />
+                )}
               />
+              {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Start Date *</label>
               <Input
                 type="date"
-                value={formData.startDate}
-                onChange={(e) => handleInputChange('startDate', e.currentTarget.value)}
-                required
+                {...register('startDate')}
               />
+              {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">End Date</label>
               <Input
                 type="date"
-                value={formData.endDate || ''}
-                onChange={(e) => handleInputChange('endDate', e.currentTarget.value || undefined)}
+                {...register('endDate')}
               />
+              {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate.message}</p>}
             </div>
 
             <div>
@@ -102,16 +127,16 @@ export default function CreateContractPage() {
               <Textarea
                 placeholder="Enter contract description"
                 rows={4}
-                value={formData.description || ''}
-                onChange={(e) => handleInputChange('description', e.currentTarget.value || undefined)}
+                {...register('description')}
               />
+              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
             </div>
 
             <div className="flex gap-4">
               <Button
                 type="submit"
-                loading={createMutation.isPending}
-                disabled={createMutation.isPending}
+                loading={createMutation.isPending || isSubmitting}
+                disabled={createMutation.isPending || isSubmitting}
               >
                 Create Contract
               </Button>

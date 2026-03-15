@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -29,7 +29,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
-import { onboardingService } from '@/lib/services/onboarding.service';
+import {
+    useOnboardingTemplate,
+    useOnboardingTemplateTasks,
+    useUpdateOnboardingTemplate,
+    useAddOnboardingTemplateTask,
+    useUpdateOnboardingTemplateTask,
+    useDeleteOnboardingTemplateTask,
+} from '@/lib/hooks/queries/useOnboarding';
 import { OnboardingChecklistTemplate, OnboardingTemplateTask, OnboardingTaskCategory, OnboardingTaskPriority } from '@/lib/types/onboarding';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -38,9 +45,14 @@ export default function TemplateEditorPage() {
     const params = useParams();
     const templateId = params.id as string;
 
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [template, setTemplate] = useState<OnboardingChecklistTemplate | null>(null);
+    const { data: template, isLoading } = useOnboardingTemplate(templateId);
+    const { data: tasksData = [] } = useOnboardingTemplateTasks(templateId);
+    const updateTemplateMutation = useUpdateOnboardingTemplate();
+    const addTaskMutation = useAddOnboardingTemplateTask();
+    const updateTaskMutation = useUpdateOnboardingTemplateTask();
+    const deleteTaskMutation = useDeleteOnboardingTemplateTask();
+
+    const [localTemplate, setLocalTemplate] = useState<OnboardingChecklistTemplate | null>(null);
     const [tasks, setTasks] = useState<OnboardingTemplateTask[]>([]);
 
     // Form and Task state
@@ -54,38 +66,25 @@ export default function TemplateEditorPage() {
         orderSequence: 0
     });
 
-    useEffect(() => {
-        if (templateId) {
-            loadData();
-        }
-    }, [templateId]);
+    // Sync data from queries to local state
+    if (template && template !== localTemplate) {
+        setLocalTemplate(template);
+    }
 
-    const loadData = async () => {
-        try {
-            setLoading(true);
-            const [templateData, tasksData] = await Promise.all([
-                onboardingService.getTemplateById(templateId),
-                onboardingService.getTemplateTasks(templateId)
-            ]);
-            setTemplate(templateData);
-            setTasks(tasksData || []);
-        } catch (error) {
-            console.error('Failed to load template data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    if (tasksData && JSON.stringify(tasksData) !== JSON.stringify(tasks)) {
+        setTasks(tasksData || []);
+    }
 
     const handleSaveTemplate = async () => {
-        if (!template) return;
+        if (!localTemplate) return;
         try {
-            setSaving(true);
-            await onboardingService.updateTemplate(templateId, template);
-            // Optionally show success toast
+            await updateTemplateMutation.mutateAsync({
+                templateId,
+                data: localTemplate,
+            });
+            // Toast success is handled in mutation
         } catch (error) {
             console.error('Failed to save template:', error);
-        } finally {
-            setSaving(false);
         }
     };
 
@@ -103,27 +102,31 @@ export default function TemplateEditorPage() {
 
     const handleSaveTask = async () => {
         try {
-            setSaving(true);
             if (editingTask === 'new') {
-                const newTask = await onboardingService.addTemplateTask(templateId, taskForm);
-                setTasks([...tasks, newTask]);
+                await addTaskMutation.mutateAsync({
+                    templateId,
+                    data: taskForm,
+                });
             } else if (editingTask) {
-                const updatedTask = await onboardingService.updateTemplateTask(templateId, editingTask, taskForm);
-                setTasks(tasks.map(t => t.id === editingTask ? updatedTask : t));
+                await updateTaskMutation.mutateAsync({
+                    templateId,
+                    taskId: editingTask,
+                    data: taskForm,
+                });
             }
             setEditingTask(null);
         } catch (error) {
             console.error('Failed to save task:', error);
-        } finally {
-            setSaving(false);
         }
     };
 
     const handleDeleteTask = async (taskId: string) => {
         if (!confirm('Are you sure you want to delete this task?')) return;
         try {
-            await onboardingService.deleteTemplateTask(templateId, taskId);
-            setTasks(tasks.filter(t => t.id !== taskId));
+            await deleteTaskMutation.mutateAsync({
+                templateId,
+                taskId,
+            });
         } catch (error) {
             console.error('Failed to delete task:', error);
         }
@@ -134,7 +137,7 @@ export default function TemplateEditorPage() {
         setEditingTask(task.id);
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <AppLayout activeMenuItem="recruitment">
                 <div className="max-w-7xl mx-auto py-10 space-y-6">
@@ -151,7 +154,7 @@ export default function TemplateEditorPage() {
             breadcrumbs={[
                 { label: 'Onboarding', href: '/onboarding' },
                 { label: 'Templates', href: '/onboarding/templates' },
-                { label: template?.name || 'Editor', href: `/onboarding/templates/${templateId}` }
+                { label: localTemplate?.name || 'Editor', href: `/onboarding/templates/${templateId}` }
             ]}
         >
             <div className="max-w-7xl mx-auto py-6 space-y-10">
@@ -177,17 +180,15 @@ export default function TemplateEditorPage() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <Button
-                            variant="primary"
-                            className="font-black tracking-widest uppercase text-[10px] bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
-                            leftIcon={<Save className="h-4 w-4" />}
-                            isLoading={saving && !editingTask}
-                            onClick={handleSaveTemplate}
-                        >
-                            Save Blueprint
-                        </Button>
-                    </div>
+                    <Button
+                        variant="primary"
+                        className="font-black tracking-widest uppercase text-[10px] bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6 px-10"
+                        leftIcon={<Save className="h-4 w-4" />}
+                        isLoading={updateTemplateMutation.isPending && !editingTask}
+                        onClick={handleSaveTemplate}
+                    >
+                        Save Blueprint
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -205,8 +206,8 @@ export default function TemplateEditorPage() {
                                     <label className="text-[10px] font-black uppercase tracking-widest text-surface-400">Template Title</label>
                                     <Input
                                         className="rounded-2xl bg-white/50 dark:bg-black/20 border-0 font-black text-lg focus:ring-2 focus:ring-primary-500"
-                                        value={template?.name || ''}
-                                        onChange={(e) => setTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
+                                        value={localTemplate?.name || ''}
+                                        onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, name: e.target.value } : null)}
                                     />
                                 </div>
                                 <div className="space-y-3">
@@ -214,8 +215,8 @@ export default function TemplateEditorPage() {
                                     <textarea
                                         rows={5}
                                         className="w-full rounded-2xl bg-white/50 dark:bg-black/20 border-0 p-4 font-bold text-surface-700 dark:text-surface-200 focus:ring-2 focus:ring-primary-500 outline-none"
-                                        value={template?.description || ''}
-                                        onChange={(e) => setTemplate(prev => prev ? { ...prev, description: e.target.value } : null)}
+                                        value={localTemplate?.description || ''}
+                                        onChange={(e) => setLocalTemplate(prev => prev ? { ...prev, description: e.target.value } : null)}
                                     />
                                 </div>
                             </CardContent>
@@ -448,7 +449,7 @@ export default function TemplateEditorPage() {
                                 <Button
                                     className="flex-1 font-black tracking-widest uppercase text-xs bg-gradient-to-r from-primary-600 to-indigo-600 border-0 shadow-xl shadow-primary-500/20 rounded-2xl py-6"
                                     leftIcon={<Save className="h-4 w-4" />}
-                                    isLoading={saving}
+                                    isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
                                     onClick={handleSaveTask}
                                 >
                                     Confirm Task
@@ -469,8 +470,8 @@ export default function TemplateEditorPage() {
     );
 }
 
-// Re-using/Adding missing Luicde icons for convenience in this file context
-function Edit3(props: any) {
+// Re-using/Adding missing Lucide icons for convenience in this file context
+function Edit3(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}

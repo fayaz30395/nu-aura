@@ -1,54 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CheckCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
-import { leaveService } from '@/lib/services/leave.service';
-import { LeaveRequest, LeaveType } from '@/lib/types/leave';
+import { useLeaveRequestsByStatus, useActiveLeaveTypes, useApproveLeaveRequest, useRejectLeaveRequest } from '@/lib/hooks/queries/useLeaves';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useToast } from '@/components/notifications/ToastProvider';
 
 export default function LeaveApprovalsPage() {
+  const toast = useToast();
   const router = useRouter();
-  const [requests, setRequests] = useState<LeaveRequest[]>([]);
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { data: pendingData } = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const { data: leaveTypes = [] } = useActiveLeaveTypes();
+  const approveLeaveRequest = useApproveLeaveRequest();
+  const rejectLeaveRequest = useRejectLeaveRequest();
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [pendingRequests, types] = await Promise.all([
-        leaveService.getLeaveRequestsByStatus('PENDING', 0, 50),
-        leaveService.getActiveLeaveTypes(),
-      ]);
-      setRequests(pendingRequests.content);
-      setLeaveTypes(types);
-    } catch (err) {
-      console.error('Error loading approvals:', err);
-      setError('Failed to load pending approvals. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const requests = pendingData?.content ?? [];
 
   const handleApprove = async (id: string) => {
     if (!confirm('Are you sure you want to approve this leave request?')) return;
 
     try {
       setProcessing(id);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      await leaveService.approveLeaveRequest(id, user.employeeId);
-      alert('Leave request approved successfully');
-      loadData();
+      await approveLeaveRequest.mutateAsync({ id, approverId: user?.employeeId || '' });
+      toast.success('Leave request approved successfully');
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to approve leave request');
     } finally {
       setProcessing(null);
     }
@@ -60,12 +42,10 @@ export default function LeaveApprovalsPage() {
 
     try {
       setProcessing(id);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      await leaveService.rejectLeaveRequest(id, user.employeeId, reason);
-      alert('Leave request rejected');
-      loadData();
+      await rejectLeaveRequest.mutateAsync({ id, approverId: user?.employeeId || '', reason });
+      toast.success('Leave request rejected');
     } catch (error: unknown) {
-      alert((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
+      toast.error((error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to reject leave request');
     } finally {
       setProcessing(null);
     }
@@ -102,7 +82,7 @@ export default function LeaveApprovalsPage() {
               <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
             </div>
             <button
-              onClick={loadData}
+              onClick={() => setError(null)}
               className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
             >
               <RefreshCw className="w-4 h-4" />
@@ -120,7 +100,7 @@ export default function LeaveApprovalsPage() {
 
         {/* Requests Table */}
         <div className="bg-white dark:bg-surface-900 rounded-lg shadow-md overflow-hidden">
-          {loading ? (
+          {!pendingData ? (
             <div className="text-center py-12 text-gray-900 dark:text-white">Loading...</div>
           ) : requests.length === 0 ? (
             <div className="text-center py-12 px-4">

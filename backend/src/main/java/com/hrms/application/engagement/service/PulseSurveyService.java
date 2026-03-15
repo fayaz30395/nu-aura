@@ -106,18 +106,22 @@ public class PulseSurveyService {
         return surveyRepository.save(survey);
     }
 
+    @Transactional(readOnly = true)
     public Optional<PulseSurvey> getSurveyById(UUID surveyId) {
         return surveyRepository.findByIdAndTenantId(surveyId, TenantContext.getCurrentTenant());
     }
 
+    @Transactional(readOnly = true)
     public Page<PulseSurvey> getAllSurveys(Pageable pageable) {
         return surveyRepository.findAllByTenantId(TenantContext.getCurrentTenant(), pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<PulseSurvey> getSurveysByStatus(SurveyStatus status, Pageable pageable) {
         return surveyRepository.findAllByTenantIdAndStatus(TenantContext.getCurrentTenant(), status, pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<PulseSurvey> getActiveSurveys() {
         return surveyRepository.findActiveSurveys(TenantContext.getCurrentTenant(), LocalDate.now());
     }
@@ -242,6 +246,7 @@ public class PulseSurveyService {
         return question;
     }
 
+    @Transactional(readOnly = true)
     public List<PulseSurveyQuestion> getSurveyQuestions(UUID surveyId) {
         return questionRepository.findAllBySurveyIdAndIsActiveTrue(surveyId);
     }
@@ -368,6 +373,7 @@ public class PulseSurveyService {
 
     // ==================== Analytics ====================
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getSurveyAnalytics(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
@@ -440,6 +446,7 @@ public class PulseSurveyService {
         return analytics;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> getEngagementDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
         Map<String, Object> dashboard = new HashMap<>();

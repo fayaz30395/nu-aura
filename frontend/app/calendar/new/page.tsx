@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { calendarService } from '@/lib/services/calendar.service';
@@ -12,6 +12,7 @@ import {
   SyncProvider,
 } from '@/lib/types/calendar';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useCreateCalendarEvent } from '@/lib/hooks/queries/useCalendar';
 import {
   ArrowLeft,
   Loader2,
@@ -30,9 +31,9 @@ import {
 export default function NewEventPage() {
   const router = useRouter();
   const { isAuthenticated, hasHydrated } = useAuth();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const createEventMutation = useCreateCalendarEvent();
 
   const now = new Date();
   const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -47,12 +48,14 @@ export default function NewEventPage() {
     isRecurring: false,
   });
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, hasHydrated, router]);
+  if (!hasHydrated) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    router.push('/login');
+    return null;
+  }
 
   const eventTypes: { value: EventType; label: string }[] = [
     { value: 'MEETING', label: 'Meeting' },
@@ -114,21 +117,17 @@ export default function NewEventPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateForm()) return;
 
-    try {
-      setLoading(true);
-      setError(null);
-
-      await calendarService.createEvent(formData);
-      router.push('/calendar');
-    } catch (err) {
-      console.error('Error creating event:', err);
-      setError('Failed to create event');
-    } finally {
-      setLoading(false);
-    }
+    createEventMutation.mutate(formData, {
+      onSuccess: () => {
+        router.push('/calendar');
+      },
+      onError: () => {
+        setError('Failed to create event');
+      },
+    });
   };
 
   return (
@@ -389,10 +388,10 @@ export default function NewEventPage() {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={createEventMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl font-medium shadow-lg shadow-primary-500/25 transition-all duration-200 disabled:opacity-50"
           >
-            {loading ? (
+            {createEventMutation.isPending ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Creating...

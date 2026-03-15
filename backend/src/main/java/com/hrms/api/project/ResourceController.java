@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/resources")
@@ -45,7 +46,7 @@ public class ResourceController {
     @RequiresPermission(Permission.PROJECT_CREATE)
     public ResponseEntity<ProjectEmployeeResponse> reallocate(
             @PathVariable UUID allocationId,
-            @RequestBody ReallocateRequest request) {
+            @Valid @RequestBody ReallocateRequest request) {
         return ResponseEntity.ok(allocationService.reallocate(allocationId, request));
     }
 

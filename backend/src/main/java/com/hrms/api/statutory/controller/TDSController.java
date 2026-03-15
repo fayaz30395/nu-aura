@@ -54,7 +54,7 @@ public class TDSController {
     @RequiresPermission("STATUTORY_MANAGE")
     public ResponseEntity<EmployeeTDSDeclaration> approveDeclaration(
             @PathVariable UUID id,
-            @RequestBody UUID approverId) {
+            @Valid @RequestBody UUID approverId) {
         return statutoryService.approveTDSDeclaration(id, approverId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

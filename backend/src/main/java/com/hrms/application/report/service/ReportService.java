@@ -19,6 +19,7 @@ import com.hrms.infrastructure.performance.repository.PerformanceReviewRepositor
 import com.lowagie.text.DocumentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,13 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ReportService {
 
+    /**
+     * Hard upper bound for paginated report queries.
+     * Prevents OOM when Pageable.unpaged() would load an unbounded dataset into heap.
+     * Requests exceeding this limit are logged as a warning — escalate to streaming exports.
+     */
+    private static final int MAX_REPORT_ROWS = 50_000;
+
     private final EmployeeRepository employeeRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final DepartmentRepository departmentRepository;
@@ -45,9 +53,10 @@ public class ReportService {
     private final PdfExportService pdfExportService;
     private final CsvExportService csvExportService;
 
+    @Transactional(readOnly = true)
     public byte[] generateEmployeeDirectoryReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        List<Employee> employees = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
+        List<Employee> employees = employeeRepository.findByTenantId(tenantId);
 
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
@@ -70,6 +79,7 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "employee");
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateAttendanceReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -119,9 +129,10 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "attendance");
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateDepartmentHeadcountReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        List<Department> departments = departmentRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
+        List<Department> departments = departmentRepository.findByTenantId(tenantId);
 
         LocalDate startDate = request.getStartDate();
         LocalDate endDate = request.getEndDate();
@@ -133,6 +144,7 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "department");
     }
 
+    @Transactional(readOnly = true)
     public byte[] generateLeaveReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -142,13 +154,17 @@ public class ReportService {
             leaveRequests = leaveRequestRepository.findByTenantIdAndStartDateBetween(
                 tenantId, request.getStartDate(), request.getEndDate());
         } else {
-            leaveRequests = leaveRequestRepository.findAllByTenantId(tenantId, Pageable.unpaged()).getContent();
+            Pageable bounded = PageRequest.of(0, MAX_REPORT_ROWS);
+            leaveRequests = leaveRequestRepository.findAllByTenantId(tenantId, bounded).getContent();
+            if (leaveRequests.size() == MAX_REPORT_ROWS) {
+                log.warn("[ReportService] Leave report hit MAX_REPORT_ROWS={} for tenant {}. " +
+                    "Results may be truncated. Consider implementing streaming export.", MAX_REPORT_ROWS, tenantId);
+            }
         }
 
         // Apply filters
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
-            Set<UUID> employeeIds = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged())
-                .getContent().stream()
+            Set<UUID> employeeIds = employeeRepository.findByTenantId(tenantId).stream()
                 .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
                 .map(Employee::getId)
                 .collect(Collectors.toSet());
@@ -194,6 +210,7 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "leave");
     }
 
+    @Transactional(readOnly = true)
     public byte[] generatePayrollReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -222,14 +239,12 @@ public class ReportService {
 
         // Fetch departments for mapping
         Map<UUID, Department> departmentMap = departmentRepository
-            .findAllByTenantId(tenantId, Pageable.unpaged())
-            .getContent().stream()
+            .findByTenantId(tenantId).stream()
             .collect(Collectors.toMap(Department::getId, d -> d));
 
         // Fetch employees for designation mapping
         Map<UUID, Employee> employeeMap = employeeRepository
-            .findAllByTenantId(tenantId, Pageable.unpaged())
-            .getContent().stream()
+            .findByTenantId(tenantId).stream()
             .collect(Collectors.toMap(Employee::getId, e -> e));
 
         List<PayrollReportRow> reportData = payrollRecords.stream()
@@ -240,6 +255,7 @@ public class ReportService {
         return exportReport(reportData, request.getFormat(), "payroll");
     }
 
+    @Transactional(readOnly = true)
     public byte[] generatePerformanceReport(ReportRequest request) throws IOException, DocumentException {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
@@ -253,8 +269,7 @@ public class ReportService {
 
         // Apply department filter
         if (request.getDepartmentIds() != null && !request.getDepartmentIds().isEmpty()) {
-            Set<UUID> employeeIds = employeeRepository.findAllByTenantId(tenantId, Pageable.unpaged())
-                .getContent().stream()
+            Set<UUID> employeeIds = employeeRepository.findByTenantId(tenantId).stream()
                 .filter(e -> e.getDepartmentId() != null && request.getDepartmentIds().contains(e.getDepartmentId()))
                 .map(Employee::getId)
                 .collect(Collectors.toSet());
@@ -353,8 +368,9 @@ public class ReportService {
         Department dept, UUID tenantId, LocalDate startDate, LocalDate endDate) {
 
         // Get all employees in this department
+        Pageable bounded = PageRequest.of(0, MAX_REPORT_ROWS);
         List<Employee> deptEmployees = employeeRepository
-            .findAllByTenantIdAndDepartmentId(tenantId, dept.getId(), Pageable.unpaged())
+            .findAllByTenantIdAndDepartmentId(tenantId, dept.getId(), bounded)
             .getContent();
 
         long totalEmployees = deptEmployees.size();

@@ -28,6 +28,7 @@ public class SurveyManagementService {
     private final SurveyRepository surveyRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public SurveyDto createSurvey(SurveyRequest request, UUID createdBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating survey {} for tenant {}", request.getSurveyCode(), tenantId);
@@ -55,6 +56,7 @@ public class SurveyManagementService {
         return mapToResponse(savedSurvey);
     }
 
+    @Transactional
     public SurveyDto updateSurvey(UUID surveyId, SurveyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating survey {} for tenant {}", surveyId, tenantId);
@@ -75,6 +77,7 @@ public class SurveyManagementService {
         return mapToResponse(updatedSurvey);
     }
 
+    @Transactional
     public SurveyDto updateStatus(UUID surveyId, Survey.SurveyStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating survey {} status to {} for tenant {}", surveyId, status, tenantId);
@@ -162,6 +165,7 @@ public class SurveyManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteSurvey(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Survey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -33,6 +33,11 @@ export default function PaymentConfigPage() {
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
   const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // BUG-007 FIX: store timer ref to prevent setState on unmounted component
+  const savedMsgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
+  }, []);
 
   const {
     register,
@@ -93,7 +98,8 @@ export default function PaymentConfigPage() {
       };
       await saveConfigMutation.mutateAsync(request);
       setSavedMessage(`${paymentService.getProviderLabel(data.provider)} configuration saved successfully!`);
-      setTimeout(() => setSavedMessage(null), 5000);
+      if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
+      savedMsgTimerRef.current = setTimeout(() => setSavedMessage(null), 5000);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save configuration';
       setErrorMessage(message);
@@ -132,7 +138,8 @@ export default function PaymentConfigPage() {
       setSavedMessage(
         `${paymentService.getProviderLabel(provider)} has been ${isActive ? 'activated' : 'deactivated'}`
       );
-      setTimeout(() => setSavedMessage(null), 5000);
+      if (savedMsgTimerRef.current) clearTimeout(savedMsgTimerRef.current);
+      savedMsgTimerRef.current = setTimeout(() => setSavedMessage(null), 5000);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update configuration status';
       setErrorMessage(message);

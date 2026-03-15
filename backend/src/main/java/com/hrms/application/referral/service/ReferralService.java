@@ -34,6 +34,7 @@ public class ReferralService {
 
     // ==================== Referral Submission ====================
 
+    @Transactional
     public ReferralResponse submitReferral(UUID referrerId, ReferralRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Submitting referral for candidate {} by referrer {} tenant {}",
@@ -77,6 +78,7 @@ public class ReferralService {
         return mapToResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public ReferralResponse getReferral(UUID referralId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
@@ -84,6 +86,7 @@ public class ReferralService {
         return mapToResponse(referral);
     }
 
+    @Transactional(readOnly = true)
     public List<ReferralResponse> getMyReferrals(UUID referrerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return referralRepository.findByReferrerIdAndTenantId(referrerId, tenantId).stream()
@@ -91,12 +94,14 @@ public class ReferralService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Page<ReferralResponse> getAllReferrals(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return referralRepository.findByTenantId(tenantId, pageable)
                 .map(this::mapToResponse);
     }
 
+    @Transactional(readOnly = true)
     public List<ReferralResponse> getReferralsByStatus(ReferralStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return referralRepository.findByTenantIdAndStatus(tenantId, status).stream()
@@ -106,6 +111,7 @@ public class ReferralService {
 
     // ==================== Status Management ====================
 
+    @Transactional
     public ReferralResponse updateStatus(UUID referralId, ReferralStatus newStatus, String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
@@ -140,6 +146,7 @@ public class ReferralService {
         return mapToResponse(referralRepository.save(referral));
     }
 
+    @Transactional
     public ReferralResponse rejectReferral(UUID referralId, String reason, String stage) {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
@@ -173,6 +180,7 @@ public class ReferralService {
 
     // ==================== Bonus Management ====================
 
+    @Transactional
     public ReferralResponse processBonus(UUID referralId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
@@ -186,6 +194,7 @@ public class ReferralService {
         return mapToResponse(referralRepository.save(referral));
     }
 
+    @Transactional
     public ReferralResponse markBonusPaid(UUID referralId, String paymentReference) {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
@@ -198,6 +207,7 @@ public class ReferralService {
         return mapToResponse(referralRepository.save(referral));
     }
 
+    @Transactional(readOnly = true)
     public List<ReferralResponse> getBonusEligibleReferrals() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return referralRepository.findEligibleForBonus(tenantId).stream()
@@ -205,6 +215,7 @@ public class ReferralService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public void checkAndUpdateBonusEligibility() {
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate today = LocalDate.now();
@@ -223,6 +234,7 @@ public class ReferralService {
 
     // ==================== Policy Management ====================
 
+    @Transactional
     public ReferralPolicyResponse createPolicy(ReferralPolicyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating referral policy {} for tenant {}", request.getName(), tenantId);
@@ -268,6 +280,7 @@ public class ReferralService {
         return mapToPolicyResponse(policyRepository.save(policy));
     }
 
+    @Transactional
     public ReferralPolicyResponse updatePolicy(UUID policyId, ReferralPolicyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ReferralPolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
@@ -293,6 +306,7 @@ public class ReferralService {
         return mapToPolicyResponse(policyRepository.save(policy));
     }
 
+    @Transactional(readOnly = true)
     public ReferralPolicyResponse getPolicy(UUID policyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         ReferralPolicy policy = policyRepository.findByIdAndTenantId(policyId, tenantId)
@@ -300,6 +314,7 @@ public class ReferralService {
         return mapToPolicyResponse(policy);
     }
 
+    @Transactional(readOnly = true)
     public List<ReferralPolicyResponse> getActivePolicies() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return policyRepository.findByTenantIdAndIsActiveTrue(tenantId).stream()
@@ -318,6 +333,7 @@ public class ReferralService {
 
     // ==================== Dashboard & Analytics ====================
 
+    @Transactional(readOnly = true)
     public ReferralDashboard getDashboard() {
         UUID tenantId = TenantContext.getCurrentTenant();
 

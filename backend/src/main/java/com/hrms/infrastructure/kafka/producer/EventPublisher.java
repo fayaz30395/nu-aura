@@ -243,32 +243,44 @@ public class EventPublisher {
     // ============ PRIVATE HELPERS ============
 
     /**
-     * Send an event to Kafka with proper error handling.
+     * Send an event to Kafka with proper error handling and failure propagation.
+     *
+     * <p>R2-004 FIX: The previous implementation wrapped the Kafka send in
+     * {@code CompletableFuture.runAsync()}, which always completed the outer future
+     * successfully even when Kafka returned an error in its own {@code whenComplete}
+     * callback. Callers that checked the returned future would never detect Kafka
+     * failures, making it appear as fire-and-forget.</p>
+     *
+     * <p>The fix converts the Kafka {@code CompletableFuture<SendResult>} directly
+     * into a {@code CompletableFuture<Void>} using {@code thenAccept} / {@code handle},
+     * so failures are propagated to the caller instead of being silently swallowed.</p>
      *
      * @param topic Kafka topic
      * @param key Message key for partitioning
      * @param event Event payload
-     * @return CompletableFuture for async handling
+     * @return CompletableFuture that completes exceptionally if the send fails
      */
     private CompletableFuture<Void> sendEvent(String topic, String key, Object event) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Message<Object> message = MessageBuilder.withPayload(event)
-                        .setHeader(KafkaHeaders.TOPIC, topic)
-                        .setHeader(KafkaHeaders.KEY, key)
-                        .build();
+        try {
+            Message<Object> message = MessageBuilder.withPayload(event)
+                    .setHeader(KafkaHeaders.TOPIC, topic)
+                    .setHeader(KafkaHeaders.KEY, key)
+                    .build();
 
-                kafkaTemplate.send(message)
-                        .whenComplete((sendResult, ex) -> {
-                            if (ex != null) {
-                                log.error("Failed to publish event to topic {}: {}", topic, ex.getMessage(), ex);
-                            } else {
-                                log.debug("Event published successfully to topic {} with key {}", topic, key);
-                            }
-                        });
-            } catch (Exception e) {
-                log.error("Error publishing event to topic {}: {}", topic, e.getMessage(), e);
-            }
-        });
+            return kafkaTemplate.send(message)
+                    .handle((sendResult, ex) -> {
+                        if (ex != null) {
+                            log.error("Failed to publish event to topic {} (key={}): {}",
+                                    topic, key, ex.getMessage(), ex);
+                            throw new RuntimeException(
+                                    "Kafka publish failed for topic " + topic, ex);
+                        }
+                        log.debug("Event published to topic {} with key {}", topic, key);
+                        return (Void) null;
+                    });
+        } catch (Exception e) {
+            log.error("Error building Kafka message for topic {}: {}", topic, e.getMessage(), e);
+            return CompletableFuture.failedFuture(e);
+        }
     }
 }

@@ -5,12 +5,18 @@ import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/Button';
 import { AppLayout } from '@/components/layout';
-import RichTextEditor from '@/components/fluence/RichTextEditor';
 import { useCreateBlogPost, useBlogCategories } from '@/lib/hooks/queries/useFluence';
 import { notifications } from '@mantine/notifications';
-import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay } from '@mantine/core';
+import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
+
+// Dynamically import Tiptap editor to keep it out of the initial bundle
+const RichTextEditor = dynamic(
+  () => import('@/components/fluence/RichTextEditor'),
+  { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
+);
 import { ArrowLeft } from 'lucide-react';
 import { isAxiosError } from '@/lib/utils/type-guards';
 

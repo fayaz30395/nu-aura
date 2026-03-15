@@ -32,7 +32,6 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { isAdmin } from '@/lib/utils';
 import {
-  announcementService,
   Announcement,
   AnnouncementCategory,
   AnnouncementPriority,
@@ -42,7 +41,6 @@ import {
   getCategoryLabel,
   CreateAnnouncementRequest,
 } from '@/lib/services/announcement.service';
-import { departmentService } from '@/lib/services/department.service';
 import { Department } from '@/lib/types/employee';
 import { sanitizeAnnouncementHtml } from '@/lib/utils/sanitize';
 import { useToast } from '@/components/notifications/ToastProvider';
@@ -50,6 +48,15 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { createLogger } from '@/lib/utils/logger';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import {
+  useActiveAnnouncements,
+  usePinnedAnnouncements,
+  useCreateAnnouncement,
+  useUpdateAnnouncement,
+  useDeleteAnnouncement,
+  useMarkAnnouncementRead,
+} from '@/lib/hooks/queries/useAnnouncements';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 
 const logger = createLogger('Announcements');
 
@@ -78,22 +85,28 @@ const priorityLabels: Record<AnnouncementPriority, string> = {
 export default function AnnouncementsPage() {
   const { user } = useAuth();
   const toast = useToast();
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [pinnedAnnouncements, setPinnedAnnouncements] = useState<Announcement[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   // Debounce search term to prevent excessive API calls
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  // React Query hooks
+  const { data: activeData, isLoading: activeLoading } = useActiveAnnouncements(user?.employeeId || '', page, 10);
+  const { data: pinnedData } = usePinnedAnnouncements();
+  const deleteAnnouncementMutation = useDeleteAnnouncement();
+  const markReadMutation = useMarkAnnouncementRead();
+
+  const announcements = activeData?.content || [];
+  const totalPages = activeData?.totalPages || 0;
+  const pinnedAnnouncements = pinnedData || [];
+  const loading = activeLoading;
 
   // Check if user can edit/delete an announcement (creator or admin)
   const canEditAnnouncement = (announcement: Announcement) => {
@@ -116,57 +129,16 @@ export default function AnnouncementsPage() {
     if (!showDeleteConfirm) return;
 
     try {
-      setIsDeleting(true);
-      await announcementService.deleteAnnouncement(showDeleteConfirm);
+      await deleteAnnouncementMutation.mutateAsync(showDeleteConfirm);
       setShowDeleteConfirm(null);
       setSelectedAnnouncement(null);
       toast.success('Announcement Deleted', 'The announcement has been permanently removed.');
-      // Reload announcements
-      loadAnnouncements();
-      loadPinnedAnnouncements();
     } catch (error) {
       logger.error('Failed to delete announcement:', error);
       toast.error('Delete Failed', 'Unable to delete the announcement. Please try again.');
-    } finally {
-      setIsDeleting(false);
     }
   };
 
-  // Memoized load functions to prevent stale closures
-  const loadAnnouncements = useCallback(async () => {
-    if (!user?.employeeId) return;
-    setLoading(true);
-    try {
-      const response = await announcementService.getActiveAnnouncements(user.employeeId, page, 10);
-      setAnnouncements(response.content || []);
-      setTotalPages(response.totalPages || 0);
-    } catch (error) {
-      logger.error('Error loading announcements:', error);
-      toast.error('Load Failed', 'Unable to load announcements. Please refresh the page.');
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.employeeId, page, toast]);
-
-  const loadPinnedAnnouncements = useCallback(async () => {
-    try {
-      const pinned = await announcementService.getPinnedAnnouncements();
-      setPinnedAnnouncements(pinned || []);
-    } catch (error) {
-      logger.error('Error loading pinned announcements:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user?.employeeId) {
-      loadAnnouncements();
-      loadPinnedAnnouncements();
-    } else if (user) {
-      // User without employee profile (e.g., SuperAdmin) — load pinned only, stop loading
-      loadPinnedAnnouncements();
-      setLoading(false);
-    }
-  }, [page, categoryFilter, priorityFilter, user?.employeeId, user, loadAnnouncements, loadPinnedAnnouncements]);
 
   const handleAnnouncementClick = async (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
@@ -174,11 +146,10 @@ export default function AnnouncementsPage() {
     // Mark as read if not already
     if (!announcement.isRead && user?.employeeId) {
       try {
-        await announcementService.markAsRead(announcement.id, user.employeeId);
-        // Update the announcement in the list
-        setAnnouncements(prev =>
-          prev.map(a => a.id === announcement.id ? { ...a, isRead: true } : a)
-        );
+        await markReadMutation.mutateAsync({
+          announcementId: announcement.id,
+          employeeId: user.employeeId,
+        });
       } catch (error) {
         logger.error('Error marking as read:', error);
       }
@@ -634,8 +605,6 @@ export default function AnnouncementsPage() {
               onSuccess={() => {
                 setShowCreateModal(false);
                 setEditingAnnouncement(null);
-                loadAnnouncements();
-                loadPinnedAnnouncements();
               }}
             />
           )}
@@ -651,7 +620,7 @@ export default function AnnouncementsPage() {
           confirmText="Delete"
           cancelText="Cancel"
           type="danger"
-          loading={isDeleting}
+          loading={deleteAnnouncementMutation.isPending}
         />
         </div>
       </div>
@@ -668,10 +637,7 @@ interface CreateAnnouncementModalProps {
 function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnnouncementModalProps) {
   const toast = useToast();
   const isEditing = !!announcement;
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
   const [formData, setFormData] = useState<CreateAnnouncementRequest>({
     title: announcement?.title || '',
     content: announcement?.content || '',
@@ -683,25 +649,17 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
     sendEmail: false,
   });
 
+  // React Query hooks
+  const { data: departments = [], isLoading: loadingDepartments } = useActiveDepartments();
+  const createMutation = useCreateAnnouncement();
+  const updateMutation = useUpdateAnnouncement();
+
   // Load departments when SPECIFIC_DEPARTMENTS is selected
   useEffect(() => {
     if (formData.targetAudience === 'SPECIFIC_DEPARTMENTS' && departments.length === 0) {
-      loadDepartments();
+      // useActiveDepartments will automatically load on first use
     }
   }, [formData.targetAudience, departments.length]);
-
-  const loadDepartments = async () => {
-    try {
-      setLoadingDepartments(true);
-      const depts = await departmentService.getActiveDepartments();
-      setDepartments(depts);
-    } catch (err) {
-      logger.error('Failed to load departments:', err);
-      toast.error('Load Failed', 'Unable to load departments.');
-    } finally {
-      setLoadingDepartments(false);
-    }
-  };
 
   const toggleDepartment = (deptId: string) => {
     setFormData(prev => {
@@ -727,15 +685,14 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       return;
     }
 
-    setLoading(true);
     setError('');
 
     try {
       if (isEditing && announcement) {
-        await announcementService.updateAnnouncement(announcement.id, formData);
+        await updateMutation.mutateAsync({ id: announcement.id, data: formData });
         toast.success('Announcement Updated', 'Your announcement has been updated successfully.');
       } else {
-        await announcementService.createAnnouncement(formData);
+        await createMutation.mutateAsync(formData);
         toast.success('Announcement Published', 'Your announcement has been published successfully.');
       }
       onSuccess();
@@ -744,8 +701,6 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
       const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
       setError(errorMessage);
       toast.error(isEditing ? 'Update Failed' : 'Publish Failed', errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -945,10 +900,10 @@ function CreateAnnouncementModal({ announcement, onClose, onSuccess }: CreateAnn
           </button>
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={createMutation.isPending || updateMutation.isPending}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {createMutation.isPending || updateMutation.isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 {isEditing ? 'Updating...' : 'Publishing...'}

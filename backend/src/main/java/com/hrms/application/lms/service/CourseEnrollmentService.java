@@ -6,7 +6,9 @@ import com.hrms.domain.lms.CourseEnrollment.EnrollmentStatus;
 import com.hrms.infrastructure.lms.repository.CourseEnrollmentRepository;
 import com.hrms.infrastructure.lms.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CourseEnrollmentService {
+
+    private static final int MAX_ENROLLMENT_ROWS = 50_000;
 
     private final CourseEnrollmentRepository enrollmentRepository;
     private final CourseRepository courseRepository;
@@ -62,6 +67,7 @@ public class CourseEnrollmentService {
      * Transitions status to IN_PROGRESS when progress > 0, and to COMPLETED
      * when progressPercent reaches 100.
      */
+    @Transactional
     public CourseEnrollment updateProgress(UUID tenantId, UUID enrollmentId, int progressPercent) {
         if (progressPercent < 0 || progressPercent > 100) {
             throw new IllegalArgumentException("progressPercent must be between 0 and 100");
@@ -110,7 +116,11 @@ public class CourseEnrollmentService {
 
         // Compute average progress across all enrollments for this course
         Page<CourseEnrollment> enrollments =
-                enrollmentRepository.findAllByCourseIdAndTenantId(courseId, tenantId, Pageable.unpaged());
+                enrollmentRepository.findAllByCourseIdAndTenantId(courseId, tenantId, PageRequest.of(0, MAX_ENROLLMENT_ROWS));
+        if (enrollments.getTotalElements() > MAX_ENROLLMENT_ROWS) {
+            log.warn("[CourseEnrollmentService] Completion stats truncated at {} rows for course {} tenant {}",
+                MAX_ENROLLMENT_ROWS, courseId, tenantId);
+        }
 
         double avgProgress = enrollments.getContent().stream()
                 .mapToDouble(e -> e.getProgressPercentage() != null

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 /**
  * Webhook endpoint for payment provider callbacks
@@ -27,7 +28,7 @@ public class PaymentWebhookController {
     @PostMapping("/{provider}")
     public ResponseEntity<String> handleWebhook(
             @PathVariable String provider,
-            @RequestBody String payload,
+            @Valid @RequestBody String payload,
             @RequestHeader(value = "X-Signature", required = false) String signature,
             @RequestHeader(value = "X-Razorpay-Signature", required = false) String razorpaySignature,
             @RequestHeader(value = "Stripe-Signature", required = false) String stripeSignature) {
@@ -57,7 +58,7 @@ public class PaymentWebhookController {
      */
     @PostMapping("/razorpay")
     public ResponseEntity<String> handleRazorpayWebhook(
-            @RequestBody String payload,
+            @Valid @RequestBody String payload,
             @RequestHeader("X-Razorpay-Signature") String signature) {
 
         return handleWebhook("razorpay", payload, null, signature, null);
@@ -68,7 +69,7 @@ public class PaymentWebhookController {
      */
     @PostMapping("/stripe")
     public ResponseEntity<String> handleStripeWebhook(
-            @RequestBody String payload,
+            @Valid @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String signature) {
 
         return handleWebhook("stripe", payload, null, null, signature);

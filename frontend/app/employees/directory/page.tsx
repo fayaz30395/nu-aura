@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -125,50 +126,54 @@ export default function TeamDirectory() {
     sortDirection: 'ASC',
   });
 
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-
-  useEffect(() => {
-    searchEmployees();
-  }, [filters.page, filters.sortBy, filters.sortDirection]);
-
-  const fetchDepartments = async () => {
-    try {
+  // React Query - fetch departments
+  const { data: departmentResponse } = useQuery({
+    queryKey: ['departments', 'all'],
+    queryFn: async () => {
       const response = await apiClient.get<{ content: Department[] }>('/departments', {
         params: { page: 0, size: 100 },
       });
-      setDepartments(response.data.content || []);
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    }
-  };
+      return response.data.content || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-  const searchEmployees = async () => {
-    setLoading(true);
-    try {
+  const deptData = departmentResponse || [];
+  React.useEffect(() => {
+    setDepartments(deptData);
+  }, [deptData]);
+
+  // React Query - search employees with filters
+  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 }, isLoading } = useQuery({
+    queryKey: ['employees', 'directory', filters],
+    queryFn: async () => {
       const response = await apiClient.post<{
         content: Employee[];
         totalPages: number;
         totalElements: number;
       }>('/employees/directory/search', filters);
 
-      setEmployees(response.data.content || []);
-      setTotalPages(response.data.totalPages || 0);
-      setTotalElements(response.data.totalElements || 0);
-    } catch (error) {
-      console.error('Error searching employees:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return {
+        content: response.data.content || [],
+        totalPages: response.data.totalPages || 0,
+        totalElements: response.data.totalElements || 0,
+      };
+    },
+    staleTime: 30 * 1000, // 30 seconds
+  });
 
-  const handleSearch = () => {
-    setFilters({ ...filters, page: 0 });
-    searchEmployees();
-  };
+  // Update local state from React Query data
+  React.useEffect(() => {
+    setEmployees(employeeSearchResponse.content);
+    setTotalPages(employeeSearchResponse.totalPages);
+    setTotalElements(employeeSearchResponse.totalElements);
+  }, [employeeSearchResponse]);
 
-  const handleFilterChange = (key: keyof SearchFilters, value: any) => {
+  const handleSearch = useCallback(() => {
+    setFilters((prev) => ({ ...prev, page: 0 }));
+  }, []);
+
+  const handleFilterChange = (key: keyof SearchFilters, value: string | string[] | number) => {
     setFilters({ ...filters, [key]: value });
   };
 

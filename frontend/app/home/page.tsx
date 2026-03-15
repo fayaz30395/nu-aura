@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Clock,
@@ -35,22 +36,8 @@ import { AppLayout } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { attendanceService } from '@/lib/services/attendance.service';
-import {
-  homeService,
-  BirthdayResponse,
-  WorkAnniversaryResponse,
-  NewJoineeResponse,
-  OnLeaveEmployeeResponse,
-  UpcomingHolidayResponse,
-  AttendanceTodayResponse,
-} from '@/lib/services/home.service';
-import {
-  wallService,
-  WallPostResponse,
-} from '@/lib/services/wall.service';
-import { leaveService } from '@/lib/services/leave.service';
-import { LeaveBalance } from '@/lib/types/leave';
+import { useCheckIn, useCheckOut } from '@/lib/hooks/queries/useAttendance';
+import { useHomeDashboard } from '@/lib/hooks/queries/useHome';
 
 type WallTab = 'Post' | 'Poll' | 'Praise';
 
@@ -68,81 +55,37 @@ export default function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeWallTab, setActiveWallTab] = useState<WallTab>('Post');
   const [postContent, setPostContent] = useState('');
 
-  const [birthdays, setBirthdays] = useState<BirthdayResponse[]>([]);
-  const [workAnniversaries, setWorkAnniversaries] = useState<WorkAnniversaryResponse[]>([]);
-  const [newJoinees, setNewJoinees] = useState<NewJoineeResponse[]>([]);
-  const [holidays, setHolidays] = useState<UpcomingHolidayResponse[]>([]);
-  const [onLeaveToday, setOnLeaveToday] = useState<OnLeaveEmployeeResponse[]>([]);
-  const [attendanceToday, setAttendanceToday] = useState<AttendanceTodayResponse | null>(null);
-  const [clockActionLoading, setClockActionLoading] = useState(false);
-  const [wallPosts, setWallPosts] = useState<WallPostResponse[]>([]);
-  const [leaveBalances, setLeaveBalances] = useState<LeaveBalance[]>([]);
+  // React Query hooks
+  const { data: dashboardData, isLoading, isError, error } = useHomeDashboard();
+  const checkInMutation = useCheckIn();
+  const checkOutMutation = useCheckOut();
 
-  useEffect(() => {
+  // Update time every second
+  React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const [bd, ann, jn, hol, lv, att, wall] = await Promise.all([
-        homeService.getUpcomingBirthdays(30).catch(() => [] as BirthdayResponse[]),
-        homeService.getUpcomingAnniversaries(30).catch(() => [] as WorkAnniversaryResponse[]),
-        homeService.getNewJoinees(30).catch(() => [] as NewJoineeResponse[]),
-        homeService.getUpcomingHolidays(90).catch(() => [] as UpcomingHolidayResponse[]),
-        homeService.getEmployeesOnLeaveToday().catch(() => [] as OnLeaveEmployeeResponse[]),
-        homeService.getMyAttendanceToday().catch(() => null as AttendanceTodayResponse | null),
-        wallService.getPosts(0, 10).catch(() => ({ content: [] as WallPostResponse[], totalElements: 0 })),
-      ]);
-      setBirthdays(bd);
-      setWorkAnniversaries(ann);
-      setNewJoinees(jn);
-      setHolidays(hol);
-      setOnLeaveToday(lv);
-      setAttendanceToday(att);
-      setWallPosts(wall.content);
-      if (att?.employeeId) {
-        const bal = await leaveService.getEmployeeBalances(att.employeeId).catch(() => [] as LeaveBalance[]);
-        setLeaveBalances(bal);
-      }
-    } catch (err) {
-      console.error('Error loading dashboard:', err);
-      setError('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleClockIn = async () => {
-    if (!user?.id || !attendanceToday?.employeeId) return;
-    try {
-      setClockActionLoading(true);
-      await attendanceService.checkIn({ employeeId: attendanceToday.employeeId, checkInTime: new Date().toISOString(), source: 'WEB' });
-      await loadData();
-    } catch (err) { console.error('Clock in failed:', err); }
-    finally { setClockActionLoading(false); }
+    if (!user?.id || !dashboardData.attendanceToday?.employeeId) return;
+    checkInMutation.mutate({
+      employeeId: dashboardData.attendanceToday.employeeId,
+      checkInTime: new Date().toISOString(),
+      source: 'WEB',
+    });
   };
 
   const handleClockOut = async () => {
-    if (!user?.id || !attendanceToday?.employeeId) return;
-    try {
-      setClockActionLoading(true);
-      await attendanceService.checkOut({ employeeId: attendanceToday.employeeId, checkOutTime: new Date().toISOString(), source: 'WEB' });
-      await loadData();
-    } catch (err) { console.error('Clock out failed:', err); }
-    finally { setClockActionLoading(false); }
+    if (!user?.id || !dashboardData.attendanceToday?.employeeId) return;
+    checkOutMutation.mutate({
+      employeeId: dashboardData.attendanceToday.employeeId,
+      checkOutTime: new Date().toISOString(),
+      source: 'WEB',
+    });
   };
 
   const formatTime = (d: Date) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
@@ -153,6 +96,7 @@ export default function HomePage() {
   };
 
   const getClockStatus = () => {
+    const attendanceToday = dashboardData.attendanceToday;
     if (!attendanceToday) return { canClockIn: false, canClockOut: false, status: 'UNKNOWN' };
     if (['HOLIDAY', 'WEEKLY_OFF', 'ON_LEAVE'].includes(attendanceToday.status))
       return { canClockIn: false, canClockOut: false, status: attendanceToday.status };
@@ -161,13 +105,14 @@ export default function HomePage() {
 
   const greeting = useMemo(() => getGreeting(), []);
   const clockStatus = getClockStatus();
-  const todayBirthdays = birthdays.filter((b) => b.isToday);
-  const upcomingBirthdays = birthdays.filter((b) => !b.isToday);
-  const todayAnniversaries = workAnniversaries.filter((a) => a.isToday);
-  const nextHoliday = holidays[0];
-  const totalLeave = leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0);
+  const todayBirthdays = dashboardData.birthdays.filter((b) => b.isToday);
+  const upcomingBirthdays = dashboardData.birthdays.filter((b) => !b.isToday);
+  const todayAnniversaries = dashboardData.anniversaries.filter((a) => a.isToday);
+  const nextHoliday = dashboardData.holidays[0];
+  const totalLeave = dashboardData.leaveBalances.reduce((sum, b) => sum + (b.available || 0), 0);
+  const newJoinees = dashboardData.newJoinees;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
         <div className="p-5">
@@ -184,15 +129,19 @@ export default function HomePage() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center max-w-sm">
             <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
             <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-1">Something went wrong</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{error}</p>
-            <Button variant="primary" onClick={loadData} size="sm">Retry</Button>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {error instanceof Error ? error.message : 'Failed to load dashboard data'}
+            </p>
+            <Button variant="primary" onClick={() => window.location.reload()} size="sm">
+              Retry
+            </Button>
           </div>
         </div>
       </AppLayout>
@@ -240,8 +189,8 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {attendanceToday?.checkInTime
-                    ? new Date(attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+                  {dashboardData.attendanceToday?.checkInTime
+                    ? new Date(dashboardData.attendanceToday.checkInTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
                     : 'Not clocked in'}
                 </p>
                 <p className="text-[11px] text-gray-500 dark:text-gray-500">{clockStatus.status.replace(/_/g, ' ')}</p>
@@ -251,10 +200,10 @@ export default function HomePage() {
               variant="primary"
               size="sm"
               className="w-full bg-brand-500 hover:bg-brand-600 dark:bg-primary-600 dark:hover:bg-primary-700 text-white text-xs font-medium rounded-lg h-8"
-              disabled={clockActionLoading || (!clockStatus.canClockIn && !clockStatus.canClockOut)}
+              disabled={checkInMutation.isPending || checkOutMutation.isPending || (!clockStatus.canClockIn && !clockStatus.canClockOut)}
               onClick={clockStatus.canClockIn ? handleClockIn : handleClockOut}
             >
-              {clockActionLoading ? (
+              {checkInMutation.isPending || checkOutMutation.isPending ? (
                 <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Processing</>
               ) : clockStatus.canClockIn ? (
                 <>Clock In</>
@@ -278,9 +227,9 @@ export default function HomePage() {
               <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalLeave > 0 ? totalLeave.toFixed(1) : '0'}</span>
               <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">days left</span>
             </div>
-            {leaveBalances.length > 0 && (
+            {dashboardData.leaveBalances.length > 0 && (
               <div className="space-y-1.5 mb-3">
-                {leaveBalances.slice(0, 2).map((bal) => (
+                {dashboardData.leaveBalances.slice(0, 2).map((bal) => (
                   <div key={bal.leaveTypeId} className="flex justify-between text-[11px]">
                     <span className="text-gray-500 dark:text-gray-400 truncate pr-2">{bal.leaveTypeId}</span>
                     <span className="font-medium text-gray-700 dark:text-gray-300">{(bal.available || 0).toFixed(1)}</span>
@@ -309,8 +258,8 @@ export default function HomePage() {
                 <p className="text-xs text-brand-100 dark:text-primary-200">
                   {new Date(nextHoliday.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
                 </p>
-                {holidays.length > 1 && (
-                  <p className="text-[11px] text-brand-200 dark:text-primary-300 mt-2">+{holidays.length - 1} more upcoming</p>
+                {dashboardData.holidays.length > 1 && (
+                  <p className="text-[11px] text-brand-200 dark:text-primary-300 mt-2">+{dashboardData.holidays.length - 1} more upcoming</p>
                 )}
               </div>
             ) : (
@@ -323,17 +272,17 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase tracking-wide">Who&apos;s Out</h3>
               <span className="text-[11px] bg-success-50 dark:bg-success-950 text-success-600 dark:text-success-400 px-1.5 py-0.5 rounded font-medium">
-                {onLeaveToday.length}
+                {dashboardData.onLeaveToday.length}
               </span>
             </div>
-            {onLeaveToday.length === 0 ? (
+            {dashboardData.onLeaveToday.length === 0 ? (
               <div className="text-center py-2">
                 <CheckCircle2 className="w-5 h-5 text-success-400 mx-auto mb-1" />
                 <p className="text-xs text-gray-500 dark:text-gray-400">Everyone is in</p>
               </div>
             ) : (
               <div className="space-y-1.5">
-                {onLeaveToday.slice(0, 3).map((emp) => (
+                {dashboardData.onLeaveToday.slice(0, 3).map((emp) => (
                   <div key={emp.employeeId} className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-brand-50 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[9px] font-bold shrink-0">
                       {getInitials(emp.employeeName)}
@@ -343,8 +292,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 ))}
-                {onLeaveToday.length > 3 && (
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500">+{onLeaveToday.length - 3} more</p>
+                {dashboardData.onLeaveToday.length > 3 && (
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">+{dashboardData.onLeaveToday.length - 3} more</p>
                 )}
               </div>
             )}
@@ -424,14 +373,14 @@ export default function HomePage() {
             </div>
 
             {/* Posts */}
-            {wallPosts.length === 0 ? (
+            {dashboardData.wallPosts.length === 0 ? (
               <div className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-6 text-center shadow-theme-xs dark:shadow-dark-xs">
                 <MessageSquare className="w-8 h-8 text-gray-300 dark:text-surface-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600 dark:text-gray-400">No posts yet</p>
                 <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">Be the first to share something</p>
               </div>
             ) : (
-              wallPosts.map((post) => (
+              dashboardData.wallPosts.map((post) => (
                 <div key={post.id} className="bg-white dark:bg-surface-800 rounded-xl border border-gray-200 dark:border-surface-700 p-4 shadow-theme-xs dark:shadow-dark-xs">
                   <div className="flex items-start gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-primary-950 flex items-center justify-center text-brand-600 dark:text-primary-400 text-[10px] font-bold shrink-0">
@@ -451,8 +400,8 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{post.content}</p>
                       {post.imageUrl && (
-                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-surface-700">
-                          <img src={post.imageUrl} alt="Post" className="w-full" />
+                        <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 dark:border-surface-700 relative w-full h-48">
+                          <Image src={post.imageUrl} alt="Post" fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                         </div>
                       )}
                       <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-200 dark:border-surface-700">

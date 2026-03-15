@@ -32,6 +32,7 @@ public class HelpdeskService {
 
     // ==================== Ticket Operations ====================
 
+    @Transactional
     public TicketResponse createTicket(TicketRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating ticket for employee {} in tenant {}", request.getEmployeeId(), tenantId);
@@ -73,6 +74,7 @@ public class HelpdeskService {
         return mapToTicketResponse(savedTicket);
     }
 
+    @Transactional
     public TicketResponse updateTicket(UUID ticketId, TicketRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating ticket {} for tenant {}", ticketId, tenantId);
@@ -98,6 +100,7 @@ public class HelpdeskService {
         return mapToTicketResponse(updatedTicket);
     }
 
+    @Transactional
     public TicketResponse updateTicketStatus(UUID ticketId, Ticket.TicketStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating ticket {} status to {} for tenant {}", ticketId, status, tenantId);
@@ -118,6 +121,7 @@ public class HelpdeskService {
         return mapToTicketResponse(updatedTicket);
     }
 
+    @Transactional
     public TicketResponse assignTicket(UUID ticketId, UUID assigneeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Assigning ticket {} to {} for tenant {}", ticketId, assigneeId, tenantId);
@@ -198,6 +202,7 @@ public class HelpdeskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteTicket(UUID ticketId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
@@ -207,6 +212,7 @@ public class HelpdeskService {
 
     // ==================== Ticket Comment Operations ====================
 
+    @Transactional
     public TicketCommentResponse addComment(TicketCommentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding comment to ticket {} by {} in tenant {}",
@@ -233,6 +239,7 @@ public class HelpdeskService {
         return mapToTicketCommentResponse(savedComment);
     }
 
+    @Transactional
     public TicketCommentResponse updateComment(UUID commentId, TicketCommentRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating comment {} for tenant {}", commentId, tenantId);
@@ -256,6 +263,7 @@ public class HelpdeskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteComment(UUID commentId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TicketComment comment = ticketCommentRepository.findByIdAndTenantId(commentId, tenantId)
@@ -265,6 +273,7 @@ public class HelpdeskService {
 
     // ==================== Ticket Category Operations ====================
 
+    @Transactional
     public TicketCategoryResponse createCategory(TicketCategoryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating ticket category {} in tenant {}", request.getName(), tenantId);
@@ -283,6 +292,7 @@ public class HelpdeskService {
         return mapToTicketCategoryResponse(savedCategory);
     }
 
+    @Transactional
     public TicketCategoryResponse updateCategory(UUID categoryId, TicketCategoryRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating ticket category {} for tenant {}", categoryId, tenantId);
@@ -325,6 +335,7 @@ public class HelpdeskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteCategory(UUID categoryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
