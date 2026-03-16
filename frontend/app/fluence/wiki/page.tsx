@@ -19,8 +19,6 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useWikiSpaces, useWikiPages } from '@/lib/hooks/queries/useFluence';
-import { WikiSpace } from '@/lib/types/fluence';
-import type { WikiPage as WikiPageType } from '@/lib/types/fluence';
 
 export default function WikiPage() {
   const router = useRouter();

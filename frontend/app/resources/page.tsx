@@ -98,10 +98,10 @@ export default function ResourcesPage() {
           </div>
 
           {/* API Not Available Card */}
-          <Card className="border-amber-200 dark:border-amber-800">
+          <Card className="border-warning-200 dark:border-warning-800">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-4 rounded-full bg-amber-100 p-4 dark:bg-amber-900/30">
-                <Settings className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+              <div className="mb-4 rounded-full bg-warning-50 p-4 dark:bg-warning-900/30">
+                <Settings className="h-8 w-8 text-warning-600 dark:text-warning-400" />
               </div>
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Resource Management API Not Available
@@ -288,7 +288,7 @@ export default function ResourcesPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <Clock className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                 Pending Allocation Approvals
               </CardTitle>
               <Link href="/resources/approvals">
@@ -306,8 +306,8 @@ export default function ResourcesPage() {
                     className="flex items-center justify-between rounded-lg border border-[var(--border-main)] p-3 dark:border-[var(--border-main)]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-                        <Users className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-warning-50 dark:bg-warning-900/30">
+                        <Users className="h-5 w-5 text-warning-600 dark:text-warning-400" />
                       </div>
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">
@@ -319,7 +319,7 @@ export default function ResourcesPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                      <p className="text-sm font-medium text-danger-600 dark:text-danger-400">
                         {approval.resultingAllocation}% total
                       </p>
                       <p className="text-xs text-[var(--text-muted)]">

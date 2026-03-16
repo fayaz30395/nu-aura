@@ -7,7 +7,6 @@ import {
   Pen,
   Plus,
   Search,
-  Filter,
   Clock,
   Eye,
   Heart,

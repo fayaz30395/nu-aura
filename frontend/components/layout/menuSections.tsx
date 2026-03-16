@@ -304,18 +304,17 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         { id: 'wellness-grow', label: 'Wellness', icon: icon.heart, href: '/wellness', requiredPermission: Permissions.WELLNESS_VIEW },
       ],
     },
-    // ─── NU-Fluence Hub (Phase 2) ───────────────────────────────────
+    // ─── NU-Fluence Hub (Knowledge Management) ──────────────────────
     {
       id: 'fluence-hub',
       label: 'NU-Fluence',
       items: [
-        { id: 'fluence-wall', label: 'Social Wall', icon: icon.messageCircle, href: '/fluence/wall', requiredPermission: Permissions.WALL_FLUENCE_VIEW },
-        { id: 'fluence-wiki', label: 'Wiki Pages', icon: icon.bookOpen, href: '/fluence/wiki', requiredPermission: Permissions.WIKI_VIEW },
-        { id: 'fluence-blogs', label: 'Blogs', icon: icon.newspaper, href: '/fluence/blogs', requiredPermission: Permissions.BLOG_VIEW },
-        { id: 'fluence-templates', label: 'Templates', icon: icon.fileStack, href: '/fluence/templates', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-wiki', label: 'Wiki', icon: icon.bookOpen, href: '/fluence/wiki', requiredPermission: Permissions.WIKI_VIEW },
+        { id: 'fluence-blogs', label: 'Articles', icon: icon.newspaper, href: '/fluence/blogs', requiredPermission: Permissions.BLOG_VIEW },
         { id: 'fluence-my-content', label: 'My Content', icon: icon.user, href: '/fluence/my-content', requiredPermission: Permissions.KNOWLEDGE_VIEW },
-        { id: 'fluence-search', label: 'Search', icon: icon.target, href: '/fluence/search', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-templates', label: 'Templates', icon: icon.fileStack, href: '/fluence/templates', requiredPermission: Permissions.KNOWLEDGE_VIEW },
         { id: 'fluence-drive', label: 'Drive', icon: icon.hardDrive, href: '/fluence/drive', requiredPermission: Permissions.KNOWLEDGE_VIEW },
+        { id: 'fluence-search', label: 'Search', icon: icon.target, href: '/fluence/search', requiredPermission: Permissions.KNOWLEDGE_VIEW },
       ],
     },
     // ─── 6. PAY & FINANCE ───────────────────────────────────────────

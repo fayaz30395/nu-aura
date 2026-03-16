@@ -217,7 +217,7 @@ function EmployeeTypeahead({ label, value, onChange, placeholder, disabled }: Em
         disabled={disabled}
       />
       {open && query.trim().length >= 2 && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)]">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
           {loading && (
             <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching employees...</div>
           )}
@@ -593,7 +593,7 @@ export default function ProjectDetailPage() {
             </div>
 
             {allocationsErrorMessage && (
-              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
                 {allocationsErrorMessage}
               </div>
             )}
@@ -658,7 +658,7 @@ export default function ProjectDetailPage() {
                     </option>
                   ))}
                 </Select>
-                {addMemberErrors.role && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.role.message}</p>}
+                {addMemberErrors.role && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.role.message}</p>}
               </div>
 
               <div>
@@ -670,18 +670,18 @@ export default function ProjectDetailPage() {
                   placeholder="e.g. 100"
                   {...registerAddMember('allocationPercentage')}
                 />
-                {addMemberErrors.allocationPercentage && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.allocationPercentage.message}</p>}
+                {addMemberErrors.allocationPercentage && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.allocationPercentage.message}</p>}
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Input label="Start Date" type="date" {...registerAddMember('startDate')} />
-                {addMemberErrors.startDate && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.startDate.message}</p>}
+                {addMemberErrors.startDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.startDate.message}</p>}
               </div>
               <div>
                 <Input label="End Date (optional)" type="date" {...registerAddMember('endDate')} />
-                {addMemberErrors.endDate && <p className="text-danger-500 text-sm mt-1">{addMemberErrors.endDate.message}</p>}
+                {addMemberErrors.endDate && <p className="text-sm text-danger-500 mt-1">{addMemberErrors.endDate.message}</p>}
               </div>
             </div>
           </ModalBody>

@@ -408,12 +408,12 @@ export default function GanttChartPage() {
 
                   {/* Delayed/At Risk Indicators */}
                   {isTaskDelayed(task) && (
-                    <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-rose-500 text-white text-xs rounded">
+                    <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-danger-500 text-white text-xs rounded">
                       Delayed
                     </div>
                   )}
                   {!isTaskDelayed(task) && isTaskAtRisk(task) && (
-                    <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-amber-500 text-white text-xs rounded">
+                    <div className="absolute right-2 top-1 px-1.5 py-0.5 bg-warning-500 text-white text-xs rounded">
                       At Risk
                     </div>
                   )}
