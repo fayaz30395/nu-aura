@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
   ArrowLeft,
@@ -14,7 +14,6 @@ import {
   MessageCircle,
   RefreshCw,
   Calendar,
-  User,
   Send,
   Trash2,
   Building2,
@@ -25,6 +24,11 @@ import {
   Users,
   Copy,
   Check,
+  ThumbsUp,
+  Reply,
+  CornerDownRight,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Skeleton, Modal, Tooltip, ActionIcon, Badge } from '@mantine/core';
@@ -46,7 +50,9 @@ import {
   useRestoreWikiPageRevision,
 } from '@/lib/hooks/queries/useFluence';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { layout, typography, card, motion as dsMotion, iconSize, status } from '@/lib/design-system';
+import { MentionInput, type MentionInputHandle } from '@/components/fluence/MentionInput';
+import { layout, typography, card, motion as dsMotion, iconSize } from '@/lib/design-system';
+import type { FluenceComment } from '@/lib/types/fluence';
 
 // Dynamically import Tiptap viewer to keep it out of the initial bundle
 const ContentViewer = dynamic(
@@ -68,33 +74,326 @@ interface Revision {
   createdAt: string;
 }
 
-interface Comment {
-  id: string;
-  authorId?: string;
-  authorName?: string;
-  body: string;
-  createdAt: string;
+// ─── Helpers ──────────────────────────────────────────────────────
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
-interface WikiPage {
-  id: string;
-  title: string;
-  content: string;
-  authorId?: string;
-  authorName?: string;
-  updatedAt: string;
-  viewCount?: number;
-  likeCount?: number;
-  commentCount?: number;
-  version: number;
-  spaceName?: string;
-  visibility?: string;
-  departmentName?: string;
-  editorIds?: string[];
-  canEdit?: boolean;
-  isLikedByCurrentUser?: boolean;
-  isFavoritedByCurrentUser?: boolean;
+const AVATAR_COLORS = [
+  'from-indigo-500 to-indigo-600',
+  'from-emerald-500 to-emerald-600',
+  'from-amber-500 to-amber-600',
+  'from-rose-500 to-rose-600',
+  'from-violet-500 to-violet-600',
+  'from-cyan-500 to-cyan-600',
+  'from-orange-500 to-orange-600',
+  'from-teal-500 to-teal-600',
+];
+
+function avatarColor(id: string): string {
+  const hash = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
+
+/** Render comment body with @mentions highlighted */
+function renderBodyWithMentions(body: string): React.ReactNode {
+  // Match @Name patterns (supports multi-word names)
+  const mentionRegex = /@([A-Z][a-z]+(?:\s[A-Z][a-z]*)*)/g;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null = null;
+
+  while ((match = mentionRegex.exec(body)) !== null) {
+    // Text before mention
+    if (match.index > lastIndex) {
+      parts.push(body.slice(lastIndex, match.index));
+    }
+    // Mention chip
+    parts.push(
+      <span
+        key={`${match.index}-${match[1]}`}
+        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[var(--primary-600)]/10 text-[var(--primary-600)] dark:text-[var(--primary-400)] text-xs font-medium cursor-pointer hover:bg-[var(--primary-600)]/20 transition-colors"
+      >
+        @{match[1]}
+      </span>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Remaining text
+  if (lastIndex < body.length) {
+    parts.push(body.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : body;
+}
+
+function timeAgo(dateStr: string): string {
+  const now = new Date();
+  const then = new Date(dateStr);
+  const diffMs = now.getTime() - then.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return then.toLocaleDateString();
+}
+
+// ─── Comment Thread Component ────────────────────────────────────
+
+interface CommentThreadProps {
+  comment: FluenceComment;
+  userId?: string;
+  onDelete: (id: string) => void;
+  onReply: (parentId: string) => void;
+  replyingTo: string | null;
+  replyText: string;
+  onReplyTextChange: (val: string) => void;
+  onSubmitReply: () => void;
+}
+
+function CommentThread({
+  comment,
+  userId,
+  onDelete,
+  onReply,
+  replyingTo,
+  replyText,
+  onReplyTextChange,
+  onSubmitReply,
+}: CommentThreadProps) {
+  const [showReplies, setShowReplies] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
+  const mentionRef = useRef<MentionInputHandle>(null);
+
+  const replies = comment.replies || [];
+
+  const handleLike = () => {
+    setLiked(!liked);
+    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+  };
+
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 8 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+      }}
+      className="group"
+    >
+      {/* Main comment */}
+      <div className="flex gap-4">
+        <div
+          className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+            comment.authorId
+          )} flex items-center justify-center text-sm font-semibold text-white`}
+        >
+          {getInitials(comment.authorName || 'A')}
+        </div>
+        <div className="flex-1 min-w-0">
+          {/* Author + time */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-semibold text-[var(--text-primary)]">
+              {comment.authorName || 'Anonymous'}
+            </span>
+            <span className="text-xs text-[var(--text-muted)]">{timeAgo(comment.createdAt)}</span>
+          </div>
+
+          {/* Body with @mentions */}
+          <div className="text-sm text-[var(--text-secondary)] leading-relaxed mb-2">
+            {renderBodyWithMentions(comment.body)}
+          </div>
+
+          {/* Action bar */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleLike}
+              className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
+                liked
+                  ? 'text-[var(--primary-600)]'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <ThumbsUp className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} />
+              {likeCount > 0 && <span>{likeCount}</span>}
+            </button>
+
+            <button
+              onClick={() => onReply(comment.id)}
+              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-150"
+            >
+              <Reply className="h-3.5 w-3.5" />
+              Reply
+            </button>
+
+            {comment.authorId === userId && (
+              <button
+                onClick={() => onDelete(comment.id)}
+                className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover:opacity-100"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </button>
+            )}
+          </div>
+
+          {/* Replies */}
+          {replies.length > 0 && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowReplies(!showReplies)}
+                className="flex items-center gap-1.5 text-xs font-medium text-[var(--primary-600)] hover:text-[var(--primary-700)] transition-colors mb-2"
+              >
+                <CornerDownRight className="h-3.5 w-3.5" />
+                {showReplies ? (
+                  <>
+                    <ChevronUp className="h-3 w-3" />
+                    Hide {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-3 w-3" />
+                    Show {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                  </>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showReplies && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    className="border-l-2 border-[var(--border-main)] pl-4 ml-1 space-y-4 overflow-hidden"
+                  >
+                    {replies.map((reply) => (
+                      <ReplyItem
+                        key={reply.id}
+                        reply={reply}
+                        userId={userId}
+                        onDelete={onDelete}
+                      />
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Inline reply input */}
+          <AnimatePresence>
+            {replyingTo === comment.id && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.15 }}
+                className="mt-4 flex gap-2 items-start overflow-hidden"
+              >
+                <div className="flex-1">
+                  <MentionInput
+                    ref={mentionRef}
+                    value={replyText}
+                    onChange={onReplyTextChange}
+                    onSubmit={onSubmitReply}
+                    placeholder={`Reply to ${comment.authorName}... Use @ to tag`}
+                  />
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onSubmitReply}
+                  disabled={!replyText.trim()}
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Send className="h-4 w-4" />
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Reply Item (nested) ─────────────────────────────────────────
+
+interface ReplyItemProps {
+  reply: FluenceComment;
+  userId?: string;
+  onDelete: (id: string) => void;
+}
+
+function ReplyItem({ reply, userId, onDelete }: ReplyItemProps) {
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(reply.likeCount || 0);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.2 }}
+      className="flex gap-4 group/reply"
+    >
+      <div
+        className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
+          reply.authorId
+        )} flex items-center justify-center text-xs font-semibold text-white`}
+      >
+        {getInitials(reply.authorName || 'A')}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className="text-sm font-semibold text-[var(--text-primary)]">
+            {reply.authorName || 'Anonymous'}
+          </span>
+          <span className="text-xs text-[var(--text-muted)]">{timeAgo(reply.createdAt)}</span>
+        </div>
+        <div className="text-sm text-[var(--text-secondary)] leading-relaxed mb-1.5">
+          {renderBodyWithMentions(reply.body)}
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              setLiked(!liked);
+              setLikeCount((p) => (liked ? p - 1 : p + 1));
+            }}
+            className={`flex items-center gap-1.5 text-xs font-medium transition-colors duration-150 ${
+              liked
+                ? 'text-[var(--primary-600)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+            }`}
+          >
+            <ThumbsUp className={`h-3 w-3 ${liked ? 'fill-current' : ''}`} />
+            {likeCount > 0 && <span>{likeCount}</span>}
+          </button>
+          {reply.authorId === userId && (
+            <button
+              onClick={() => onDelete(reply.id)}
+              className="flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-150 opacity-0 group-hover/reply:opacity-100"
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Main Page ───────────────────────────────────────────────────
 
 export default function WikiPageDetailPage() {
   const router = useRouter();
@@ -102,9 +401,12 @@ export default function WikiPageDetailPage() {
   const pageId = params.slug as string;
   const { user } = useAuth();
   const [commentText, setCommentText] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
   const [showViewers, setShowViewers] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const commentInputRef = useRef<MentionInputHandle>(null);
 
   const { data: page, isLoading } = useWikiPage(pageId, !!pageId);
   const { data: commentsData } = useComments(pageId, 'WIKI', 0, 50, !!pageId && !!page);
@@ -120,9 +422,15 @@ export default function WikiPageDetailPage() {
   const removeFavorite = useRemoveFavorite();
   const restoreRevision = useRestoreWikiPageRevision();
 
-  const comments = (commentsData?.content || []) as Comment[];
+  const comments = (commentsData?.content || []) as FluenceComment[];
   const isLiked = page?.isLikedByCurrentUser ?? false;
   const isFavorited = page?.isFavoritedByCurrentUser ?? false;
+
+  // Total comment count including replies
+  const totalCommentCount = comments.reduce(
+    (sum, c) => sum + 1 + (c.replies?.length || 0),
+    0
+  );
 
   // Record view on page load
   useEffect(() => {
@@ -178,6 +486,29 @@ export default function WikiPageDetailPage() {
     [page, deleteComment]
   );
 
+  const handleReply = useCallback((parentId: string) => {
+    setReplyingTo((prev) => (prev === parentId ? null : parentId));
+    setReplyText('');
+  }, []);
+
+  const handleSubmitReply = useCallback(() => {
+    if (!page || !replyText.trim() || !replyingTo) return;
+    createComment.mutate(
+      {
+        contentId: page.id,
+        contentType: 'WIKI',
+        data: { body: replyText.trim(), parentId: replyingTo },
+      },
+      {
+        onSuccess: () => {
+          setReplyText('');
+          setReplyingTo(null);
+          notifications.show({ title: 'Reply posted', message: '', color: 'green' });
+        },
+      }
+    );
+  }, [page, replyText, replyingTo, createComment]);
+
   const handleCopyLink = useCallback(() => {
     if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href);
@@ -214,13 +545,18 @@ export default function WikiPageDetailPage() {
     [page, restoreRevision]
   );
 
-  const canEdit = page?.canEdit || page?.authorId === user?.id || page?.editorIds?.includes(user?.id || '');
+  const canEdit =
+    page?.canEdit || page?.authorId === user?.id || page?.editorIds?.includes(user?.id || '');
+
+  // ─── Loading ─────────────────────────────────────────────────
 
   if (isLoading) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <RefreshCw className={`${iconSize.pageHeader} text-[var(--text-muted)] animate-spin`} />
+          <RefreshCw
+            className={`${iconSize.pageHeader} text-[var(--text-muted)] animate-spin`}
+          />
         </div>
       </AppLayout>
     );
@@ -235,9 +571,13 @@ export default function WikiPageDetailPage() {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="text-center py-16"
         >
-          <BookOpen className={`${iconSize.pageHeader} mx-auto mb-4 text-[var(--text-muted)]`} />
+          <BookOpen
+            className={`${iconSize.pageHeader} mx-auto mb-4 text-[var(--text-muted)]`}
+          />
           <h3 className={`${typography.sectionTitle} mb-1`}>Page not found</h3>
-          <p className={`${typography.caption} mb-6`}>The page you&apos;re looking for doesn&apos;t exist</p>
+          <p className={`${typography.caption} mb-6`}>
+            The page you&apos;re looking for doesn&apos;t exist
+          </p>
           <Button
             onClick={() => router.back()}
             className="gap-2 bg-[var(--primary-600)] hover:bg-[var(--primary-700)]"
@@ -250,17 +590,19 @@ export default function WikiPageDetailPage() {
     );
   }
 
-  const visibilityIcon =
+  const VisibilityIcon =
     page.visibility === 'PUBLIC' || page.visibility === 'ORGANIZATION'
       ? Globe
       : page.visibility === 'DEPARTMENT'
         ? Building2
         : Lock;
 
+  // ─── Render ──────────────────────────────────────────────────
+
   return (
     <AppLayout>
       <motion.div {...dsMotion.pageEnter} className={layout.sectionGap}>
-        {/* Back Button & Header */}
+        {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
@@ -270,7 +612,9 @@ export default function WikiPageDetailPage() {
             onClick={() => router.back()}
             className="mb-6 inline-flex items-center gap-2 text-[var(--primary-600)] hover:text-[var(--primary-700)] transition-colors duration-200 group"
           >
-            <ArrowLeft className={`${iconSize.button} group-hover:-translate-x-1 transition-transform`} />
+            <ArrowLeft
+              className={`${iconSize.button} group-hover:-translate-x-1 transition-transform`}
+            />
             <span className="text-sm font-medium">Back</span>
           </button>
         </motion.div>
@@ -285,46 +629,123 @@ export default function WikiPageDetailPage() {
           <div className={card.paddingLarge}>
             <div className="flex items-start justify-between gap-6 mb-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4 leading-tight">{page.title}</h1>
+                <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
+                  {page.title}
+                </h1>
                 <div className="flex flex-wrap items-center gap-6 mb-6">
                   {/* Author */}
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-sm font-semibold text-white">
-                      {(page.authorName || 'A').charAt(0).toUpperCase()}
+                    <div
+                      className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+                        page.authorId || 'default'
+                      )} flex items-center justify-center text-sm font-semibold text-white`}
+                    >
+                      {getInitials(page.authorName || 'A')}
                     </div>
                     <div>
-                      <p className={typography.bodySecondary}>{page.authorName || 'Unknown Author'}</p>
+                      <p className={typography.bodySecondary}>
+                        {page.authorName || 'Unknown Author'}
+                      </p>
                       <p className={typography.caption}>Author</p>
                     </div>
                   </div>
 
-                  {/* Updated Date */}
                   <div className="flex items-center gap-2 text-[var(--text-muted)]">
                     <Calendar className={`${iconSize.cardInline} flex-shrink-0`} />
-                    <span className="text-sm">{new Date(page.updatedAt).toLocaleDateString()}</span>
+                    <span className="text-sm">
+                      {new Date(page.updatedAt).toLocaleDateString()}
+                    </span>
                   </div>
 
-                  {/* View Count - Clickable */}
                   <Tooltip label="Click to see who viewed this page" withArrow>
                     <button
                       onClick={() => setShowViewers(true)}
                       className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer group"
                     >
-                      <Eye className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`} />
+                      <Eye
+                        className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`}
+                      />
                       <span className="text-sm font-medium">{page.viewCount || 0} views</span>
                     </button>
                   </Tooltip>
 
-                  {/* Space Badge */}
                   {page.spaceName && (
                     <Badge variant="light" size="lg" color="var(--primary-600)">
                       {page.spaceName}
                     </Badge>
                   )}
                 </div>
+
+                {/* ═══ Engagement Bar ═══ */}
+                <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
+                  {/* Like Button */}
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    onClick={handleToggleLike}
+                    disabled={likeMutation.isPending || unlikeMutation.isPending}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+                      isLiked
+                        ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400'
+                        : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-main)]'
+                    } disabled:opacity-50`}
+                  >
+                    <Heart
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isLiked ? 'fill-current scale-110' : ''
+                      }`}
+                    />
+                    <span>{page.likeCount || 0}</span>
+                  </motion.button>
+
+                  {/* Favorite Button */}
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    onClick={handleToggleFavorite}
+                    disabled={addFavorite.isPending || removeFavorite.isPending}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
+                      isFavorited
+                        ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400'
+                        : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
+                    } disabled:opacity-50`}
+                  >
+                    <Star
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isFavorited ? 'fill-current scale-110' : ''
+                      }`}
+                    />
+                    <span>{isFavorited ? 'Saved' : 'Save'}</span>
+                  </motion.button>
+
+                  {/* Comment count chip */}
+                  <button
+                    onClick={() => {
+                      document
+                        .getElementById('comments-section')
+                        ?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>{totalCommentCount}</span>
+                  </button>
+
+                  {/* Share */}
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    onClick={handleCopyLink}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                  >
+                    {linkCopied ? (
+                      <Check className="h-4 w-4 text-[var(--status-success-text)]" />
+                    ) : (
+                      <Share2 className="h-4 w-4" />
+                    )}
+                    <span>{linkCopied ? 'Copied' : 'Share'}</span>
+                  </motion.button>
+                </div>
               </div>
 
-              {/* Action Buttons - Horizontal */}
+              {/* Action Icons */}
               <div className="flex-shrink-0 flex items-center gap-2">
                 {canEdit && (
                   <Tooltip label="Edit page" withArrow>
@@ -346,20 +767,6 @@ export default function WikiPageDetailPage() {
                     className="hover:bg-[var(--bg-secondary)] transition-colors"
                   >
                     <History className={iconSize.cardInline} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={linkCopied ? 'Copied!' : 'Copy link'} withArrow>
-                  <ActionIcon
-                    size="lg"
-                    variant="subtle"
-                    onClick={handleCopyLink}
-                    className="hover:bg-[var(--bg-secondary)] transition-colors"
-                  >
-                    {linkCopied ? (
-                      <Check className={iconSize.cardInline} style={{ color: 'var(--status-success-text)' }} />
-                    ) : (
-                      <Copy className={iconSize.cardInline} />
-                    )}
                   </ActionIcon>
                 </Tooltip>
               </div>
@@ -386,7 +793,7 @@ export default function WikiPageDetailPage() {
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.15 }}
-            className={`${layout.sectionGap}`}
+            className={layout.sectionGap}
           >
             {/* Stats Card */}
             <motion.div
@@ -403,21 +810,37 @@ export default function WikiPageDetailPage() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
                     <span className={typography.bodySecondary}>Views</span>
-                    <span className="text-lg font-semibold text-[var(--text-primary)]">{page.viewCount || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
-                    <span className={typography.bodySecondary}>Likes</span>
-                    <span className="text-lg font-semibold text-[var(--text-primary)]">{page.likeCount || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
-                    <span className={typography.bodySecondary}>Comments</span>
                     <span className="text-lg font-semibold text-[var(--text-primary)]">
-                      {page.commentCount || comments.length}
+                      {page.viewCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
+                    <div className="flex items-center gap-2">
+                      <Heart
+                        className={`h-4 w-4 ${
+                          isLiked ? 'fill-red-500 text-red-500' : 'text-[var(--text-muted)]'
+                        }`}
+                      />
+                      <span className={typography.bodySecondary}>Likes</span>
+                    </div>
+                    <span className="text-lg font-semibold text-[var(--text-primary)]">
+                      {page.likeCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between pb-4 border-b border-[var(--border-main)]">
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="h-4 w-4 text-[var(--text-muted)]" />
+                      <span className={typography.bodySecondary}>Comments</span>
+                    </div>
+                    <span className="text-lg font-semibold text-[var(--text-primary)]">
+                      {totalCommentCount}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className={typography.bodySecondary}>Version</span>
-                    <span className="text-lg font-semibold text-[var(--text-primary)]">v{page.version}</span>
+                    <span className="text-lg font-semibold text-[var(--text-primary)]">
+                      v{page.version}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -427,7 +850,11 @@ export default function WikiPageDetailPage() {
             <motion.div
               variants={{
                 hidden: { opacity: 0, y: 8 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.25, delay: 0.06 } },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.25, delay: 0.06 },
+                },
               }}
               initial="hidden"
               animate="visible"
@@ -436,57 +863,6 @@ export default function WikiPageDetailPage() {
               <div className={card.paddingLarge}>
                 <h3 className={`${typography.cardTitle} mb-4`}>Actions</h3>
                 <div className="space-y-2">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleToggleLike}
-                    disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
-                  >
-                    <Heart
-                      className={`${iconSize.cardInline} flex-shrink-0 ${isLiked ? 'fill-[var(--status-danger-text)] text-[var(--status-danger-text)]' : ''}`}
-                    />
-                    <span>
-                      {isLiked ? 'Unlike' : 'Like'} ({page.likeCount || 0})
-                    </span>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleToggleFavorite}
-                    disabled={addFavorite.isPending || removeFavorite.isPending}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-[var(--text-primary)]"
-                  >
-                    <Star
-                      className={`${iconSize.cardInline} flex-shrink-0 ${isFavorited ? 'fill-[var(--status-warning-text)] text-[var(--status-warning-text)]' : ''}`}
-                    />
-                    <span>{isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}</span>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      const el = document.getElementById('comment-input');
-                      el?.focus();
-                    }}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
-                  >
-                    <MessageCircle className={`${iconSize.cardInline} flex-shrink-0`} />
-                    <span>Comment</span>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleCopyLink}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)]"
-                  >
-                    <Share2 className={`${iconSize.cardInline} flex-shrink-0`} />
-                    <span>Share Link</span>
-                  </motion.button>
-
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -514,7 +890,11 @@ export default function WikiPageDetailPage() {
               <motion.div
                 variants={{
                   hidden: { opacity: 0, y: 8 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.25, delay: 0.12 } },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.25, delay: 0.12 },
+                  },
                 }}
                 initial="hidden"
                 animate="visible"
@@ -524,27 +904,30 @@ export default function WikiPageDetailPage() {
                   <h3 className={`${typography.cardTitle} mb-4`}>Visibility</h3>
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      {visibilityIcon === Globe && (
-                        <Globe className={`${iconSize.cardInline} text-[var(--status-success-text)] flex-shrink-0`} />
-                      )}
-                      {visibilityIcon === Building2 && (
-                        <Building2 className={`${iconSize.cardInline} text-[var(--status-info-text)] flex-shrink-0`} />
-                      )}
-                      {visibilityIcon === Lock && (
-                        <Lock className={`${iconSize.cardInline} text-[var(--status-warning-text)] flex-shrink-0`} />
-                      )}
+                      <VisibilityIcon
+                        className={`${iconSize.cardInline} flex-shrink-0 ${
+                          VisibilityIcon === Globe
+                            ? 'text-[var(--status-success-text)]'
+                            : VisibilityIcon === Building2
+                              ? 'text-[var(--status-info-text)]'
+                              : 'text-[var(--status-warning-text)]'
+                        }`}
+                      />
                       <span className={`${typography.bodySecondary} capitalize`}>
                         {page.visibility.toLowerCase()}
                       </span>
                     </div>
                     {page.departmentName && (
-                      <p className={`${typography.caption} pl-7`}>Department: {page.departmentName}</p>
+                      <p className={`${typography.caption} pl-7`}>
+                        Department: {page.departmentName}
+                      </p>
                     )}
                     {page.editorIds && page.editorIds.length > 0 && (
                       <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] pl-7 pt-2 border-t border-[var(--border-main)]">
                         <Users className={`${iconSize.meta} flex-shrink-0`} />
                         <span>
-                          {page.editorIds.length} editor{page.editorIds.length !== 1 ? 's' : ''} with edit access
+                          {page.editorIds.length} editor
+                          {page.editorIds.length !== 1 ? 's' : ''} with edit access
                         </span>
                       </div>
                     )}
@@ -555,56 +938,74 @@ export default function WikiPageDetailPage() {
           </motion.div>
         </div>
 
-        {/* Comments Section */}
+        {/* ═══════════════════════════════════════════════════════════
+            COMMENTS SECTION
+            ═══════════════════════════════════════════════════════════ */}
         <motion.div
+          id="comments-section"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut', delay: 0.2 }}
           className={card.base}
         >
           <div className={card.paddingLarge}>
-            <div className="flex items-center gap-2 mb-6">
-              <MessageCircle className={iconSize.cardInline} />
-              <h2 className={typography.cardTitle}>
-                Comments <span className="text-[var(--text-muted)] font-normal">({comments.length})</span>
-              </h2>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <MessageCircle className={iconSize.cardInline} />
+                <h2 className={typography.cardTitle}>
+                  Discussion{' '}
+                  <span className="text-[var(--text-muted)] font-normal">
+                    ({totalCommentCount})
+                  </span>
+                </h2>
+              </div>
             </div>
 
             {/* Comment Input */}
-            <div className="flex gap-4 mb-6 pb-6 border-b border-[var(--border-main)]">
-              <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-sm font-semibold text-white">
-                {(user?.fullName || 'U').charAt(0).toUpperCase()}
+            <div className="flex gap-4 mb-8 pb-6 border-b border-[var(--border-main)]">
+              <div
+                className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+                  user?.id || 'me'
+                )} flex items-center justify-center text-sm font-semibold text-white`}
+              >
+                {getInitials(user?.fullName || 'You')}
               </div>
-              <div className="flex-1 flex gap-2">
-                <input
-                  id="comment-input"
-                  type="text"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-600)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)] text-sm transition-all duration-200"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleAddComment();
-                    }
-                  }}
-                />
+              <div className="flex-1 flex gap-2 items-start">
+                <div className="flex-1">
+                  <MentionInput
+                    ref={commentInputRef}
+                    value={commentText}
+                    onChange={setCommentText}
+                    onSubmit={handleAddComment}
+                    placeholder="Join the discussion... Use @ to tag people"
+                  />
+                </div>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleAddComment}
                   disabled={!commentText.trim() || createComment.isPending}
-                  className="px-4 py-2.5 rounded-lg bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="mt-0.5 p-2.5 rounded-xl bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-medium text-sm transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <Send className={iconSize.button} />
+                  <Send className="h-4 w-4" />
                 </motion.button>
               </div>
             </div>
 
             {/* Comments List */}
             {comments.length === 0 ? (
-              <p className={`${typography.caption} text-center py-8`}>No comments yet. Be the first to comment!</p>
+              <div className="text-center py-12">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--bg-secondary)] mx-auto mb-4">
+                  <MessageCircle className="h-6 w-6 text-[var(--text-muted)]" />
+                </div>
+                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
+                  No comments yet
+                </p>
+                <p className={typography.caption}>
+                  Be the first to share your thoughts. Use @ to tag team members.
+                </p>
+              </div>
             ) : (
               <motion.div
                 initial="hidden"
@@ -613,44 +1014,26 @@ export default function WikiPageDetailPage() {
                   hidden: { opacity: 0 },
                   visible: {
                     opacity: 1,
-                    transition: { staggerChildren: 0.06, delayChildren: 0 },
+                    transition: { staggerChildren: 0.08, delayChildren: 0 },
                   },
                 }}
-                className="space-y-4"
+                className="space-y-6"
               >
                 {comments.map((comment) => (
-                  <motion.div
-                    key={comment.id}
-                    variants={{
-                      hidden: { opacity: 0, y: 8 },
-                      visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
-                    }}
-                    className="flex gap-4 pb-4 border-b border-[var(--border-main)] last:border-b-0"
-                  >
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-sm font-semibold text-white">
-                      {(comment.authorName || 'A').charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-medium text-sm text-[var(--text-primary)]">
-                          {comment.authorName || 'Anonymous'}
-                        </p>
-                        {comment.authorId === user?.id && (
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => handleDeleteComment(comment.id)}
-                            className="text-[var(--text-muted)] hover:text-[var(--status-danger-text)] transition-colors duration-200"
-                            title="Delete comment"
-                          >
-                            <Trash2 className={iconSize.cardInline} />
-                          </motion.button>
-                        )}
-                      </div>
-                      <p className={`${typography.body} mt-1`}>{comment.body}</p>
-                      <p className={`${typography.caption} mt-2`}>{new Date(comment.createdAt).toLocaleDateString()}</p>
-                    </div>
-                  </motion.div>
+                  <Fragment key={comment.id}>
+                    <CommentThread
+                      comment={comment}
+                      userId={user?.id}
+                      onDelete={handleDeleteComment}
+                      onReply={handleReply}
+                      replyingTo={replyingTo}
+                      replyText={replyText}
+                      onReplyTextChange={setReplyText}
+                      onSubmitReply={handleSubmitReply}
+                    />
+                    {/* Divider between top-level comments */}
+                    <div className="border-b border-[var(--border-subtle)] last:border-b-0" />
+                  </Fragment>
                 ))}
               </motion.div>
             )}
@@ -658,29 +1041,26 @@ export default function WikiPageDetailPage() {
         </motion.div>
       </motion.div>
 
-      {/* Viewers Modal */}
+      {/* ═══ Viewers Modal ═══ */}
       <Modal
         opened={showViewers}
         onClose={() => setShowViewers(false)}
         title="Who viewed this page"
         size="md"
-        styles={{
-          title: { fontSize: '1.125rem', fontWeight: 600 },
-        }}
+        styles={{ title: { fontSize: '1.125rem', fontWeight: 600 } }}
       >
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {!viewers || viewers.length === 0 ? (
-            <p className={`${typography.caption} text-center py-8`}>No view records yet.</p>
+            <p className={`${typography.caption} text-center py-8`}>
+              No view records yet.
+            </p>
           ) : (
             <motion.div
               initial="hidden"
               animate="visible"
               variants={{
                 hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.05 },
-                },
+                visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
               }}
               className="space-y-2"
             >
@@ -694,12 +1074,18 @@ export default function WikiPageDetailPage() {
                   className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors duration-200"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-[var(--primary-400)] to-[var(--primary-600)] flex items-center justify-center text-xs font-semibold text-white">
-                      {(v.viewerName || 'U').charAt(0).toUpperCase()}
+                    <div
+                      className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
+                        v.id
+                      )} flex items-center justify-center text-xs font-semibold text-white`}
+                    >
+                      {getInitials(v.viewerName || 'U')}
                     </div>
                     <span className={typography.body}>{v.viewerName || 'Unknown'}</span>
                   </div>
-                  <span className={typography.caption}>{new Date(v.viewedAt).toLocaleString()}</span>
+                  <span className={typography.caption}>
+                    {new Date(v.viewedAt).toLocaleString()}
+                  </span>
                 </motion.div>
               ))}
             </motion.div>
@@ -707,29 +1093,26 @@ export default function WikiPageDetailPage() {
         </div>
       </Modal>
 
-      {/* Version History Modal */}
+      {/* ═══ Version History Modal ═══ */}
       <Modal
         opened={showHistory}
         onClose={() => setShowHistory(false)}
         title="Version History"
         size="lg"
-        styles={{
-          title: { fontSize: '1.125rem', fontWeight: 600 },
-        }}
+        styles={{ title: { fontSize: '1.125rem', fontWeight: 600 } }}
       >
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {!revisions || revisions.length === 0 ? (
-            <p className={`${typography.caption} text-center py-8`}>No version history available.</p>
+            <p className={`${typography.caption} text-center py-8`}>
+              No version history available.
+            </p>
           ) : (
             <motion.div
               initial="hidden"
               animate="visible"
               variants={{
                 hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.05 },
-                },
+                visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
               }}
               className="space-y-4"
             >
@@ -744,7 +1127,9 @@ export default function WikiPageDetailPage() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-semibold text-[var(--text-primary)]">v{rev.version}</span>
+                      <span className="text-sm font-semibold text-[var(--text-primary)]">
+                        v{rev.version}
+                      </span>
                       {rev.version === page.version && (
                         <Badge size="sm" color="var(--status-success)">
                           Current
@@ -752,12 +1137,16 @@ export default function WikiPageDetailPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-[var(--text-muted)]">{rev.authorName || 'Unknown'}</span>
+                      <span className="text-xs text-[var(--text-muted)]">
+                        {rev.authorName || 'Unknown'}
+                      </span>
                       <span className="text-xs text-[var(--text-muted)]">
                         {new Date(rev.createdAt).toLocaleString()}
                       </span>
                     </div>
-                    <p className={`${typography.caption} text-[var(--text-secondary)]`}>
+                    <p
+                      className={`${typography.caption} text-[var(--text-secondary)]`}
+                    >
                       {rev.changeDescription || 'No description'}
                     </p>
                   </div>
