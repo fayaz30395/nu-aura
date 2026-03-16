@@ -28,7 +28,9 @@ ON CONFLICT (id) DO NOTHING;
 -- 2. USERS & EMPLOYEES
 -- ══════════════════════════════════════════════════════════════════════════
 
--- Note: fayaz.m@nulogic.io already exists from V19, employee_code: EMP-0001
+-- Note: SuperAdmin users already exist from V19:
+--   - sarankarthick.maran@nulogic.io (EMP-0001)
+--   - fayaz.m@nulogic.io (EMP-0001A)
 
 -- Engineering Team (10 employees)
 INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, failed_login_attempts, mfa_enabled, created_at, updated_at, version, is_deleted)
