@@ -59,9 +59,11 @@ export function useFluenceChat(): UseFluenceChatReturn {
     setIsStreaming(true);
     streamingContentRef.current = '';
 
-    // 3. Build history for context (exclude the placeholder)
+    // 3. Build history for context (exclude empty/placeholder messages)
     const history: Array<{ role: ChatRole; content: string }> = [
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ...messages
+        .filter((m) => m.content && m.content.trim().length > 0)
+        .map((m) => ({ role: m.role, content: m.content })),
       { role: 'user' as ChatRole, content: content.trim() },
     ];
 
@@ -114,12 +116,15 @@ export function useFluenceChat(): UseFluenceChatReturn {
       },
 
       onError: (error) => {
+        const friendlyMessage = error.includes('Failed to fetch')
+          ? 'Connection issue — please try again in a moment.'
+          : `Sorry, something went wrong: ${error}`;
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
               ? {
                   ...m,
-                  content: m.content || `Sorry, something went wrong: ${error}`,
+                  content: m.content || friendlyMessage,
                   isStreaming: false,
                 }
               : m

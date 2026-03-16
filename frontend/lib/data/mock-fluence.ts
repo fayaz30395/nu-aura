@@ -4,7 +4,7 @@
  *
  * Remove this file once the Fluence backend endpoints are fully deployed.
  */
-import type { WikiPage, WikiSpace, FluenceComment, Page } from '@/lib/types/fluence';
+import type { WikiPage, WikiSpace, FluenceComment, DocumentTemplate, Page } from '@/lib/types/fluence';
 
 // ─── Mock Users (for @mention / tagging) ────────────────────────
 
@@ -351,6 +351,167 @@ export const MOCK_WIKI_PAGES: WikiPage[] = [
     updatedAt: '2026-03-15T18:30:00Z',
   },
 ];
+
+// ─── Mock Templates ───────────────────────────────────────────────
+
+export const MOCK_TEMPLATES: DocumentTemplate[] = [
+  {
+    id: 'tmpl-001',
+    name: 'Meeting Notes',
+    slug: 'meeting-notes',
+    description: 'Standard template for capturing meeting notes, action items, and follow-ups.',
+    content: tiptapDoc([
+      heading(2, 'Meeting Details'),
+      paragraph('Date: [Date] | Time: [Time] | Location: [Location/Link]'),
+      heading(2, 'Attendees'),
+      paragraph('- [Name 1]\n- [Name 2]'),
+      heading(2, 'Agenda'),
+      paragraph('1. [Topic 1]\n2. [Topic 2]\n3. [Topic 3]'),
+      heading(2, 'Discussion Notes'),
+      paragraph('[Add detailed notes here]'),
+      heading(2, 'Action Items'),
+      paragraph('- [ ] [Task 1] — Assigned to: [Name] — Due: [Date]\n- [ ] [Task 2] — Assigned to: [Name] — Due: [Date]'),
+      heading(2, 'Next Meeting'),
+      paragraph('[Date/Time]'),
+    ]),
+    authorId: 'user-001',
+    authorName: 'Fayaz M',
+    usageCount: 24,
+    icon: '📝',
+    tags: ['meeting', 'notes'],
+    createdAt: '2026-01-15T10:00:00Z',
+    updatedAt: '2026-03-10T14:00:00Z',
+  },
+  {
+    id: 'tmpl-002',
+    name: 'Project Brief',
+    slug: 'project-brief',
+    description: 'Outline project goals, scope, timeline, and stakeholders for new initiatives.',
+    content: tiptapDoc([
+      heading(2, 'Project Overview'),
+      paragraph('[Brief description of the project and its purpose]'),
+      heading(2, 'Goals & Objectives'),
+      paragraph('1. [Goal 1]\n2. [Goal 2]\n3. [Goal 3]'),
+      heading(2, 'Scope'),
+      paragraph('In Scope:\n- [Item 1]\n- [Item 2]\n\nOut of Scope:\n- [Item 1]'),
+      heading(2, 'Timeline'),
+      paragraph('Start Date: [Date]\nEnd Date: [Date]\n\nKey Milestones:\n- [Milestone 1] — [Date]\n- [Milestone 2] — [Date]'),
+      heading(2, 'Stakeholders'),
+      paragraph('- Project Lead: [Name]\n- Sponsor: [Name]\n- Team: [Names]'),
+      heading(2, 'Risks & Mitigations'),
+      paragraph('| Risk | Impact | Mitigation |\n|------|--------|------------|\n| [Risk 1] | High | [Plan] |'),
+    ]),
+    authorId: 'user-002',
+    authorName: 'Arjun S',
+    usageCount: 18,
+    icon: '🎯',
+    tags: ['project', 'planning', 'brief'],
+    createdAt: '2026-01-20T09:00:00Z',
+    updatedAt: '2026-03-05T11:30:00Z',
+  },
+  {
+    id: 'tmpl-003',
+    name: 'Weekly Status Report',
+    slug: 'weekly-status-report',
+    description: 'Weekly progress update with accomplishments, blockers, and next week plans.',
+    content: tiptapDoc([
+      heading(2, 'Weekly Status Report'),
+      paragraph('Week of: [Start Date] — [End Date]\nTeam: [Team Name]\nAuthor: [Your Name]'),
+      heading(2, 'Accomplishments This Week'),
+      paragraph('- [Completed item 1]\n- [Completed item 2]\n- [Completed item 3]'),
+      heading(2, 'In Progress'),
+      paragraph('- [Task 1] — [% complete]\n- [Task 2] — [% complete]'),
+      heading(2, 'Blockers & Risks'),
+      paragraph('- [Blocker 1] — Impact: [High/Medium/Low]\n- [Risk 1] — Mitigation: [Plan]'),
+      heading(2, 'Plan for Next Week'),
+      paragraph('- [Planned task 1]\n- [Planned task 2]'),
+      heading(2, 'Metrics'),
+      paragraph('[Add relevant KPIs or metrics here]'),
+    ]),
+    authorId: 'user-009',
+    authorName: 'Meera J',
+    usageCount: 42,
+    icon: '📊',
+    tags: ['status', 'weekly', 'report'],
+    createdAt: '2026-02-01T08:00:00Z',
+    updatedAt: '2026-03-14T16:00:00Z',
+  },
+  {
+    id: 'tmpl-004',
+    name: 'Technical Design Doc',
+    slug: 'technical-design-doc',
+    description: 'RFC-style technical design document for architecture decisions and feature specs.',
+    content: tiptapDoc([
+      heading(2, 'Technical Design Document'),
+      paragraph('Title: [Feature Name]\nAuthor: [Name]\nStatus: Draft | In Review | Approved\nDate: [Date]'),
+      heading(2, 'Summary'),
+      paragraph('[One paragraph overview of what this design covers]'),
+      heading(2, 'Motivation'),
+      paragraph('[Why is this needed? What problem does it solve?]'),
+      heading(2, 'Proposed Solution'),
+      paragraph('[Detailed description of the approach]'),
+      heading(2, 'API Design'),
+      paragraph('[Endpoint definitions, request/response schemas]'),
+      heading(2, 'Data Model'),
+      paragraph('[Database tables, relationships, migrations]'),
+      heading(2, 'Alternatives Considered'),
+      paragraph('[What other approaches were evaluated and why they were rejected]'),
+      heading(2, 'Security & Privacy'),
+      paragraph('[Security implications and mitigations]'),
+      heading(2, 'Testing Strategy'),
+      paragraph('[Unit tests, integration tests, edge cases]'),
+    ]),
+    authorId: 'user-001',
+    authorName: 'Fayaz M',
+    usageCount: 15,
+    icon: '⚙️',
+    tags: ['engineering', 'design', 'rfc', 'architecture'],
+    createdAt: '2026-02-10T10:00:00Z',
+    updatedAt: '2026-03-12T09:00:00Z',
+  },
+  {
+    id: 'tmpl-005',
+    name: 'Onboarding Checklist',
+    slug: 'onboarding-checklist',
+    description: 'Step-by-step onboarding checklist for new hires covering Day 1 through 90 days.',
+    content: tiptapDoc([
+      heading(2, 'New Employee Onboarding'),
+      paragraph('Employee: [Name]\nStart Date: [Date]\nDepartment: [Department]\nBuddy: [Assigned Buddy]'),
+      heading(2, 'Pre-Day 1'),
+      paragraph('- [ ] Create employee profile in NU-AURA\n- [ ] Set up email & Slack accounts\n- [ ] Assign hardware assets\n- [ ] Send welcome email'),
+      heading(2, 'Day 1'),
+      paragraph('- [ ] Welcome meeting with HR\n- [ ] Workspace tour\n- [ ] IT setup verification\n- [ ] Benefits enrollment\n- [ ] Team introduction'),
+      heading(2, 'Week 1'),
+      paragraph('- [ ] Complete compliance training\n- [ ] Review team documentation\n- [ ] 1:1 with manager\n- [ ] Shadow team members'),
+      heading(2, 'First 30 Days'),
+      paragraph('- [ ] Complete all mandatory training\n- [ ] First project assignment\n- [ ] 30-day check-in with HR'),
+      heading(2, 'First 90 Days'),
+      paragraph('- [ ] Probation review meeting\n- [ ] Goal setting for next quarter\n- [ ] Feedback collection'),
+    ]),
+    authorId: 'user-003',
+    authorName: 'Priya K',
+    usageCount: 31,
+    icon: '✅',
+    tags: ['onboarding', 'hr', 'checklist'],
+    createdAt: '2026-01-10T08:00:00Z',
+    updatedAt: '2026-03-08T10:00:00Z',
+  },
+];
+
+// In-memory store for newly created templates (mock mode)
+let _mockCreatedTemplates: DocumentTemplate[] = [];
+
+export function addMockTemplate(template: DocumentTemplate): void {
+  _mockCreatedTemplates = [template, ..._mockCreatedTemplates];
+}
+
+export function getAllMockTemplates(): DocumentTemplate[] {
+  return [..._mockCreatedTemplates, ...MOCK_TEMPLATES];
+}
+
+export function getMockTemplate(id: string): DocumentTemplate | undefined {
+  return getAllMockTemplates().find((t) => t.id === id);
+}
 
 // ─── Mock Comments ────────────────────────────────────────────────
 

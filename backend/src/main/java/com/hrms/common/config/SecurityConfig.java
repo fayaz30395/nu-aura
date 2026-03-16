@@ -136,7 +136,10 @@ public class SecurityConfig {
                     // Ignore CSRF for actuator health checks
                     .ignoringRequestMatchers("/actuator/health", "/actuator/health/**")
                     // Ignore CSRF for WebSocket/SockJS transports
-                    .ignoringRequestMatchers("/ws/**"));
+                    .ignoringRequestMatchers("/ws/**")
+                    // Ignore CSRF for SSE streaming endpoints (authenticated via cookies, but
+                    // native fetch may not have XSRF token on first request)
+                    .ignoringRequestMatchers("/api/v1/fluence/chat"));
         } else {
             http.csrf(AbstractHttpConfigurer::disable);
         }
