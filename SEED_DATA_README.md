@@ -27,10 +27,17 @@ Located: `backend/src/main/resources/db/migration/V19__platform_seed_data.sql`
 - **Name**: NuLogic
 - **Status**: ACTIVE
 
-#### 2. SuperAdmin User
+#### 2. SuperAdmin Users (2)
+**SuperAdmin 1 - Sarankarthick Maran**:
 - **User ID**: `550e8400-e29b-41d4-a716-446655440030`
-- **Email**: `fayaz.m@nulogic.io`
+- **Email**: `sarankarthick.maran@nulogic.io`
 - **Employee Code**: `EMP-0001`
+- **Role**: SUPER_ADMIN (bypasses all RBAC checks)
+
+**SuperAdmin 2 - Fayaz M**:
+- **User ID**: `550e8400-e29b-41d4-a716-446655440031`
+- **Email**: `fayaz.m@nulogic.io`
+- **Employee Code**: `EMP-0001A`
 - **Role**: SUPER_ADMIN (bypasses all RBAC checks)
 
 #### 3. Roles
@@ -202,9 +209,17 @@ Located: `backend/src/main/resources/db/migration/V30__comprehensive_demo_seed_d
 
 ## Demo Login Credentials
 
-### SuperAdmin (Full Access)
-- **Email**: `fayaz.m@nulogic.io`
+### SuperAdmin Users (Full Access)
+
+**SuperAdmin 1 - Sarankarthick Maran**:
+- **Email**: `sarankarthick.maran@nulogic.io`
 - **Employee Code**: `EMP-0001`
+- **Role**: SUPER_ADMIN
+- **Password**: Set via signup or database
+
+**SuperAdmin 2 - Fayaz M**:
+- **Email**: `fayaz.m@nulogic.io`
+- **Employee Code**: `EMP-0001A`
 - **Role**: SUPER_ADMIN
 - **Password**: Set via signup or database
 

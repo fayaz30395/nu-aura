@@ -18,7 +18,8 @@ VALUES (
     NOW(), NOW(), 0, false
 ) ON CONFLICT DO NOTHING;
 
--- 2. USER (extends TenantAware — has tenant_id)
+-- 2. USERS (extends TenantAware — has tenant_id)
+-- SuperAdmin 1: Sarankarthick Maran
 INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, failed_login_attempts, mfa_enabled, created_at, updated_at, version, is_deleted)
 VALUES (
     '550e8400-e29b-41d4-a716-446655440030',
@@ -26,6 +27,21 @@ VALUES (
     'sarankarthick.maran@nulogic.io',
     'Sarankarthick',
     'Maran',
+    '',
+    'ACTIVE',
+    0,
+    false,
+    NOW(), NOW(), 0, false
+) ON CONFLICT DO NOTHING;
+
+-- SuperAdmin 2: Fayaz M
+INSERT INTO users (id, tenant_id, email, first_name, last_name, password_hash, status, failed_login_attempts, mfa_enabled, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440031',
+    '660e8400-e29b-41d4-a716-446655440001',
+    'fayaz.m@nulogic.io',
+    'Fayaz',
+    'M',
     '',
     'ACTIVE',
     0,
@@ -46,19 +62,46 @@ VALUES (
 ) ON CONFLICT DO NOTHING;
 
 -- 4. USER-ROLE JUNCTION
+-- Grant SUPER_ADMIN role to both SuperAdmin users
 INSERT INTO user_roles (user_id, role_id)
 VALUES (
     '550e8400-e29b-41d4-a716-446655440030',
     '550e8400-e29b-41d4-a716-446655440020'
 ) ON CONFLICT DO NOTHING;
 
--- 5. EMPLOYEE linked to user
+INSERT INTO user_roles (user_id, role_id)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440031',
+    '550e8400-e29b-41d4-a716-446655440020'
+) ON CONFLICT DO NOTHING;
+
+-- 5. EMPLOYEES linked to SuperAdmin users
+-- Employee for Sarankarthick Maran (SuperAdmin 1)
 INSERT INTO employees (id, tenant_id, employee_code, user_id, first_name, last_name, personal_email, joining_date, designation, level, job_role, employment_type, status, created_at, updated_at, version, is_deleted)
 VALUES (
     '550e8400-e29b-41d4-a716-446655440040',
     '660e8400-e29b-41d4-a716-446655440001',
     'EMP-0001',
     '550e8400-e29b-41d4-a716-446655440030',
+    'Sarankarthick',
+    'Maran',
+    'sarankarthick.maran@nulogic.io',
+    CURRENT_DATE,
+    'System Administrator',
+    'CXO',
+    'EXECUTIVE',
+    'FULL_TIME',
+    'ACTIVE',
+    NOW(), NOW(), 0, false
+) ON CONFLICT DO NOTHING;
+
+-- Employee for Fayaz M (SuperAdmin 2)
+INSERT INTO employees (id, tenant_id, employee_code, user_id, first_name, last_name, personal_email, joining_date, designation, level, job_role, employment_type, status, created_at, updated_at, version, is_deleted)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440041',
+    '660e8400-e29b-41d4-a716-446655440001',
+    'EMP-0001A',
+    '550e8400-e29b-41d4-a716-446655440031',
     'Fayaz',
     'M',
     'fayaz.m@nulogic.io',
