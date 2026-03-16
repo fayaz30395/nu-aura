@@ -128,8 +128,9 @@ export default function RichTextEditor({
       Color,
       TextStyle,
     ],
-    content: content as any,
+    content: content as Record<string, unknown>,
     editable,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON());
     },

@@ -1,100 +1,15 @@
 import { apiClient } from '@/lib/api/client';
 import { logger } from '@/lib/utils/logger';
 import {
-    PSAProject,
     PSATimesheet,
     PSATimeEntry,
     PSAInvoice,
-    ProjectStatus,
-    TimesheetStatus
 } from '@/lib/types/psa';
 
-export interface PSAResourceAllocationRequest {
-  employeeId: string;
-  role?: string;
-  allocationPercentage: number;
-  startDate: string;
-  endDate?: string;
-  billingRate?: number;
-  costRate?: number;
-}
-
-const PROJECTS_URL = '/psa/projects';
 const TIMESHEETS_URL = '/psa/timesheets';
 const INVOICES_URL = '/psa/invoices';
 
 export const psaService = {
-    // --- Projects ---
-
-    getAllProjects: async (): Promise<PSAProject[]> => {
-        try {
-            const response = await apiClient.get<PSAProject[]>(PROJECTS_URL);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to fetch all projects', { error });
-            throw error;
-        }
-    },
-
-    getProject: async (id: string): Promise<PSAProject> => {
-        try {
-            const response = await apiClient.get<PSAProject>(`${PROJECTS_URL}/${id}`);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to fetch project', { error, id });
-            throw error;
-        }
-    },
-
-    createProject: async (data: Partial<PSAProject>): Promise<PSAProject> => {
-        try {
-            const response = await apiClient.post<PSAProject>(PROJECTS_URL, data);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to create project', { error, data });
-            throw error;
-        }
-    },
-
-    updateProject: async (id: string, data: Partial<PSAProject>): Promise<PSAProject> => {
-        try {
-            const response = await apiClient.put<PSAProject>(`${PROJECTS_URL}/${id}`, data);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to update project', { error, id, data });
-            throw error;
-        }
-    },
-
-    deleteProject: async (id: string): Promise<void> => {
-        try {
-            await apiClient.delete(`${PROJECTS_URL}/${id}`);
-        } catch (error) {
-            logger.error('Failed to delete project', { error, id });
-            throw error;
-        }
-    },
-
-    getProjectsByStatus: async (status: ProjectStatus): Promise<PSAProject[]> => {
-        try {
-            const response = await apiClient.get<PSAProject[]>(`${PROJECTS_URL}/status/${status}`);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to fetch projects by status', { error, status });
-            throw error;
-        }
-    },
-
-    allocateResources: async (projectId: string, allocation: PSAResourceAllocationRequest): Promise<PSAProject> => {
-        try {
-            const response = await apiClient.post<PSAProject>(`${PROJECTS_URL}/${projectId}/allocate`, allocation);
-            return response.data;
-        } catch (error) {
-            logger.error('Failed to allocate resources', { error, projectId, allocation });
-            throw error;
-        }
-    },
-
     // --- Timesheets ---
 
     createTimesheet: async (data: Partial<PSATimesheet>): Promise<PSATimesheet> => {
@@ -113,6 +28,16 @@ export const psaService = {
             return response.data;
         } catch (error) {
             logger.error('Failed to fetch employee timesheets', { error, employeeId });
+            throw error;
+        }
+    },
+
+    getProjectTimesheets: async (projectId: string): Promise<PSATimesheet[]> => {
+        try {
+            const response = await apiClient.get<PSATimesheet[]>(`${TIMESHEETS_URL}/project/${projectId}`);
+            return response.data;
+        } catch (error) {
+            logger.error('Failed to fetch project timesheets', { error, projectId });
             throw error;
         }
     },

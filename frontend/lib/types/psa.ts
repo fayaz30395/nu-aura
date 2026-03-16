@@ -1,17 +1,9 @@
-export enum ProjectBillingType {
-    TIME_AND_MATERIAL = 'TIME_AND_MATERIAL',
-    FIXED_PRICE = 'FIXED_PRICE',
-    NON_BILLABLE = 'NON_BILLABLE',
-    RETAINER = 'RETAINER',
-}
-
-export enum ProjectStatus {
-    PLANNED = 'PLANNED',
-    ACTIVE = 'ACTIVE',
-    ON_HOLD = 'ON_HOLD',
-    COMPLETED = 'COMPLETED',
-    CANCELLED = 'CANCELLED',
-}
+/**
+ * PSA types — Timesheets & Invoices
+ *
+ * PSAProject has been merged into HrmsProject (see hrms-project.ts).
+ * Billing fields (isBillable, billingType, billingRate) now live on HrmsProject.
+ */
 
 export enum TimesheetStatus {
     DRAFT = 'DRAFT',
@@ -28,25 +20,6 @@ export enum InvoiceStatus {
     PAID = 'PAID',
     OVERDUE = 'OVERDUE',
     CANCELLED = 'CANCELLED',
-}
-
-export interface PSAProject {
-    id: string; // UUID
-    tenantId: string;
-    projectCode: string;
-    projectName: string;
-    clientId?: string;
-    projectManagerId?: string;
-    startDate?: string;
-    endDate?: string;
-    billingType: ProjectBillingType;
-    billingRate?: number;
-    budget?: number;
-    isBillable: boolean;
-    status: ProjectStatus;
-    description?: string;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface PSATimeEntry {

@@ -625,3 +625,297 @@
     background-position: 200% 0;
   }
 }
+
+/* ─── Fluence Editor Styles ────────────────────────────────── */
+
+/* Editor wrapper */
+.fluence-editor-wrapper {
+  @apply w-full;
+}
+
+/* Editor canvas — the main content area with defined boundary */
+.fluence-editor-canvas {
+  @apply relative min-h-[400px] rounded-xl border border-[var(--border-subtle)] p-6;
+  background: var(--bg-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.fluence-editor-canvas:focus-within {
+  border-color: var(--border-main);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 62, 99, 221), 0.08);
+}
+
+/* Subtle left accent line for editing context */
+.fluence-editor-canvas::before {
+  content: '';
+  @apply absolute left-0 top-6 bottom-6 w-[3px] rounded-full opacity-0;
+  background: linear-gradient(180deg, rgba(var(--primary-rgb, 62, 99, 221), 0.4) 0%, rgba(var(--primary-rgb, 62, 99, 221), 0.05) 100%);
+  transition: opacity 0.3s ease;
+}
+.fluence-editor-canvas:focus-within::before {
+  @apply opacity-100;
+}
+
+/* Editor content area — ProseMirror root */
+.fluence-editor-content {
+  @apply outline-none;
+}
+
+.fluence-editor-content .ProseMirror {
+  @apply outline-none min-h-[350px] py-2;
+}
+
+/* Placeholder styling — more prominent */
+.fluence-editor-content .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply float-left pointer-events-none h-0 text-base;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Placeholder with icon hint for empty editor */
+.fluence-editor-content .ProseMirror.is-empty::before {
+  content: '';
+  @apply block w-full h-px mb-4;
+  background: transparent;
+}
+
+/* Typography inside editor */
+.fluence-editor-content .ProseMirror h1 {
+  @apply text-3xl font-bold mt-8 mb-4 text-[var(--text-primary)];
+}
+.fluence-editor-content .ProseMirror h2 {
+  @apply text-2xl font-semibold mt-6 mb-3 text-[var(--text-primary)];
+}
+.fluence-editor-content .ProseMirror h3 {
+  @apply text-xl font-semibold mt-4 mb-2 text-[var(--text-primary)];
+}
+.fluence-editor-content .ProseMirror p {
+  @apply text-base leading-7 mb-2 text-[var(--text-primary)];
+}
+
+/* Lists */
+.fluence-editor-content .ProseMirror ul {
+  @apply list-disc pl-6 mb-4;
+}
+.fluence-editor-content .ProseMirror ol {
+  @apply list-decimal pl-6 mb-4;
+}
+.fluence-editor-content .ProseMirror li {
+  @apply mb-1;
+}
+.fluence-editor-content .ProseMirror li p {
+  @apply mb-0;
+}
+
+/* Task list */
+.fluence-editor-content .ProseMirror ul[data-type="taskList"] {
+  @apply list-none pl-0;
+}
+.fluence-editor-content .ProseMirror ul[data-type="taskList"] li {
+  @apply flex items-start gap-2;
+}
+.fluence-editor-content .ProseMirror ul[data-type="taskList"] li label {
+  @apply mt-1;
+}
+.fluence-editor-content .ProseMirror ul[data-type="taskList"] li label input[type="checkbox"] {
+  @apply w-4 h-4 rounded border-2 accent-primary-500 cursor-pointer;
+}
+.fluence-editor-content .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div > p {
+  @apply line-through text-[var(--text-muted)];
+}
+
+/* Blockquote */
+.fluence-editor-content .ProseMirror blockquote {
+  @apply border-l-4 border-primary-400 pl-4 py-1 my-4 text-[var(--text-secondary)] italic;
+}
+
+/* Code blocks */
+.fluence-editor-content .ProseMirror pre {
+  @apply bg-surface-900 text-surface-100 rounded-lg p-4 my-4 overflow-x-auto font-mono text-sm;
+}
+.fluence-editor-content .ProseMirror pre code {
+  @apply bg-transparent text-inherit p-0 rounded-none;
+}
+
+/* Inline code */
+.fluence-editor-content .ProseMirror code {
+  @apply bg-primary-500/10 text-primary-400 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* Horizontal rule */
+.fluence-editor-content .ProseMirror hr {
+  @apply border-t border-[var(--border-main)] my-6;
+}
+
+/* Images */
+.fluence-editor-content .ProseMirror img {
+  @apply max-w-full h-auto rounded-lg my-4;
+}
+.fluence-editor-content .ProseMirror img.ProseMirror-selectednode {
+  @apply ring-2 ring-primary-500 ring-offset-2;
+}
+
+/* Tables */
+.fluence-editor-content .ProseMirror table {
+  @apply w-full border-collapse my-4;
+}
+.fluence-editor-content .ProseMirror table td,
+.fluence-editor-content .ProseMirror table th {
+  @apply border border-[var(--border-main)] px-3 py-2 text-left text-sm min-w-[80px];
+}
+.fluence-editor-content .ProseMirror table th {
+  @apply bg-[var(--bg-secondary)] font-semibold text-[var(--text-primary)];
+}
+.fluence-editor-content .ProseMirror table td {
+  @apply text-[var(--text-primary)];
+}
+.fluence-editor-content .ProseMirror table .selectedCell {
+  @apply bg-primary-500/10;
+}
+
+/* Link */
+.fluence-editor-content .ProseMirror a {
+  @apply text-primary-500 underline decoration-primary-500/30 underline-offset-2 hover:decoration-primary-500 transition-colors cursor-pointer;
+}
+
+/* Highlight */
+.fluence-editor-content .ProseMirror mark {
+  @apply rounded px-0.5;
+}
+
+/* ─── Callout / Panel Blocks ──────────────────────────────── */
+
+.fluence-callout {
+  @apply rounded-lg p-4 my-4 border-l-4;
+}
+.fluence-callout > p:last-child {
+  @apply mb-0;
+}
+.fluence-callout-info {
+  @apply bg-blue-500/10 border-blue-500 text-[var(--text-primary)];
+}
+.fluence-callout-warning {
+  @apply bg-amber-500/10 border-amber-500 text-[var(--text-primary)];
+}
+.fluence-callout-success {
+  @apply bg-green-500/10 border-green-500 text-[var(--text-primary)];
+}
+.fluence-callout-danger {
+  @apply bg-red-500/10 border-red-500 text-[var(--text-primary)];
+}
+
+/* ─── Slash Command Menu ──────────────────────────────────── */
+
+.fluence-slash-menu {
+  @apply absolute z-50 w-72 rounded-xl shadow-xl border border-[var(--border-main)] overflow-hidden;
+  background: var(--bg-card);
+  backdrop-filter: blur(8px);
+}
+
+.fluence-slash-item {
+  @apply flex items-center gap-3 w-full px-3 py-2 text-left transition-colors duration-75 cursor-pointer;
+}
+.fluence-slash-item:hover,
+.fluence-slash-item-active {
+  @apply bg-primary-500/10;
+}
+
+.fluence-slash-item-icon {
+  @apply flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-[var(--text-secondary)];
+  background: var(--bg-secondary);
+}
+.fluence-slash-item-active .fluence-slash-item-icon,
+.fluence-slash-item:hover .fluence-slash-item-icon {
+  @apply text-primary-500;
+  background: rgba(var(--primary-rgb, 62, 99, 221), 0.15);
+}
+
+/* ─── Floating Format Toolbar ─────────────────────────────── */
+
+.fluence-floating-bar {
+  @apply flex items-center gap-0.5 rounded-lg px-1 py-1 shadow-xl border border-white/10;
+  background: #1e1e2e;
+}
+
+.fluence-floating-btn {
+  @apply w-7 h-7 flex items-center justify-center rounded-md text-white/70 transition-all duration-100 hover:text-white hover:bg-white/10;
+}
+.fluence-floating-btn-active {
+  @apply text-primary-400 bg-primary-500/20 hover:text-primary-300;
+}
+
+.fluence-floating-link-input {
+  @apply bg-white/10 border-none text-white text-sm rounded px-2 py-1 outline-none w-48 placeholder:text-white/40;
+}
+
+/* ─── Bottom Hint Bar ─────────────────────────────────────── */
+
+.fluence-editor-hint {
+  @apply flex items-center justify-center text-xs text-[var(--text-muted)] pt-4 mt-4 border-t border-dashed;
+  border-color: var(--border-subtle);
+}
+.fluence-editor-hint kbd {
+  @apply inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded text-[10px] font-mono font-semibold border mx-1;
+  background: var(--bg-secondary);
+  border-color: var(--border-main);
+  color: var(--text-secondary);
+}
+
+/* ─── Editor Loading State ────────────────────────────────── */
+
+.fluence-editor-loading {
+  @apply min-h-[400px] flex items-start pt-8 px-4;
+}
+
+/* ─── Confluence-like Page Editor Layout ──────────────────── */
+
+.fluence-page-editor {
+  @apply flex flex-col min-h-screen;
+}
+
+.fluence-page-topbar {
+  @apply sticky top-0 z-30 flex items-center justify-between px-6 py-3 border-b border-[var(--border-subtle)];
+  background: var(--bg-page);
+}
+
+.fluence-page-topbar-left {
+  @apply flex items-center gap-3;
+}
+
+.fluence-page-topbar-right {
+  @apply flex items-center gap-2;
+}
+
+.fluence-page-canvas {
+  @apply flex-1 max-w-4xl mx-auto w-full px-6 py-8;
+}
+
+/* Title block with subtle left accent on focus */
+.fluence-title-block {
+  @apply relative pl-4 mb-6;
+  border-left: 3px solid transparent;
+  transition: border-color 0.2s ease;
+}
+.fluence-title-block:focus-within {
+  border-left-color: rgba(var(--primary-rgb, 62, 99, 221), 0.4);
+}
+
+.fluence-title-input {
+  @apply w-full text-4xl font-bold outline-none border-none bg-transparent resize-none overflow-hidden;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.fluence-title-input::placeholder {
+  @apply text-[var(--text-muted)] opacity-40;
+}
+
+.fluence-meta-row {
+  @apply flex items-center gap-4 mt-2 mb-6 pb-4;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+/* Section label for the editor area */
+.fluence-editor-label {
+  @apply flex items-center gap-2 text-xs font-medium uppercase tracking-wider mb-2;
+  color: var(--text-muted);
+}

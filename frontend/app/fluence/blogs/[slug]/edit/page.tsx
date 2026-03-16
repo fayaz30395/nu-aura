@@ -20,8 +20,8 @@ import { isAxiosError } from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import { useEmployeeSearch } from '@/lib/hooks/queries/useEmployees';
 
-const RichTextEditor = dynamic(
-  () => import('@/components/fluence/RichTextEditor'),
+const FluenceEditor = dynamic(
+  () => import('@/components/fluence/editor/FluenceEditor'),
   { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
 );
 
@@ -371,12 +371,10 @@ export default function EditBlogPost() {
               control={control}
               name="content"
               render={({ field }) => (
-                <RichTextEditor
+                <FluenceEditor
                   content={field.value}
                   onChange={field.onChange}
-                  placeholder="Write your blog post content here..."
-                  minHeight="400px"
-                  maxHeight="800px"
+                  placeholder='Type "/" for commands, or just start writing...'
                 />
               )}
             />

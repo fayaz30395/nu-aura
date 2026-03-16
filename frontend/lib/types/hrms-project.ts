@@ -1,6 +1,31 @@
 export type ProjectStatus = 'DRAFT' | 'PLANNED' | 'IN_PROGRESS' | 'ON_HOLD' | 'COMPLETED' | 'CANCELLED';
 export type ProjectPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type ProjectType = 'CLIENT' | 'INTERNAL';
+export type ProjectBillingType = 'TIME_AND_MATERIAL' | 'FIXED_PRICE' | 'RETAINER';
+
+export type ProjectMemberRole =
+  | 'PROJECT_MANAGER'
+  | 'TEAM_LEAD'
+  | 'DEVELOPER'
+  | 'SENIOR_DEVELOPER'
+  | 'QA_ENGINEER'
+  | 'DESIGNER'
+  | 'BUSINESS_ANALYST'
+  | 'ARCHITECT'
+  | 'CONSULTANT'
+  | 'MEMBER';
+
+export interface ProjectTeamMember {
+  id: string;
+  projectId: string;
+  employeeId: string;
+  employeeName?: string;
+  role: ProjectMemberRole;
+  allocationPercentage?: number;
+  startDate?: string;
+  endDate?: string | null;
+  isActive?: boolean;
+}
 
 export interface HrmsProject {
   id: string;
@@ -20,6 +45,12 @@ export interface HrmsProject {
   currency?: string | null;
   createdAt: string;
   updatedAt: string;
+  teamMembers?: ProjectTeamMember[] | null;
+  // Billing fields (optional — enabled when isBillable is true)
+  isBillable?: boolean;
+  billingType?: ProjectBillingType | null;
+  billingRate?: number | null;
+  clientId?: string | null;
 }
 
 export interface ProjectCreateRequest {
@@ -34,6 +65,9 @@ export interface ProjectCreateRequest {
   clientName?: string;
   budget?: number;
   currency?: string;
+  isBillable?: boolean;
+  billingType?: ProjectBillingType;
+  billingRate?: number;
 }
 
 export interface ProjectUpdateRequest extends Partial<ProjectCreateRequest> {

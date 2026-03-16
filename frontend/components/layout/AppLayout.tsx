@@ -18,6 +18,7 @@ import { useActiveApp } from '@/lib/hooks/useActiveApp';
 import { APP_SIDEBAR_SECTIONS } from '@/lib/config/apps';
 import { buildMenuSections } from './menuSections';
 import { ErrorBoundary } from '@/components/errors';
+import { FluenceChatWidget } from '@/components/fluence/FluenceChatWidget';
 import { Home, Users, Calendar, CheckSquare, User, Briefcase, UserPlus, ClipboardList, TrendingUp, BookOpen, Target, FileText, Edit, MessageCircle } from 'lucide-react';
 import type { NavItem } from '@/components/ui/MobileBottomNav';
 
@@ -351,6 +352,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           onMoreClick={() => setIsMobileMenuOpen(true)}
         />
       </div>
+
+      {/* Fluence AI Chat Widget — only on Fluence routes */}
+      {appCode === 'FLUENCE' && <FluenceChatWidget />}
     </div>
   );
 };

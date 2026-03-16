@@ -27,7 +27,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               'block text-sm font-medium mb-1.5',
               error
                 ? 'text-danger-600 dark:text-danger-400'
-                : 'text-surface-700 dark:text-surface-200'
+                : 'text-[var(--text-secondary)]'
             )}
           >
             {label}
@@ -39,20 +39,20 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             className={cn(
               // Base styles
-              'w-full appearance-none rounded-lg border bg-white transition-all duration-150',
-              'text-surface-900 dark:bg-surface-800 dark:text-surface-50',
+              'w-full appearance-none rounded-lg border bg-[var(--bg-card)] transition-all duration-150',
+              'text-[var(--text-primary)]',
               // Size
               sizeStyles[selectSize],
               // Default border
-              !error && 'border-surface-300 dark:border-surface-600',
+              !error && 'border-[var(--border-main)]',
               // Hover state
-              !error && !disabled && 'hover:border-surface-400 dark:hover:border-surface-500',
+              !error && !disabled && 'hover:border-primary-300 dark:hover:border-primary-700',
               // Focus state
               !error && 'focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:focus:border-primary-400 dark:focus:ring-primary-400/20',
               // Error state
               error && 'border-danger-500 focus:border-danger-500 focus:ring-2 focus:ring-danger-500/20',
               // Disabled
-              disabled && 'bg-surface-100 dark:bg-surface-700 cursor-not-allowed opacity-60',
+              disabled && 'bg-[var(--bg-secondary)] cursor-not-allowed opacity-60',
               // Remove default outline
               'outline-none',
               className
@@ -64,7 +64,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </select>
           <ChevronDown className={cn(
             'absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none',
-            'text-surface-400 dark:text-surface-500',
+            'text-[var(--text-muted)]',
             disabled && 'opacity-60'
           )} />
         </div>
@@ -75,7 +75,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               'text-sm mt-1.5',
               error
                 ? 'text-danger-600 dark:text-danger-400'
-                : 'text-surface-500 dark:text-surface-400'
+                : 'text-[var(--text-muted)]'
             )}
           >
             {error || helper}

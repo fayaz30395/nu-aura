@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { Download, Loader2, Plus, Search, X } from 'lucide-react';
+import { Download, Loader2, Plus, Search, X, Edit2, MoreHorizontal, Eye } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,6 +27,7 @@ import {
   ProjectStatus,
   ProjectType,
   ProjectPriority,
+  ProjectUpdateRequest,
 } from '@/lib/types/hrms-project';
 import { apiClient } from '@/lib/api/client';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -35,6 +36,7 @@ import {
   useHrmsProjects,
   useCreateHrmsProject,
   useExportHrmsProjects,
+  useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
 
 interface PageResponse<T> {
@@ -64,6 +66,15 @@ interface OwnerTypeaheadProps {
   onChange: (value: EmployeeSummary | null) => void;
   placeholder?: string;
   disabled?: boolean;
+}
+
+interface MultiOwnerTypeaheadProps {
+  label: string;
+  values: EmployeeSummary[];
+  onChange: (values: EmployeeSummary[]) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  maxOwners?: number;
 }
 
 const STATUS_BADGE: Record<ProjectStatus, { label: string; variant: 'success' | 'warning' | 'secondary' | 'danger' | 'primary' }> = {
@@ -126,9 +137,28 @@ const projectFormSchema = z.object({
   expectedEndDate: z.string().optional().or(z.literal('')),
   clientName: z.string().optional().or(z.literal('')),
   description: z.string().optional().or(z.literal('')),
+  isBillable: z.boolean().optional().default(false),
+  billingType: z.enum(['TIME_AND_MATERIAL', 'FIXED_PRICE', 'RETAINER']).optional(),
+  billingRate: z.union([z.string(), z.number()]).optional()
+    .transform((v) => v === '' || v === undefined ? undefined : typeof v === 'string' ? Number(v) : v),
 });
 
 type ProjectFormData = z.infer<typeof projectFormSchema>;
+
+// Zod schema for project edit form
+const editProjectFormSchema = z.object({
+  projectCode: z.string().optional(),
+  name: z.string().min(1, 'Project name is required'),
+  status: z.enum(['DRAFT', 'PLANNED', 'IN_PROGRESS', 'ON_HOLD', 'COMPLETED', 'CANCELLED']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  startDate: z.string().min(1, 'Start date is required'),
+  expectedEndDate: z.string().optional().or(z.literal('')),
+  endDate: z.string().optional().or(z.literal('')),
+  clientName: z.string().optional().or(z.literal('')),
+  description: z.string().optional().or(z.literal('')),
+});
+
+type EditProjectFormData = z.infer<typeof editProjectFormSchema>;
 
 const parseApiError = (error: unknown): ApiErrorPayload => {
   const response = (error as { response?: { data?: ApiErrorPayload } })?.response?.data;
@@ -262,6 +292,156 @@ function OwnerTypeahead({ label, value, onChange, placeholder, disabled }: Owner
   );
 }
 
+function MultiOwnerTypeahead({
+  label,
+  values,
+  onChange,
+  placeholder,
+  disabled,
+  maxOwners = 5,
+}: MultiOwnerTypeaheadProps) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<EmployeeSummary[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const term = query.trim();
+    if (term.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const handle = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await apiClient.get<PageResponse<EmployeeSummary>>('/employees', {
+          params: { search: term, page: 0, size: 20 },
+        });
+        const selectedIds = new Set(values.map((v) => v.id));
+        const filtered = (response.data.content ?? []).filter((emp) => !selectedIds.has(emp.id));
+        setResults(filtered);
+      } catch (err) {
+        console.error('Owner search failed', err);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(handle);
+  }, [query, open, values]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    setOpen(true);
+  };
+
+  const handleSelect = (owner: EmployeeSummary) => {
+    if (values.length < maxOwners) {
+      onChange([...values, owner]);
+      setQuery('');
+      setResults([]);
+    }
+  };
+
+  const handleRemove = (id: string) => {
+    onChange(values.filter((v) => v.id !== id));
+  };
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+        {label}
+      </label>
+      <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-2.5 dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+        {values.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {values.map((owner, index) => (
+              <div
+                key={owner.id}
+                className="flex items-center gap-1.5 rounded-md bg-primary-50 px-2.5 py-1.5 text-sm text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
+              >
+                <span>
+                  {buildEmployeeName(owner)}
+                  {index === 0 ? ' (Primary)' : ''}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleRemove(owner.id)}
+                  className="ml-1 hover:text-primary-900 dark:hover:text-primary-100"
+                  aria-label={`Remove ${buildEmployeeName(owner)}`}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="relative">
+          <Input
+            placeholder={placeholder || 'Search and add owners...'}
+            value={query}
+            onChange={handleInputChange}
+            onFocus={() => setOpen(true)}
+            icon={<Search className="h-4 w-4" />}
+            rightIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined}
+            disabled={disabled || values.length >= maxOwners}
+          />
+        </div>
+      </div>
+      {open && query.trim().length >= 2 && (
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-lg dark:border-[var(--border-main)] dark:bg-[var(--bg-card)]">
+          {loading && (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">Searching owners...</div>
+          )}
+          {!loading && results.length === 0 && (
+            <div className="px-4 py-3 text-sm text-[var(--text-muted)]">
+              {values.length >= maxOwners ? 'Maximum owners reached' : 'No owners found'}
+            </div>
+          )}
+          {!loading && results.length > 0 && (
+            <ul className="max-h-64 overflow-y-auto">
+              {results.map((owner) => (
+                <li key={owner.id}>
+                  <button
+                    type="button"
+                    aria-label={`Select ${buildEmployeeName(owner)}`}
+                    className="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
+                    onClick={() => handleSelect(owner)}
+                  >
+                    <span className="font-medium text-[var(--text-primary)]">
+                      {buildEmployeeName(owner)}
+                    </span>
+                    <span className="text-xs text-[var(--text-muted)]">
+                      {owner.employeeCode || owner.officialEmail}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ProjectsPage() {
   const { user } = useAuth();
   const toast = useToast();
@@ -276,7 +456,12 @@ export default function ProjectsPage() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formErrorDetails, setFormErrorDetails] = useState<string[]>([]);
-  const [ownerSelection, setOwnerSelection] = useState<EmployeeSummary | null>(null);
+  const [ownerSelection, setOwnerSelection] = useState<EmployeeSummary[]>([]);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingProject, setEditingProject] = useState<HrmsProject | null>(null);
+  const [editOwnerSelection, setEditOwnerSelection] = useState<EmployeeSummary[]>([]);
+  const [editFormErrorDetails, setEditFormErrorDetails] = useState<string[]>([]);
 
   const handleTabChange = (tab: 'active' | 'all' | 'on_hold' | 'completed' | 'archived') => {
     setActiveTab(tab);
@@ -302,11 +487,12 @@ export default function ProjectsPage() {
     }
   };
 
-  // React Hook Form setup
+  // React Hook Form setup for create
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectFormSchema),
@@ -320,7 +506,20 @@ export default function ProjectsPage() {
       expectedEndDate: '',
       clientName: '',
       description: '',
+      isBillable: false,
+      billingType: undefined,
+      billingRate: undefined,
     },
+  });
+
+  // React Hook Form setup for edit
+  const {
+    register: editRegister,
+    handleSubmit: editHandleSubmit,
+    reset: editReset,
+    formState: { errors: editErrors, isSubmitting: editIsSubmitting },
+  } = useForm<EditProjectFormData>({
+    resolver: zodResolver(editProjectFormSchema),
   });
 
   const roleCodes = useMemo(() => new Set(user?.roles?.map((role) => role.code) ?? []), [user]);
@@ -366,6 +565,7 @@ export default function ProjectsPage() {
   );
 
   const createMutation = useCreateHrmsProject();
+  const updateMutation = useUpdateHrmsProject();
   const exportMutation = useExportHrmsProjects();
 
   const projects = data?.content ?? [];
@@ -393,7 +593,7 @@ export default function ProjectsPage() {
 
   const handleOpenCreate = () => {
     reset();
-    setOwnerSelection(canChooseOwner ? null : defaultOwner);
+    setOwnerSelection(canChooseOwner ? [] : (defaultOwner ? [defaultOwner] : []));
     setFormErrorDetails([]);
     setShowCreateModal(true);
   };
@@ -404,7 +604,7 @@ export default function ProjectsPage() {
       return;
     }
 
-    const ownerId = ownerSelection?.id?.trim();
+    const ownerId = ownerSelection[0]?.id?.trim();
     if (!ownerId) {
       setFormErrorDetails(['Project owner is required']);
       return;
@@ -425,6 +625,9 @@ export default function ProjectsPage() {
       expectedEndDate: data.expectedEndDate ? data.expectedEndDate : undefined,
       clientName: data.type === 'CLIENT' ? data.clientName?.trim() : undefined,
       description: data.description?.trim() || undefined,
+      isBillable: data.isBillable ?? false,
+      billingType: data.isBillable ? data.billingType : undefined,
+      billingRate: data.isBillable && data.billingRate ? Number(data.billingRate) : undefined,
     };
 
     try {
@@ -435,6 +638,64 @@ export default function ProjectsPage() {
     } catch (err) {
       const apiError = parseApiError(err);
       setFormErrorDetails([apiError.message || 'Failed to create project. Please try again.', ...(apiError.details || [])]);
+    }
+  };
+
+  const handleOpenEdit = (project: HrmsProject) => {
+    setEditingProject(project);
+    editReset({
+      name: project.name,
+      status: project.status,
+      priority: project.priority,
+      startDate: project.startDate?.split('T')[0] || '',
+      expectedEndDate: project.expectedEndDate?.split('T')[0] || '',
+      endDate: project.endDate?.split('T')[0] || '',
+      clientName: project.clientName || '',
+      description: project.description || '',
+    });
+    const owners: EmployeeSummary[] = [];
+    if (project.projectManagerId && project.projectManagerName) {
+      const nameParts = project.projectManagerName.split(' ');
+      owners.push({
+        id: project.projectManagerId,
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || null,
+      });
+    }
+    setEditOwnerSelection(owners);
+    setEditFormErrorDetails([]);
+    setShowEditModal(true);
+  };
+
+  const handleEditProject = async (data: EditProjectFormData) => {
+    if (!editingProject) return;
+
+    const primaryOwnerId = editOwnerSelection[0]?.id?.trim();
+    if (!primaryOwnerId) {
+      setEditFormErrorDetails(['At least one project owner is required']);
+      return;
+    }
+
+    const payload: ProjectUpdateRequest = {
+      name: data.name?.trim(),
+      status: data.status,
+      priority: data.priority as any,
+      projectManagerId: primaryOwnerId,
+      startDate: data.startDate,
+      expectedEndDate: data.expectedEndDate || undefined,
+      endDate: data.endDate || undefined,
+      clientName: data.clientName?.trim() || undefined,
+      description: data.description?.trim() || undefined,
+    };
+
+    try {
+      await updateMutation.mutateAsync({ id: editingProject.id, data: payload });
+      setShowEditModal(false);
+      setEditingProject(null);
+      refetch();
+    } catch (err) {
+      const apiError = parseApiError(err);
+      setEditFormErrorDetails([apiError.message || 'Failed to update project.', ...(apiError.details || [])]);
     }
   };
 
@@ -538,7 +799,24 @@ export default function ProjectsPage() {
       ),
       mobilePriority: 'hidden' as const,
     },
-  ], []);
+    {
+      key: 'actions',
+      header: '',
+      accessor: (project: HrmsProject) => (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleOpenEdit(project); }}
+            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+            aria-label={`Edit ${project.name}`}
+          >
+            <Edit2 className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+      mobilePriority: 'secondary' as const,
+    },
+  ], [handleOpenEdit]);
 
   return (
     <AppLayout breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Projects' }]} activeMenuItem="projects">
@@ -756,9 +1034,9 @@ export default function ProjectsPage() {
                 </Select>
                 {errors.type && <p className="text-sm text-danger-500 mt-1">{errors.type.message}</p>}
               </div>
-              <OwnerTypeahead
-                label="Owner"
-                value={ownerSelection}
+              <MultiOwnerTypeahead
+                label="Owner(s)"
+                values={ownerSelection}
                 onChange={setOwnerSelection}
                 placeholder="Search owners..."
                 disabled={!canChooseOwner}
@@ -801,6 +1079,41 @@ export default function ProjectsPage() {
               {errors.clientName && <p className="text-sm text-danger-500 mt-1">{errors.clientName.message}</p>}
             </div>
 
+            {/* Billing toggle */}
+            <div className="rounded-lg border border-[var(--border-main)] p-4 space-y-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-[var(--border-main)] text-primary-600 focus:ring-primary-500"
+                  {...register('isBillable')}
+                />
+                <span className="text-sm font-medium text-[var(--text-primary)]">Billable project</span>
+                <span className="text-xs text-[var(--text-muted)]">— enables invoicing for this project</span>
+              </label>
+
+              {watch('isBillable') && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <Select label="Billing type" {...register('billingType')}>
+                      <option value="">Select billing type</option>
+                      <option value="TIME_AND_MATERIAL">Time &amp; Material</option>
+                      <option value="FIXED_PRICE">Fixed Price</option>
+                      <option value="RETAINER">Retainer</option>
+                    </Select>
+                  </div>
+                  <div>
+                    <Input
+                      label="Billing rate (per hour)"
+                      type="number"
+                      min={0}
+                      placeholder="e.g. 150"
+                      {...register('billingRate')}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div>
               <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                 Description (optional)
@@ -815,6 +1128,115 @@ export default function ProjectsPage() {
             </Button>
             <Button type="submit" isLoading={isSubmitting || createMutation.isPending}>
               Create Project
+            </Button>
+          </ModalFooter>
+        </form>
+      </Modal>
+
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} size="lg">
+        <ModalHeader onClose={() => setShowEditModal(false)}>
+          Edit Project
+        </ModalHeader>
+        <form onSubmit={editHandleSubmit(handleEditProject)}>
+          <ModalBody className="space-y-4">
+            {editFormErrorDetails.length > 0 && (
+              <div className="rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+                <ul className="space-y-1">
+                  {editFormErrorDetails.map((detail, index) => (
+                    <li key={`${index}-${detail}`}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+                  Project code
+                </label>
+                <div className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-sm text-[var(--text-secondary)]">
+                  {editingProject?.projectCode}
+                </div>
+              </div>
+              <div>
+                <Input
+                  label="Project name"
+                  placeholder="e.g. Mobile app revamp"
+                  {...editRegister('name')}
+                />
+                {editErrors.name && <p className="text-sm text-danger-500 mt-1">{editErrors.name.message}</p>}
+              </div>
+            </div>
+
+            <div>
+              <MultiOwnerTypeahead
+                label="Owner(s)"
+                values={editOwnerSelection}
+                onChange={setEditOwnerSelection}
+                placeholder="Search owners..."
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Input label="Start date" type="date" {...editRegister('startDate')} />
+                {editErrors.startDate && <p className="text-sm text-danger-500 mt-1">{editErrors.startDate.message}</p>}
+              </div>
+              <div>
+                <Input label="Expected end date" type="date" {...editRegister('expectedEndDate')} />
+                {editErrors.expectedEndDate && <p className="text-sm text-danger-500 mt-1">{editErrors.expectedEndDate.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Input label="Actual end date" type="date" {...editRegister('endDate')} />
+                {editErrors.endDate && <p className="text-sm text-danger-500 mt-1">{editErrors.endDate.message}</p>}
+              </div>
+              <div>
+                <Select label="Status" {...editRegister('status')}>
+                  <option value="DRAFT">Draft</option>
+                  <option value="PLANNED">Planned</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="ON_HOLD">On Hold</option>
+                  <option value="COMPLETED">Completed</option>
+                  <option value="CANCELLED">Cancelled</option>
+                </Select>
+                {editErrors.status && <p className="text-sm text-danger-500 mt-1">{editErrors.status.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Select label="Priority" {...editRegister('priority')}>
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                  <option value="CRITICAL">Critical</option>
+                </Select>
+                {editErrors.priority && <p className="text-sm text-danger-500 mt-1">{editErrors.priority.message}</p>}
+              </div>
+            </div>
+
+            <div>
+              <Input label="Client name" placeholder="e.g. Acme Corp" {...editRegister('clientName')} />
+              {editErrors.clientName && <p className="text-sm text-danger-500 mt-1">{editErrors.clientName.message}</p>}
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+                Description (optional)
+              </label>
+              <Textarea placeholder="Add a short description or scope notes" {...editRegister('description')} />
+              {editErrors.description && <p className="text-sm text-danger-500 mt-1">{editErrors.description.message}</p>}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="button" variant="outline" onClick={() => setShowEditModal(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={editIsSubmitting || updateMutation.isPending}>
+              Save Changes
             </Button>
           </ModalFooter>
         </form>

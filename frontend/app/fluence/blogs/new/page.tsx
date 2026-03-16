@@ -12,9 +12,9 @@ import { useCreateBlogPost, useBlogCategories } from '@/lib/hooks/queries/useFlu
 import { notifications } from '@mantine/notifications';
 import { TextInput, Textarea, Select, MultiSelect, LoadingOverlay, Skeleton } from '@mantine/core';
 
-// Dynamically import Tiptap editor to keep it out of the initial bundle
-const RichTextEditor = dynamic(
-  () => import('@/components/fluence/RichTextEditor'),
+// Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
+const FluenceEditor = dynamic(
+  () => import('@/components/fluence/editor/FluenceEditor'),
   { ssr: false, loading: () => <Skeleton height={400} radius="md" /> }
 );
 import { ArrowLeft } from 'lucide-react';
@@ -278,12 +278,10 @@ export default function CreateBlogPost() {
               control={control}
               name="content"
               render={({ field }) => (
-                <RichTextEditor
+                <FluenceEditor
                   content={field.value}
                   onChange={field.onChange}
-                  placeholder="Write your blog post content here..."
-                  minHeight="400px"
-                  maxHeight="800px"
+                  placeholder='Type "/" for commands, or just start writing...'
                 />
               )}
             />

@@ -27,6 +27,14 @@ import {
   UpdateCommentRequest,
   FavoriteContentType,
 } from '@/lib/types/fluence';
+import {
+  MOCK_WIKI_PAGES,
+  MOCK_SPACES,
+  MOCK_LIKED_PAGES,
+  MOCK_FAVORITED_PAGES,
+  getMockComments,
+  mockPageResponse,
+} from '@/lib/data/mock-fluence';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────
 
@@ -96,7 +104,17 @@ export function useWikiPages(
 ) {
   return useQuery({
     queryKey: fluenceKeys.wikiPageList(spaceId, page, size),
-    queryFn: () => fluenceService.listWikiPages(spaceId, page, size),
+    queryFn: async () => {
+      try {
+        return await fluenceService.listWikiPages(spaceId, page, size);
+      } catch {
+        // Fallback to mock data when backend is unavailable
+        const filtered = spaceId
+          ? MOCK_WIKI_PAGES.filter((p) => p.spaceId === spaceId)
+          : MOCK_WIKI_PAGES;
+        return mockPageResponse(filtered, page, size);
+      }
+    },
     enabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -105,7 +123,22 @@ export function useWikiPages(
 export function useWikiPage(id: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.wikiPageDetail(id),
-    queryFn: () => fluenceService.getWikiPage(id),
+    queryFn: async () => {
+      try {
+        return await fluenceService.getWikiPage(id);
+      } catch {
+        // Fallback to mock data when backend is unavailable
+        const mockPage = MOCK_WIKI_PAGES.find((p) => p.id === id);
+        if (mockPage) {
+          return {
+            ...mockPage,
+            isLikedByCurrentUser: MOCK_LIKED_PAGES.has(id),
+            isFavoritedByCurrentUser: MOCK_FAVORITED_PAGES.has(id),
+          };
+        }
+        throw new Error(`Wiki page not found: ${id}`);
+      }
+    },
     enabled: enabled && !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -138,7 +171,14 @@ export function useWikiPageRevisions(pageId: string, enabled: boolean = true) {
 export function useWikiSpaces(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.wikiSpaceList(page, size),
-    queryFn: () => fluenceService.listWikiSpaces(page, size),
+    queryFn: async () => {
+      try {
+        return await fluenceService.listWikiSpaces(page, size);
+      } catch {
+        // Fallback to mock data when backend is unavailable
+        return mockPageResponse(MOCK_SPACES, page, size);
+      }
+    },
     enabled,
     staleTime: 2 * 60 * 1000,
   });
@@ -243,7 +283,15 @@ export function useComments(
 ) {
   return useQuery({
     queryKey: fluenceKeys.commentList(contentId, contentType),
-    queryFn: () => fluenceService.listComments(contentId, contentType, page, size),
+    queryFn: async () => {
+      try {
+        return await fluenceService.listComments(contentId, contentType, page, size);
+      } catch {
+        // Fallback to mock comments when backend is unavailable
+        const comments = getMockComments(contentId);
+        return mockPageResponse(comments, page, size);
+      }
+    },
     enabled: enabled && !!contentId,
     staleTime: 1 * 60 * 1000, // 1 minute, comments update frequently
   });

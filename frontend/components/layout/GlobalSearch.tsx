@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import {
   Search,
@@ -29,9 +29,18 @@ import {
   ClipboardCheck,
   UserCheck,
   Loader2,
+  Newspaper,
+  HardDrive,
+  FileStack,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { searchService, SearchResult, UnifiedSearchResponse } from '@/lib/services/search.service';
+import {
+  searchService,
+  SearchResult,
+  UnifiedSearchResponse,
+  FluenceUnifiedSearchResponse,
+} from '@/lib/services/search.service';
+import { getAppForRoute } from '@/lib/config/apps';
 
 interface NavigationItem {
   id: string;
@@ -43,7 +52,9 @@ interface NavigationItem {
   keywords: string[];
 }
 
-const navigationItems: NavigationItem[] = [
+// ─── Default navigation items (HRMS / general) ─────────────────────────────
+
+const defaultNavigationItems: NavigationItem[] = [
   // Dashboard
   { id: 'dashboard', title: 'Dashboard', description: 'Overview and analytics', href: '/dashboard', icon: BarChart3, category: 'Pages', keywords: ['home', 'overview', 'analytics', 'stats'] },
 
@@ -97,11 +108,25 @@ const navigationItems: NavigationItem[] = [
   { id: 'settings', title: 'Settings', description: 'System settings', href: '/settings', icon: Settings, category: 'Admin', keywords: ['settings', 'configuration', 'preferences'] },
 ];
 
+// ─── Fluence navigation items ───────────────────────────────────────────────
+
+const fluenceNavigationItems: NavigationItem[] = [
+  { id: 'fluence-wiki', title: 'Wiki', description: 'Browse wiki pages and spaces', href: '/fluence/wiki', icon: BookOpen, category: 'NU-Fluence', keywords: ['wiki', 'pages', 'spaces', 'knowledge', 'docs'] },
+  { id: 'fluence-blogs', title: 'Articles', description: 'Read and write blog posts', href: '/fluence/blogs', icon: Newspaper, category: 'NU-Fluence', keywords: ['articles', 'blogs', 'posts', 'writing'] },
+  { id: 'fluence-my-content', title: 'My Content', description: 'View your created content', href: '/fluence/my-content', icon: User, category: 'NU-Fluence', keywords: ['my content', 'authored', 'drafts', 'published'] },
+  { id: 'fluence-templates', title: 'Templates', description: 'Browse document templates', href: '/fluence/templates', icon: FileStack, category: 'NU-Fluence', keywords: ['templates', 'blueprints', 'formats'] },
+  { id: 'fluence-drive', title: 'Drive', description: 'File storage and management', href: '/fluence/drive', icon: HardDrive, category: 'NU-Fluence', keywords: ['drive', 'files', 'storage', 'uploads'] },
+  { id: 'fluence-search', title: 'Advanced Search', description: 'Full search with filters', href: '/fluence/search', icon: Search, category: 'NU-Fluence', keywords: ['search', 'find', 'filter', 'advanced'] },
+];
+
 // Icon mapping for search result types
 const typeIcons: Record<string, React.ElementType> = {
   employee: User,
   project: Briefcase,
   department: Building2,
+  wiki: BookOpen,
+  blog: Newspaper,
+  template: FileStack,
 };
 
 interface GlobalSearchProps {
@@ -112,14 +137,25 @@ interface GlobalSearchProps {
 
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect, autoFocus }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(autoFocus || false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
   const [apiResults, setApiResults] = useState<UnifiedSearchResponse | null>(null);
+  const [fluenceResults, setFluenceResults] = useState<FluenceUnifiedSearchResponse | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect if we're in the Fluence app
+  const isFluence = useMemo(() => getAppForRoute(pathname) === 'FLUENCE', [pathname]);
+
+  // Pick the right navigation items based on active app
+  const navigationItems = isFluence ? fluenceNavigationItems : defaultNavigationItems;
+  const placeholderText = isFluence
+    ? 'Search wiki, articles, templates...'
+    : 'Search employees, projects...';
 
   // Filter navigation items based on query
   const filteredNavItems = query === ''
@@ -134,7 +170,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         );
       }).slice(0, 5);
 
-  // Debounced API search
+  // Debounced API search — switches backend based on active app
   useEffect(() => {
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -144,17 +180,26 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
       setIsSearching(true);
       searchTimeoutRef.current = setTimeout(async () => {
         try {
-          const results = await searchService.unifiedSearch(query, 5);
-          setApiResults(results);
+          if (isFluence) {
+            const results = await searchService.searchFluenceContent(query, 5);
+            setFluenceResults(results);
+            setApiResults(null);
+          } else {
+            const results = await searchService.unifiedSearch(query, 5);
+            setApiResults(results);
+            setFluenceResults(null);
+          }
         } catch (error) {
           logger.error('Search error:', error);
           setApiResults(null);
+          setFluenceResults(null);
         } finally {
           setIsSearching(false);
         }
       }, 300);
     } else {
       setApiResults(null);
+      setFluenceResults(null);
       setIsSearching(false);
     }
 
@@ -163,7 +208,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         clearTimeout(searchTimeoutRef.current);
       }
     };
-  }, [query]);
+  }, [query, isFluence]);
 
   // Build combined results for keyboard navigation
   const allSelectableItems: { type: 'nav' | 'api'; item: NavigationItem | SearchResult; category: string }[] = [];
@@ -173,8 +218,18 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
     allSelectableItems.push({ type: 'nav', item, category: item.category });
   });
 
-  // Add API results
-  if (apiResults) {
+  // Add API results — Fluence or default
+  if (isFluence && fluenceResults) {
+    fluenceResults.wikiPages.forEach((item) => {
+      allSelectableItems.push({ type: 'api', item, category: 'Wiki Pages' });
+    });
+    fluenceResults.blogPosts.forEach((item) => {
+      allSelectableItems.push({ type: 'api', item, category: 'Blog Posts' });
+    });
+    fluenceResults.templates.forEach((item) => {
+      allSelectableItems.push({ type: 'api', item, category: 'Templates' });
+    });
+  } else if (!isFluence && apiResults) {
     apiResults.employees.forEach((item) => {
       allSelectableItems.push({ type: 'api', item, category: 'People' });
     });
@@ -190,6 +245,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
     setIsOpen(false);
     setQuery('');
     setApiResults(null);
+    setFluenceResults(null);
     router.push(href);
     onSelect?.();
   }, [router, onSelect]);
@@ -219,6 +275,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
       setIsOpen(false);
       setQuery('');
       setApiResults(null);
+      setFluenceResults(null);
     }
   }, [allSelectableItems, selectedIndex, handleSelectHref]);
 
@@ -254,6 +311,13 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
   useEffect(() => {
     setSelectedIndex(0);
   }, [query]);
+
+  // Clear results when switching apps
+  useEffect(() => {
+    setQuery('');
+    setApiResults(null);
+    setFluenceResults(null);
+  }, [isFluence]);
 
   const renderNavItem = (item: NavigationItem, globalIndex: number) => {
     const Icon = item.icon;
@@ -332,6 +396,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
             {result.subtitle}
             {result.metadata?.email && ` • ${result.metadata.email}`}
             {result.metadata?.department && ` • ${result.metadata.department}`}
+            {result.metadata?.author && ` • ${result.metadata.author}`}
           </p>
         </div>
         {globalIndex === selectedIndex && (
@@ -349,6 +414,23 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
     acc[item.category].push(item);
     return acc;
   }, {} as Record<string, NavigationItem[]>);
+
+  // Build grouped API results for rendering
+  const groupedApiResults = useMemo(() => {
+    const groups: { label: string; items: SearchResult[] }[] = [];
+
+    if (isFluence && fluenceResults) {
+      if (fluenceResults.wikiPages.length > 0) groups.push({ label: 'Wiki Pages', items: fluenceResults.wikiPages });
+      if (fluenceResults.blogPosts.length > 0) groups.push({ label: 'Blog Posts', items: fluenceResults.blogPosts });
+      if (fluenceResults.templates.length > 0) groups.push({ label: 'Templates', items: fluenceResults.templates });
+    } else if (!isFluence && apiResults) {
+      if (apiResults.employees.length > 0) groups.push({ label: 'People', items: apiResults.employees });
+      if (apiResults.projects.length > 0) groups.push({ label: 'Projects', items: apiResults.projects });
+      if (apiResults.departments.length > 0) groups.push({ label: 'Departments', items: apiResults.departments });
+    }
+
+    return groups;
+  }, [isFluence, fluenceResults, apiResults]);
 
   // Calculate global indices for navigation items
   let navItemGlobalIndex = 0;
@@ -375,7 +457,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
         <input
           ref={inputRef}
           type="text"
-          placeholder="Search employees, projects..."
+          placeholder={placeholderText}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -400,13 +482,18 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-surface-100 dark:border-surface-800">
             <span className="text-xs font-medium text-surface-500 uppercase tracking-wider">
-              {query ? `Results for "${query}"` : 'Quick Navigation'}
+              {query
+                ? `Results for "${query}"`
+                : isFluence
+                  ? 'NU-Fluence Navigation'
+                  : 'Quick Navigation'}
             </span>
             <button
               onClick={() => {
                 setIsOpen(false);
                 setQuery('');
                 setApiResults(null);
+                setFluenceResults(null);
               }}
               className="p-1 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
             >
@@ -444,53 +531,28 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className, onSelect,
                   );
                 })}
 
-                {/* API Results - Employees */}
-                {apiResults && apiResults.employees.length > 0 && (
-                  <div className="mb-2">
-                    <div className="px-4 py-1.5">
-                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
-                        People
-                      </span>
-                    </div>
-                    {apiResults.employees.map((result, idx) =>
-                      renderApiResult(result, filteredNavItems.length + idx)
-                    )}
-                  </div>
-                )}
+                {/* API Results — rendered generically from grouped data */}
+                {groupedApiResults.map((group) => {
+                  // Calculate the starting global index for this group
+                  let groupStartIndex = filteredNavItems.length;
+                  for (const g of groupedApiResults) {
+                    if (g === group) break;
+                    groupStartIndex += g.items.length;
+                  }
 
-                {/* API Results - Projects */}
-                {apiResults && apiResults.projects.length > 0 && (
-                  <div className="mb-2">
-                    <div className="px-4 py-1.5">
-                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
-                        Projects
-                      </span>
+                  return (
+                    <div key={group.label} className="mb-2">
+                      <div className="px-4 py-1.5">
+                        <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
+                          {group.label}
+                        </span>
+                      </div>
+                      {group.items.map((result, idx) =>
+                        renderApiResult(result, groupStartIndex + idx)
+                      )}
                     </div>
-                    {apiResults.projects.map((result, idx) =>
-                      renderApiResult(result, filteredNavItems.length + (apiResults?.employees.length || 0) + idx)
-                    )}
-                  </div>
-                )}
-
-                {/* API Results - Departments */}
-                {apiResults && apiResults.departments.length > 0 && (
-                  <div className="mb-2">
-                    <div className="px-4 py-1.5">
-                      <span className="text-xs font-semibold text-surface-400 dark:text-surface-500 uppercase tracking-wider">
-                        Departments
-                      </span>
-                    </div>
-                    {apiResults.departments.map((result, idx) =>
-                      renderApiResult(
-                        result,
-                        filteredNavItems.length +
-                        (apiResults?.employees.length || 0) +
-                        (apiResults?.projects.length || 0) +
-                        idx
-                      )
-                    )}
-                  </div>
-                )}
+                  );
+                })}
 
                 {/* Loading indicator */}
                 {isSearching && (
