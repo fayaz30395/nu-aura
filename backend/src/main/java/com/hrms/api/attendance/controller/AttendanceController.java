@@ -271,6 +271,18 @@ public class AttendanceController {
         return ResponseEntity.ok(toResponse(record));
     }
 
+    @PostMapping("/{id}/reject-regularization")
+    @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    public ResponseEntity<AttendanceResponse> rejectRegularization(
+            @PathVariable UUID id,
+            @RequestParam(required = false, defaultValue = "") String reason) {
+        AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
+        validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
+        UUID rejectorId = requireCurrentEmployeeId();
+        AttendanceRecord record = attendanceService.rejectRegularization(id, rejectorId, reason);
+        return ResponseEntity.ok(toResponse(record));
+    }
+
     // ===================== Bulk Import (Excel) =====================
 
     @GetMapping("/import/template")
