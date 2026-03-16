@@ -14,7 +14,6 @@ import {
   Users,
   Globe,
   RefreshCw,
-  Settings,
   Pencil,
   Trash2,
   Heart,
@@ -203,7 +202,7 @@ export default function WikiPage() {
   );
 
   const handleConfirmDelete = useCallback(
-    (spaceId: string, migrateToSpaceId: string | null) => {
+    (spaceId: string, _migrateToSpaceId: string | null) => {
       // In a real app, this would first migrate docs then delete.
       // For now, we just trigger the delete mutation.
       deleteSpace.mutate(spaceId, {

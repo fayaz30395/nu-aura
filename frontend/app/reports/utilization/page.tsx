@@ -10,10 +10,8 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-  Calendar,
   ChevronDown,
   Download,
-  Filter,
   ArrowUpRight,
   ArrowDownRight,
   Building2,
@@ -32,16 +30,11 @@ import {
 import { Badge } from '@/components/ui/Badge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import {
-  EmployeeUtilization,
-  DepartmentUtilization,
-  ProjectUtilization,
-  UtilizationTrend,
   getUtilizationColor,
   getUtilizationBgColor,
   formatHours,
   formatPercentage,
   formatCurrency,
-  UtilizationDashboardData,
 } from '@/lib/types/utilization';
 import { getDateRanges } from '@/lib/services/utilization.service';
 import { usePermissions, Permissions } from '@/lib/hooks/usePermissions';
@@ -61,10 +54,6 @@ export default function UtilizationReportsPage() {
       router.replace('/reports');
     }
   }, [permReady, hasPermission, router]);
-
-  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
-    return null;
-  }
 
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>('thisMonth');
   const [customStartDate, setCustomStartDate] = useState('');
@@ -112,6 +101,11 @@ export default function UtilizationReportsPage() {
     });
   }, [dashboardData, searchQuery]);
 
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
+
 
 
 
@@ -157,7 +151,7 @@ export default function UtilizationReportsPage() {
               </div>
             )}
           </div>
-          <div className={`p-3 rounded-xl ${color}`}>
+          <div className={`p-4 rounded-xl ${color}`}>
             <Icon className="h-6 w-6 text-white" />
           </div>
         </div>
@@ -168,7 +162,7 @@ export default function UtilizationReportsPage() {
 
 
   const UtilizationBar = ({ rate }: { rate: number }) => (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-4">
       <div className="flex-1 h-2 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${rate >= 90 ? 'bg-green-500' :
@@ -238,7 +232,7 @@ export default function UtilizationReportsPage() {
         <div className="p-6 flex flex-col items-center justify-center h-[60vh]">
           <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
           <h2 className="text-xl font-bold text-[var(--text-primary)]">Failed to load data</h2>
-          <p className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as any).message : 'Unknown error occurred'}</p>
+          <p className="text-[var(--text-muted)] mt-2">{typeof error === 'object' && error ? (error as Error).message : 'Unknown error occurred'}</p>
           <Button
             onClick={() => refetch()}
             variant="primary"
@@ -272,7 +266,7 @@ export default function UtilizationReportsPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Date Range Selector */}
             <div className="relative">
               <select
@@ -328,10 +322,10 @@ export default function UtilizationReportsPage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3"
+            className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-4"
           >
             <AlertCircle className="h-5 w-5 text-red-500" />
-            <span className="text-red-700 dark:text-red-400">{typeof error === 'object' && error ? (error as any).message : String(error)}</span>
+            <span className="text-red-700 dark:text-red-400">{typeof error === 'object' && error ? (error as Error).message : String(error)}</span>
           </motion.div>
         )}
 
@@ -420,7 +414,7 @@ export default function UtilizationReportsPage() {
                     {dashboardData.topPerformers.slice(0, 5).map((emp, index) => (
                       <div
                         key={emp.employeeId}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-[var(--bg-secondary)]/50"
+                        className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-sm font-bold">
                           {index + 1}
@@ -460,7 +454,7 @@ export default function UtilizationReportsPage() {
                     {dashboardData.underUtilized.map((emp) => (
                       <div
                         key={emp.employeeId}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-[var(--bg-secondary)]/50"
+                        className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)]/50"
                       >
                         <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                           <User className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -558,7 +552,7 @@ export default function UtilizationReportsPage() {
                           className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
                           <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-700 dark:text-primary-300 text-sm font-medium">
                                 {emp.employeeName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                               </div>
@@ -674,7 +668,7 @@ export default function UtilizationReportsPage() {
                           className="border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
                         >
                           <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               <div className="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                                 <FolderOpen className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                               </div>

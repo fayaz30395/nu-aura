@@ -3,11 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { wellnessService } from '@/lib/services/wellness.service';
 import {
-  WellnessProgram,
-  WellnessChallenge,
   HealthLog,
-  WellnessPoints,
-  LeaderboardEntry,
 } from '@/lib/types/wellness';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────

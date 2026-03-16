@@ -75,6 +75,33 @@ const nextConfig = {
         hostname: '**.licdn.com',
         pathname: '/**',
       },
+      // UI Avatars (generated avatar fallbacks)
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        pathname: '/**',
+      },
+      // Google Drive (file previews and thumbnails)
+      {
+        protocol: 'https',
+        hostname: 'drive.google.com',
+        pathname: '/**',
+      },
+      // MinIO local object storage (development)
+      // In production, assets are served via S3/CloudFront (already covered above).
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '9000',
+        pathname: '/**',
+      },
+      // Backend API server (serves files proxied from MinIO in development/staging)
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8080',
+        pathname: '/api/v1/files/**',
+      },
     ],
   },
 

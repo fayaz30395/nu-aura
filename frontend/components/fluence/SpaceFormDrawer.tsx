@@ -7,13 +7,11 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import {
-  Folder,
   Type,
   AlignLeft,
   Eye,
   Palette,
   Smile,
-  X,
   Save,
   Plus,
 } from 'lucide-react';

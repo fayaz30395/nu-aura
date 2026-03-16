@@ -2,10 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  OnboardingProcess,
-  OnboardingChecklistTemplate,
-  OnboardingTemplateTask,
-  OnboardingTask,
   OnboardingStatus
 } from '@/lib/types/onboarding';
 import { onboardingService } from '@/lib/services/onboarding.service';

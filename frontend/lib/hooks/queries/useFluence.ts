@@ -4,15 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fluenceService } from '@/lib/services/fluence.service';
 import {
   WikiPage,
-  WikiSpace,
-  BlogPost,
-  BlogCategory,
   DocumentTemplate,
-  FluenceComment,
-  FluenceSearchResponse,
-  FluenceFavorite,
-  ContentViewRecord,
-  Page,
   CreateWikiPageRequest,
   UpdateWikiPageRequest,
   CreateWikiSpaceRequest,

@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
 import { format, differenceInSeconds, parseISO } from 'date-fns';
 import { User } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -21,29 +20,14 @@ import { attendanceService } from '@/lib/services/attendance.service';
 import { useSelfServiceDashboard } from '@/lib/hooks/queries';
 import { SelfServiceDashboard } from '@/lib/types/selfservice';
 
-// Helper function to format elapsed time
-function formatElapsedTime(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-
-  const parts = [];
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
-  parts.push(`${secs}s`);
-
-  return parts.join(' ');
-}
-
 export default function MyDashboardPage() {
-  const router = useRouter();
   const { user, hasHydrated } = useAuth();
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const [dashboard, setDashboard] = useState<SelfServiceDashboard | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [_elapsedSeconds, setElapsedSeconds] = useState(0);
   const [checkInTime, setCheckInTime] = useState<Date | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -62,7 +46,7 @@ export default function MyDashboardPage() {
       // SuperAdmin or user without employee profile — skip loading self-service data
       setIsLoading(false);
     }
-  }, [hasHydrated, user?.employeeId, queryLoading]);
+  }, [hasHydrated, user, queryLoading]);
 
   // Update dashboard from query data
   useEffect(() => {

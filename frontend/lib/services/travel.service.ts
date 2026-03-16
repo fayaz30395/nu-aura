@@ -226,7 +226,7 @@ class TravelService {
     return response.data;
   }
 
-  async getExpenseSummary(travelRequestId: string): Promise<any> {
+  async getExpenseSummary(travelRequestId: string): Promise<unknown> {
     const response = await apiClient.get(
       `/travel-expenses/request/${travelRequestId}/summary`
     );

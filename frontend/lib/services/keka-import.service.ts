@@ -1,6 +1,5 @@
 import { apiClient } from '../api/client';
 import {
-  KekaEmployee,
   KekaImportMapping,
   KekaImportMappingSuggestion,
   KekaImportPreview,
@@ -57,7 +56,7 @@ class KekaImportService {
       let bestMatch: [keyof typeof KEKA_COLUMN_PRESETS, number] | null = null;
       let bestConfidence = 0;
 
-      Object.entries(KEKA_COLUMN_PRESETS).forEach(([presetName, targetField]) => {
+      Object.entries(KEKA_COLUMN_PRESETS).forEach(([presetName, _targetField]) => {
         const similarity = this.calculateStringSimilarity(
           trimmedHeader.toLowerCase(),
           presetName.toLowerCase()

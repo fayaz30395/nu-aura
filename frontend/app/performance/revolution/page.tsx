@@ -4,15 +4,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Target,
-    GitBranch,
     Hexagon,
     Zap,
-    TrendingUp,
-    MessageSquare,
     Users,
     Award,
-    Search,
-    Filter,
     RefreshCw,
     Share2,
     ChevronRight,
@@ -31,14 +26,12 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useOKRGraph, usePerformanceSpider } from '@/lib/hooks/queries/usePerformance';
-import { OKRGraphResponse, PerformanceSpiderResponse } from '@/lib/types/performance';
 
 export default function PerformanceRevolutionPage() {
     const [currentUserId] = useState('me');
     const okrGraphQuery = useOKRGraph();
     const performanceSpiderQuery = usePerformanceSpider(currentUserId);
 
-    const loading = okrGraphQuery.isLoading || performanceSpiderQuery.isLoading;
     const graphData = okrGraphQuery.data || null;
     const spiderData = performanceSpiderQuery.data || null;
 
@@ -183,7 +176,7 @@ export default function PerformanceRevolutionPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="flex gap-3 group cursor-pointer">
+                                <div key={i} className="flex gap-4 group cursor-pointer">
                                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-xs font-bold text-yellow-700">
                                         {i === 1 ? 'JD' : i === 2 ? 'AL' : 'KS'}
                                     </div>

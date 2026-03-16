@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Paper, Container, Center, Stack, Button, Group, Text, Alert, Accordion, Badge } from '@mantine/core';
+import { useEffect } from 'react';
+import { Paper, Container, Center, Stack, Button, Group, Text, Accordion, Badge } from '@mantine/core';
 import { IconAlertTriangle, IconRefresh, IconHome } from '@tabler/icons-react';
 import { handleError, getUserMessage, categorizeError, ErrorCategory } from '@/lib/utils/error-handler';
 import { isDevelopment } from '@/lib/config';
@@ -16,8 +16,6 @@ interface ErrorProps {
  * This is rendered when an error.tsx file catches an error in a page segment
  */
 export default function Error({ error, reset }: ErrorProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   useEffect(() => {
     // Log and report the error using centralized error handler
     handleError(error, {

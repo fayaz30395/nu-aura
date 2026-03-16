@@ -7,8 +7,6 @@ import { AppLayout } from '@/components/layout';
 import {
   Download,
   DollarSign,
-  Calendar,
-  Filter,
   Loader2,
   X,
 } from 'lucide-react';
@@ -30,10 +28,6 @@ export default function PayrollReportsPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
-    return null;
-  }
-
   const [format, setFormat] = useState<'EXCEL' | 'PDF' | 'CSV'>('EXCEL');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -41,6 +35,11 @@ export default function PayrollReportsPage() {
   const [successMessage, setSuccessMessage] = useState('');
 
   const downloadMutation = useDownloadPayrollReport();
+
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.REPORT_VIEW)) {
+    return null;
+  }
 
   const handleDownload = async () => {
     if (!startDate || !endDate) {
@@ -117,7 +116,7 @@ export default function PayrollReportsPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                   Payroll Period <span className="text-red-500">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">From</label>
                     <input
@@ -144,12 +143,12 @@ export default function PayrollReportsPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                   Export Format
                 </label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-4">
                   {(['EXCEL', 'PDF', 'CSV'] as const).map((fmt) => (
                     <button
                       key={fmt}
                       onClick={() => setFormat(fmt)}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
                           ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/20'
                           : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
@@ -168,7 +167,7 @@ export default function PayrollReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
+                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
                   <X className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
                 </div>
@@ -200,7 +199,7 @@ export default function PayrollReportsPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900">
             <CardContent className="pt-6">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4">
                 <DollarSign className="h-5 w-5 text-purple-600 dark:text-purple-400 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-purple-900 dark:text-purple-100">Report Details</h3>

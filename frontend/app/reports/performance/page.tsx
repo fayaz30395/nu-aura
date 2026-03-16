@@ -6,8 +6,6 @@ import { AppLayout } from '@/components/layout';
 import {
   Download,
   TrendingUp,
-  Calendar,
-  Filter,
   Loader2,
   X,
 } from 'lucide-react';
@@ -95,7 +93,7 @@ export default function PerformanceReportsPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                   Review Period (Optional)
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs text-slate-500 mb-1">From</label>
                     <input
@@ -125,12 +123,12 @@ export default function PerformanceReportsPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                   Export Format
                 </label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-4">
                   {(['EXCEL', 'PDF', 'CSV'] as const).map((fmt) => (
                     <button
                       key={fmt}
                       onClick={() => setFormat(fmt)}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`p-4 rounded-lg border-2 transition-all ${
                         format === fmt
                           ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/20'
                           : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
@@ -149,7 +147,7 @@ export default function PerformanceReportsPage() {
 
               {/* Error */}
               {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
+                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-2">
                   <X className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
                 </div>
@@ -181,7 +179,7 @@ export default function PerformanceReportsPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <Card className="bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900">
             <CardContent className="pt-6">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4">
                 <TrendingUp className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mt-0.5" />
                 <div>
                   <h3 className="font-semibold text-indigo-900 dark:text-indigo-100">Report Details</h3>

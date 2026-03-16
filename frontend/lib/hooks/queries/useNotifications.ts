@@ -22,7 +22,7 @@ export const notificationKeys = {
  * Hook to fetch unread notifications for the notification bell inbox.
  * Polls every 30 seconds for new notifications.
  */
-export function useNotificationInbox(limit: number = 10, enabled: boolean = true) {
+export function useNotificationInbox(_limit: number = 10, enabled: boolean = true) {
   return useQuery<Notification[]>({
     queryKey: notificationKeys.unread(),
     queryFn: () => notificationsApi.getUnreadNotifications(),

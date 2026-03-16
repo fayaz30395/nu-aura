@@ -10,17 +10,12 @@ import {
   RefreshCw,
   Filter,
   Users,
-  Building2,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ResourceAvailabilityCalendar } from '@/components/resource-management/ResourceAvailabilityCalendar';
-import {
-  AVAILABILITY_COLORS,
-  getAvailabilityStatusLabel,
-} from '@/lib/types/resource-management';
 import { useTeamAvailability } from '@/lib/hooks/queries/useResources';
 import {
   format,
@@ -135,7 +130,7 @@ export default function AvailabilityCalendarPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button variant="ghost" disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
@@ -314,7 +309,7 @@ function SummaryCard({
 }) {
   return (
     <Card>
-      <CardContent className="flex items-center gap-3 p-4">
+      <CardContent className="flex items-center gap-4 p-4">
         <div className={`rounded-lg bg-[var(--bg-secondary)] p-2 dark:bg-[var(--bg-secondary)] ${color}`}>
           <Icon className="h-5 w-5" />
         </div>

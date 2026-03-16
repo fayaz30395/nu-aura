@@ -8,19 +8,14 @@ import {
   Users,
   CheckCircle,
   Clock,
-  Calendar,
   Plus,
   Eye,
   Play,
-  Pause,
   ChevronRight,
   Search,
   Filter,
   FileText,
   ArrowUpRight,
-  ArrowDownRight,
-  Building,
-  Target,
   PieChart,
   AlertCircle,
 } from 'lucide-react';
@@ -52,7 +47,6 @@ import type {
   CycleStatus,
   RevisionType,
   RevisionStatus,
-  CompensationCycleRequest,
 } from '@/lib/types/compensation';
 
 const cycleTypeLabels: Record<CycleType, string> = {
@@ -138,9 +132,6 @@ export default function CompensationPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  if (!permReady || !hasPermission(Permissions.COMPENSATION_VIEW)) {
-    return null;
-  }
   const [activeTab, setActiveTab] = useState<'cycles' | 'revisions' | 'pending'>('cycles');
 
   // React Query hooks
@@ -167,6 +158,11 @@ export default function CompensationPage() {
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectionReasonInput, setShowRejectionReasonInput] = useState(false);
+
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.COMPENSATION_VIEW)) {
+    return null;
+  }
 
   // Stats
   const activeCycle = cycles.find((c) => c.status === 'IN_PROGRESS');
@@ -279,7 +275,7 @@ export default function CompensationPage() {
         {error && !loading && (
           <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <AlertCircle className="h-5 w-5 text-red-500" />
                 <p className="text-red-700 dark:text-red-400">{error}</p>
               </div>
@@ -293,8 +289,8 @@ export default function CompensationPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -311,8 +307,8 @@ export default function CompensationPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -329,8 +325,8 @@ export default function CompensationPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -347,8 +343,8 @@ export default function CompensationPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -426,12 +422,12 @@ export default function CompensationPage() {
                         Effective: {new Date(activeCycle.effectiveDate).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <div className="bg-white/10 rounded-lg p-3 text-center min-w-[100px]">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
                         <p className="text-2xl font-bold text-white">{activeCycle.revisionsDrafted}</p>
                         <p className="text-xs text-white/80">Drafted</p>
                       </div>
-                      <div className="bg-white/10 rounded-lg p-3 text-center min-w-[100px]">
+                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
                         <p className="text-2xl font-bold text-white">{activeCycle.revisionsApproved}</p>
                         <p className="text-xs text-white/80">Approved</p>
                       </div>
@@ -651,7 +647,7 @@ export default function CompensationPage() {
                     <CardContent className="p-4">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex items-start gap-4">
-                          <div className="bg-amber-100 dark:bg-amber-900 rounded-full p-3">
+                          <div className="bg-amber-100 dark:bg-amber-900 rounded-full p-4">
                             <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                           </div>
                           <div>
@@ -719,7 +715,7 @@ export default function CompensationPage() {
         {/* Cycle Detail Modal */}
         <Modal isOpen={isDetailModalOpen} onClose={() => setIsDetailModalOpen(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {selectedCycle && (
                 <>
                   <div className="rounded-lg bg-primary-100 dark:bg-primary-900 p-2">
@@ -784,19 +780,19 @@ export default function CompensationPage() {
                     Increment Guidelines
                   </h4>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                    <div className="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
                       <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.minIncrementPercentage || 0}%
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Minimum</p>
                     </div>
-                    <div className="text-center p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
+                    <div className="text-center p-4 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
                       <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                         {selectedCycle.averageIncrementTarget || 0}%
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">Target Avg</p>
                     </div>
-                    <div className="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                    <div className="text-center p-4 bg-[var(--bg-secondary)] rounded-lg">
                       <p className="text-2xl font-bold text-[var(--text-primary)]">
                         {selectedCycle.maxIncrementPercentage || 0}%
                       </p>
@@ -918,7 +914,7 @@ export default function CompensationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--text-muted)]">Revision Type</span>
                     <span className="text-[var(--text-primary)]">
@@ -956,7 +952,7 @@ export default function CompensationPage() {
           </ModalBody>
           <ModalFooter className="flex-col gap-4">
             {showRejectionReasonInput && selectedRevision && (selectedRevision.status === 'PENDING_REVIEW' || selectedRevision.status === 'PENDING_APPROVAL') && (
-              <div className="w-full space-y-3 border-t border-[var(--border-main)] pt-4">
+              <div className="w-full space-y-4 border-t border-[var(--border-main)] pt-4">
                 <label className="block text-sm font-medium text-[var(--text-secondary)]">
                   Rejection Reason <span className="text-red-600">*</span>
                 </label>

@@ -5,16 +5,12 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Mail,
-  Calendar,
-  HardDrive,
   MessageSquare,
   Zap,
-  Users,
   Video,
   FileText,
   DollarSign,
   Shield,
-  Database,
   Code,
   ArrowRight,
   Check,
@@ -23,7 +19,7 @@ import {
   Fingerprint,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 export default function IntegrationsPage() {
@@ -194,7 +190,7 @@ export default function IntegrationsPage() {
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/pricing">
                 <Button variant="ghost" size="sm">
                   Pricing
@@ -342,7 +338,7 @@ export default function IntegrationsPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
-            Don't see your tool?
+            Don&apos;t see your tool?
           </h2>
           <p className="text-lg text-[var(--text-secondary)] mb-8">
             Request an integration or build your own with our API

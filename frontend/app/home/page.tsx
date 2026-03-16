@@ -5,11 +5,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Clock,
-  Calendar,
   Cake,
   Award,
-  Megaphone,
-  ChevronRight,
   Plus,
   MessageSquare,
   BarChart3,
@@ -26,7 +23,6 @@ import {
   Users,
   FileText,
   TrendingUp,
-  Zap,
   Sun,
   Moon,
   Sunrise,
@@ -117,10 +113,10 @@ export default function HomePage() {
       <AppLayout activeMenuItem="home" showBreadcrumbs={false}>
         <div className="p-5">
           <Skeleton className="h-20 w-full rounded-xl mb-4" />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
             <Skeleton className="lg:col-span-2 h-64 rounded-xl" />
             <Skeleton className="h-64 rounded-xl" />
           </div>
@@ -153,7 +149,7 @@ export default function HomePage() {
       <div className="p-4 md:p-5 space-y-4">
 
         {/* ═══ WELCOME STRIP ═══ */}
-        <div className="bg-gray-900 dark:bg-[var(--bg-secondary)] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-theme-md dark:shadow-dark-md">
+        <div className="bg-gray-900 dark:bg-[var(--bg-secondary)] rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-theme-md dark:shadow-dark-md">
           <div>
             <div className="flex items-center gap-2 text-brand-300 dark:text-primary-300 text-xs font-medium mb-0.5 uppercase tracking-wide">
               {greeting.icon}
@@ -173,7 +169,7 @@ export default function HomePage() {
         </div>
 
         {/* ═══ STAT CARDS ROW ═══ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
           {/* Attendance */}
           <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
@@ -183,7 +179,7 @@ export default function HomePage() {
                 View
               </button>
             </div>
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-4 mb-3">
               <div className="w-10 h-10 rounded-full bg-brand-50 dark:bg-primary-950 flex items-center justify-center">
                 <Clock className="w-4 h-4 text-brand-500 dark:text-primary-400" />
               </div>
@@ -309,7 +305,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
           {/* LEFT — Feed */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="lg:col-span-2 space-y-4">
 
             {/* Composer */}
             <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">
@@ -413,7 +409,7 @@ export default function HomePage() {
                           <Image src={post.imageUrl} alt={`${post.author?.fullName || 'User'}'s post`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
                         </div>
                       )}
-                      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+                      <div className="flex items-center gap-4 mt-2 pt-2 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                         <button className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                           <ThumbsUp className="w-3 h-3" /> Like
                         </button>
@@ -429,7 +425,7 @@ export default function HomePage() {
           </div>
 
           {/* RIGHT — Sidebar widgets */}
-          <div className="lg:col-span-1 space-y-3">
+          <div className="lg:col-span-1 space-y-4">
 
             {/* Celebrations */}
             <div className="bg-[var(--bg-input)] rounded-xl border border-[var(--border-main)] dark:border-[var(--border-main)] p-4 shadow-theme-xs dark:shadow-dark-xs">

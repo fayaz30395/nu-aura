@@ -1,8 +1,10 @@
 package com.hrms.application.admin.service;
 
 import com.hrms.api.admin.dto.*;
+import com.hrms.common.config.TenantCacheManager;
 import com.hrms.common.exception.ResourceNotFoundException;
 import com.hrms.common.security.JwtTokenProvider;
+import com.hrms.common.security.TenantFilter;
 import com.hrms.domain.tenant.Tenant;
 import com.hrms.domain.user.User;
 import com.hrms.domain.workflow.WorkflowExecution;
@@ -39,6 +41,8 @@ public class SystemAdminService {
     private final WorkflowExecutionRepository workflowExecutionRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final com.hrms.application.audit.service.AuditLogService auditLogService;
+    private final TenantFilter tenantFilter;
+    private final TenantCacheManager tenantCacheManager;
 
     /**
      * Get comprehensive system overview across all tenants
@@ -214,6 +218,77 @@ public class SystemAdminService {
         }
 
         return GrowthMetricsDTO.builder().months(growthList).build();
+    }
+
+    /**
+     * Suspend a tenant — immediately revokes access by invalidating all caches.
+     *
+     * <p>This method performs three cache-invalidation steps to ensure the suspended
+     * tenant cannot continue making requests:
+     * <ol>
+     *   <li>Persist the status change to the database.</li>
+     *   <li>Remove the tenant from {@link TenantFilter}'s in-memory valid-tenant cache
+     *       so subsequent requests are rejected immediately (SEC-B10).</li>
+     *   <li>Flush all Redis caches scoped to the tenant via {@link TenantCacheManager}
+     *       to prevent stale data from being served.</li>
+     * </ol>
+     */
+    @Transactional
+    public Tenant suspendTenant(UUID tenantId) {
+        log.info("SuperAdmin suspending tenant: {}", tenantId);
+
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tenant not found with ID: " + tenantId));
+
+        tenant.suspend(); // throws IllegalStateException if not ACTIVE
+        tenantRepository.save(tenant);
+
+        // Immediately invalidate caches so the tenant is locked out (SEC-B10)
+        tenantFilter.invalidateTenant(tenantId);
+        tenantCacheManager.invalidateTenantCaches(tenantId);
+
+        // Audit log the suspension
+        UUID currentUserId = com.hrms.common.security.SecurityContext.getCurrentUserId();
+        auditLogService.logAction(
+                "TENANT",
+                tenantId,
+                com.hrms.domain.audit.AuditLog.AuditAction.UPDATE,
+                Map.of("previousStatus", "ACTIVE", "newStatus", "SUSPENDED"),
+                Map.of("admin_user_id", currentUserId),
+                "SuperAdmin suspended tenant: " + tenant.getName()
+        );
+
+        log.info("Tenant {} suspended successfully. Caches invalidated.", tenantId);
+        return tenant;
+    }
+
+    /**
+     * Re-activate a previously suspended tenant.
+     */
+    @Transactional
+    public Tenant activateTenant(UUID tenantId) {
+        log.info("SuperAdmin activating tenant: {}", tenantId);
+
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Tenant not found with ID: " + tenantId));
+
+        String previousStatus = tenant.getStatus().name();
+        tenant.activate(); // throws IllegalStateException if not SUSPENDED/PENDING_ACTIVATION
+        tenantRepository.save(tenant);
+
+        // Audit log the activation
+        UUID currentUserId = com.hrms.common.security.SecurityContext.getCurrentUserId();
+        auditLogService.logAction(
+                "TENANT",
+                tenantId,
+                com.hrms.domain.audit.AuditLog.AuditAction.UPDATE,
+                Map.of("previousStatus", previousStatus, "newStatus", "ACTIVE"),
+                Map.of("admin_user_id", currentUserId),
+                "SuperAdmin activated tenant: " + tenant.getName()
+        );
+
+        log.info("Tenant {} activated successfully.", tenantId);
+        return tenant;
     }
 
     // ===================== Helper Methods =====================

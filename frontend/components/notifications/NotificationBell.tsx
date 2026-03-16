@@ -86,9 +86,9 @@ export const NotificationBell: React.FC = () => {
           type: (latest.type as NotificationType) || 'GENERAL',
           createdAt: new Date(latest.timestamp || Date.now()).toISOString(),
           updatedAt: new Date(latest.timestamp || Date.now()).toISOString(),
-          relatedEntityId: latest.metadata?.relatedEntityId || latest.payload?.id,
+          relatedEntityId: (latest.metadata?.relatedEntityId as string | undefined) || ((latest.payload as Record<string, unknown> | undefined)?.id as string | undefined),
           actionUrl: latest.actionUrl,
-          userId: latest.metadata?.userId || '',
+          userId: (latest.metadata?.userId as string | undefined) || '',
           priority: latest.priority || 'NORMAL'
         };
         

@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Stack, Group, Skeleton, Card, Badge, Button } from '@mantine/core';
+import { Container, Stack, Group, Skeleton, Card } from '@mantine/core';
 
 /**
  * Loading skeleton for security settings page

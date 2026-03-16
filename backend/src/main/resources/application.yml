@@ -260,6 +260,11 @@ app:
 
   auth:
     allowed-domain: ${AUTH_ALLOWED_DOMAIN:nulogic.io}
+    # Tenant UUID to use when no tenant context can be determined at login.
+    # Set APP_AUTH_DEFAULT_TENANT_ID in production to the correct tenant UUID.
+    default-tenant-id: ${APP_AUTH_DEFAULT_TENANT_ID:550e8400-e29b-41d4-a716-446655440000}
+    # Tenant UUID for the NuLogic corporate domain (@nulogic.io accounts).
+    nulogic-tenant-id: ${APP_AUTH_NULOGIC_TENANT_ID:660e8400-e29b-41d4-a716-446655440001}
 
   # API Rate Limiting Configuration (Bucket4j Token Bucket Algorithm)
   rate-limit:

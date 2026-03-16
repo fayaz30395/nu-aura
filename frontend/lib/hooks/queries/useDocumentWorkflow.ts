@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
 import {
   DocumentApprovalWorkflow,
-  DocumentApprovalTask,
   DocumentAccess,
   DocumentExpiryTracking,
   DocumentAccessLevel,

@@ -19,7 +19,6 @@ import {
   Card,
   CardContent,
   Loading,
-  Badge,
   Button,
   Modal,
   ModalHeader,
@@ -31,12 +30,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useMyDocumentRequests,
   useCreateDocumentRequest,
-  useCompleteDocumentRequest,
-  useMarkDocumentDelivered,
-  useRejectDocumentRequest,
 } from '@/lib/hooks/queries';
 import {
-  DocumentRequestResponse,
   DocumentRequestDto,
   DocumentType,
   DeliveryMode,
@@ -192,7 +187,7 @@ export default function MyDocumentsPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card padding="md">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                 <Clock className="h-5 w-5" />
               </div>
@@ -205,7 +200,7 @@ export default function MyDocumentsPage() {
             </div>
           </Card>
           <Card padding="md">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-info-100 dark:bg-info-900/30 text-info-600">
                 <AlertCircle className="h-5 w-5" />
               </div>
@@ -218,7 +213,7 @@ export default function MyDocumentsPage() {
             </div>
           </Card>
           <Card padding="md">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                 <CheckCircle className="h-5 w-5" />
               </div>
@@ -231,7 +226,7 @@ export default function MyDocumentsPage() {
             </div>
           </Card>
           <Card padding="md">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="p-2 rounded-lg bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                 <FileText className="h-5 w-5" />
               </div>
@@ -258,7 +253,7 @@ export default function MyDocumentsPage() {
                 <CardContent>
                   <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Icon and Status */}
-                    <div className={`p-3 rounded-lg ${STATUS_CONFIG[request.status].bgColor}`}>
+                    <div className={`p-4 rounded-lg ${STATUS_CONFIG[request.status].bgColor}`}>
                       <FileText className={`h-6 w-6 ${STATUS_CONFIG[request.status].color}`} />
                     </div>
 
@@ -293,7 +288,7 @@ export default function MyDocumentsPage() {
                       </div>
 
                       {request.rejectionReason && (
-                        <div className="mt-3 p-3 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
+                        <div className="mt-3 p-4 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800">
                           <p className="text-sm text-danger-700 dark:text-danger-400">
                             <strong>Rejection Reason:</strong> {request.rejectionReason}
                           </p>

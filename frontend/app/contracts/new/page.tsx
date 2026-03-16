@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCreateContract } from '@/lib/hooks/queries/useContracts';
-import type { CreateContractRequest } from '@/lib/types/contract';
 import { Button, Input, Select, Textarea, Card } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
 

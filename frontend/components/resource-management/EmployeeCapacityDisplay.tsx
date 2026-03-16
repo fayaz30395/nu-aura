@@ -191,7 +191,7 @@ export function EmployeeCapacityDisplay({
  */
 function CompactCapacityDisplay({
   capacity,
-  status,
+  status: _status,
   statusColor,
   className,
 }: {

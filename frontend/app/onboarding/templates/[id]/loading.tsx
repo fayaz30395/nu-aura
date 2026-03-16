@@ -4,7 +4,7 @@ import { Skeleton } from '@mantine/core';
 
 export default function Loading() {
   return (
-    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Back button + header skeleton */}
       <div className="space-y-4">
         <Skeleton height={20} width={100} />

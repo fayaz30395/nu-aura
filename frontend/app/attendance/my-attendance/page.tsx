@@ -4,9 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar,
-  Clock,
   LogIn,
-  LogOut,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -15,18 +13,14 @@ import {
   MoreHorizontal,
   Users,
   Timer,
-  Zap,
-  CheckCircle,
-  XCircle,
   AlertCircle,
   Eye,
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Loading';
-import { AttendanceRecord, TimeEntry } from '@/lib/types/attendance';
+import { AttendanceRecord } from '@/lib/types/attendance';
 import { getMonthStartString, getMonthEndString, getLocalDateString, getDateOffsetString } from '@/lib/utils/dateUtils';
 import { useAttendanceByDateRange, useMyTimeEntries, useHolidaysByYear } from '@/lib/hooks/queries/useAttendance';
 
@@ -69,11 +63,6 @@ function formatTime(isoString: string | undefined, use24h: boolean): string {
   } catch {
     return '--:--';
   }
-}
-
-// ─── Helper: get day of week short label ───────────────────────────
-function getDayLabel(date: Date): string {
-  return date.toLocaleDateString('en-US', { weekday: 'short' }).charAt(0);
 }
 
 // ─── Helper: date display ──────────────────────────────────────────
@@ -195,13 +184,10 @@ export default function MyAttendancePage() {
 
   // ── Data hooks ───────────────────────────────────────────────────
   const { data: records = [], isLoading: loading } = useAttendanceByDateRange(startDate, endDate);
-  const { data: holidays = [] } = useHolidaysByYear(selectedYear);
+  useHolidaysByYear(selectedYear); // Pre-fetch for cache warming (data displayed on parent page)
 
   // Fetch time entries for expanded row
-  const { data: timeEntries = [] } = useMyTimeEntries(
-    expandedRow || '',
-    !!expandedRow
-  );
+  useMyTimeEntries(expandedRow || '', !!expandedRow); // Pre-fetch for expanded row (rendering in progress)
 
   // ── Current week days ────────────────────────────────────────────
   const weekDays = useMemo((): DayOfWeek[] => {

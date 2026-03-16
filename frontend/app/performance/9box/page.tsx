@@ -7,14 +7,12 @@ import {
   Info,
   RefreshCw,
   Search,
-  Maximize2,
   Grid3x3,
   Users,
   TrendingUp,
   Target,
 } from 'lucide-react';
 import { usePerformanceAllCycles, useAllReviews } from '@/lib/hooks/queries/usePerformance';
-import type { ReviewCycle, PerformanceReview } from '@/lib/types/performance';
 
 // ─── Types & Constants ────────────────────────────────────────────────────────
 
@@ -52,7 +50,7 @@ function boxKey(perf: number, pot: number) {
 // ─── Components ────────────────────────────────────────────────────────────────
 
 function NineBoxGrid({
-  points,
+  points: _points,
   byBox,
   selectedBox,
   onSelectBox,
@@ -88,7 +86,7 @@ function NineBoxGrid({
         <div className="flex-1">
           {/* Rows (potential high to low) */}
           {gridRows.map(({ potBand, label: potLabel }) => (
-            <div key={potBand} className="flex gap-3 mb-3">
+            <div key={potBand} className="flex gap-4 mb-3">
               {/* Potential label */}
               <div className="w-28 flex-shrink-0 flex items-center justify-end pr-3">
                 <span className="text-xs text-[var(--text-muted)] text-right font-medium">{potLabel}</span>
@@ -105,7 +103,7 @@ function NineBoxGrid({
                   <div
                     key={key}
                     onClick={() => onSelectBox(isSelected ? null : key)}
-                    className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-3 cursor-pointer transition-all hover:shadow-lg ${meta.bg} ${meta.border} ${
+                    className={`flex-1 min-w-[140px] min-h-[140px] rounded-xl border-2 p-4 cursor-pointer transition-all hover:shadow-lg ${meta.bg} ${meta.border} ${
                       isSelected
                         ? 'ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-surface-800'
                         : ''
@@ -121,7 +119,7 @@ function NineBoxGrid({
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1 flex-1">
-                        {cellPoints.slice(0, 8).map((p, idx) => {
+                        {cellPoints.slice(0, 8).map((p, _idx) => {
                           const initials = p.employeeName
                             .split(' ')
                             .map(w => w[0])
@@ -152,7 +150,7 @@ function NineBoxGrid({
           ))}
 
           {/* X-axis labels */}
-          <div className="flex gap-3 mt-4">
+          <div className="flex gap-4 mt-4">
             <div className="w-28 flex-shrink-0" />
             {gridCols.map(({ perfBand, label }) => (
               <div key={perfBand} className="flex-1 text-center text-xs text-[var(--text-muted)] font-medium">
@@ -369,7 +367,7 @@ export default function NineBoxPage() {
         </div>
 
         {/* Info Banner */}
-        <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
+        <div className="flex items-start gap-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
           <Info size={16} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-blue-800 dark:text-blue-300">
             <strong>X-axis:</strong> Performance = manager review rating.
@@ -381,7 +379,7 @@ export default function NineBoxPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
                 <Users className="text-purple-600 dark:text-purple-400" size={20} />
               </div>
@@ -393,7 +391,7 @@ export default function NineBoxPage() {
           </div>
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
                 <TrendingUp className="text-emerald-600 dark:text-emerald-400" size={20} />
               </div>
@@ -405,7 +403,7 @@ export default function NineBoxPage() {
           </div>
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <Target className="text-blue-600 dark:text-blue-400" size={20} />
               </div>
@@ -417,7 +415,7 @@ export default function NineBoxPage() {
           </div>
 
           <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                 <Grid3x3 className="text-green-600 dark:text-green-400" size={20} />
               </div>
@@ -457,7 +455,7 @@ export default function NineBoxPage() {
             {/* Selected Box Details */}
             {selectedBox && selectedBoxPoints && (
               <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div
                     className={`px-3 py-1.5 rounded-lg border ${BOX_CONFIG[selectedBox].bg} ${BOX_CONFIG[selectedBox].border}`}
                   >
@@ -532,7 +530,7 @@ export default function NineBoxPage() {
 
             {/* All Employees Table */}
             <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-5 space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <h3 className="text-sm font-bold text-[var(--text-primary)]">
                   All Employees
                 </h3>

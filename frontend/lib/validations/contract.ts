@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // ─── Shared Field Schemas ───────────────────────────────────────────────────
 
-const uuidSchema = z.string().uuid('Invalid ID format');
+const _uuidSchema = z.string().uuid('Invalid ID format');
 
 const optionalUuidSchema = z
   .string()

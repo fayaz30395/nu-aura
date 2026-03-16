@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Plus, Star, MoreHorizontal, Loader2, ArrowRight, User, Search,
   Filter, Clock, TrendingUp, ChevronDown, GripVertical, AlertCircle,
-  DollarSign, Calendar, BarChart3, X,
+  DollarSign, BarChart3, X,
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
@@ -22,7 +22,6 @@ import {
 import { applicantService } from '@/lib/services/applicant.service';
 import { letterService } from '@/lib/services/letter.service';
 import { LetterCategory } from '@/lib/types/letter';
-import type { LetterTemplate } from '@/lib/types/letter';
 import { useQueryClient } from '@tanstack/react-query';
 import { useJobOpenings } from '@/lib/hooks/queries/useRecruitment';
 import { usePipelineByJob, applicantKeys } from '@/lib/hooks/queries/useApplicants';
@@ -37,7 +36,6 @@ import type {
   ApplicantStatusUpdate,
   PipelineData,
 } from '@/lib/types/applicant';
-import type { JobOpening } from '@/lib/types/recruitment';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -303,7 +301,7 @@ const PipelineAnalytics: React.FC<AnalyticsProps> = ({ pipelineData }) => {
   }, [allApplicants]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Total Active */}
       <div className="bg-white border border-[var(--border-main)] rounded-xl p-4">
         <div className="flex items-center gap-2 mb-1">
@@ -472,7 +470,7 @@ export default function ApplicantPipelinePage() {
   // ── Create Offer Modal ────────────────────────────────────────────────
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [offerApplicant, setOfferApplicant] = useState<Applicant | null>(null);
-  const [offerTemplatesLoading, setOfferTemplatesLoading] = useState(false);
+  const [offerTemplatesLoading] = useState(false);
   const [offerForm, setOfferForm] = useState({
     templateId: '',
     offeredCtc: '',
@@ -769,7 +767,7 @@ export default function ApplicantPipelinePage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Job Selector */}
             <div className="w-72">
               {jobsLoading ? (
@@ -851,7 +849,7 @@ export default function ApplicantPipelinePage() {
           <>
             {/* ── Pipeline Stats Bar ──────────────────────────────────── */}
             {selectedJob && (
-              <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--text-secondary)]">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
                 <span className="font-medium text-[var(--text-secondary)]">{selectedJob.jobTitle}</span>
                 {selectedJob.jobCode && (
                   <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded text-[var(--text-muted)] font-mono text-xs">
@@ -869,14 +867,14 @@ export default function ApplicantPipelinePage() {
 
             {/* ── Analytics Section ──────────────────────────────────── */}
             {totalApplicants > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <PipelineAnalytics pipelineData={pipelineData} />
                 <FunnelBar pipelineData={pipelineData} />
               </div>
             )}
 
             {/* ── Search & Filters ───────────────────────────────────── */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-4">
               <div className="relative flex-1 min-w-[200px] max-w-md">
                 <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
@@ -958,7 +956,7 @@ export default function ApplicantPipelinePage() {
             {/* ── Kanban Board with Drag & Drop ────────────────────── */}
             <DragDropContext onDragEnd={handleDragEnd}>
               <div className="overflow-x-auto pb-4 -mx-6 px-6">
-                <div className="flex gap-3" style={{ minWidth: `${PIPELINE_STAGES.length * 256 + (PIPELINE_STAGES.length - 1) * 12}px` }}>
+                <div className="flex gap-4" style={{ minWidth: `${PIPELINE_STAGES.length * 256 + (PIPELINE_STAGES.length - 1) * 12}px` }}>
                   {PIPELINE_STAGES.map(stage => {
                     const applicants = (filteredPipeline?.[stage] || []).slice().sort((a, b) => {
                       const at = a.appliedDate ? new Date(a.appliedDate).getTime() : 0;
@@ -1011,7 +1009,7 @@ export default function ApplicantPipelinePage() {
                                         <div
                                           ref={dragProvided.innerRef}
                                           {...dragProvided.draggableProps}
-                                          className={`bg-white border rounded-lg p-3 transition-all cursor-pointer group ${
+                                          className={`bg-white border rounded-lg p-4 transition-all cursor-pointer group ${
                                             dragSnapshot.isDragging
                                               ? 'shadow-lg border-primary-300 ring-2 ring-primary-200 rotate-1'
                                               : 'border-[var(--border-main)] shadow-sm hover:shadow-md hover:border-[var(--border-main)]'
@@ -1358,7 +1356,7 @@ export default function ApplicantPipelinePage() {
           >
             Reject
           </Button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => setShowDetailModal(false)} disabled={detailLoading}>
               Cancel
             </Button>
@@ -1457,7 +1455,7 @@ export default function ApplicantPipelinePage() {
               />
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-700">
               The offer letter will be generated, a PDF created, and a signing link sent to the candidate&apos;s email.
               The applicant will be moved to <strong>Offered</strong> stage automatically.
             </div>

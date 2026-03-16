@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,7 +22,6 @@ import {
   Textarea,
 } from '@/components/ui';
 import {
-  HrmsProject,
   ProjectStatus,
   ProjectType,
   ProjectPriority,
@@ -125,7 +124,7 @@ export default function ProjectDetailPage() {
       await activateMutation.mutateAsync(projectId);
       setShowActivateDialog(false);
       await refetchProject();
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
     }
   };
@@ -135,7 +134,7 @@ export default function ProjectDetailPage() {
       await closeMutation.mutateAsync({ id: projectId });
       setShowCloseDialog(false);
       await refetchProject();
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
     }
   };

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Users,
@@ -8,9 +9,6 @@ import {
   Calendar,
   Clock,
   Briefcase,
-  Building2,
-  TrendingUp,
-  TrendingDown,
   LogIn,
   LogOut,
   AlertCircle,
@@ -25,7 +23,6 @@ import {
   Bell,
   Mail,
   HardDrive,
-  Share2,
   Video,
   ExternalLink,
   RefreshCw,
@@ -33,7 +30,6 @@ import {
   X,
   MapPin,
   Users as UsersIcon,
-  Trash2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -44,11 +40,7 @@ import { Button } from '@/components/ui/Button';
 import { PremiumMetricCard } from '@/components/ui/PremiumMetricCard';
 import { NuAuraLoader } from '@/components/ui/Loading';
 import { getGoogleToken } from '@/lib/utils/googleToken';
-import {
-  useDashboardAnalytics,
-  useAnalyticsSummary,
-  useOrganizationHealth,
-} from '@/lib/hooks/queries/useAnalytics';
+import { useDashboardAnalytics } from '@/lib/hooks/queries/useAnalytics';
 import {
   useAttendanceByDateRange,
   useMyTimeEntries,
@@ -56,9 +48,7 @@ import {
   useCheckOut,
 } from '@/lib/hooks/queries/useAttendance';
 import { useOnboardingProcessesByStatus } from '@/lib/hooks/queries/useOnboarding';
-import { DashboardAnalytics } from '@/lib/types/analytics';
-import { AttendanceRecord, TimeEntry } from '@/lib/types/attendance';
-import { getLocalDateString, getLocalDateTimeString, getDateOffsetString } from '@/lib/utils/dateUtils';
+import { getLocalDateString, getLocalDateTimeString } from '@/lib/utils/dateUtils';
 import { sanitizeEmailHtml } from '@/lib/utils/sanitize';
 
 interface EmailHeader {
@@ -484,7 +474,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-3 text-danger-600 dark:text-danger-400">
+              <div className="flex items-center gap-4 text-danger-600 dark:text-danger-400">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
@@ -510,7 +500,7 @@ export default function DashboardPage() {
         {/* Header with greeting and time */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
                 Welcome back, {user?.firstName || user?.fullName?.split(' ')[0] || 'User'}!
               </h1>
@@ -610,7 +600,7 @@ export default function DashboardPage() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 {clockError && <span className="text-sm text-danger-600 dark:text-danger-400">{clockError}</span>}
                 {canCheckIn && (
                   <Button variant="success" onClick={handleCheckIn} isLoading={isClockingIn} leftIcon={<LogIn className="h-4 w-4" />}>
@@ -697,7 +687,7 @@ export default function DashboardPage() {
                     <button
                       key={idx}
                       onClick={() => router.push(action.href)}
-                      className="flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all min-h-[88px]"
+                      className="flex flex-col items-center gap-2 sm:gap-4 p-4 sm:p-4 rounded-xl border border-[var(--border-main)] hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-sm transition-all min-h-[88px]"
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${action.color} flex items-center justify-center`}>
                         <action.icon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -721,22 +711,22 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="text-center p-3 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
+                  <div className="text-center p-4 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-xl">
                     <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onTime}</p>
                     <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Time</p>
                   </div>
-                  <div className="text-center p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
+                  <div className="text-center p-4 sm:p-4 bg-yellow-50 dark:bg-yellow-950/30 rounded-xl">
                     <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600 dark:text-yellow-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.late}</p>
                     <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Late</p>
                   </div>
-                  <div className="text-center p-3 sm:p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
+                  <div className="text-center p-4 sm:p-4 bg-orange-50 dark:bg-orange-950/30 rounded-xl">
                     <Coffee className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.onLeave}</p>
                     <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">On Leave</p>
                   </div>
-                  <div className="text-center p-3 sm:p-4 bg-danger-50 dark:bg-danger-950/20 rounded-xl">
+                  <div className="text-center p-4 sm:p-4 bg-danger-50 dark:bg-danger-950/20 rounded-xl">
                     <UserX className="h-5 w-5 sm:h-6 sm:w-6 text-danger-600 dark:text-danger-400 mx-auto" />
                     <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.attendance.absent}</p>
                     <p className="text-xs sm:text-xs text-[var(--text-secondary)] mt-1">Absent</p>
@@ -815,7 +805,7 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {analytics.upcomingEvents?.birthdays?.slice(0, 3).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 bg-pink-50 dark:bg-pink-950/30 rounded-xl">
+                    <div key={idx} className="flex items-center gap-4 p-4 bg-pink-50 dark:bg-pink-950/30 rounded-xl">
                       <div className="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/50 flex items-center justify-center">
                         <Gift className="h-5 w-5 text-pink-600 dark:text-pink-400" />
                       </div>
@@ -826,7 +816,7 @@ export default function DashboardPage() {
                     </div>
                   ))}
                   {analytics.upcomingEvents?.holidays?.slice(0, 2).map((event, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                    <div key={idx} className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
                       <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
                         <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
@@ -889,12 +879,12 @@ export default function DashboardPage() {
                     <p className="text-sm text-[var(--text-secondary)]">All caught up!</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {notifications.map((notification) => (
                       <div
                         key={notification.id}
                         onClick={() => handleNotificationClick(notification)}
-                        className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer hover:shadow-sm transition-all ${getNotificationBg(notification.type)}`}
+                        className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer hover:shadow-sm transition-all ${getNotificationBg(notification.type)}`}
                       >
                         <div className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-sm">
                           {getNotificationIcon(notification.type)}
@@ -1020,7 +1010,7 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 text-[var(--text-secondary)]">
+              <div className="flex items-center gap-4 text-[var(--text-secondary)]">
                 <Clock className="h-5 w-5 flex-shrink-0" />
                 <div>
                   <p className="font-medium">
@@ -1057,14 +1047,14 @@ export default function DashboardPage() {
               </div>
 
               {selectedEvent.calendarEvent.location && (
-                <div className="flex items-center gap-3 text-[var(--text-secondary)]">
+                <div className="flex items-center gap-4 text-[var(--text-secondary)]">
                   <MapPin className="h-5 w-5 flex-shrink-0" />
                   <p>{selectedEvent.calendarEvent.location}</p>
                 </div>
               )}
 
               {selectedEvent.calendarEvent.hangoutLink && (
-                <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
+                <div className="flex items-center gap-4 text-blue-600 dark:text-blue-400">
                   <Video className="h-5 w-5 flex-shrink-0" />
                   <a
                     href={selectedEvent.calendarEvent.hangoutLink}
@@ -1115,7 +1105,7 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
               {selectedEvent.calendarEvent.hangoutLink && (
                 <Button
                   variant="primary"
@@ -1158,7 +1148,7 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
                   <Mail className="h-5 w-5 text-danger-600 dark:text-danger-400" />
                 </div>
@@ -1185,7 +1175,7 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
               <Button
                 variant="primary"
                 className="flex-1"
@@ -1204,7 +1194,7 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-[var(--bg-overlay)] flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-4 min-w-0">
                 <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
                   <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
@@ -1222,12 +1212,14 @@ export default function DashboardPage() {
                 <X className="h-5 w-5 text-[var(--text-secondary)]" />
               </button>
             </div>
-            <div className="h-[60vh] bg-[var(--bg-secondary)]">
+            <div className="relative h-[60vh] bg-[var(--bg-secondary)]">
               {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
-                <img
+                <Image
                   src={`https://drive.google.com/uc?id=${selectedFile.driveFile.id}`}
                   alt={selectedFile.driveFile.name}
-                  className="w-full h-full object-contain"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  className="object-contain"
                 />
               ) : (
                 <iframe
@@ -1237,7 +1229,7 @@ export default function DashboardPage() {
                 />
               )}
             </div>
-            <div className="p-4 border-t border-[var(--border-main)] flex gap-3">
+            <div className="p-4 border-t border-[var(--border-main)] flex gap-4">
               <Button
                 variant="primary"
                 className="flex-1"

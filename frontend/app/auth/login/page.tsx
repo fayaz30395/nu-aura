@@ -2,14 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useGoogleLogin, CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { saveGoogleToken, GOOGLE_SSO_SCOPES } from '@/lib/utils/googleToken';
 import { MfaVerification } from '@/components/auth/MfaVerification';
@@ -21,35 +16,31 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+/**
+ * Validates a returnUrl to prevent open redirect attacks (SEC-F03).
+ * Only allows relative paths starting with '/'. Rejects:
+ * - Absolute URLs (https://evil.com)
+ * - Protocol-relative URLs (//evil.com)
+ * - javascript: URLs
+ * - Data URLs
+ * - Any URL containing backslashes (bypass via \evil.com)
+ */
+function sanitizeReturnUrl(url: string | null): string {
+  const fallback = '/me/dashboard';
+  if (!url) return fallback;
+  const trimmed = url.trim();
+  // Must start with exactly one forward slash (not //)
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
+  // Reject protocol schemes and backslash tricks
+  if (/[:\\]/.test(trimmed.split('/')[1] || '')) return fallback;
+  // Only allow path characters (letters, numbers, hyphens, slashes, dots, underscores, query, hash)
+  if (!/^\/[\w\-./~?#&=%@]*$/.test(trimmed)) return fallback;
+  return trimmed;
+}
+
 // Configurable via env — falls back to 'nulogic.io' for local dev.
 // Set NEXT_PUBLIC_SSO_ALLOWED_DOMAIN in .env.production for each tenant deployment.
 const ALLOWED_DOMAIN = process.env.NEXT_PUBLIC_SSO_ALLOWED_DOMAIN || 'nulogic.io';
-
-interface GoogleJwtPayload {
-  email: string;
-  hd?: string;
-  name?: string;
-  picture?: string;
-}
-
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
-  password: z
-    .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters'),
-  rememberMe: z.boolean().optional(),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-
-const RATE_LIMIT_MAX_ATTEMPTS = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const IS_DEMO_MODE = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 // ─── CSS-only Ambient Background (theme-aware) ─────────────────────
 function AnimatedBackground() {
@@ -89,7 +80,7 @@ function FeaturePills() {
   ];
 
   return (
-    <div className="flex flex-wrap gap-3 justify-center mt-8">
+    <div className="flex flex-wrap gap-4 justify-center mt-8">
       {features.map(({ icon: Icon, label, delay }) => (
         <div
           key={label}
@@ -131,25 +122,24 @@ export default function LoginPageWrapper() {
 function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
+  const { googleLogin, user, isAuthenticated, hasHydrated, setUser } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showDemoCredentials, setShowDemoCredentials] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaUserId, setMfaUserId] = useState<string | null>(null);
-  const [loginAttempts, setLoginAttempts] = useState(0);
+  // setLoginAttempts is called by the lockout timer and resetLoginAttempts;
+  // the read value is intentionally unused (lockout state is persisted to localStorage).
+  const [, setLoginAttempts] = useState(0);
   const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
-  const [remainingLockoutTime, setRemainingLockoutTime] = useState(0);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [didFreshLogin, setDidFreshLogin] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Rate limiting from localStorage
+  // Restore rate-limit state from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedAttempts = localStorage.getItem('loginAttempts');
@@ -166,8 +156,6 @@ function LoginPage() {
       }
     }
   }, []);
-
-  const [didFreshLogin, setDidFreshLogin] = useState(false);
 
   // Clear stale auth on mount
   useEffect(() => {
@@ -187,17 +175,15 @@ function LoginPage() {
   useEffect(() => {
     if (!hasHydrated || !didFreshLogin) return;
     if (isAuthenticated && user && !mfaRequired) {
-      const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/me/dashboard');
+      router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
     }
   }, [hasHydrated, isAuthenticated, user, didFreshLogin, router, searchParams, mfaRequired]);
 
-  // Lockout timer
+  // Lockout timer — clears expired lockout once the window expires
   useEffect(() => {
     if (lockoutUntil) {
       const interval = setInterval(() => {
         const remaining = Math.max(0, lockoutUntil - Date.now());
-        setRemainingLockoutTime(remaining);
         if (remaining === 0) {
           setLockoutUntil(null);
           setLoginAttempts(0);
@@ -209,36 +195,6 @@ function LoginPage() {
     }
   }, [lockoutUntil]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid, isDirty },
-    setValue,
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    mode: 'onChange',
-    defaultValues: { email: '', password: '', rememberMe: false },
-  });
-
-  const isLockedOut = Boolean(lockoutUntil && lockoutUntil > Date.now());
-
-  const formatLockoutTime = (ms: number) => {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const incrementLoginAttempts = () => {
-    const newAttempts = loginAttempts + 1;
-    setLoginAttempts(newAttempts);
-    localStorage.setItem('loginAttempts', newAttempts.toString());
-    if (newAttempts >= RATE_LIMIT_MAX_ATTEMPTS) {
-      const lockout = Date.now() + RATE_LIMIT_WINDOW_MS;
-      setLockoutUntil(lockout);
-      localStorage.setItem('lockoutUntil', lockout.toString());
-    }
-  };
-
   const resetLoginAttempts = () => {
     setLoginAttempts(0);
     setLockoutUntil(null);
@@ -246,56 +202,10 @@ function LoginPage() {
     localStorage.removeItem('lockoutUntil');
   };
 
-  const onSubmit = async (data: LoginFormData) => {
-    if (isLockedOut) {
-      setError(`Too many login attempts. Please try again in ${formatLockoutTime(remainingLockoutTime)}`);
-      return;
-    }
-    setError(null);
-    setIsLoading(true);
-    try {
-      const response = await login({ email: data.email, password: data.password });
-      const responseWithMfa = response as unknown as { mfaRequired?: boolean; userId?: string };
-      if (responseWithMfa.mfaRequired && responseWithMfa.userId) {
-        setMfaRequired(true);
-        setMfaUserId(responseWithMfa.userId);
-        setIsLoading(false);
-        return;
-      }
-      resetLoginAttempts();
-      if (data.rememberMe) {
-        localStorage.setItem('rememberMe', 'true');
-      } else {
-        localStorage.removeItem('rememberMe');
-      }
-      setDidFreshLogin(true);
-      const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/me/dashboard');
-    } catch (err: unknown) {
-      logger.error('[LoginPage] Login error:', err);
-      incrementLoginAttempts();
-      const attemptsRemaining = RATE_LIMIT_MAX_ATTEMPTS - (loginAttempts + 1);
-      let errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Invalid email or password. Please try again.';
-      if (attemptsRemaining > 0 && attemptsRemaining < 3) {
-        errorMessage += ` (${attemptsRemaining} attempt${attemptsRemaining === 1 ? '' : 's'} remaining)`;
-      }
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fillDemoCredentials = (email: string) => {
-    setValue('email', email, { shouldValidate: true });
-    setValue('password', 'password', { shouldValidate: true });
-    setShowDemoCredentials(false);
-  };
-
-  const handleMfaSuccess = (token: string) => {
+  const handleMfaSuccess = (_token: string) => {
     resetLoginAttempts();
     setDidFreshLogin(true);
-    const returnUrl = searchParams.get('returnUrl');
-    router.push(returnUrl || '/me/dashboard');
+    router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
   };
 
   const handleMfaCancel = () => {
@@ -304,10 +214,9 @@ function LoginPage() {
     setError(null);
   };
 
-  // Google SSO
+  // Google SSO (primary auth path)
   const handleGoogleSSO = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-
       setIsGoogleLoading(true);
       setError(null);
       try {
@@ -330,8 +239,7 @@ function LoginPage() {
         saveGoogleToken(tokenResponse.access_token, tokenResponse.expires_in || 3600);
         await googleLogin({ credential: tokenResponse.access_token, accessToken: true });
         setDidFreshLogin(true);
-        const returnUrl = searchParams.get('returnUrl');
-        router.push(returnUrl || '/me/dashboard');
+        router.push(sanitizeReturnUrl(searchParams.get('returnUrl')));
       } catch (err: unknown) {
         setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Google sign-in failed. Please try again.');
       } finally {
@@ -346,46 +254,6 @@ function LoginPage() {
     flow: 'implicit',
     prompt: 'select_account',
   });
-
-  useEffect(() => {
-
-
-  }, []);
-
-  // Legacy Google handlers
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    if (!credentialResponse.credential) {
-      setError('Google sign-in failed. No credential received.');
-      return;
-    }
-    setIsGoogleLoading(true);
-    setError(null);
-    try {
-      const decoded = jwtDecode<GoogleJwtPayload>(credentialResponse.credential);
-      if (!decoded.hd || decoded.hd !== ALLOWED_DOMAIN) {
-        setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
-        setIsGoogleLoading(false);
-        return;
-      }
-      if (!decoded.email.endsWith(`@${ALLOWED_DOMAIN}`)) {
-        setError(`Only @${ALLOWED_DOMAIN} accounts are allowed to sign in.`);
-        setIsGoogleLoading(false);
-        return;
-      }
-      await googleLogin({ credential: credentialResponse.credential });
-      setDidFreshLogin(true);
-      const returnUrl = searchParams.get('returnUrl');
-      router.push(returnUrl || '/me/dashboard');
-    } catch (err: unknown) {
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Google sign-in failed. Please try again.');
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    setError('Google sign-in failed. Please ensure popups are allowed and third-party cookies are enabled.');
-  };
 
   // MFA screen
   if (mfaRequired && mfaUserId) {
@@ -550,7 +418,7 @@ function LoginPage() {
               {/* Error Alert */}
               {error && (
                 <div
-                  className="flex items-start gap-3 p-4 mb-6 rounded-xl bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
+                  className="flex items-start gap-4 p-4 mb-6 rounded-xl bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800"
                   style={{ animation: 'fadeSlideUp 0.3s ease-out' }}
                 >
                   <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 flex-shrink-0 mt-0.5" />
@@ -568,11 +436,8 @@ function LoginPage() {
               {/* Google SSO Button */}
               <button
                 type="button"
-                className="w-full relative group flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
-                onClick={() => {
-
-                  handleGoogleSSO();
-                }}
+                className="w-full relative group flex items-center justify-center gap-4 px-6 py-3.5 rounded-xl bg-[var(--bg-elevated)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)] border border-[var(--border-main)] font-semibold text-sm transition-all duration-300 hover:shadow-card-hover active:scale-[0.98]"
+                onClick={() => { handleGoogleSSO(); }}
                 disabled={isGoogleLoading}
               >
                 {isGoogleLoading ? (

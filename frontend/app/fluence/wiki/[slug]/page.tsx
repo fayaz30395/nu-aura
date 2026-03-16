@@ -22,7 +22,6 @@ import {
   Star,
   History,
   Users,
-  Copy,
   Check,
   ThumbsUp,
   Reply,

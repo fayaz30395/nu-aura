@@ -16,7 +16,6 @@ import {
   useSignatureInfo,
   useSignDocument,
   useDeclineDocument,
-  ExternalSignatureInfoResponse,
 } from '@/lib/hooks/queries/useEsignPublic';
 
 type Step = 'verify' | 'sign' | 'success' | 'declined' | 'already_processed';
@@ -26,7 +25,7 @@ export default function SignPage() {
   const { token } = useParams<{ token: string }>();
 
   // React Query hooks
-  const { data: docInfo, isLoading, isError, error: queryError } = useSignatureInfo(
+  const { data: docInfo, isLoading } = useSignatureInfo(
     token,
     !!token
   );
@@ -377,7 +376,7 @@ export default function SignPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center">
             <FileText className="h-4 w-4 text-white" />
           </div>
@@ -625,7 +624,7 @@ export default function SignPage() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-4 pt-2">
               <button
                 onClick={() => setShowDeclineModal(true)}
                 disabled={signDocumentMutation.isPending || declineDocumentMutation.isPending}
@@ -687,7 +686,7 @@ export default function SignPage() {
                 {declineError}
               </p>
             )}
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-4 mt-4">
               <button
                 onClick={() => {
                   setShowDeclineModal(false);

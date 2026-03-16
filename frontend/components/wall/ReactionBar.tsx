@@ -34,7 +34,7 @@ const reactionEmojis: Record<ReactionType, { icon: React.ReactNode; label: strin
 const reactionTypes: ReactionType[] = ['LIKE', 'LOVE', 'CELEBRATE', 'INSIGHTFUL', 'CURIOUS'];
 
 export function ReactionBar({
-  reactionCounts,
+  reactionCounts: _reactionCounts,
   totalReactions,
   commentCount,
   hasReacted,

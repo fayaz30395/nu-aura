@@ -2,17 +2,16 @@
 
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, LayoutList, ArrowLeft, Loader2, AlertCircle, Download, Flag, Users, Clock, LayoutGrid, List } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, LayoutList, ArrowLeft, Loader2, AlertCircle, Flag, List } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, Button } from '@/components/ui';
-import { Project } from '@/lib/types/project';
 import { TaskListItem } from '@/lib/types/task';
 import { CalendarEvent, GanttTask, STATUS_COLORS, PRIORITY_COLORS } from '@/lib/types/project-calendar';
 import { CalendarGridView } from '@/components/projects/CalendarGridView';
 import { TaskDetailsModal } from '@/components/projects/TaskDetailsModal';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { hasPermission } from '@/lib/utils';
-import { toPriority, toTaskStatus, Priority, TaskStatus } from '@/lib/utils/type-guards';
+import { toPriority } from '@/lib/utils/type-guards';
 import { useProjects } from '@/lib/hooks/queries/useProjects';
 import { useQuery } from '@tanstack/react-query';
 
@@ -75,7 +74,8 @@ export default function ProjectCalendarPage() {
     priorityFilter || undefined
   );
 
-  const projects = projectsData?.content ?? [];
+  // Stable reference: prevents calendarEvents useMemo from re-running on every render.
+  const projects = useMemo(() => projectsData?.content ?? [], [projectsData]);
 
   // Fetch tasks for all projects (task management coming soon)
   const tasksQuery = useQuery({
@@ -88,7 +88,8 @@ export default function ProjectCalendarPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const tasks = tasksQuery.data ?? [];
+  // Stable reference: prevents calendarEvents useMemo from re-running on every render.
+  const tasks = useMemo(() => tasksQuery.data ?? [], [tasksQuery.data]);
   const loading = isLoading || tasksQuery.isLoading;
   const queryError = error || tasksQuery.error;
 
@@ -345,7 +346,7 @@ export default function ProjectCalendarPage() {
     setIsModalOpen(true);
   };
 
-  const handleUpdateStatus = async (taskId: string, status: string) => {
+  const handleUpdateStatus = async (_taskId: string, _status: string) => {
     if (!canEditTasks) {
       return;
     }
@@ -358,7 +359,7 @@ export default function ProjectCalendarPage() {
     }
   };
 
-  const handleUpdateProgress = async (taskId: string, progress: number) => {
+  const handleUpdateProgress = async (_taskId: string, _progress: number) => {
     try {
       // Progress update would be handled by taskService mutation
     } catch (err) {
@@ -388,7 +389,7 @@ export default function ProjectCalendarPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/projects')}
               className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
@@ -456,7 +457,7 @@ export default function ProjectCalendarPage() {
           <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               {/* Filters */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-4">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
@@ -556,14 +557,14 @@ export default function ProjectCalendarPage() {
                 <div className="min-w-[1200px]">
                   {/* Header */}
                   <div className="flex border-b border-[var(--border-main)] bg-[var(--bg-secondary)]/50 sticky top-0 z-10">
-                    <div className="w-80 p-3 border-r border-[var(--border-main)] font-medium text-[var(--text-secondary)]">
+                    <div className="w-80 p-4 border-r border-[var(--border-main)] font-medium text-[var(--text-secondary)]">
                       Project / Task
                     </div>
                     <div className="flex-1 flex">
                       {timelineColumns.map((col, idx) => (
                         <div
                           key={idx}
-                          className={`flex-1 p-3 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'
+                          className={`flex-1 p-4 text-center text-xs font-medium border-r border-[var(--border-main)] ${col.isToday ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-[var(--text-secondary)]'
                             }`}
                         >
                           {col.label}
@@ -574,7 +575,7 @@ export default function ProjectCalendarPage() {
 
                   {/* Gantt Rows */}
                   <div className="relative">
-                    {ganttItems.map((item, idx) => {
+                    {ganttItems.map((item, _idx) => {
                       const position = calculatePosition(item.startDate, item.endDate);
                       const isProject = item.type === 'project';
                       const isMilestone = item.type === 'milestone';
@@ -587,7 +588,7 @@ export default function ProjectCalendarPage() {
                             }`}
                         >
                           {/* Name Column */}
-                          <div className="w-80 p-3 border-r border-[var(--border-main)]">
+                          <div className="w-80 p-4 border-r border-[var(--border-main)]">
                             <div className="flex items-center gap-2">
                               {isProject && (
                                 <button
@@ -647,8 +648,8 @@ export default function ProjectCalendarPage() {
                                   width: position.width,
                                   backgroundColor: item.color + 'E6',
                                 }}
-                                onClick={() => isProject ? router.push(`/projects/${item.id}`) : handleEventClick(item)}
-                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isProject ? router.push(`/projects/${item.id}`) : handleEventClick(item); } }}
+                                onClick={() => { if (isProject) { void router.push(`/projects/${item.id}`); } else { handleEventClick(item); } }}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (isProject) { void router.push(`/projects/${item.id}`); } else { handleEventClick(item); } } }}
                                 role="button"
                                 tabIndex={0}
                                 title={`${item.name} - ${item.progress}%`}

@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { notifications } from '@mantine/notifications';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { createJobOpeningSchema, CreateJobOpeningFormData } from '@/lib/validations/recruitment';
 import {
@@ -19,8 +19,8 @@ import {
 } from '@/lib/hooks/queries/useRecruitment';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
-import { JobOpening, JobStatus, EmploymentType, Priority, CreateJobOpeningRequest } from '@/lib/types/recruitment';
-import { Department, Employee } from '@/lib/types/employee';
+import { JobOpening, JobStatus, Priority, CreateJobOpeningRequest } from '@/lib/types/recruitment';
+import { Department } from '@/lib/types/employee';
 import { JobDescriptionResponse } from '@/lib/types/ai-recruitment';
 import { Briefcase, MapPin, Users, Calendar, DollarSign, Plus, Search, Eye, Edit2, Trash2, X, Sparkles } from 'lucide-react';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -45,7 +45,6 @@ export default function JobOpeningsPage() {
   const deleteMutation = useDeleteJobOpening();
   const generateJDMutation = useGenerateJobDescription();
 
-  const isLoading = jobOpeningsQuery.isLoading;
   const managers = employeesData?.content || [];
 
   // React Hook Form setup
@@ -399,7 +398,7 @@ export default function JobOpeningsPage() {
             transition={{ duration: 0.3, staggerChildren: 0.05, delayChildren: 0.15 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           >
-            {filteredJobs.map((job, index) => (
+            {filteredJobs.map((job, _index) => (
               <motion.div
                 key={job.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -713,7 +712,7 @@ export default function JobOpeningsPage() {
                     {errors.skillsRequired && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.skillsRequired.message}</p>}
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button
                       type="button"
                       variant="outline"
@@ -749,7 +748,7 @@ export default function JobOpeningsPage() {
               <p className="text-sm text-[var(--text-muted)] mb-6">
                 Are you sure you want to delete <strong className="text-[var(--text-secondary)]">{jobToDelete.jobTitle}</strong>? This action cannot be undone.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button
                   variant="outline"
                   onClick={() => { setShowDeleteModal(false); setJobToDelete(null); }}
@@ -847,7 +846,7 @@ export default function JobOpeningsPage() {
                       </div>
                     )}
 
-                    <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                    <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                       <Button
                         type="button"
                         variant="outline"

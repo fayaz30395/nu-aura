@@ -1,10 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   KekaImportMapping,
-  KekaImportPreview,
-  KekaImportResult,
-  KekaFileUploadResponse,
-  KekaImportHistoryEntry,
 } from '../../types/keka-import';
 import { kekaImportService } from '../../services/keka-import.service';
 

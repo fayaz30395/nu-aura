@@ -12,9 +12,9 @@ export default function Loading() {
         </div>
         <Skeleton height={32} width={120} />
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="rounded-2xl border border-surface-200 dark:border-surface-800 p-3 sm:p-5 space-y-3">
+          <div key={index} className="rounded-2xl border border-surface-200 dark:border-surface-800 p-4 sm:p-5 space-y-4">
             <Skeleton height={16} width="50%" />
             <Skeleton height={28} width="40%" />
             <Skeleton height={16} width="60%" />

@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 // ─── Shared Field Schemas ───────────────────────────────────────────────────
 
-const slugSchema = z
+const _slugSchema = z
   .string()
   .min(1, 'Slug is required')
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must contain only lowercase letters, numbers, and hyphens');
 
-const optionalSlugSchema = z
+const _optionalSlugSchema = z
   .string()
   .optional()
   .refine(

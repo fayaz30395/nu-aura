@@ -3,7 +3,6 @@ import {
   ExpenseClaim,
   CreateExpenseClaimRequest,
   ApprovalRequest,
-  ExpenseClaimFilters,
   Page,
 } from '../types/expense';
 

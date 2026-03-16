@@ -14,7 +14,7 @@ import {
     Target,
     Sparkles
 } from 'lucide-react';
-import { TalentProfile, SkillDto, MilestoneDto, AchievementDto, FeedbackSnippet } from '@/lib/types/employee';
+import { TalentProfile } from '@/lib/types/employee';
 import { employeeService } from '@/lib/services/employee.service';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -29,6 +29,8 @@ export default function TalentJourneyTab({ employeeId }: TalentJourneyTabProps) 
 
     useEffect(() => {
         loadTalentProfile();
+        // loadTalentProfile is defined below; omitted to prevent infinite-loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [employeeId]);
 
     const loadTalentProfile = async () => {

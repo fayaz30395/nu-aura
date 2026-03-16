@@ -42,8 +42,6 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { Asset, CreateAssetRequest, UpdateAssetRequest, AssetCategory, AssetStatus } from '@/lib/types/asset';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { useRouter } from 'next/navigation';
 import {
   useAllAssets,
   useCreateAsset,
@@ -159,8 +157,6 @@ const formatCurrency = (amount: number | undefined) => {
 };
 
 export default function AssetManagementPage() {
-  const router = useRouter();
-  const { isAuthenticated, user, hasHydrated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -182,9 +178,8 @@ export default function AssetManagementPage() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [assignEmployeeId, setAssignEmployeeId] = useState('');
 
   // Form setup
   const {
@@ -192,7 +187,6 @@ export default function AssetManagementPage() {
     handleSubmit,
     reset: resetAssetForm,
     formState: { errors, isSubmitting },
-    watch,
     setValue,
   } = useForm<AssetFormData>({
     resolver: zodResolver(assetFormSchema),
@@ -340,22 +334,6 @@ export default function AssetManagementPage() {
     }
   };
 
-  const handleAssign = async () => {
-    if (!selectedAsset || !assignEmployeeId) return;
-    setSaving(true);
-    try {
-      await assignMutation.mutateAsync({ assetId: selectedAsset.id, employeeId: assignEmployeeId });
-      setShowAssignModal(false);
-      setSelectedAsset(null);
-      setAssignEmployeeId('');
-    } catch (err: unknown) {
-      console.error('Error assigning asset:', err);
-      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to assign asset');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleReturn = async (asset: Asset) => {
     try {
       await returnMutation.mutateAsync(asset.id);
@@ -427,8 +405,8 @@ export default function AssetManagementPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <Package className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
@@ -440,8 +418,8 @@ export default function AssetManagementPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <Package className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -453,8 +431,8 @@ export default function AssetManagementPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -466,8 +444,8 @@ export default function AssetManagementPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -556,7 +534,7 @@ export default function AssetManagementPage() {
                     {filteredAssets.map((asset) => (
                       <tr key={asset.id} className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
                             <div className={`rounded-lg p-2 ${getCategoryColor(asset.category)}`}>
                               {getCategoryIcon(asset.category)}
                             </div>
@@ -892,7 +870,7 @@ export default function AssetManagementPage() {
         {/* Asset Detail Modal */}
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {selectedAsset && (
                 <>
                   <div className={`rounded-lg p-2 ${getCategoryColor(selectedAsset.category)}`}>

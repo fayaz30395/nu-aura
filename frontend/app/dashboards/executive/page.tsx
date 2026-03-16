@@ -6,7 +6,6 @@ import {
   Users,
   DollarSign,
   TrendingUp,
-  TrendingDown,
   Building2,
   AlertCircle,
   CheckCircle,
@@ -19,19 +18,13 @@ import {
   Calendar,
   AlertTriangle,
   Info,
-  Zap,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
   RefreshCw,
   Shield,
-  UserX,
 } from 'lucide-react';
 import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
   PieChart as RechartsPieChart,
   Pie,
   Cell,
@@ -40,7 +33,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
   Area,
   AreaChart,
 } from 'recharts';
@@ -52,11 +44,21 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useExecutiveDashboard } from '@/lib/hooks/queries/useDashboards';
 import { StrategicAlert } from '@/lib/types/dashboard';
 
-const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+// Use CSS vars so chart colors adapt to dark mode automatically
+const COLORS = [
+  'var(--chart-primary)',
+  'var(--chart-success)',
+  'var(--chart-warning)',
+  'var(--chart-danger)',
+  'var(--chart-secondary)',
+  'var(--chart-accent)',
+  'var(--chart-info)',
+  'var(--chart-muted)',
+];
 
 export default function ExecutiveDashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   const { data, isLoading: loading, error, refetch } = useExecutiveDashboard(
@@ -189,7 +191,7 @@ export default function ExecutiveDashboardPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
             <CardHeader>
-              <div className="flex items-center gap-3 text-red-600">
+              <div className="flex items-center gap-4 text-red-600">
                 <AlertCircle className="h-6 w-6" />
                 <CardTitle>Error Loading Dashboard</CardTitle>
               </div>
@@ -217,7 +219,7 @@ export default function ExecutiveDashboardPage() {
               Comprehensive C-suite insights and analytics
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="text-sm text-[var(--text-muted)]">
               Last updated: {lastUpdated.toLocaleTimeString()}
             </div>
@@ -286,8 +288,8 @@ export default function ExecutiveDashboardPage() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                    <XAxis dataKey="period" tick={{ fill: '#64748B', fontSize: 12 }} />
-                    <YAxis tick={{ fill: '#64748B', fontSize: 12 }} />
+                    <XAxis dataKey="period" tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
+                    <YAxis tick={{ fill: 'var(--chart-muted)', fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{
                         borderRadius: '8px',
@@ -355,12 +357,12 @@ export default function ExecutiveDashboardPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {data.strategicAlerts && data.strategicAlerts.length > 0 ? (
                     data.strategicAlerts.slice(0, 5).map((alert) => (
                       <div
                         key={alert.id}
-                        className={`flex items-start gap-3 p-4 rounded-lg border ${getAlertBgColor(alert.severity)}`}
+                        className={`flex items-start gap-4 p-4 rounded-lg border ${getAlertBgColor(alert.severity)}`}
                       >
                         <div className="flex-shrink-0 mt-0.5">{getAlertIcon(alert.severity)}</div>
                         <div className="flex-1 min-w-0">
@@ -410,7 +412,7 @@ export default function ExecutiveDashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">Total Headcount</span>
                       <span className="text-lg font-bold text-[var(--text-primary)]">{data.workforceSummary.totalHeadcount}</span>
@@ -446,7 +448,7 @@ export default function ExecutiveDashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">Attendance Rate</span>
                       <span className="text-lg font-bold text-green-600">{data.productivityMetrics.avgAttendanceRate?.toFixed(1) || 0}%</span>
@@ -478,7 +480,7 @@ export default function ExecutiveDashboardPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-[var(--text-secondary)]">High Risk Employees</span>
                       <span className="text-lg font-bold text-red-600">{data.riskIndicators.highRiskEmployees}</span>

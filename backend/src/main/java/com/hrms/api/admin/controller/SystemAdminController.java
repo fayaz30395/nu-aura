@@ -91,6 +91,43 @@ public class SystemAdminController {
     }
 
     /**
+     * Suspend a tenant — blocks all access immediately.
+     * Invalidates TenantFilter cache + Redis caches (SEC-B10).
+     */
+    @PostMapping("/tenants/{tenantId}/suspend")
+    @Operation(summary = "Suspend tenant", description = "Suspend a tenant, immediately revoking access by invalidating all caches")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<TenantStatusDTO> suspendTenant(
+            @Parameter(description = "Tenant ID to suspend")
+            @PathVariable UUID tenantId) {
+        log.info("SuperAdmin suspending tenant: {}", tenantId);
+        var tenant = systemAdminService.suspendTenant(tenantId);
+        return ResponseEntity.ok(TenantStatusDTO.builder()
+                .tenantId(tenant.getId())
+                .name(tenant.getName())
+                .status(tenant.getStatus().name())
+                .build());
+    }
+
+    /**
+     * Re-activate a previously suspended or pending tenant.
+     */
+    @PostMapping("/tenants/{tenantId}/activate")
+    @Operation(summary = "Activate tenant", description = "Re-activate a suspended or pending tenant")
+    @RequiresPermission(SYSTEM_ADMIN)
+    public ResponseEntity<TenantStatusDTO> activateTenant(
+            @Parameter(description = "Tenant ID to activate")
+            @PathVariable UUID tenantId) {
+        log.info("SuperAdmin activating tenant: {}", tenantId);
+        var tenant = systemAdminService.activateTenant(tenantId);
+        return ResponseEntity.ok(TenantStatusDTO.builder()
+                .tenantId(tenant.getId())
+                .name(tenant.getName())
+                .status(tenant.getStatus().name())
+                .build());
+    }
+
+    /**
      * Generate an impersonation token for a specific tenant
      * SuperAdmin can use this token to access a tenant's data
      * Useful for troubleshooting and support

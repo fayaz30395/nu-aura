@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppLayout } from '@/components/layout';
@@ -26,8 +26,6 @@ import {
   User,
   MapPin,
   Clock,
-  CheckCircle,
-  AlertCircle,
   Loader2,
 } from 'lucide-react';
 import { JobOpening, Candidate, Interview, CandidateStatus } from '@/lib/types/recruitment';
@@ -274,7 +272,7 @@ export default function RecruitmentDashboard() {
               Track job openings, candidates, and interviews
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <Button
               onClick={() => router.push('/recruitment/jobs')}
               className="flex items-center gap-2"
@@ -363,7 +361,7 @@ export default function RecruitmentDashboard() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-4">
                         <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
                           <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                         </div>

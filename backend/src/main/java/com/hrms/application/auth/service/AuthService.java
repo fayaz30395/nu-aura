@@ -82,6 +82,21 @@ public class AuthService {
     @Value("${app.google.client-id:}")
     private String googleClientId;
 
+    /**
+     * Fallback tenant ID used when no tenant can be determined during password login.
+     * Should be set to the demo/default tenant UUID via the {@code APP_DEFAULT_TENANT_ID}
+     * environment variable. If left empty, login without a tenant context will fail fast.
+     */
+    @Value("${app.auth.default-tenant-id:550e8400-e29b-41d4-a716-446655440000}")
+    private String defaultTenantId;
+
+    /**
+     * Tenant ID for the NuLogic corporate domain ({@code @nulogic.io}).
+     * Configurable via {@code APP_NULOGIC_TENANT_ID}; defaults to the seeded demo value.
+     */
+    @Value("${app.auth.nulogic-tenant-id:660e8400-e29b-41d4-a716-446655440001}")
+    private String nulogicTenantId;
+
     @Value("${app.auth.allowed-domain:nulogic.io}")
     private String allowedDomain;
 
@@ -97,8 +112,13 @@ public class AuthService {
             // Use the user's actual tenant
             tenantId = userByEmail.get().getTenantId();
         } else if (tenantId == null) {
-            // Fallback to demo tenant if user not found and no tenant specified
-            tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+            // Fallback: use the configurable default tenant when no tenant is specified.
+            // Configure APP_AUTH_DEFAULT_TENANT_ID in production to avoid relying on the demo seed.
+            if (defaultTenantId == null || defaultTenantId.isBlank()) {
+                throw new com.hrms.common.exception.BusinessException(
+                        "Unable to determine tenant context. Please provide a valid X-Tenant-ID header or tenantId in the request.");
+            }
+            tenantId = UUID.fromString(defaultTenantId);
         }
 
         // Set tenant context for authentication
@@ -192,6 +212,10 @@ public class AuthService {
                 }
                 GoogleIdToken.Payload payload = idToken.getPayload();
                 email = payload.getEmail();
+                if (email == null || email.isBlank()) {
+                    metricsService.recordLoginFailure("google", "missing_email");
+                    throw new AuthenticationException("Google ID token does not contain a verified email address");
+                }
                 hostedDomain = payload.getHostedDomain();
                 profilePictureUrl = (String) payload.get("picture");
             }
@@ -207,16 +231,17 @@ public class AuthService {
                 throw new AuthenticationException("Only @" + allowedDomain + " accounts are allowed");
             }
 
-            // For @nulogic.io accounts, use NuLogic tenant; otherwise use provided or demo
-            // tenant
+            // For @nulogic.io accounts, use the configured NuLogic tenant;
+            // otherwise fall back to the configured default tenant.
             UUID tenantId = request.getTenantId();
             if (tenantId == null) {
-                if (email.endsWith("@nulogic.io")) {
-                    // NuLogic tenant
-                    tenantId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
+                if (email.endsWith("@" + allowedDomain) && nulogicTenantId != null && !nulogicTenantId.isBlank()) {
+                    tenantId = UUID.fromString(nulogicTenantId);
+                } else if (defaultTenantId != null && !defaultTenantId.isBlank()) {
+                    tenantId = UUID.fromString(defaultTenantId);
                 } else {
-                    // Default demo tenant
-                    tenantId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+                    throw new com.hrms.common.exception.BusinessException(
+                            "Unable to determine tenant context. Please provide a valid X-Tenant-ID header.");
                 }
             }
 

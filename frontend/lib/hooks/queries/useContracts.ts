@@ -3,18 +3,12 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { contractService } from '@/lib/services/contract.service';
 import type {
-  Contract,
-  ContractListItem,
   CreateContractRequest,
   UpdateContractRequest,
   ContractStatus,
   ContractType,
-  ContractSignature,
   SendForSigningRequest,
-  ContractTemplate,
   CreateContractTemplateRequest,
-  Page,
-  SignatureSummary,
 } from '@/lib/types/contract';
 
 export const contractKeys = {

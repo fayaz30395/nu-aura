@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout';
-import { useEmployees, useEmployeeHierarchy } from '@/lib/hooks/queries/useEmployees';
+import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { Employee, Department } from '@/lib/types/employee';
+import { Employee } from '@/lib/types/employee';
 
 interface TreeNode extends Employee {
   children?: TreeNode[];
@@ -32,6 +32,10 @@ export default function OrgChartPage() {
     if (employees.length > 0) {
       buildOrgTree();
     }
+    // buildOrgTree is defined after this hook and only depends on the variables
+    // already listed as deps. Including it without useCallback would cause an
+    // infinite re-render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employees, viewMode, selectedDepartment]);
 
   const buildOrgTree = () => {
@@ -87,7 +91,7 @@ export default function OrgChartPage() {
             hover:shadow-lg transition-shadow cursor-pointer
           `}
         >
-          <div className="flex items-start space-x-3">
+          <div className="flex items-start space-x-4">
             <div className="flex-shrink-0">
               <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center border-2 border-current">
                 <span className="text-lg font-bold">
@@ -140,7 +144,7 @@ export default function OrgChartPage() {
             )}
 
             <div className="flex space-x-10 justify-center">
-              {employee.children!.map((child, index) => (
+              {employee.children!.map((child, _index) => (
                 <div key={child.id} className="relative">
                   {/* Vertical line to child */}
                   <div className="absolute left-1/2 -top-0 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
@@ -175,7 +179,7 @@ export default function OrgChartPage() {
             </div>
             <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
               {emps.map(emp => (
-                <div key={emp.id} className="flex items-center space-x-3 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
+                <div key={emp.id} className="flex items-center space-x-4 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
                   <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
                     <span className="text-xs font-medium text-primary-700">
                       {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) || ''}

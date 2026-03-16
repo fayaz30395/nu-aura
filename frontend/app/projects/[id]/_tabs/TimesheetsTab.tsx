@@ -19,7 +19,7 @@ import {
   ResponsiveTable,
 } from '@/components/ui';
 import { usePsaProjectTimesheets, useCreatePsaTimesheet, useSubmitPsaTimesheet } from '@/lib/hooks/queries/usePsa';
-import { PSATimesheet, TimesheetStatus } from '@/lib/types/psa';
+import { PSATimesheet } from '@/lib/types/psa';
 
 interface TimesheetsTabProps {
   projectId: string;
@@ -160,7 +160,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
               try {
                 await submitMutation.mutateAsync(timesheet.id);
                 await refetchTimesheets();
-              } catch (err) {
+              } catch (_err) {
                 // Error handled by mutation
               }
             }}
@@ -183,7 +183,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
       setShowCreateModal(false);
       resetCreate();
       await refetchTimesheets();
-    } catch (err) {
+    } catch (_err) {
       // Error handled by mutation
     }
   };
@@ -251,7 +251,7 @@ export function TimesheetsTab({ projectId }: TimesheetsTabProps) {
     <div className="space-y-4">
       <Card>
         <CardContent className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Timesheets</h2>
               <p className="text-sm text-[var(--text-muted)]">Track hours worked on this project.</p>

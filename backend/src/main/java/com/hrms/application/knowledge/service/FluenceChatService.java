@@ -169,8 +169,9 @@ public class FluenceChatService {
     private void safeComplete(SseEmitter emitter) {
         try {
             emitter.complete();
-        } catch (Exception ignored) {
-            // Emitter may already be completed or timed out
+        } catch (Exception e) {
+            // Emitter may already be completed or timed out — this is expected on client disconnect
+            log.debug("safeComplete: emitter completion suppressed (likely already closed): {}", e.getMessage());
         }
     }
 

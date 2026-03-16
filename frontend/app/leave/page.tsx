@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
@@ -8,7 +8,6 @@ import {
   useActiveLeaveTypes,
   useEmployeeLeaveRequests,
 } from '@/lib/hooks/queries/useLeaves';
-import { LeaveBalance, LeaveRequest, LeaveType } from '@/lib/types/leave';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -205,7 +204,7 @@ export default function LeavePage() {
                   className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-4 hover:shadow-lg transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient}`}>
+                    <div className={`p-4 rounded-xl bg-gradient-to-br ${gradient}`}>
                       <Icon className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-xs font-medium px-2 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] rounded-lg">
@@ -372,7 +371,7 @@ export default function LeavePage() {
             className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
@@ -390,7 +389,7 @@ export default function LeavePage() {
             className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
@@ -408,7 +407,7 @@ export default function LeavePage() {
             className="group bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-purple-300 dark:hover:border-purple-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-purple-500 group-hover:translate-x-1 transition-all" />

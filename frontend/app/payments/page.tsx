@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout';
 import {
   CreditCard,
   Filter,
   ChevronDown,
   Search,
-  Calendar,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -17,7 +16,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { usePayments, usePaymentStats } from '@/lib/hooks/queries/usePayments';
 import { paymentService } from '@/lib/services/payment.service';
 import {
-  PaymentTransactionListItem,
   PaymentStatus,
   PaymentType,
   PaymentProvider,
@@ -39,7 +37,7 @@ interface Filters {
 }
 
 export default function PaymentsPage() {
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { hasHydrated } = useAuth();
   const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
   const { data: statsData } = usePaymentStats();
 
@@ -56,7 +54,8 @@ export default function PaymentsPage() {
     search: '',
   });
 
-  const payments = paymentsData?.content || [];
+  // Stable reference: prevents filteredPayments useMemo from re-running on every render.
+  const payments = useMemo(() => paymentsData?.content ?? [], [paymentsData]);
 
   // Filter payments based on active tab and filters
   const filteredPayments = useMemo(() => {
@@ -155,7 +154,7 @@ export default function PaymentsPage() {
         {statsData && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600">
                   <CreditCard className="w-5 h-5" />
                 </div>
@@ -169,7 +168,7 @@ export default function PaymentsPage() {
             </div>
 
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-success-100 dark:bg-success-900/30 text-success-600">
                   <CheckCircle className="w-5 h-5" />
                 </div>
@@ -183,7 +182,7 @@ export default function PaymentsPage() {
             </div>
 
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-warning-100 dark:bg-warning-900/30 text-warning-600">
                   <Clock className="w-5 h-5" />
                 </div>
@@ -197,7 +196,7 @@ export default function PaymentsPage() {
             </div>
 
             <div className="bg-[var(--bg-input)] rounded-lg p-4 border border-[var(--border-main)]">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="p-2 rounded-lg bg-error-100 dark:bg-error-900/30 text-error-600">
                   <XCircle className="w-5 h-5" />
                 </div>
@@ -433,10 +432,10 @@ export default function PaymentsPage() {
                   className="border border-[var(--border-main)] rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-4">
                       {getStatusIcon(payment.status)}
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{payment.transactionReference}</h3>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${paymentService.getStatusColor(payment.status)}`}

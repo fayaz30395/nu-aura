@@ -7,8 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEmployees, useManagers, useCreateEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
 import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
-import { Employee, CreateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole } from '@/lib/types/employee';
-import { toGender, toEmploymentType, toEmployeeLevel, toJobRole } from '@/lib/utils/type-guards';
+import { Employee, CreateEmployeeRequest } from '@/lib/types/employee';
 import { AppLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
 import { Users } from 'lucide-react';
@@ -892,7 +891,7 @@ export default function EmployeesPage() {
                           )}
                         />
                         <p className="mt-1 text-xs text-[var(--text-muted)]">
-                          Select "Self" for top-level employees who don't report to anyone.
+                          Select &ldquo;Self&rdquo; for top-level employees who don&apos;t report to anyone.
                         </p>
                         {errors.managerId && <p className="text-danger-500 dark:text-danger-400 text-xs mt-1">{errors.managerId.message}</p>}
                       </div>

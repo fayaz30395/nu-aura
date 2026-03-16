@@ -4,9 +4,9 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Clock, LogIn, LogOut, Calendar, MapPin, CheckCircle, AlertCircle,
-  Timer, CalendarDays, ClipboardCheck, History, Activity, Coffee,
-  BarChart3, Target, ArrowRight, Flame, Zap, TrendingUp, Users,
-  ChevronRight, Sun, Moon, Sunrise, AlertTriangle, Award, Briefcase,
+  CalendarDays, ClipboardCheck, History, Coffee,
+  BarChart3, Target, ArrowRight, Flame, Zap, Users,
+  Sun, Moon, Sunrise, AlertTriangle,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
@@ -164,7 +164,7 @@ export default function AttendancePage() {
   );
 
   // Fetch monthly attendance
-  const { data: monthlyData, isLoading: monthlyLoading } = useAttendanceByDateRange(
+  const { data: monthlyData } = useAttendanceByDateRange(
     monthStartStr, todayStr, isAuthenticated && hasHydrated
   );
 
@@ -181,9 +181,10 @@ export default function AttendancePage() {
   }, []);
 
   const todayRecord: AttendanceRecord | null = todayData?.[0] ?? null;
-  const weeklyRecords: AttendanceRecord[] = weeklyData || [];
-  const monthlyRecords: AttendanceRecord[] = monthlyData || [];
-  const holidays: Holiday[] = holidaysData || [];
+  // Stable references: prevents downstream useMemo hooks from re-running on every render.
+  const weeklyRecords = useMemo<AttendanceRecord[]>(() => weeklyData ?? [], [weeklyData]);
+  const monthlyRecords = useMemo<AttendanceRecord[]>(() => monthlyData ?? [], [monthlyData]);
+  const holidays = useMemo<Holiday[]>(() => holidaysData ?? [], [holidaysData]);
 
   // ─── Handlers ─────────────────────────────────────────────────────────
   const getLocation = useCallback(async (): Promise<string> => {

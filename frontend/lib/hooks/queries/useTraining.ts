@@ -3,9 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { trainingService } from '@/lib/services/training.service';
 import type {
-  TrainingProgram,
   TrainingProgramRequest,
-  TrainingEnrollment,
   TrainingEnrollmentRequest,
   ProgramStatus,
   EnrollmentStatus,

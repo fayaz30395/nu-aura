@@ -3,7 +3,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   publicOfferService,
-  type PublicOfferResponse,
   type AcceptOfferRequest,
   type DeclineOfferRequest,
 } from '@/lib/services/public-offer.service';

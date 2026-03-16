@@ -9,7 +9,7 @@ import { Settings, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAllPaymentConfigs, useSavePaymentConfig, useTestConnection, useToggleConfigActive } from '@/lib/hooks/queries/usePayments';
 import { paymentService } from '@/lib/services/payment.service';
-import { PaymentProvider, SavePaymentConfigRequest, PaymentConfig } from '@/lib/types/payment';
+import { PaymentProvider, SavePaymentConfigRequest } from '@/lib/types/payment';
 
 const configFormSchema = z.object({
   provider: z.enum(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const),
@@ -22,8 +22,8 @@ const configFormSchema = z.object({
 type ConfigFormData = z.infer<typeof configFormSchema>;
 
 export default function PaymentConfigPage() {
-  const { user, isAuthenticated, hasHydrated } = useAuth();
-  const { data: configs = [], isLoading: configsLoading } = useAllPaymentConfigs();
+  const { hasHydrated } = useAuth();
+  const { data: configs = [] } = useAllPaymentConfigs();
   const saveConfigMutation = useSavePaymentConfig();
   const testConnectionMutation = useTestConnection();
   const toggleConfigMutation = useToggleConfigActive();
@@ -52,9 +52,6 @@ export default function PaymentConfigPage() {
       testMode: false,
     },
   });
-
-  const credentialsJson = watch('credentialsJson');
-  const testMode = watch('testMode');
 
   const selectedConfig = configs.find((c) => c.provider === selectedProvider);
 
@@ -160,7 +157,7 @@ export default function PaymentConfigPage() {
     <AppLayout activeMenuItem="payments">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-4 mb-6">
           <Settings className="w-8 h-8 text-primary-600" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">
@@ -189,7 +186,7 @@ export default function PaymentConfigPage() {
         {/* Provider Selection */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3 text-[var(--text-primary)]">Payment Providers</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(['RAZORPAY', 'STRIPE', 'BANK_TRANSFER', 'PAYPAL'] as const).map((provider) => {
               const config = configs.find((c) => c.provider === provider);
               const isSelected = selectedProvider === provider;
@@ -233,7 +230,7 @@ export default function PaymentConfigPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Test Mode Toggle */}
             <div>
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-4 cursor-pointer">
                 <input
                   type="checkbox"
                   {...register('testMode')}
@@ -297,7 +294,7 @@ export default function PaymentConfigPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+            <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
               <button
                 type="submit"
                 disabled={isSubmitting || saveConfigMutation.isPending}
@@ -366,7 +363,7 @@ export default function PaymentConfigPage() {
             <h2 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">
               Active Configurations
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {configs.map((config) => (
                 <div
                   key={config.id}
@@ -381,7 +378,7 @@ export default function PaymentConfigPage() {
                       {paymentService.formatDate(config.updatedAt)}
                     </p>
                   </div>
-                  <label className="flex items-center gap-3 cursor-pointer">
+                  <label className="flex items-center gap-4 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={config.isActive}

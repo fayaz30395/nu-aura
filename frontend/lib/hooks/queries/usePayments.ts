@@ -3,23 +3,14 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { paymentService } from '@/lib/services/payment.service';
 import type {
-  PaymentTransaction,
-  PaymentTransactionListItem,
   CreatePaymentTransactionRequest,
   UpdatePaymentTransactionRequest,
-  PaymentConfig,
   SavePaymentConfigRequest,
   TestConnectionRequest,
-  TestConnectionResponse,
-  PaymentRefund,
-  PaymentRefundListItem,
   ProcessRefundRequest,
-  PaymentStats,
-  PaymentStatusCheckResponse,
   PaymentProvider,
   PaymentStatus,
   PaymentType,
-  Page,
 } from '@/lib/types/payment';
 
 export const paymentKeys = {

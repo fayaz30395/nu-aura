@@ -80,7 +80,7 @@ export default function WorkloadDashboardPage() {
   const [selectedStatus, setSelectedStatus] = useState<AllocationStatus[]>([]);
   const [selectedRanges, setSelectedRanges] = useState<AllocationRange[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [_showFilters, _setShowFilters] = useState(false);
 
   // Employee detail modal state
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeWorkload | null>(null);
@@ -367,7 +367,7 @@ export default function WorkloadDashboardPage() {
 
         {/* Error state */}
         {error && (
-          <div className="flex items-center gap-3 rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
+          <div className="flex items-center gap-4 rounded-lg border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700 dark:border-danger-800 dark:bg-danger-900/20 dark:text-danger-400">
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <span className="flex-1">{error instanceof Error ? error.message : 'Error loading data'}</span>
             <button onClick={() => refetchData()} className="font-medium hover:underline">
@@ -536,7 +536,7 @@ export default function WorkloadDashboardPage() {
                     <h3 className="mb-3 text-sm font-medium text-[var(--text-primary)]">
                       By Department
                     </h3>
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                       {(dashboardData.departmentWorkloads || []).map((dept) => (
                         <DepartmentCard key={dept.departmentId} department={dept} />
                       ))}
@@ -646,7 +646,7 @@ function DepartmentCard({
 
       {expanded && (
         <div className="mt-3 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <span className="text-danger-600">{department.overAllocatedCount} over</span>
             <span className="text-success-600">{department.optimalCount} optimal</span>
             <span className="text-warning-600">{department.underUtilizedCount} under</span>

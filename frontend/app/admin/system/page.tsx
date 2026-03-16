@@ -11,7 +11,6 @@ import {
   ChevronRight,
   RefreshCw,
   Zap,
-  HardDrive,
 } from 'lucide-react';
 import {
   Paper,
@@ -23,12 +22,8 @@ import {
   Skeleton,
   Group,
   Stack,
-  Card,
   ActionIcon,
-  Tooltip,
   Modal,
-  Code,
-  CopyButton,
 } from '@mantine/core';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -40,7 +35,6 @@ import {
   useGrowthMetrics,
 } from '@/lib/hooks/queries/useSystemAdmin';
 import { TenantListItem, MonthlyGrowth } from '@/lib/types/admin-system';
-import clsx from 'clsx';
 
 const SUPER_ADMIN_ONLY_ROLES = [Roles.SUPER_ADMIN];
 
@@ -117,8 +111,8 @@ export default function SystemDashboard() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg shadow-blue-500/25">
+        <div className="flex items-center gap-4">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 shadow-lg shadow-blue-500/25">
             <Server className="h-6 w-6 text-white" />
           </div>
           <div>

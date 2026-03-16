@@ -227,7 +227,7 @@ const SidebarMenuItem: React.FC<{
   activeId?: string;
   openFlyoverId: string | null;
   onToggleFlyover: (itemId: string, rect: DOMRect | null) => void;
-}> = ({ item, isActive, isCollapsed, onItemClick, activeId, openFlyoverId, onToggleFlyover }) => {
+}> = ({ item, isActive, isCollapsed, onItemClick, activeId: _activeId, openFlyoverId, onToggleFlyover }) => {
   const elementRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const hasChildren = item.children && item.children.length > 0;
   const isFlyoverOpen = openFlyoverId === item.id;
@@ -408,13 +408,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       collapsed = false,
       onCollapsedChange,
       collapsible = true,
-      variant = 'default',
-      ...props
+      variant: _variant = 'default',
+      ..._props
     },
     ref
   ) => {
     const [isCollapsed, setIsCollapsed] = useState(collapsed);
-    const [isHovering, setIsHovering] = useState(false);
+    const [, setIsHovering] = useState(false);
     const [openFlyoverId, setOpenFlyoverId] = useState<string | null>(null);
     const [flyoverTriggerRect, setFlyoverTriggerRect] = useState<DOMRect | null>(null);
     const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -429,7 +429,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           try {
             const parsed = JSON.parse(savedCollapsedSections);
             setCollapsedSections(new Set(parsed));
-          } catch (e) {
+          } catch {
             // Ignore parse errors
           }
         }

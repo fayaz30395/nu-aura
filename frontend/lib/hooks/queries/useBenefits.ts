@@ -3,15 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { benefitsService } from '@/lib/services/benefits.service';
 import {
-  BenefitPlan,
-  BenefitEnrollment,
-  BenefitClaim,
   EnrollmentRequest,
   ClaimRequest,
   BenefitPlanRequest,
-  PlanType,
 } from '@/lib/types/benefits';
-import { Page } from '@/lib/types/payroll';
 
 // Query keys for cache management
 export const benefitKeys = {
@@ -143,7 +138,7 @@ export function useSubmitBenefitClaim() {
 
   return useMutation({
     mutationFn: (data: ClaimRequest) => benefitsService.submitClaim(data),
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: benefitKeys.pendingClaims() });
       queryClient.invalidateQueries({ queryKey: benefitKeys.claims() });
     },

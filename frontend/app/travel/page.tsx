@@ -32,7 +32,7 @@ import {
 
 export default function TravelPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
+  const { isAuthenticated, hasHydrated } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TravelStatus | 'ALL'>('ALL');
   const [typeFilter, setTypeFilter] = useState<TravelType | 'ALL'>('ALL');
@@ -288,7 +288,7 @@ export default function TravelPage() {
                       {/* Header */}
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4">
-                          <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+                          <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
                             <TypeIcon className="h-5 w-5 text-white" />
                           </div>
                           <div>
@@ -313,7 +313,7 @@ export default function TravelPage() {
 
                       {/* Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <MapPin className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
                             <p className="text-xs text-[var(--text-muted)]">Route</p>
@@ -328,7 +328,7 @@ export default function TravelPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <Calendar className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
                             <p className="text-xs text-[var(--text-muted)]">Duration</p>
@@ -341,7 +341,7 @@ export default function TravelPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <TransportIcon className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
                             <p className="text-xs text-[var(--text-muted)]">Transport</p>
@@ -356,7 +356,7 @@ export default function TravelPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-4">
                           <DollarSign className="h-5 w-5 text-[var(--text-muted)] mt-0.5" />
                           <div>
                             <p className="text-xs text-[var(--text-muted)]">

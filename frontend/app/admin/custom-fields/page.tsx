@@ -61,9 +61,22 @@ export default function CustomFieldsPage() {
   // Query hook
   const definitionsQuery = useCustomFieldDefinitions(0, 100);
 
+  // Local UI state — declared before mutation hooks so selectedDefinition.id
+  // is accessible when the update mutation hook is initialised below.
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  const [selectedDefinition, setSelectedDefinition] = React.useState<CustomFieldDefinition | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [filterEntityType, setFilterEntityType] = React.useState<EntityType | 'ALL'>('ALL');
+  const [error, setError] = React.useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
+  const [fieldToDelete, setFieldToDelete] = React.useState<CustomFieldDefinition | null>(null);
+
   // Mutation hooks
   const createMutation = useCreateCustomFieldDefinition();
-  const updateMutation = useUpdateCustomFieldDefinition('');
+  // Bind update mutation to the currently-selected definition's ID so the hook
+  // is always called unconditionally at the component level (Rules of Hooks).
+  const updateMutation = useUpdateCustomFieldDefinition(selectedDefinition?.id ?? '');
   const deleteMutation = useDeleteCustomFieldDefinition();
   const activateMutation = useActivateCustomFieldDefinition();
   const deactivateMutation = useDeactivateCustomFieldDefinition();
@@ -97,18 +110,8 @@ export default function CustomFieldsPage() {
     },
   });
 
-  // Local UI state
-  const [showCreateModal, setShowCreateModal] = React.useState(false);
-  const [showEditModal, setShowEditModal] = React.useState(false);
-  const [selectedDefinition, setSelectedDefinition] = React.useState<CustomFieldDefinition | null>(null);
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [filterEntityType, setFilterEntityType] = React.useState<EntityType | 'ALL'>('ALL');
-  const [error, setError] = React.useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
-  const [fieldToDelete, setFieldToDelete] = React.useState<CustomFieldDefinition | null>(null);
-
   const fieldType = watch('fieldType');
-  const optionsText = watch('optionsText');
+  const _optionsText = watch('optionsText');
 
   useEffect(() => {
     if (!hasHydrated || !isReady) return;
@@ -149,8 +152,9 @@ export default function CustomFieldsPage() {
       };
 
       if (selectedDefinition) {
-        const updateMutationForId = useUpdateCustomFieldDefinition(selectedDefinition.id);
-        await updateMutationForId.mutateAsync(request);
+        // updateMutation is already bound to selectedDefinition.id at the component level
+        // (see useUpdateCustomFieldDefinition(selectedDefinition?.id ?? '') above)
+        await updateMutation.mutateAsync(request);
       } else {
         await createMutation.mutateAsync(request);
       }
@@ -654,7 +658,7 @@ export default function CustomFieldsPage() {
                   />
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-4">
                   <button
                     type="button"
                     onClick={() => {

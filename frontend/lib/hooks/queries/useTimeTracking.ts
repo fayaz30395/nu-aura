@@ -3,12 +3,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
 import {
-  TimeEntry,
   CreateTimeEntryRequest,
   TimeEntryStatus,
-  TimeSummary,
-  ProjectTimeSummary,
-  Page,
 } from '@/lib/types/time-tracking';
 
 export const timeTrackingKeys = {

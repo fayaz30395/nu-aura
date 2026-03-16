@@ -4,9 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   helpdeskSLAService,
   TicketSLA,
-  TicketEscalation,
-  TicketMetrics,
-  SLADashboard,
 } from '@/lib/services/helpdesk-sla.service';
 
 export const helpdeskSlaKeys = {

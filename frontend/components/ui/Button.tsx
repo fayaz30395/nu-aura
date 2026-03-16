@@ -99,7 +99,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseElement = asChild ? Slot : 'button';
-    const MotionComp = motion(baseElement as any);
+    const MotionComp = motion(baseElement as React.ElementType);
     return (
       <MotionComp
         className={cn(buttonVariants({ variant, size, className }))}

@@ -15,7 +15,6 @@ import {
   X,
   Send,
   FileText,
-  TrendingUp,
   Edit3,
   User,
   Ban,
@@ -27,7 +26,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeLeaveRequests, useEmployeeBalances, useActiveLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest, useCancelLeaveRequest } from '@/lib/hooks/queries/useLeaves';
 import {
   LeaveRequest,
-  LeaveType,
   LeaveRequestRequest,
   LeaveRequestStatus,
 } from '@/lib/types/leave';
@@ -398,7 +396,7 @@ export default function MyLeavesPage() {
                 </CardDescription>
               </div>
               {/* Filters */}
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-slate-500" />
                   <select
@@ -472,7 +470,7 @@ export default function MyLeavesPage() {
                   >
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                             {getLeaveTypeName(request.leaveTypeId)}
                           </h3>
@@ -640,7 +638,7 @@ export default function MyLeavesPage() {
                   </div>
 
                   {/* Half Day */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
                       id="halfDay"
@@ -677,7 +675,7 @@ export default function MyLeavesPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-3 pt-4">
+                  <div className="flex items-center justify-end gap-4 pt-4">
                     <button
                       type="button"
                       onClick={handleCloseModal}
@@ -751,7 +749,7 @@ export default function MyLeavesPage() {
                   {cancelErrors.reason && <p className="text-red-500 text-sm mt-1">{cancelErrors.reason.message}</p>}
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-4">
+                <div className="flex items-center justify-end gap-4 pt-4">
                   <button
                     type="button"
                     onClick={handleCloseCancelModal}

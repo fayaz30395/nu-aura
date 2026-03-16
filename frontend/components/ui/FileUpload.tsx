@@ -53,7 +53,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const validateFile = (file: File): string | null => {
+  const validateFile = useCallback((file: File): string | null => {
     if (file.size > maxSize) {
       return `File size exceeds ${formatFileSize(maxSize)} limit`;
     }
@@ -76,7 +76,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     }
 
     return null;
-  };
+  }, [maxSize, accept]);
 
   const uploadFile = useCallback(async (file: File) => {
     const error = validateFile(file);
@@ -118,13 +118,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       onUpload(response.data);
       setSelectedFile(null);
     } catch (err: unknown) {
-      const errorMessage = typeof err === 'object' && err !== null && 'response' in err ? (err as any).response?.data?.message : null;
+      const errorMessage = typeof err === 'object' && err !== null && 'response' in err ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : null;
       onError?.(errorMessage || 'Failed to upload file');
     } finally {
       setUploading(false);
       setProgress(0);
     }
-  }, [category, employeeId, maxSize, onUpload, onError]);
+  }, [category, employeeId, validateFile, onUpload, onError]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

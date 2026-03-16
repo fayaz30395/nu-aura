@@ -1,6 +1,6 @@
 declare module 'sockjs-client' {
   class SockJS {
-    constructor(url: string, _reserved?: any, options?: {
+    constructor(url: string, _reserved?: unknown, options?: {
       server?: string;
       transports?: string[];
       timeout?: number;

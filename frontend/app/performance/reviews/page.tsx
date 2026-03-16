@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,7 +13,6 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { PerformanceReview, ReviewRequest, ReviewType, ReviewStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useToast } from '@/components/notifications/ToastProvider';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -39,8 +38,7 @@ const reviewFormSchema = z.object({
 type ReviewFormData = z.infer<typeof reviewFormSchema>;
 
 export default function PerformanceReviewsPage() {
-  const toast = useToast();
-  const { user, hasHydrated } = useAuth();
+  const { user } = useAuth();
   const reviewsQuery = useEmployeeReviews(user?.employeeId || '');
   const createReviewMutation = useCreateReview();
   const updateReviewMutation = useUpdateReview();

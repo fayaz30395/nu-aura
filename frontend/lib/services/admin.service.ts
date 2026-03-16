@@ -41,7 +41,7 @@ class AdminService {
       // It accepts absolute URLs — the URL normalizer only strips `/api/v1` from relative paths.
       const response = await publicApiClient.get<HealthResponse>(healthUrl);
       return response.data;
-    } catch (error) {
+    } catch (_error) {
       // If the health endpoint is not available or times out, return a graceful response
       // Mark components as UNAVAILABLE instead of DOWN to indicate connectivity issues
       return {

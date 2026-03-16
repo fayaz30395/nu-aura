@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import {
-  Settings as SettingsIcon,
+
   Bell,
   Shield,
   Moon,
@@ -33,7 +33,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useDarkMode } from '@/components/layout/DarkModeProvider';
 import { authApi } from '@/lib/api/auth';
 import { notificationsApi } from '@/lib/api/notifications';
-import { NotificationPreferences } from '@/lib/types/notifications';
+
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function SettingsPage() {
   const [anniversaryNotifications, setAnniversaryNotifications] = useState(true);
   const [systemAlertNotifications, setSystemAlertNotifications] = useState(true);
 
-  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
+  const [_preferencesLoaded, setPreferencesLoaded] = useState(false);
 
   // Password Change
   const [currentPassword, setCurrentPassword] = useState('');
@@ -205,7 +205,7 @@ export default function SettingsPage() {
     icon?: React.ElementType;
   }) => (
     <div className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {Icon && (
           <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
             <Icon className="h-4 w-4 text-slate-600 dark:text-slate-400" />
@@ -559,7 +559,7 @@ export default function SettingsPage() {
               )}
 
               {/* Summary */}
-              <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+              <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
                 <div className="flex items-center gap-2 text-sm">
                   <Check className="h-4 w-4 text-green-600" />
                   <span className="text-slate-600 dark:text-slate-400">
@@ -605,7 +605,7 @@ export default function SettingsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
                       <Shield className="h-5 w-5 text-green-600" />
                     </div>

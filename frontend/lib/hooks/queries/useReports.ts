@@ -5,11 +5,9 @@ import { reportService, ReportRequest } from '@/lib/services/report.service';
 import { scheduledReportService } from '@/lib/services/scheduled-report.service';
 import { utilizationService } from '@/lib/services/utilization.service';
 import {
-  ScheduledReport,
   ScheduledReportRequest,
 } from '@/lib/types/analytics';
 import {
-  UtilizationDashboardData,
   UtilizationFilterOptions,
 } from '@/lib/types/utilization';
 

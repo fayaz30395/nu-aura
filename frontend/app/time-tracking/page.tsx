@@ -4,8 +4,7 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { timeTrackingService } from '@/lib/services/time-tracking.service';
-import { TimeEntry, TimeEntryStatus } from '@/lib/types/time-tracking';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { TimeEntryStatus } from '@/lib/types/time-tracking';
 import {
   useMyTimeTrackingEntries,
   useTimeSummary,
@@ -23,13 +22,11 @@ import {
   Loader2,
   CalendarDays,
   DollarSign,
-  TrendingUp,
   Send,
 } from 'lucide-react';
 
 export default function TimeTrackingPage() {
   const router = useRouter();
-  const { user, isAuthenticated, hasHydrated } = useAuth();
   const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
 
   const { weekStart, weekEnd } = useMemo(() => timeTrackingService.getWeekDates(), []);
@@ -37,7 +34,8 @@ export default function TimeTrackingPage() {
   const { data: summaryData } = useTimeSummary(weekStart, weekEnd);
   const submitMultipleMutation = useSubmitMultipleTimeEntries();
 
-  const entries = entriesData?.content || [];
+  // Stable reference: prevents summary useMemo from re-running on every render.
+  const entries = useMemo(() => entriesData?.content ?? [], [entriesData]);
 
   const summary = useMemo(() => {
     const draftEntries = entries.filter((e) => e.status === 'DRAFT');
@@ -159,7 +157,7 @@ export default function TimeTrackingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600">
                 <Timer className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -175,7 +173,7 @@ export default function TimeTrackingPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-green-500 to-green-600">
                 <DollarSign className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -191,7 +189,7 @@ export default function TimeTrackingPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600">
                 <Clock className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -207,7 +205,7 @@ export default function TimeTrackingPage() {
 
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-surface-500 to-surface-600">
                 <FileText className="h-5 w-5 text-white" />
               </div>
             </div>
@@ -225,7 +223,7 @@ export default function TimeTrackingPage() {
         {/* Bulk Submit */}
         {draftEntries.length > 0 && (
           <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <AlertCircle className="h-5 w-5 text-amber-500" />
               <span className="text-sm text-amber-700 dark:text-amber-400">
                 You have {draftEntries.length} draft entries ready to submit
@@ -388,7 +386,7 @@ export default function TimeTrackingPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 group-hover:scale-110 transition-transform">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-primary-500 group-hover:translate-x-1 transition-all" />
@@ -406,7 +404,7 @@ export default function TimeTrackingPage() {
             className="group bg-[var(--bg-card)] rounded-2xl border border-[var(--border-main)] p-6 hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-200 text-left"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
+              <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:scale-110 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
               <ChevronRight className="h-5 w-5 text-[var(--text-muted)] group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />

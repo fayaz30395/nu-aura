@@ -3,14 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { payrollService } from '@/lib/services/payroll.service';
 import {
-  PayrollRun,
   PayrollRunRequest,
-  Payslip,
   PayslipRequest,
-  SalaryStructure,
   SalaryStructureRequest,
   PayrollRunStatus,
-  Page,
 } from '@/lib/types/payroll';
 
 // Query keys for cache management

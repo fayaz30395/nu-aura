@@ -5,20 +5,16 @@ import { AppLayout } from '@/components/layout';
 import {
   ChevronLeft,
   ChevronRight,
-  ZoomIn,
-  ZoomOut,
   Filter,
-  Download,
   RefreshCw,
   Loader2,
   AlertCircle,
   Calendar,
-  Users,
   Target,
   Clock,
   BarChart3,
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useQuery } from '@tanstack/react-query';
 import { projectService } from '@/lib/services/project.service';
@@ -26,13 +22,10 @@ import { projectCalendarService } from '@/lib/services/project-calendar.service'
 import {
   GanttTask,
   GanttFilterOptions,
-  getStatusColor,
-  getPriorityColor,
   isTaskDelayed,
   isTaskAtRisk,
   calculateTaskDuration,
 } from '@/lib/types/project-calendar';
-import type { Task, TaskListItem } from '@/lib/types/task';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
 
@@ -48,7 +41,7 @@ const getWeekNumber = (date: Date): number => {
 export default function GanttChartPage() {
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('week');
   const [startDate, setStartDate] = useState<Date>(new Date());
-  const [filters, setFilters] = useState<GanttFilterOptions>({});
+  const [filters] = useState<GanttFilterOptions>({});
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch projects with React Query
@@ -207,8 +200,8 @@ export default function GanttChartPage() {
       <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg">
+        <div className="flex items-center gap-4">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg">
             <Calendar className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -235,7 +228,7 @@ export default function GanttChartPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-info-50 dark:bg-info-900/30">
               <Target className="h-5 w-5 text-info-600" />
             </div>
@@ -246,7 +239,7 @@ export default function GanttChartPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
               <Target className="h-5 w-5 text-emerald-600" />
             </div>
@@ -257,7 +250,7 @@ export default function GanttChartPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-rose-100 dark:bg-rose-900/30">
               <Clock className="h-5 w-5 text-rose-600" />
             </div>
@@ -268,7 +261,7 @@ export default function GanttChartPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-warning-50 dark:bg-warning-900/30">
               <AlertCircle className="h-5 w-5 text-warning-600" />
             </div>
@@ -279,7 +272,7 @@ export default function GanttChartPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-4 flex items-center gap-4">
             <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
               <Target className="h-5 w-5 text-violet-600" />
             </div>
@@ -345,7 +338,7 @@ export default function GanttChartPage() {
           <div className="min-w-[1200px]">
             {/* Timeline Header */}
             <div className="flex border-b border-[var(--border-main)]">
-              <div className="w-64 flex-shrink-0 p-3 bg-[var(--bg-secondary)] font-semibold border-r border-[var(--border-main)]">
+              <div className="w-64 flex-shrink-0 p-4 bg-[var(--bg-secondary)] font-semibold border-r border-[var(--border-main)]">
                 Task Name
               </div>
               <div className="flex-1 flex">
@@ -369,7 +362,7 @@ export default function GanttChartPage() {
                 className="flex border-b border-[var(--border-main)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]"
               >
                 {/* Task Name */}
-                <div className={`w-64 flex-shrink-0 p-3 border-r border-[var(--border-main)] ${
+                <div className={`w-64 flex-shrink-0 p-4 border-r border-[var(--border-main)] ${
                   task.type === 'project' ? 'font-semibold bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)]' : 'pl-8'
                 }`}>
                   <div className="flex items-center gap-2">

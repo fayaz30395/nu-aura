@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,7 +13,6 @@ import {
 } from '@/lib/hooks/queries/usePerformance';
 import { Goal, GoalRequest, GoalType, GoalStatus } from '@/lib/types/performance';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useToast } from '@/components/notifications/ToastProvider';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -36,8 +35,7 @@ const goalFormSchema = z.object({
 type GoalFormData = z.infer<typeof goalFormSchema>;
 
 export default function GoalsPage() {
-  const toast = useToast();
-  const { user, hasHydrated } = useAuth();
+  const { user } = useAuth();
   const goalsQuery = useEmployeeGoals(user?.employeeId || '');
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();

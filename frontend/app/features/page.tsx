@@ -16,10 +16,7 @@ import {
   Heart,
   Briefcase,
   FileText,
-  CreditCard,
   Package,
-  MapPin,
-  HelpCircle,
   MessageSquare,
   BarChart3,
   Settings,
@@ -31,7 +28,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 export default function FeaturesPage() {
@@ -387,7 +384,7 @@ export default function FeaturesPage() {
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/pricing">
                 <Button variant="ghost" size="sm">
                   Pricing
@@ -492,7 +489,7 @@ export default function FeaturesPage() {
             {integrations.map((integration, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center gap-3 group cursor-pointer"
+                className="flex flex-col items-center gap-4 group cursor-pointer"
               >
                 <div className="w-16 h-16 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-main)] flex items-center justify-center group-hover:border-primary-500 group-hover:shadow-card-hover transition-all">
                   <integration.icon className="h-8 w-8 text-[var(--text-secondary)] group-hover:text-primary-500 transition-colors" />

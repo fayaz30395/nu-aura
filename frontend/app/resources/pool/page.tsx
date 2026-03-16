@@ -54,8 +54,8 @@ export default function ResourcePoolPage() {
   const isApiUnavailable = (error instanceof Error &&
     (error as unknown as ResourceManagementApiError).isApiNotAvailable) ?? false;
 
-  // Extract employees list
-  const employees: EmployeeWorkload[] = data?.employeeWorkloads || [];
+  // Extract employees list — stable reference to prevent departments/filtered useMemo thrashing.
+  const employees = useMemo<EmployeeWorkload[]>(() => data?.employeeWorkloads ?? [], [data]);
 
   // Unique departments
   const departments = useMemo(() => {
@@ -170,7 +170,7 @@ export default function ResourcePoolPage() {
 
         {/* Summary Stats */}
         {!isLoading && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { label: 'Total Employees', value: summary.total, color: 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]', filter: 'ALL' as StatusFilter },
               { label: 'Over-Allocated', value: summary.overAllocated, color: 'bg-danger-50 text-danger-700', filter: 'OVER_ALLOCATED' as StatusFilter },
@@ -197,7 +197,7 @@ export default function ResourcePoolPage() {
         )}
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-4">
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
@@ -266,7 +266,7 @@ export default function ResourcePoolPage() {
                     return (
                       <tr key={emp.employeeId} className="hover:bg-[var(--bg-secondary)] transition-colors">
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
                             <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                               <span className="text-xs font-bold text-primary-700">
                                 {(emp.employeeName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}

@@ -13,8 +13,6 @@ import {
   AlertCircle,
   Loader2,
   MoreVertical,
-  Edit,
-  Trash2,
   Eye,
   User,
   Send,
@@ -521,8 +519,8 @@ export default function LettersPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <Files className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
@@ -534,8 +532,8 @@ export default function LettersPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-[var(--bg-surface)] p-3 dark:bg-[var(--bg-secondary)]">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-[var(--bg-surface)] p-4 dark:bg-[var(--bg-secondary)]">
                   <FilePlus className="h-6 w-6 text-[var(--text-secondary)]" />
                 </div>
                 <div>
@@ -547,8 +545,8 @@ export default function LettersPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -560,8 +558,8 @@ export default function LettersPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <FileCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -1027,7 +1025,7 @@ export default function LettersPage() {
         {/* Letter Detail Modal */}
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="rounded-lg bg-primary-100 p-2 dark:bg-primary-900">
                 <FileText className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>

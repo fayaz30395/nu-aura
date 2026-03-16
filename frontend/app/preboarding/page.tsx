@@ -6,19 +6,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   Users, UserPlus, Calendar, CheckCircle2, Clock,
-  AlertCircle, MoreVertical, Search, Mail, RefreshCw
+  Search, Mail, RefreshCw
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { useToast } from '@/components/notifications/ToastProvider';
 import {
   usePreboardingCandidates,
   useCreatePreboardingCandidate,
   useResendPreboardingInvitation,
-  type PreboardingCandidate,
   type CreatePreboardingRequest,
 } from '@/lib/hooks/queries/usePreboarding';
 
@@ -111,7 +109,6 @@ function PreBoardingModal({ onClose, createMutation }: PreBoardingModalProps) {
 }
 
 export default function PreboardingPage() {
-  const toast = useToast();
   const { data: candidates = [], isLoading: loading } = usePreboardingCandidates();
   const createCandidateMutation = useCreatePreboardingCandidate();
   const resendInvitationMutation = useResendPreboardingInvitation();

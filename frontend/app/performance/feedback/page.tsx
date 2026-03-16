@@ -25,7 +25,7 @@ const feedbackFormSchema = z.object({
 type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
 
 export default function FeedbackPage() {
-  const toast = useToast();
+  const _toast = useToast();
 
   // Get current user ID from localStorage
   const [currentUserId, setCurrentUserId] = useState('');

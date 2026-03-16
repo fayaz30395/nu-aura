@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw, Clock, CheckCircle, XCircle, AlertCircle, ArrowLeftRight, PlusCircle } from 'lucide-react';
+import { ArrowLeftRight, PlusCircle } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -267,7 +267,7 @@ export default function ShiftSwapPage() {
                   onChange={e => setForm(f => ({ ...f, reason: e.target.value }))}
                   className="w-full border border-[var(--border-strong)] rounded-md px-3 py-2 text-sm" />
               </div>
-              <div className="flex gap-3 justify-end pt-2">
+              <div className="flex gap-4 justify-end pt-2">
                 <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
                 <Button
                   onClick={() => submitMutation.mutate(form)}

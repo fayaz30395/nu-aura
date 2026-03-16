@@ -320,13 +320,13 @@ describe('getSupportedNotificationTypes', () => {
 
 describe('notificationRouteConfig', () => {
   it('should have string or function values for all entries', () => {
-    for (const [key, value] of Object.entries(notificationRouteConfig)) {
+    for (const [_key, value] of Object.entries(notificationRouteConfig)) {
       expect(['string', 'function']).toContain(typeof value);
     }
   });
 
   it('should have all function routes return strings', () => {
-    for (const [key, value] of Object.entries(notificationRouteConfig)) {
+    for (const [_key, value] of Object.entries(notificationRouteConfig)) {
       if (typeof value === 'function') {
         expect(typeof value('test-id')).toBe('string');
         expect(typeof value(undefined)).toBe('string');

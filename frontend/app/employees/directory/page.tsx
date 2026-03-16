@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -10,15 +10,12 @@ import {
   Mail,
   Phone,
   Building2,
-  Briefcase,
   Calendar,
-  MapPin,
   ChevronLeft,
   ChevronRight,
   Grid3X3,
   List,
   X,
-  MessageCircle,
   UserCircle,
   Loader2,
 } from 'lucide-react';
@@ -103,10 +100,10 @@ const statusOptions = [
 ];
 
 export default function TeamDirectory() {
-  const { user } = useAuth();
+  useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
@@ -138,13 +135,14 @@ export default function TeamDirectory() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const deptData = departmentResponse || [];
+  // Stable reference: prevents the useEffect below from running on every render.
+  const deptData = useMemo(() => departmentResponse ?? [], [departmentResponse]);
   React.useEffect(() => {
     setDepartments(deptData);
   }, [deptData]);
 
   // React Query - search employees with filters
-  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 }, isLoading } = useQuery({
+  const { data: employeeSearchResponse = { content: [], totalPages: 0, totalElements: 0 } } = useQuery({
     queryKey: ['employees', 'directory', filters],
     queryFn: async () => {
       const response = await apiClient.post<{
@@ -225,7 +223,7 @@ export default function TeamDirectory() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-4">
                 <Users className="w-7 h-7 text-primary-600 dark:text-primary-400" />
                 Team Directory
               </h1>
@@ -560,7 +558,7 @@ export default function TeamDirectory() {
                           className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                         >
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
                               <div
                                 className={`w-10 h-10 rounded-full ${getRandomColor(
                                   employee.fullName
@@ -751,7 +749,7 @@ export default function TeamDirectory() {
 
                   <div className="space-y-4">
                     {selectedEmployee.departmentName && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Building2 className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Department</p>
@@ -763,7 +761,7 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.personalEmail && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Mail className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
                           <p className="text-xs text-[var(--text-muted)]">Email</p>
@@ -781,7 +779,7 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.phoneNumber && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Phone className="w-5 h-5 text-[var(--text-muted)]" />
                         <div className="flex-1">
                           <p className="text-xs text-[var(--text-muted)]">Phone</p>
@@ -799,7 +797,7 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.managerName && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <UserCircle className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Reports To</p>
@@ -811,7 +809,7 @@ export default function TeamDirectory() {
                     )}
 
                     {selectedEmployee.joiningDate && (
-                      <div className="flex items-center gap-3 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                      <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                         <Calendar className="w-5 h-5 text-[var(--text-muted)]" />
                         <div>
                           <p className="text-xs text-[var(--text-muted)]">Joined</p>
@@ -827,7 +825,7 @@ export default function TeamDirectory() {
                     )}
                   </div>
 
-                  <div className="mt-6 flex gap-3">
+                  <div className="mt-6 flex gap-4">
                     <button
                       onClick={() => setSelectedEmployee(null)}
                       className="flex-1 px-4 py-2.5 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-xl hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors font-medium"

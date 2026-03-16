@@ -7,14 +7,10 @@ import {
     Users,
     UserPlus,
     Calendar,
-    CheckCircle2,
     Clock,
-    AlertCircle,
-    MoreVertical,
     Search,
     Filter,
     ChevronRight,
-    Settings,
     Zap,
     TrendingUp,
     ShieldCheck,
@@ -22,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -32,7 +28,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 
 export default function OnboardingPage() {
     const router = useRouter();
-    const { user, hasHydrated } = useAuth();
+    useAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
@@ -81,7 +77,7 @@ export default function OnboardingPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <Button
                             variant="outline"
                             className="font-black tracking-widest uppercase text-xs rounded-2xl"
@@ -113,7 +109,7 @@ export default function OnboardingPage() {
                             <Card className="border-0 shadow-2xl bg-[var(--bg-card)]">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between mb-4">
-                                        <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
+                                        <div className={`p-4 rounded-2xl ${stat.bg} ${stat.color}`}>
                                             <stat.icon className="h-6 w-6" />
                                         </div>
                                         <TrendingUp className="h-4 w-4 text-emerald-500" />
@@ -214,7 +210,7 @@ export default function OnboardingPage() {
                                                 <div className="flex items-center justify-between sm:justify-end gap-10">
                                                     <div className="text-right hidden sm:block">
                                                         <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Momentum</span>
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-4">
                                                             <div className="w-32 h-2.5 bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
                                                                 <motion.div
                                                                     initial={{ width: 0 }}

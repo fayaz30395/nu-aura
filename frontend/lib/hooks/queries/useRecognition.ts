@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recognitionService } from '@/lib/services/recognition.service';
-import type { Recognition, RecognitionRequest, EmployeePoints, ReactionType } from '@/lib/types/recognition';
+import type { RecognitionRequest, ReactionType } from '@/lib/types/recognition';
 import { notifications } from '@mantine/notifications';
 
 // ─── Query Key Factory ─────────────────────────────────────────────────────

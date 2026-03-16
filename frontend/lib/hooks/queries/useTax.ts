@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { taxService } from '@/lib/services/tax.service';
-import { TaxDeclarationRequest, TaxDeclarationResponse } from '@/lib/types/tax';
+import { TaxDeclarationRequest } from '@/lib/types/tax';
 import { notifications } from '@mantine/notifications';
 
 // Query keys for cache management

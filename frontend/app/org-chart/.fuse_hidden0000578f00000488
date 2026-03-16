@@ -1,0 +1,302 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { AppLayout } from '@/components/layout';
+import { useEmployees, useEmployeeHierarchy } from '@/lib/hooks/queries/useEmployees';
+import { useActiveDepartments } from '@/lib/hooks/queries/useDepartments';
+import { Employee, Department } from '@/lib/types/employee';
+
+interface TreeNode extends Employee {
+  children?: TreeNode[];
+}
+
+export default function OrgChartPage() {
+  const [viewMode, setViewMode] = useState<'hierarchy' | 'department'>('hierarchy');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+  const [orgTree, setOrgTree] = useState<TreeNode[]>([]);
+
+  // React Query - fetch employees and departments
+  const { data: employeeResponse, isLoading: employeesLoading, error: employeesError } = useEmployees(0, 1000);
+  const { data: departments = [], isLoading: departmentsLoading } = useActiveDepartments();
+
+  const employees = employeeResponse?.content ?? [];
+  const isLoading = employeesLoading || departmentsLoading;
+  const error = employeesError
+    ? employeesError instanceof Error
+      ? employeesError.message
+      : 'Failed to load organization data'
+    : null;
+
+  // Rebuild org tree when employees, viewMode, or selectedDepartment changes
+  useEffect(() => {
+    if (employees.length > 0) {
+      buildOrgTree();
+    }
+  }, [employees, viewMode, selectedDepartment]);
+
+  const buildOrgTree = () => {
+    let filteredEmployees = employees;
+
+    if (selectedDepartment) {
+      filteredEmployees = employees.filter(emp => emp.departmentId === selectedDepartment);
+    }
+
+    // Find root employees (no manager or manager not in filtered list)
+    const roots = filteredEmployees.filter(emp =>
+      !emp.managerId || !filteredEmployees.find(e => e.id === emp.managerId)
+    );
+
+    const buildTree = (employee: Employee): TreeNode => {
+      const children = filteredEmployees
+        .filter(emp => emp.managerId === employee.id)
+        .map(buildTree)
+        .sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+      return { ...employee, children };
+    };
+
+    const tree = roots.map(buildTree);
+    setOrgTree(tree);
+  };
+
+  const renderEmployeeCard = (employee: TreeNode, depth: number = 0) => {
+    const hasChildren = employee.children && employee.children.length > 0;
+    const levelColors: Record<string, string> = {
+      'CXO': 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-300 dark:border-purple-700',
+      'SVP': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-700/50',
+      'VP': 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700',
+      'DIRECTOR': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700/50',
+      'SENIOR_MANAGER': 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700',
+      'MANAGER': 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700/50',
+      'LEAD': 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700',
+      'SENIOR': 'bg-[var(--bg-surface)] text-gray-800 border-[var(--border-strong)] dark:bg-[var(--bg-surface)] dark:text-gray-300 dark:border-[var(--border-strong)]',
+      'MID': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
+      'ENTRY': 'bg-[var(--bg-secondary)]/50 text-[var(--text-secondary)] border-[var(--border-main)] dark:bg-[var(--bg-secondary)]/50 dark:text-[var(--text-secondary)] dark:border-[var(--border-main)]',
+    };
+
+    const cardColor = employee.level ? levelColors[employee.level] : 'bg-white border-[var(--border-main)]';
+
+    return (
+      <div key={employee.id} className="flex flex-col items-center">
+        {/* Employee Card */}
+        <div
+          className={`
+            relative p-4 rounded-lg border-2 shadow-md
+            ${cardColor}
+            min-w-[280px] max-w-[280px]
+            hover:shadow-lg transition-shadow cursor-pointer
+          `}
+        >
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center border-2 border-current">
+                <span className="text-lg font-bold">
+                  {employee.firstName.charAt(0)}{employee.lastName?.charAt(0) || ''}
+                </span>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold truncate">{employee.fullName}</h3>
+              <p className="text-xs font-medium mt-1 truncate">{employee.designation}</p>
+              {employee.level && (
+                <span className="inline-block mt-2 px-2 py-0.5 text-xs font-semibold rounded bg-white bg-opacity-50">
+                  {employee.level.replace('_', ' ')}
+                </span>
+              )}
+              {employee.departmentName && (
+                <p className="text-xs mt-1 truncate opacity-90">
+                  {employee.departmentName}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {hasChildren && (
+            <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
+              <div className="bg-gray-300 rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+                {employee.children!.length}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Children */}
+        {hasChildren && (
+          <div className="relative mt-12">
+            {/* Vertical line from parent */}
+            <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
+
+            {/* Horizontal line connecting children */}
+            {employee.children!.length > 1 && (
+              <div
+                className="absolute top-0 h-0.5 bg-gray-300"
+                style={{
+                  left: '50%',
+                  right: '50%',
+                  width: `${(employee.children!.length - 1) * 320}px`,
+                  marginLeft: `-${((employee.children!.length - 1) * 320) / 2}px`
+                }}
+              />
+            )}
+
+            <div className="flex space-x-10 justify-center">
+              {employee.children!.map((child, index) => (
+                <div key={child.id} className="relative">
+                  {/* Vertical line to child */}
+                  <div className="absolute left-1/2 -top-0 w-0.5 h-8 bg-gray-300 transform -translate-x-1/2" />
+                  {renderEmployeeCard(child, depth + 1)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderDepartmentView = () => {
+    const deptGroups: Record<string, Employee[]> = {};
+
+    employees.forEach(emp => {
+      const deptKey = emp.departmentName || 'Unassigned';
+      if (!deptGroups[deptKey]) {
+        deptGroups[deptKey] = [];
+      }
+      deptGroups[deptKey].push(emp);
+    });
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Object.entries(deptGroups).map(([deptName, emps]) => (
+          <div key={deptName} className="bg-white rounded-lg border border-[var(--border-main)] shadow-sm">
+            <div className="bg-[var(--bg-secondary)]/50 px-4 py-3 border-b border-[var(--border-main)]">
+              <h3 className="font-semibold text-[var(--text-primary)]">{deptName}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{emps.length} employees</p>
+            </div>
+            <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
+              {emps.map(emp => (
+                <div key={emp.id} className="flex items-center space-x-4 p-2 hover:bg-[var(--bg-secondary)]/50 rounded">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                    <span className="text-xs font-medium text-primary-700">
+                      {emp.firstName.charAt(0)}{emp.lastName?.charAt(0) || ''}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{emp.fullName}</p>
+                    <p className="text-xs text-[var(--text-secondary)] truncate">{emp.designation}</p>
+                  </div>
+                  {emp.level && (
+                    <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
+                      {emp.level}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <AppLayout activeMenuItem="org-chart">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">Organization Chart</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Visualize your company structure and reporting relationships
+          </p>
+        </div>
+
+        {/* Controls */}
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-center">
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-medium text-[var(--text-secondary)]">View:</label>
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as 'hierarchy' | 'department')}
+              className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="hierarchy">Hierarchy View</option>
+              <option value="department">Department View</option>
+            </select>
+          </div>
+
+          {viewMode === 'hierarchy' && (
+            <div className="flex items-center space-x-2">
+              <label className="text-sm font-medium text-[var(--text-secondary)]">Department:</label>
+              <select
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
+                className="px-3 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="">All Departments</option>
+                {departments.map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="ml-auto flex items-center space-x-2 text-xs text-[var(--text-secondary)]">
+            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded">Executive</span>
+            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Director/VP</span>
+            <span className="px-2 py-1 bg-green-100 text-green-800 rounded">Manager</span>
+            <span className="px-2 py-1 bg-[var(--bg-surface)] text-gray-800 rounded">Individual Contributor</span>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="bg-[var(--bg-secondary)] rounded-lg shadow-sm p-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                <p className="mt-4 text-[var(--text-secondary)]">Loading organization chart...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center text-red-600">
+                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="mt-2">{error}</p>
+              </div>
+            </div>
+          ) : employees.length === 0 ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center text-[var(--text-secondary)]">
+                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <p className="mt-2">No employees found</p>
+              </div>
+            </div>
+          ) : viewMode === 'department' ? (
+            renderDepartmentView()
+          ) : (
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full">
+                {orgTree.length > 0 ? (
+                  <div className="flex flex-col space-y-12">
+                    {orgTree.map(root => renderEmployeeCard(root))}
+                  </div>
+                ) : (
+                  <div className="text-center text-[var(--text-secondary)] py-12">
+                    <p>No organizational hierarchy found</p>
+                    <p className="text-sm mt-2">Set up manager relationships in employee profiles</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

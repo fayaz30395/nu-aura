@@ -11,7 +11,6 @@ import {
   MobileQuickLeaveRequest,
   MobileCancelLeaveRequest,
   PendingApprovalsResponse,
-  MobileApprovalActionRequest,
   MobileBulkApprovalRequest,
   ApprovalActionResponse,
   UnreadNotificationsResponse,
@@ -19,7 +18,6 @@ import {
   MobileMarkReadRequest,
   MarkReadResponse,
   SyncResponse,
-  MobileSyncRequest,
 } from '../types/mobile-api';
 
 const MOBILE_API_BASE = '/api/v1/mobile';

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   User,
@@ -22,7 +23,7 @@ import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployee, useUpdateEmployee } from '@/lib/hooks/queries';
-import { Employee, UpdateEmployeeRequest } from '@/lib/types/employee';
+import { UpdateEmployeeRequest } from '@/lib/types/employee';
 import { getInitials } from '@/lib/utils';
 
 export default function MyProfilePage() {
@@ -260,12 +261,13 @@ export default function MyProfilePage() {
             <div className="flex flex-col md:flex-row items-start md:items-end gap-6 -mt-16">
               <div className="relative">
                 {employee.profilePhotoUrl && !photoLoadError ? (
-                  <img
+                  <Image
                     src={employee.profilePhotoUrl}
                     alt={displayName}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-[var(--bg-input)]"
+                    width={128}
+                    height={128}
+                    className="rounded-full object-cover border-4 border-white dark:border-slate-900 shadow-lg bg-[var(--bg-input)]"
                     onError={() => setPhotoLoadError(true)}
-                    loading="lazy"
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-[var(--bg-input)] border-4 border-white dark:border-slate-900 flex items-center justify-center text-4xl font-bold text-primary-600 shadow-lg">

@@ -13,7 +13,6 @@ import {
   Eye,
   RefreshCw,
   Calendar,
-  User,
   Tag,
   Send,
   Trash2,
@@ -27,9 +26,9 @@ import dynamic from 'next/dynamic';
 import { Skeleton, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+
 import { Button } from '@/components/ui/Button';
-import { layout, typography, card, motion as dsMotion, iconSize, status } from '@/lib/design-system';
+import { card, motion as dsMotion } from '@/lib/design-system';
 import {
   useBlogPost,
   useComments,
@@ -49,29 +48,6 @@ const ContentViewer = dynamic(
   () => import('@/components/fluence/ContentViewer'),
   { ssr: false, loading: () => <Skeleton height={300} radius="md" /> }
 );
-
-interface BlogPost {
-  id: string;
-  title: string;
-  content: string;
-  excerpt?: string;
-  authorName?: string;
-  authorId: string;
-  publishedAt?: string;
-  updatedAt: string;
-  coverImageUrl?: string;
-  categoryName?: string;
-  viewCount?: number;
-  likeCount?: number;
-  commentCount?: number;
-  isLikedByCurrentUser?: boolean;
-  isFavoritedByCurrentUser?: boolean;
-  canEdit?: boolean;
-  visibility?: string;
-  departmentName?: string;
-  editorIds?: string[];
-  tags?: string[];
-}
 
 interface Comment {
   id: string;

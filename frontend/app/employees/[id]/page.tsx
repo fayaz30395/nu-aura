@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Employee } from '@/lib/types/employee';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import { EntityType } from '@/lib/types/custom-fields';
 import { AppLayout } from '@/components/layout';
@@ -126,7 +125,7 @@ export default function EmployeeDetailPage() {
                 </button>
                 <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <button
                   onClick={() => router.push(`/employees/${employeeId}/edit`)}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md"
@@ -504,7 +503,7 @@ export default function EmployeeDetailPage() {
               <p className="text-sm text-[var(--text-muted)] mb-6">
                 Are you sure you want to delete <strong>{employee.fullName}</strong>? This action cannot be undone.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   disabled={deleteEmployeeMutation.isPending}

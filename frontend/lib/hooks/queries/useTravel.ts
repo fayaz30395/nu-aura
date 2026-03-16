@@ -2,8 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  TravelRequest,
-  TravelExpense,
   TravelStatus,
   TravelRequestFilters,
 } from '@/lib/types/travel';
@@ -324,7 +322,7 @@ export function useCreateTravelExpense() {
   return useMutation({
     mutationFn: (data: Parameters<typeof travelService.createTravelExpense>[0]) =>
       travelService.createTravelExpense(data),
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: travelKeys.expenses() });
       queryClient.invalidateQueries({
         queryKey: travelKeys.expenses(),

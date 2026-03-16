@@ -34,17 +34,14 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   EmptyState,
   ConfirmDialog,
 } from '@/components/ui';
 import {
-  BenefitPlan,
   BenefitEnrollment,
   BenefitClaim,
   CoverageLevel,
   ClaimRequest,
-  EmployeeBenefitsSummary,
 } from '@/lib/types/benefits';
 import {
   useActiveBenefitPlans,
@@ -53,7 +50,6 @@ import {
   useEnrollEmployee,
   useTerminateEnrollment,
   useSubmitBenefitClaim,
-  useProcessBenefitClaim,
 } from '@/lib/hooks/queries';
 
 const enrollmentFormSchema = z.object({
@@ -171,8 +167,6 @@ export default function BenefitsPage() {
   const [selectedBenefit, setSelectedBenefit] = useState<DisplayBenefit | null>(null);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
-  const [enrolling, setEnrolling] = useState(false);
-  const [submittingClaim, setSubmittingClaim] = useState(false);
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
   const [selectedEnrollmentForTerminate, setSelectedEnrollmentForTerminate] = useState<string | null>(null);
 
@@ -183,7 +177,6 @@ export default function BenefitsPage() {
   const enrollMutation = useEnrollEmployee();
   const terminateMutation = useTerminateEnrollment();
   const submitClaimMutation = useSubmitBenefitClaim();
-  const processClaimMutation = useProcessBenefitClaim();
 
   // Form setup for enrollment
   const {
@@ -191,7 +184,6 @@ export default function BenefitsPage() {
     handleSubmit: handleSubmitEnrollment,
     reset: resetEnrollmentForm,
     formState: { errors: enrollmentErrors, isSubmitting: isEnrollingForm },
-    watch: watchEnrollment,
   } = useForm<EnrollmentFormData>({
     resolver: zodResolver(enrollmentFormSchema),
     defaultValues: {
@@ -433,8 +425,8 @@ export default function BenefitsPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-4 dark:bg-green-900">
                   <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -446,8 +438,8 @@ export default function BenefitsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900">
                   <DollarSign className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -459,8 +451,8 @@ export default function BenefitsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-purple-100 p-4 dark:bg-purple-900">
                   <Gift className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -472,8 +464,8 @@ export default function BenefitsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-100 p-3 dark:bg-amber-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900">
                   <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
@@ -487,8 +479,8 @@ export default function BenefitsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-cyan-100 p-3 dark:bg-cyan-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-cyan-100 p-4 dark:bg-cyan-900">
                   <CreditCard className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div>
@@ -551,8 +543,8 @@ export default function BenefitsPage() {
                   {benefits.filter((b) => b.isEnrolled).map((benefit) => (
                     <Card key={benefit.id} className="hover:shadow-lg transition-shadow">
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div className={`rounded-lg p-3 ${getBenefitColor(benefit.type)}`}>
+                        <div className="flex items-start gap-4">
+                          <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)}`}>
                             {getBenefitIcon(benefit.type)}
                           </div>
                           <div className="flex-1">
@@ -596,8 +588,8 @@ export default function BenefitsPage() {
                   {benefits.filter((b) => !b.isEnrolled).map((benefit) => (
                     <Card key={benefit.id} className="hover:shadow-lg transition-shadow border-dashed">
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div className={`rounded-lg p-3 ${getBenefitColor(benefit.type)} opacity-60`}>
+                        <div className="flex items-start gap-4">
+                          <div className={`rounded-lg p-4 ${getBenefitColor(benefit.type)} opacity-60`}>
                             {getBenefitIcon(benefit.type)}
                           </div>
                           <div className="flex-1">
@@ -676,7 +668,7 @@ export default function BenefitsPage() {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{enrollment.benefitPlanName}</h3>
                           <Badge variant={enrollment.status === 'ACTIVE' ? 'success' : 'default'}>
                             {enrollment.status}
@@ -750,7 +742,7 @@ export default function BenefitsPage() {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-4 mb-2">
                           <h3 className="font-semibold text-lg">{claim.claimNumber}</h3>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${claimStatusColors[claim.status] || ''}`}>
                             {claim.status}
@@ -816,7 +808,7 @@ export default function BenefitsPage() {
         {/* Enrollment Modal */}
         <Modal isOpen={isEnrollModalOpen} onClose={() => setIsEnrollModalOpen(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {selectedBenefit && (
                 <>
                   <div className={`rounded-lg p-2 ${getBenefitColor(selectedBenefit.type)}`}>

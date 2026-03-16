@@ -15,11 +15,8 @@ import {
   Divider,
   Grid,
   Group,
-  NumberInput,
-  Select,
   Stack,
   Text,
-  TextInput,
   Title,
   Alert,
   Badge,
@@ -94,9 +91,6 @@ export default function StatutoryPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  if (!permReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
-    return null;
-  }
   const [result, setResult] = useState<StatutoryDeductions | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,6 +104,11 @@ export default function StatutoryPage() {
       state: 'Karnataka',
     },
   });
+
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
+    return null;
+  }
 
   async function handleCalculate(values: PreviewFormValues) {
     setLoading(true);

@@ -44,7 +44,6 @@ export function AuthGuard({
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
-    hasRole,
     hasAnyRole,
     hasAllRoles,
     isAdmin,
@@ -125,6 +124,10 @@ export function AuthGuard({
     if (!authorized) {
       console.warn(`[AuthGuard] Access denied to ${pathname}`);
     }
+    // Intentional omissions: checkAuthorization is a stable hoisted function; router is stable
+    // from useRouter; restoreSession is a stable Zustand action; isRestoringSession is omitted
+    // to avoid an infinite loop (this effect sets it indirectly via restoreSession().then()).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, isAuthenticated, hasHydrated, isReady, isSuperAdmin]);
 
   function checkAuthorization(config: RouteConfig): boolean {

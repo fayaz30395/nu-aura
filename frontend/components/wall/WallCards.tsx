@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Pin,
@@ -169,7 +170,7 @@ function CardHeader({
 
 // ==================== PostCard ====================
 
-interface PostCardProps extends BaseCardProps {}
+type PostCardProps = BaseCardProps;
 
 export function PostCard({
   post,
@@ -219,10 +220,14 @@ export function PostCard({
             {/* Image */}
             {post.imageUrl && (
               <div className="overflow-hidden rounded-lg bg-[var(--bg-secondary)]">
-                <img
+                <Image
                   src={post.imageUrl}
                   alt="Post content"
+                  width={800}
+                  height={450}
                   className="h-auto w-full object-cover"
+                  style={{ width: '100%', height: 'auto' }}
+                  unoptimized
                 />
               </div>
             )}
@@ -399,7 +404,7 @@ function PollOption({
   option,
   hasVoted,
   userVotedOptionId,
-  totalVotes,
+  totalVotes: _totalVotes,
   onVote,
 }: PollOptionProps): JSX.Element {
   const isSelected = userVotedOptionId === option.id;
@@ -453,7 +458,7 @@ function PollOption({
 
 // ==================== PraiseCard ====================
 
-interface PraiseCardProps extends BaseCardProps {}
+type PraiseCardProps = BaseCardProps;
 
 export function PraiseCard({
   post,

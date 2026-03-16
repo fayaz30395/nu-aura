@@ -3,8 +3,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { letterService } from '@/lib/services/letter.service';
 import {
-  LetterTemplate,
-  GeneratedLetter,
   GenerateLetterRequest,
   GenerateOfferLetterRequest,
   LetterCategory,
@@ -109,7 +107,7 @@ export function useLetterTemplate(templateId: string, enabled: boolean = true) {
 
 export function useGenerateLetter() {
   const queryClient = useQueryClient();
-  const userId = ''; // Will be set via useAuth in the component
+  const _userId = ''; // Will be set via useAuth in the component
 
   return useMutation({
     mutationFn: ({ data, generatedBy }: { data: GenerateLetterRequest; generatedBy: string }) =>

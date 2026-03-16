@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   MessageSquare,
   HelpCircle,
-  Building2,
   Clock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -108,7 +107,7 @@ export default function ContactPage() {
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/pricing">
                 <Button variant="ghost" size="sm">
                   Pricing
@@ -129,10 +128,10 @@ export default function ContactPage() {
             Contact Us
           </Badge>
           <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4">
-            Let's start a conversation
+            Let&apos;s start a conversation
           </h1>
           <p className="text-xl text-[var(--text-secondary)] mb-8">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
           </p>
         </div>
       </section>
@@ -185,7 +184,7 @@ export default function ContactPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 rounded-lg bg-success-50 dark:bg-success-950 border border-success-200 dark:border-success-800 flex items-start gap-3"
+                  className="mb-6 p-4 rounded-lg bg-success-50 dark:bg-success-950 border border-success-200 dark:border-success-800 flex items-start gap-4"
                 >
                   <CheckCircle2 className="h-5 w-5 text-success-600 dark:text-success-400 flex-shrink-0 mt-0.5" />
                   <div>
@@ -193,7 +192,7 @@ export default function ContactPage() {
                       Message sent successfully!
                     </p>
                     <p className="text-sm text-success-600 dark:text-success-400 mt-1">
-                      We'll get back to you shortly.
+                      We&apos;ll get back to you shortly.
                     </p>
                   </div>
                 </motion.div>
@@ -348,7 +347,7 @@ export default function ContactPage() {
                   },
                 ].map((faq, index) => (
                   <Card key={index} padding="md">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-4">
                       <HelpCircle className="h-5 w-5 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
@@ -373,7 +372,7 @@ export default function ContactPage() {
               Our Offices
             </h2>
             <p className="text-lg text-[var(--text-secondary)]">
-              We're a global team with offices around the world
+              We&apos;re a global team with offices around the world
             </p>
           </div>
 

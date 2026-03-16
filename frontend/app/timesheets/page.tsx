@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { logger } from '@/lib/utils/logger';
 import {
   Clock,
   Plus,
-  Calendar,
   CheckCircle,
   AlertCircle,
   Loader2,
@@ -32,8 +30,7 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useEmployeeTimesheets, useTimesheetEntries, useCreateTimesheet, useSubmitTimesheet, useAddTimeEntry } from '@/lib/hooks/queries/useTimesheets';
 import { useProjects } from '@/lib/hooks/queries/useProjects';
-import { Timesheet, TimeEntry, ActivityType, CreateTimeEntryRequest } from '@/lib/types/timesheet';
-import { Project } from '@/lib/types/project';
+import { Timesheet, ActivityType, CreateTimeEntryRequest } from '@/lib/types/timesheet';
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -76,7 +73,6 @@ const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
 ];
 
 export default function TimesheetsPage() {
-  const router = useRouter();
   const { user, isAuthenticated, hasHydrated } = useAuth();
 
   // React Query hooks
@@ -323,8 +319,8 @@ export default function TimesheetsPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary-100 p-3 dark:bg-primary-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-primary-100 p-4 dark:bg-primary-900">
                   <Timer className="h-6 w-6 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
@@ -336,8 +332,8 @@ export default function TimesheetsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-warning-100 p-3 dark:bg-warning-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
                   <Clock className="h-6 w-6 text-warning-600 dark:text-warning-400" />
                 </div>
                 <div>
@@ -349,8 +345,8 @@ export default function TimesheetsPage() {
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-success-100 p-3 dark:bg-success-900">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
                   <CheckCircle className="h-6 w-6 text-success-600 dark:text-success-400" />
                 </div>
                 <div>
@@ -539,7 +535,7 @@ export default function TimesheetsPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="rounded-lg bg-[var(--bg-secondary)] p-3 dark:bg-[var(--bg-secondary)]">
+                        <div className="rounded-lg bg-[var(--bg-secondary)] p-4 dark:bg-[var(--bg-secondary)]">
                           <FileSpreadsheet className="h-5 w-5 text-[var(--text-secondary)]" />
                         </div>
                         <div>
@@ -620,7 +616,7 @@ export default function TimesheetsPage() {
         {/* Timesheet Detail Modal */}
         <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
           <ModalHeader>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="rounded-lg bg-primary-100 p-2 dark:bg-primary-900">
                 <FileSpreadsheet className="h-6 w-6 text-primary-600 dark:text-primary-400" />
               </div>
@@ -650,7 +646,7 @@ export default function TimesheetsPage() {
                 </div>
 
                 {selectedTimesheet.rejectionReason && (
-                  <div className="p-3 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
+                  <div className="p-4 bg-danger-50 dark:bg-danger-900/20 rounded-lg text-danger-700 dark:text-danger-300">
                     <strong>Rejection Reason:</strong> {selectedTimesheet.rejectionReason}
                   </div>
                 )}
@@ -671,7 +667,7 @@ export default function TimesheetsPage() {
                       {entriesData.map((entry) => (
                         <div
                           key={entry.id}
-                          className="p-3 bg-[var(--bg-secondary)] rounded-lg"
+                          className="p-4 bg-[var(--bg-secondary)] rounded-lg"
                         >
                           <div className="flex items-center justify-between">
                             <div>

@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import {
   WorkloadHeatmapRow,
   WorkloadHeatmapCell,
-  getAllocationStatusColor,
   formatAllocationPercentage,
   ALLOCATION_THRESHOLDS,
 } from '@/lib/types/resource-management';

@@ -7,7 +7,6 @@ import {
   FileText,
   ArrowLeft,
   Copy,
-  Edit,
   Eye,
   Tag,
   Calendar,
@@ -19,7 +18,7 @@ import dynamic from 'next/dynamic';
 import { Skeleton, TextInput, Select, Modal } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -29,7 +28,7 @@ import {
   useDeleteFluenceTemplate,
   useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
-import { instantiateTemplateSchema } from '@/lib/validations/fluence';
+
 import type { InstantiateTemplateRequest } from '@/lib/types/fluence';
 
 const ContentViewer = dynamic(

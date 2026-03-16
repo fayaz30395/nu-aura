@@ -11,17 +11,13 @@ import {
   Database,
   Key,
   FileCheck,
-  AlertTriangle,
   Eye,
   CloudLightning,
   Check,
   Download,
-  BarChart3,
-  Users,
-  Fingerprint,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 export default function SecurityPage() {
@@ -155,7 +151,7 @@ export default function SecurityPage() {
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-bold text-[var(--text-primary)]">NU-AURA</span>
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href="/pricing">
                 <Button variant="ghost" size="sm">
                   Pricing
@@ -281,7 +277,7 @@ export default function SecurityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {complianceFeatures.map((feature, index) => (
               <Card key={index} padding="lg">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4">
                   <Check className="h-6 w-6 text-success-500 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-1">

@@ -15,7 +15,7 @@ vi.mock('@/lib/api/client', () => ({
 import { homeService } from './home.service';
 import { apiClient } from '@/lib/api/client';
 
-const mockedApiClient = apiClient as any;
+const mockedApiClient = apiClient as { get: ReturnType<typeof vi.fn> };
 
 describe('HomeService', () => {
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe('HomeService', () => {
     });
 
     it('should fetch birthdays with custom days parameter', async () => {
-      const mockBirthdays: any[] = [];
+      const mockBirthdays: never[] = [];
       mockedApiClient.get.mockResolvedValueOnce({ data: mockBirthdays });
 
       const result = await homeService.getUpcomingBirthdays(14);

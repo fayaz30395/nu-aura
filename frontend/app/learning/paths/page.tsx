@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -8,7 +9,6 @@ import {
   ArrowLeft,
   BookOpen,
   Clock,
-  BarChart2,
   Users,
   Play,
   CheckCircle2,
@@ -167,11 +167,15 @@ export default function LearningPathsPage() {
               <div key={path.id} className="bg-[var(--bg-input)] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 {/* Thumbnail */}
                 {path.thumbnailUrl ? (
-                  <img
-                    src={path.thumbnailUrl}
-                    alt={path.title}
-                    className="w-full h-40 object-cover"
-                  />
+                  <div className="relative w-full h-40">
+                    <Image
+                      src={path.thumbnailUrl}
+                      alt={path.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-40 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                     <Zap className="h-12 w-12 text-white opacity-50" />
@@ -196,7 +200,7 @@ export default function LearningPathsPage() {
                   )}
 
                   {/* Meta Info */}
-                  <div className="flex flex-wrap gap-3 mb-4 text-xs text-[var(--text-secondary)]">
+                  <div className="flex flex-wrap gap-4 mb-4 text-xs text-[var(--text-secondary)]">
                     <div className="flex items-center gap-1">
                       <BookOpen className="h-4 w-4" />
                       {path.courseCount} {path.courseCount === 1 ? 'course' : 'courses'}

@@ -3,10 +3,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   lmsService,
-  Course,
-  CourseEnrollment,
-  Certificate,
-  LmsDashboard,
 } from '@/lib/services/lms.service';
 
 // ─── Query Keys ─────────────────────────────────────────────────────────────

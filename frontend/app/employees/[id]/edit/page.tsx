@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { employeeService } from '@/lib/services/employee.service';
 import { departmentService } from '@/lib/services/department.service';
 import { employmentChangeRequestService } from '@/lib/services/employment-change-request.service';
-import { Employee, UpdateEmployeeRequest, Department, Gender, EmploymentType, EmployeeLevel, JobRole, EmployeeStatus } from '@/lib/types/employee';
+import { Employee, UpdateEmployeeRequest, Department } from '@/lib/types/employee';
 import { toGender, toEmploymentType, toEmployeeLevel, toJobRole, toEmployeeStatus } from '@/lib/utils/type-guards';
 import { CreateEmploymentChangeRequest } from '@/lib/types/employment-change-request';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
@@ -91,9 +91,16 @@ export default function EditEmployeePage() {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     loadEmployee();
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     loadManagers();
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     loadDepartments();
+    // The three load functions are intentionally omitted from deps:
+    // they only depend on `employeeId` (already listed) and stable service refs.
+    // Including them without useCallback would cause an infinite re-render loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employeeId]);
 
   const loadEmployee = async () => {
@@ -359,7 +366,7 @@ export default function EditEmployeePage() {
         {/* Change Request Success Message */}
         {changeRequestCreated && (
           <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <Clock className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
@@ -707,7 +714,7 @@ export default function EditEmployeePage() {
               <div className="space-y-4">
                 {/* Approval Notice */}
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-md p-4">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-4">
                     <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
@@ -1103,7 +1110,7 @@ export default function EditEmployeePage() {
             )}
 
             {/* Form Actions */}
-            <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+            <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
               <button
                 type="button"
                 onClick={() => router.push(`/employees/${employeeId}`)}

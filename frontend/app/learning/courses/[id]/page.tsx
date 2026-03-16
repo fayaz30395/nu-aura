@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout';
 import {
   ArrowLeft,
   Clock,
-  BarChart2,
   BookOpen,
   Users,
   Star,
@@ -20,10 +20,9 @@ import {
   Download,
   AlertCircle,
 } from 'lucide-react';
-import { Course } from '@/lib/services/lms.service';
 import { apiClient } from '@/lib/api/client';
 import { useToast } from '@/components/notifications/ToastProvider';
-import { useCourseDetail, useCourseEnrollment, useMyEnrollments, useEnrollCourse } from '@/lib/hooks/queries/useLearning';
+import { useCourseDetail, useMyEnrollments, useEnrollCourse } from '@/lib/hooks/queries/useLearning';
 
 const DIFFICULTY_COLOR = {
   BEGINNER: 'bg-green-100 text-green-700',
@@ -103,7 +102,7 @@ export default function CourseDetailPage() {
       link.download = `certificate-${enrollment.certificateId}.pdf`;
       link.click();
       window.URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to download certificate');
     } finally {
       setDownloadingCert(false);
@@ -208,7 +207,7 @@ export default function CourseDetailPage() {
               
               {/* Completion percentage */}
               <div className="mb-6">
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-4 mb-3">
                   <div className="flex-1 h-3 bg-gray-200 dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full transition-all duration-500" style={{ width: `${completionPercentage}%` }} />
                   </div>
@@ -279,7 +278,7 @@ export default function CourseDetailPage() {
                           {quiz.description && (
                             <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-1">{quiz.description}</p>
                           )}
-                          <div className="flex flex-wrap gap-3 mt-2 text-xs text-[var(--text-secondary)]">
+                          <div className="flex flex-wrap gap-4 mt-2 text-xs text-[var(--text-secondary)]">
                             <span>{quiz.totalQuestions} questions</span>
                             {quiz.timeLimit && <span>{quiz.timeLimit} min time limit</span>}
                             <span className="text-blue-600 dark:text-blue-400 font-medium">{quiz.passingScore}% to pass</span>
@@ -323,7 +322,7 @@ export default function CourseDetailPage() {
                         onClick={() => toggleModule(mod.id)}
                         className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-[var(--bg-surface)] dark:hover:bg-gray-700/50 transition-colors"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           <span className="text-xs font-bold text-[var(--text-muted)] w-5">{idx + 1}</span>
                           <div>
                             <p className="text-sm font-semibold text-gray-800 dark:text-white">{mod.title}</p>
@@ -338,7 +337,7 @@ export default function CourseDetailPage() {
                       {expanded && mod.contents && (
                         <div className="bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)]/30 border-t border-gray-100 dark:border-[var(--border-main)]">
                           {mod.contents.map((content, cIdx) => (
-                            <div key={content.id} className="flex items-center gap-3 px-6 py-2.5 border-b border-gray-100 dark:border-[var(--border-main)] last:border-0">
+                            <div key={content.id} className="flex items-center gap-4 px-6 py-2.5 border-b border-gray-100 dark:border-[var(--border-main)] last:border-0">
                               <span className="text-xs text-[var(--text-muted)] w-4">{cIdx + 1}</span>
                               <BookOpen className="h-3.5 w-3.5 text-[var(--text-muted)] shrink-0" />
                               <p className="text-sm text-[var(--text-primary)] dark:text-gray-300 flex-1">{content.title}</p>
@@ -361,11 +360,15 @@ export default function CourseDetailPage() {
         <div className="space-y-4">
           <div className="bg-[var(--bg-input)] rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] p-6 shadow-sm sticky top-6">
             {course.thumbnailUrl && (
-              <img
-                src={course.thumbnailUrl}
-                alt={course.title}
-                className="w-full h-36 object-cover rounded-md mb-4"
-              />
+              <div className="relative w-full h-36 mb-4">
+                <Image
+                  src={course.thumbnailUrl}
+                  alt={course.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 400px"
+                  className="object-cover rounded-md"
+                />
+              </div>
             )}
 
             {isEnrolled ? (
@@ -381,7 +384,7 @@ export default function CourseDetailPage() {
                 </div>
 
                 {enrollment?.status === 'COMPLETED' && !enrollment?.certificateId && (
-                  <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <div className="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                     <p className="text-xs text-yellow-800 dark:text-yellow-200">
                       Processing your certificate... This should appear within a few minutes.
                     </p>

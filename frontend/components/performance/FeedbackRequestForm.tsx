@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Users, Plus, X, Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { FeedbackReviewer, ReviewerType, NominatePeersRequest } from '@/lib/types/performance-360';
+import { FeedbackReviewer, NominatePeersRequest } from '@/lib/types/performance-360';
 import { Employee } from '@/lib/types/employee';
 
 interface FeedbackRequestFormProps {
@@ -117,8 +117,8 @@ export default function FeedbackRequestForm({
       };
 
       await onSubmit(request);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit feedback nominations');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err) || 'Failed to submit feedback nominations');
     } finally {
       setIsSubmitting(false);
     }

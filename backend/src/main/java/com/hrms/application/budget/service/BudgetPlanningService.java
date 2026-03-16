@@ -463,11 +463,17 @@ public class BudgetPlanningService {
     public List<BudgetScenarioResponse> compareScenarios(List<UUID> scenarioIds) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        // Batch-fetch all requested scenarios in a single query (avoids N+1).
+        // Preserve the caller's requested order by building an id→entity map.
+        Map<UUID, BudgetScenario> scenarioMap = scenarioRepository
+                .findAllByIdsAndTenantId(scenarioIds, tenantId)
+                .stream()
+                .collect(Collectors.toMap(BudgetScenario::getId, s -> s));
+
         return scenarioIds.stream()
-                .map(id -> scenarioRepository.findByIdAndTenantId(id, tenantId)
-                        .map(BudgetScenarioResponse::fromEntity)
-                        .orElse(null))
+                .map(scenarioMap::get)
                 .filter(Objects::nonNull)
+                .map(BudgetScenarioResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 

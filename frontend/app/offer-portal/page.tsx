@@ -79,7 +79,7 @@ function OfferPortalPage() {
   const handleAcceptOffer = async () => {
     if (!offer || !offer.email || !token) return;
     try {
-      const response = await acceptMutation.mutateAsync({
+      const _response = await acceptMutation.mutateAsync({
         token,
         data: {
           email: offer.email,
@@ -259,7 +259,7 @@ function OfferPortalPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Building className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
                   <p className="text-xs text-[var(--text-muted)]">Position</p>
@@ -268,7 +268,7 @@ function OfferPortalPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <DollarSign className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
                   <p className="text-xs text-[var(--text-muted)]">Annual CTC</p>
@@ -277,7 +277,7 @@ function OfferPortalPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Calendar className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
                   <p className="text-xs text-[var(--text-muted)]">Proposed Joining Date</p>
@@ -286,7 +286,7 @@ function OfferPortalPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-[var(--bg-secondary)] rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                 <Clock className="h-5 w-5 text-[var(--text-muted)]" />
                 <div>
                   <p className="text-xs text-[var(--text-muted)]">Offer Extended On</p>
@@ -413,7 +413,7 @@ function OfferPortalPage() {
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button
                   variant="outline"
                   onClick={() => setShowAcceptModal(false)}
@@ -472,7 +472,7 @@ function OfferPortalPage() {
                 />
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button
                   variant="outline"
                   onClick={() => setShowDeclineModal(false)}

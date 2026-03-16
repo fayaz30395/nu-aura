@@ -1,20 +1,20 @@
 'use client';
 
 import React, { useState, useMemo, useRef, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { notifications } from '@mantine/notifications';
 import { AppLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Interview, CreateInterviewRequest, InterviewStatus, InterviewRound, InterviewType, InterviewResult, Candidate, JobOpening } from '@/lib/types/recruitment';
+import { Interview, CreateInterviewRequest, InterviewStatus, InterviewType, InterviewResult } from '@/lib/types/recruitment';
 import { Employee } from '@/lib/types/employee';
 import { createInterviewSchema, CreateInterviewFormData } from '@/lib/validations/recruitment';
 import { useScheduleInterview, useUpdateInterview, useDeleteInterview, useGenerateInterviewQuestions, useCandidates, useJobOpenings, useAllInterviews, useInterviewsByCandidate } from '@/lib/hooks/queries/useRecruitment';
 import { useEmployees } from '@/lib/hooks/queries/useEmployees';
 import { InterviewQuestionsResponse, TechnicalQuestion, BehavioralQuestion, SituationalQuestion, CulturalFitQuestion, RoleSpecificQuestion } from '@/lib/types/ai-recruitment';
-import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, XCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown, Link2 } from 'lucide-react';
+import { Calendar, Clock, Video, Phone, MapPin, User, Plus, Search, Edit2, Trash2, X, CheckCircle, AlertCircle, Star, Sparkles, Copy, Save, ChevronDown } from 'lucide-react';
 import { getGoogleToken, hasValidGoogleToken } from '@/lib/utils/googleToken';
 
 // ==================== Searchable Select Component ====================
@@ -141,7 +141,6 @@ export default function InterviewsPageWrapper() {
 }
 
 function InterviewsPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
 
@@ -256,7 +255,7 @@ function InterviewsPage() {
       setEditingInterview(null);
       setCreateMeetToggle(false);
       // React Query auto-refetches via invalidateQueries in the mutation hook
-    } catch (err) {
+    } catch (_err) {
       notifications.show({
         title: 'Error',
         message: 'Failed to save interview',
@@ -297,7 +296,7 @@ function InterviewsPage() {
       setSelectedInterview(null);
       resetFeedback();
       // React Query auto-refetches via invalidateQueries in the mutation hook
-    } catch (err) {
+    } catch (_err) {
       notifications.show({
         title: 'Error',
         message: 'Failed to submit feedback',
@@ -362,7 +361,7 @@ function InterviewsPage() {
       setShowDeleteModal(false);
       setInterviewToDelete(null);
       // React Query auto-refetches via invalidateQueries in the mutation hook
-    } catch (err) {
+    } catch (_err) {
       notifications.show({
         title: 'Error',
         message: 'Failed to delete interview',
@@ -391,7 +390,7 @@ function InterviewsPage() {
       });
       setGeneratedQuestions(response);
       setShowQuestionsModal(true);
-    } catch (err) {
+    } catch (_err) {
       notifications.show({
         title: 'Error',
         message: 'Failed to generate interview questions',
@@ -865,7 +864,7 @@ const formatDateTime = (dateString?: string): string => {
 
                   {/* Google Meet Toggle */}
                   {!editingInterview && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
+                    <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-main)] bg-[var(--bg-secondary)]/50">
                       <div className="flex items-center gap-2 flex-1">
                         <Video className="h-5 w-5 text-blue-500" />
                         <div>
@@ -972,7 +971,7 @@ const formatDateTime = (dateString?: string): string => {
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowAddModal(false); resetCreate(); setEditingInterview(null); }} className="flex-1">
                       Cancel
                     </Button>
@@ -998,7 +997,7 @@ const formatDateTime = (dateString?: string): string => {
                   </button>
                 </div>
 
-                <div className="mb-4 p-3 bg-[var(--bg-secondary)] rounded-xl">
+                <div className="mb-4 p-4 bg-[var(--bg-secondary)] rounded-xl">
                   <p className="text-sm text-[var(--text-muted)]">Candidate</p>
                   <p className="font-medium text-[var(--text-primary)]">{selectedInterview.candidateName}</p>
                   <p className="text-sm text-[var(--text-muted)] mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
@@ -1049,7 +1048,7 @@ const formatDateTime = (dateString?: string): string => {
                     {errorsFeedback.feedback && <p className="text-red-500 text-xs mt-1">{errorsFeedback.feedback.message}</p>}
                   </div>
 
-                  <div className="flex gap-3 pt-4 border-t border-[var(--border-main)]">
+                  <div className="flex gap-4 pt-4 border-t border-[var(--border-main)]">
                     <Button type="button" variant="outline" onClick={() => { setShowFeedbackModal(false); setSelectedInterview(null); resetFeedback(); }} className="flex-1">
                       Cancel
                     </Button>
@@ -1076,7 +1075,7 @@ const formatDateTime = (dateString?: string): string => {
               <p className="text-sm text-[var(--text-muted)] mb-6">
                 Are you sure you want to delete this interview for <strong className="text-[var(--text-secondary)]">{interviewToDelete.candidateName}</strong>? This action cannot be undone.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button variant="outline" onClick={() => { setShowDeleteModal(false); setInterviewToDelete(null); }} className="flex-1">
                   Cancel
                 </Button>
@@ -1108,9 +1107,9 @@ const formatDateTime = (dateString?: string): string => {
                   {generatedQuestions.technicalQuestions && generatedQuestions.technicalQuestions.length > 0 && (
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Technical Questions</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {generatedQuestions.technicalQuestions.map((q: TechnicalQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                          <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <div className="flex items-start justify-between gap-2">
                               <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
@@ -1132,9 +1131,9 @@ const formatDateTime = (dateString?: string): string => {
                   {generatedQuestions.behavioralQuestions && generatedQuestions.behavioralQuestions.length > 0 && (
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Behavioral Questions</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {generatedQuestions.behavioralQuestions.map((q: BehavioralQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                          <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                             <span className="text-xs text-[var(--text-muted)] mt-2 block">Competency: {q.competency}</span>
                           </div>
@@ -1147,9 +1146,9 @@ const formatDateTime = (dateString?: string): string => {
                   {generatedQuestions.situationalQuestions && generatedQuestions.situationalQuestions.length > 0 && (
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Situational Questions</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {generatedQuestions.situationalQuestions.map((q: SituationalQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                          <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                             <p className="text-xs text-[var(--text-muted)] mt-2">Scenario: {q.scenario}</p>
                           </div>
@@ -1162,9 +1161,9 @@ const formatDateTime = (dateString?: string): string => {
                   {generatedQuestions.culturalFitQuestions && generatedQuestions.culturalFitQuestions.length > 0 && (
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Cultural Fit Questions</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {generatedQuestions.culturalFitQuestions.map((q: CulturalFitQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                          <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                             <span className="text-xs text-[var(--text-muted)] mt-2 block">Value: {q.value}</span>
                           </div>
@@ -1177,9 +1176,9 @@ const formatDateTime = (dateString?: string): string => {
                   {generatedQuestions.roleSpecificQuestions && generatedQuestions.roleSpecificQuestions.length > 0 && (
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3">Role-Specific Questions</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {generatedQuestions.roleSpecificQuestions.map((q: RoleSpecificQuestion, idx: number) => (
-                          <div key={idx} className="p-3 bg-[var(--bg-secondary)] rounded-xl">
+                          <div key={idx} className="p-4 bg-[var(--bg-secondary)] rounded-xl">
                             <p className="text-sm text-[var(--text-primary)]">{q.question}</p>
                             <span className="text-xs text-[var(--text-muted)] mt-2 block">Focus: {q.focus}</span>
                           </div>
@@ -1189,7 +1188,7 @@ const formatDateTime = (dateString?: string): string => {
                   )}
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-[var(--border-main)] mt-6">
+                <div className="flex gap-4 pt-4 border-t border-[var(--border-main)] mt-6">
                   <Button type="button" variant="outline" onClick={() => { setShowQuestionsModal(false); setGeneratedQuestions(null); }} className="flex-1">
                     Close
                   </Button>

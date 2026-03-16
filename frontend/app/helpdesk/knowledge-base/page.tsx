@@ -1,21 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useKnowledgeBaseArticles, useArticleFeedback, type Article as KBArticle } from '@/lib/hooks/queries/useKnowledgeBase';
+import { useKnowledgeBaseArticles, useArticleFeedback } from '@/lib/hooks/queries/useKnowledgeBase';
 import {
   Search,
   ThumbsUp,
   ThumbsDown,
   Clock,
   Eye,
-  AlertCircle,
-  Loader2,
   Plus,
   MessageSquare,
   ChevronRight,
   FileText,
   CheckCircle,
-  X,
 } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -83,7 +80,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onView }) => {
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-start gap-3 mb-3">
+          <div className="flex items-start gap-4 mb-3">
             <FileText className="h-5 w-5 text-slate-400 flex-shrink-0 mt-1" />
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors truncate">
@@ -137,7 +134,7 @@ const ArticleDetailModal: React.FC<{
       await feedbackMutation.mutateAsync({ articleId: article.id, helpful });
       setIsHelpful(helpful);
       setSubmitStatus('success');
-    } catch (error) {
+    } catch {
       setSubmitStatus('error');
     }
   };
@@ -149,7 +146,7 @@ const ArticleDetailModal: React.FC<{
           <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
             {article.title}
           </h2>
-          <div className="flex items-center gap-3 mt-3 flex-wrap">
+          <div className="flex items-center gap-4 mt-3 flex-wrap">
             <Badge variant="outline">{article.category}</Badge>
             <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
               <Eye className="h-3 w-3" />
@@ -182,13 +179,13 @@ const ArticleDetailModal: React.FC<{
             </h4>
 
             {submitStatus === 'success' && (
-              <div className="p-3 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 flex gap-2 mb-4 text-sm">
+              <div className="p-4 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 flex gap-2 mb-4 text-sm">
                 <CheckCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 Thank you for your feedback!
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <Button
                 variant={isHelpful === true ? 'default' : 'outline'}
                 size="sm"
@@ -248,7 +245,7 @@ const ArticleDetailModal: React.FC<{
 const ArticleSkeletonCard: React.FC = () => (
   <Card className="p-5">
     <div className="space-y-4">
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <Skeleton className="h-5 w-5 flex-shrink-0" />
         <Skeleton className="h-6 w-2/3" />
       </div>
@@ -287,7 +284,6 @@ export default function KnowledgeBasePage() {
     category: selectedCategory || undefined,
     q: searchQuery || undefined,
   });
-  const feedbackMutation = useArticleFeedback();
 
   const handleViewArticle = (article: Article) => {
     setSelectedArticle(article);

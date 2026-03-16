@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { timesheetService } from '@/lib/services/timesheet.service';
-import { Timesheet, TimeEntry, CreateTimesheetRequest, CreateTimeEntryRequest } from '@/lib/types/timesheet';
+import { CreateTimesheetRequest, CreateTimeEntryRequest } from '@/lib/types/timesheet';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 // Query keys for cache management

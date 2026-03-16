@@ -10,12 +10,10 @@ import {
   eachDayOfInterval,
   isSameMonth,
   isSameDay,
-  addDays,
   startOfDay,
   isToday,
 } from 'date-fns';
-import { ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
-import { CalendarEvent, getStatusColor, getPriorityColor } from '@/lib/types/project-calendar';
+import { CalendarEvent } from '@/lib/types/project-calendar';
 
 interface CalendarGridViewProps {
   currentDate: Date;
@@ -56,7 +54,7 @@ export function CalendarGridView({
           {day}
         </div>
       ))}
-      {calendarDays.map((day, idx) => {
+      {calendarDays.map((day, _idx) => {
         const dayEvents = getDayEvents(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
         

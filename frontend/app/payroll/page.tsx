@@ -34,7 +34,6 @@ import {
   SalaryStructure,
   SalaryStructureRequest,
   PayrollRunStatus,
-  SalaryComponent,
 } from '@/lib/types/payroll';
 
 // ============ ZOD SCHEMAS ============
@@ -96,9 +95,6 @@ export default function PayrollPage() {
     }
   }, [permReady, hasPermission, router]);
 
-  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
-    return null;
-  }
   const [activeTab, setActiveTab] = useState<TabType>('runs');
   const [error, setError] = useState<string | null>(null);
 
@@ -182,6 +178,11 @@ export default function PayrollPage() {
   const createStructureMutation = useCreateSalaryStructure();
   const updateStructureMutation = useUpdateSalaryStructure();
   const deleteStructureMutation = useDeleteSalaryStructure();
+
+  // RBAC guard — all hooks declared above; safe to return null after them
+  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+    return null;
+  }
 
   // Compute loading state from queries and mutations
   const loading =
@@ -697,7 +698,7 @@ export default function PayrollPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-4 mb-4">
                       <div className="flex justify-between text-sm">
                         <span className="text-[var(--text-secondary)]">Base Salary</span>
                         <span className="font-medium">{formatCurrency(payslip.baseSalary)}</span>
@@ -1193,9 +1194,9 @@ export default function PayrollPage() {
                         Add Allowance
                       </button>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {allowanceFields.map((field, idx) => (
-                        <div key={field.id} className="flex gap-3 pb-3 border-b">
+                        <div key={field.id} className="flex gap-4 pb-3 border-b">
                           <div className="flex-1">
                             <input
                               type="text"
@@ -1237,9 +1238,9 @@ export default function PayrollPage() {
                         Add Deduction
                       </button>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {deductionFields.map((field, idx) => (
-                        <div key={field.id} className="flex gap-3 pb-3 border-b">
+                        <div key={field.id} className="flex gap-4 pb-3 border-b">
                           <div className="flex-1">
                             <input
                               type="text"
