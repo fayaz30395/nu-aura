@@ -19,6 +19,8 @@ import {
   ChevronDown,
   Send,
   TrendingUp,
+  Eye,
+  ArrowLeft,
 } from 'lucide-react';
 import { AppLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -232,12 +234,16 @@ export default function RegularizationPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'APPROVED': return 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-400';
-      case 'PENDING': return 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-400';
-      case 'REJECTED': return 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-400';
-      default: return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] dark:text-[var(--text-muted)]';
+      case 'APPROVED':
+        return 'badge-status status-success';
+      case 'PENDING':
+        return 'badge-status status-warning';
+      case 'REJECTED':
+        return 'badge-status status-danger';
+      default:
+        return 'badge-status status-neutral';
     }
   };
 
@@ -249,36 +255,47 @@ export default function RegularizationPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
       >
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Attendance Regularization</h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Request corrections for your attendance records
-            </p>
+        {/* Header with Breadcrumb */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-sm">
+            <button
+              onClick={() => router.push('/attendance')}
+              className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Attendance
+            </button>
           </div>
-          <Button
-            onClick={() => {
-              setShowCreateModal(true);
-              setFormStep(1);
-              reset();
-            }}
-            className="bg-primary-500 hover:bg-primary-600 text-white"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Request Regularization
-          </Button>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-page-title">Attendance Regularization</h1>
+              <p className="text-[var(--text-muted)] mt-2">
+                Request corrections for your attendance records
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                setShowCreateModal(true);
+                setFormStep(1);
+                reset();
+              }}
+              className="bg-primary-500 hover:bg-primary-600 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Request Regularization
+            </Button>
+          </div>
         </div>
 
 
-        {/* Info Card */}
-        <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+        {/* Info Banner */}
+        <Card className="card-aura tint-info border-[var(--status-info-border)]">
           <CardContent className="p-4">
             <div className="flex gap-3">
-              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-800 dark:text-blue-300">
+              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]" />
+              <div className="text-sm text-[var(--status-info-text)]">
                 <p className="font-semibold mb-1">About Attendance Regularization</p>
-                <p className="text-blue-700 dark:text-blue-400">
+                <p>
                   If you forgot to check in/out or need to correct your attendance, you can submit a regularization request.
                   Your manager will review and approve/reject the request.
                 </p>
@@ -296,21 +313,22 @@ export default function RegularizationPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-[var(--bg-card)]">
+            {/* Pending Card */}
+            <Card className="card-aura">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-start gap-4">
                   <motion.div
-                    className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center flex-shrink-0"
+                    className="w-12 h-12 rounded-xl bg-[var(--status-warning-bg)] flex items-center justify-center flex-shrink-0"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.25, ease: 'easeOut' }}
                   >
-                    <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    <Clock className="h-6 w-6 text-[var(--status-warning-text)]" />
                   </motion.div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)]">Pending</p>
+                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Pending</p>
                     <motion.p
-                      className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]"
+                      className="text-stat-large"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.1 }}
@@ -322,21 +340,22 @@ export default function RegularizationPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[var(--bg-card)]">
+            {/* Approved Card */}
+            <Card className="card-aura">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-start gap-4">
                   <motion.div
-                    className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center flex-shrink-0"
+                    className="w-12 h-12 rounded-xl bg-[var(--status-success-bg)] flex items-center justify-center flex-shrink-0"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.25, ease: 'easeOut', delay: 0.05 }}
                   >
-                    <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    <CheckCircle className="h-6 w-6 text-[var(--status-success-text)]" />
                   </motion.div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)]">Approved</p>
+                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Approved</p>
                     <motion.p
-                      className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]"
+                      className="text-stat-large"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
@@ -348,21 +367,22 @@ export default function RegularizationPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[var(--bg-card)]">
+            {/* Rejected Card */}
+            <Card className="card-aura">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-start gap-4">
                   <motion.div
-                    className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center flex-shrink-0"
+                    className="w-12 h-12 rounded-xl bg-[var(--status-danger-bg)] flex items-center justify-center flex-shrink-0"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 }}
                   >
-                    <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    <XCircle className="h-6 w-6 text-[var(--status-danger-text)]" />
                   </motion.div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)]">Rejected</p>
+                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Rejected</p>
                     <motion.p
-                      className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]"
+                      className="text-stat-large"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.3 }}
@@ -374,21 +394,22 @@ export default function RegularizationPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[var(--bg-card)]">
+            {/* Avg Resolution Card */}
+            <Card className="card-aura">
               <CardContent className="p-4 md:p-6">
                 <div className="flex items-start gap-4">
                   <motion.div
-                    className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center flex-shrink-0"
+                    className="w-12 h-12 rounded-xl bg-[var(--status-info-bg)] flex items-center justify-center flex-shrink-0"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.25, ease: 'easeOut', delay: 0.15 }}
                   >
-                    <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    <TrendingUp className="h-6 w-6 text-[var(--status-info-text)]" />
                   </motion.div>
                   <div>
-                    <p className="text-sm text-[var(--text-muted)]">Avg Resolution</p>
+                    <p className="text-xs text-[var(--text-muted)] uppercase font-medium">Avg Resolution</p>
                     <motion.p
-                      className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]"
+                      className="text-stat-large"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5, delay: 0.4 }}
@@ -402,29 +423,40 @@ export default function RegularizationPage() {
           </div>
         )}
 
-        {/* Filter Tabs */}
-        <div className="flex gap-2 border-b border-[var(--border-main)]">
+        {/* Status Filter Tabs */}
+        <div className="flex items-center gap-1 border-b border-[var(--border-main)]">
           {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((tab) => (
             <motion.button
               key={tab}
               onClick={() => setStatusFilter(tab)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                statusFilter === tab
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
-              }`}
-              whileHover={{ y: -2 }}
+              className="relative px-4 py-3 text-sm font-medium transition-colors"
+              whileHover={{ y: -1 }}
               whileTap={{ y: 0 }}
             >
-              {tab}
+              <span
+                className={
+                  statusFilter === tab
+                    ? 'text-primary-600 dark:text-primary-400'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                }
+              >
+                {tab}
+              </span>
+              {statusFilter === tab && (
+                <motion.div
+                  layoutId="tabUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600 dark:bg-primary-400"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
             </motion.button>
           ))}
         </div>
 
         {/* Requests Table/List */}
-        <Card className="bg-[var(--bg-card)]">
+        <Card className="card-aura">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-[var(--text-primary)]">
+            <CardTitle className="text-section-title">
               Your Regularization Requests
             </CardTitle>
           </CardHeader>
@@ -503,7 +535,7 @@ export default function RegularizationPage() {
                             </div>
                           </td>
                           <td className="px-4 md:px-6 py-4">
-                            <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(request.status)}`}>
+                            <span className={getStatusBadgeClass(request.status)}>
                               {request.status}
                             </span>
                           </td>
@@ -511,18 +543,16 @@ export default function RegularizationPage() {
                             {formatRelativeTime(request.requestedOn)}
                           </td>
                           <td className="px-4 md:px-6 py-4 text-right">
-                            <button
+                            <motion.button
                               onClick={() =>
                                 setExpandedRequestId(expandedRequestId === request.id ? null : request.id)
                               }
-                              className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium text-sm"
+                              className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
                             >
-                              <ChevronDown
-                                className={`h-4 w-4 inline transition-transform ${
-                                  expandedRequestId === request.id ? 'rotate-180' : ''
-                                }`}
-                              />
-                            </button>
+                              <Eye className="h-4 w-4" />
+                            </motion.button>
                           </td>
                         </motion.tr>
                       ))}
@@ -539,7 +569,7 @@ export default function RegularizationPage() {
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.25, ease: 'easeOut' }}
                           >
-                            <td colSpan={6} className="px-4 md:px-6 py-4 bg-[var(--bg-secondary)]/30">
+                            <td colSpan={6} className="px-4 md:px-6 py-6 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]">
                               <RequestTimeline request={request} />
                             </td>
                           </motion.tr>
@@ -575,54 +605,66 @@ export default function RegularizationPage() {
               transition={{ duration: 0.25, ease: 'easeOut' }}
               className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
             >
-              <div className="bg-[var(--bg-card)] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl pointer-events-auto flex flex-col">
-                {/* Header with Steps */}
+              <div className="card-aura rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl pointer-events-auto flex flex-col border-0">
+                {/* Modal Header */}
                 <div className="border-b border-[var(--border-main)] p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-[var(--text-primary)]">
+                    <h2 className="text-card-title">
                       Request Attendance Regularization
                     </h2>
-                    <button
+                    <motion.button
                       onClick={() => {
                         setShowCreateModal(false);
                         reset();
                       }}
-                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl leading-none"
+                      className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl leading-none transition-colors"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       ×
-                    </button>
+                    </motion.button>
                   </div>
 
-                  {/* Step Indicator */}
-                  <div className="flex gap-2">
-                    {getTimelineSteps(formStep).map((step) => (
-                      <div key={step.step} className="flex items-center gap-2">
+                  {/* Step Indicator with Connected Line */}
+                  <div className="relative flex items-center gap-4">
+                    {getTimelineSteps(formStep).map((step, index) => (
+                      <div key={step.step} className="flex items-center flex-1">
                         <motion.div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                          className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                             step.completed
-                              ? 'bg-green-500 text-white'
+                              ? 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]'
                               : step.active
                                 ? 'bg-primary-500 text-white ring-4 ring-primary-500/30'
                                 : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                           }`}
-                          animate={step.active ? { scale: [1, 1.05, 1] } : {}}
+                          animate={step.active ? { scale: [1, 1.08, 1] } : {}}
                           transition={{ duration: 1.5, repeat: Infinity }}
                         >
                           {step.completed ? '✓' : step.step}
                         </motion.div>
-                        <div className="hidden sm:block">
+                        <div className="hidden sm:block ml-3">
                           <p
-                            className={`text-xs font-medium ${
+                            className={`text-xs font-semibold ${
                               step.active
                                 ? 'text-primary-600 dark:text-primary-400'
-                                : 'text-[var(--text-muted)]'
+                                : step.completed
+                                  ? 'text-[var(--status-success-text)]'
+                                  : 'text-[var(--text-muted)]'
                             }`}
                           >
                             {step.label}
                           </p>
                         </div>
-                        {step.step < 3 && (
-                          <div className="hidden md:block w-8 h-0.5 bg-[var(--border-main)]" />
+                        {index < 2 && (
+                          <div
+                            className={`absolute h-0.5 transition-colors ${
+                              step.completed ? 'bg-[var(--status-success-bg)]' : 'bg-[var(--border-main)]'
+                            }`}
+                            style={{
+                              width: 'calc(100% - 40px - 2rem)',
+                              left: 'calc(20px + 1rem)',
+                            }}
+                          />
                         )}
                       </div>
                     ))}
@@ -644,14 +686,14 @@ export default function RegularizationPage() {
                           className="space-y-4"
                         >
                           <div>
-                            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                              Which date do you want to regularize? *
+                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                              Which date do you want to regularize? <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="date"
                               {...register('attendanceDate')}
                               max={new Date().toISOString().split('T')[0]}
-                              className="input-aura w-full"
+                              className="input-aura w-full px-4 py-2.5"
                             />
                             {errors.attendanceDate && (
                               <motion.p
@@ -678,47 +720,47 @@ export default function RegularizationPage() {
                         >
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                                Check In Time (optional)
+                              <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                                Check In Time
                               </label>
                               <input
                                 type="time"
                                 {...register('requestedCheckIn')}
-                                className="input-aura w-full"
+                                className="input-aura w-full px-4 py-2.5"
                               />
                               {errors.requestedCheckIn && (
                                 <motion.p
                                   initial={{ opacity: 0, y: -4 }}
                                   animate={{ opacity: 1, y: 0 }}
-                                  className="text-red-500 text-xs mt-1"
+                                  className="text-red-500 text-xs mt-2"
                                 >
                                   {errors.requestedCheckIn.message}
                                 </motion.p>
                               )}
                             </div>
                             <div>
-                              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                                Check Out Time (optional)
+                              <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                                Check Out Time
                               </label>
                               <input
                                 type="time"
                                 {...register('requestedCheckOut')}
-                                className="input-aura w-full"
+                                className="input-aura w-full px-4 py-2.5"
                               />
                               {errors.requestedCheckOut && (
                                 <motion.p
                                   initial={{ opacity: 0, y: -4 }}
                                   animate={{ opacity: 1, y: 0 }}
-                                  className="text-red-500 text-xs mt-1"
+                                  className="text-red-500 text-xs mt-2"
                                 >
                                   {errors.requestedCheckOut.message}
                                 </motion.p>
                               )}
                             </div>
                           </div>
-                          <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                            <p className="text-xs text-blue-700 dark:text-blue-300">
-                              Tip: Provide the times you were actually present. Leave blank if only the status needs correction.
+                          <div className="card-aura tint-info border-[var(--status-info-border)] p-4">
+                            <p className="text-xs text-[var(--status-info-text)]">
+                              <span className="font-semibold">Tip:</span> Provide the times you were actually present. Leave blank if only the status needs correction.
                             </p>
                           </div>
                         </motion.div>
@@ -735,13 +777,13 @@ export default function RegularizationPage() {
                           className="space-y-4"
                         >
                           <div>
-                            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                              Why do you need this regularization? *
+                            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">
+                              Why do you need this regularization? <span className="text-red-500">*</span>
                             </label>
                             <textarea
                               {...register('reason')}
                               rows={4}
-                              className="input-aura w-full"
+                              className="input-aura w-full px-4 py-3"
                               placeholder="Please explain why you need attendance regularization..."
                             />
                             <div className="flex items-center justify-between mt-2">
@@ -755,7 +797,7 @@ export default function RegularizationPage() {
                                 </motion.p>
                               )}
                               <p
-                                className={`text-xs ml-auto ${
+                                className={`text-xs ml-auto font-medium ${
                                   reasonValue.length > 450
                                     ? 'text-red-500'
                                     : reasonValue.length > 400
@@ -770,7 +812,7 @@ export default function RegularizationPage() {
 
                           {/* Quick Templates */}
                           <div>
-                            <label className="block text-xs font-medium text-[var(--text-muted)] mb-2 uppercase">
+                            <label className="block text-xs font-semibold text-[var(--text-muted)] mb-3 uppercase tracking-wide">
                               Quick Templates
                             </label>
                             <div className="flex flex-wrap gap-2">
@@ -779,9 +821,9 @@ export default function RegularizationPage() {
                                   key={template}
                                   type="button"
                                   onClick={() => handleAddQuickReason(template)}
-                                  whileHover={{ scale: 1.05 }}
+                                  whileHover={{ scale: 1.05, y: -1 }}
                                   whileTap={{ scale: 0.95 }}
-                                  className="px-3 py-1.5 text-xs border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                                  className="px-3 py-2 text-xs font-medium border border-[var(--border-main)] rounded-full text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:border-primary-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
                                 >
                                   {template}
                                 </motion.button>
@@ -795,42 +837,46 @@ export default function RegularizationPage() {
                 </div>
 
                 {/* Footer with Buttons */}
-                <div className="border-t border-[var(--border-main)] p-6 bg-[var(--bg-secondary)]/30">
+                <div className="border-t border-[var(--border-main)] p-6 bg-[var(--bg-secondary)]/20">
                   <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        if (formStep > 1) {
-                          handlePrevStep();
-                        } else {
-                          setShowCreateModal(false);
-                          reset();
-                        }
-                      }}
-                      className="flex-1"
-                    >
-                      {formStep === 1 ? 'Cancel' : 'Back'}
-                    </Button>
-                    {formStep < 3 ? (
+                    <motion.div className="flex-1">
                       <Button
                         type="button"
-                        onClick={handleNextStep}
-                        className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
+                        variant="outline"
+                        onClick={() => {
+                          if (formStep > 1) {
+                            handlePrevStep();
+                          } else {
+                            setShowCreateModal(false);
+                            reset();
+                          }
+                        }}
+                        className="w-full border-[var(--border-main)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
                       >
-                        Next
+                        {formStep === 1 ? 'Cancel' : 'Back'}
                       </Button>
-                    ) : (
-                      <Button
-                        type="submit"
-                        disabled={requestMutation.isPending || isSubmitting}
-                        onClick={handleSubmit(onSubmit)}
-                        className="flex-1 bg-primary-500 hover:bg-primary-600 text-white disabled:opacity-50"
-                      >
-                        <Send className="h-4 w-4 mr-2" />
-                        {requestMutation.isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}
-                      </Button>
-                    )}
+                    </motion.div>
+                    <motion.div className="flex-1">
+                      {formStep < 3 ? (
+                        <Button
+                          type="button"
+                          onClick={handleNextStep}
+                          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium"
+                        >
+                          Next
+                        </Button>
+                      ) : (
+                        <Button
+                          type="submit"
+                          disabled={requestMutation.isPending || isSubmitting}
+                          onClick={handleSubmit(onSubmit)}
+                          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Send className="h-4 w-4 mr-2" />
+                          {requestMutation.isPending || isSubmitting ? 'Submitting...' : 'Submit Request'}
+                        </Button>
+                      )}
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -871,11 +917,11 @@ function RequestTimeline({ request }: RequestTimelineProps) {
   const getStatusColor = (status: TimelineStatus): string => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 ring-2 ring-green-500/30';
+        return 'bg-[var(--status-success-bg)] text-[var(--status-success-text)] ring-2 ring-[var(--status-success-border)]';
       case 'active':
-        return 'bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 ring-4 ring-blue-500/30';
+        return 'bg-[var(--status-info-bg)] text-[var(--status-info-text)] ring-4 ring-[var(--status-info-border)]';
       case 'failed':
-        return 'bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 ring-2 ring-red-500/30';
+        return 'bg-[var(--status-danger-bg)] text-[var(--status-danger-text)] ring-2 ring-[var(--status-danger-border)]';
       case 'pending':
         return 'bg-[var(--bg-secondary)] text-[var(--text-muted)]';
     }
@@ -926,7 +972,7 @@ function RequestTimeline({ request }: RequestTimelineProps) {
       {/* Timeline */}
       <div className="relative">
         {/* Timeline line */}
-        <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-green-500 to-[var(--border-main)] dark:from-green-400" />
+        <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gradient-to-b from-[var(--status-success-text)] to-[var(--border-main)]" />
 
         {/* Timeline steps */}
         <div className="space-y-6">
@@ -952,9 +998,9 @@ function RequestTimeline({ request }: RequestTimelineProps) {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-[var(--text-primary)]">{step.label}</h4>
-                    <span className="text-sm text-[var(--text-muted)]">
+                  <div className="flex items-center justify-between gap-4">
+                    <h4 className="text-card-title">{step.label}</h4>
+                    <span className="text-xs text-[var(--text-muted)] whitespace-nowrap font-medium">
                       {new Date(step.date).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -1000,17 +1046,19 @@ function RequestTimeline({ request }: RequestTimelineProps) {
         </div>
       </div>
 
-      {/* Request Details */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-3">
-          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold mb-1">Reason</p>
-          <p className="text-sm text-[var(--text-secondary)]">{request.reason}</p>
+      {/* Request Details Section */}
+      <div className="grid grid-cols-2 gap-4 pt-2">
+        <div className="card-aura p-4 bg-[var(--bg-secondary)]/30">
+          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold tracking-wide mb-2">Reason</p>
+          <p className="text-sm text-[var(--text-secondary)] line-clamp-3">{request.reason}</p>
         </div>
-        <div className="bg-[var(--bg-secondary)]/50 rounded-lg p-3">
-          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold mb-1">Original Times</p>
+        <div className="card-aura p-4 bg-[var(--bg-secondary)]/30">
+          <p className="text-xs text-[var(--text-muted)] uppercase font-semibold tracking-wide mb-2">Original Times</p>
           <p className="text-sm text-[var(--text-secondary)]">
-            In: {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'} / Out:{' '}
-            {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}
+            <span className="font-medium">In:</span> {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'}
+          </p>
+          <p className="text-sm text-[var(--text-secondary)]">
+            <span className="font-medium">Out:</span> {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}
           </p>
         </div>
       </div>
