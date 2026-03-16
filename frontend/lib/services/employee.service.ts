@@ -117,6 +117,14 @@ class EmployeeService {
     return response.data;
   }
 
+  /**
+   * Fetch employees who have the given manager assigned as a dotted-line manager.
+   */
+  async getDottedLineReports(managerId: string): Promise<Employee[]> {
+    const response = await apiClient.get<Employee[]>(`/employees/${managerId}/dotted-reports`);
+    return response.data;
+  }
+
   async getTalentProfile(id: string): Promise<TalentProfile> {
     const response = await apiClient.get<TalentProfile>(`/employees/${id}/talent-profile`);
     return response.data;

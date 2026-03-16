@@ -51,6 +51,10 @@ public class UpdateEmployeeRequest {
 
     private UUID managerId;
 
+    private UUID dottedLineManager1Id;
+
+    private UUID dottedLineManager2Id;
+
     private Employee.EmploymentType employmentType;
 
     private Employee.EmployeeStatus status;

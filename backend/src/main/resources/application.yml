@@ -334,12 +334,12 @@ spring:
       on-profile: dev
 
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
-        # Enable statistics in dev for performance monitoring
-        generate_statistics: true
+        # Hibernate statistics disabled to reduce log noise (enable for N+1 debugging)
+        generate_statistics: false
 
 # Dev profile: disable secure cookies (localhost doesn't have HTTPS)
 app:
@@ -358,10 +358,10 @@ logging:
   level:
     com.hrms: DEBUG
     org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
     # Log Hibernate statistics for N+1 query detection
-    org.hibernate.stat: DEBUG
+    org.hibernate.stat: WARN
 
 ---
 spring:

@@ -48,21 +48,21 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
 
     /**
      * Broad ILIKE-based search for RAG retrieval — high recall, LLM handles precision.
-     * Searches title, excerpt, AND content body for any keyword match.
+     * Searches title, excerpt, AND content body (JSONB cast to TEXT) for any keyword match.
      */
     @Query(value = "SELECT bp.* FROM blog_posts bp " +
            "WHERE bp.tenant_id = :tenantId AND (" +
            "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR LOWER(bp.excerpt) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "OR LOWER(bp.content) LIKE LOWER(CONCAT('%', :query, '%'))" +
+           "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
            ") ORDER BY CASE WHEN LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) THEN 0 ELSE 1 END, " +
            "bp.updated_at DESC",
            nativeQuery = true,
            countQuery = "SELECT COUNT(*) FROM blog_posts bp " +
                    "WHERE bp.tenant_id = :tenantId AND (" +
                    "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-                   "OR LOWER(bp.excerpt) LIKE LOWER(CONCAT('%', :query, '%')) " +
-                   "OR LOWER(bp.content) LIKE LOWER(CONCAT('%', :query, '%')))")
+                   "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
+                   "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<BlogPost> searchByTenantBroad(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     long countByTenantIdAndCategoryId(UUID tenantId, UUID categoryId);

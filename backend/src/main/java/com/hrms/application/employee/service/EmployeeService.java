@@ -99,6 +99,8 @@ public class EmployeeService {
                 .departmentId(request.getDepartmentId())
                 .designation(request.getDesignation())
                 .managerId(request.getManagerId())
+                .dottedLineManager1Id(request.getDottedLineManager1Id())
+                .dottedLineManager2Id(request.getDottedLineManager2Id())
                 .employmentType(request.getEmploymentType())
                 .status(Employee.EmployeeStatus.ACTIVE)
                 .bankAccountNumber(request.getBankAccountNumber())
@@ -275,6 +277,14 @@ public class EmployeeService {
             employee.setManagerId(request.getManagerId());
             changedFields.add("managerId");
         }
+        if (request.getDottedLineManager1Id() != null && !Objects.equals(request.getDottedLineManager1Id(), employee.getDottedLineManager1Id())) {
+            employee.setDottedLineManager1Id(request.getDottedLineManager1Id());
+            changedFields.add("dottedLineManager1Id");
+        }
+        if (request.getDottedLineManager2Id() != null && !Objects.equals(request.getDottedLineManager2Id(), employee.getDottedLineManager2Id())) {
+            employee.setDottedLineManager2Id(request.getDottedLineManager2Id());
+            changedFields.add("dottedLineManager2Id");
+        }
         if (request.getEmploymentType() != null && request.getEmploymentType() != employee.getEmploymentType()) {
             employee.setEmploymentType(request.getEmploymentType());
             changedFields.add("employmentType");
@@ -365,6 +375,16 @@ public class EmployeeService {
         if (employee.getManagerId() != null) {
             employeeRepository.findById(employee.getManagerId())
                     .ifPresent(manager -> response.setManagerName(manager.getFullName()));
+        }
+
+        // Add dotted-line manager names if they exist
+        if (employee.getDottedLineManager1Id() != null) {
+            employeeRepository.findById(employee.getDottedLineManager1Id())
+                    .ifPresent(mgr -> response.setDottedLineManager1Name(mgr.getFullName()));
+        }
+        if (employee.getDottedLineManager2Id() != null) {
+            employeeRepository.findById(employee.getDottedLineManager2Id())
+                    .ifPresent(mgr -> response.setDottedLineManager2Name(mgr.getFullName()));
         }
 
         return response;
@@ -476,6 +496,21 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns active employees who have the given manager assigned as
+     * dotted-line manager 1 or dotted-line manager 2 (matrix reporting).
+     */
+    @Transactional(readOnly = true)
+    public List<EmployeeResponse> getDottedLineReports(UUID managerId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        List<Employee> reports = employeeRepository.findDottedLineReportsByManagerId(tenantId, managerId);
+        Map<UUID, String> deptNames = buildDepartmentNameMap(tenantId);
+        Map<UUID, String> empNames = buildEmployeeNameMap(reports);
+        return reports.stream()
+                .map(emp -> enrichResponse(EmployeeResponse.fromEmployee(emp), deptNames, empNames))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void deleteEmployee(UUID employeeId) {
         deleteEmployee(employeeId, "Terminated by administrator");
@@ -549,6 +584,12 @@ public class EmployeeService {
         }
         if (response.getManagerId() != null && empNames.containsKey(response.getManagerId())) {
             response.setManagerName(empNames.get(response.getManagerId()));
+        }
+        if (response.getDottedLineManager1Id() != null && empNames.containsKey(response.getDottedLineManager1Id())) {
+            response.setDottedLineManager1Name(empNames.get(response.getDottedLineManager1Id()));
+        }
+        if (response.getDottedLineManager2Id() != null && empNames.containsKey(response.getDottedLineManager2Id())) {
+            response.setDottedLineManager2Name(empNames.get(response.getDottedLineManager2Id()));
         }
         return response;
     }

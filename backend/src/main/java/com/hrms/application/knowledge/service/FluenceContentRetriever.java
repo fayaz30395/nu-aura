@@ -7,6 +7,8 @@ import com.hrms.domain.knowledge.WikiPage;
 import com.hrms.infrastructure.knowledge.repository.BlogPostRepository;
 import com.hrms.infrastructure.knowledge.repository.DocumentTemplateRepository;
 import com.hrms.infrastructure.knowledge.repository.WikiPageRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class FluenceContentRetriever {
     private final WikiPageRepository wikiPageRepository;
     private final BlogPostRepository blogPostRepository;
     private final DocumentTemplateRepository documentTemplateRepository;
+    private final ObjectMapper objectMapper;
 
     private static final int MAX_CHUNKS = 8; // More context for RAG — LLM filters
     private static final int MAX_CONTENT_LENGTH = 2000; // chars per chunk
@@ -68,7 +71,7 @@ public class FluenceContentRetriever {
         List<String> keywords = extractKeywords(query);
         Map<String, ContentChunk> deduped = new LinkedHashMap<>();
 
-        log.debug("RAG retrieval for query: '{}' → keywords: {}", query, keywords);
+        log.info("RAG retrieval for query: '{}' → keywords: {}, tenantId: {}", query, keywords, tenantId);
 
         if (keywords.isEmpty()) {
             // If no meaningful keywords, try the raw query as-is
@@ -79,8 +82,9 @@ public class FluenceContentRetriever {
             for (String keyword : keywords) {
                 Pageable limit = PageRequest.of(0, RESULTS_PER_KEYWORD);
 
-                // Search wiki pages (broad ILIKE)
+                // Search wiki pages (broad ILIKE on title, excerpt, content::TEXT)
                 var wikiResults = wikiPageRepository.searchByTenantBroad(tenantId, keyword, limit);
+                log.info("Wiki search for keyword '{}': {} results", keyword, wikiResults.getTotalElements());
                 for (WikiPage page : wikiResults.getContent()) {
                     String key = "wiki-" + page.getId();
                     if (!deduped.containsKey(key)) {
@@ -88,15 +92,16 @@ public class FluenceContentRetriever {
                                 .id(page.getId().toString())
                                 .type("wiki")
                                 .title(page.getTitle())
-                                .content(truncate(stripJsonMarkup(page.getContent()), MAX_CONTENT_LENGTH))
+                                .content(truncate(extractTextFromTipTap(page.getContent()), MAX_CONTENT_LENGTH))
                                 .url("/fluence/wiki/" + page.getId())
                                 .relevanceScore(scoreTitleMatch(page.getTitle(), keywords))
                                 .build());
                     }
                 }
 
-                // Search blog posts (broad ILIKE)
+                // Search blog posts (broad ILIKE on title, excerpt, content::TEXT)
                 var blogResults = blogPostRepository.searchByTenantBroad(tenantId, keyword, limit);
+                log.info("Blog search for keyword '{}': {} results", keyword, blogResults.getTotalElements());
                 for (BlogPost post : blogResults.getContent()) {
                     String key = "blog-" + post.getId();
                     if (!deduped.containsKey(key)) {
@@ -104,7 +109,7 @@ public class FluenceContentRetriever {
                                 .id(post.getId().toString())
                                 .type("blog")
                                 .title(post.getTitle())
-                                .content(truncate(stripJsonMarkup(post.getContent()), MAX_CONTENT_LENGTH))
+                                .content(truncate(extractTextFromTipTap(post.getContent()), MAX_CONTENT_LENGTH))
                                 .url("/fluence/blogs/" + post.getId())
                                 .relevanceScore(scoreTitleMatch(post.getTitle(), keywords))
                                 .build());
@@ -137,7 +142,9 @@ public class FluenceContentRetriever {
                 .limit(MAX_CHUNKS)
                 .collect(Collectors.toList());
 
-        log.debug("Retrieved {} content chunks for query: '{}'", chunks.size(), query);
+        log.info("Retrieved {} content chunks for query: '{}'. Titles: {}",
+                chunks.size(), query,
+                chunks.stream().map(ContentChunk::getTitle).collect(Collectors.joining(", ")));
         return chunks;
     }
 
@@ -173,16 +180,59 @@ public class FluenceContentRetriever {
     }
 
     /**
-     * Strip JSON/HTML markup from content to get a plain-text approximation.
-     * TipTap stores content as JSON; this is a lightweight extraction.
+     * Extract plain text from TipTap JSON content.
+     *
+     * TipTap stores content as a JSON AST like:
+     * {"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]}
+     *
+     * This method recursively walks the JSON tree and extracts all "text" values
+     * from text nodes, producing clean readable text for the LLM prompt.
      */
-    private String stripJsonMarkup(String content) {
+    private String extractTextFromTipTap(String content) {
         if (content == null || content.isBlank()) return "";
-        return content
-                .replaceAll("<[^>]+>", " ")       // strip HTML tags
-                .replaceAll("[{}\\[\\]\":]", " ")  // strip JSON syntax
-                .replaceAll("\\s+", " ")
-                .trim();
+        try {
+            JsonNode root = objectMapper.readTree(content);
+            StringBuilder sb = new StringBuilder();
+            extractTextNodes(root, sb);
+            return sb.toString().replaceAll("\\s+", " ").trim();
+        } catch (Exception e) {
+            // Fallback: crude regex extraction if JSON parsing fails
+            log.trace("TipTap JSON parse failed, falling back to regex: {}", e.getMessage());
+            return content
+                    .replaceAll("<[^>]+>", " ")
+                    .replaceAll("[{}\\[\\]\":]", " ")
+                    .replaceAll("\\s+", " ")
+                    .trim();
+        }
+    }
+
+    /** Recursively walk TipTap JSON and collect text node values */
+    private void extractTextNodes(JsonNode node, StringBuilder sb) {
+        if (node == null) return;
+
+        // If this is a text node, extract the "text" value
+        if (node.isObject()) {
+            JsonNode typeNode = node.get("type");
+            if (typeNode != null && "text".equals(typeNode.asText())) {
+                JsonNode textNode = node.get("text");
+                if (textNode != null && !textNode.isNull()) {
+                    sb.append(textNode.asText()).append(" ");
+                }
+            }
+            // Also check for heading — add a newline for readability
+            if (typeNode != null && "heading".equals(typeNode.asText())) {
+                sb.append("\n");
+            }
+        }
+
+        // Recurse into children
+        if (node.isObject()) {
+            node.fields().forEachRemaining(entry -> extractTextNodes(entry.getValue(), sb));
+        } else if (node.isArray()) {
+            for (JsonNode child : node) {
+                extractTextNodes(child, sb);
+            }
+        }
     }
 
     private String truncate(String text, int maxLen) {

@@ -114,6 +114,12 @@ public class FluenceChatService {
                 chunks = Collections.emptyList();
             }
 
+            log.info("RAG retrieved {} chunks for message: '{}'. Chunks: {}",
+                    chunks.size(), request.getMessage(),
+                    chunks.stream()
+                            .map(c -> c.getTitle() + " (" + c.getType() + ")")
+                            .collect(Collectors.joining(", ")));
+
             // 2. Build LLM messages with RAG context
             List<Map<String, String>> llmMessages = buildLlmMessages(request, chunks);
 

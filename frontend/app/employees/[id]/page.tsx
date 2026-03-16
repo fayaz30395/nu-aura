@@ -7,7 +7,7 @@ import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection'
 import { EntityType } from '@/lib/types/custom-fields';
 import { AppLayout } from '@/components/layout';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
-import { useEmployee, useDeleteEmployee } from '@/lib/hooks/queries/useEmployees';
+import { useEmployee, useDeleteEmployee, useDottedLineReports } from '@/lib/hooks/queries/useEmployees';
 import { useToast } from '@/components/notifications/ToastProvider';
 
 export default function EmployeeDetailPage() {
@@ -21,6 +21,7 @@ export default function EmployeeDetailPage() {
 
   // React Query hooks
   const { data: employee, isLoading: loading, error: queryError } = useEmployee(employeeId);
+  const { data: dottedReports = [] } = useDottedLineReports(employeeId);
   const deleteEmployeeMutation = useDeleteEmployee();
 
   const error = queryError ? (queryError as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to load employee' : null;
@@ -224,6 +225,17 @@ export default function EmployeeDetailPage() {
                 >
                   Talent Journey
                 </button>
+                {dottedReports.length > 0 && (
+                  <button
+                    onClick={() => setCurrentTab('dottedReports')}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm ${currentTab === 'dottedReports'
+                        ? 'border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400'
+                        : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] dark:text-[var(--text-muted)] dark:hover:text-[var(--text-muted)] dark:hover:border-[var(--border-main)]'
+                      }`}
+                  >
+                    Dotted Reports ({dottedReports.length})
+                  </button>
+                )}
               </nav>
             </div>
 
@@ -333,6 +345,18 @@ export default function EmployeeDetailPage() {
                     <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Reporting Manager</label>
                     <p className="text-base text-[var(--text-primary)]">{employee.managerName || '-'}</p>
                   </div>
+                  {employee.dottedLineManager1Name && (
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Dotted-Line Manager 1</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.dottedLineManager1Name}</p>
+                    </div>
+                  )}
+                  {employee.dottedLineManager2Name && (
+                    <div>
+                      <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Dotted-Line Manager 2</label>
+                      <p className="text-base text-[var(--text-primary)]">{employee.dottedLineManager2Name}</p>
+                    </div>
+                  )}
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-muted)] mb-1">Joining Date</label>
                     <p className="text-base text-[var(--text-primary)]">{formatDate(employee.joiningDate)}</p>
@@ -392,6 +416,49 @@ export default function EmployeeDetailPage() {
               {/* Talent Journey Tab */}
               {currentTab === 'talent' && (
                 <TalentJourneyTab employeeId={employeeId} />
+              )}
+
+              {/* Dotted Reports Tab */}
+              {currentTab === 'dottedReports' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    Employees who have {employee.fullName} assigned as a dotted-line manager (matrix reporting).
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="table-aura">
+                      <thead>
+                        <tr>
+                          <th>Employee</th>
+                          <th>Code</th>
+                          <th>Designation</th>
+                          <th>Department</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dottedReports.map((report) => (
+                          <tr
+                            key={report.id}
+                            className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer"
+                            onClick={() => router.push(`/employees/${report.id}`)}
+                          >
+                            <td className="whitespace-nowrap">
+                              <span className="font-medium text-[var(--text-primary)]">{report.fullName}</span>
+                            </td>
+                            <td className="whitespace-nowrap text-[var(--text-secondary)]">{report.employeeCode}</td>
+                            <td className="whitespace-nowrap text-[var(--text-secondary)]">{report.designation || '-'}</td>
+                            <td className="whitespace-nowrap text-[var(--text-secondary)]">{report.departmentName || '-'}</td>
+                            <td>
+                              <span className={`badge-status ${report.status === 'ACTIVE' ? 'status-success' : 'status-neutral'}`}>
+                                {report.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
           </div>

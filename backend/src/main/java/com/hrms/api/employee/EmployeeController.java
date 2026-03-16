@@ -144,6 +144,21 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getManagerEmployees());
     }
 
+    @GetMapping("/{id}/dotted-reports")
+    @RequiresPermission({
+        Permission.EMPLOYEE_VIEW_ALL,
+        Permission.EMPLOYEE_VIEW_DEPARTMENT,
+        Permission.EMPLOYEE_VIEW_TEAM
+    })
+    @Operation(summary = "Get dotted-line reports",
+               description = "Returns active employees who have this manager assigned as a dotted-line manager")
+    @ApiResponse(responseCode = "200", description = "Dotted-line reports retrieved successfully")
+    public ResponseEntity<List<EmployeeResponse>> getDottedLineReports(
+            @Parameter(description = "Manager UUID") @PathVariable UUID id) {
+        List<EmployeeResponse> reports = employeeService.getDottedLineReports(id);
+        return ResponseEntity.ok(reports);
+    }
+
     @PutMapping("/{id}")
     @RequiresPermission(Permission.EMPLOYEE_UPDATE)
     public ResponseEntity<EmployeeResponse> updateEmployee(
