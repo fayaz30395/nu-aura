@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -30,12 +30,14 @@ export default function FeedbackPage() {
   // Get current user ID from localStorage
   const [currentUserId, setCurrentUserId] = useState('');
 
-  if (!currentUserId) {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.employeeId) {
-      setCurrentUserId(user.employeeId);
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !currentUserId) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.employeeId) {
+        setCurrentUserId(user.employeeId);
+      }
     }
-  }
+  }, [currentUserId]);
 
   // React Query hooks
   const receivedQuery = useReceivedFeedback(currentUserId);
